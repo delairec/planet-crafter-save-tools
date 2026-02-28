@@ -1,6 +1,10 @@
 # Planet Crafter Merge Saves
 
+> ❗ I’m not going to actively maintain this project (or only minimally). If you’d like to add improvements or fix bugs, feel free to fork it 😃
+
+
 Merges two **Planet Crafter** save files into a single one, preserving as much information as possible.
+
 
 ## Table of Contents
 
