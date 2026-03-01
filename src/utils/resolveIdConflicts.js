@@ -34,10 +34,12 @@ export function resolveIdConflicts(mergedSave) {
   const {updatedPlayers: playersWithUpdatedRefs, inventoryConsumedCount} = updatePlayerInventoryReferences(resolvedPlayers, oldIdToNewIds);
 
   const worldObjectIdRemapping = new Map();
-  const resolvedWorldObjectsGenerator = createResolveWorldObjectsGenerator(worldObjectsGenerator, nextIdGenerator, worldObjectIdRemapping);
+  const saveBLinkedInventoryIds = new Set();
+  const resolvedWorldObjectsGenerator = createResolveWorldObjectsGenerator(worldObjectsGenerator, nextIdGenerator, worldObjectIdRemapping, saveBLinkedInventoryIds);
   const serializedWorldObjects = serializeWorldObjectsAndBuildRemapping(resolvedWorldObjectsGenerator, oldIdToAllResolvedIds, worldObjectIdRemapping, inventoryConsumedCount);
 
-  const inventoriesWithUpdatedWoIds = updateInventoryWoIdsReferences(resolvedInventories, worldObjectIdRemapping);
+  const resolvedSaveBLinkedInventoryIds = remapLinkedInventoryIds(saveBLinkedInventoryIds, oldIdToNewIds);
+  const inventoriesWithUpdatedWoIds = updateInventoryWoIdsReferences(resolvedInventories, worldObjectIdRemapping, resolvedSaveBLinkedInventoryIds);
 
   return serializeSave({
     metadata,
@@ -118,13 +120,14 @@ function remapRef(refId, oldIdToNewIds, consumedCount) {
 }
 
 
-function* createResolveWorldObjectsGenerator(worldObjectsGenerator, generateNextId, worldObjectIdRemapping) {
+function* createResolveWorldObjectsGenerator(worldObjectsGenerator, generateNextId, worldObjectIdRemapping, saveBLinkedInventoryIds) {
   const seenIds = new Set();
   for (const worldObject of worldObjectsGenerator) {
     generateNextId.bumpTo(worldObject.id);
     if (seenIds.has(worldObject.id)) {
       const newId = generateNextId();
       worldObjectIdRemapping.set(worldObject.id, newId);
+      if (worldObject.liId !== undefined) saveBLinkedInventoryIds.add(worldObject.liId);
       yield {...worldObject, id: newId};
     } else {
       seenIds.add(worldObject.id);
@@ -133,10 +136,24 @@ function* createResolveWorldObjectsGenerator(worldObjectsGenerator, generateNext
   }
 }
 
-function updateInventoryWoIdsReferences(inventories, worldObjectIdRemapping) {
+function remapLinkedInventoryIds(saveBLinkedInventoryIds, oldIdToNewIds) {
+  const resolved = new Set();
+  for (const id of saveBLinkedInventoryIds) {
+    if (oldIdToNewIds.has(id)) {
+      const newIds = oldIdToNewIds.get(id);
+      for (const newId of newIds) resolved.add(newId);
+    } else {
+      resolved.add(id);
+    }
+  }
+  return resolved;
+}
+
+function updateInventoryWoIdsReferences(inventories, worldObjectIdRemapping, saveBLinkedInventoryIds) {
   if (worldObjectIdRemapping.size === 0) return inventories;
   return inventories.map(inventory => {
     if (!inventory.woIds) return inventory;
+    if (!saveBLinkedInventoryIds.has(inventory.id)) return inventory;
     const updatedWoIds = inventory.woIds
       .split(',')
       .map(id => {

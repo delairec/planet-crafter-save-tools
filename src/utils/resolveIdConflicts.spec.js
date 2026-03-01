@@ -407,7 +407,56 @@ describe('utils/resolveIdConflicts', () => {
       expect(worldObjects[1].id > 500).toBeTruthy();
     });
 
-    it('should update inventory item references when a world object receives a new id', () => {
+    it('should update woIds only in the inventory that owns the remapped world object', () => {
+      // Arrange
+      const inventoryOfWorldObjectA = {id: 30, woIds: '100', size: 50};
+      const inventoryOfWorldObjectB = {id: 31, woIds: '100', size: 50};
+      const worldObjectFromA = {id: 100, gId: 'SomeObject', liId: 30, pos: '100,200,300', rot: '0,0,0,1', planet: 110910047};
+      const worldObjectFromB = {id: 100, gId: 'OtherObject', liId: 31, pos: '400,500,600', rot: '0,0,0,1', planet: 110910047};
+      const mergedSave = createFakeSaveString({
+        players: [defaultPlayerFromA],
+        worldObjects: [worldObjectFromA, worldObjectFromB],
+        inventories: [inventoryOfA, equipmentOfA, inventoryOfWorldObjectA, inventoryOfWorldObjectB]
+      });
+
+      // Act
+      const result = resolveIdConflicts(mergedSave);
+
+      // Assert
+      const worldObjects = parseResultSection(result, WORLD_OBJECTS_SECTION_INDEX);
+      const inventories = parseResultSection(result, INVENTORIES_SECTION_INDEX);
+      const remappedWoId = worldObjects[1].id;
+      const inventoryA = inventories.find(inventory => inventory.id === 30);
+      const inventoryB = inventories.find(inventory => inventory.id === 31);
+
+      expect(inventoryA.woIds).toBe('100');
+      expect(inventoryB.woIds).toBe(String(remappedWoId));
+    });
+
+    it('should update woIds in the inventory linked to a remapped world object', () => {
+      // Arrange
+      const worldObjectFromA = {id: 100, gId: 'SomeObject', pos: '100,200,300', rot: '0,0,0,1', planet: 110910047};
+      const worldObjectFromB = {id: 100, gId: 'OtherObject', liId: 30, pos: '400,500,600', rot: '0,0,0,1', planet: 110910047};
+      const inventoryOfWorldObjectB = {id: 30, woIds: '100', size: 50};
+      const mergedSave = createFakeSaveString({
+        players: [defaultPlayerFromA],
+        worldObjects: [worldObjectFromA, worldObjectFromB],
+        inventories: [inventoryOfA, equipmentOfA, inventoryOfWorldObjectB]
+      });
+
+      // Act
+      const result = resolveIdConflicts(mergedSave);
+
+      // Assert
+      const worldObjects = parseResultSection(result, WORLD_OBJECTS_SECTION_INDEX);
+      const inventories = parseResultSection(result, INVENTORIES_SECTION_INDEX);
+      const remappedWoId = worldObjects[1].id;
+      const inventoryB = inventories.find(inventory => inventory.id === 30);
+
+      expect(inventoryB.woIds).toBe(String(remappedWoId));
+    });
+
+    it('should not update woIds in inventories unrelated to any remapped world object', () => {
       // Arrange
       const worldObjectFromA = {id: 100, gId: 'SomeObject', pos: '100,200,300', rot: '0,0,0,1', planet: 110910047};
       const worldObjectFromB = {id: 100, gId: 'OtherObject', pos: '400,500,600', rot: '0,0,0,1', planet: 110910047};
@@ -421,12 +470,36 @@ describe('utils/resolveIdConflicts', () => {
       const result = resolveIdConflicts(mergedSave);
 
       // Assert
-      const worldObjects = parseResultSection(result, WORLD_OBJECTS_SECTION_INDEX);
       const inventories = parseResultSection(result, INVENTORIES_SECTION_INDEX);
-      const newId = worldObjects[1].id;
       const inventory = inventories.find(inventory => inventory.id === 10);
 
-      expect(inventory.woIds.split(',').includes(String(newId))).toBeTruthy();
+      expect(inventory.woIds).toBe('100');
+    });
+
+    it('should update woIds in the linked inventory even when that inventory itself had an id conflict', () => {
+      // Arrange
+      const inventoryOfWorldObjectA = {id: 30, woIds: '100', size: 50};
+      const inventoryOfWorldObjectB = {id: 30, woIds: '100', size: 60};
+      const worldObjectFromA = {id: 100, gId: 'SomeObject', liId: 30, pos: '100,200,300', rot: '0,0,0,1', planet: 110910047};
+      const worldObjectFromB = {id: 100, gId: 'OtherObject', liId: 30, pos: '400,500,600', rot: '0,0,0,1', planet: 110910047};
+      const mergedSave = createFakeSaveString({
+        players: [defaultPlayerFromA],
+        worldObjects: [worldObjectFromA, worldObjectFromB],
+        inventories: [inventoryOfA, equipmentOfA, inventoryOfWorldObjectA, inventoryOfWorldObjectB]
+      });
+
+      // Act
+      const result = resolveIdConflicts(mergedSave);
+
+      // Assert
+      const worldObjects = parseResultSection(result, WORLD_OBJECTS_SECTION_INDEX);
+      const inventories = parseResultSection(result, INVENTORIES_SECTION_INDEX);
+      const remappedWoId = worldObjects[1].id;
+      const inventoryA = inventories.find(inventory => inventory.size === 50);
+      const inventoryB = inventories.find(inventory => inventory.size === 60);
+
+      expect(inventoryA.woIds).toBe('100');
+      expect(inventoryB.woIds).toBe(String(remappedWoId));
     });
   });
 
