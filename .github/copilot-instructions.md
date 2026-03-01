@@ -2,74 +2,74 @@
 
 ## Project
 
-Merges two **Planet Crafter** save files into one. The save format is a plain-text string split into 11 sections separated by `@`. Each
-section contains JSON objects separated by `|\n`.
+Merges two **Planet Crafter** save files. Format: plain-text, 11 sections separated by `@`, each containing JSON objects separated by `|\n`.
 
 ## Stack
 
 - **Runtime**: Bun (ESM, `"type": "module"`)
-- **Tests**: `bun test` with `bun:test` (`describe`, `it`, `expect`) — no external test framework
-- **Type checking**: `tsconfig.json` with `checkJs: true` — no compilation, types only (`bun run lint:types`)
-- **Types**: all domain types are defined as `@typedef` in `src/types.js` — import with `/** @import { Foo } from '../types.js' */`
+- **Tests**: `bun test` / `bun:test` (`describe`, `it`, `expect`)
+- **Type checking**: `tsconfig.json` `checkJs: true` — types only (`bun run lint:types`)
+- **Types**: `@typedef` in `src/types.js` — import via `/** @import { Foo } from '../types.js' */`
 
-## Terminal usage
+## Terminal
 
-- Follow conventional commit format: `<type>(<scope>): <message>` (no description block).
-- `<scope>` is the section being merged if applicable (e.g. `players`, `inventories`).
-- No `cd` command unless an error occurred.
-- No `wsl` command at all — assume all commands are run in the correct environment.
+- Conventional commits: `<type>(<scope>): <message>` — no body.
+- `<scope>` = section name when applicable (e.g. `players`, `inventories`).
+- No `cd` unless an error occurred. No `wsl` ever.
 
-## TDD Workflow
+## TDD — strict red → green → refactor
 
-Follow strict **red → green → refactor** cycles: write failing tests first, then implement the minimal code to pass. Never implement logic
-without a corresponding test. Don't execute tests yourself — ask me to run them and provide feedback.
+1. Write failing tests first. Never implement logic without a test.
+2. After writing tests, **stop and ask** for a test run before implementing.
+3. After going green, **stop and ask** before refactoring.
+4. Never skip a phase or merge two phases in one step.
 
-## Testing conventions
+## Testing
 
-- AAA pattern (Arrange, Act, Assert); one Act per test.
-- Business-readable test names; no technical details in names.
-- Nested `describe` blocks for context grouping; test names focused on behavior.
-- Tests are living documentation — no additional comments needed.
-- Prefer hard-coded values in assertions; avoid loops unless data exceeds ~5 entries.
-- Avoid mocking modules directly. Prefer dependency injection for testability.
-- Avoid test dependencies; each test should be independent and self-contained. Use `beforeEach` for shared setup if necessary, but avoid
-  shared state between tests.
+- AAA (Arrange / Act / Assert); one Act per `it`.
+- Business-readable names; no technical jargon in names.
+- Nested `describe` for context; outer = subject, inner = scenario.
+- Tests are the only documentation — no inline comments.
+- Hard-coded expected values; no assertion loops unless >5 entries.
+- No module mocking — use dependency injection.
+- No shared state between tests; `beforeEach` only for setup, never for cross-test data.
+- Never assert on implementation details (internal function calls, private state).
 
-## Code Conventions
+## Code
 
-- SOLID principles; respect abstraction levels.
-- **Named exports** only (no default exports).
-- Each `merge*` function receives two parsed section arrays and returns a serialized string. Follow the `mergeTerraformationLevels` pattern.
-- Helper/test utilities live in `src/testing/`.
-- No magic numbers or strings — use `UPPER_SNAKE_CASE` named constants.
-- No explanatory comments; write self-explanatory code.
-- Avoid diminutive or truncated variable/function names.
-- All new modules must import their types from `src/types.js` via `/** @import { ... } from '../types.js' */` and annotate every exported
-  function with `@param` / `@returns`.
-- Avoid `any` type whenever possible; prefer precise types, `unknown`, or `@ts-expect-error` for intentionally invalid test values.
+- **Architecture**: SOLID; single responsibility per module; respect abstraction levels.
+- **Exports**: named exports only — no default exports.
+- **Merge functions**: `merge*(sectionA, sectionB[, extras])` → `string`. Follow the `mergeTerraformationLevels` pattern exactly.
+- **Utilities / test helpers**: `src/utils/` and `src/utils/testing/` respectively.
+- **Constants**: `UPPER_SNAKE_CASE` for every literal reused or domain-meaningful. Zero magic numbers or strings.
+- **Naming**: full, unambiguous names — no abbreviations, no diminutives.
+- **Comments**: none — code must be self-explanatory. `@see GR-*` JSDoc tags are allowed on exports.
+- **Types**: every exported function annotated with `@param` / `@returns`. Never use `any`; prefer precise types, `unknown`, or `@ts-expect-error` for intentionally invalid test values.
+- **Null-safety**: no silent coercion (`??` is fine; never `|| default` for booleans/numbers).
+- **Immutability**: never mutate input parameters; always return new values.
+- **Pure functions**: no side effects outside the designated I/O layer (`merge-cli.js`, `validate-cli.js`).
+- **Early returns**: guard clauses over nested `if`/`else` chains.
+- **No redundancy**: no duplicated logic — extract shared behaviour into named helpers.
+- **Error handling**: throw a typed `Error` with a descriptive message; never swallow errors silently.
 
-## Domain guidelines
+## Domain
 
-The canonical merge rules are in **[`docs/game-rules.md`](../docs/game-rules.md)** — consult that file for every section strategy,
-merge key, and invariant. The summary below is for quick orientation only; the canonical document is authoritative.
+Canonical rules: **`docs/game-rules.md`** — always consult it. Table below is orientation only.
 
-| Section                   | Merge key             | Conflict strategy                                             |
-|---------------------------|-----------------------|---------------------------------------------------------------|
-| 0 — Global metadata       | —                     | Sum tokens; union groups; save A wins instance fields         |
-| 1 — Terraformation levels | `planetId`            | `Math.max` all numeric fields; `-1` sentinel for purification |
-| 2 — Players               | `name`                | Save A wins; exactly one `host: true` (save A's host)         |
-| 3 — World objects         | `planet:pos`          | Save A wins; orphans from ejected B-players removed first     |
-| 4 — Inventories           | `id` (remapped)       | All kept except ejected-player inventories from save B        |
-| 5 — Statistics            | —                     | All fields summed                                             |
-| 6 — Messages              | `stringId`            | Union; `isRead` = boolean OR                                  |
-| 7 — Story events          | `stringId`            | Union; no field merge                                         |
-| 8 — Save configuration    | —                     | Save A wins; `saveDisplayName` overridden by `merge()` arg    |
-| 9 — Terrain layers        | `layerId`+`planet`    | Save A wins                                                   |
-| 10 — World events         | `planet`+`seed`+`pos` | Save A wins                                                   |
+| § | Merge key | Strategy |
+|---|-----------|----------|
+| 0 Global metadata | — | Sum tokens; union groups; save A wins instance fields |
+| 1 Terraformation levels | `planetId` | `Math.max` all numeric; `-1` sentinel for purification |
+| 2 Players | `name` | Save A wins; exactly one `host: true` (save A's host) |
+| 3 World objects | `planet:pos` | Save A wins; remove B-player orphans first |
+| 4 Inventories | `id` (remapped) | Keep all except ejected-player inventories from B |
+| 5 Statistics | — | Sum all fields |
+| 6 Messages | `stringId` | Union; `isRead` = boolean OR |
+| 7 Story events | `stringId` | Union; no field merge |
+| 8 Save configuration | — | Save A wins; `saveDisplayName` from `merge()` arg |
+| 9 Terrain layers | `layerId`+`planet` | Save A wins |
+| 10 World events | `planet`+`seed`+`pos` | Save A wins |
 
-**Save order (GR-ORDER-1):** if one save has `planetId === 'Prime'` in its configuration and the other does not, the Prime save is promoted
-to save A before any merge function runs.
+**GR-ORDER-1**: if exactly one save has `planetId === 'Prime'` in its config, promote it to save A before any merge.
 
-**Id conflict resolution:** `src/utils/resolveIdConflicts.js` runs last — remaps duplicate ids and updates all back-references
-(`inventoryId`, `equipmentId`, `liId`, `woIds`).
-
+**Id conflicts**: `resolveIdConflicts.js` runs last — remaps duplicate ids, updates `inventoryId`, `equipmentId`, `liId`, `woIds`.
