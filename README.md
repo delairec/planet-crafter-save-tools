@@ -18,7 +18,6 @@ Merges two **Planet Crafter** save files into a single one, preserving as much i
 ## Prerequisites
 
 Using [Bun](https://bun.sh) `v1.3.10` by default.
-Compatible with [Node.js](https://nodejs.org/) ≥ 18.
 
 ## Installation
 
