@@ -1,9 +1,11 @@
 import {describe, it} from 'node:test';
 import {equal} from 'node:assert/strict';
-import {mergeSaves, determineSaveOrder} from './merge.js';
+import {merge} from './merge.js';
 import {createFakeSaveString} from './testing/createFakeSaveString.js';
 
 describe('Merge saves', () => {
+
+  const {mergeSaves, determineSaveOrder} = merge();
 
   const saveA_metadata = {
     terraTokens: 122279,
