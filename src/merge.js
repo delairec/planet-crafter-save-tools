@@ -2,9 +2,16 @@ import {parseSaveSections} from './utils/parseSaveSections.js';
 import {stringifyEntry} from './utils/stringifyEntry.js';
 
 export function merge(saveA, saveB, saveDisplayName) {
-  function mergeSaves(saveA, saveB, saveDisplayName) {
-    const [metadataA = [], terraformationLevelsA = [], playersA = [], worldObjectsGeneratorA = '', inventoriesA = [], statisticsA = [], mailboxA = [], storyEventsA = [], saveConfigurationsA = [], terrainLayersA = [], worldEventsA = []] = parseSaveSections(saveA);
-    const [metadataB = [], terraformationLevelsB = [], playersB = [], worldObjectsGeneratorB = '', inventoriesB = [], statisticsB = [], mailboxB = [], storyEventsB = [], saveConfigurationsB = [], terrainLayersB = [], worldEventsB = []] = parseSaveSections(saveB);
+
+ const parsedSaveA = parseSaveSections(saveA);
+ const parsedSaveB = parseSaveSections(saveB);
+
+  const [mainSave, secondarySave] = determineSaveOrder(parsedSaveA, parsedSaveB);
+
+  const [metadataA = [], terraformationLevelsA = [], playersA = [], worldObjectsGeneratorA = '', inventoriesA = [], statisticsA = [], mailboxA = [], storyEventsA = [], saveConfigurationsA = [], terrainLayersA = [], worldEventsA = []] = mainSave;
+  const [metadataB = [], terraformationLevelsB = [], playersB = [], worldObjectsGeneratorB = '', inventoriesB = [], statisticsB = [], mailboxB = [], storyEventsB = [], saveConfigurationsB = [], terrainLayersB = [], worldEventsB = []] = secondarySave;
+
+  function mergeSaves() {
 
     const ejectedPlayerIdsFromB = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);
 
@@ -25,9 +32,9 @@ export function merge(saveA, saveB, saveDisplayName) {
     return sections.join('\n@\n') + '\n@';
   }
 
-  function determineSaveOrder(saveA, saveB) {
-    const [, , , , , , , , saveConfigurationsA] = parseSaveSections(saveA);
-    const [, , , , , , , , saveConfigurationsB] = parseSaveSections(saveB);
+  function determineSaveOrder(parsedSaveA, parsedSaveB) {
+    const [, , , , , , , , saveConfigurationsA] = parsedSaveA;
+    const [, , , , , , , , saveConfigurationsB] = parsedSaveB;
 
     const configA = saveConfigurationsA?.[0];
     const configB = saveConfigurationsB?.[0];
@@ -36,10 +43,10 @@ export function merge(saveA, saveB, saveDisplayName) {
     const save2IsPrime = configB?.planetId === 'Prime';
 
     if (save2IsPrime && !save1IsPrime) {
-      return [saveB, saveA];
+      return [parsedSaveB, parsedSaveA];
     }
 
-    return [saveA, saveB];
+    return [parsedSaveA, parsedSaveB];
   }
 
   function collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB) {
@@ -278,7 +285,8 @@ export function merge(saveA, saveB, saveDisplayName) {
   }
 
   return {
-    determineSaveOrder,
-    mergeSaves
+    mergeSaves,
+    indexFileA: mainSave === parsedSaveA ? 0 : 1,
+    indexFileB: secondarySave === parsedSaveB ? 1 : 0,
   }
 }

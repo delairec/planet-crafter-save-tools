@@ -4,8 +4,7 @@ import {merge} from './merge.js';
 import {createFakeSaveString} from './testing/createFakeSaveString.js';
 
 describe('Merge saves', () => {
-
-  const {mergeSaves, determineSaveOrder} = merge();
+  const saveDisplayName = 'SAVE_NAME';
 
   const saveA_metadata = {
     terraTokens: 122279,
@@ -71,8 +70,11 @@ describe('Merge saves', () => {
   ];
 
   it('should handle error in case of wrong save format', () => {
+    // Arrange
+    const {mergeSaves} = merge('invalidSaveFormatA', 'invalidSaveFormatB', saveDisplayName);
+
     // Act
-    const result = mergeSaves('save1', 'save2');
+    const result = mergeSaves();
 
     // Assert
     equal(result, createFakeSaveString({}));
@@ -84,8 +86,11 @@ describe('Merge saves', () => {
       const fakeSaveA = createFakeSaveString({globalMetadata: saveA_metadata});
       const fakeSaveB = createFakeSaveString({globalMetadata: saveB_metadata});
 
+      const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
+
       // Act
-      const result = mergeSaves(fakeSaveA, fakeSaveB);
+      const result = mergeSaves();
 
       // Assert
       equal(result, createFakeSaveString({globalMetadata: mergedSave_metadata}));
@@ -100,8 +105,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({terraformationLevels: saveA_terraformationLevels});
         const fakeSaveB = createFakeSaveString({terraformationLevels: saveB_terraformationLevels});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({terraformationLevels: mergedSave_terraformationLevels}));
@@ -111,7 +118,8 @@ describe('Merge saves', () => {
     describe('When terraformation levels are duplicated', () => {
       it('should merge terraformation levels by taking max values', () => {
         // Arrange
-        const fakeSaveA = createFakeSaveString({terraformationLevels: [
+        const fakeSaveA = createFakeSaveString({
+          terraformationLevels: [
             ...saveA_terraformationLevels,
             {
               planetId: 'Prime',
@@ -123,14 +131,18 @@ describe('Merge saves', () => {
               unitAnimalsLevel: 601.0,
               unitPurificationLevel: -1.0
             }
-          ]});
+          ]
+        });
         const fakeSaveB = createFakeSaveString({terraformationLevels: saveB_terraformationLevels});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
-        equal(result, createFakeSaveString({terraformationLevels: [
+        equal(result, createFakeSaveString({
+          terraformationLevels: [
             {...mergedSave_terraformationLevels[0]},
             {
               planetId: 'Prime',
@@ -143,63 +155,91 @@ describe('Merge saves', () => {
               unitPurificationLevel: -1.0
             },
             {...mergedSave_terraformationLevels[2]}
-          ]}));
+          ]
+        }));
       });
     });
 
     describe('When unitPurificationLevel is -1 (sentinel for "not yet unlocked")', () => {
       it('should keep -1 when both saves have -1', () => {
         // Arrange
-        const fakeSaveA = createFakeSaveString({terraformationLevels: [{
-          planetId: 'Prime', unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
-          unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0, unitPurificationLevel: -1.0
-        }]});
-        const fakeSaveB = createFakeSaveString({terraformationLevels: [{
-          planetId: 'Prime', unitOxygenLevel: 5.0, unitHeatLevel: 10.0, unitPressureLevel: 15.0,
-          unitPlantsLevel: 20.0, unitInsectsLevel: 25.0, unitAnimalsLevel: 30.0, unitPurificationLevel: -1.0
-        }]});
+        const fakeSaveA = createFakeSaveString({
+          terraformationLevels: [{
+            planetId: 'Prime', unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
+            unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0, unitPurificationLevel: -1.0
+          }]
+        });
+        const fakeSaveB = createFakeSaveString({
+          terraformationLevels: [{
+            planetId: 'Prime', unitOxygenLevel: 5.0, unitHeatLevel: 10.0, unitPressureLevel: 15.0,
+            unitPlantsLevel: 20.0, unitInsectsLevel: 25.0, unitAnimalsLevel: 30.0, unitPurificationLevel: -1.0
+          }]
+        });
+
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
 
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
-        equal(result, createFakeSaveString({terraformationLevels: [{
-          planetId: 'Prime', unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
-          unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0, unitPurificationLevel: -1.0
-        }]}));
+        equal(result, createFakeSaveString({
+          terraformationLevels: [{
+            planetId: 'Prime', unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
+            unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0, unitPurificationLevel: -1.0
+          }]
+        }));
       });
 
       it('should take the non-negative value when one save has -1 and the other has a real value', () => {
         // Arrange
-        const fakeSaveA = createFakeSaveString({terraformationLevels: [{
-          planetId: 'Prime', unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
-          unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0, unitPurificationLevel: 500.0
-        }]});
-        const fakeSaveB = createFakeSaveString({terraformationLevels: [{
-          planetId: 'Prime', unitOxygenLevel: 5.0, unitHeatLevel: 10.0, unitPressureLevel: 15.0,
-          unitPlantsLevel: 20.0, unitInsectsLevel: 25.0, unitAnimalsLevel: 30.0, unitPurificationLevel: -1.0
-        }]});
+        const fakeSaveA = createFakeSaveString({
+          terraformationLevels: [{
+            planetId: 'Prime', unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
+            unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0, unitPurificationLevel: 500.0
+          }]
+        });
+        const fakeSaveB = createFakeSaveString({
+          terraformationLevels: [{
+            planetId: 'Prime', unitOxygenLevel: 5.0, unitHeatLevel: 10.0, unitPressureLevel: 15.0,
+            unitPlantsLevel: 20.0, unitInsectsLevel: 25.0, unitAnimalsLevel: 30.0, unitPurificationLevel: -1.0
+          }]
+        });
+
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
 
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
-        equal(result, createFakeSaveString({terraformationLevels: [{
-          planetId: 'Prime', unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
-          unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0, unitPurificationLevel: 500.0
-        }]}));
+        equal(result, createFakeSaveString({
+          terraformationLevels: [{
+            planetId: 'Prime', unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
+            unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0, unitPurificationLevel: 500.0
+          }]
+        }));
       });
     });
 
     describe('When terraformation level values are integers', () => {
       it('should serialize them with .0 suffix', () => {
         // Arrange
-        const level = {planetId: 'Toxicity', unitOxygenLevel: 2477136019456.0, unitHeatLevel: 2219597103104.0, unitPressureLevel: 2262299836416.0, unitPlantsLevel: 918480420864.0, unitInsectsLevel: 372341538816.0, unitAnimalsLevel: 10118330580992.0, unitPurificationLevel: 2653680304128.0};
+        const level = {
+          planetId: 'Toxicity',
+          unitOxygenLevel: 2477136019456.0,
+          unitHeatLevel: 2219597103104.0,
+          unitPressureLevel: 2262299836416.0,
+          unitPlantsLevel: 918480420864.0,
+          unitInsectsLevel: 372341538816.0,
+          unitAnimalsLevel: 10118330580992.0,
+          unitPurificationLevel: 2653680304128.0
+        };
         const fakeSaveA = createFakeSaveString({terraformationLevels: [level]});
         const fakeSaveB = createFakeSaveString({});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         const terraSection = result.split('@')[1];
@@ -249,8 +289,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: saveA_players});
         const fakeSaveB = createFakeSaveString({players: saveB_players});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({players: [...saveA_players, ...saveB_players]}));
@@ -265,8 +307,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [playerInSaveA]});
         const fakeSaveB = createFakeSaveString({players: [playerInSaveB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({players: [playerInSaveA]}));
@@ -281,8 +325,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [playerInSaveA]});
         const fakeSaveB = createFakeSaveString({players: [playerInSaveB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({players: [playerInSaveA]}));
@@ -298,14 +344,18 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [hostInSaveA, guestInSaveA]});
         const fakeSaveB = createFakeSaveString({players: [hostInSaveB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
-        equal(result, createFakeSaveString({players: [
+        equal(result, createFakeSaveString({
+          players: [
             {...hostInSaveA, host: true},
             {...guestInSaveA, host: false}
-          ]}));
+          ]
+        }));
       });
     });
 
@@ -317,14 +367,18 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [hostInSaveA]});
         const fakeSaveB = createFakeSaveString({players: [playerInSaveB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
-        equal(result, createFakeSaveString({players: [
+        equal(result, createFakeSaveString({
+          players: [
             {...hostInSaveA, planetId: 'Toxicity'},
             {...playerInSaveB, planetId: 'Prime'}
-          ]}));
+          ]
+        }));
       });
     });
     describe('When player gauges have integer values', () => {
@@ -334,8 +388,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [player]});
         const fakeSaveB = createFakeSaveString({players: []});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         const playersSection = result.split('@')[2];
@@ -357,8 +413,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({worldObjects: [worldObjectA]});
         const fakeSaveB = createFakeSaveString({worldObjects: [worldObjectB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({worldObjects: [worldObjectA, worldObjectB]}));
@@ -373,8 +431,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({worldObjects: [worldObjectInSaveA]});
         const fakeSaveB = createFakeSaveString({worldObjects: [worldObjectInSaveB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({worldObjects: [worldObjectInSaveA]}));
@@ -389,8 +449,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({worldObjects: [worldObjectOnPlanetA]});
         const fakeSaveB = createFakeSaveString({worldObjects: [worldObjectOnPlanetB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({worldObjects: [worldObjectOnPlanetA, worldObjectOnPlanetB]}));
@@ -404,8 +466,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({worldObjects: [dnaSequence]});
         const fakeSaveB = createFakeSaveString({});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         const sections = result.split('\n@\n');
@@ -463,8 +527,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [playerA], inventories: [inventoryA]});
         const fakeSaveB = createFakeSaveString({players: [playerB], inventories: [inventoryB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({players: [playerA, playerB], inventories: [inventoryA, inventoryB]}));
@@ -478,8 +544,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [playerA], inventories: [inventoryA, worldObjectInventory]});
         const fakeSaveB = createFakeSaveString({players: [playerB], inventories: [inventoryB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({players: [playerA, playerB], inventories: [inventoryA, worldObjectInventory, inventoryB]}));
@@ -492,8 +560,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [playerA], inventories: [inventoryA, equipmentA]});
         const fakeSaveB = createFakeSaveString({players: [playerB], inventories: [inventoryB, equipmentB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({players: [playerA, playerB], inventories: [inventoryA, equipmentA, inventoryB, equipmentB]}));
@@ -508,8 +578,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({players: [playerA], inventories: [inventoryA]});
         const fakeSaveB = createFakeSaveString({players: [playerBWithSameInventoryId], inventories: [inventoryFromB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({
@@ -548,8 +620,10 @@ describe('Merge saves', () => {
           inventories: [orphanInventory, orphanEquipment, inventoryB]
         });
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({
@@ -567,8 +641,10 @@ describe('Merge saves', () => {
           worldObjects: [orphanItem1, orphanItem2, orphanItem3]
         });
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({
@@ -586,8 +662,10 @@ describe('Merge saves', () => {
       const fakeSaveA = createFakeSaveString({statistics: {craftedObjects: 3952, totalSaveFileLoad: 10, totalSaveFileTime: 500}});
       const fakeSaveB = createFakeSaveString({statistics: {craftedObjects: 1000, totalSaveFileLoad: 20, totalSaveFileTime: 300}});
 
+      const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
       // Act
-      const result = mergeSaves(fakeSaveA, fakeSaveB);
+      const result = mergeSaves();
 
       // Assert
       equal(result, createFakeSaveString({statistics: {craftedObjects: 4952, totalSaveFileLoad: 30, totalSaveFileTime: 800}}));
@@ -605,8 +683,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({mailboxes: [mailboxA]});
         const fakeSaveB = createFakeSaveString({mailboxes: [mailboxB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({mailboxes: [mailboxA, mailboxB]}));
@@ -621,8 +701,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({mailboxes: [mailboxInSaveA]});
         const fakeSaveB = createFakeSaveString({mailboxes: [mailboxInSaveB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({mailboxes: [{...mailboxShared, isRead: true}]}));
@@ -633,8 +715,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({mailboxes: [{...mailboxShared, isRead: false}]});
         const fakeSaveB = createFakeSaveString({mailboxes: [{...mailboxShared, isRead: false}]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({mailboxes: [{...mailboxShared, isRead: false}]}));
@@ -653,8 +737,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({storyEvents: [storyEventA]});
         const fakeSaveB = createFakeSaveString({storyEvents: [storyEventB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({storyEvents: [storyEventA, storyEventB]}));
@@ -667,8 +753,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({storyEvents: [storyEventShared]});
         const fakeSaveB = createFakeSaveString({storyEvents: [storyEventShared]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({storyEvents: [storyEventShared]}));
@@ -677,19 +765,51 @@ describe('Merge saves', () => {
   });
 
   describe('#8 Save configuration', () => {
-    const saveConfigA = {saveDisplayName: 'SaveA', someOtherField: 'valueA'};
-    const saveConfigB = {saveDisplayName: 'SaveB', someOtherField: 'valueB'};
+    const saveConfigA = {
+      saveDisplayName: 'SAVE_A',
+      planetId: 'Prime',
+      unlockedSpaceTrading: false,
+      unlockedOreExtrators: false,
+      unlockedTeleporters: false,
+      unlockedDrones: false,
+      unlockedAutocrafter: false,
+      unlockedEverything: false,
+      freeCraft: false,
+      preInterplanetarySave: false,
+      randomizeMineables: false,
+      modifierTerraformationPace: 1.0,
+      modifierPowerConsumption: 1.0,
+      modifierGaugeDrain: 1.0,
+      modifierMeteoOccurence: 1.0,
+      modifierMultiplayerTerraformationFactor: 0.5,
+      modded: false,
+      version: '1.618',
+      mode: 'Standard',
+      dyingConsequencesLabel: 'DropSomeItems',
+      startLocationLabel: 'Standard',
+      worldSeed: 1154674599,
+      hasPlayedIntro: true,
+      gameStartLocation: 'Standard'
+    };
+
+    const saveConfigB = {
+      ...saveConfigA,
+      saveDisplayName: 'SAVE_B'
+    };
 
     it('should use the saveDisplayName parameter and take save configuration from save A', () => {
       // Arrange
       const fakeSaveA = createFakeSaveString({saveConfiguration: saveConfigA});
       const fakeSaveB = createFakeSaveString({saveConfiguration: saveConfigB});
 
+      const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
+
       // Act
-      const result = mergeSaves(fakeSaveA, fakeSaveB, 'MyMergedSave');
+      const result = mergeSaves();
 
       // Assert
-      equal(result, createFakeSaveString({saveConfiguration: {...saveConfigA, saveDisplayName: 'MyMergedSave'}}));
+      equal(result, createFakeSaveString({saveConfiguration: {...saveConfigA, saveDisplayName: saveDisplayName}}));
     });
 
     it('should fall back to save B configuration if save A has none', () => {
@@ -697,11 +817,13 @@ describe('Merge saves', () => {
       const fakeSaveA = createFakeSaveString({saveConfiguration: null});
       const fakeSaveB = createFakeSaveString({saveConfiguration: saveConfigB});
 
+      const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
       // Act
-      const result = mergeSaves(fakeSaveA, fakeSaveB, 'MyMergedSave');
+      const result = mergeSaves();
 
       // Assert
-      equal(result, createFakeSaveString({saveConfiguration: {...saveConfigB, saveDisplayName: 'MyMergedSave'}}));
+      equal(result, createFakeSaveString({saveConfiguration: {...saveConfigB, saveDisplayName}}));
     });
 
     it('should produce an empty configuration if both saves have none', () => {
@@ -709,8 +831,10 @@ describe('Merge saves', () => {
       const fakeSaveA = createFakeSaveString({saveConfiguration: null});
       const fakeSaveB = createFakeSaveString({saveConfiguration: null});
 
+      const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
       // Act
-      const result = mergeSaves(fakeSaveA, fakeSaveB, 'MyMergedSave');
+      const result = mergeSaves();
 
       // Assert
       equal(result, createFakeSaveString({saveConfiguration: null}));
@@ -728,8 +852,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({terrainLayers: [terrainLayerA]});
         const fakeSaveB = createFakeSaveString({terrainLayers: [terrainLayerB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({terrainLayers: [terrainLayerA, terrainLayerB]}));
@@ -744,8 +870,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({terrainLayers: [layerInSaveA]});
         const fakeSaveB = createFakeSaveString({terrainLayers: [layerInSaveB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({terrainLayers: [layerInSaveA]}));
@@ -760,8 +888,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({terrainLayers: [layerInSaveA]});
         const fakeSaveB = createFakeSaveString({terrainLayers: [layerInSaveB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({terrainLayers: [layerInSaveA, layerInSaveB]}));
@@ -780,8 +910,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({worldEvents: [worldEventA]});
         const fakeSaveB = createFakeSaveString({worldEvents: [worldEventB]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({worldEvents: [worldEventA, worldEventB]}));
@@ -794,8 +926,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({worldEvents: [worldEventShared]});
         const fakeSaveB = createFakeSaveString({worldEvents: [worldEventShared]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({worldEvents: [worldEventShared]}));
@@ -813,8 +947,10 @@ describe('Merge saves', () => {
         const fakeSaveA = createFakeSaveString({worldEvents: []});
         const fakeSaveB = createFakeSaveString({worldEvents: [wreckEvent]});
 
+        const {mergeSaves} = merge(fakeSaveA, fakeSaveB, saveDisplayName);
+
         // Act
-        const result = mergeSaves(fakeSaveA, fakeSaveB);
+        const result = mergeSaves();
 
         // Assert
         equal(result, createFakeSaveString({worldEvents: [wreckEvent]}));
@@ -830,73 +966,78 @@ describe('Merge saves', () => {
     describe('When one save has Prime as planetId and the other does not', () => {
       it('should return the Prime save as save A when it is passed second', () => {
         // Arrange
-        const save1 = createFakeSaveString({saveConfiguration: toxicityConfig});
-        const save2 = createFakeSaveString({saveConfiguration: primeConfig});
+        const saveA = createFakeSaveString({saveConfiguration: toxicityConfig});
+        const saveB = createFakeSaveString({saveConfiguration: primeConfig});
+
+        const {mergeSaves} = merge(saveA, saveB, saveDisplayName);
 
         // Act
-        const [resultA, resultB] = determineSaveOrder(save1, save2);
+        const result = mergeSaves();
 
         // Assert
-        equal(resultA, save2);
-        equal(resultB, save1);
+        equal(result, createFakeSaveString({saveConfiguration: {...primeConfig, saveDisplayName}}));
       });
 
       it('should keep the Prime save as save A when it is already passed first', () => {
         // Arrange
-        const save1 = createFakeSaveString({saveConfiguration: primeConfig});
-        const save2 = createFakeSaveString({saveConfiguration: toxicityConfig});
+        const saveA = createFakeSaveString({saveConfiguration: primeConfig});
+        const saveB = createFakeSaveString({saveConfiguration: toxicityConfig});
+
+        const {mergeSaves} = merge(saveA, saveB, saveDisplayName);
 
         // Act
-        const [resultA, resultB] = determineSaveOrder(save1, save2);
+        const result = mergeSaves();
 
         // Assert
-        equal(resultA, save1);
-        equal(resultB, save2);
+        equal(result, createFakeSaveString({saveConfiguration: {...primeConfig, saveDisplayName}}));
       });
     });
 
     describe('When neither save has Prime as planetId', () => {
       it('should return saves in the original order', () => {
         // Arrange
-        const save1 = createFakeSaveString({saveConfiguration: toxicityConfig});
-        const save2 = createFakeSaveString({saveConfiguration: aqualisConfig});
+        const saveA = createFakeSaveString({saveConfiguration: toxicityConfig});
+        const saveB = createFakeSaveString({saveConfiguration: aqualisConfig});
+
+        const {mergeSaves} = merge(saveA, saveB, saveDisplayName);
 
         // Act
-        const [resultA, resultB] = determineSaveOrder(save1, save2);
+        const result = mergeSaves();
 
         // Assert
-        equal(resultA, save1);
-        equal(resultB, save2);
+        equal(result, createFakeSaveString({saveConfiguration: {...toxicityConfig, saveDisplayName}}));
       });
     });
 
     describe('When both saves have Prime as planetId', () => {
       it('should return saves in the original order', () => {
         // Arrange
-        const save1 = createFakeSaveString({saveConfiguration: primeConfig});
-        const save2 = createFakeSaveString({saveConfiguration: {...primeConfig, saveDisplayName: 'SavePrime2'}});
+        const saveA = createFakeSaveString({saveConfiguration: {...primeConfig, terraTokens:1}});
+        const saveB = createFakeSaveString({saveConfiguration: {...primeConfig, terraTokens:2}});
+
+        const {mergeSaves}= merge(saveA, saveB, saveDisplayName);
 
         // Act
-        const [resultA, resultB] = determineSaveOrder(save1, save2);
+        const result = mergeSaves();
 
         // Assert
-        equal(resultA, save1);
-        equal(resultB, save2);
+        equal(result, createFakeSaveString({saveConfiguration: {...primeConfig, terraTokens:1, saveDisplayName}}));
       });
     });
 
     describe('When a save has no configuration', () => {
       it('should still promote the Prime save to save A', () => {
         // Arrange
-        const save1 = createFakeSaveString({saveConfiguration: null});
-        const save2 = createFakeSaveString({saveConfiguration: primeConfig});
+        const saveA = createFakeSaveString({saveConfiguration: null});
+        const saveB = createFakeSaveString({saveConfiguration: primeConfig});
+
+        const {mergeSaves} = merge(saveA, saveB, saveDisplayName);
 
         // Act
-        const [resultA, resultB] = determineSaveOrder(save1, save2);
+        const result = mergeSaves();
 
         // Assert
-        equal(resultA, save2);
-        equal(resultB, save1);
+        equal(result, createFakeSaveString({saveConfiguration: {...primeConfig, saveDisplayName}}));
       });
     });
   });

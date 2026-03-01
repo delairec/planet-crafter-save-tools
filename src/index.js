@@ -1,7 +1,7 @@
-import {readdir, readFile, writeFile, mkdir} from 'node:fs/promises';
+import {readdir, writeFile, mkdir} from 'node:fs/promises';
 import {join, basename} from 'node:path';
-import {mergeSaves, determineSaveOrder} from './merge.js';
 import {resolveIdConflicts} from './utils/resolveIdConflicts.js';
+import {merge} from './merge.js';
 
 const INPUT_DIR = 'input';
 const OUTPUT_DIR = 'output';
@@ -43,17 +43,14 @@ async function processFolder(folder) {
   const folderPath = join(INPUT_DIR, folder);
   const files = (await readdir(folderPath)).filter(isJson).sort();
 
-  const [rawSaveA, rawSaveB] = await Promise.all([
-    readFile(join(folderPath, files[0]), 'utf-8'),
-    readFile(join(folderPath, files[1]), 'utf-8'),
-  ]);
-
-  const [saveA, saveB] = determineSaveOrder(rawSaveA, rawSaveB);
-  const [fileA, fileB] = saveA === rawSaveA ? [files[0], files[1]] : [files[1], files[0]];
-  console.log(`  Merging ${fileB} (save B) into ${fileA} (save A)...`);
-
   const saveDisplayName = folder;
-  const merged = mergeSaves(saveA, saveB, saveDisplayName);
+  const {mergeSaves, indexFileA, indexFileB} = merge(files[0], files[1], saveDisplayName);
+
+  const fileA = files[indexFileA];
+  const fileB = files[indexFileB];
+
+  console.log(`  Merging ${fileB} (save B) into ${fileA} (save A)...`);
+  const merged = mergeSaves();
   console.log(`  ✓ Sections merged`);
 
   console.log(`  Resolving id conflicts...`);
