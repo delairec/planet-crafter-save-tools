@@ -15,7 +15,6 @@ const DEFAULT_METADATA = {
  * @see GR-META-1, GR-META-2, GR-META-3, GR-META-4 in docs/game-rules.md
  */
 export function mergeGlobalMetadata([metadataA], [metadataB]) {
-  console.log('META = ', metadataA, metadataB);
   if(!metadataA && !metadataB) {
     return 'ERROR_INVALID_INPUT_FORMAT';
   }
