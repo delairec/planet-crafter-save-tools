@@ -1,33 +1,37 @@
-# Planet Crafter Merge Saves
+# Planet Crafter Save Tools
 
 > ❗ I’m not going to actively maintain this project (or only minimally). If you’d like to add improvements or fix bugs, feel free to fork it
 > 😃
 
+## Overview
 
+This project provides tools to manipulate **Planet Crafter** save files. Currently, the available tools are:
+- **Merge**: combine two save files into one, following specific rules to preserve as much information as possible.
+- **Validate**: check if a save file is correctly formatted according to the game's specifications.
+
+In progress:
+- **Save Manager**: a UI to visualize save files. In the long term, it could also include editing capabilities, but for now it is only a viewer.
+
+Planned:
+- **Fix corrupted saves**: a tool to attempt to recover data from corrupted save files thanks to analysis.
+
+
+## Merge and Validate tools
 Merges two **Planet Crafter** save files into a single one, preserving as much information as possible.
 
-## Table of Contents
-
-1. [Prerequisites](#prerequisites)
-1. [Installation](#installation)
-1. [Scripts](#scripts)
-1. [Preparing data](#preparing-data)
-1. [Planet Crafter Save Format](#planet-crafter-save-format)
-1. [Merge Logic](#merge-logic)
-
-## Prerequisites
+### Prerequisites
 
 Using [Bun](https://bun.sh) `v1.3.10` by default.
 
-## Installation
+### Installation
 
 ```
 bun install
 ```
 
-## Scripts
+### Scripts
 
-### With Bun
+#### With Bun
 
 ```
 bun merge
@@ -57,7 +61,7 @@ bun run lint:types
 
 Checks typings in all the project files (using `tsc --noEmit` under the hood).
 
-### With Node.js
+#### With Node.js
 
 If you prefer to run the scripts using Node.js instead of Bun, use the following commands:
 
@@ -65,18 +69,18 @@ If you prefer to run the scripts using Node.js instead of Bun, use the following
 npm run node:merge
 ```
 
-Equivalent to `bun merge`, but uses Node.js as the runtime.
+Equivalent to `bun merge`.
 
 ```
-npm run node:validate -- <file>
+npm run node:validate -- --file=<filepath>
 ```
 
-Equivalent to `bun validate`, but uses Node.js as the runtime.
+Equivalent to `bun validate`.
 
 
-## Preparing data
+### Preparing data
 
-### 1. Create the `input` folder
+#### 1. Create the `input` folder
 
 Create one sub-folder per desired merge.
 
@@ -94,7 +98,7 @@ input/
     └── Standard-3.json ← save B
 ```
 
-### 2. Run the merge
+#### 2. Run the merge
 
 ```bash
 bun run merge
@@ -113,13 +117,13 @@ output/
 Copy the output file to the Planet Crafter saves folder (on Windows, it is usually located at
 `%APPDATA%\..\LocalLow\MijuGames\Planet Crafter\`).
 
-## Planet Crafter Save Format
+### Planet Crafter Save Format
 
 The game uses a **non-standard JSON format**: multiple JSON blocks concatenated and separated by special delimiters.
 
 > ❗More information about save format available in the docs folder.
 
-### Separators (as used in the merge result)
+#### Separators (as used in the merge result)
 
 | Context                               | Character(s) |
 |---------------------------------------|--------------|
@@ -128,7 +132,7 @@ The game uses a **non-standard JSON format**: multiple JSON blocks concatenated 
 
 Note: the file is ending by `@`.
 
-### Sections (in order)
+#### Sections (in order)
 
 | #  | Content                                               | Format                 |
 |----|-------------------------------------------------------|------------------------|
@@ -144,25 +148,25 @@ Note: the file is ending by `@`.
 | 9  | Terrain colour layers                                 | `\|`-separated records |
 | 10 | World events (asteroid / instance spawns)             | `\|`-separated records |
 
-### Planet Identification
+#### Planet Identification
 
 Each **world object** contains a `planet` field (numeric integer). The mapping from number to planet name uses the terrain layer `layerId`
 values (format `PC-{PlanetId}-{LayerName}`).
 
-## Merge Logic
+### Merge Logic
 
 > 📖 The authoritative specification for every merge decision is in **[`docs/game-rules.md`](./docs/game-rules.md)**.
 > The tables below are a human-readable summary; the business rules document is the source of truth.
 
 The original saves remain untouched, and the result is generated in a separate folder.
 
-### Save A and Save B
+#### Save A and Save B
 
 The saves have one "host planet" (= where the player started the game).
 Prime hosted save is prioritized as Save A, otherwise it follows alphabetical order.
 This order is important because in case of conflicting data, save A data will be kept and save B data will be lost.
 
-### Global Metadata
+#### Global Metadata
 
 | Field                         | Strategy                                |
 |-------------------------------|-----------------------------------------|
@@ -171,14 +175,14 @@ This order is important because in case of conflicting data, save A data will be
 | `unlockedGroups`              | **Union** (no duplicates) of both lists |
 | `openedInstanceSeed/TimeLeft` | Value from save A                       |
 
-### Players
+#### Players
 
 - **Union** by `id` — every unique player from both saves is kept.
 - On duplicate `id`, the version from **save A** takes precedence (this includes inventory and equipment).
 
 This means that the duplicated player's inventory and equipment from save B is lost.
 
-### Planets present in BOTH saves
+#### Planets present in BOTH saves
 
 > ❗ Not implemented, not tested.
 
@@ -188,23 +192,23 @@ This means that the duplicated player's inventory and equipment from save B is l
 | `keepA`         | Save A only        | Save A                    | Save A                   |
 | `keepB`         | Save B only        | Save B                    | Save B                   |
 
-### Messages & Story Events
+#### Messages & Story Events
 
 - **Union** by `stringId`, no duplicates.
 - For messages: if `isRead: true` in either save → `isRead: true` in the result.
 
-### Statistics
+#### Statistics
 
 | Field            | Strategy              |
 |------------------|-----------------------|
 | `craftedObjects` | **Sum** of both saves |
 
-### Inventories
+#### Inventories
 
 When a player is removed from the list (deduplication), the corresponding inventory and all the associated world objects are remove as well.
 Otherwise, all inventories and objects are kept.
 
-### Duplicated IDs
+#### Duplicated IDs
 
 When merging 2 saves, it is a common case to have the same ID used in both saves for different objects. Since we want to keep a maximum of
 information from both saves (and especially objects), we need a strategy to resolve id conflicts.
