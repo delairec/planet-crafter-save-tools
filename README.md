@@ -36,7 +36,7 @@ bun merge
 Generates the merged saves in output directory, by processing all subfolders from input folder.
 
 ```
-bun validate -- <file>
+bun validate -- --file=<filepath>
 ```
 
 Validates a json save file against the json schemas stored in this project. This is useful mostly for debugging.

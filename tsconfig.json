@@ -12,7 +12,7 @@
     "types": ["@types/bun"],
     "maxNodeModuleJsDepth": 1
   },
-  "include": ["src/**/*.js"],
+  "include": ["packages/**/*.js"],
   "exclude": ["node_modules"]
 }
 

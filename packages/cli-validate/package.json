@@ -1,0 +1,18 @@
+{
+  "name": "cli-validate",
+  "version": "1.0.0",
+  "description": "Validate Planet Crafter save files against a JSON schema",
+  "type": "module",
+  "main": "cli/validate-cli.js",
+  "scripts": {
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "lint:types": "tsc --noEmit",
+    "validate": "bun --cwd ../.. packages/cli-validate/cli/validate-cli.js ",
+    "validate:test": "bun test packages/cli-validate",
+    "node:validate": "node cli/validate-cli.js --platform=node"
+  },
+  "dependencies": {
+    "ajv": "catalog:testing"
+  }
+}
