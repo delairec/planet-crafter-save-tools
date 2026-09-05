@@ -13,9 +13,10 @@ output/
 input
 
 # other
+.claude/
 .github/agents
 next-steps.txt
-/AGENTS.md
+
 
 # private agent context (satellite repository .do-not-commit)
 /.do-not-commit/
