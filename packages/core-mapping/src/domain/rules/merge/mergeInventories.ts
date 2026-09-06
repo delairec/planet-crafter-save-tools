@@ -1,4 +1,4 @@
-import {Inventory} from 'shared-save-processing/gameDefinitions';
+import type {Inventory} from 'shared-save-processing/gameDefinitions';
 
 /**
  * @see GR-INV-1, GR-INV-2, GR-INV-3 in docs/game-rules.md

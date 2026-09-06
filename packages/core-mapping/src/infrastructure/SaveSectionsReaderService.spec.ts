@@ -1,21 +1,21 @@
 import {beforeEach, describe, expect, it} from 'bun:test';
 import {createFakeSaveContent, createPlayer} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
-import {PlayerEntity} from "../domain/entities/PlayerEntity";
-import {SaveSectionsReaderService} from './SaveSectionsReaderService';
-import {GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
-import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
-import {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
-import {SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
-import {ParsedSections} from "shared-save-processing/gameDefinitions";
-import {EnergyLevelsValueObject} from "../domain/valueObjects/EnergyLevelsValueObject";
+import type {PlayerEntity} from "../domain/entities/PlayerEntity.ts";
+import {SaveSectionsReaderService} from './SaveSectionsReaderService.ts';
+import type {GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject.ts";
+import type {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity.ts";
+import type {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject.ts";
+import type {SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject.ts";
+import type {ParsedSections} from "shared-save-processing/gameDefinitions";
+import type {EnergyLevelsValueObject} from "../domain/valueObjects/EnergyLevelsValueObject.ts";
 import {
   energyConsumptionLevelsByWorldObjectName,
   energyProductionLevelsByWorldObjectName
-} from "../domain/energyLevelsByWorldObjectName";
-import {WorldObjectName} from "../domain/worldObjectNames";
-import {LoadEnergyLevelsSection} from "../application/LoadEnergyLevelsSection";
-import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
+} from "../domain/energyLevelsByWorldObjectName.ts";
+import type {WorldObjectName} from "../domain/worldObjectNames.ts";
+import {LoadEnergyLevelsSection} from "../application/LoadEnergyLevelsSection.ts";
+import type {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort.ts";
 import {SAVE_CONFIGURATION_SECTION_INDEX, STATISTICS_SECTION_INDEX} from "shared-save-processing/gameDefinitions";
 
 describe('SaveSectionsReaderService', () => {

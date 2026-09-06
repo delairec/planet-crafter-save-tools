@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {mergeParsedSaveSections} from './mergeParsedSaveSections';
-import {resolveIdConflicts} from './resolveIdConflicts';
+import {mergeParsedSaveSections} from './mergeParsedSaveSections.ts';
+import {resolveIdConflicts} from './resolveIdConflicts.ts';
 import {
     createGlobalMetadata,
     createSaveConfiguration,

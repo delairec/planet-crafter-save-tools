@@ -1,4 +1,4 @@
-import {Inventory, Player, WorldObject} from 'shared-save-processing/gameDefinitions';
+import type {Inventory, Player, WorldObject} from 'shared-save-processing/gameDefinitions';
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 import {serializeSave} from 'shared-save-processing/serializeSave.js';

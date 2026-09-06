@@ -1,16 +1,16 @@
-import {ParsedSave} from 'shared-save-processing/gameDefinitions';
-import {mergeGlobalMetadata} from './mergeGlobalMetadata';
-import {mergeTerraformationLevels} from './mergeTerraformationLevels';
-import {mergePlayers} from './mergePlayers';
-import {mergeWorldObjects} from './mergeWorldObjects';
-import {mergeInventories} from './mergeInventories';
-import {mergeStatistics} from './mergeStatistics';
-import {mergeMailboxes} from './mergeMailboxes';
-import {mergeStoryEvents} from './mergeStoryEvents';
-import {mergeSaveConfigurations} from './mergeSaveConfigurations';
-import {mergeWorldEvents} from './mergeWorldEvents';
-import {determineSaveOrder} from './determineSaveOrder';
-import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
+import type {ParsedSave} from 'shared-save-processing/gameDefinitions';
+import {mergeGlobalMetadata} from './mergeGlobalMetadata.ts';
+import {mergeTerraformationLevels} from './mergeTerraformationLevels.ts';
+import {mergePlayers} from './mergePlayers.ts';
+import {mergeWorldObjects} from './mergeWorldObjects.ts';
+import {mergeInventories} from './mergeInventories.ts';
+import {mergeStatistics} from './mergeStatistics.ts';
+import {mergeMailboxes} from './mergeMailboxes.ts';
+import {mergeStoryEvents} from './mergeStoryEvents.ts';
+import {mergeSaveConfigurations} from './mergeSaveConfigurations.ts';
+import {mergeWorldEvents} from './mergeWorldEvents.ts';
+import {determineSaveOrder} from './determineSaveOrder.ts';
+import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds.ts';
 
 function* EMPTY_GENERATOR(): Generator<never> {
 }

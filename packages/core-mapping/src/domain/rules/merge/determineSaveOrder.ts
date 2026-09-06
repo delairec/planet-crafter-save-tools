@@ -1,4 +1,4 @@
-import {ParsedSections} from 'shared-save-processing/gameDefinitions';
+import type {ParsedSections} from 'shared-save-processing/gameDefinitions';
 
 /**
  * @see GR-ORDER-1 in docs/business-rules.md
