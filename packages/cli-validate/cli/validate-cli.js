@@ -1,24 +1,32 @@
-import {readTextFile, exitProcess, isEntryPoint, getCliArguments} from '../../util-platforms/platform.js';
-import {validateMergedSave} from '../validate.js';
+import {getCliArguments} from 'shared-platforms/platform.common.js';
+import {extractPlatformParameter} from 'shared-platforms/extractPlatformParameter.js';
+import {createPlatform} from 'shared-platforms/platform.js';
+import {validateSaveContent} from 'core-mapping/infrastructure/validateSaveContent.js';
 
-const USAGE_MESSAGE = `Usage: bun src/validate-cli.js <path-to-save-file>`;
+const USAGE_MESSAGE = `Usage: bun validate-cli.js --file=<path-to-save-file>`;
+
+const {readTextFile, exitProcess, isEntryPoint} = createPlatform(extractPlatformParameter(getCliArguments()));
 
 const CLI = initValidateCli({readTextFile, exitProcess, isEntryPoint, getCliArguments});
 
 
 if (CLI.isEntryPoint(import.meta)) {
-  const outputArguments = CLI.getCliArguments().find(arg => arg.startsWith('--file='));
-  const filePath = outputArguments && outputArguments.split('=')[1];
+  const filePath = parseFilePathArgument(CLI.getCliArguments());
 
-  if(filePath === undefined) {
+  if (filePath === undefined) {
     console.error(USAGE_MESSAGE);
     CLI.exitProcess(1);
+  } else {
+    CLI.main(filePath).catch(err => {
+      console.error('Error:', err);
+      CLI.exitProcess(1);
+    });
   }
+}
 
-  CLI.main(filePath).catch(err => {
-    console.error('Error:', err);
-    CLI.exitProcess(1);
-  });
+function parseFilePathArgument(cliArguments) {
+  const fileArgument = cliArguments.find(arg => arg.startsWith('--file='));
+  return fileArgument && fileArgument.split('=')[1];
 }
 
 export function initValidateCli({readTextFile, exitProcess, isEntryPoint, getCliArguments}) {
@@ -30,7 +38,7 @@ export function initValidateCli({readTextFile, exitProcess, isEntryPoint, getCli
     }
 
     const save = await readTextFile(filePath);
-    const {isValid, errors, warnings} = validateMergedSave(save);
+    const {isValid, errors, warnings} = validateSaveContent(save);
 
     for (const warning of warnings ?? []) {
       console.warn(`⚠ ${warning}`);
@@ -38,18 +46,22 @@ export function initValidateCli({readTextFile, exitProcess, isEntryPoint, getCli
 
     if (isValid) {
       console.log(`✓ ${filePath} is valid`);
+      exitProcess(0);
     } else {
       console.error(`✖ ${filePath} has ${errors.length} error(s):\n`);
       for (const error of errors) {
-        const location = [
-          error.section !== undefined ? `section ${error.section}` : null,
-          error.entryIndex !== undefined ? `entry ${error.entryIndex}` : null
-        ].filter(Boolean).join(', ');
-        console.error(`  [${location || error.rule || 'structure'}] ${error.message}`);
+        console.error(`  [${formatErrorLocation(error)}] ${error.detail}`);
       }
       exitProcess(1);
     }
   }
 
   return {isEntryPoint, main, exitProcess, getCliArguments};
+}
+
+function formatErrorLocation(error) {
+  if (error.section !== undefined) {
+    return `section ${error.section}, entry ${error.entryIndex}`;
+  }
+  return error.code ?? 'structure';
 }

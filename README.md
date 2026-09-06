@@ -15,19 +15,35 @@ In progress:
 Planned:
 - **Fix corrupted saves**: a tool to attempt to recover data from corrupted save files thanks to analysis.
 
+## Project Structure
+
+This is a Bun workspace monorepo, organized around Clean Architecture package prefixes:
+
+| Package                  | Role                                                                                                                    |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                  |
+| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node.                                                        |
+| `util-types`             | `RuntimePlatform` contract type, consumed (type-only) by `shared-platforms`.                                            |
+| `core-mapping`           | Domain/application/infrastructure/presentation layers: merge and validation engines, use cases, controllers, presenters. |
+| `cli-merge`              | Thin CLI: parses `--input`/`--output` arguments and delegates to `core-mapping`.                                        |
+| `cli-validate`           | Thin CLI: parses `--file` argument and delegates to `core-mapping`.                                                     |
+| `ui-save-manager`        | SolidStart UI to visualize save files, consuming `core-mapping` controllers.                                            |
 
 ## Merge and Validate tools
 Merges two **Planet Crafter** save files into a single one, preserving as much information as possible.
 
 ### Prerequisites
 
-Using [Bun](https://bun.sh) `v1.3.10` by default.
+Using [Bun](https://bun.sh) `v1.3.14` by default.
 
 ### Installation
 
 ```
 bun install
 ```
+
+The install hook `scripts/sync-private-context.sh` clones the private agent context repository when the account has
+access to it. Contributors without access get a skip message and an otherwise normal install.
 
 ### Scripts
 
@@ -38,6 +54,12 @@ bun merge
 ```
 
 Generates the merged saves in output directory, by processing all subfolders from input folder.
+
+```
+bun merge -- --input=<directory> --output=<directory>
+```
+
+Overrides the default `input` and `output` directories.
 
 ```
 bun validate -- --file=<filepath>
@@ -55,6 +77,33 @@ bun test:watch
 
 Execute all the unit tests of the project. Use `watch` to enable automatic run on save.
 
+Mocks and spies are restored between tests by a global `afterEach`, so no test has to clean up after itself. It comes
+from `testSetup.ts`, preloaded through the `bunfig.toml` sitting next to it: one at the repository root, one in each
+package. Bun resolves `bunfig.toml` from the working directory only, without looking at parent directories, so the
+preload silently does not apply when tests are run from any other directory — a deeper folder inside a package, or an
+IDE run configuration whose working directory is the folder of the test file.
+
+```
+bun test testIsolation.spec.ts
+```
+
+Checks that the preload actually applies. Run it with the working directory you want to check (the repository root, a
+package folder, an IDE run configuration): it fails when mocks are not restored between tests in that context.
+
+In an IDE, a generated run configuration usually takes the folder of the test file as its working directory, which is
+deeper than any `bunfig.toml`. In IntelliJ, set the environment variable below on the Bun *configuration template*
+(Run > Edit Configurations > Edit configuration templates…), so that every run configuration created afterwards loads
+the setup whatever its working directory:
+
+```
+BUN_OPTIONS=--preload=<absolute path>/testSetup.ts
+```
+
+`BUN_OPTIONS` prepends CLI arguments to every Bun invocation, and a CLI flag wins over `bunfig.toml`. It applies to run
+configurations created after the change only, so delete the temporary ones already generated. It lives in
+`.idea/workspace.xml`, which is git-ignored: it is a per-developer setting, not shared and not used by the CI, where
+`bunfig.toml` remains the source of truth.
+
 ```
 bun run lint:types
 ```
@@ -68,6 +117,28 @@ bun run audit
 Audits production and development dependencies. The two Picomatch advisories are explicitly allowlisted because
 `micromatch` still requires the affected 2.x dependency transitively; they should be removed as soon as that upstream
 constraint is updated.
+
+```
+bun run audit:quality
+```
+
+Runs the [Fallow](https://github.com/fallow-rs/fallow) audit and health reports (dead files, unused exports,
+unresolved imports) against `master`, as the CI does.
+
+#### Save Manager UI
+
+```
+bun run dev:ui
+```
+
+Starts the Save Manager UI in development mode.
+
+```
+bun run build:ui
+```
+
+Builds the UI for production. `bun run preview:ui` builds then serves the result, and `bun run clean:ui` removes the
+build output.
 
 #### With Node.js
 
