@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {SaveFilesMergerService} from './SaveFilesMergerService';
+import {SaveFilesMergerService} from './SaveFilesMergerService.ts';
 import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 
 describe('SaveFilesMergerService', () => {

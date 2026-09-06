@@ -1,4 +1,4 @@
-import {TerraformationLevel} from 'shared-save-processing/gameDefinitions';
+import type {TerraformationLevel} from 'shared-save-processing/gameDefinitions';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 
 const PURIFICATION_SENTINEL = -1;

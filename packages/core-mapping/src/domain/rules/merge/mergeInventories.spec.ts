@@ -1,5 +1,5 @@
 import {describe, it, expect} from 'bun:test';
-import {mergeInventories} from './mergeInventories';
+import {mergeInventories} from './mergeInventories.ts';
 import {createInventory} from 'shared-save-processing/testing/createFakeSaveContent.js';
 
 describe('Merge Inventories', () => {

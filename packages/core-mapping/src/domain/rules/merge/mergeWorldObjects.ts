@@ -1,4 +1,4 @@
-import {WorldObject} from 'shared-save-processing/gameDefinitions';
+import type {WorldObject} from 'shared-save-processing/gameDefinitions';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 
 export interface MergeWorldObjectsResult {

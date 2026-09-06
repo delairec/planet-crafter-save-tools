@@ -1,4 +1,4 @@
-import {Player} from 'shared-save-processing/gameDefinitions';
+import type {Player} from 'shared-save-processing/gameDefinitions';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 
 type LegacyCompatiblePlayer = Omit<Player, 'cameraView' | 'totalCraftedObjects' | 'totalTerraTokenEarned'>
