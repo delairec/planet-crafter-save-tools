@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {validateSchemas, validateSectionEntry} from './validateSchemas.js';
+import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
 import {PLAYERS_SECTION_INDEX, STATISTICS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createFakeParsedSave} from 'shared-save-processing/testing/createFakeParsedSave.js';
@@ -48,6 +49,7 @@ describe('validateSchemas', () => {
       const validating = () => validateSchemas(sections);
 
       // Assert
+      expect(validating).toThrow(UnexpectedSaveSectionError);
       expect(validating).toThrow('Unexpected save data: section 5 should hold a list of entries, received undefined.');
     });
   });

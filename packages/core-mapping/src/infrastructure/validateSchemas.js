@@ -11,6 +11,7 @@ import schema8 from 'shared-save-processing/schemas/section8-save-config.schema.
 import schema9 from 'shared-save-processing/schemas/section9-world-events.schema.json' with {type: 'json'};
 import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
+import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
 
 const SCHEMAS_BY_SECTION = {0: schema0, 1: schema1, 2: schema2, 3: schema3, 4: schema4, 5: schema5, 6: schema6, 7: schema7, 8: schema8, 9: schema9};
 
@@ -41,10 +42,11 @@ function getSchemaValidators() {
  * them.
  * @param {import('shared-save-processing/gameDefinitions').ParsedSections | unknown[][]} parsedSections
  * @returns {import('../application/ports/ValidationIssue.ts').ValidationIssue[]}
- * @throws {Error} when a section that should hold a list of entries does not. The reader of the
- * format guarantees it does, so this is a broken invariant of ours and never a malformed save: fix
- * what handed the section over rather than reading it as a section without a single entry, which
- * is how the world objects section went unvalidated for as long as it did.
+ * @throws {import('./errors/UnexpectedSaveSectionError.ts').UnexpectedSaveSectionError} when a
+ * section that should hold a list of entries does not. The reader of the format guarantees it
+ * does, so this is a broken invariant of ours and never a malformed save: fix what handed the
+ * section over rather than reading it as a section without a single entry, which is how the world
+ * objects section went unvalidated for as long as it did.
  */
 export function validateSchemas(parsedSections) {
   const issues = [];
@@ -53,7 +55,7 @@ export function validateSchemas(parsedSections) {
     const entries = parsedSections[sectionIndex];
 
     if (!Array.isArray(entries)) {
-      throw new Error(`Unexpected save data: section ${sectionIndex} should hold a list of entries, received ${String(entries)}.`);
+      throw new UnexpectedSaveSectionError(sectionIndex, entries);
     }
 
     for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
