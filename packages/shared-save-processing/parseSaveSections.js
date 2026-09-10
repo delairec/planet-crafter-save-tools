@@ -25,7 +25,6 @@ const REPORTED_LINE_LENGTH = 60;
  * @returns {ParsedSave}
  */
 export function parseSaveSections(save) {
-
   const rawSections = save.split('@');
 
   const errors = verifySectionCount(rawSections);

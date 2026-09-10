@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {isEntryPoint} from './platform.node.js';
 
-describe('Node platform', () => {
+describe('isEntryPoint of the node platform', () => {
 
   describe('When the running script path matches the module URL', () => {
     it('should return true', () => {
