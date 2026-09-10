@@ -158,6 +158,13 @@ erDiagram
 | `totalCraftedObjects` | `int`  | Total objects crafted by the player                    |
 | `totalTerraTokenEarned` | `int` | Total terra tokens earned by the player                |
 
+**`id` is an int64 in the file and a decimal string in the tool.** A Steam64 sits some 8.5 times beyond the largest
+integer a double represents exactly, where consecutive doubles are 16 apart: reading the literal as a number rounds
+it, and writing it back yields the shortest decimal reading to the same double, so the save would name no existing
+Steam account. The section 2 schema therefore declares `id` as `{"type": "string", "pattern": "^-?[0-9]+$"}`, the
+parser hands back the exact source text and the serializer writes it unquoted — the file format is unchanged. See
+`GR-ID-7` in [`game-rules.md`](./game-rules.md). No other field of the reference saves exceeds that range.
+
 ---
 
 ### #3 — World Objects

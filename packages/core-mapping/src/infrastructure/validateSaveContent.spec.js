@@ -462,7 +462,7 @@ describe('validateSaveContent', () => {
           // Arrange
           const firstPlayer = createPlayer();
           const secondPlayer = createPlayer({
-            id: 76561190000000030,
+            id: '76561190000000030',
             name: 'Chileny',
             inventoryId: 3,
             equipmentId: 4,
@@ -504,7 +504,7 @@ describe('validateSaveContent', () => {
           // Arrange
           const firstPlayer = createPlayer();
           const playerOnOtherPlanet = createPlayer({
-            id: 76561190000000030,
+            id: '76561190000000030',
             name: 'Chileny',
             inventoryId: 3,
             equipmentId: 4,
