@@ -57,11 +57,7 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
     return results;
   }
 
-  /**
-   * @returns {Promise<boolean>} whether the run may go on. A folder holding an invalid save file is
-   * reported and the next folder is processed: that verdict belongs to validation. A merge that
-   * produces no save, or a save that cannot be written, stops the run instead.
-   */
+  /** @returns {Promise<boolean>} whether the run may go on. */
   async function processFolder(folder) {
     renderProcessingFolder(folder);
     const folderPath = joinPath(inputDir, folder);

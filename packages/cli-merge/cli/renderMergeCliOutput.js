@@ -79,8 +79,6 @@ export function renderUnexpectedError(error) {
 }
 
 /**
- * Reports a merge that ran on two accepted save files and produced nothing usable. The input files
- * are not at fault, so the sentence shown is the one the merge itself worded.
  * @param {string} folder
  * @param {string} mergeFailureMessage
  */
@@ -89,8 +87,6 @@ export function renderMergeCouldNotProduceASave(folder, mergeFailureMessage) {
 }
 
 /**
- * Reports a merged save that could not be written. The merge succeeded: what failed is the output
- * directory, which the CLI owns, so the message names the path it tried to write.
  * @param {string} folder
  * @param {string} outputPath
  * @param {unknown} error
