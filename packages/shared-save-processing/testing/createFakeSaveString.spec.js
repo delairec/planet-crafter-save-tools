@@ -11,24 +11,27 @@ import {
   TERRAFORMATION_LEVELS_SECTION_INDEX
 } from '../sectionIndexes.js';
 
+const SECTION_SEPARATOR = '\n@\n';
+const noOptions = {};
+
 describe('createFakeSaveString', () => {
 
   it('should split into 11 `@`-separated parts (10 sections + trailing reserved part)', () => {
     // Act
-    const save = createFakeSaveString({});
+    const save = createFakeSaveString(noOptions);
 
     // Assert
-    expect(save.split('@').length).toBe(11);
+    expect(save.split('@')).toHaveLength(11);
   });
 
   it('should serialize the default global metadata when none is provided', () => {
     // Act
-    const save = createFakeSaveString({});
+    const save = createFakeSaveString(noOptions);
 
     // Assert
-    const sections = save.split('\n@\n');
+    const sections = save.split(SECTION_SEPARATOR);
     expect(sections[GLOBAL_METADATA_SECTION_INDEX])
-      .toBe('{"terraTokens":0,"allTimeTerraTokens":0,"unlockedGroups":"","openedInstanceSeed":0,"openedInstanceTimeLeft":0}');
+      .toBe('{"terraTokens":100,"allTimeTerraTokens":200345,"unlockedGroups":"BootsSpeed1","openedInstanceSeed":0,"openedInstanceTimeLeft":0}');
   });
 
   it('should serialize the provided entries for a given section', () => {
@@ -39,7 +42,7 @@ describe('createFakeSaveString', () => {
     const save = createFakeSaveString({players: [player]});
 
     // Assert
-    const sections = save.split('\n@\n');
+    const sections = save.split(SECTION_SEPARATOR);
     expect(sections[PLAYERS_SECTION_INDEX]).toBe('{"id":1,"name":"Nikowa","inventoryId":44,"equipmentId":45,"playerPosition":"1751.865,472.58,-1106.104","playerRotation":"0,0.5740051,0,-0.8188518","playerGaugeOxygen":280.0,"playerGaugeThirst":96.3858642578125,"playerGaugeHealth":72.67363739013672,"playerGaugeToxic":0.0,"host":true,"planetId":"Toxicity","cameraView":0,"totalCraftedObjects":1820,"totalTerraTokenEarned":9000}');
   });
 
@@ -48,17 +51,17 @@ describe('createFakeSaveString', () => {
     const save = createFakeSaveString({terraformationLevels: [createTerraformationLevel({unitOxygenLevel: 100})]});
 
     // Assert
-    const sections = save.split('\n@\n');
+    const sections = save.split(SECTION_SEPARATOR);
     expect(sections[TERRAFORMATION_LEVELS_SECTION_INDEX]).toBe('{"planetId":"Toxicity","unitOxygenLevel":100.0,"unitHeatLevel":200.0,"unitPressureLevel":300.0,"unitPlantsLevel":400.0,"unitInsectsLevel":500.0,"unitAnimalsLevel":600.0,"unitPurificationLevel":700.0}');
   });
 
   describe('When statistics and saveConfiguration are not provided', () => {
     it('should serialize their sections as empty strings', () => {
       // Act
-      const save = createFakeSaveString({});
+      const save = createFakeSaveString(noOptions);
 
       // Assert
-      const sections = save.split('\n@\n');
+      const sections = save.split(SECTION_SEPARATOR);
       expect(sections[STATISTICS_SECTION_INDEX]).toBe('');
       expect(sections[SAVE_CONFIGURATION_SECTION_INDEX]).toBe('');
     });
@@ -69,10 +72,10 @@ describe('createLegacyFakeSaveString', () => {
 
   it('should split into 12 `@`-separated parts (11 sections + trailing reserved part)', () => {
     // Act
-    const save = createLegacyFakeSaveString({});
+    const save = createLegacyFakeSaveString(noOptions);
 
     // Assert
-    expect(save.split('@').length).toBe(12);
+    expect(save.split('@')).toHaveLength(12);
   });
 
   it('should insert the Terrain Layers section right before World Events', () => {
@@ -83,7 +86,7 @@ describe('createLegacyFakeSaveString', () => {
     const save = createLegacyFakeSaveString({terrainLayers: [terrainLayer]});
 
     // Assert
-    const sections = save.split('\n@\n');
+    const sections = save.split(SECTION_SEPARATOR);
     expect(sections[LEGACY_TERRAIN_LAYERS_SECTION_INDEX]).toBe('{"layerId":"PC-Toxicity-Layer1","planet":110910047,"colorBase":"1-1-1-1"}');
   });
 
@@ -95,7 +98,7 @@ describe('createLegacyFakeSaveString', () => {
     const save = createLegacyFakeSaveString({worldEvents: [worldEvent]});
 
     // Assert
-    const sections = save.replace(/\n@$/, '').split('\n@\n');
+    const sections = save.replace(/\n@$/, '').split(SECTION_SEPARATOR);
     expect(sections[LEGACY_WORLD_EVENTS_SECTION_INDEX]).toBe('{"planet":110910045,"seed":1,"pos":"0,0,0","owner":0,"index":0}');
   });
 });

@@ -1,9 +1,9 @@
 /** @import { ParsedSave, SaveParseError, SaveWarningCode, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
 
-import {DEFAULT_GLOBAL_METADATA} from './createFakeSaveString.js';
+import {createGlobalMetadata} from './createSaveRecords.js';
 
 /** @returns {Generator<never>} */
-function* EMPTY_GENERATOR() {
+function* createEmptyGenerator() {
 }
 
 /**
@@ -29,34 +29,34 @@ function* EMPTY_GENERATOR() {
  * @returns {ParsedSave}
  */
 export function createFakeParsedSave({
-    globalMetadata = [DEFAULT_GLOBAL_METADATA],
-    terraformationLevels = [],
-    players = [],
-    worldObjects = () => EMPTY_GENERATOR(),
-    inventories = [],
-    statistics = [],
-    mailboxes = [],
-    storyEvents = [],
-    saveConfigurations = [],
-    worldEvents = [],
-    errors = [],
-    warnings = [],
+  globalMetadata = [createGlobalMetadata()],
+  terraformationLevels = [],
+  players = [],
+  worldObjects = () => createEmptyGenerator(),
+  inventories = [],
+  statistics = [],
+  mailboxes = [],
+  storyEvents = [],
+  saveConfigurations = [],
+  worldEvents = [],
+  errors = [],
+  warnings = []
 } = {}) {
-    return {
-        errors,
-        warnings,
-        sections: [
-            globalMetadata,
-            terraformationLevels,
-            players,
-            worldObjects,
-            inventories,
-            statistics,
-            mailboxes,
-            storyEvents,
-            saveConfigurations,
-            worldEvents,
-            []
-        ]
-    };
+  return {
+    errors,
+    warnings,
+    sections: [
+      globalMetadata,
+      terraformationLevels,
+      players,
+      worldObjects,
+      inventories,
+      statistics,
+      mailboxes,
+      storyEvents,
+      saveConfigurations,
+      worldEvents,
+      []
+    ]
+  };
 }
