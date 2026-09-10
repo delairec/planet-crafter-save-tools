@@ -1,6 +1,5 @@
 import {ValidationIssue} from "./ValidationIssue";
-import {ParsedSections, SaveParseError} from "shared-save-processing/gameDefinitions";
-import {SaveWarningCode} from "shared-save-processing/normalizeRawSections.js";
+import {ParsedSections, SaveParseError, SaveWarningCode} from "shared-save-processing/gameDefinitions";
 
 export interface LoadAndValidateSaveFilePresenterPort {
   presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarningCode[]): void;

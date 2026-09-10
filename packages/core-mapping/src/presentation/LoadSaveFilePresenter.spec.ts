@@ -1,8 +1,8 @@
 import {describe, expect, it} from 'bun:test';
 import {LoadSaveFilePresenter} from './LoadSaveFilePresenter';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {ParsedSections, SaveParseError, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/gameDefinitions';
-import {SaveWarningCode} from 'shared-save-processing/normalizeRawSections.js';
+import {ParsedSections, SaveParseError, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {LoadSaveFileViewModel} from './viewModels/LoadSaveFileViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 

@@ -1,5 +1,5 @@
 import {ValidationIssue} from "./ValidationIssue";
-import {SaveWarningCode} from "shared-save-processing/normalizeRawSections.js";
+import {SaveWarningCode} from "shared-save-processing/gameDefinitions";
 
 /**
  * Outcome of validating a save file's technical acceptability (extension, structural validity),

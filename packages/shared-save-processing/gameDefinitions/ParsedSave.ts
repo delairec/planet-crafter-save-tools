@@ -8,7 +8,7 @@ import {MailboxMessage} from "./MailboxMessage";
 import {StoryEvent} from "./StoryEvent";
 import {SaveConfiguration} from "./SaveConfiguration";
 import {WorldEvent} from "./WorldEvent";
-import {SaveWarningCode} from "../normalizeRawSections.js";
+import {SaveWarningCode} from "./SaveWarningCode";
 import {SaveParseError} from "./SaveParseError";
 
 export type ParsedSections = [

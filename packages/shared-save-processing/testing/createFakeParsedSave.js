@@ -1,5 +1,4 @@
-/** @import { SaveWarningCode } from '../normalizeRawSections.js' */
-/** @import { ParsedSave, SaveParseError, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
+/** @import { ParsedSave, SaveParseError, SaveWarningCode, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
 
 import {DEFAULT_GLOBAL_METADATA} from './createFakeSaveString.js';
 

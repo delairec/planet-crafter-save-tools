@@ -1,6 +1,6 @@
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveWarningCode} from "shared-save-processing/normalizeRawSections.js";
+import {SaveWarningCode} from "shared-save-processing/gameDefinitions";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
