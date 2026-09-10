@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {MergeResultPresenter} from './MergeResultPresenter';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {SaveWarningCode} from 'shared-save-processing/normalizeRawSections.js';
+import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 

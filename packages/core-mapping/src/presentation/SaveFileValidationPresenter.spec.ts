@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveFileValidationPresenter} from './SaveFileValidationPresenter';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {SaveWarningCode} from 'shared-save-processing/normalizeRawSections.js';
+import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
 import {SaveFileValidationViewModel, SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noWarnings: SaveWarningCode[] = [];

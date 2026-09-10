@@ -1,7 +1,6 @@
 import {LoadAndValidateSaveFilePresenterPort} from "../application/ports/LoadAndValidateSaveFilePresenterPort";
 import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {ParsedSections, SaveParseError} from "shared-save-processing/gameDefinitions";
-import {SaveWarningCode} from "shared-save-processing/normalizeRawSections.js";
+import {ParsedSections, SaveParseError, SaveWarningCode} from "shared-save-processing/gameDefinitions";
 import {LoadSaveFileViewModel} from "./viewModels/LoadSaveFileViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatErrorLocation} from "./formatErrorLocation";

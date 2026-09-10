@@ -4,8 +4,8 @@ import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {ParsedSaveSections, SaveSectionsParserPort} from './ports/SaveSectionsParserPort';
 import {LoadAndValidateSaveFilePresenterPort} from './ports/LoadAndValidateSaveFilePresenterPort';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
-import {SaveWarningCode} from 'shared-save-processing/normalizeRawSections.js';
-import {ParsedSections, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/gameDefinitions';
+import {ParsedSections, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 
 const emptySections: ParsedSections = [[], [], [], function* () {}, [], [], [], [], [], [], []];
 

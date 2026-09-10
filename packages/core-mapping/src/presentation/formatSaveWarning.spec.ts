@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {formatSaveWarning} from './formatSaveWarning';
-import {SAVE_WARNING_CODES, SaveWarningCode} from 'shared-save-processing/normalizeRawSections.js';
+import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SAVE_WARNING_CODES} from 'shared-save-processing/normalizeRawSections.js';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 import {unknownSaveWarningMessage} from './messages/saveWarningMessages.js';
 

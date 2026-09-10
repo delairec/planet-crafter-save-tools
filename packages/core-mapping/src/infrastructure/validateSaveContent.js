@@ -17,7 +17,7 @@ import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
  * once let a lost section pass for a valid save.
  *
  * @param {string} mergedSave
- * @returns {{isValid: boolean, errors: import('../application/ports/ValidationIssue').ValidationIssue[], warnings: import('shared-save-processing/normalizeRawSections.js').SaveWarningCode[]}}
+ * @returns {{isValid: boolean, errors: import('../application/ports/ValidationIssue').ValidationIssue[], warnings: import('shared-save-processing/gameDefinitions').SaveWarningCode[]}}
  */
 export function validateSaveContent(mergedSave) {
   const sectionCountErrors = verifySectionCount(mergedSave.split('@'));

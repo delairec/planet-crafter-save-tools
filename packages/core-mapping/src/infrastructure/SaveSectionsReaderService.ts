@@ -1,20 +1,22 @@
 import {
-  GLOBAL_METADATA_SECTION_INDEX,
   GlobalMetadata,
-  INVENTORIES_SECTION_INDEX,
   Inventory,
   ParsedSections,
   Player,
-  PLAYERS_SECTION_INDEX,
-  SAVE_CONFIGURATION_SECTION_INDEX,
   SaveConfiguration,
   Statistics,
-  STATISTICS_SECTION_INDEX,
-  TERRAFORMATION_LEVELS_SECTION_INDEX,
   TerraformationLevel,
-  WORLD_OBJECTS_SECTION_INDEX,
   WorldObject
 } from 'shared-save-processing/gameDefinitions';
+import {
+  GLOBAL_METADATA_SECTION_INDEX,
+  INVENTORIES_SECTION_INDEX,
+  PLAYERS_SECTION_INDEX,
+  SAVE_CONFIGURATION_SECTION_INDEX,
+  STATISTICS_SECTION_INDEX,
+  TERRAFORMATION_LEVELS_SECTION_INDEX,
+  WORLD_OBJECTS_SECTION_INDEX
+} from 'shared-save-processing/sectionIndexes.js';
 import {SaveSectionsReaderPort} from '../application/ports/SaveSectionsReaderPort';
 import {GlobalProgressionValueObject, createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {PlayerEntity, createPlayerEntity} from "../domain/entities/PlayerEntity";

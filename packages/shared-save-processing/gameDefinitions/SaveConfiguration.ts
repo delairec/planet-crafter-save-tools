@@ -10,7 +10,6 @@ export interface SaveConfiguration {
   modifierGaugeDrain: number;
   modifierMeteoOccurence: number;
   modifierMultiplayerTerraformationFactor: number;
-  // Extra
   unlockedSpaceTrading: boolean;
   unlockedOreExtrators: boolean;
   unlockedTeleporters: boolean;

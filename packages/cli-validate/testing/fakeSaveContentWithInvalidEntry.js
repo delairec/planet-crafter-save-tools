@@ -1,4 +1,4 @@
-import {PLAYERS_SECTION_INDEX} from 'shared-save-processing/gameDefinitions';
+import {PLAYERS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {VALID_SAVE_CONTENT} from './fakeValidSaveContent.js';
 
 const BROKEN_ENTRY = '{ broken entry';

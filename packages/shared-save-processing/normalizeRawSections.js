@@ -12,16 +12,18 @@
  * save file). Everywhere else in the codebase, the canonical 11-part format is assumed.
  */
 
-import {LEGACY_TERRAIN_LAYERS_SECTION_INDEX, LEGACY_WORLD_EVENTS_SECTION_INDEX} from './sectionIndexes.js';
+/** @import { SaveWarningCode } from './gameDefinitions' */
 
-const LEGACY_SECTION_COUNT = 11; // real sections when Terrain Layers still existed
-const LEGACY_SPLIT_PARTS_COUNT = LEGACY_SECTION_COUNT + 1; // + trailing reserved part
+import {
+  LEGACY_SPLIT_PARTS_COUNT,
+  LEGACY_TERRAIN_LAYERS_SECTION_INDEX,
+  LEGACY_WORLD_EVENTS_SECTION_INDEX
+} from './sectionIndexes.js';
 
-export const SAVE_WARNING_CODES = /** @type {const} */ ({
+/** @type {Readonly<Record<'LEGACY_SAVE_FORMAT', SaveWarningCode>>} */
+export const SAVE_WARNING_CODES = Object.freeze({
   LEGACY_SAVE_FORMAT: 'legacy-save-format'
 });
-
-/** @typedef {typeof SAVE_WARNING_CODES[keyof typeof SAVE_WARNING_CODES]} SaveWarningCode */
 
 /**
  * Adapts the raw `@`-split parts of a save to the current 11-part format.

@@ -95,7 +95,7 @@ describe('findViolations', () => {
         packageName: 'shared-platforms',
         filePath: 'packages/shared-platforms/platform.js',
         line: 3,
-        specifier: 'util-types/gameDefinitions'
+        specifier: 'util-types/platform'
       }];
 
       // Act
@@ -104,7 +104,7 @@ describe('findViolations', () => {
       // Assert
       expect(violations).toEqual([{
         location: 'packages/shared-platforms/platform.js:3',
-        message: 'import of \'util-types/gameDefinitions\': util-types is missing from the dependencies of packages/shared-platforms/package.json'
+        message: 'import of \'util-types/platform\': util-types is missing from the dependencies of packages/shared-platforms/package.json'
       }]);
     });
   });
@@ -241,13 +241,13 @@ describe('findImportedPackages', () => {
   describe('When a file imports a package for its types only', () => {
     it('should report the specifier, a type-only import being a dependency too', () => {
       // Arrange
-      const source = 'import type {RuntimePlatform} from \'util-types/gameDefinitions\';';
+      const source = 'import type {RuntimePlatform} from \'util-types/platform\';';
 
       // Act
       const importedPackages = findImportedPackages(source);
 
       // Assert
-      expect(importedPackages).toEqual([{line: 1, specifier: 'util-types/gameDefinitions'}]);
+      expect(importedPackages).toEqual([{line: 1, specifier: 'util-types/platform'}]);
     });
   });
 

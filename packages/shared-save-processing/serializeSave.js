@@ -26,8 +26,8 @@ const SAVE_TERMINATOR = '\n@';
  * @returns {string}
  */
 export function serializeSave({metadata, terraformationLevels, players, worldObjects, inventories, statistics, mailboxes, storyEvents, saveConfigurations, worldEvents}) {
-  const serialize = (entries) => entries.map(e => JSON.stringify(e)).join(ENTRY_SEPARATOR);
-  const serializeWithFloats = (entries) => entries.map(e => stringifyEntry(e)).join(ENTRY_SEPARATOR);
+  const serialize = (entries) => entries.map(entry => JSON.stringify(entry)).join(ENTRY_SEPARATOR);
+  const serializeWithFloats = (entries) => entries.map(entry => stringifyEntry(entry)).join(ENTRY_SEPARATOR);
   const serializeSingle = (entry) => entry ? JSON.stringify(entry) : '';
 
   const sections = [
@@ -45,5 +45,3 @@ export function serializeSave({metadata, terraformationLevels, players, worldObj
 
   return sections.join(SECTION_SEPARATOR) + SAVE_TERMINATOR;
 }
-
-

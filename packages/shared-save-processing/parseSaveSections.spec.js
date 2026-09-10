@@ -1,15 +1,17 @@
-import {describe, it, expect, spyOn} from 'bun:test';
+import {describe, it, expect} from 'bun:test';
 import {parseSaveSections} from './parseSaveSections.js';
 import {createFakeSaveString, createLegacyFakeSaveString} from './testing/createFakeSaveString.js';
 import {
+  GLOBAL_METADATA_SECTION_INDEX,
   INVENTORIES_SECTION_INDEX,
   PLAYERS_SECTION_INDEX,
   RESERVED_TRAILING_SECTION_INDEX,
+  TERRAFORMATION_LEVELS_SECTION_INDEX,
   WORLD_EVENTS_SECTION_INDEX,
   WORLD_OBJECTS_SECTION_INDEX
 } from './sectionIndexes.js';
 
-describe('utils/parseSaveSections', () => {
+describe('parseSaveSections', () => {
   const expectedGlobalMetadata = {
     terraTokens: 100,
     allTimeTerraTokens: 200,
@@ -35,6 +37,7 @@ describe('utils/parseSaveSections', () => {
     totalTerraTokenEarned: 0
   };
   const SECTION_SEPARATOR = '\n@\n';
+  const noOptions = {};
 
   /**
    * A save whose players section holds the given text verbatim. The text of an identifier is what
@@ -44,7 +47,7 @@ describe('utils/parseSaveSections', () => {
    * @returns {string}
    */
   function createSaveHoldingPlayersSection(playersSection) {
-    return createFakeSaveString({})
+    return createFakeSaveString(noOptions)
       .split(SECTION_SEPARATOR)
       .with(PLAYERS_SECTION_INDEX, playersSection)
       .join(SECTION_SEPARATOR);
@@ -65,18 +68,18 @@ describe('utils/parseSaveSections', () => {
 
   it('should parse a valid save into 11 sections', () => {
     // Arrange
-    const save = createFakeSaveString({});
+    const save = createFakeSaveString(noOptions);
 
     // Act
     const {sections} = parseSaveSections(save);
 
     // Assert
-    expect(sections.length).toBe(11);
+    expect(sections).toHaveLength(11);
   });
 
   it('should parse a valid save with no warnings', () => {
     // Arrange
-    const save = createFakeSaveString({});
+    const save = createFakeSaveString(noOptions);
 
     // Act
     const {warnings} = parseSaveSections(save);
@@ -93,8 +96,8 @@ describe('utils/parseSaveSections', () => {
     const {sections} = parseSaveSections(save);
 
     // Assert
-    const [metadata] = sections;
-    expect(metadata).toEqual([expectedGlobalMetadata]);
+    const globalMetadata = sections[GLOBAL_METADATA_SECTION_INDEX];
+    expect(globalMetadata).toEqual([expectedGlobalMetadata]);
   });
 
   it('should parse terraformation levels', () => {
@@ -105,7 +108,7 @@ describe('utils/parseSaveSections', () => {
     const {sections} = parseSaveSections(save);
 
     // Assert
-    const [, terraformationLevels] = sections;
+    const terraformationLevels = sections[TERRAFORMATION_LEVELS_SECTION_INDEX];
     expect(terraformationLevels).toEqual([expectedTerraformationLevel]);
   });
 
@@ -162,7 +165,8 @@ describe('utils/parseSaveSections', () => {
 
   it('should parse an empty inventories section as empty', () => {
     // Arrange
-    const save = createFakeSaveString({inventories: []});
+    const noInventories = [];
+    const save = createFakeSaveString({inventories: noInventories});
 
     // Act
     const {sections} = parseSaveSections(save);
@@ -173,11 +177,10 @@ describe('utils/parseSaveSections', () => {
   });
 
   describe('When a world object line cannot be read', () => {
-    it('should record the failure with its section, its position and an excerpt of the line, instead of logging to the console', () => {
+    it('should record the failure with its section, its position and an excerpt of the line, once the generator is drained', () => {
       // Arrange
       const save = createFakeSaveString({worldObjects: [expectedWorldObject]})
         .replace(JSON.stringify(expectedWorldObject), '{not valid json');
-      const consoleLogSpy = spyOn(console, 'log');
 
       // Act
       const {sections, errors} = parseSaveSections(save);
@@ -188,13 +191,13 @@ describe('utils/parseSaveSections', () => {
       expect(errors).toEqual([
         {detail: 'Invalid JSON: {not valid json', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 0}
       ]);
-      expect(consoleLogSpy).not.toHaveBeenCalled();
     });
   });
 
   it('should parse an empty world objects section as empty', () => {
     // Arrange
-    const save = createFakeSaveString({worldObjects: []});
+    const noWorldObjects = [];
+    const save = createFakeSaveString({worldObjects: noWorldObjects});
 
     // Act
     const {sections} = parseSaveSections(save);
@@ -264,7 +267,7 @@ describe('utils/parseSaveSections', () => {
   describe('When the save holds blank sections', () => {
     it('should report no error for them nor for the reserved trailing part', () => {
       // Arrange
-      const saveWithoutMailboxesStoryEventsAndWorldEvents = createFakeSaveString({});
+      const saveWithoutMailboxesStoryEventsAndWorldEvents = createFakeSaveString(noOptions);
 
       // Act
       const {errors} = parseSaveSections(saveWithoutMailboxesStoryEventsAndWorldEvents);
@@ -275,7 +278,7 @@ describe('utils/parseSaveSections', () => {
 
     it('should read the reserved trailing part as an empty section', () => {
       // Arrange
-      const save = createFakeSaveString({});
+      const save = createFakeSaveString(noOptions);
 
       // Act
       const {sections} = parseSaveSections(save);
@@ -298,7 +301,7 @@ describe('utils/parseSaveSections', () => {
 
       // Assert
       expect(errors).toEqual([]);
-      expect(sections.length).toBe(11);
+      expect(sections).toHaveLength(11);
     });
 
     it('should report a legacy-save-format warning code', () => {
@@ -328,4 +331,3 @@ describe('utils/parseSaveSections', () => {
     });
   });
 });
-

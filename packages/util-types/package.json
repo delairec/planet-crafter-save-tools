@@ -4,7 +4,7 @@
   "description": "Runtime platform contract (fs/process adapters)",
   "type": "module",
   "exports": {
-    "./gameDefinitions": "./gameDefinitions/index.ts",
+    "./platform": "./platform/index.ts",
     "./*": "./*"
   },
   "scripts": {

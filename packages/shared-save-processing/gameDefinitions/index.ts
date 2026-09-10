@@ -5,7 +5,7 @@ export * from './ParsedSave';
 export * from './Player';
 export * from './SaveConfiguration';
 export * from './SaveParseError';
-export * from '../sectionIndexes';
+export * from './SaveWarningCode';
 export * from './Statistics';
 export * from './StoryEvent';
 export * from './TerraformationLevel';

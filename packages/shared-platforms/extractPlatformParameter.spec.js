@@ -1,10 +1,15 @@
 import {describe, expect, it} from 'bun:test';
 import {extractPlatformParameter, SUPPORTED_PLATFORMS} from './extractPlatformParameter.js';
 
-describe('Extract platform parameter', () => {
+describe('extractPlatformParameter', () => {
+
+  it('should support bun and node, the two platforms the cases below enumerate', () => {
+    // Assert
+    expect(SUPPORTED_PLATFORMS).toEqual(['bun', 'node']);
+  });
 
   describe('When --platform is absent', () => {
-    it('should use fallback value', () => {
+    it('should return bun, the default platform', () => {
       // Arrange
       const argv = ['script.js'];
 
@@ -17,9 +22,9 @@ describe('Extract platform parameter', () => {
   });
 
   describe('When --platform is present', () => {
-    it.each([...SUPPORTED_PLATFORMS])('should return %s as the platform name', (/** @type {'bun'|'node'} */ expectedPlatform) => {
+    it.each(['bun', 'node'])('should return %s as the platform name', (expectedPlatform) => {
       // Arrange
-      const argv = [expectedPlatform, 'script.js', `--platform=${expectedPlatform}`];
+      const argv = ['script.js', `--platform=${expectedPlatform}`];
 
       // Act
       const platform = extractPlatformParameter(argv);
@@ -30,11 +35,11 @@ describe('Extract platform parameter', () => {
   });
 
   describe('When --platform is invalid', () => {
-    it('should throw an error', () => {
+    it('should throw an error listing the supported platforms', () => {
       // Arrange
       const argv = ['script.js', '--platform=invalidPlatform'];
 
-      //Act
+      // Act
       const execute = () => extractPlatformParameter(argv);
 
       // Assert

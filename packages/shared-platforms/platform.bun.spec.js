@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {isEntryPoint} from './platform.bun.js';
 
-describe('Bun platform', () => {
+describe('isEntryPoint of the bun platform', () => {
 
   describe('When importMeta.main is true', () => {
     it('should return true', () => {
