@@ -7,7 +7,7 @@ import {SAVE_CONTENT_WITH_INVALID_ENTRY} from '../testing/fakeSaveContentWithInv
 import {createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 
 const NO_ARGUMENTS = [];
-const USAGE_MESSAGE = 'Usage: bun validate-cli.js --file=<path-to-save-file>';
+const USAGE_MESSAGE = 'Usage: bun validate -- --file=<filepath>';
 
 describe('Validate CLI', () => {
   let consoleLogSpy;
@@ -75,6 +75,62 @@ describe('Validate CLI', () => {
       // Assert
       expect(consoleErrorSpy).toHaveBeenCalledWith(USAGE_MESSAGE);
       expect(readTextFile).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('When an argument names no flag the command accepts', () => {
+    it('should name that argument and print a usage message', async () => {
+      // Arrange
+      const {main} = initCli(['--fil=Standard-1.json']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith('✖ Unknown argument(s): --fil=Standard-1.json');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(USAGE_MESSAGE);
+    });
+
+    it('should exit with code 1 without reading any file', async () => {
+      // Arrange
+      const {main} = initCli([`--file=${SAVE_FILE_PATH}`, '--verbose']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readTextFile).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+
+  });
+
+  describe('When the Node command passes the platform flag', () => {
+    it('should validate the save all the same', async () => {
+      // Arrange
+      readTextFile.mockResolvedValue(VALID_SAVE_CONTENT);
+      const {main} = initCli(['--platform=node', `--file=${SAVE_FILE_PATH}`]);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).toHaveBeenCalledWith(`✓ ${SAVE_FILE_PATH} is valid`);
+    });
+  });
+
+  describe('When the path of the save file holds an equals sign', () => {
+    it('should read the path whole', async () => {
+      // Arrange
+      const pathHoldingAnEqualsSign = 'saves/a=b/Standard-1.json';
+      readTextFile.mockResolvedValue(VALID_SAVE_CONTENT);
+      const {main} = initCli([`--file=${pathHoldingAnEqualsSign}`]);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readTextFile).toHaveBeenCalledWith(pathHoldingAnEqualsSign);
     });
   });
 
