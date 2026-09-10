@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, mock, spyOn} from 'bun:test';
-import {initMergeCli} from './merge-cli.js';
+import {initMergeCli} from './initMergeCli.js';
 import {
   FAKE_SAVE_STRING_A,
   FAKE_SAVE_STRING_B,
@@ -31,7 +31,6 @@ describe('Merge CLI', () => {
       readTextFile,
       writeTextFile,
       joinPath: (...segments) => segments.join('/'),
-      isEntryPoint: () => false,
       exitProcess,
     };
 
