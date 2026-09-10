@@ -1,3 +1,5 @@
+import {PLATFORM_FLAG_NAME, readFlagValue} from './cliArguments.js';
+
 export const SUPPORTED_PLATFORMS = /** @type {readonly ['bun', 'node']} */ (['bun', 'node']);
 
 /** @typedef {typeof SUPPORTED_PLATFORMS[number]} SupportedPlatform */
@@ -16,13 +18,11 @@ function isSupportedPlatform(candidate) {
  * @throws {Error} when `--platform=` names an unsupported platform
  */
 export function extractPlatformParameter(argv) {
-  const platformArg = argv.find(arg => arg.startsWith('--platform='));
+  const platform = readFlagValue(argv, PLATFORM_FLAG_NAME);
 
-  if (!platformArg) {
+  if (platform === undefined) {
     return SUPPORTED_PLATFORMS[0];
   }
-
-  const platform = platformArg.split('=')[1];
 
   if (isSupportedPlatform(platform)) {
     return platform;
