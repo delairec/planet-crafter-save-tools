@@ -18,6 +18,7 @@ import {
 
 const NO_INPUT_FOLDERS = [];
 const SINGLE_SAVE_FILENAME = 'only-one.json';
+const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>]';
 
 describe('Merge CLI', () => {
   let consoleLogSpy;
@@ -273,6 +274,46 @@ describe('Merge CLI', () => {
     it('should read save folders from that directory', async () => {
       // Arrange
       ({main} = initCli(['--input=custom-input']));
+      readDirectory.mockResolvedValueOnce(NO_INPUT_FOLDERS);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readDirectory).toHaveBeenCalledWith('custom-input');
+    });
+  });
+
+  describe('When an argument names no flag the command accepts', () => {
+    it('should name that argument and print a usage message', async () => {
+      // Arrange
+      ({main} = initCli(['--inpt=custom-input']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith('✖ Unknown argument(s): --inpt=custom-input');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(USAGE_MESSAGE);
+    });
+
+    it('should exit with code 1 without reading any directory', async () => {
+      // Arrange
+      ({main} = initCli(['--input', 'custom-input']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readDirectory).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('When the Node command passes the platform flag', () => {
+    it('should read the save folders all the same', async () => {
+      // Arrange
+      ({main} = initCli(['--platform=node', '--input=custom-input']));
       readDirectory.mockResolvedValueOnce(NO_INPUT_FOLDERS);
 
       // Act
