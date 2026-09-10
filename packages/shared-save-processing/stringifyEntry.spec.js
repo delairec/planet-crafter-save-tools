@@ -158,13 +158,13 @@ describe('stringifyEntry', () => {
   describe('When an entry carries an int64 identifier', () => {
     it('should write the identifier unchanged', () => {
       // Arrange
-      const playerWithSteamIdentifier = {id: '76561198055446664', name: 'Chillie'};
+      const playerWithSteamIdentifier = {id: '76561190000000007', name: 'Chileny'};
 
       // Act
       const result = stringifyEntry(playerWithSteamIdentifier);
 
       // Assert
-      expect(result).toBe('{"id":76561198055446664,"name":"Chillie"}');
+      expect(result).toBe('{"id":76561190000000007,"name":"Chileny"}');
     });
 
     it('should quote an identifier that is not a decimal integer', () => {

@@ -124,7 +124,7 @@ describe('utils/parseSaveSections', () => {
   describe('When a player carries an int64 identifier', () => {
     it('should keep the identifier exactly as written', () => {
       // Arrange
-      const savedPlayersSection = '{"id":76561198055446664,"name":"Nikowa","inventoryId":44,"equipmentId":45,"playerPosition":"0,0,0","playerRotation":"0,0,0,0","playerGaugeOxygen":280.0,"playerGaugeThirst":96.0,"playerGaugeHealth":72.0,"playerGaugeToxic":0.0,"host":true,"planetId":"Toxicity","cameraView":0,"totalCraftedObjects":0,"totalTerraTokenEarned":0}';
+      const savedPlayersSection = '{"id":76561190000000007,"name":"Nikowa","inventoryId":44,"equipmentId":45,"playerPosition":"0,0,0","playerRotation":"0,0,0,0","playerGaugeOxygen":280.0,"playerGaugeThirst":96.0,"playerGaugeHealth":72.0,"playerGaugeToxic":0.0,"host":true,"planetId":"Toxicity","cameraView":0,"totalCraftedObjects":0,"totalTerraTokenEarned":0}';
       const save = createSaveHoldingPlayersSection(savedPlayersSection);
 
       // Act
@@ -132,7 +132,7 @@ describe('utils/parseSaveSections', () => {
 
       // Assert
       const players = sections[PLAYERS_SECTION_INDEX];
-      expect(players).toEqual([{...expectedPlayer, id: '76561198055446664'}]);
+      expect(players).toEqual([{...expectedPlayer, id: '76561190000000007'}]);
     });
   });
 
