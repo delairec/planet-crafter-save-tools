@@ -1,46 +1,42 @@
-import {afterEach, describe, expect, it, spyOn} from 'bun:test';
-import fs from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
+import {afterEach, beforeEach, describe, expect, it, spyOn} from 'bun:test';
+import {mkdtemp, rm, writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import process from 'node:process';
 import {exitProcess, getBasename, getCliArguments, joinPath, readDirectory} from './platform.common.js';
 
-describe('readDirectory', () => {
-  /** @type {string[]} */
-  const temporaryDirectories = [];
+const SAVE_FILE_NAME = 'Standard-1.json';
+const SAVE_CONTENT = 'save content';
+const MISSING_FOLDER_NAME = 'no-such-folder';
 
-  afterEach(async () => {
-    await Promise.all(temporaryDirectories.splice(0).map(directory => fs.rm(directory, {recursive: true, force: true})));
+describe('readDirectory', () => {
+  let saveFolderPath;
+
+  beforeEach(async () => {
+    saveFolderPath = await mkdtemp(join(tmpdir(), 'platform-common-'));
   });
 
-  async function createTemporaryDirectory() {
-    const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'platform-common-'));
-    temporaryDirectories.push(directory);
-
-    return directory;
-  }
+  afterEach(async () => {
+    await rm(saveFolderPath, {recursive: true, force: true});
+  });
 
   describe('When the folder holds a save file', () => {
     it('should return its name', async () => {
       // Arrange
-      const directory = await createTemporaryDirectory();
-      await fs.writeFile(path.join(directory, 'Standard-1.json'), 'save content', 'utf8');
+      await writeFile(join(saveFolderPath, SAVE_FILE_NAME), SAVE_CONTENT, 'utf8');
 
       // Act
-      const entries = await readDirectory(directory);
+      const entries = await readDirectory(saveFolderPath);
 
       // Assert
-      expect(entries).toEqual(['Standard-1.json']);
+      expect(entries).toEqual([SAVE_FILE_NAME]);
     });
   });
 
   describe('When the folder is empty', () => {
     it('should return no name', async () => {
-      // Arrange
-      const directory = await createTemporaryDirectory();
-
       // Act
-      const entries = await readDirectory(directory);
+      const entries = await readDirectory(saveFolderPath);
 
       // Assert
       expect(entries).toEqual([]);
@@ -50,10 +46,10 @@ describe('readDirectory', () => {
   describe('When the folder does not exist', () => {
     it('should reject', async () => {
       // Arrange
-      const missingDirectory = path.join(os.tmpdir(), 'platform-common-absent-folder');
+      const missingFolderPath = join(saveFolderPath, MISSING_FOLDER_NAME);
 
       // Act
-      const execute = readDirectory(missingDirectory);
+      const execute = readDirectory(missingFolderPath);
 
       // Assert
       await expect(execute).rejects.toThrow();
@@ -125,21 +121,27 @@ describe('getCliArguments', () => {
 });
 
 describe('exitProcess', () => {
+  const FAILURE_STATUS_CODE = 1;
+  // `process.exit` never returns, so the double standing in for it must not return either.
+  const processEnded = new Error('process ended');
+  let exitSpy;
 
-  it('should end the process with the given status code, without returning', () => {
-    // Arrange
-    const failureStatusCode = 1;
-    // `process.exit` never returns, so the double standing in for it must not return either.
-    const processEnded = new Error('process ended');
-    const exitSpy = spyOn(process, 'exit').mockImplementation(() => {
+  beforeEach(() => {
+    exitSpy = spyOn(process, 'exit').mockImplementation(() => {
       throw processEnded;
     });
+  });
 
+  afterEach(() => {
+    exitSpy.mockRestore();
+  });
+
+  it('should end the process with the given status code, without returning', () => {
     // Act
-    const execute = () => exitProcess(failureStatusCode);
+    const execute = () => exitProcess(FAILURE_STATUS_CODE);
 
     // Assert
     expect(execute).toThrow(processEnded);
-    expect(exitSpy).toHaveBeenCalledWith(failureStatusCode);
+    expect(exitSpy).toHaveBeenCalledWith(FAILURE_STATUS_CODE);
   });
 });
