@@ -6,10 +6,12 @@ import {parseMergeCliArguments} from './parseMergeCliArguments.js';
 import {
   renderDone,
   renderFoldersFound,
+  renderMergeCouldNotProduceASave,
   renderMergeFailed,
   renderMergeSucceeded,
   renderMergeWarnings,
   renderNoValidFolders,
+  renderOutputWriteFailed,
   renderProcessingFolder,
   renderSkippedFolder,
   renderUnexpectedError
@@ -31,7 +33,13 @@ if (CLI.isEntryPoint(import.meta)) {
   });
 }
 
-export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = []) {
+/**
+ * @param argv command-line arguments
+ * @param mergeSaveFiles the merge controller, injected so a run whose merge ends without a save can
+ * be exercised: the only failure the merge engine can raise is a broken invariant, unreachable from
+ * two save files validation has accepted.
+ */
+export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = [], mergeSaveFiles = MergeSaveFilesController.mergeSaveFiles) {
   const {inputDir, outputDir} = parseMergeCliArguments(argv);
 
   async function filterByValidSaveFolders(folders) {
@@ -49,12 +57,17 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
     return results;
   }
 
+  /**
+   * @returns {Promise<boolean>} whether the run may go on. A folder holding an invalid save file is
+   * reported and the next folder is processed: that verdict belongs to validation. A merge that
+   * produces no save, or a save that cannot be written, stops the run instead.
+   */
   async function processFolder(folder) {
     renderProcessingFolder(folder);
     const folderPath = joinPath(inputDir, folder);
     const [fileNameA, fileNameB] = (await readDirectory(folderPath)).filter(isJson).sort();
 
-    const viewModel = await MergeSaveFilesController.mergeSaveFiles({
+    const viewModel = await mergeSaveFiles({
       fileNameA,
       contentA: await readTextFile(joinPath(folderPath, fileNameA)),
       fileNameB,
@@ -64,18 +77,32 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
 
     renderMergeWarnings(folder, viewModel.saveAWarnings, viewModel.saveBWarnings);
 
-    if (viewModel.status !== 'success') {
+    if (viewModel.status === 'validationError') {
       renderMergeFailed(folder, viewModel.saveAErrors, viewModel.saveBErrors);
-      return;
+      return true;
     }
 
-    await writeOutput(folder, viewModel.fileName, viewModel.content);
+    if (viewModel.status === 'mergeFailed') {
+      renderMergeCouldNotProduceASave(folder, viewModel.mergeFailureMessage);
+      return false;
+    }
+
+    return writeOutput(folder, viewModel.fileName, viewModel.content);
   }
 
+  /** @returns {Promise<boolean>} whether the merged save reached the output directory. */
   async function writeOutput(folder, outputFileName, content) {
     const outputPath = joinPath(outputDir, folder, outputFileName);
-    await writeTextFile(outputPath, content);
+
+    try {
+      await writeTextFile(outputPath, content);
+    } catch (error) {
+      renderOutputWriteFailed(folder, outputPath, error);
+      return false;
+    }
+
     renderMergeSucceeded(outputPath);
+    return true;
   }
 
   function isJson(file) {
@@ -94,7 +121,11 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
 
     renderFoldersFound(validSaveFolders.length);
     for (const folder of validSaveFolders) {
-      await processFolder(folder);
+      const runCanGoOn = await processFolder(folder);
+      if (!runCanGoOn) {
+        exitProcess(UNEXPECTED_ERROR_EXIT_CODE);
+        return;
+      }
     }
     renderDone();
     exitProcess(0);

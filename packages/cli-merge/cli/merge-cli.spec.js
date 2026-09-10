@@ -16,6 +16,22 @@ import {
   OUTPUT_DIR
 } from '../testing/fakePaths.js';
 
+const MERGE_FAILURE_MESSAGE = 'The merge could not produce a usable save file. Both save files were left untouched.';
+
+/** @returns {import('core-mapping/presentation/viewModels/MergeResultViewModel').MergeResultViewModel} */
+function createMergeFailedViewModel() {
+  return {
+    status: 'mergeFailed',
+    fileName: '',
+    content: '',
+    mergeFailureMessage: MERGE_FAILURE_MESSAGE,
+    saveAErrors: [],
+    saveBErrors: [],
+    saveAWarnings: [],
+    saveBWarnings: []
+  };
+}
+
 describe('Merge CLI', () => {
   let consoleLogSpy;
   let consoleErrorSpy;
@@ -25,7 +41,7 @@ describe('Merge CLI', () => {
   let exitProcess;
   let main;
 
-  function initCli(argv) {
+  function initCli(argv, mergeSaveFiles) {
     const fakePlatform = {
       readDirectory,
       readTextFile,
@@ -36,7 +52,7 @@ describe('Merge CLI', () => {
       exitProcess,
     };
 
-    return initMergeCli(fakePlatform, argv);
+    return initMergeCli(fakePlatform, argv, mergeSaveFiles);
   }
 
   beforeEach(() => {
@@ -374,6 +390,106 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(writeTextFile).not.toHaveBeenCalled();
+    });
+
+    it('should still exit successfully, the verdict on an input file belonging to validation', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the merge produces no usable save', () => {
+    beforeEach(() => {
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
+      ({main} = initCli([], mock(() => Promise.resolve(createMergeFailedViewModel()))));
+    });
+
+    it('should name the folder and say what happened, in the words the user reads', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ Folder "${INPUT_SUBFOLDER_ALPHA}" was not merged: ${MERGE_FAILURE_MESSAGE}`);
+    });
+
+    it('should write no merged file', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(writeTextFile).not.toHaveBeenCalled();
+    });
+
+    it('should exit with the failure code', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('When the merge of the first folder produces no usable save', () => {
+    const FOLDER_BETA = 'Beta';
+
+    it('should stop before processing the next folder', async () => {
+      // Arrange
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA, FOLDER_BETA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
+      const mergeSaveFiles = mock(() => Promise.resolve(createMergeFailedViewModel()));
+      ({main} = initCli([], mergeSaveFiles));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(mergeSaveFiles).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('When the merged save cannot be written', () => {
+    const WRITE_FAILURE_REASON = 'EACCES: permission denied';
+
+    beforeEach(() => {
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
+      writeTextFile.mockImplementation(() => Promise.reject(new Error(WRITE_FAILURE_REASON)));
+    });
+
+    it('should name the folder, the output path and the reason', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ Folder "${INPUT_SUBFOLDER_ALPHA}" was merged but could not be written to "${MERGED_SAVE_OUTPUT_PATH}": ${WRITE_FAILURE_REASON}`);
+    });
+
+    it('should not announce a merged file it failed to write', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+    });
+
+    it('should exit with the failure code', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(exitProcess).toHaveBeenCalledWith(1);
     });
   });
 });
