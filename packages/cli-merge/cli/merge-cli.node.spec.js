@@ -144,7 +144,7 @@ describe('Merge CLI run as a Node process', () => {
       const {exitCode, stderr} = await runMergeCliUnderNode(inputDirectory, outputDirectory);
 
       // Assert
-      expect(stderr).toContain(`⚠ Folder "${SAVE_FOLDER_NAME}" contains a save adapted from an older format:`);
+      expect(stderr).toContain(`⚠ Folder "${SAVE_FOLDER_NAME}" has warnings on its save files:`);
       expect(stderr).toContain('  [save A] This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.');
       expect(exitCode).toBe(0);
     });

@@ -312,7 +312,7 @@ describe('Merge CLI', () => {
     });
   });
 
-  describe('When a merged save is in the legacy format', () => {
+  describe('When an input save is in the legacy format', () => {
     beforeEach(() => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
@@ -332,12 +332,12 @@ describe('Merge CLI', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith('  [save A] This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.');
     });
 
-    it('should name the folder the adapted save comes from', async () => {
+    it('should name the folder the warning comes from', async () => {
       // Act
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith(`⚠ Folder "${INPUT_SUBFOLDER_ALPHA}" contains a save adapted from an older format:`);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`⚠ Folder "${INPUT_SUBFOLDER_ALPHA}" has warnings on its save files:`);
     });
 
     it('should still write the merged file', async () => {
