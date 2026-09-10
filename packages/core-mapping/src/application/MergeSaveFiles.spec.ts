@@ -4,6 +4,7 @@ import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {SaveFilesMergerPort} from './ports/SaveFilesMergerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
+import {InvalidSaveDataError} from '../domain/errors/InvalidSaveDataError';
 
 describe('MergeSaveFiles', () => {
 
@@ -12,7 +13,7 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const validator: SaveValidatorPort = {validate: mock(() => ({isValid: true, errors: [], warnings: []}))};
       const merger: SaveFilesMergerPort = {merge: mock(() => ({fileName: 'Save-A-Save-B-merged.json', content: 'merged content'}))};
-      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock()};
+      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
       const useCase = new MergeSaveFiles(validator, merger, presenter);
 
       // Act
@@ -33,7 +34,7 @@ describe('MergeSaveFiles', () => {
           : {isValid: true, errors: [], warnings: []})
       };
       const merger: SaveFilesMergerPort = {merge: mock()};
-      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock()};
+      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
       const useCase = new MergeSaveFiles(validator, merger, presenter);
 
       // Act
@@ -55,7 +56,7 @@ describe('MergeSaveFiles', () => {
           : {isValid: true, errors: [], warnings: []})
       };
       const merger: SaveFilesMergerPort = {merge: mock()};
-      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock()};
+      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
       const useCase = new MergeSaveFiles(validator, merger, presenter);
 
       // Act
@@ -79,7 +80,7 @@ describe('MergeSaveFiles', () => {
           : {isValid: true, errors: [], warnings: []})
       };
       const merger: SaveFilesMergerPort = {merge: mock(() => ({fileName: 'Save-A-Save-B-merged.json', content: 'merged content'}))};
-      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock()};
+      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
       const useCase = new MergeSaveFiles(validator, merger, presenter);
 
       // Act
@@ -98,7 +99,7 @@ describe('MergeSaveFiles', () => {
           : {isValid: false, errors: [invalidJsonError], warnings: []})
       };
       const merger: SaveFilesMergerPort = {merge: mock()};
-      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock()};
+      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
       const useCase = new MergeSaveFiles(validator, merger, presenter);
 
       // Act
@@ -106,6 +107,66 @@ describe('MergeSaveFiles', () => {
 
       // Assert
       expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith([], [invalidJsonError], ['legacy-save-format'], []);
+    });
+  });
+  describe('When the merge produces a save that cannot be used', () => {
+    it('should present the merged save as unusable instead of a success', async () => {
+      // Arrange
+      const validator: SaveValidatorPort = {validate: mock(() => ({isValid: true, errors: [], warnings: []}))};
+      const merger: SaveFilesMergerPort = {
+        merge: mock(() => {
+          throw new InvalidSaveDataError('MergedSaveValueObject.content must be a non-empty string, received ');
+        })
+      };
+      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
+      const useCase = new MergeSaveFiles(validator, merger, presenter);
+
+      // Act
+      await useCase.execute({fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'});
+
+      // Assert
+      expect(presenter.presentMergedSaveUnusable).toHaveBeenCalled();
+      expect(presenter.presentMergeSucceeded).not.toHaveBeenCalled();
+    });
+
+    it('should not blame the input files, which validation has already accepted', async () => {
+      // Arrange
+      const validator: SaveValidatorPort = {validate: mock(() => ({isValid: true, errors: [], warnings: []}))};
+      const merger: SaveFilesMergerPort = {
+        merge: mock(() => {
+          throw new InvalidSaveDataError('MergedSaveValueObject.content must be a non-empty string, received ');
+        })
+      };
+      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
+      const useCase = new MergeSaveFiles(validator, merger, presenter);
+
+      // Act
+      await useCase.execute({fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'});
+
+      // Assert
+      expect(presenter.presentSaveFilesInvalid).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('When the merge fails on anything other than unusable save data', () => {
+    it('should let the failure surface rather than turn it into a merge outcome', async () => {
+      // Arrange
+      const unreadableSaveContentError = new Error('Save file "Save-A.json" cannot be parsed: Invalid JSON: {not valid json');
+      const validator: SaveValidatorPort = {validate: mock(() => ({isValid: true, errors: [], warnings: []}))};
+      const merger: SaveFilesMergerPort = {
+        merge: mock(() => {
+          throw unreadableSaveContentError;
+        })
+      };
+      const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
+      const useCase = new MergeSaveFiles(validator, merger, presenter);
+
+      // Act
+      const mergeSaveFiles = useCase.execute({fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'});
+
+      // Assert
+      await expect(mergeSaveFiles).rejects.toThrow(unreadableSaveContentError);
+      expect(presenter.presentMergedSaveUnusable).not.toHaveBeenCalled();
     });
   });
 });

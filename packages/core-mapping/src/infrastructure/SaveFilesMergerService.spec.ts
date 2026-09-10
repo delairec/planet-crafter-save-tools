@@ -7,6 +7,7 @@ import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {INVENTORIES_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createEquipment, createInventory, createPlayer, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 import {UnreadableSaveContentError} from './errors/UnreadableSaveContentError';
+import {InvalidSaveDataError} from '../domain/errors/InvalidSaveDataError';
 
 describe('SaveFilesMergerService', () => {
 
@@ -104,6 +105,21 @@ describe('SaveFilesMergerService', () => {
       // Assert
       expect(mergeSaveFiles).toThrow(UnreadableSaveContentError);
       expect(mergeSaveFiles).toThrow('Save file "Standard-2.json" cannot be parsed: Invalid JSON: {not valid json');
+    });
+
+    it('should keep the failure out of the invalid save data family, which the merge use case turns into a user-facing outcome', () => {
+      // Arrange
+      const service = new SaveFilesMergerService();
+      const unreadableInventory = createEquipment({id: 45, woIds: '', size: 20});
+      const contentA = createFakeSaveContent({inventories: [unreadableInventory]})
+        .replace(JSON.stringify(unreadableInventory), '{not valid json');
+      const contentB = createFakeSaveContent();
+
+      // Act
+      const mergeSaveFiles = () => service.merge('Standard-1.json', contentA, 'Standard-2.json', contentB);
+
+      // Assert
+      expect(mergeSaveFiles).not.toThrow(InvalidSaveDataError);
     });
   });
 });
