@@ -14,7 +14,7 @@ export const RESERVED_TRAILING_SECTION_INDEX = SAVE_SECTIONS_COUNT; // empty par
 export const SAVE_SPLIT_PARTS_COUNT = SAVE_SECTIONS_COUNT + 1; // real sections + trailing reserved part
 
 // The Terrain Layers section a game update removed: legacy saves still carry it, which shifts
-// World Events by one. Only the user-input boundary reads these three.
+// World Events by one. Only the user-input boundary reads the legacy constants below.
 export const LEGACY_TERRAIN_LAYERS_SECTION_INDEX = 9;
 export const LEGACY_WORLD_EVENTS_SECTION_INDEX = 10;
 const LEGACY_SAVE_SECTIONS_COUNT = 11; // real sections when Terrain Layers still existed
