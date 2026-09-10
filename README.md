@@ -135,6 +135,14 @@ Audits production and development dependencies. The two Picomatch advisories are
 `micromatch` still requires the affected 2.x dependency transitively; they should be removed as soon as that upstream
 constraint is updated.
 
+Version bumps are raised on a schedule next to it. `.github/dependabot.yml`, maintained on the default branch because
+Dependabot reads its configuration there and nowhere else, opens one grouped pull request per week for the actions the
+workflows use and one for the Bun dependencies of the workspace. Both scan the repository root, where the manifest
+declares every workspace member and the single `bun.lock` resolves them all. The `bun` ecosystem brings version
+updates alone and never opens a security update, so `bun run audit` remains the net against vulnerabilities; the
+actions receive their security updates as well. A pull request opened by Dependabot skips the Claude review workflow,
+which has no secrets available on such a run.
+
 ```
 bun run audit:quality
 ```
