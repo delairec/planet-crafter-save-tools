@@ -1,4 +1,4 @@
-import {afterEach, describe, expect, it} from 'bun:test';
+import {afterEach, beforeEach, describe, expect, it} from 'bun:test';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -19,23 +19,20 @@ const FILE_ACCESS_ADAPTERS = [
 ];
 
 describe.each(FILE_ACCESS_ADAPTERS)('Platform file access — $platformName adapter', ({platformName, readTextFile, writeTextFile}) => {
-  /** @type {string[]} */
-  const temporaryDirectories = [];
+  /** @type {string} */
+  let directory;
 
-  afterEach(async () => {
-    await Promise.all(temporaryDirectories.splice(0).map(directory => fs.rm(directory, {recursive: true, force: true})));
+  beforeEach(async () => {
+    directory = await fs.mkdtemp(path.join(os.tmpdir(), `platform-${platformName}-`));
   });
 
-  async function createTemporaryDirectory() {
-    const directory = await fs.mkdtemp(path.join(os.tmpdir(), `platform-${platformName}-`));
-    temporaryDirectories.push(directory);
-    return directory;
-  }
+  afterEach(async () => {
+    await fs.rm(directory, {recursive: true, force: true});
+  });
 
   describe('When the destination folder does not exist yet', () => {
     it('should create it and write the file', async () => {
       // Arrange
-      const directory = await createTemporaryDirectory();
       const filePath = path.join(directory, 'merged', 'save.json');
 
       // Act
@@ -49,7 +46,6 @@ describe.each(FILE_ACCESS_ADAPTERS)('Platform file access — $platformName adap
   describe('When the file starts with a byte order mark', () => {
     it('should return its content without the mark', async () => {
       // Arrange
-      const directory = await createTemporaryDirectory();
       const filePath = path.join(directory, 'save.json');
       await fs.writeFile(filePath, '\uFEFF{"saveDisplayName":"Prime"}', 'utf8');
 
@@ -64,7 +60,6 @@ describe.each(FILE_ACCESS_ADAPTERS)('Platform file access — $platformName adap
   describe('When the file exists', () => {
     it('should return its content', async () => {
       // Arrange
-      const directory = await createTemporaryDirectory();
       const filePath = path.join(directory, 'save.json');
       await fs.writeFile(filePath, 'save content', 'utf8');
 
