@@ -7,6 +7,7 @@ import {
   SAVE_CONFIGURATION_SECTION_INDEX,
   STATISTICS_SECTION_INDEX,
   TERRAFORMATION_LEVELS_SECTION_INDEX,
+  WORLD_EVENTS_SECTION_INDEX,
   WORLD_OBJECTS_SECTION_INDEX
 } from './sectionIndexes.js';
 import {createPlayer, createSaveConfiguration, createStatistics, createTerraformationLevel} from './testing/createSaveRecords.js';
@@ -15,6 +16,7 @@ import {parseSaveSections} from './parseSaveSections.js';
 
 describe('serializeSave', () => {
   const SECTION_SEPARATOR = '\n@\n';
+  const SAVE_TERMINATOR = '\n@';
   const noOptions = {};
 
   /** @type {SerializeSaveParams} */
@@ -24,11 +26,15 @@ describe('serializeSave', () => {
   };
 
   it('should join all sections with the section separator and terminate the save', () => {
+    // Arrange
+    const separatorsBetweenSections = WORLD_EVENTS_SECTION_INDEX;
+    const emptySave = SECTION_SEPARATOR.repeat(separatorsBetweenSections) + SAVE_TERMINATOR;
+
     // Act
     const result = serializeSave(emptyParams);
 
     // Assert
-    expect(result).toBe('\n@\n\n@\n\n@\n\n@\n\n@\n\n@\n\n@\n\n@\n\n@\n\n@');
+    expect(result).toBe(emptySave);
   });
 
   it('should serialize world objects as entries separated by the entry separator', () => {
