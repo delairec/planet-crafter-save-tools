@@ -33,13 +33,7 @@ if (CLI.isEntryPoint(import.meta)) {
   });
 }
 
-/**
- * @param argv command-line arguments
- * @param mergeSaveFiles the merge controller, injected so a run whose merge ends without a save can
- * be exercised: the only failure the merge engine can raise is a broken invariant, unreachable from
- * two save files validation has accepted.
- */
-export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = [], mergeSaveFiles = MergeSaveFilesController.mergeSaveFiles) {
+export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = []) {
   const {inputDir, outputDir} = parseMergeCliArguments(argv);
 
   async function filterByValidSaveFolders(folders) {
@@ -63,7 +57,7 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
     const folderPath = joinPath(inputDir, folder);
     const [fileNameA, fileNameB] = (await readDirectory(folderPath)).filter(isJson).sort();
 
-    const viewModel = await mergeSaveFiles({
+    const viewModel = await MergeSaveFilesController.mergeSaveFiles({
       fileNameA,
       contentA: await readTextFile(joinPath(folderPath, fileNameA)),
       fileNameB,
