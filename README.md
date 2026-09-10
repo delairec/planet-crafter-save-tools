@@ -67,6 +67,11 @@ bun merge
 
 Generates the merged saves in output directory, by processing all subfolders from input folder.
 
+A folder holding a save file the validation refuses is reported and skipped, the remaining folders are still
+processed, and the command exits with code `0`. A merge that runs and produces no usable save file, or a merged save
+the output directory refuses, is a different matter: the command names the folder, stops there and exits with a
+non-zero code. Code `2` is reserved for an input directory holding no folder to merge.
+
 ```
 bun merge -- --input=<directory> --output=<directory>
 ```
