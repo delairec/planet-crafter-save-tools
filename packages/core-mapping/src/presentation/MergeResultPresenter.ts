@@ -15,6 +15,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       fileName: '',
       content: '',
       mergeFailureMessage: '',
+      mergedSaveErrors: [],
       saveAErrors: [],
       saveBErrors: [],
       saveAWarnings: [],
@@ -26,12 +27,13 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     return this._viewModel;
   }
 
-  presentMergeSucceeded(fileName: string, content: string, saveAWarnings: SaveWarningCode[], saveBWarnings: SaveWarningCode[]): void {
+  presentMergeSucceeded(fileName: string, content: string, mergedSaveIssues: ValidationIssue[], saveAWarnings: SaveWarningCode[], saveBWarnings: SaveWarningCode[]): void {
     this._viewModel = {
       status: 'success',
       fileName,
       content,
       mergeFailureMessage: '',
+      mergedSaveErrors: mergedSaveIssues.map(formatValidationError),
       saveAErrors: [],
       saveBErrors: [],
       saveAWarnings: saveAWarnings.map(formatSaveWarning),
@@ -45,6 +47,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       fileName: '',
       content: '',
       mergeFailureMessage: '',
+      mergedSaveErrors: [],
       saveAErrors: saveAErrors.map(formatValidationError),
       saveBErrors: saveBErrors.map(formatValidationError),
       saveAWarnings: saveAWarnings.map(formatSaveWarning),
@@ -58,6 +61,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       fileName: '',
       content: '',
       mergeFailureMessage: mergedSaveUnusableMessage,
+      mergedSaveErrors: [],
       saveAErrors: [],
       saveBErrors: [],
       saveAWarnings: [],

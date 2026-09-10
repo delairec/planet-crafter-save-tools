@@ -6,6 +6,7 @@ import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noErrorsFromSaveB: ValidationIssue[] = [];
+const noIssuesFromTheMergedSave: ValidationIssue[] = [];
 const noWarningsFromSaveA: SaveWarningCode[] = [];
 const noWarningsFromSaveB: SaveWarningCode[] = [];
 
@@ -17,7 +18,7 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentMergeSucceeded('merged.json', 'merged content', noWarningsFromSaveA, noWarningsFromSaveB);
+      presenter.presentMergeSucceeded('merged.json', 'merged content', noIssuesFromTheMergedSave, noWarningsFromSaveA, noWarningsFromSaveB);
 
       // Assert
       expect<MergeResultViewModel>(presenter.viewModel).toEqual({
@@ -25,6 +26,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeFailureMessage: '',
+        mergedSaveErrors: [],
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
@@ -37,7 +39,7 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentMergeSucceeded('merged.json', 'merged content', ['legacy-save-format'], noWarningsFromSaveB);
+      presenter.presentMergeSucceeded('merged.json', 'merged content', noIssuesFromTheMergedSave, ['legacy-save-format'], noWarningsFromSaveB);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAWarnings).toEqual([{
@@ -45,6 +47,52 @@ describe('MergeResultPresenter', () => {
         location: null
       }]);
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBWarnings).toEqual([]);
+    });
+  });
+
+  describe('When presenting a merge success whose produced save does not pass validation', () => {
+    it('should keep the success status, the file name and the content of the produced save', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentMergeSucceeded(
+        'merged.json',
+        'merged content',
+        [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: 2}],
+        noWarningsFromSaveA,
+        noWarningsFromSaveB
+      );
+
+      // Assert
+      expect<MergeResultViewModel>(presenter.viewModel).toEqual({
+        status: 'success',
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergeFailureMessage: '',
+        mergedSaveErrors: [{message: 'Expected exactly one host player, found 2', location: 'Players (section 2)'}],
+        saveAErrors: [],
+        saveBErrors: [],
+        saveAWarnings: [],
+        saveBWarnings: []
+      });
+    });
+
+    it('should tell where in the produced save each error was found', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentMergeSucceeded(
+        'merged.json',
+        'merged content',
+        [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 3, entryIndex: 12}],
+        noWarningsFromSaveA,
+        noWarningsFromSaveB
+      );
+
+      // Assert
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.mergedSaveErrors).toEqual([{message: 'must have required property gId', location: 'World objects (section 3), entry 12'}]);
     });
   });
 
@@ -67,6 +115,7 @@ describe('MergeResultPresenter', () => {
         fileName: '',
         content: '',
         mergeFailureMessage: '',
+        mergedSaveErrors: [],
         saveAErrors: [{message: 'Invalid JSON: contentA', location: null}],
         saveBErrors: [],
         saveAWarnings: [],
@@ -125,6 +174,7 @@ describe('MergeResultPresenter', () => {
         fileName: '',
         content: '',
         mergeFailureMessage: 'The merge could not produce a usable save file. Both save files were left untouched.',
+        mergedSaveErrors: [],
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
