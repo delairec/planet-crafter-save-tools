@@ -18,7 +18,13 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentMergeSucceeded('merged.json', 'merged content', noIssuesFromTheMergedSave, noWarningsFromSaveA, noWarningsFromSaveB);
+      presenter.presentMergeSucceeded({
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergedSaveIssues: noIssuesFromTheMergedSave,
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
 
       // Assert
       expect<MergeResultViewModel>(presenter.viewModel).toEqual({
@@ -39,7 +45,13 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentMergeSucceeded('merged.json', 'merged content', noIssuesFromTheMergedSave, ['legacy-save-format'], noWarningsFromSaveB);
+      presenter.presentMergeSucceeded({
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergedSaveIssues: noIssuesFromTheMergedSave,
+        saveAWarnings: ['legacy-save-format'],
+        saveBWarnings: noWarningsFromSaveB
+      });
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAWarnings).toEqual([{
@@ -56,13 +68,13 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentMergeSucceeded(
-        'merged.json',
-        'merged content',
-        [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: 2}],
-        noWarningsFromSaveA,
-        noWarningsFromSaveB
-      );
+      presenter.presentMergeSucceeded({
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergedSaveIssues: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: 2}],
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
 
       // Assert
       expect<MergeResultViewModel>(presenter.viewModel).toEqual({
@@ -83,13 +95,13 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentMergeSucceeded(
-        'merged.json',
-        'merged content',
-        [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 3, entryIndex: 12}],
-        noWarningsFromSaveA,
-        noWarningsFromSaveB
-      );
+      presenter.presentMergeSucceeded({
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergedSaveIssues: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 3, entryIndex: 12}],
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.mergedSaveErrors).toEqual([{message: 'must have required property gId', location: 'World objects (section 3), entry 12'}]);
@@ -102,12 +114,12 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentSaveFilesInvalid(
-        [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'}],
-        noErrorsFromSaveB,
-        noWarningsFromSaveA,
-        noWarningsFromSaveB
-      );
+      presenter.presentSaveFilesInvalid({
+        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'}],
+        saveBErrors: noErrorsFromSaveB,
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
 
       // Assert
       expect<MergeResultViewModel>(presenter.viewModel).toEqual({
@@ -128,12 +140,12 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentSaveFilesInvalid(
-        [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'}],
-        noErrorsFromSaveB,
-        noWarningsFromSaveA,
-        ['legacy-save-format']
-      );
+      presenter.presentSaveFilesInvalid({
+        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'}],
+        saveBErrors: noErrorsFromSaveB,
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: ['legacy-save-format']
+      });
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBWarnings).toEqual([{
@@ -147,12 +159,12 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentSaveFilesInvalid(
-        [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: { broken', section: 2, entryIndex: 1}],
-        [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 4, entryIndex: 0}],
-        noWarningsFromSaveA,
-        noWarningsFromSaveB
-      );
+      presenter.presentSaveFilesInvalid({
+        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: { broken', section: 2, entryIndex: 1}],
+        saveBErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 4, entryIndex: 0}],
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAErrors).toEqual([{message: 'Invalid JSON: { broken', location: 'Players (section 2), entry 1'}]);

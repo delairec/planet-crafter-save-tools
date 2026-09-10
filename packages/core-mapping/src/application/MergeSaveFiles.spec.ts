@@ -34,7 +34,13 @@ describe('MergeSaveFiles', () => {
       await useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith('Save-A-Save-B-merged.json', 'merged content', noIssuesFromTheMergedSave, [], []);
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
+        fileName: 'Save-A-Save-B-merged.json',
+        content: 'merged content',
+        mergedSaveIssues: noIssuesFromTheMergedSave,
+        saveAWarnings: [],
+        saveBWarnings: []
+      });
     });
   });
 
@@ -53,7 +59,12 @@ describe('MergeSaveFiles', () => {
 
       // Assert
       expect(merger.merge).not.toHaveBeenCalled();
-      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith([invalidJsonError], [], [], []);
+      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
+        saveAErrors: [invalidJsonError],
+        saveBErrors: [],
+        saveAWarnings: [],
+        saveBWarnings: []
+      });
     });
   });
 
@@ -75,7 +86,12 @@ describe('MergeSaveFiles', () => {
       expect(validator.validate).toHaveBeenCalledWith('Save-A.txt', 'contentA');
       expect(validator.validate).toHaveBeenCalledWith('Save-B.json', 'contentB');
       expect(merger.merge).not.toHaveBeenCalled();
-      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith([invalidExtensionError], [], [], []);
+      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
+        saveAErrors: [invalidExtensionError],
+        saveBErrors: [],
+        saveAWarnings: [],
+        saveBWarnings: []
+      });
     });
   });
 
@@ -92,7 +108,13 @@ describe('MergeSaveFiles', () => {
       useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith('Save-A-Save-B-merged.json', 'merged content', noIssuesFromTheMergedSave, ['legacy-save-format'], []);
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
+        fileName: 'Save-A-Save-B-merged.json',
+        content: 'merged content',
+        mergedSaveIssues: noIssuesFromTheMergedSave,
+        saveAWarnings: ['legacy-save-format'],
+        saveBWarnings: []
+      });
     });
 
     it('should present the warnings of each save when the merge is rejected', () => {
@@ -108,7 +130,12 @@ describe('MergeSaveFiles', () => {
       useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith([], [invalidJsonError], ['legacy-save-format'], []);
+      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
+        saveAErrors: [],
+        saveBErrors: [invalidJsonError],
+        saveAWarnings: ['legacy-save-format'],
+        saveBWarnings: []
+      });
     });
   });
 
@@ -129,7 +156,13 @@ describe('MergeSaveFiles', () => {
       await useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith('Save-A-Save-B-merged.json', 'merged content', [uniqueHostError], [], []);
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
+        fileName: 'Save-A-Save-B-merged.json',
+        content: 'merged content',
+        mergedSaveIssues: [uniqueHostError],
+        saveAWarnings: [],
+        saveBWarnings: []
+      });
     });
 
     it('should not blame the input files, which validation has already accepted', async () => {

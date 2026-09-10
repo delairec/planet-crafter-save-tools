@@ -1,6 +1,8 @@
-import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
-import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveWarningCode} from "shared-save-processing/gameDefinitions";
+import {
+  MergeResultPresenterPort,
+  MergeSucceededOutcome,
+  SaveFilesInvalidOutcome
+} from "../application/ports/MergeResultPresenterPort";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
@@ -27,7 +29,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     return this._viewModel;
   }
 
-  presentMergeSucceeded(fileName: string, content: string, mergedSaveIssues: ValidationIssue[], saveAWarnings: SaveWarningCode[], saveBWarnings: SaveWarningCode[]): void {
+  presentMergeSucceeded({fileName, content, mergedSaveIssues, saveAWarnings, saveBWarnings}: MergeSucceededOutcome): void {
     this._viewModel = {
       status: 'success',
       fileName,
@@ -41,7 +43,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     };
   }
 
-  presentSaveFilesInvalid(saveAErrors: ValidationIssue[], saveBErrors: ValidationIssue[], saveAWarnings: SaveWarningCode[], saveBWarnings: SaveWarningCode[]): void {
+  presentSaveFilesInvalid({saveAErrors, saveBErrors, saveAWarnings, saveBWarnings}: SaveFilesInvalidOutcome): void {
     this._viewModel = {
       status: 'validationError',
       fileName: '',
