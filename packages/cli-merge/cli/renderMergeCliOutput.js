@@ -56,6 +56,21 @@ export function renderMergeWarnings(folder, saveAWarnings, saveBWarnings) {
 }
 
 /**
+ * @param {string} folder
+ * @param {SaveValidationMessageViewModel[]} mergedSaveErrors
+ */
+export function renderMergedSaveIssues(folder, mergedSaveErrors) {
+  if (mergedSaveErrors.length === 0) {
+    return;
+  }
+
+  console.error(`✖ Folder "${folder}" was merged, but the save file written does not pass validation:`);
+  for (const error of mergedSaveErrors) {
+    console.error(`  ${formatMessageLine(error)}`);
+  }
+}
+
+/**
  * Reports a folder left out of the merge because it does not hold the two save files a merge takes.
  * @param {string} folder
  * @param {number} jsonFileCount

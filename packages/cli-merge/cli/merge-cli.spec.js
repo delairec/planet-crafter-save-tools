@@ -199,6 +199,24 @@ describe('Merge CLI', () => {
       // Assert
       expect(consoleLogSpy).toHaveBeenCalledWith(MERGED_SAVE_OUTPUT_PATH);
     });
+
+    it('should report nothing about a merged save that passes validation', async () => {
+      // Arrange
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readTextFile.mockImplementation((path) => {
+        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
+        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
+        return Promise.reject(new Error(`Unexpected path: ${path}`));
+      });
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(`✖ Folder "${INPUT_SUBFOLDER_ALPHA}" was merged, but the save file written does not pass validation:`);
+    });
   });
 
   describe('When no input folder contains exactly two JSON files', () => {
@@ -377,6 +395,58 @@ describe('Merge CLI', () => {
     });
 
     it('should still exit successfully, the verdict on an input file belonging to validation', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the merged save does not pass validation', () => {
+    const FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR = 'Alpha@Beta';
+    const MERGED_SAVE_PATH = `${OUTPUT_DIR}/${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}/Standard-1-Standard-2-merged.json`;
+    const SAVE_A_PATH = `input/${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}/${SAVE_A_FILENAME}`;
+    const SAVE_B_PATH = `input/${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}/${SAVE_B_FILENAME}`;
+
+    beforeEach(() => {
+      readDirectory.mockResolvedValueOnce([FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readTextFile.mockImplementation((path) => {
+        if (path === SAVE_A_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
+        if (path === SAVE_B_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
+        return Promise.reject(new Error(`Unexpected path: ${path}`));
+      });
+    });
+
+    it('should name the folder and what the save it wrote does not pass', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ Folder "${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}" was merged, but the save file written does not pass validation:`);
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  [Save configuration (section 8), entry 0] Invalid JSON: {"saveDisplayName":"Alpha');
+    });
+
+    it('should blame neither save A nor save B for a defect the merge created', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(`✖ Folder "${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}" contains an invalid save file:`);
+    });
+
+    it('should still write the merged save and announce it on stdout', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(writeTextFile.mock.calls[0][0]).toBe(MERGED_SAVE_PATH);
+      expect(consoleLogSpy).toHaveBeenCalledWith(MERGED_SAVE_PATH);
+    });
+
+    it('should still exit successfully, the merged save being there to be used', async () => {
       // Act
       await main();
 

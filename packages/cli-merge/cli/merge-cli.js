@@ -7,6 +7,7 @@ import {
   renderDone,
   renderFoldersFound,
   renderMergeCouldNotProduceASave,
+  renderMergedSaveIssues,
   renderMergeFailed,
   renderMergeSucceeded,
   renderMergeWarnings,
@@ -77,7 +78,13 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
       return false;
     }
 
-    return writeOutput(folder, viewModel.fileName, viewModel.content);
+    const mergedSaveWasWritten = await writeOutput(folder, viewModel.fileName, viewModel.content);
+
+    if (mergedSaveWasWritten) {
+      renderMergedSaveIssues(folder, viewModel.mergedSaveErrors);
+    }
+
+    return mergedSaveWasWritten;
   }
 
   /** @returns {Promise<boolean>} whether the merged save reached the output directory. */
