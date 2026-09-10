@@ -31,7 +31,6 @@ describe('Merge CLI', () => {
       readTextFile,
       writeTextFile,
       joinPath: (...segments) => segments.join('/'),
-      getBasename: (path, ext) => ext ? path.replace(ext, '') : path,
       isEntryPoint: () => false,
       exitProcess,
     };

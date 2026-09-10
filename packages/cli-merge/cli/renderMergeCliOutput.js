@@ -26,8 +26,12 @@ export function renderMergeSucceeded(outputPath) {
  */
 export function renderMergeFailed(folder, saveAErrors, saveBErrors) {
   console.error(`✖ Folder "${folder}" contains an invalid save file:`);
-  for (const error of saveAErrors) console.error(`  [save A] ${formatMessageLine(error)}`);
-  for (const error of saveBErrors) console.error(`  [save B] ${formatMessageLine(error)}`);
+  for (const error of saveAErrors) {
+    console.error(`  [save A] ${formatMessageLine(error)}`);
+  }
+  for (const error of saveBErrors) {
+    console.error(`  [save B] ${formatMessageLine(error)}`);
+  }
 }
 
 /** @param {SaveValidationMessageViewModel} validationMessage */
@@ -51,8 +55,12 @@ export function renderMergeWarnings(folder, saveAWarnings, saveBWarnings) {
   }
 
   console.error(`⚠ Folder "${folder}" contains a save adapted from an older format:`);
-  for (const warning of saveAWarnings) console.error(`  [save A] ${formatMessageLine(warning)}`);
-  for (const warning of saveBWarnings) console.error(`  [save B] ${formatMessageLine(warning)}`);
+  for (const warning of saveAWarnings) {
+    console.error(`  [save A] ${formatMessageLine(warning)}`);
+  }
+  for (const warning of saveBWarnings) {
+    console.error(`  [save B] ${formatMessageLine(warning)}`);
+  }
 }
 
 /**

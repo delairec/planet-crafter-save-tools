@@ -28,8 +28,8 @@ const {isEntryPoint, readTextFile, exitProcess, readDirectory, writeTextFile, jo
 const CLI = initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv);
 
 if (CLI.isEntryPoint(import.meta)) {
-  CLI.main().catch(err => {
-    renderUnexpectedError(err);
+  CLI.main().catch(error => {
+    renderUnexpectedError(error);
     CLI.exitProcess(UNEXPECTED_ERROR_EXIT_CODE);
   });
 }
