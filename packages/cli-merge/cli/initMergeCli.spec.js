@@ -16,6 +16,9 @@ import {
   OUTPUT_DIR
 } from '../testing/fakePaths.js';
 
+const NO_INPUT_FOLDERS = [];
+const SINGLE_SAVE_FILENAME = 'only-one.json';
+
 describe('Merge CLI', () => {
   let consoleLogSpy;
   let consoleErrorSpy;
@@ -52,7 +55,7 @@ describe('Merge CLI', () => {
     it('should report zero folders to process and write nothing', async () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce(['only-one.json']);
+      readDirectory.mockResolvedValueOnce([SINGLE_SAVE_FILENAME]);
 
       // Act
       await main();
@@ -61,10 +64,35 @@ describe('Merge CLI', () => {
       expect(writeTextFile).not.toHaveBeenCalled();
     });
 
+    it('should exit with a distinct exit code', async () => {
+      // Arrange
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SINGLE_SAVE_FILENAME]);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(exitProcess).toHaveBeenCalledWith(2);
+    });
+
+    it('should report the issue on stderr rather than stdout', async () => {
+      // Arrange
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SINGLE_SAVE_FILENAME]);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+    });
+
     it('should warn that the folder was skipped and how many save files it holds', async () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce(['only-one.json']);
+      readDirectory.mockResolvedValueOnce([SINGLE_SAVE_FILENAME]);
 
       // Act
       await main();
@@ -139,7 +167,7 @@ describe('Merge CLI', () => {
   });
 
   describe('When a folder contains non-JSON files alongside JSON files', () => {
-    it('should ignore non-JSON files when selecting saves to merge', async () => {
+    it('should merge the two JSON saves and leave the other files alone', async () => {
       // Arrange
       const filesWithNonJson = [SAVE_A_FILENAME, 'readme.txt', SAVE_B_FILENAME, 'notes.md'];
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
@@ -209,33 +237,6 @@ describe('Merge CLI', () => {
     });
   });
 
-  describe('When no input folder contains exactly two JSON files', () => {
-    it('should exit with a distinct exit code', async () => {
-      // Arrange
-      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce(['only-one.json']);
-
-      // Act
-      await main();
-
-      // Assert
-      expect(exitProcess).toHaveBeenCalledWith(2);
-    });
-
-    it('should report the issue on stderr rather than stdout', async () => {
-      // Arrange
-      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce(['only-one.json']);
-
-      // Act
-      await main();
-
-      // Assert
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      expect(consoleLogSpy).not.toHaveBeenCalled();
-    });
-  });
-
   describe('When an input folder contains more than two JSON files', () => {
     const SAVE_C_FILENAME = 'Standard-3.json';
 
@@ -272,7 +273,7 @@ describe('Merge CLI', () => {
     it('should read save folders from that directory', async () => {
       // Arrange
       ({main} = initCli(['--input=custom-input']));
-      readDirectory.mockResolvedValueOnce([]);
+      readDirectory.mockResolvedValueOnce(NO_INPUT_FOLDERS);
 
       // Act
       await main();

@@ -135,6 +135,17 @@ describe('Merge CLI run as a Node process', () => {
     });
   });
 
+  describe('When the input directory does not exist', () => {
+    it('should name the failure in one line, without the error object', async () => {
+      // Act
+      const {exitCode, stderr} = await runMergeCliUnderNode(join(temporaryDirectory, 'absent'), outputDirectory);
+
+      // Assert
+      expect(stderr).toMatch(/^Error: ENOENT: no such file or directory, scandir '.*absent'\n$/);
+      expect(exitCode).toBe(1);
+    });
+  });
+
   describe('When an input folder holds a save in the legacy format', () => {
     it('should warn about the format adaptation without failing', async () => {
       // Arrange
