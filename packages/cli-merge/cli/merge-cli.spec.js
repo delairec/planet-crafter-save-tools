@@ -82,7 +82,6 @@ describe('Merge CLI', () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
         if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
@@ -100,7 +99,6 @@ describe('Merge CLI', () => {
     it('should write the save string merged from both inputs', async () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
@@ -128,8 +126,6 @@ describe('Merge CLI', () => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA, FOLDER_BETA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
 
       // Act
@@ -149,7 +145,6 @@ describe('Merge CLI', () => {
       const filesWithNonJson = [SAVE_A_FILENAME, 'readme.txt', SAVE_B_FILENAME, 'notes.md'];
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce(filesWithNonJson);
-      readDirectory.mockResolvedValueOnce(filesWithNonJson);
       readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
 
       // Act
@@ -166,7 +161,6 @@ describe('Merge CLI', () => {
     it('should exit with code 0', async () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
@@ -185,7 +179,6 @@ describe('Merge CLI', () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
         if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
@@ -202,7 +195,6 @@ describe('Merge CLI', () => {
     it('should report nothing about a merged save that passes validation', async () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
@@ -297,7 +289,6 @@ describe('Merge CLI', () => {
       ({main} = initCli(['--output=custom-output']));
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
         if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
@@ -315,7 +306,6 @@ describe('Merge CLI', () => {
   describe('When an input save is in the legacy format', () => {
     beforeEach(() => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_INPUT_PATH) return Promise.resolve(LEGACY_FAKE_SAVE_STRING_A);
@@ -360,7 +350,6 @@ describe('Merge CLI', () => {
   describe('When a folder contains a save with an invalid entry', () => {
     beforeEach(() => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_WITH_INVALID_ENTRY);
@@ -411,7 +400,6 @@ describe('Merge CLI', () => {
     beforeEach(() => {
       readDirectory.mockResolvedValueOnce([FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockImplementation((path) => {
         if (path === SAVE_A_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
         if (path === SAVE_B_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
@@ -459,7 +447,6 @@ describe('Merge CLI', () => {
 
     beforeEach(() => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
-      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
       writeTextFile.mockImplementation(() => Promise.reject(new Error(WRITE_FAILURE_REASON)));

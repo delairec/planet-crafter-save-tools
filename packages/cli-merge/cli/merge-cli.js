@@ -37,26 +37,29 @@ if (CLI.isEntryPoint(import.meta)) {
 export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = []) {
   const {inputDir, outputDir} = parseMergeCliArguments(argv);
 
-  async function filterByValidSaveFolders(folders) {
-    const results = [];
+  /**
+   * @param {string[]} folders
+   * @returns {Promise<{folder: string, fileNameA: string, fileNameB: string}[]>}
+   */
+  async function findMergeableFolders(folders) {
+    const mergeableFolders = [];
     for (const folder of folders) {
-      const files = await readDirectory(joinPath(inputDir, folder));
-      const jsonFileCount = files.filter(isJson).length;
+      const saveFileNames = (await readDirectory(joinPath(inputDir, folder))).filter(isJson).sort();
 
-      if (jsonFileCount === MERGEABLE_SAVE_FILES_COUNT) {
-        results.push(folder);
+      if (saveFileNames.length === MERGEABLE_SAVE_FILES_COUNT) {
+        const [fileNameA, fileNameB] = saveFileNames;
+        mergeableFolders.push({folder, fileNameA, fileNameB});
       } else {
-        renderSkippedFolder(folder, jsonFileCount);
+        renderSkippedFolder(folder, saveFileNames.length);
       }
     }
-    return results;
+    return mergeableFolders;
   }
 
   /** @returns {Promise<boolean>} whether the run may go on. */
-  async function processFolder(folder) {
+  async function processFolder({folder, fileNameA, fileNameB}) {
     renderProcessingFolder(folder);
     const folderPath = joinPath(inputDir, folder);
-    const [fileNameA, fileNameB] = (await readDirectory(folderPath)).filter(isJson).sort();
 
     const viewModel = await MergeSaveFilesController.mergeSaveFiles({
       fileNameA,
@@ -108,17 +111,17 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
 
   async function main() {
     const inputFolders = await readDirectory(inputDir);
-    const validSaveFolders = await filterByValidSaveFolders(inputFolders);
+    const mergeableFolders = await findMergeableFolders(inputFolders);
 
-    if (validSaveFolders.length === 0) {
+    if (mergeableFolders.length === 0) {
       renderNoValidFolders(inputDir);
       exitProcess(NO_VALID_FOLDERS_EXIT_CODE);
       return;
     }
 
-    renderFoldersFound(validSaveFolders.length);
-    for (const folder of validSaveFolders) {
-      const runCanGoOn = await processFolder(folder);
+    renderFoldersFound(mergeableFolders.length);
+    for (const mergeableFolder of mergeableFolders) {
+      const runCanGoOn = await processFolder(mergeableFolder);
       if (!runCanGoOn) {
         exitProcess(UNEXPECTED_ERROR_EXIT_CODE);
         return;
