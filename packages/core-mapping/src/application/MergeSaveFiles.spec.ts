@@ -10,7 +10,7 @@ describe('MergeSaveFiles', () => {
 
   const MERGED_SAVE = {fileName: 'Save-A-Save-B-merged.json', content: 'merged content'};
   const TWO_VALID_SAVES = {fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'};
-  const noIssuesFromTheMergedSave: ValidationIssue[] = [];
+  const noErrorsFromTheMerge: ValidationIssue[] = [];
 
   interface UseCaseOverrides {
     validate?: SaveValidatorPort['validate'];
@@ -37,7 +37,7 @@ describe('MergeSaveFiles', () => {
       expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
         fileName: 'Save-A-Save-B-merged.json',
         content: 'merged content',
-        mergedSaveIssues: noIssuesFromTheMergedSave,
+        mergeErrors: noErrorsFromTheMerge,
         saveAWarnings: [],
         saveBWarnings: []
       });
@@ -111,7 +111,7 @@ describe('MergeSaveFiles', () => {
       expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
         fileName: 'Save-A-Save-B-merged.json',
         content: 'merged content',
-        mergedSaveIssues: noIssuesFromTheMergedSave,
+        mergeErrors: noErrorsFromTheMerge,
         saveAWarnings: ['legacy-save-format'],
         saveBWarnings: []
       });
@@ -159,7 +159,7 @@ describe('MergeSaveFiles', () => {
       expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
         fileName: 'Save-A-Save-B-merged.json',
         content: 'merged content',
-        mergedSaveIssues: [uniqueHostError],
+        mergeErrors: [uniqueHostError],
         saveAWarnings: [],
         saveBWarnings: []
       });

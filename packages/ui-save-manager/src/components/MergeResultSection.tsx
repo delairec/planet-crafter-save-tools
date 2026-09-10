@@ -59,9 +59,9 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
                                                                                              href={downloadUrl() ?? undefined}
                                                                                              download={props.result()!.fileName}>{mergeResultSectionDownloadLinkLabel}</a>
         </p>
-        <Show when={props.result()!.mergedSaveErrors.length > 0}>
+        <Show when={props.result()!.mergeErrors.length > 0}>
           <ValidationMessagesList title={mergeResultSectionMergedSaveInvalidMessage} severity="danger"
-                                  messages={props.result()!.mergedSaveErrors}/>
+                                  messages={props.result()!.mergeErrors}/>
         </Show>
       </Show>
 

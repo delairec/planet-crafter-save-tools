@@ -42,7 +42,7 @@ export class MergeSaveFiles {
     this.presenter.presentMergeSucceeded({
       fileName: mergedSave.fileName,
       content: mergedSave.content,
-      mergedSaveIssues: mergedSaveValidation.errors,
+      mergeErrors: mergedSaveValidation.errors,
       saveAWarnings: validationA.warnings,
       saveBWarnings: validationB.warnings
     });

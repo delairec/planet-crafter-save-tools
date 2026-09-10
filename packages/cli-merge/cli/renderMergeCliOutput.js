@@ -57,15 +57,15 @@ export function renderMergeWarnings(folder, saveAWarnings, saveBWarnings) {
 
 /**
  * @param {string} folder
- * @param {SaveValidationMessageViewModel[]} mergedSaveErrors
+ * @param {SaveValidationMessageViewModel[]} mergeErrors
  */
-export function renderMergedSaveIssues(folder, mergedSaveErrors) {
-  if (mergedSaveErrors.length === 0) {
+export function renderMergedSaveIssues(folder, mergeErrors) {
+  if (mergeErrors.length === 0) {
     return;
   }
 
   console.error(`✖ Folder "${folder}" was merged, but the save file written does not pass validation:`);
-  for (const error of mergedSaveErrors) {
+  for (const error of mergeErrors) {
     console.error(`  ${formatMessageLine(error)}`);
   }
 }

@@ -81,7 +81,7 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
     const mergedSaveWasWritten = await writeOutput(folder, viewModel.fileName, viewModel.content);
 
     if (mergedSaveWasWritten) {
-      renderMergedSaveIssues(folder, viewModel.mergedSaveErrors);
+      renderMergedSaveIssues(folder, viewModel.mergeErrors);
     }
 
     return mergedSaveWasWritten;

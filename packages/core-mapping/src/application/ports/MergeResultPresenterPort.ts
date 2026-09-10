@@ -4,7 +4,7 @@ import {SaveWarningCode} from "shared-save-processing/gameDefinitions";
 export interface MergeSucceededOutcome {
   fileName: string;
   content: string;
-  mergedSaveIssues: ValidationIssue[];
+  mergeErrors: ValidationIssue[];
   saveAWarnings: SaveWarningCode[];
   saveBWarnings: SaveWarningCode[];
 }

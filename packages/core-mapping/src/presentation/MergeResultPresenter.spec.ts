@@ -6,7 +6,7 @@ import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noErrorsFromSaveB: ValidationIssue[] = [];
-const noIssuesFromTheMergedSave: ValidationIssue[] = [];
+const noErrorsFromTheMerge: ValidationIssue[] = [];
 const noWarningsFromSaveA: SaveWarningCode[] = [];
 const noWarningsFromSaveB: SaveWarningCode[] = [];
 
@@ -21,7 +21,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergedSaveIssues: noIssuesFromTheMergedSave,
+        mergeErrors: noErrorsFromTheMerge,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -32,7 +32,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeFailureMessage: '',
-        mergedSaveErrors: [],
+        mergeErrors: [],
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
@@ -48,7 +48,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergedSaveIssues: noIssuesFromTheMergedSave,
+        mergeErrors: noErrorsFromTheMerge,
         saveAWarnings: ['legacy-save-format'],
         saveBWarnings: noWarningsFromSaveB
       });
@@ -71,7 +71,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergedSaveIssues: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: 2}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: 2}],
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -82,7 +82,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeFailureMessage: '',
-        mergedSaveErrors: [{message: 'Expected exactly one host player, found 2', location: 'Players (section 2)'}],
+        mergeErrors: [{message: 'Expected exactly one host player, found 2', location: 'Players (section 2)'}],
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
@@ -98,13 +98,13 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergedSaveIssues: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 3, entryIndex: 12}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 3, entryIndex: 12}],
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
 
       // Assert
-      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.mergedSaveErrors).toEqual([{message: 'must have required property gId', location: 'World objects (section 3), entry 12'}]);
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.mergeErrors).toEqual([{message: 'must have required property gId', location: 'World objects (section 3), entry 12'}]);
     });
   });
 
@@ -127,7 +127,7 @@ describe('MergeResultPresenter', () => {
         fileName: '',
         content: '',
         mergeFailureMessage: '',
-        mergedSaveErrors: [],
+        mergeErrors: [],
         saveAErrors: [{message: 'Invalid JSON: contentA', location: null}],
         saveBErrors: [],
         saveAWarnings: [],
@@ -186,7 +186,7 @@ describe('MergeResultPresenter', () => {
         fileName: '',
         content: '',
         mergeFailureMessage: 'The merge could not produce a usable save file. Both save files were left untouched.',
-        mergedSaveErrors: [],
+        mergeErrors: [],
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
