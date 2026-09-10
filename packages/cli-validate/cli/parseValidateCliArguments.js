@@ -1,13 +1,15 @@
-const FILE_FLAG = '--file=';
+import {findUnknownArguments, PLATFORM_FLAG_NAME, readFlagValue} from 'shared-platforms/cliArguments.js';
+
+const FILE_FLAG_NAME = 'file';
+const KNOWN_FLAG_NAMES = [FILE_FLAG_NAME, PLATFORM_FLAG_NAME];
 
 /**
  * @param {string[]} argv
- * @returns {{filePath: string | undefined}}
+ * @returns {{filePath: string | undefined, unknownArguments: string[]}}
  */
 export function parseValidateCliArguments(argv) {
-  const fileArgument = argv.find(argument => argument.startsWith(FILE_FLAG));
-
   return {
-    filePath: fileArgument && fileArgument.split('=')[1]
+    filePath: readFlagValue(argv, FILE_FLAG_NAME),
+    unknownArguments: findUnknownArguments(argv, KNOWN_FLAG_NAMES)
   };
 }

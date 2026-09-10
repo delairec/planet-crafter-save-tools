@@ -4,10 +4,16 @@
  * Rendering for the validate CLI. The verdict of a valid save goes to stdout, every diagnostic to stderr.
  */
 
-const USAGE_MESSAGE = 'Usage: bun validate-cli.js --file=<path-to-save-file>';
+const USAGE_MESSAGE = 'Usage: bun validate -- --file=<filepath>';
 
 export function renderUsage() {
   console.error(USAGE_MESSAGE);
+}
+
+/** @param {string[]} unknownArguments */
+export function renderUnknownArguments(unknownArguments) {
+  console.error(`✖ Unknown argument(s): ${unknownArguments.join(', ')}`);
+  renderUsage();
 }
 
 /** @param {SaveValidationMessageViewModel[]} warnings */
@@ -31,6 +37,16 @@ export function renderSaveErrors(filePath, errors) {
   for (const error of errors) {
     console.error(`  ${formatMessageLine(error)}`);
   }
+}
+
+/** @param {unknown} error */
+export function renderUnexpectedError(error) {
+  console.error(`Error: ${describeError(error)}`);
+}
+
+/** @param {unknown} error */
+function describeError(error) {
+  return error instanceof Error ? error.message : String(error);
 }
 
 /** @param {SaveValidationMessageViewModel} validationMessage */
