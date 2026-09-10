@@ -11,17 +11,19 @@ import {
   renderNoValidFolders,
   renderOutputWriteFailed,
   renderProcessingFolder,
-  renderSkippedFolder
+  renderSkippedFolder,
+  renderUnknownArguments
 } from './renderMergeCliOutput.js';
 
 const MERGEABLE_SAVE_FILES_COUNT = 2;
 const NO_VALID_FOLDERS_EXIT_CODE = 2;
+const USAGE_ERROR_EXIT_CODE = 1;
 const SUCCESS_EXIT_CODE = 0;
 
 export const UNEXPECTED_ERROR_EXIT_CODE = 1;
 
 export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = []) {
-  const {inputDir, outputDir} = parseMergeCliArguments(argv);
+  const {inputDir, outputDir, unknownArguments} = parseMergeCliArguments(argv);
 
   /**
    * @param {string[]} folders
@@ -96,6 +98,12 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
   }
 
   async function main() {
+    if (unknownArguments.length > 0) {
+      renderUnknownArguments(unknownArguments);
+      exitProcess(USAGE_ERROR_EXIT_CODE);
+      return;
+    }
+
     const inputFolders = await readDirectory(inputDir);
     const mergeableFolders = await findMergeableFolders(inputFolders);
 

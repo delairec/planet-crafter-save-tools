@@ -4,6 +4,14 @@
  * Rendering for the merge CLI. Diagnostics go to stderr, the merge result (output file paths) goes to stdout.
  */
 
+const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>]';
+
+/** @param {string[]} unknownArguments */
+export function renderUnknownArguments(unknownArguments) {
+  console.error(`✖ Unknown argument(s): ${unknownArguments.join(', ')}`);
+  console.error(USAGE_MESSAGE);
+}
+
 /** @param {number} count */
 export function renderFoldersFound(count) {
   console.error(`Found ${count} folder(s) to process.`);
