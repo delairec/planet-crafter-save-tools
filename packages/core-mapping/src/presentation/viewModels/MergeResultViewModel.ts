@@ -1,9 +1,10 @@
 import {SaveValidationMessageViewModel} from "./SaveFileValidationViewModel";
 
 export interface MergeResultViewModel {
-  status: 'idle' | 'success' | 'validationError';
+  status: 'idle' | 'success' | 'validationError' | 'mergeFailed';
   fileName: string;
   content: string;
+  mergeFailureMessage: string;
   saveAErrors: SaveValidationMessageViewModel[];
   saveBErrors: SaveValidationMessageViewModel[];
   saveAWarnings: SaveValidationMessageViewModel[];

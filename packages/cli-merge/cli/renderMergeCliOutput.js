@@ -75,5 +75,27 @@ export function renderDone() {
 
 /** @param {unknown} error */
 export function renderUnexpectedError(error) {
-  console.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
+  console.error(`Error: ${describeError(error)}`);
+}
+
+/**
+ * @param {string} folder
+ * @param {string} mergeFailureMessage
+ */
+export function renderMergeCouldNotProduceASave(folder, mergeFailureMessage) {
+  console.error(`✖ Folder "${folder}" was not merged: ${mergeFailureMessage}`);
+}
+
+/**
+ * @param {string} folder
+ * @param {string} outputPath
+ * @param {unknown} error
+ */
+export function renderOutputWriteFailed(folder, outputPath, error) {
+  console.error(`✖ Folder "${folder}" was merged but could not be written to "${outputPath}": ${describeError(error)}`);
+}
+
+/** @param {unknown} error */
+function describeError(error) {
+  return error instanceof Error ? error.message : String(error);
 }

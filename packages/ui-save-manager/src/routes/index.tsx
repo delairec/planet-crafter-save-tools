@@ -37,6 +37,7 @@ export default function Home() {
     isLoading,
     handleFileChange,
     handleSubmit,
+    handleMergeStarted,
     handleSubmitMerge
   } = useLoadSaveFile();
   const viewModels = useSectionViewModels(sections);
@@ -63,7 +64,7 @@ export default function Home() {
           <Spinner/>
         </Show>
 
-        <MergeSection onMergeResult={handleMergeResult}/>
+        <MergeSection onMergeStarted={handleMergeStarted} onMergeResult={handleMergeResult}/>
 
         <h2>{displayRouteVisualizationTitle}</h2>
 

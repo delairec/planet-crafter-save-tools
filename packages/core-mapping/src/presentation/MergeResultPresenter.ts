@@ -4,6 +4,7 @@ import {SaveWarningCode} from "shared-save-processing/gameDefinitions";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
+import {mergedSaveUnusableMessage} from "./messages/mergeFailureMessages.js";
 
 export class MergeResultPresenter implements MergeResultPresenterPort {
   private _viewModel: MergeResultViewModel;
@@ -13,6 +14,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       status: 'idle',
       fileName: '',
       content: '',
+      mergeFailureMessage: '',
       saveAErrors: [],
       saveBErrors: [],
       saveAWarnings: [],
@@ -29,6 +31,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       status: 'success',
       fileName,
       content,
+      mergeFailureMessage: '',
       saveAErrors: [],
       saveBErrors: [],
       saveAWarnings: saveAWarnings.map(formatSaveWarning),
@@ -41,10 +44,24 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       status: 'validationError',
       fileName: '',
       content: '',
+      mergeFailureMessage: '',
       saveAErrors: saveAErrors.map(formatValidationError),
       saveBErrors: saveBErrors.map(formatValidationError),
       saveAWarnings: saveAWarnings.map(formatSaveWarning),
       saveBWarnings: saveBWarnings.map(formatSaveWarning)
+    };
+  }
+
+  presentMergedSaveUnusable(): void {
+    this._viewModel = {
+      status: 'mergeFailed',
+      fileName: '',
+      content: '',
+      mergeFailureMessage: mergedSaveUnusableMessage,
+      saveAErrors: [],
+      saveBErrors: [],
+      saveAWarnings: [],
+      saveBWarnings: []
     };
   }
 }

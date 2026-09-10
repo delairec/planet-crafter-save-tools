@@ -3,6 +3,7 @@ import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeRe
 import {
   mergeResultSectionDownloadLinkLabel,
   mergeResultSectionFileCreatedMessage,
+  mergeResultSectionMergeFailedTitle,
   mergeResultSectionSaveAInvalidMessage,
   mergeResultSectionSaveAWarningsTitle,
   mergeResultSectionSaveBInvalidMessage,
@@ -21,6 +22,7 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
 
   const isSuccess = () => props.result()?.status === 'success';
   const isInvalid = () => props.result()?.status === 'validationError';
+  const hasMergeFailed = () => props.result()?.status === 'mergeFailed';
 
   createEffect(() => {
     const result = props.result();
@@ -56,6 +58,11 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
                                                                                              href={downloadUrl() ?? undefined}
                                                                                              download={props.result()!.fileName}>{mergeResultSectionDownloadLinkLabel}</a>
         </p>
+      </Show>
+
+      <Show when={hasMergeFailed()}>
+        <p class="text-color-danger">{mergeResultSectionMergeFailedTitle}</p>
+        <p>{props.result()!.mergeFailureMessage}</p>
       </Show>
 
       <Show when={isInvalid()}>

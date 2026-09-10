@@ -6,10 +6,12 @@ import {parseMergeCliArguments} from './parseMergeCliArguments.js';
 import {
   renderDone,
   renderFoldersFound,
+  renderMergeCouldNotProduceASave,
   renderMergeFailed,
   renderMergeSucceeded,
   renderMergeWarnings,
   renderNoValidFolders,
+  renderOutputWriteFailed,
   renderProcessingFolder,
   renderSkippedFolder,
   renderUnexpectedError
@@ -49,6 +51,7 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
     return results;
   }
 
+  /** @returns {Promise<boolean>} whether the run may go on. */
   async function processFolder(folder) {
     renderProcessingFolder(folder);
     const folderPath = joinPath(inputDir, folder);
@@ -64,18 +67,32 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
 
     renderMergeWarnings(folder, viewModel.saveAWarnings, viewModel.saveBWarnings);
 
-    if (viewModel.status !== 'success') {
+    if (viewModel.status === 'validationError') {
       renderMergeFailed(folder, viewModel.saveAErrors, viewModel.saveBErrors);
-      return;
+      return true;
     }
 
-    await writeOutput(folder, viewModel.fileName, viewModel.content);
+    if (viewModel.status === 'mergeFailed') {
+      renderMergeCouldNotProduceASave(folder, viewModel.mergeFailureMessage);
+      return false;
+    }
+
+    return writeOutput(folder, viewModel.fileName, viewModel.content);
   }
 
+  /** @returns {Promise<boolean>} whether the merged save reached the output directory. */
   async function writeOutput(folder, outputFileName, content) {
     const outputPath = joinPath(outputDir, folder, outputFileName);
-    await writeTextFile(outputPath, content);
+
+    try {
+      await writeTextFile(outputPath, content);
+    } catch (error) {
+      renderOutputWriteFailed(folder, outputPath, error);
+      return false;
+    }
+
     renderMergeSucceeded(outputPath);
+    return true;
   }
 
   function isJson(file) {
@@ -94,7 +111,11 @@ export function initMergeCli({isEntryPoint, readTextFile, exitProcess, readDirec
 
     renderFoldersFound(validSaveFolders.length);
     for (const folder of validSaveFolders) {
-      await processFolder(folder);
+      const runCanGoOn = await processFolder(folder);
+      if (!runCanGoOn) {
+        exitProcess(UNEXPECTED_ERROR_EXIT_CODE);
+        return;
+      }
     }
     renderDone();
     exitProcess(0);

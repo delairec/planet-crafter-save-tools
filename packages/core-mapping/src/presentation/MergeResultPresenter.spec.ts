@@ -24,6 +24,7 @@ describe('MergeResultPresenter', () => {
         status: 'success',
         fileName: 'merged.json',
         content: 'merged content',
+        mergeFailureMessage: '',
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
@@ -65,6 +66,7 @@ describe('MergeResultPresenter', () => {
         status: 'validationError',
         fileName: '',
         content: '',
+        mergeFailureMessage: '',
         saveAErrors: [{message: 'Invalid JSON: contentA', location: null}],
         saveBErrors: [],
         saveAWarnings: [],
@@ -106,6 +108,40 @@ describe('MergeResultPresenter', () => {
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAErrors).toEqual([{message: 'Invalid JSON: { broken', location: 'Players (section 2), entry 1'}]);
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBErrors).toEqual([{message: 'must have required property gId', location: 'Inventories (section 4), entry 0'}]);
+    });
+  });
+
+  describe('When presenting a merge that produced no usable save', () => {
+    it('should update the view model with the merge failure status and a sentence written for the user', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentMergedSaveUnusable();
+
+      // Assert
+      expect<MergeResultViewModel>(presenter.viewModel).toEqual({
+        status: 'mergeFailed',
+        fileName: '',
+        content: '',
+        mergeFailureMessage: 'The merge could not produce a usable save file. Both save files were left untouched.',
+        saveAErrors: [],
+        saveBErrors: [],
+        saveAWarnings: [],
+        saveBWarnings: []
+      });
+    });
+
+    it('should leave the errors of each input save empty, the merge failure being none of their doing', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentMergedSaveUnusable();
+
+      // Assert
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAErrors).toEqual([]);
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBErrors).toEqual([]);
     });
   });
 });

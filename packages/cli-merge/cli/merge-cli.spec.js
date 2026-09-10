@@ -375,5 +375,49 @@ describe('Merge CLI', () => {
       // Assert
       expect(writeTextFile).not.toHaveBeenCalled();
     });
+
+    it('should still exit successfully, the verdict on an input file belonging to validation', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the merged save cannot be written', () => {
+    const WRITE_FAILURE_REASON = 'EACCES: permission denied';
+
+    beforeEach(() => {
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
+      writeTextFile.mockImplementation(() => Promise.reject(new Error(WRITE_FAILURE_REASON)));
+    });
+
+    it('should name the folder, the output path and the reason', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ Folder "${INPUT_SUBFOLDER_ALPHA}" was merged but could not be written to "${MERGED_SAVE_OUTPUT_PATH}": ${WRITE_FAILURE_REASON}`);
+    });
+
+    it('should not announce a merged file it failed to write', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+    });
+
+    it('should exit with the failure code', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
   });
 });
