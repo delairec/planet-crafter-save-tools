@@ -6,6 +6,11 @@ on:
 
 jobs:
   claude-review:
+    # A pull request opened by Dependabot runs with a read-only token and without the
+    # repository secrets — Dependabot has its own secret store — so
+    # CLAUDE_CODE_OAUTH_TOKEN would arrive empty and every weekly update would carry a red
+    # job. A dependency version bump is not worth a review either.
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read

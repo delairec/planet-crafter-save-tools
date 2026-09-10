@@ -1,0 +1,46 @@
+# Weekly version updates for the actions referenced by the workflows and for the Bun
+# dependencies of the workspace.
+#
+# Dependabot reads this file only on the repository default branch, which is why it is
+# maintained on master and declares no target-branch: master is already the branch the
+# pull requests must target.
+version: 2
+
+updates:
+  # Every action used by the workflows is pinned on a moving major tag, so the only updates
+  # to expect here are major ones. A single group keeps them in one pull request per week.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Raised from the default of 5 on purpose: a truncated queue would hide pending updates
+    # instead of reporting them.
+    open-pull-requests-limit: 10
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "chore(ci)"
+
+  # The root directory covers the whole workspace: the root manifest declares every member
+  # under packages/ and the single bun.lock at the root resolves them all, so Dependabot
+  # reaches the member manifests from here and no explicit directories list is needed.
+  #
+  # The bun ecosystem brings version updates only, never security updates, so `bun run audit`
+  # remains the net against vulnerabilities.
+  #
+  # One single group, not a production/development split: `dependency-type` inside a group and
+  # `commit-message.prefix-development` are only honoured by bundler, composer, mix, maven, npm
+  # and pip, and bun is not among them. Splitting would read as intentional while doing nothing.
+  - package-ecosystem: "bun"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      bun-dependencies:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "chore(deps)"
