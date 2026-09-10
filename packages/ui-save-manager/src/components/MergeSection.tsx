@@ -5,6 +5,7 @@ import Spinner from '~/components/structure/Spinner';
 import {yieldToPaint} from '~/lib/yieldToPaint';
 import {
   mergeButtonLabel,
+  mergeSectionCallFailedMessage,
   mergeSectionSaveALabel,
   mergeSectionSaveBLabel,
   mergeSectionTitle
@@ -18,6 +19,7 @@ export default function MergeSection(props: MergeSectionProps) {
   const [fileA, setFileA] = createSignal<File | null>(null);
   const [fileB, setFileB] = createSignal<File | null>(null);
   const [isMerging, setIsMerging] = createSignal<boolean>(false);
+  const [hasMergeCallFailed, setHasMergeCallFailed] = createSignal<boolean>(false);
 
   const handleMerge = async () => {
     const savedFileA = fileA();
@@ -26,6 +28,7 @@ export default function MergeSection(props: MergeSectionProps) {
       return;
     }
 
+    setHasMergeCallFailed(false);
     setIsMerging(true);
     try {
       await yieldToPaint();
@@ -39,6 +42,8 @@ export default function MergeSection(props: MergeSectionProps) {
       });
 
       props.onMergeResult(viewModel);
+    } catch {
+      setHasMergeCallFailed(true);
     } finally {
       setIsMerging(false);
     }
@@ -58,6 +63,9 @@ export default function MergeSection(props: MergeSectionProps) {
       <button onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
       <Show when={isMerging()}>
         <Spinner/>
+      </Show>
+      <Show when={hasMergeCallFailed()}>
+        <p class="text-color-danger">{mergeSectionCallFailedMessage}</p>
       </Show>
     </div>
   );

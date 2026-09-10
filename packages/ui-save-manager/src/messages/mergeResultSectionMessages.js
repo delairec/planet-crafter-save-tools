@@ -5,3 +5,4 @@ export const mergeResultSectionSaveAInvalidMessage = 'Save A is not a valid save
 export const mergeResultSectionSaveBInvalidMessage = 'Save B is not a valid save file.';
 export const mergeResultSectionSaveAWarningsTitle = 'Save A warnings';
 export const mergeResultSectionSaveBWarningsTitle = 'Save B warnings';
+export const mergeResultSectionMergeFailedTitle = 'Merge failed';
