@@ -15,6 +15,7 @@ import {parseSaveSections} from './parseSaveSections.js';
 
 describe('serializeSave', () => {
   const SECTION_SEPARATOR = '\n@\n';
+  const noOptions = {};
 
   /** @type {SerializeSaveParams} */
   const emptyParams = {
@@ -27,7 +28,7 @@ describe('serializeSave', () => {
     const result = serializeSave(emptyParams);
 
     // Assert
-    expect(result).toBe('\n@\n'.repeat(9) + '\n@');
+    expect(result).toBe('\n@\n\n@\n\n@\n\n@\n\n@\n\n@\n\n@\n\n@\n\n@\n\n@');
   });
 
   it('should serialize world objects as entries separated by the entry separator', () => {
@@ -35,7 +36,7 @@ describe('serializeSave', () => {
     const params = {...emptyParams, worldObjects: [{id: 1, gId: 'Iron'}, {id: 2, gId: 'Cobalt'}]};
 
     // Act
-    const sections = serializeSave(params).split('\n@\n');
+    const sections = serializeSave(params).split(SECTION_SEPARATOR);
 
     // Assert
     expect(sections[WORLD_OBJECTS_SECTION_INDEX]).toBe('{"id":1,"gId":"Iron"}|\n{"id":2,"gId":"Cobalt"}');
@@ -46,7 +47,7 @@ describe('serializeSave', () => {
     const params = {...emptyParams, worldObjects: [{id: 1, gId: 'Tree', hunger: 50}]};
 
     // Act
-    const sections = serializeSave(params).split('\n@\n');
+    const sections = serializeSave(params).split(SECTION_SEPARATOR);
 
     // Assert
     expect(sections[WORLD_OBJECTS_SECTION_INDEX]).toBe('{"id":1,"gId":"Tree","hunger":50.0}');
@@ -55,7 +56,7 @@ describe('serializeSave', () => {
   describe('When statistics is empty', () => {
     it('should serialize the statistics section as an empty string', () => {
       // Act
-      const sections = serializeSave(emptyParams).split('\n@\n');
+      const sections = serializeSave(emptyParams).split(SECTION_SEPARATOR);
 
       // Assert
       expect(sections[STATISTICS_SECTION_INDEX]).toBe('');
@@ -68,7 +69,7 @@ describe('serializeSave', () => {
       const params = {...emptyParams, statistics: [createStatistics()]};
 
       // Act
-      const sections = serializeSave(params).split('\n@\n');
+      const sections = serializeSave(params).split(SECTION_SEPARATOR);
 
       // Assert
       expect(sections[STATISTICS_SECTION_INDEX]).toBe('{"craftedObjects":10,"totalSaveFileLoad":5,"totalSaveFileTime":3600}');
@@ -78,7 +79,7 @@ describe('serializeSave', () => {
   describe('When saveConfigurations is empty', () => {
     it('should serialize the save configuration section as an empty string', () => {
       // Act
-      const sections = serializeSave(emptyParams).split('\n@\n');
+      const sections = serializeSave(emptyParams).split(SECTION_SEPARATOR);
 
       // Assert
       expect(sections[SAVE_CONFIGURATION_SECTION_INDEX]).toBe('');
@@ -91,7 +92,7 @@ describe('serializeSave', () => {
       const params = {...emptyParams, saveConfigurations: [createSaveConfiguration()]};
 
       // Act
-      const sections = serializeSave(params).split('\n@\n');
+      const sections = serializeSave(params).split(SECTION_SEPARATOR);
 
       // Assert
       expect(sections[SAVE_CONFIGURATION_SECTION_INDEX]).toBe('{"saveDisplayName":"Merged Save","planetId":"Toxicity","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":0.1,"modifierPowerConsumption":0.2,"modifierGaugeDrain":0.3,"modifierMeteoOccurence":0.4,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"1.0","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":42,"hasPlayedIntro":true,"gameStartLocation":"Standard"}');
@@ -103,7 +104,7 @@ describe('serializeSave', () => {
     const params = {...emptyParams, terraformationLevels: [createTerraformationLevel()], players: [createPlayer()]};
 
     // Act
-    const sections = serializeSave(params).split('\n@\n');
+    const sections = serializeSave(params).split(SECTION_SEPARATOR);
 
     // Assert
     expect(sections[TERRAFORMATION_LEVELS_SECTION_INDEX]).toBe('{"planetId":"Toxicity","unitOxygenLevel":100.0,"unitHeatLevel":200.0,"unitPressureLevel":300.0,"unitPlantsLevel":400.0,"unitInsectsLevel":500.0,"unitAnimalsLevel":600.0,"unitPurificationLevel":700.0}');
@@ -114,7 +115,7 @@ describe('serializeSave', () => {
     it('should write the players section exactly as the save held it', () => {
       // Arrange
       const savedPlayersSection = '{"id":76561190000000007,"name":"Chileny","inventoryId":44,"equipmentId":45,"playerPosition":"0,0,0","playerRotation":"0,0,0,0","playerGaugeOxygen":280.0,"playerGaugeThirst":96.0,"playerGaugeHealth":72.0,"playerGaugeToxic":0.0,"host":true,"planetId":"Toxicity","cameraView":0,"totalCraftedObjects":0,"totalTerraTokenEarned":0}';
-      const save = createFakeSaveString({})
+      const save = createFakeSaveString(noOptions)
         .split(SECTION_SEPARATOR)
         .with(PLAYERS_SECTION_INDEX, savedPlayersSection)
         .join(SECTION_SEPARATOR);
