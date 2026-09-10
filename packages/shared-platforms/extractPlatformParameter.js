@@ -3,7 +3,7 @@ export const SUPPORTED_PLATFORMS = /** @type {readonly ['bun', 'node']} */ (['bu
 export function extractPlatformParameter(argv) {
   const platformArg = argv.find(arg => arg.startsWith('--platform='));
 
-  if(!platformArg) {
+  if (!platformArg) {
     return SUPPORTED_PLATFORMS[0];
   }
 

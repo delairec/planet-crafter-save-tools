@@ -16,7 +16,10 @@ export async function writeTextFile(filePath, content) {
 }
 
 export function isEntryPoint(importMeta) {
-  if (!importMeta || !importMeta.url) return false;
+  if (!importMeta || !importMeta.url) {
+    return false;
+  }
+
   const scriptPath = process.argv[1];
   const importPath = new URL(importMeta.url).pathname;
 
