@@ -43,8 +43,6 @@ function formatMessageLine({message, location}) {
 }
 
 /**
- * Reports the adaptations a save needed to match the current format. Not an error: the exit code is
- * unaffected and the merge goes on.
  * @param {string} folder
  * @param {SaveValidationMessageViewModel[]} saveAWarnings
  * @param {SaveValidationMessageViewModel[]} saveBWarnings
@@ -54,7 +52,7 @@ export function renderMergeWarnings(folder, saveAWarnings, saveBWarnings) {
     return;
   }
 
-  console.error(`⚠ Folder "${folder}" contains a save adapted from an older format:`);
+  console.error(`⚠ Folder "${folder}" has warnings on its save files:`);
   for (const warning of saveAWarnings) {
     console.error(`  [save A] ${formatMessageLine(warning)}`);
   }
