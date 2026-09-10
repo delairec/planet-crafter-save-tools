@@ -7,6 +7,7 @@ import EnergyLevelsSection from "~/components/EnergyLevelsSection";
 import MergeSection from "~/components/MergeSection";
 import MergeResultSection from "~/components/MergeResultSection";
 import {
+  displayRouteCallFailedMessage,
   displayRouteDisplayTitle,
   displayRouteErrorsTitle,
   displayRouteFileInputLabel,
@@ -35,6 +36,7 @@ export default function Home() {
     warnings,
     mergeResult,
     isLoading,
+    hasLoadCallFailed,
     handleFileChange,
     handleSubmit,
     handleMergeStarted,
@@ -44,9 +46,7 @@ export default function Home() {
 
   const handleMergeResult: typeof handleSubmitMerge = (result) => {
     handleSubmitMerge(result);
-    if (fileInputElement) {
-      fileInputElement.value = '';
-    }
+    fileInputElement.value = '';
   };
 
   return (
@@ -68,11 +68,15 @@ export default function Home() {
 
         <h2>{displayRouteVisualizationTitle}</h2>
 
-        <Show when={!errors().length && !sections() && !mergeResult()}>
+        <Show when={!errors().length && !sections() && !mergeResult() && !hasLoadCallFailed()}>
           <p class="text-color-muted">{displayRouteParsedDataPlaceholder}</p>
         </Show>
 
         <MergeResultSection result={mergeResult}/>
+
+        <Show when={hasLoadCallFailed()}>
+          <p class="text-color-danger">{displayRouteCallFailedMessage}</p>
+        </Show>
 
         <Show when={errors().length}>
           <code>{file()?.name}</code>

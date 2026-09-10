@@ -4,5 +4,6 @@ export const displayRouteFileInputLabel = 'Save file: ';
 export const displayRouteSubmitButtonLabel = 'Visualize';
 export const displayRouteVisualizationTitle = 'Visualization';
 export const displayRouteParsedDataPlaceholder = 'Parsed data will appear here.';
+export const displayRouteCallFailedMessage = 'The save file could not be displayed. Please try again.';
 export const displayRouteErrorsTitle = 'Errors';
 export const displayRouteWarningsTitle = 'Warnings';
