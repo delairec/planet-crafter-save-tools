@@ -1,3 +1,7 @@
+/**
+ * Wire DTO mirroring section 8 of the save format. Field names are the game's, abbreviations
+ * included; the domain translates them into business language at its boundary.
+ */
 export interface SaveConfiguration {
   saveDisplayName: string;
   planetId: string;
@@ -10,7 +14,6 @@ export interface SaveConfiguration {
   modifierGaugeDrain: number;
   modifierMeteoOccurence: number;
   modifierMultiplayerTerraformationFactor: number;
-  // Extra
   unlockedSpaceTrading: boolean;
   unlockedOreExtrators: boolean;
   unlockedTeleporters: boolean;

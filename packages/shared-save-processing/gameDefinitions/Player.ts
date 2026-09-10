@@ -1,3 +1,7 @@
+/**
+ * Wire DTO mirroring section 2 of the save format. Field names are the game's, abbreviations
+ * included; the domain translates them into business language at its boundary.
+ */
 export interface Player {
   /** Steam64 identifier, carried as its exact decimal text — see `int64Identifiers.js`. */
   id: string;
