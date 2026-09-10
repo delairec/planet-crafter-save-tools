@@ -14,6 +14,7 @@ export interface LoadSaveFile {
   isLoading: Accessor<boolean>;
   handleFileChange: (event: Event) => void;
   handleSubmit: () => Promise<void>;
+  handleMergeStarted: () => void;
   handleSubmitMerge: (result: MergeResultViewModel) => void;
 }
 
@@ -78,6 +79,7 @@ export function useLoadSaveFile(): LoadSaveFile {
     isLoading,
     handleFileChange,
     handleSubmit,
+    handleMergeStarted: resetDisplayFields,
     handleSubmitMerge
   };
 }

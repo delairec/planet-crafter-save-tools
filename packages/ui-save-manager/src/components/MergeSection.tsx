@@ -12,6 +12,7 @@ import {
 } from '~/messages/mergeSectionMessages';
 
 interface MergeSectionProps {
+  onMergeStarted: () => void;
   onMergeResult: (result: MergeResultViewModel) => void;
 }
 
@@ -29,6 +30,7 @@ export default function MergeSection(props: MergeSectionProps) {
     }
 
     setHasMergeCallFailed(false);
+    props.onMergeStarted();
     setIsMerging(true);
     try {
       await yieldToPaint();
