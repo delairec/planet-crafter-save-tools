@@ -29,6 +29,17 @@ describe('Merge CLI', () => {
   let exitProcess;
   let main;
 
+  function serveSaves(saveContentsByPath) {
+    readTextFile.mockImplementation(path => {
+      const saveContent = saveContentsByPath[path];
+
+      if (saveContent === undefined) {
+        return Promise.reject(new Error(`Unexpected path: ${path}`));
+      }
+      return Promise.resolve(saveContent);
+    });
+  }
+
   function initCli(argv) {
     const fakePlatform = {
       readDirectory,
@@ -110,11 +121,7 @@ describe('Merge CLI', () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
-        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
 
       // Act
       await main();
@@ -128,11 +135,7 @@ describe('Merge CLI', () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
-        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
 
       // Act
       await main();
@@ -190,11 +193,7 @@ describe('Merge CLI', () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
-        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
 
       // Act
       await main();
@@ -207,11 +206,7 @@ describe('Merge CLI', () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
-        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
 
       // Act
       await main();
@@ -224,11 +219,7 @@ describe('Merge CLI', () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
-        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
 
       // Act
       await main();
@@ -330,11 +321,7 @@ describe('Merge CLI', () => {
       ({main} = initCli(['--output=custom-output']));
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
-        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
 
       // Act
       await main();
@@ -348,11 +335,7 @@ describe('Merge CLI', () => {
     beforeEach(() => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(LEGACY_FAKE_SAVE_STRING_A);
-        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_INPUT_PATH]: LEGACY_FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
     });
 
     it('should warn about the format adaptation of the affected save', async () => {
@@ -392,11 +375,7 @@ describe('Merge CLI', () => {
     beforeEach(() => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_WITH_INVALID_ENTRY);
-        if (path === SAVE_B_INPUT_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_WITH_INVALID_ENTRY, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
     });
 
     it('should tell where in the save the error was found', async () => {
@@ -441,11 +420,7 @@ describe('Merge CLI', () => {
     beforeEach(() => {
       readDirectory.mockResolvedValueOnce([FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
-      readTextFile.mockImplementation((path) => {
-        if (path === SAVE_A_PATH) return Promise.resolve(FAKE_SAVE_STRING_A);
-        if (path === SAVE_B_PATH) return Promise.resolve(FAKE_SAVE_STRING_B);
-        return Promise.reject(new Error(`Unexpected path: ${path}`));
-      });
+      serveSaves({[SAVE_A_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_PATH]: FAKE_SAVE_STRING_B});
     });
 
     it('should name the folder and what the save it wrote does not pass', async () => {
