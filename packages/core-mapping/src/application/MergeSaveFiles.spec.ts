@@ -142,11 +142,9 @@ describe('MergeSaveFiles', () => {
   describe('When the merged save does not pass validation', () => {
     const uniqueHostError = {code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2'};
 
-    function acceptBothInputsAndRejectTheMergedSave(fileName: string, content: string) {
-      return content === MERGED_SAVE.content
-        ? {isValid: false, errors: [uniqueHostError], warnings: []}
-        : {isValid: true, errors: [], warnings: []};
-    }
+    const acceptBothInputsAndRejectTheMergedSave = (fileName: string) => fileName === MERGED_SAVE.fileName
+      ? {isValid: false, errors: [uniqueHostError], warnings: []}
+      : {isValid: true, errors: [], warnings: []};
 
     it('should present a success carrying the errors of the produced save', async () => {
       // Arrange
