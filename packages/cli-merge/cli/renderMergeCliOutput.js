@@ -4,6 +4,14 @@
  * Rendering for the merge CLI. Diagnostics go to stderr, the merge result (output file paths) goes to stdout.
  */
 
+const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>]';
+
+/** @param {string[]} unknownArguments */
+export function renderUnknownArguments(unknownArguments) {
+  console.error(`✖ Unknown argument(s): ${unknownArguments.join(', ')}`);
+  console.error(USAGE_MESSAGE);
+}
+
 /** @param {number} count */
 export function renderFoldersFound(count) {
   console.error(`Found ${count} folder(s) to process.`);
@@ -26,8 +34,12 @@ export function renderMergeSucceeded(outputPath) {
  */
 export function renderMergeFailed(folder, saveAErrors, saveBErrors) {
   console.error(`✖ Folder "${folder}" contains an invalid save file:`);
-  for (const error of saveAErrors) console.error(`  [save A] ${formatMessageLine(error)}`);
-  for (const error of saveBErrors) console.error(`  [save B] ${formatMessageLine(error)}`);
+  for (const error of saveAErrors) {
+    console.error(`  [save A] ${formatMessageLine(error)}`);
+  }
+  for (const error of saveBErrors) {
+    console.error(`  [save B] ${formatMessageLine(error)}`);
+  }
 }
 
 /** @param {SaveValidationMessageViewModel} validationMessage */
@@ -39,8 +51,6 @@ function formatMessageLine({message, location}) {
 }
 
 /**
- * Reports the adaptations a save needed to match the current format. Not an error: the exit code is
- * unaffected and the merge goes on.
  * @param {string} folder
  * @param {SaveValidationMessageViewModel[]} saveAWarnings
  * @param {SaveValidationMessageViewModel[]} saveBWarnings
@@ -50,9 +60,13 @@ export function renderMergeWarnings(folder, saveAWarnings, saveBWarnings) {
     return;
   }
 
-  console.error(`⚠ Folder "${folder}" contains a save adapted from an older format:`);
-  for (const warning of saveAWarnings) console.error(`  [save A] ${formatMessageLine(warning)}`);
-  for (const warning of saveBWarnings) console.error(`  [save B] ${formatMessageLine(warning)}`);
+  console.error(`⚠ Folder "${folder}" has warnings on its save files:`);
+  for (const warning of saveAWarnings) {
+    console.error(`  [save A] ${formatMessageLine(warning)}`);
+  }
+  for (const warning of saveBWarnings) {
+    console.error(`  [save B] ${formatMessageLine(warning)}`);
+  }
 }
 
 /**

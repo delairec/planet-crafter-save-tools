@@ -135,6 +135,17 @@ describe('Merge CLI run as a Node process', () => {
     });
   });
 
+  describe('When the input directory does not exist', () => {
+    it('should name the failure in one line, without the error object', async () => {
+      // Act
+      const {exitCode, stderr} = await runMergeCliUnderNode(join(temporaryDirectory, 'absent'), outputDirectory);
+
+      // Assert
+      expect(stderr).toMatch(/^Error: ENOENT: no such file or directory, scandir '.*absent'\n$/);
+      expect(exitCode).toBe(1);
+    });
+  });
+
   describe('When an input folder holds a save in the legacy format', () => {
     it('should warn about the format adaptation without failing', async () => {
       // Arrange
@@ -144,7 +155,7 @@ describe('Merge CLI run as a Node process', () => {
       const {exitCode, stderr} = await runMergeCliUnderNode(inputDirectory, outputDirectory);
 
       // Assert
-      expect(stderr).toContain(`⚠ Folder "${SAVE_FOLDER_NAME}" contains a save adapted from an older format:`);
+      expect(stderr).toContain(`⚠ Folder "${SAVE_FOLDER_NAME}" has warnings on its save files:`);
       expect(stderr).toContain('  [save A] This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.');
       expect(exitCode).toBe(0);
     });

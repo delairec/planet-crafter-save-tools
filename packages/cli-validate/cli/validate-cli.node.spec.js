@@ -76,6 +76,17 @@ describe('Validate CLI run as a Node process', () => {
     });
   });
 
+  describe('When the save file does not exist', () => {
+    it('should name the failure in one line, without the error object', async () => {
+      // Act
+      const {exitCode, stderr} = await runValidateCliUnderNode(join(temporaryDirectory, 'absent.json'));
+
+      // Assert
+      expect(stderr).toMatch(/^Error: ENOENT: no such file or directory, open '.*absent\.json'\n$/);
+      expect(exitCode).toBe(1);
+    });
+  });
+
   describe('When the save file holds an invalid entry', () => {
     it('should name the error with its location and fail', async () => {
       // Arrange

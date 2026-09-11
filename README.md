@@ -22,7 +22,7 @@ This is a Bun workspace monorepo, organized around Clean Architecture package pr
 | Package                  | Role                                                                                                                    |
 |--------------------------|-------------------------------------------------------------------------------------------------------------------------|
 | `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                  |
-| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node.                                                        |
+| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` arguments.           |
 | `util-types`             | `RuntimePlatform` contract type, consumed (type-only) by `shared-platforms`.                                            |
 | `core-mapping`           | Domain/application/infrastructure/presentation layers: merge and validation engines, use cases, controllers, presenters. |
 | `cli-merge`              | Thin CLI: parses `--input`/`--output` arguments and delegates to `core-mapping`.                                        |
@@ -89,6 +89,10 @@ bun validate -- --file=<filepath>
 ```
 
 Validates a json save file against the json schemas stored in this project. This is useful mostly for debugging.
+
+Both commands accept `--name=value` arguments only, and act on none they do not know: an argument such as `--inpt=x`,
+`--input x` or a bare `--file` is named on stderr with a usage message, and the command exits with code `1` without
+reading anything. The value is taken whole, so a path or a directory name may hold an equals sign.
 
 ```
 bun test
