@@ -3,6 +3,8 @@ import {MergeSaveFiles} from './MergeSaveFiles';
 import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {SaveFilesMergerPort} from './ports/SaveFilesMergerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
+import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
+import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
 import {InvalidSaveDataError} from '../domain/errors/InvalidSaveDataError';
 
@@ -40,7 +42,7 @@ describe('MergeSaveFiles', () => {
         mergeErrors: noErrorsFromTheMerge,
         saveAWarnings: [],
         saveBWarnings: []
-      });
+      } satisfies MergeSucceededResponse);
     });
   });
 
@@ -64,7 +66,7 @@ describe('MergeSaveFiles', () => {
         saveBErrors: [],
         saveAWarnings: [],
         saveBWarnings: []
-      });
+      } satisfies SaveFilesInvalidResponse);
     });
   });
 
@@ -91,7 +93,7 @@ describe('MergeSaveFiles', () => {
         saveBErrors: [],
         saveAWarnings: [],
         saveBWarnings: []
-      });
+      } satisfies SaveFilesInvalidResponse);
     });
   });
 
@@ -114,7 +116,7 @@ describe('MergeSaveFiles', () => {
         mergeErrors: noErrorsFromTheMerge,
         saveAWarnings: ['legacy-save-format'],
         saveBWarnings: []
-      });
+      } satisfies MergeSucceededResponse);
     });
 
     it('should present the warnings of each save when the merge is rejected', () => {
@@ -135,7 +137,7 @@ describe('MergeSaveFiles', () => {
         saveBErrors: [invalidJsonError],
         saveAWarnings: ['legacy-save-format'],
         saveBWarnings: []
-      });
+      } satisfies SaveFilesInvalidResponse);
     });
   });
 
@@ -160,7 +162,7 @@ describe('MergeSaveFiles', () => {
         mergeErrors: [uniqueHostError],
         saveAWarnings: [],
         saveBWarnings: []
-      });
+      } satisfies MergeSucceededResponse);
     });
 
     it('should not blame the input files, which validation has already accepted', async () => {
