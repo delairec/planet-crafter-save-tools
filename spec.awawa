@@ -390,27 +390,6 @@ DECISION LExperimentationAwawaEstReversibleParUnTagPasParUneBranche
 		+ "prefixe pcst/ le desambigue"
 	SOURCE "decision du 2026-09-11, session d'installation d'awawa"
 
-DECISION LeCorpusNeGardeQueCeQuiEviteDeRefaireUneErreur
-	DESC "une entite dont la matiere est portee ailleurs est supprimee du corpus, pas conservee en"
-		+ "superseded"
-	DESC "ce qui reste : la regle en vigueur, et ce qui empeche de refaire une erreur deja faite"
-	DESC "ce qui part : l'historique d'un montage remplace, dont plus rien ne depend"
-	DESC "une entite qui reste superseded nomme toujours sa successeure ; la suppression ne"
-		+ "dispense pas de l'arete, elle la rend sans objet"
-		REF @DECISION.UneDecisionRetireeNommeSaSuccesseure
-	STATUS specified
-	RATIONALE "le corpus est un instrument de decision, pas un journal : la chronologie se lit dans"
-		+ "git et dans les pull requests, et chaque entite morte gardee est une ligne que status"
-		+ "compte et qu'un lecteur doit ecarter"
-	RATIONALE "la garde est l'arete entrante : verifier par refs qu'une suppression ne laisse"
-		+ "aucune reference pendante, et que ce qui devait survivre est porte par la successeure,"
-		+ "avant de supprimer"
-	REJECTED "garder toute entite remplacee en superseded : le gating la rend invisible en"
-		+ "recuperation, elle reste dans le fichier et dans chaque comptage"
-	REJECTED "supprimer sans verifier les referents : une reference pendante casse le lint, et une"
-		+ "successeure orpheline ne dit plus ce qu'elle remplace"
-	SOURCE "decision du 2026-09-12"
-
 DECISION UneLimitationAccepteeGardeSaMatiereDansLaDecision
 	DESC "une limitation acceptee se modelise en question superseded plus decision qui la ferme, et"
 		+ "c'est la decision qui porte symptome, cause et garde"

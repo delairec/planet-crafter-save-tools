@@ -75,10 +75,6 @@ entité `SEC` (@DECISION.LesMesuresDeSecuriteSontDesEntitesSEC), une tâche une 
 (@DECISION.UneTacheFusionneeResteDansLeCorpus). Une nouvelle tâche s'écrit avec `awawa new TASK T40 .` ; la famille
 d'outillage du dépôt, hors chantier de conformité, garde ses numéros `DEP{N}`.
 
-**Le corpus ne garde que ce qui évite de refaire une erreur.** Une entité dont la matière est portée ailleurs est
-supprimée, pas conservée en `superseded` : la chronologie se lit dans git et dans les pull requests
-(@DECISION.LeCorpusNeGardeQueCeQuiEviteDeRefaireUneErreur).
-
 **Langue** : `spec.awawa` et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
 générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, `docs/`,
 commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts
