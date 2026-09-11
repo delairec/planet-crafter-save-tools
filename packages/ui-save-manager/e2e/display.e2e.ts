@@ -31,6 +31,7 @@ test.describe('Save display', () => {
 
       // Assert
       await expect(page.getByText('The save file could not be displayed. Please try again.')).toBeVisible();
+      await expect(page.getByLabel('Save file:')).toHaveValue(/valid-save\.json$/);
       await expect(page.getByRole('button', {name: 'Visualize'})).toBeEnabled();
     });
   });
