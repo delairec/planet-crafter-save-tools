@@ -1,4 +1,4 @@
-import {Accessor, createSignal} from 'solid-js';
+import {Accessor, createSignal, JSX} from 'solid-js';
 import {LoadAndValidateSaveFileController} from "core-mapping/controllers/LoadAndValidateSaveFileController";
 import {MergeResultViewModel} from "core-mapping/presentation/viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
@@ -12,7 +12,8 @@ export interface LoadSaveFile {
   warnings: Accessor<SaveValidationMessageViewModel[]>;
   mergeResult: Accessor<MergeResultViewModel | null>;
   isLoading: Accessor<boolean>;
-  handleFileChange: (event: Event) => void;
+  hasLoadCallFailed: Accessor<boolean>;
+  handleFileChange: JSX.EventHandler<HTMLInputElement, Event>;
   handleSubmit: () => Promise<void>;
   handleMergeStarted: () => void;
   handleSubmitMerge: (result: MergeResultViewModel) => void;
@@ -25,21 +26,19 @@ export function useLoadSaveFile(): LoadSaveFile {
   const [warnings, setWarnings] = createSignal<SaveValidationMessageViewModel[]>([]);
   const [mergeResult, setMergeResult] = createSignal<MergeResultViewModel | null>(null);
   const [isLoading, setIsLoading] = createSignal<boolean>(false);
+  const [hasLoadCallFailed, setHasLoadCallFailed] = createSignal<boolean>(false);
 
   const resetDisplayFields = () => {
     setErrors([]);
     setWarnings([]);
     setSections(null);
     setMergeResult(null);
+    setHasLoadCallFailed(false);
   };
 
-  const handleFileChange = (event: Event) => {
+  const handleFileChange: JSX.EventHandler<HTMLInputElement, Event> = (event) => {
     resetDisplayFields();
-
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      setFile(input.files[0]);
-    }
+    setFile(event.currentTarget.files?.[0] ?? null);
   };
 
   const handleSubmit = async () => {
@@ -60,6 +59,9 @@ export function useLoadSaveFile(): LoadSaveFile {
       setSections(viewModel.sections);
       setErrors(viewModel.errors);
       setWarnings(viewModel.warnings);
+    } catch (error) {
+      console.error(error);
+      setHasLoadCallFailed(true);
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +69,7 @@ export function useLoadSaveFile(): LoadSaveFile {
 
   const handleSubmitMerge = (result: MergeResultViewModel) => {
     resetDisplayFields();
+    setFile(null);
     setMergeResult(result);
   };
 
@@ -77,6 +80,7 @@ export function useLoadSaveFile(): LoadSaveFile {
     warnings,
     mergeResult,
     isLoading,
+    hasLoadCallFailed,
     handleFileChange,
     handleSubmit,
     handleMergeStarted: resetDisplayFields,
