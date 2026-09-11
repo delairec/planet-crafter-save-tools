@@ -44,7 +44,8 @@ export default function MergeSection(props: MergeSectionProps) {
       });
 
       props.onMergeResult(viewModel);
-    } catch {
+    } catch (error) {
+      console.error(error);
       setHasMergeCallFailed(true);
     } finally {
       setIsMerging(false);
