@@ -1,1 +1,2345 @@
-.do-not-commit/planet-crafter-save-tools/spec.awawa
+// Corpus de spécification de planet-crafter-save-tools.
+//
+// Il vit à la racine du dépôt public, qui est aussi la racine de workspace — c'est de là que les
+// ancres IMPL résolvent. Voir @DECISION.LeCorpusVitDansLeDepotPublic.
+//
+// Langue : français, par exception à la règle anglaise du dépôt public
+// (@DECISION.LaSpecificationResteEnFrancaisMemePubliee).
+PROJECT PlanetCrafterSaveTools
+	DESC "outils de fusion et de validation de sauvegardes du jeu The Planet Crafter"
+	DESC "monorepo Bun, packages prefixes par leur couche, UI SolidStart"
+
+SCHEMA PROJECT
+	DESC "configuration de niveau projet, exactement une par corpus"
+
+SCHEMA *
+	DESC "champs licites sur toute entite de ce corpus"
+	FIELD DESC string
+		REPEATABLE
+		FIELD REF reference
+			REPEATABLE
+			DESC "l'entite que cette phrase nomme, pour qu'elle soit indexee"
+	FIELD RATIONALE string
+		REPEATABLE
+		CATEGORY reasoning
+		FIELD REF reference
+			REPEATABLE
+	FIELD SPEC string
+		REPEATABLE
+		FIELD IMPL anchor
+			REPEATABLE
+	FIELD STATUS draft|specified|implemented|superseded
+		DEFAULT draft
+	FIELD SOURCE string
+		REPEATABLE
+		DESC "ou cela a ete decide ou lu : date, numero de PR, revue"
+	FIELD IMPL anchor
+		REPEATABLE
+		DESC "ou cela est realise, pour une entite qui ne porte pas de SPEC"
+	FIELD SUPERSEDES reference
+		DESC "l'entite que celle-ci remplace ; les rapports impriment SUPERSEDED_BY sur l'ancienne"
+		CONVERSE SUPERSEDED_BY
+	WHEN STATUS specified
+		GATE error
+	WHEN STATUS implemented
+		GATE error
+		FIELD SPEC
+			REQUIRED
+			FIELD IMPL
+				REQUIRED
+	WHEN STATUS superseded
+		GATE suppressed
+		INCOMING CLOSED_BY|SUPERSEDED_BY
+
+SCHEMA DECISION
+	DESC "un arbitrage, et ce qu'il a ecarte"
+	FIELD REJECTED string
+		REQUIRED
+		REPEATABLE
+		DESC "ce qui a ete envisage et ecarte"
+		FIELD REF reference
+			REPEATABLE
+	FIELD CLOSES @OPEN_QUESTION
+		REPEATABLE
+		CONVERSE CLOSED_BY
+
+SCHEMA OPEN_QUESTION
+	DESC "un point non tranche, ou une limitation dont personne n'a encore decide du sort"
+	DESC "ferme par une DECISION qui pointe ici, et passe superseded alors, jamais supprime"
+	FIELD BLOCKS reference
+		REPEATABLE
+		DESC "ce que ce point empeche ou fragilise ; l'arete inverse est calculee"
+		CONVERSE BLOCKED_BY
+	WHEN STATUS superseded
+		INCOMING CLOSED_BY
+
+SCHEMA PACKAGE
+	DESC "un package du monorepo ; le prefixe du nom fixe ses dependances autorisees"
+	FIELD PREFIX core|util|cli|ui|shared
+		REQUIRED
+
+// Les sept packages. La matrice de dependances par prefixe n'est pas recopiee ici : elle a un seul
+// domicile, `bun run check:dependencies` et le README public. Ce que le corpus ajoute est l'ancre :
+// un package dissous ou renomme fait tomber L016 ici (@DECISION.LesPackagesDissousNeSontPasRecrees).
+PACKAGE SharedSaveProcessing
+	DESC "format wire des saves : types, analyse, serialisation, schemas JSON, fixtures de test"
+	PREFIX shared
+	STATUS implemented
+	SPEC "expose l'analyse et la serialisation des sections de save, sans dependance hors util-*"
+		IMPL "packages/shared-save-processing/package.json::shared-save-processing"
+
+PACKAGE SharedPlatforms
+	DESC "adaptateurs fs/process pour Bun et Node, sans effet de bord a l'import"
+	PREFIX shared
+	STATUS implemented
+	SPEC "les deux adaptateurs honorent le meme contrat, verifie par une spec commune"
+		IMPL "packages/shared-platforms/package.json::shared-platforms"
+
+PACKAGE UtilTypes
+	DESC "le seul type de contrat RuntimePlatform, consomme type-only par shared-platforms"
+	PREFIX util
+	STATUS implemented
+	SPEC "ne depend de rien"
+		IMPL "packages/util-types/package.json::util-types"
+
+PACKAGE CoreMapping
+	DESC "domaine, application, infrastructure et presentation du mapping de saves"
+	DESC "seuls les controleurs et les ViewModels sont exportes"
+	PREFIX core
+	STATUS implemented
+	SPEC "seuls les controleurs et les ViewModels sont exportes : aucun module d'infrastructure"
+		+ "n'est atteignable de l'exterieur du package"
+		IMPL "packages/core-mapping/package.json::core-mapping"
+	SPEC "les Responses des use cases se declarent dans application/responses, une interface par"
+		+ "fichier"
+		IMPL "packages/core-mapping/src/application/responses"
+	RATIONALE "le port est la frontiere, pas la charge utile qui la traverse ; application/requests"
+		+ "tenait deja l'autre moitie de la regle"
+	SOURCE "T28, PR #59"
+
+PACKAGE CliMerge
+	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
+	PREFIX cli
+	STATUS implemented
+	SPEC "ne porte aucune regle de fusion"
+		IMPL "packages/cli-merge/package.json::cli-merge"
+
+PACKAGE CliValidate
+	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
+	PREFIX cli
+	STATUS implemented
+	SPEC "ne porte aucune regle de validation"
+		IMPL "packages/cli-validate/package.json::cli-validate"
+
+PACKAGE UiSaveManager
+	DESC "UI SolidStart consommant directement les controleurs de core-mapping"
+	PREFIX ui
+	STATUS implemented
+	SPEC "hors perimetre qualite fallow pour l'instant"
+		IMPL "fallow.toml"
+	SOURCE "decision du 2026-09-03, question Q5"
+
+// Les points non tranches. Une limitation acceptee est un point *ferme* : sa question passe
+// superseded et la DECISION qui la ferme porte la matiere — symptome, cause, garde — parce que
+// superseded est supprime de la recuperation et que ces constats, eux, doivent rester lisibles
+// (@DECISION.UneLimitationAccepteeGardeSaMatiereDansLaDecision).
+OPEN_QUESTION NomDeDossierAvecArobaseCorromptLaSaveFusionnee
+	DESC "un nom de dossier contenant @ fait ecrire par bun merge une save que bun validate refuse"
+	DESC "correction a instruire : assainir le nom affiche a la frontiere qui le recoit, ou refuser"
+		+ "un nom que le format ne peut pas porter"
+	STATUS specified
+	BLOCKS @PACKAGE.CoreMapping
+	RATIONALE "@ est le separateur de sections du format ; mergeSaveConfigurations recopie tel quel"
+		+ "le saveDisplayName que les deux appelants prennent du nom de dossier ou de la saisie."
+		+ "buildMergedFileName assainit le nom de *fichier*, rien n'assainit le nom *affiche* de la"
+		+ "section 8 : un @ de plus porte le decoupage de 11 a 12 parties, verifySectionCount"
+		+ "accepte 12 comme un format ancien legitime, et la section 8 est lue tronquee"
+	RATIONALE "T28 rend le defaut visible sans le supprimer : le fichier est ecrit, le code de"
+		+ "retour reste 0, les erreurs sortent sur stderr"
+	SPEC "un correctif doit reformuler la spec de bout en bout de T28 et lui trouver un autre"
+		+ "producteur de sortie invalide"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::does not pass validation"
+	RATIONALE "c'est la seule reproduction vivante d'une sortie fusionnee invalide depuis la fusion"
+		+ "de T29 ; verifie en revue de la PR #59, assainir le @ fait tomber l'assertion d'en-tete"
+		+ "et elle seule, les trois autres cas du bloc restant vrais avec ou sans le defaut"
+	SOURCE "known-issues/merge/nom-de-dossier-qui-corrompt-la-save-produite.md"
+	SOURCE "constate le 2026-09-10, mise en oeuvre de T28"
+
+OPEN_QUESTION LaRegleGitignoreDuContextePriveNeCouvrePasUnLien
+	DESC "la regle /.do-not-commit/ du .gitignore public ne vise qu'un repertoire : un lien"
+		+ "symbolique du meme nom y echappe et se fait indexer par git add -A"
+	STATUS superseded
+	SOURCE "constate le 2026-09-11, montage du corpus awawa"
+
+DECISION LaRegleDuContextePrivePerdSaBarreFinale
+	DESC "la regle du .gitignore public vise .do-not-commit sans barre ni prefixe, comme input, et"
+		+ "porte le commentaire qui dit pourquoi"
+	CLOSES @OPEN_QUESTION.LaRegleGitignoreDuContextePriveNeCouvrePasUnLien
+	STATUS implemented
+	RATIONALE "c'est exactement le defaut deja rencontre sur input/, elargi a input par la PR #37 ;"
+		+ "le lien porte le chemin absolu du clone prive de l'utilisateur, et un commit"
+		+ "l'exposerait dans le depot public"
+	RATIONALE "le montage du corpus rend le cas courant : lier le clone prive dans un worktree"
+		+ "devient un geste normal, la ou il etait jusqu'ici exceptionnel"
+	RATIONALE "CFG-2 le prescrit mot pour mot : pas de barre finale quand un lien symbolique vers"
+		+ "le repertoire doit etre pris, et le commentaire qui dit pourquoi fait partie de la regle"
+	REJECTED "garder la barre finale et compter sur la vigilance au moment d'indexer"
+	SPEC "la regle prend le lien comme le repertoire"
+		IMPL ".gitignore::.do-not-commit"
+	SOURCE "constate le 2026-09-11, montage du corpus awawa"
+
+// Les limitations acceptees. La question est fermee — superseded, donc hors des paquets de
+// recuperation — et la decision qui la ferme porte la matiere que la fiche gardait.
+OPEN_QUESTION ErreursTardivesDeLaSectionTroisPerdues
+	DESC "une erreur d'analyse decouverte apres coup dans la section des objets du monde n'atteint"
+		+ "jamais l'ecran"
+	STATUS superseded
+
+DECISION LesErreursTardivesDeLaSectionTroisRestentUneFragiliteLatente
+	DESC "fragilite laissee telle quelle : aujourd'hui le chemin est mort, la validation draine le"
+		+ "generateur avant de lire les erreurs d'analyse"
+	DESC "le jour ou cette garde saute, le defaut apparait sans qu'aucun test ne tombe"
+	CLOSES @OPEN_QUESTION.ErreursTardivesDeLaSectionTroisPerdues
+	STATUS specified
+	RATIONALE "parseSaveSections rend un tableau errors partage et mutable ; les dix sections"
+		+ "ordinaires sont materialisees tout de suite, la section 3 est rendue comme fabrique de"
+		+ "generateur non iteree — une save de reference y porte jusqu'a 28425 objets et on n'en"
+		+ "garde qu'un en memoire. Ses erreurs ne sont poussees qu'a l'iteration, or le cas"
+		+ "d'utilisation passe le tableau au presenter immediatement et le presenter le fige par un"
+		+ "map : le ViewModel est un instantane pris avant que quiconque ait lu la section 3"
+	RATIONALE "sans effet aujourd'hui parce que validateSaveContent draine le generateur avant de"
+		+ "lire parseErrors — l'ordre de ces deux lignes est porteur et rien ne le dit sur place."
+		+ "Une save dont la section 3 ne s'analyse pas proprement sort en invalid et n'atteint"
+		+ "jamais le chemin fautif"
+	RATIONALE "ce qui le rendrait visible : une optimisation cessant de drainer la section 3, un"
+		+ "appelant utilisant l'analyseur sans le validateur, un affichage progressif de la"
+		+ "section, ou toute inversion des deux lignes"
+	REJECTED "corriger par anticipation : le chemin est mort, YAGNI"
+	REJECTED "faire cesser le ViewModel d'etre un instantane — erreurs lues a la demande, ou"
+		+ "section 3 analysee sans paresse, ce que sa taille interdit"
+	SPEC "le geste le moins cher, le jour venu, est une spec qui epingle la garde : la validation"
+		+ "refuse une save dont seule la section 3 porte une ligne illisible"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js"
+	SOURCE "known-issues/erreurs-tardives-des-objets-du-monde-perdues.md"
+	SOURCE "constate le 2026-09-11, revue de la PR #58"
+
+OPEN_QUESTION PreloadDIsolationIgnoreHorsRacineDePackage
+	DESC "bun test lance d'un dossier plus profond qu'une racine de package n'applique pas"
+		+ "l'isolation des tests"
+	STATUS superseded
+
+DECISION LePreloadHorsRacineDePackageSeContourneParBunOptions
+	DESC "limitation acceptee : Bun resout bunfig.toml depuis le repertoire courant seulement, sans"
+		+ "remonter"
+	DESC "contournement : la variable BUN_OPTIONS pointant le preload en chemin absolu, sur le"
+		+ "modele de configuration Bun de l'IDE"
+	CLOSES @OPEN_QUESTION.PreloadDIsolationIgnoreHorsRacineDePackage
+	STATUS specified
+	RATIONALE "sans le preload, enforceTestIsolation n'est pas applique et les mocks ne sont pas"
+		+ "restaures entre tests, sans aucun signal. C'est le cas d'IntelliJ, dont une"
+		+ "configuration Bun generee prend le dossier du spec comme repertoire de travail"
+	REJECTED "faire remonter la resolution de bunfig.toml : ce n'est pas le projet qui decide"
+	SPEC "la spec d'isolation, lancee avec le cwd a verifier, echoue quand le preload ne s'applique"
+		+ "pas"
+		IMPL "testIsolation.spec.ts"
+		IMPL "testing/testIsolation.ts::enforceTestIsolation"
+	SOURCE "known-issues/preload-des-tests-ignore-hors-racine-de-package.md"
+	SOURCE "decision du 2026-09-05, revue T9"
+
+OPEN_QUESTION StandardDeuxMergedNEstPasUneSortieDeLOutil
+	DESC "la save de reference Standard-2-merged.json peut-elle servir de reference de sortie"
+	STATUS superseded
+
+DECISION StandardDeuxMergedNeSertJamaisDeReferenceDeSortie
+	DESC "non : le fichier a ete retouche, aucune version de l'outil ne l'a ecrit"
+	DESC "toute comparaison de sortie de la fusion se fait contre une reference capturee par"
+		+ "l'outil lui-meme, celle prise au debut de T11"
+	CLOSES @OPEN_QUESTION.StandardDeuxMergedNEstPasUneSortieDeLOutil
+	STATUS specified
+	RATIONALE "trois de ses quatre identifiants de joueurs sont les formes arrondies d'identifiants"
+		+ "reels, mais son hote porte un identifiant qu'aucun number ne peut produire par"
+		+ "serialisation JSON — a cette magnitude seuls les multiples de 16 sont representables, et"
+		+ "les deux doubles voisins de celui-la s'impriment a …60 et …70. stringifyEntry repose sur"
+		+ "cette serialisation depuis le premier commit. Le fichier porte aussi une marque d'ordre"
+		+ "des octets que l'outil n'ecrit jamais"
+	REJECTED "corriger le fichier pour en faire une reference : il n'aurait plus de provenance"
+		+ "connue"
+	SOURCE "known-issues/save-de-reference-standard-2-merged-retouchee.md"
+	SOURCE "constat du 2026-09-07, T30"
+
+OPEN_QUESTION OnzeMachinesPlaceesHorsDesTablesDEnergie
+	DESC "quelle valeur d'energie donner aux onze gId places dont le wiki n'imprime aucun champ"
+		+ "energy"
+	STATUS superseded
+
+DECISION LesOnzeMachinesRestentSansNiveauDEnergieConnu
+	DESC "limitation acceptee sans tache : la lever demande une source de donnees du jeu, que le"
+		+ "projet n'a pas"
+	DESC "les onze gId restent dans le groupe sans niveau d'energie connu, qui ne leur affirme"
+		+ "aucun cout"
+	DESC "TradePlatform1 (29 places), LightBoxMedium (28), ButterflyDisplayer1 (18), Megadome1 (7),"
+		+ "HologramGenerator, Server1, PlanetViewer1, FishDisplayer1, CookingStation1,"
+		+ "FrogDisplayer1, et les presentoirs et mobilier associes"
+	CLOSES @OPEN_QUESTION.OnzeMachinesPlaceesHorsDesTablesDEnergie
+	STATUS specified
+	RATIONALE "le wiki est la seule source de valeurs et il est muet sur ces machines ; une valeur"
+		+ "non imprimee n'est pas zero (decision du 2026-09-07)"
+	RATIONALE "Megadome1 et LightBoxMedium sont les deux qui consomment probablement : tant qu'ils"
+		+ "sont hors table, la consommation affichee d'une partie qui en pose reste sous-evaluee"
+	RATIONALE "T25 (PR #43) a ferme l'essentiel : 23 candidats tarifes ou ecartes avec motif"
+		+ "(consommateurs 75 puis 104), six variantes *T* supprimees, quatorze gId places ajoutes"
+		+ "sous une regle d'attestation, Incubator2 et InsideLamp2 sources"
+	REJECTED "deduire les valeurs d'un raisonnement sur la regularite entre paliers"
+	REJECTED "poser zero pour une valeur que le wiki n'imprime pas"
+	SPEC "GeneticManipulator1 porte une valeur suspecte : ses 117,5 kW sont anterieurs au"
+		+ "recoupement wiki de T25, aucune page ne les atteste, et le gId a change de nom a cette"
+		+ "occasion"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::GeneticManipulator1"
+	SPEC "la partition des noms d'objets reste explicite, jamais deduite par un test circulaire"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_PRODUCING_ENERGY"
+	SOURCE "known-issues/tables-d-energie-incompletes.md"
+	SOURCE "decision du 2026-09-09 ; constate le 2026-09-06, reduit a la fusion de la PR #43"
+
+OPEN_QUESTION MarqueDOrdreDesOctetsNonPreservee
+	DESC "faut-il preserver la marque d'ordre des octets d'une save qui en porte une"
+	STATUS superseded
+
+DECISION LaMarqueDOrdreDesOctetsNEstPasPreservee
+	DESC "non : les deux adaptateurs retirent la marque a la lecture et n'en ecrivent aucune"
+	DESC "l'aller-retour n'est donc pas identique octet pour octet sur un fichier qui en porte une"
+	CLOSES @OPEN_QUESTION.MarqueDOrdreDesOctetsNonPreservee
+	STATUS implemented
+	RATIONALE "le jeu charge les deux formes, et les marques presentes dans les saves de reference"
+		+ "viennent d'un editeur, pas du jeu — Custom-1.json en porte une, Standard-1, 3 et 4 non"
+	RATIONALE "preserver la marque imposerait de la transporter comme metadonnee a travers un"
+		+ "domaine qui n'a pas a connaitre les encodages, avec des entrees de fusion en desaccord"
+		+ "et donc aucune regle defendable pour la sortie"
+	REJECTED "transporter la marque comme metadonnee du domaine"
+	SPEC "les deux adaptateurs honorent le meme contrat de lecture et d'ecriture, marque comprise"
+		IMPL "packages/shared-platforms/platform.fs.adapters.spec.js"
+	SPEC "une save prefixee d'une marque fusionne correctement en processus Node reel, contenu"
+		+ "asserte et pas seulement le code de retour"
+		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
+	SOURCE "known-issues/merge/marque-d-ordre-des-octets-non-preservee.md"
+	SOURCE "decision du 2026-09-07, PR #33 ; garde Node depuis T22, PR #45"
+
+OPEN_QUESTION RecouvrementDIdentifiantsDansLesSavesDEntree
+	DESC "la fusion peut-elle garantir que chaque identifiant de l'union inventaires + world"
+		+ "objects est unique"
+	STATUS superseded
+
+DECISION LaGarantieDUnicitePorteSurCeQueLaFusionIntroduit
+	DESC "non : les saves d'entree portent deja le recouvrement, sorti du jeu, et aucune fusion ne"
+		+ "peut le supprimer"
+	DESC "la garantie tenable, et tenue depuis T16, est plus etroite : la fusion n'introduit aucun"
+		+ "recouvrement qui ne soit deja present dans les saves d'entree"
+	CLOSES @OPEN_QUESTION.RecouvrementDIdentifiantsDansLesSavesDEntree
+	STATUS implemented
+	RATIONALE "mesure du 2026-09-07 sur les dossiers de reference : Standard-3 721 valeurs portees"
+		+ "a la fois par un inventaire et un world object, Standard-4 549, Standard-1-unlocked-ivy"
+		+ "203, Standard-1 171. Les deux sections numerotent dans la meme plage 101 000 000 – 110"
+		+ "000 000 et le jeu reutilise volontiers une valeur de l'une dans l'autre"
+	RATIONALE "supprimer le recouvrement demanderait de renumeroter des entrees de la save A, dont"
+		+ "les identifiants font autorite et que l'outil n'a aucune raison de toucher"
+	RATIONALE "1 recouvrement introduit par dossier avant T16, 0 apres"
+	REJECTED "renumeroter des entrees de la save A pour rendre l'union unique"
+	REJECTED "laisser GR-ID-1 enoncer l'unicite de l'union, qui est fausse sur de vraies saves"
+	SPEC "GR-ID-1 enonce ce que la fusion n'introduit pas, jamais l'unicite de l'union"
+		IMPL "docs/game-rules.md::GR-ID-1"
+	SOURCE "known-issues/merge/recouvrement-d-identifiants-deja-present-dans-les-saves-d-entree.md"
+	SOURCE "decision du 2026-09-09, revue de la PR #41 ; GR-ID-1 reformulee par T30, PR #49"
+
+// Les arbitrages qui tiennent. Ils vivaient dans l'AGENTS.md prive, qui les enonce sans les
+// indexer.
+DECISION LeCorpusVitDansLeDepotPriveEtSeLitParUnLien
+	DESC "spec.awawa vit dans le depot prive et un lien symbolique du meme nom, a la racine du"
+		+ "depot public, le rend lisible"
+	DESC "la racine de workspace est la racine du depot public : c'est de la que les ancres IMPL"
+		+ "resolvent"
+	DESC "toujours lancer awawa depuis un worktree du depot public qui porte le lien, avec . pour"
+		+ "racine"
+	DESC "lance depuis le clone prive, status sort en 0 et chaque ancre IMPL tombe en L016 : un"
+		+ "corpus sain qui parait casse, et le symptome ne nomme pas sa cause"
+	STATUS superseded
+	RATIONALE "awawa saute les fichiers ignores par git, et /.do-not-commit/ est ignore : un corpus"
+		+ "pose la est invisible — status rend « ignored by git rules » et zero entite. Une"
+		+ "negation dans .gitignore ne le sauve pas, git ne re-inclut pas un fichier sous un"
+		+ "repertoire exclu"
+	RATIONALE "l'ancre ne peut pas remonter — .. y est une erreur — donc une racine de workspace"
+		+ "posee sur le depot prive interdirait toute ancre vers le code, c'est-a-dire L016, qui"
+		+ "est l'essentiel de ce que le corpus apporte"
+	RATIONALE "verifie : awawa suit le lien, les ancres packages/… resolvent, L016 tombe sur une"
+		+ "ancre cassee, et fmt ecrit a travers le lien sans le remplacer par un fichier ordinaire"
+	REJECTED "poser le corpus dans le depot public : l'AGENTS.md public interdit d'y ecrire du"
+		+ "contexte projet"
+	REJECTED "prendre le depot prive pour racine de workspace : le corpus est lisible mais perd"
+		+ "toutes ses ancres"
+	REJECTED "ré-inclure le chemin par une negation .gitignore : sans effet, mesure"
+	SPEC "le lien est versionne dans le depot public et n'y porte aucun contenu prive ; il pend"
+		+ "pour qui n'a pas le clone prive"
+		IMPL "spec.awawa"
+	SOURCE "decision du 2026-09-11, mise en place du corpus"
+
+DECISION LeCorpusVitDansLeDepotPublic
+	DESC "spec.awawa est un fichier ordinaire a la racine du depot public, qui est aussi la racine"
+		+ "de workspace"
+	DESC "toujours lancer awawa depuis un worktree du depot public, avec . pour racine"
+	DESC "lire une decision ne demande plus de synchroniser le depot prive"
+	STATUS implemented
+	RATIONALE "le montage par lien tenait le corpus hors du depot public et coutait trois choses :"
+		+ "une regle gitignore a maintenir, un clone fige par worktree dont une decision citee"
+		+ "pouvait etre fausse sans aucun signe, et un arbitrage separe du code qu'il gouverne,"
+		+ "donc invisible en revue"
+	RATIONALE "le corpus dans la branche fait entrer la decision dans la pull request qui"
+		+ "l'implemente et la fait suivre les rebases de la pile"
+	SUPERSEDES @DECISION.LeCorpusVitDansLeDepotPriveEtSeLitParUnLien
+	REJECTED "attendre la confirmation de l'experimentation awawa : le repli tient a un tag, pas a"
+		+ "l'emplacement du corpus"
+	REJECTED "decouper le corpus en plusieurs fichiers dans le meme mouvement : le deplacement se"
+		+ "verifie seul, et le decoupage se refera contre un corpus qui aura bouge"
+	SPEC "spec.awawa est versionne dans le depot public et ne porte ni nom reel de joueur ni"
+		+ "identifiant de compte reel"
+		IMPL "spec.awawa"
+	SOURCE "decision du 2026-09-12"
+
+DECISION LesDepotsSatellitesRestentSurLeurBrancheAwawa
+	DESC "l'integration d'awawa est experimentale : jusqu'a nouvel ordre, les deux depots"
+		+ "satellites travaillent sur leur branche portant awawa — .do-not-commit sur pcst/awawa,"
+		+ "~/.ai sur awawa"
+	DESC "le depot public ne suit pas cette convention : dep2-corpus-awawa y est une branche de"
+		+ "tache ordinaire, partie de la base en vigueur et destinee a fusionner"
+		REF @DECISION.LaBaseDesTachesEstTemporairementLaBrancheDeConformite
+	DESC "quand l'integration sera acquise, cette entite est le seul endroit a corriger"
+	STATUS superseded
+	RATIONALE "les deux satellites sont prives et sans revue : leur branche par defaut reste l'etat"
+		+ "de repli tant que l'integration n'a pas fait ses preuves"
+	RATIONALE "la convention est ecrite pour que la branche en vigueur ne soit plus demandee a"
+		+ "chaque session"
+	REJECTED "aligner le depot public sur la meme convention : son cycle de branches et de PR est"
+		+ "inchange"
+	REJECTED "fusionner l'integration dans la branche par defaut des satellites avant qu'elle ait"
+		+ "fait ses preuves"
+	REJECTED "demander a chaque session quelle branche des depots satellites est en vigueur"
+	SOURCE "decision du 2026-09-11, session d'installation d'awawa"
+
+DECISION LExperimentationAwawaEstReversibleParUnTagPasParUneBranche
+	DESC "l'etat d'avant awawa est marque par un tag dans chacun des trois depots :"
+		+ "pcst/before-awawa dans .do-not-commit, before-awawa dans ~/.ai, before-awawa sur la base"
+		+ "des taches du depot public — le parent de la fusion de DEP2"
+	DESC "aucune branche experimentale : les trois depots gardent leur cycle ordinaire, le clone"
+		+ "prive sur planet-crafter-save-tools, les instructions par PR sur main, le public sur sa"
+		+ "base de taches"
+	STATUS specified
+	SUPERSEDES @DECISION.LesDepotsSatellitesRestentSurLeurBrancheAwawa
+	CLOSES @OPEN_QUESTION.SortDuBasculementDeBrancheParPrivateSync
+	RATIONALE "private:sync repositionne le clone prive sur la branche nommee d'apres le projet :"
+		+ "une branche experimentale y est defaite en silence, un tag ne depend d'aucune branche"
+		+ "courante"
+	RATIONALE "le repli ne demande pas une branche vivante, seulement un point de retour nomme"
+	REJECTED "garder pcst/awawa et apprendre a install.sh une branche surchargeable : de"
+		+ "l'outillage ajoute pour un chantier temporaire"
+	REJECTED "nommer le tag before-awawa dans .do-not-commit, qui porte plusieurs projets : le"
+		+ "prefixe pcst/ le desambigue"
+	SOURCE "decision du 2026-09-11, session d'installation d'awawa"
+
+DECISION UneLimitationAccepteeGardeSaMatiereDansLaDecision
+	DESC "une limitation acceptee se modelise en question superseded plus decision qui la ferme, et"
+		+ "c'est la decision qui porte symptome, cause et garde"
+	STATUS implemented
+	RATIONALE "superseded vaut GATE suppressed : la question disparait des paquets de recuperation."
+		+ "Or une fiche de limitation acceptee existe precisement pour rester lisible — mettre sa"
+		+ "matiere dans la question la ferait disparaitre le jour ou elle est fermee"
+	REJECTED "laisser la question ouverte pour qu'elle reste visible : elle est tranchee, et"
+		+ "l'ouverture mentirait sur l'etat du projet"
+	SPEC "chaque fiche de known-issues fermee a sa decision porteuse dans ce corpus"
+		IMPL "spec.awawa"
+	SOURCE "decision du 2026-09-11, migration de known-issues"
+
+DECISION LaBaseDesTachesEstTemporairementLaBrancheDeConformite
+	DESC "toute branche de tache part de"
+		+ "refactor/review-clean-archi-violations-in-core-mapping-package et sa PR la prend pour"
+		+ "base, jamais master"
+	DESC "base temporaire : une fois le chantier de conformite fusionne, master redevient la base"
+		+ "et cette entite est le seul endroit a corriger"
+	STATUS specified
+	RATIONALE "master est en retard sur la branche de conformite ; une tache basee sur master"
+		+ "rebaserait tout le chantier"
+	REJECTED "baser les taches sur master tant que le chantier n'est pas fusionne"
+	SOURCE "AGENTS.md prive, section Branches"
+
+DECISION TroisFichiersPartentDeMasterEtNonDeLaBase
+	DESC "dependabot.yml et les deux workflows claude se modifient d'abord sur master, la base les"
+		+ "recoit au rebase suivant"
+	STATUS implemented
+	RATIONALE "dependabot.yml n'est lu que sur la branche par defaut ; les deux workflows sont"
+		+ "valides par claude-code-action contre leur copie sur cette meme branche, et un contenu"
+		+ "qui differe fait sortir l'action en avertissement — job vert, revue silencieusement"
+		+ "morte"
+	REJECTED "traiter ces trois fichiers comme le reste du depot, depuis la base des taches"
+	SPEC "les trois fichiers existent et ne se modifient que depuis master"
+		IMPL ".github/dependabot.yml"
+		IMPL ".github/workflows/claude.yml"
+		IMPL ".github/workflows/claude-code-review.yml"
+	SOURCE "decision du 2026-09-10"
+
+DECISION UneBrancheDeTacheEstRebaseeJamaisFusionnee
+	DESC "le depot est une pile git machete ; un commit de fusion a l'interieur de la pile est"
+		+ "defait au premier traverse"
+	DESC "avant de travailler sur une branche deja poussee, et surtout avant de traiter une revue :"
+		+ "verifier que la base est ancetre de HEAD, sinon rebaser et pousser avec"
+		+ "force-with-lease, avant de lire le premier commentaire"
+	STATUS specified
+	RATIONALE "la base bouge pendant l'attente d'une revue ; lire les commentaires sur une branche"
+		+ "en retard fait travailler sur un etat qui n'existe plus"
+	REJECTED "fusionner la base dans la branche de tache"
+	SOURCE "AGENTS.md prive, section Branches"
+
+DECISION LeDepotPriveEstEnFrancais
+	DESC "tout le contenu du depot prive est en francais ; la regle generale documentation commitee"
+		+ "en anglais ne vise que le depot public"
+	DESC "les messages de commit restent en anglais dans tous les depots, celui-ci compris"
+	STATUS superseded
+	RATIONALE "le depot est prive et son seul lecteur humain travaille en francais"
+	REJECTED "aligner le depot prive sur la regle anglaise du depot public"
+	SOURCE "decision du 2026-09-07"
+
+DECISION LaSpecificationResteEnFrancaisMemePubliee
+	DESC "spec.awawa et AGENTS.md restent en francais bien qu'ils soient publics"
+	DESC "le reste du depot public reste en anglais : README, docs, commentaires de code, messages"
+		+ "de commit"
+	DESC "le depot prive reste integralement en francais"
+	STATUS specified
+	RATIONALE "la regle generale, documentation publique commitee en anglais, vise ce qu'un lecteur"
+		+ "du depot lit ; ces deux fichiers sont des instructions d'agent, relues a chaque session"
+		+ "par un seul lecteur humain qui travaille en francais"
+	RATIONALE "l'exception est ici et nulle part ailleurs : elle est a reporter dans les"
+		+ "instructions generales si elle doit valoir pour d'autres projets"
+	SUPERSEDES @DECISION.LeDepotPriveEstEnFrancais
+	REJECTED "traduire le corpus en anglais au moment de le publier : deux mille trois cents lignes"
+		+ "a traduire, et une traduction fige mal un texte reecrit a chaque session"
+	REJECTED "aligner AGENTS.md sur la regle anglaise et laisser le corpus en francais : les deux"
+		+ "fichiers se lisent ensemble"
+	SOURCE "decision du 2026-09-12"
+
+DECISION AucunNomReelDansUnContenuPublic
+	DESC "aucun nom reel de joueur n'apparait dans un contenu public : corps et titre de PR,"
+		+ "commentaires de revue, code, tests, fixtures publiques, docs, README, messages de commit"
+	DESC "seuls ces pseudonymes sont autorises en public : Salengor, Chileny, Sovagoz, Nikowa,"
+		+ "Sakia, Anya"
+	DESC "le depot prive reste la source de verite et conserve les noms reels ; c'est au moment de"
+		+ "sortir en public qu'il faut substituer"
+	STATUS specified
+	RATIONALE "les saves privees portent les noms reels des joueurs, qui n'ont pas consenti a leur"
+		+ "publication"
+	REJECTED "reecrire l'historique git deja pousse : cout hors de proportion, et la branche de"
+		+ "conformite sera vraisemblablement ecrasee a sa fusion"
+	SOURCE "decision du 2026-09-10, PR #49"
+
+DECISION LesTablesDAnonymisationRestentPrivees
+	DESC "AGENTS.md porte la regle d'anonymisation et la liste des pseudonymes autorises, jamais la"
+		+ "correspondance avec les noms reels ni les identifiants de compte reels"
+		REF @DECISION.AucunNomReelDansUnContenuPublic
+		REF @DECISION.LesIdentifiantsSteamSontAnonymisesCommeLesNoms
+	DESC "les deux tables de correspondance restent dans le depot prive"
+	STATUS implemented
+	RATIONALE "publier la table publierait exactement la donnee que la regle protege : un"
+		+ "pseudonyme ne protege plus rien des qu'il parait a cote du nom qu'il remplace"
+	REJECTED "publier AGENTS.md tel quel au moment de le rendre public : sa section anonymisation"
+		+ "portait les six noms reels et quatre identifiants de compte reels"
+	REJECTED "retirer la regle avec la table : c'est la seule regle du projet dont l'oubli publie"
+		+ "une donnee personnelle, elle doit etre lisible sans avoir rien lance"
+	SPEC "AGENTS.md ne porte ni nom reel de joueur ni identifiant de compte reel"
+		IMPL "AGENTS.md"
+	SOURCE "decision du 2026-09-12"
+
+DECISION LesIdentifiantsSteamSontAnonymisesCommeLesNoms
+	DESC "un contenu public porte un identifiant synthetique de la famille 765611900000000xx,"
+		+ "jamais celui d'un compte reel"
+	DESC "un identifiant de demonstration doit rester un couple d'arrondi vrai — texte exact non"
+		+ "representable en double, valeur imprimee differente — sinon la demonstration devient"
+		+ "fausse"
+	STATUS specified
+	RATIONALE "un identifiant de compte designe une personne aussi surement qu'un nom"
+	REJECTED "publier les identifiants reels au motif qu'ils ne portent pas de nom"
+	REJECTED "prendre un identifiant synthetique quelconque : il ne demontrerait plus l'arrondi"
+	SOURCE "decision du 2026-09-10"
+
+DECISION ChaqueWorktreeInstalleSesDependances
+	DESC "bun install --frozen-lockfile dans le worktree, avant le premier test"
+	STATUS specified
+	RATIONALE "sans lui, Bun resout les packages du workspace via le node_modules du depot"
+		+ "principal : les tests s'executent sur les sources d'une autre branche et passent au vert"
+		+ "sans rien dire. C'est le piege le plus couteux, parce qu'il rend un verdict, et le"
+		+ "mauvais"
+	RATIONALE "deux autres gestes vont avec : verifier que la branche part bien de la base en"
+		+ "vigueur, et lier input/ depuis le depot principal — ce repertoire n'est pas versionne et"
+		+ "la regle input/ du .gitignore ne vise qu'un repertoire, un lien y echappe et se fait"
+		+ "indexer par un ajout global"
+	REJECTED "se fier au node_modules du depot principal"
+	SOURCE "AGENTS.md prive, section Travail dans un arbre de travail lie"
+
+DECISION UnWorktreeEstDecoupeDansLeDepotDuRepertoireCourant
+	DESC "ne jamais entrer dans le clone prive : le lire la ou il est, par -C pour git et en"
+		+ "chemins absolus pour le reste"
+	DESC "avant de lancer un agent, la racine du depot vue depuis le repertoire courant doit etre"
+		+ "celle du depot public"
+	STATUS specified
+	RATIONALE "le clone prive est un depot a part entiere imbrique dans le depot public, et un"
+		+ "worktree est decoupe dans le depot qui contient le repertoire de travail du shell au"
+		+ "moment de l'appel. Une session qui y entre donne a chaque agent qu'elle lance un"
+		+ "worktree du depot prive : la garde d'isolation refuse alors tout git visant le depot"
+		+ "public, l'agent se rabat sur un clone a lui, le travail aboutit hors de l'isolation"
+		+ "prevue, et le nettoyage des worktrees ne voit pas ce clone"
+	REJECTED "entrer dans le clone prive pour y lire une fiche"
+	SOURCE "constate le 2026-09-10, vague T39/T30"
+
+DECISION LeContextePriveEstRafraichiAvantLecture
+	DESC "lancer la synchronisation du contexte prive avant de lire une fiche, de citer une"
+		+ "decision ou de choisir un numero de tache"
+	STATUS superseded
+	RATIONALE "le clone est fige au dernier install et chaque worktree porte le sien : une fiche,"
+		+ "une decision ou un numero libre lus sur un clone perime sont faux sans aucun signe"
+		+ "qu'ils le sont"
+	REJECTED "lire le clone tel qu'il est et corriger apres coup"
+	SPEC "la synchronisation est un script du depot, appele par l'installation des dependances et"
+		+ "relancable seul"
+		IMPL "scripts/sync-private-context.sh"
+		IMPL "package.json::private:sync"
+	SOURCE "AGENTS.md prive, section Emplacement"
+
+DECISION LeContextePriveSeReduitAuxSavesEtAuxPlans
+	DESC "le depot prive ne porte plus que les saves de reference, les plans, resources.md et les"
+		+ "tables d'anonymisation"
+	DESC "le rafraichir avant de lire une save, un plan ou une table ; plus avant de citer une"
+		+ "decision ou de choisir un numero de tache"
+	STATUS implemented
+	RATIONALE "la specification, les decisions et les numeros de tache sont dans le depot public :"
+		+ "ce qu'un clone perime rendait faux sans signe ne s'y lit plus"
+	SUPERSEDES @DECISION.LeContextePriveEstRafraichiAvantLecture
+	REJECTED "supprimer le depot prive : les saves portent les noms reels des joueurs et pesent"
+		+ "huit megaoctets"
+	REJECTED "garder la synchronisation en tete de session : elle ne conditionne plus rien de ce"
+		+ "qu'une session lit pour demarrer"
+	SPEC "la synchronisation est un script du depot, appele par l'installation des dependances et"
+		+ "relancable seul"
+		IMPL "scripts/sync-private-context.sh"
+		IMPL "package.json::private:sync"
+	SOURCE "decision du 2026-09-12"
+
+DECISION LesFichesSontSupprimeesALaFusionPasALOuverture
+	DESC "une fiche de known-issues ou de tasks est supprimee a la fusion du correctif, jamais a"
+		+ "l'ouverture de sa PR"
+	STATUS specified
+	RATIONALE "une PR fermee au lieu d'etre fusionnee laisse la fiche silencieusement absente, et"
+		+ "personne ne se souvient de la retablir"
+	REJECTED "supprimer la fiche en ouvrant la PR qui la traite"
+	SOURCE "AGENTS.md prive, section Emplacement"
+
+DECISION UneFixturePeutReposerSurUnDefautOuvert
+	DESC "une fixture peut reposer sur un defaut ouvert, a condition que la fiche du defaut nomme"
+		+ "la spec a reformuler quand il sera corrige"
+	DESC "le couplage se documente du cote du defaut, pas du cote du test"
+	STATUS specified
+	RATIONALE "certains comportements n'ont pas de producteur naturel — verifier qu'une sortie"
+		+ "invalide est bien signalee demande une entree qui en produit une — et le seul"
+		+ "arrangement honnete est alors un defaut reel plutot qu'une entree fabriquee qui ne se"
+		+ "rencontre jamais"
+	RATIONALE "c'est la fiche qui est lue au moment de corriger, et elle porte la preuve que la"
+		+ "spec echoue une fois le defaut parti, plus ce qu'il faudra faire : trouver un autre"
+		+ "producteur, pas seulement remettre l'assertion au vert"
+	REJECTED "fabriquer une entree qui ne se rencontre jamais pour eviter de dependre d'un defaut"
+	REJECTED "documenter le couplage du cote du test"
+	SOURCE "AGENTS.md prive ; exemple en vigueur T28, PR #59"
+
+DECISION ToutePrPorteUneChecklistAFaireALaFusion
+	DESC "toute PR de tache porte un commentaire « A faire a la fusion » : decisions a consigner,"
+		+ "fiches a supprimer ou corriger, lignes de plan a mettre a jour, regles d'instruction a"
+		+ "promouvoir"
+	DESC "l'agent de tache l'ecrit en ouvrant la PR, l'agent de revue la complete, et un"
+		+ "commentaire absent est un oubli, pas un rien a faire"
+	STATUS superseded
+	RATIONALE "l'agent de tache est le seul a connaitre l'inventaire de ce que sa tache laisse"
+		+ "derriere elle, et cet inventaire disparait avec sa session"
+	RATIONALE "distinguer une PR sans travail de fusion d'une PR dont personne n'a fait"
+		+ "l'inventaire est la raison d'etre de la regle : le suivi de fusion s'arrete et le"
+		+ "signale plutot que d'improviser"
+	REJECTED "omettre le commentaire quand il n'y a rien a faire"
+	SOURCE "constate le 2026-09-10, PR #55"
+
+DECISION LeCorpusRemplaceLaChecklistDeFusion
+	DESC "une PR de tache ne porte plus de commentaire « A faire a la fusion » : ce que la"
+		+ "checklist inventoriait entre dans le corpus au moment ou la decision est prise, pas a la"
+		+ "fusion"
+	DESC "reste attache a la fusion la promotion de STATUS — une TASK passe implemented une fois sa"
+		+ "PR fusionnee — et ce qui vit hors du corpus : une regle a promouvoir vers ~/.ai, le"
+		+ "nettoyage du worktree et de la branche"
+	DESC "deux commandes sur les deux moments reels : /awawa-pr-review avant la fusion,"
+		+ "/awawa-pr-merged apres"
+	DESC "le residu que le corpus ne porte pas — une regle a promouvoir vers ~/.ai — s'ecrit en"
+		+ "OPEN_QUESTION a la revue : general ou specifique au projet est l'arbitrage de"
+		+ "l'utilisateur, et rien hors du corpus ne survit a la session qui l'a appris"
+	STATUS specified
+	SUPERSEDES @DECISION.ToutePrPorteUneChecklistAFaireALaFusion
+	RATIONALE "le motif de la checklist etait qu'un inventaire disparait avec la session de l'agent"
+		+ "de tache ; le corpus est cet inventaire et il ne disparait pas"
+	RATIONALE "la moitie post-fusion ne peut pas tourner avant le git merge de l'utilisateur et"
+		+ "demande un worktree autre que celui de la premiere : une commande unique ne couvre pas"
+		+ "les deux moments"
+	REJECTED "une seule commande /awawa-pr-review couvrant les deux moments"
+	REJECTED "garder la checklist en la vidant de ce que le corpus porte : un commentaire reduit a"
+		+ "la promotion de STATUS ne vaut pas la discipline qu'il coute"
+	REJECTED "garder un commentaire de PR pour le seul residu ~/.ai : une entite le porte mieux,"
+		+ "elle est typee, interrogeable, et visible a chaque status jusqu'a sa fermeture"
+	REJECTED "corriger /pr-merge-followup et /pr-review-followup en place : elles servent les"
+		+ "projets sans corpus et gardent leur forme"
+	SOURCE "decision du 2026-09-11, session d'installation d'awawa"
+
+DECISION LeCorpsDeLaPrSeMetAJourPendantLaRevue
+	DESC "une revue qui change une signature, un nom public ou une phrase d'interface met a jour le"
+		+ "corps de la PR, pas seulement le code et les fiches"
+	STATUS specified
+	RATIONALE "dans une pile git machete, le corps d'une PR est ce que lit la tache empilee pour"
+		+ "savoir ce qu'elle rebase, et ce que lit le relecteur suivant pour savoir ce qu'il relit."
+		+ "Un corps qui decrit encore la signature d'avant la revue envoie la tache suivante"
+		+ "travailler sur un contrat qui n'existe plus, sans qu'aucun outil ne le signale"
+	REJECTED "traiter le corps de la PR comme un resume d'ouverture fige"
+	SOURCE "constate le 2026-09-11, PR #59"
+
+DECISION LesPackagesDissousNeSontPasRecrees
+	DESC "util-parsing, util-messages et shared-mapping ont ete dissous dans shared-save-processing"
+		+ "et core-mapping ; util-platforms a ete renomme shared-platforms"
+	DESC "pas de nouveau package util-* non plus, sauf helper reellement generique ; les helpers de"
+		+ "format de fichier vont dans shared-save-processing"
+	STATUS specified
+	RATIONALE "YAGNI : un package par famille de helpers multiplie les frontieres sans separer de"
+		+ "responsabilites"
+	REJECTED "recreer un package util-* pour un helper de format de fichier"
+	SOURCE "AGENTS.md prive, section Organisation des packages"
+
+// Ce que le corpus prend en charge, et comment on revient sur ce qu'il enregistre.
+DECISION UneDecisionRetireeNommeSaSuccesseure
+	DESC "SCHEMA * exige une arete entrante CLOSED_BY ou SUPERSEDED_BY sur toute entite superseded"
+		+ ": une decision retiree qui ne nomme pas ce qui la remplace tombe en L026"
+	DESC "rouvrir une limitation acceptee se fait donc en trois gestes : la decision passe"
+		+ "superseded, une successeure :v2 la SUPERSEDES et dit ce qui a change, la question"
+		+ "repasse specified"
+	STATUS implemented
+	RATIONALE "mesure du 2026-09-11 : remettre la question a specified en laissant la decision en"
+		+ "l'etat passe lint --strict sans un mot, et le corpus porte alors une decision qui"
+		+ "pretend fermer une question ouverte. awawa n'a aucune primitive pour interdire une arete"
+		+ "entrante, INCOMING ne sait que l'exiger — la moitie verifiable est donc celle-ci, et la"
+		+ "seconde reste une discipline"
+	RATIONALE "la ligne va sur SCHEMA * et non sur un type : une ligne de type s'ajoute a celle du"
+		+ "caractere joker au lieu de la remplacer, et separer les deux noms ferait reclamer a"
+		+ "chaque question fermee un SUPERSEDED_BY qu'elle n'aura jamais"
+	REJECTED "interdire la reouverture : une limitation acceptee l'est dans un etat du projet, pas"
+		+ "pour toujours"
+	REJECTED "compter sur la relecture pour reperer une decision devenue caduque"
+	SPEC "toute entite superseded est atteinte par CLOSED_BY ou SUPERSEDED_BY, et une question"
+		+ "fermee l'est par une DECISION"
+		IMPL "spec.awawa"
+	SOURCE "decision du 2026-09-11"
+
+DECISION LeCorpusRemplaceLesFichesDeKnownIssues
+	DESC "known-issues/ est supprime : ses sept fiches sont devenues des entites de ce corpus"
+	DESC "un defaut constate s'enregistre desormais en OPEN_QUESTION, et son sort en DECISION qui"
+		+ "le ferme"
+	STATUS implemented
+	RATIONALE "un fait a un seul domicile ; garder les fiches a cote du corpus, c'est deux versions"
+		+ "du meme constat qui divergent a la premiere correction"
+	RATIONALE "ce que le repertoire faisait mieux que le corpus — la fiche que l'on relit au moment"
+		+ "de corriger — le corpus le fait aussi, et en plus il repond a « qu'est-ce qui bloque X »"
+		+ "sans que personne tienne la liste"
+	REJECTED "garder les fiches et n'indexer dans le corpus que leur titre : le corps aurait"
+		+ "continue a vivre hors de portee de toute commande"
+	SPEC "l'inventaire des defauts se lit par status OPEN_QUESTION, jamais par un repertoire de"
+		+ "fiches"
+		IMPL "spec.awawa"
+	SOURCE "decision du 2026-09-11"
+
+DECISION LeCorpusEstLeDomicileDesDecisionsEtHistoryResteLeJournal
+	DESC "une decision prise avec l'utilisateur s'enregistre dans ce corpus, plus dans history.md"
+	DESC "history.md reste le journal date : ce qui s'est passe, quand, dans quelle PR — il n'est"
+		+ "pas reecrit et ses entrees anterieures au 2026-09-11 ne sont pas migrees"
+	STATUS superseded
+	RATIONALE "history.md croit sans index : 2047 lignes au moment du basculement, ou retrouver un"
+		+ "arbitrage demande de lire des sections datees. Le corpus repond par requete — status"
+		+ "DECISION, refs, context — et rattache l'arbitrage a ce qu'il contraint"
+	RATIONALE "migrer les 2047 lignes n'aurait pas de valeur : le journal vaut par sa chronologie,"
+		+ "le corpus par ses aretes ; ce qui devait passer est ce qui contraint encore le travail"
+	REJECTED "migrer tout history.md : la chronologie serait perdue et le corpus rempli"
+		+ "d'arbitrages caducs"
+	REJECTED "garder history.md comme domicile des decisions et n'utiliser le corpus que pour la"
+		+ "specification : les deux se seraient contredits des la premiere revue"
+	SOURCE "decision du 2026-09-11"
+
+// Les arbitrages techniques, migres de history.md le 2026-09-11 quand ce fichier a ete supprime.
+// Ce qui n'y figure pas a un autre domicile : les regles de fusion dans docs/game-rules.md, les
+// regles generales de code et de test dans ~/.ai, les sources externes dans resources.md, les
+// mesures de non-regression dans plans/plan.md
+// (@DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime).
+// Le format de save : ce que l'outil lit, ce qu'il ecrit, et ce qu'il refuse de supposer.
+DECISION UneSaveCompteOnzeSectionsIndexeesDeZeroADix
+	DESC "un seul decompte, partout : 11 sections indexees 0 a 10, la derniere etant la partie"
+		+ "reservee et vide que produit le separateur terminal"
+	DESC "les constantes internes qui comptent 10 sections plus une partie reservee decrivent"
+		+ "l'arithmetique, pas le format, et gardent leur nom"
+	STATUS implemented
+	RATIONALE "c'est ce que declare save-file.schema.json, ce que compte le message utilisateur"
+		+ "Expected 11 sections, et ce que rend l'analyseur ; trois vocabulaires concurrents"
+		+ "avaient laisse le README affirmer autre chose que le code"
+	RATIONALE "le format herite compte 11 sections reelles, homonyme numerique des 11 parties du"
+		+ "format courant ; les compteurs portent des noms qui disent sections d'une save et"
+		+ "parties"
+	REJECTED "renommer en parts et data sections : le mot section est celui du vocabulaire public"
+	REJECTED "laisser chaque module compter a sa facon avec son propre nom"
+	SPEC "les compteurs de sections et de parties sont declares une fois, et les indices portent"
+		+ "chacun un nom"
+		IMPL "packages/shared-save-processing/sectionIndexes.js"
+		IMPL "packages/shared-save-processing/verifySectionCount.js"
+	SOURCE "decision du 2026-09-07, T35 ; noms arretes en revue de T26, PR #47"
+
+DECISION UnFormatDEntreeNAQuUnAnalyseur
+	DESC "un seul module du code de production fait passer une ligne de save par JSON.parse ; la"
+		+ "validation et la fusion emploient le meme"
+	DESC "l'echec est par ligne et localise : la section est lue ligne par ligne et chaque ligne en"
+		+ "echec est signalee seule, sans emporter les entrees valides qui l'entourent"
+	DESC "une section vide reste vide et ne produit aucune erreur"
+	STATUS implemented
+	RATIONALE "deux implementations tolerant le meme format differemment sont un defaut a part"
+		+ "entiere, independamment du bug qu'elles produisent : c'est cette divergence qui a rendu"
+		+ "silencieux le defaut de la PR #34, la validation declarant la save valide pendant que la"
+		+ "fusion perdait une section entiere"
+	RATIONALE "la section des objets du monde est rendue comme fabrique de generateur : une entree"
+		+ "a la fois au lieu des 28425 objets d'une save de reference materialises"
+	REJECTED "garder un second analyseur dans le validateur"
+	REJECTED "une variante non paresseuse de l'analyseur : elle rouvre la porte que cette decision"
+		+ "ferme"
+	SPEC "l'analyseur est le seul point ou une ligne de save atteint JSON.parse"
+		IMPL "packages/shared-save-processing/parseSaveSections.js"
+	SOURCE "decision du 2026-09-09, T26, PR #47 ; confirmee en revue"
+
+DECISION UnIdentifiantInt64EstPorteParSonTexteDecimal
+	DESC "un identifiant du format de save qui depasse la plage d'entiers exacte d'un double est"
+		+ "porte par son texte decimal exact, jamais par un number"
+	DESC "la regle vise le format et pas un champ : l'identifiant de joueur est le seul concerne"
+		+ "des six saves de reference, tout futur champ int64 la suit"
+	DESC "l'exactitude est produite et consommee dans shared-save-processing seul, et le schema de"
+		+ "la section concernee declare une chaine decimale"
+	STATUS implemented
+	RATIONALE "le texte source d'un litteral JSON se lit par le troisieme parametre du reviver"
+		+ "(ES2025) ; support verifie sur les trois moteurs que visent les scenarios d'UI, qui"
+		+ "rendent tous le litteral intact la ou la valeur analysee arrondit"
+	RATIONALE "le reviver ne s'applique qu'a la section des joueurs : l'appliquer partout ferait"
+		+ "passer les 115838 couples cle/valeur de la section des objets du monde par un appel de"
+		+ "fonction, pour un champ qui n'y existe pas. Cout mesure de la mesure : nul"
+	RATIONALE "aucune regle de validation ne porte sur la precision des entiers — un grand litteral"
+		+ "dans une save est normal. La garde est un test d'aller-retour et le systeme de types,"
+		+ "qui rend une fixture numerique impossible"
+	REJECTED "typer le champ en BigInt : JSON.stringify leve dessus, ajv ne sait pas le valider, et"
+		+ "il annonce une arithmetique que le projet ne fait jamais"
+	REJECTED "conserver le texte brut des entrees de la section : la fusion reconstruit chaque"
+		+ "entree joueur"
+	REJECTED "poser une regle de validation sur la precision des entiers"
+	SPEC "la liste des champs int64, le test d'emission et le reviver vivent dans un seul module"
+		IMPL "packages/shared-save-processing/int64Identifiers.js"
+	SPEC "la regle est enoncee dans la documentation publique des regles de fusion"
+		IMPL "docs/game-rules.md::GR-ID-7"
+	SOURCE "decision du 2026-09-07, T30 ; livree par la PR #49"
+
+DECISION LeSuffixeDesFlottantsEstAppliqueALEmission
+	DESC "le suffixe .0 des champs flottants est applique a l'emission, dans une serialisation"
+		+ "champ par champ de l'entree, jamais par un post-traitement textuel de la chaine produite"
+	DESC "la serialisation ne traite que le premier niveau de l'entree, et le dit : une valeur"
+		+ "objet ou tableau leve, parce que les enregistrements du format sont plats"
+	STATUS implemented
+	RATIONALE "un sentinel textuel reecrit toute valeur chaine qui en porte le motif : un panneau"
+		+ "dont le texte joueur valait FLOAT:5 ressortait en nombre"
+	RATIONALE "le silence etait le vrai risque : la ou un reviver appliquait le suffixe a toute"
+		+ "profondeur, l'emission champ par champ ne le fait qu'au premier niveau, et une entree"
+		+ "imbriquee ressortirait sans suffixe sans aucun signe"
+	RATIONALE "la consigne portee par la JSDoc de l'erreur est de corriger ce qui a passe une"
+		+ "entree imbriquee, ou d'etendre le module aux niveaux profonds — jamais d'assouplir la"
+		+ "garde"
+	REJECTED "un post-traitement textuel de la chaine produite"
+	REJECTED "resserrer le type du parametre au lieu de garder la verification a l'execution : le"
+		+ "type n'enonce le contrat que pour les appelants type-checkes"
+	SPEC "une entree non plate leve au lieu d'etre serialisee en silence"
+		IMPL "packages/shared-save-processing/stringifyEntry.js"
+	SOURCE "decision du 2026-09-07, T33, PR #36 ; garde ajoutee en revue"
+
+DECISION UneRegleDeSchemaTientParLeSensAvantDeTenirParLaMesure
+	DESC "une borne ou une regle de schema posee sur la seule foi de l'echantillon refusera demain"
+		+ "une save legitime : chaque regle doit tenir par le sens avant de tenir par la mesure"
+	DESC "additionalProperties reste ferme : le format est decrit exhaustivement et toute derive du"
+		+ "jeu se decouvre immediatement, au prix de la maintenance a la prochaine propriete"
+	DESC "seules les implications qui tiennent par le sens sont inscrites ; une implication qui ne"
+		+ "tient que par coincidence d'identifiant de groupe ne l'est pas"
+	STATUS implemented
+	RATIONALE "le releve du 2026-09-09 sur dix saves et 190338 objets du monde n'atteste que deux"
+		+ "proprietes universelles ; les dix-huit autres vont de 14,31 % a 0,01 %, et cinq regles"
+		+ "de composition tiennent sans contre-exemple quand deux tombent"
+	RATIONALE "c'est la fermeture d'additionalProperties qui a fait remonter la propriete absente"
+		+ "du schema et du type"
+	REJECTED "corriger deux lignes pour faire passer les saves de reference : cela figerait sur un"
+		+ "echantillon ce qui doit etre compris"
+	REJECTED "deduire une valeur manquante d'une regularite observee entre paliers"
+	SPEC "les dix schemas de section restent en draft-07 et expriment leurs implications par le"
+		+ "mot-cle dependencies en forme tableau"
+		IMPL "packages/shared-save-processing/schemas"
+	RATIONALE "dependentRequired est un mot-cle draft 2019-09 qu'Ajv 8 refuse en mode strict sous"
+		+ "la meta-schema draft-07 des dix schemas ; basculer les dix schemas et le validateur"
+		+ "serait une tache a elle seule"
+	SOURCE "decision du 2026-09-09, revue de T26 ; appliquee par T39, PR #48"
+
+// La fusion : ce qu'elle promet, ce qu'elle refuse de fabriquer.
+DECISION LaFusionPorteExactementDeuxSavesParDossier
+	DESC "un sous-dossier d'entree est valide quand il contient exactement deux fichiers de save ;"
+		+ "tout autre nombre est ecarte"
+	DESC "un dossier ecarte est nomme sur la sortie d'erreur avec le nombre qui l'a disqualifie :"
+		+ "l'ecart silencieux est refuse des deux cotes de la regle"
+	STATUS implemented
+	RATIONALE "l'UI etait deja a deux fichiers, save A et save B : la boucle d'accumulation du CLI"
+		+ "faisait dire deux choses differentes aux deux points d'entree du meme outil"
+	RATIONALE "arbitrage de l'utilisateur en revue : rester sur deux saves au maximum par fusion"
+	REJECTED "accumuler les saves d'un dossier de plus de deux fichiers"
+	REJECTED "ecarter un dossier sans le nommer, comme un dossier d'un seul fichier l'etait deja"
+	SPEC "la documentation publique dit deux saves, parce que c'est le code qui a change"
+		IMPL "README.md"
+	SOURCE "decision du 2026-09-09, revue de la PR #42"
+
+DECISION UneIdentiteDeJoueurEstPorteeParLEntree
+	DESC "une identite de joueur est portee par l'entree, jamais par son identifiant :"
+		+ "l'identifiant est un compte Steam, que le jeu reutilise d'une partie a l'autre"
+	DESC "le role d'hote est donc applique par la position de l'entree dans la save A, jamais par"
+		+ "egalite d'identifiant ni par nom"
+	DESC "un identifiant de joueur n'est jamais regenere : la renumerotation changeait le compte"
+		+ "que nomme une entree, pour rien — aucune entree ne le reference en retour"
+	DESC "consequence assumee : deux entrees joueur peuvent porter le meme compte Steam, cas que la"
+		+ "deduplication par nom laisse passer par construction"
+	STATUS implemented
+	RATIONALE "l'identifiant n'est unique ni entre deux saves ni, formellement, a l'interieur d'une"
+		+ "seule"
+	RATIONALE "calculer le role apres la renumerotation ferait dependre la justesse d'une regle de"
+		+ "role d'une regle d'identifiants qui n'en sait rien, et eclaterait une regle de jeu sur"
+		+ "deux modules"
+	RATIONALE "comparer par nom ne marche pas non plus : rien ne garantit l'unicite des noms dans"
+		+ "une meme save, et deux homonymes ressortiraient tous deux hotes"
+	RATIONALE "la save B apporte l'hote quand la save A n'a aucune entree joueur — repli"
+		+ "strictement borne a ce cas, le seul atteignable puisque la validation refuse en amont"
+		+ "une section joueurs non vide sans hote"
+	REJECTED "designer l'hote par egalite d'identifiant"
+	REJECTED "designer l'hote par egalite de nom"
+	REJECTED "fabriquer un identifiant neuf pour le joueur de la save B dont l'identifiant figure"
+		+ "deja en save A : la valeur ne designerait aucun compte reel"
+	SPEC "la deduplication et le role d'hote sont decides dans un seul module de regle"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts"
+	SOURCE "decision du 2026-09-07, T29, PR #39 ; etendue en revue de T16, PR #41"
+
+DECISION UneFusionQuiProduitUnFichierResteUnSucces
+	DESC "une fusion qui produit un fichier est un succes : le fichier est ecrit, le telechargement"
+		+ "offert, le code de retour reste zero"
+	DESC "un defaut de ce fichier est signale, pas transforme en echec : la sortie est revalidee et"
+		+ "ses erreurs remontent dans un canal propre, jamais fondues dans les listes par fichier"
+		+ "d'entree, qui n'ont pas la meme attribution"
+	DESC "l'operation qui n'a pas pu produire de resultat, elle, a une issue de presenter dediee et"
+		+ "un code de retour non nul"
+	DESC "dans le CLI, le marqueur d'echec sur une ligne ne vaut pas code de retour non nul : il"
+		+ "marque une save invalide"
+	STATUS implemented
+	RATIONALE "refuser d'ecrire couplerait la disponibilite de la fusion a la severite du"
+		+ "validateur"
+	RATIONALE "les avertissements de la revalidation ne sont pas remontes : annoncer que la save a"
+		+ "ete creee par une version plus ancienne du jeu, a propos d'un fichier que l'outil vient"
+		+ "d'ecrire, est un contresens. Ce vocabulaire ne s'applique pas a une sortie"
+	RATIONALE "surcout mesure de la revalidation : +25 % d'une fusion, la section des objets du"
+		+ "monde passant desormais par ajv"
+	REJECTED "refuser d'ecrire un fichier que la revalidation trouve invalide"
+	REJECTED "une option qui coupe l'etape de revalidation"
+	REJECTED "remonter les avertissements de la revalidation au meme titre que ceux des entrees"
+	SPEC "le cas d'utilisation valide ses deux entrees, fusionne, puis valide ce qu'il a produit,"
+		+ "sans branche"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts"
+	SOURCE "decision du 2026-09-07, revue de T26 ; livree par T28, PR #59"
+
+DECISION AucunCanalDAvertissementDeFusionSansProducteur
+	DESC "la fusion n'expose aucun canal d'avertissement tant qu'aucune regle n'en produit : un"
+		+ "canal sans producteur est du code mort"
+	DESC "forme arretee pour le jour ou une regle en produira : une liste unique portant sur la"
+		+ "sortie, du nom du champ de l'objet de sortie du port jusqu'au ViewModel"
+	STATUS specified
+	RATIONALE "les deux candidats n'en sont pas : une section vide est legitime dans une save"
+		+ "valide, et la collision d'identifiants est un defaut corrige, pas une fonctionnalite a"
+		+ "documenter"
+	RATIONALE "le nom du canal est le meme de bout en bout ; ses voisins de la meme interface"
+		+ "portent deja cette forme, sans suffixe Messages, parce que les messages de validation"
+		+ "voyagent comme un couple message plus localisation et non comme une chaine"
+	REJECTED "ouvrir le canal des maintenant, en prevision"
+	REJECTED "fondre les avertissements de sortie dans les listes par fichier d'entree"
+	SOURCE "decision du 2026-09-10, T27, PR #54 ; nom arrete en revue de la PR #59"
+
+// Les erreurs, les avertissements, et le texte que l'utilisateur lit.
+DECISION LOrigineDUneErreurDecideDuCheminQuElleEmprunte
+	DESC "une erreur sur un fichier d'entree que l'outil ne modifie pas releve de la validation,"
+		+ "qui s'execute d'abord ; la meme erreur surgissant plus loin est un invariant rompu et"
+		+ "echoue bruyamment"
+	DESC "une erreur que l'outil cree par sa propre intervention — fusion, renumerotation,"
+		+ "serialisation, ecriture — atteint l'UI et le CLI par une issue de presenter en langage"
+		+ "metier, jamais par une exception"
+	DESC "une issue de presenter par famille d'erreur, jamais une issue generique : reutiliser"
+		+ "l'issue des fichiers d'entree dirait a l'utilisateur que ses saves sont mauvaises alors"
+		+ "que c'est l'outil qui a echoue"
+	DESC "le rattrapage est type sur l'erreur de domaine, jamais sur unknown : tout le reste"
+		+ "continue de remonter en exception"
+	STATUS implemented
+	RATIONALE "une erreur d'analyse rencontree par le fusionneur porte sur les deux fichiers"
+		+ "d'entree, que la validation vient d'accepter une ligne plus haut : c'est un invariant"
+		+ "rompu, et aucune issue de presenter n'est ajoutee pour elle"
+	RATIONALE "ce que l'utilisateur voit d'une save corrompue reste le refus de la validation,"
+		+ "avant toute fusion et toute ecriture"
+	REJECTED "une issue de presenter generique portant n'importe quelle erreur"
+	REJECTED "convertir en issue toute erreur rattrapee, quelle que soit sa famille"
+	REJECTED "faire remonter par exception une erreur nee de l'intervention de l'outil"
+	SPEC "les invariants de l'infrastructure de core-mapping vivent dans un repertoire d'erreurs"
+		+ "nommees"
+		IMPL "packages/core-mapping/src/infrastructure/errors"
+	SOURCE "decision du 2026-09-07, revue de T26 ; seconde moitie livree par T27 et T28"
+
+DECISION UnInvariantRompuEchoueParUnTypeNomme
+	DESC "un invariant rompu de l'infrastructure de core-mapping echoue par un type d'erreur nomme,"
+		+ "jamais par une erreur nue"
+	DESC "la JSDoc de l'erreur porte la consigne, pas seulement la cause : corriger ce qui a laisse"
+		+ "passer la donnee, jamais assouplir la garde"
+	DESC "portee : cette couche. Les autres packages gardent leur erreur nue tant qu'ils n'ont ni"
+		+ "repertoire d'erreurs ni second cas a aligner"
+	STATUS implemented
+	RATIONALE "les invariants d'une meme couche doivent se rattraper et se distinguer d'un bug de"
+		+ "programmation de la meme facon ; la spec verifie le type puis le message"
+	RATIONALE "le repli silencieux qui ecartait une section mal formee par sa forme est ce qui"
+		+ "avait laisse une section entiere sans validation pendant tout ce temps : une section"
+		+ "attendue en tableau qui n'en est pas un leve desormais"
+	REJECTED "lever une erreur nue et distinguer les cas par le message"
+	REJECTED "un repli silencieux sur la forme de la section"
+	SPEC "chaque invariant de la couche a son type dans le repertoire d'erreurs"
+		IMPL "packages/core-mapping/src/infrastructure/errors"
+	SOURCE "decision du 2026-09-10, revue de T39, PR #48"
+
+DECISION LaValidationEstLaSourceUniqueDesAvertissements
+	DESC "le resultat de validation porte les avertissements, jamais l'analyseur"
+	DESC "la validation s'execute en premier dans les quatre flux — affichage, fusion dans l'UI,"
+		+ "fusion en ligne de commande, validation en ligne de commande — et les avertissements"
+		+ "remontent sur toutes les issues, saves invalides et fusions reussies comprises"
+	STATUS implemented
+	RATIONALE "deux producteurs d'avertissements, c'est deux listes a reconcilier par consommateur"
+		+ "et un flux qui en oublie une"
+	REJECTED "faire porter les avertissements par le port d'analyse"
+	SPEC "le port d'analyse ne declare aucun champ d'avertissements"
+		IMPL "packages/core-mapping/src/application/ports"
+	SOURCE "decision du 2026-09-06, T18"
+
+DECISION LeTexteUtilisateurVitDansLaPresentationDeCoreMapping
+	DESC "un code interne — avertissement, echec de fusion — est traduit en phrase par la"
+		+ "presentation de core-mapping ; le ViewModel expose des chaines pretes a afficher"
+	DESC "une issue qui ne transporte aucun texte a sa phrase fixe dans le repertoire des messages"
+		+ "; une issue qui porte deja ses messages n'en recoit pas une de plus"
+	DESC "un code inconnu tombe sur un message generique, et le code lui-meme n'est jamais affiche"
+	STATUS implemented
+	RATIONALE "traduire dans l'UI dupliquerait la table pour le CLI et mettrait de la connaissance"
+		+ "du domaine dans un mecanisme de livraison"
+	RATIONALE "un libelle fixe de plus dans le ViewModel, quand l'issue porte deja ses messages,"
+		+ "doublerait le titre que chaque mecanisme de livraison ecrit deja"
+	REJECTED "traduire les codes dans l'UI"
+	REJECTED "afficher le code interne faute de phrase"
+	REJECTED "donner une phrase d'accompagnement a une issue qui transporte deja ses messages"
+	SPEC "les phrases utilisateur de core-mapping vivent dans un seul repertoire"
+		IMPL "packages/core-mapping/src/presentation/messages"
+	SOURCE "decision du 2026-09-06, T18 ; complete par T27 et T28"
+
+DECISION UneLocalisationEstUnLibelleMetierSuiviDeLIndex
+	DESC "un message de validation voyage comme un couple message plus localisation, la"
+		+ "localisation valant nul quand l'erreur porte sur le fichier entier"
+	DESC "la localisation est un libelle metier suivi de l'index — le libelle pour comprendre,"
+		+ "l'index pour retrouver la section dans un editeur de texte ; le segment d'entree"
+		+ "disparait quand l'erreur ne vise pas une entree, et une section hors table retombe sur"
+		+ "son numero"
+	DESC "elle est formatee en presentation, a cote des autres formateurs de message ; le ViewModel"
+		+ "n'expose jamais les index bruts"
+	DESC "un avertissement et une erreur portent le meme ViewModel : seul le champ qui les porte"
+		+ "dit laquelle des deux severites c'est"
+	STATUS implemented
+	RATIONALE "garder les index bruts dans le ViewModel obligerait le CLI et l'UI a appeler"
+		+ "eux-memes le formateur, donc a l'exporter de core-mapping, ce que la regle d'exports"
+		+ "interdit"
+	RATIONALE "message et localisation restent deux champs distincts : chaque mecanisme de"
+		+ "livraison choisit de l'afficher ou non, et ou"
+	REJECTED "l'index seul, qui est un detail de format de fichier"
+	REJECTED "le libelle seul, trop pauvre pour editer la save a la main"
+	REJECTED "garder les index bruts dans le ViewModel"
+	SPEC "la table des libelles de section est complete, et un test d'exhaustivite echoue des"
+		+ "qu'une section y manque"
+		IMPL "packages/core-mapping/src/presentation/messages"
+	SOURCE "decision du 2026-09-07, T20, PR #37"
+
+DECISION LesDeuxListesDeMessagesGardentLeMemeRendu
+	DESC "la distinction entre erreurs et avertissements est portee par la separation des deux"
+		+ "listes, jamais par un parametrage du composant"
+	DESC "un message de validation se lit comme une frame de pile : tout l'item en monospace, le"
+		+ "message sur la premiere ligne, son origine en dessous, prefixee et indentee, dans un ton"
+		+ "un cran plus efface que le message"
+	DESC "le mot qui introduit l'origine est destine a l'utilisateur, donc il vit dans les messages"
+		+ "de l'UI ; la mise en page est en CSS, et core-mapping ne sait rien du rendu"
+	STATUS implemented
+	RATIONALE "repliable et monospace n'est pas une option offerte au consommateur : c'est le rendu"
+		+ "unique des deux listes, et les parametres qui l'avaient ouvert ont ete retires"
+	RATIONALE "la premiere forme — localisation avant le message, en texte estompe hors du bloc de"
+		+ "code — a ete refusee en revue sur capture : deux typographies sur une ligne. La forme"
+		+ "retenue regle aussi l'ordre, une pile mettant le message d'abord"
+	REJECTED "parametrer le composant de liste par severite"
+	REJECTED "placer la localisation avant le message"
+	SPEC "un seul composant rend les deux listes"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx"
+	SOURCE "decision du 2026-09-08, revue de T20, PR #37"
+
+DECISION UnSeulIdiomeDErreurDUiDansLePackage
+	DESC "un appel de controleur qui n'aboutit pas pose un signal d'erreur local, journalise le"
+		+ "detail technique, et affiche une phrase fixe vivant dans les messages du package"
+	DESC "l'avis d'echec s'affiche a cote des champs de saisie, sous le bouton qui l'a produit,"
+		+ "jamais dans la zone reservee a ce qu'une analyse reussie a produit"
+	DESC "les deux mecanismes coexistent sans se recouvrir : l'issue de presenter dit ce que"
+		+ "l'operation a decide, le signal d'UI dit que l'appel n'a pas abouti"
+	STATUS implemented
+	RATIONALE "arbitrage de l'utilisateur : placer l'avis dans la zone de visualisation le faisait"
+		+ "tomber a environ 670 px sous le bouton qui l'avait produit, donc hors ecran sur une"
+		+ "fenetre courte, et pretait a confusion avec un resultat d'analyse"
+	RATIONALE "le rattrapage nu sans journal etait une omission, pas un arbitrage : verifie dans"
+		+ "les trois endroits ou la justification aurait vecu, aucun n'en parle"
+	REJECTED "placer l'avis d'echec a l'emplacement des messages de validation"
+	REJECTED "laisser un rattrapage nu qui ne journalise rien"
+	SPEC "les deux flux d'UI partagent le mecanisme, le nommage et le placement"
+		IMPL "packages/ui-save-manager/src"
+	SOURCE "decision du 2026-09-10, T31, PR #58 ; placement arbitre en revue"
+
+// Les packages, leurs frontieres et leurs exports.
+DECISION LesInvariantsDuDomaineSontComplets
+	DESC "champs en lecture seule et fabriques validantes sur chaque entite et chaque value object,"
+		+ "pas seulement sur les critiques"
+	STATUS specified
+	RATIONALE "une conformite partielle demande de se souvenir, a chaque ajout, de quel objet etait"
+		+ "juge critique ; la regle complete ne demande rien"
+	REJECTED "n'appliquer les invariants qu'aux entites jugees critiques"
+	SOURCE "decision du 2026-09-03, question Q3 du chantier de conformite"
+
+DECISION LesReglesDeFusionRecoiventDesDtoWireTypes
+	DESC "les regles de fusion recoivent et retournent des enregistrements du format wire types,"
+		+ "avec l'origine save A ou save B explicite, jamais des chaines"
+	DESC "la serialisation se fait une fois, en infrastructure, et le nommage du fichier produit y"
+		+ "reste"
+	DESC "pas de modele de domaine dedie a la fusion"
+	STATUS implemented
+	RATIONALE "YAGNI : un modele de domaine du merge ajouterait une traduction aller-retour pour"
+		+ "des regles qui operent sur la forme du fichier"
+	REJECTED "faire circuler des chaines entre les regles de fusion"
+	REJECTED "un modele de domaine dedie a la fusion"
+	SPEC "les regles de fusion vivent dans un seul repertoire du domaine et n'y serialisent rien"
+		IMPL "packages/core-mapping/src/domain/rules/merge"
+	SOURCE "decision du 2026-09-04, planification de T11"
+
+DECISION LesAbreviationsWireRestentDansSharedSaveProcessing
+	DESC "les abreviations du format wire ne sont tolerees que dans les enregistrements de"
+		+ "shared-save-processing, et sont traduites en langage metier a la frontiere du domaine"
+	DESC "la tolerance s'appuie sur la description du package, pas sur un commentaire d'en-tete par"
+		+ "fichier"
+	STATUS implemented
+	RATIONALE "un commentaire par fichier ne dit rien que l'interface ne dise, et il nomme une"
+		+ "section par son index — un numero qu'aucun test ne tient et qui devient faux le jour ou"
+		+ "un index bouge"
+	REJECTED "tolerer les abreviations wire au-dela de ce package"
+	REJECTED "un commentaire d'en-tete par fichier de DTO"
+	SPEC "la description du package porte la tolerance"
+		IMPL "packages/shared-save-processing/package.json::shared-save-processing"
+	SOURCE "decision du 2026-09-03, question Q8 ; commentaires retires en revue de T36, PR #55"
+
+DECISION CreateSaveRecordsEstLaSourceUniqueDesBuilders
+	DESC "un seul module porte les constructeurs d'enregistrements de save ; les deux rendus —"
+		+ "chaine de save et sections deja analysees — en sont des consommateurs, jamais des"
+		+ "sources"
+	DESC "tout enregistrement du format wire declare dans la phase de preparation d'une spec passe"
+		+ "par son constructeur"
+	DESC "les constructeurs vivent dans le repertoire de test de shared-save-processing, y compris"
+		+ "quand seul un package core les consomme : ils decrivent le format wire, pas le domaine"
+	DESC "un module ne reexporte pas ce qu'il importe d'un autre pour le confort d'un appelant"
+		+ "historique, et ce repertoire n'a pas de barrel"
+	STATUS implemented
+	RATIONALE "trois frontieres que la regle ne franchit pas : une valeur attendue reste litterale,"
+		+ "les types du domaine ne sont pas des enregistrements de save, et la spec du serialiseur"
+		+ "garde ses litteraux parce que chaque attendu y est le JSON exact de son jeu de champs"
+	RATIONALE "une generation depuis les schemas JSON produirait une donnee que personne ne lit :"
+		+ "un attendu litteral se lit, une valeur generee non. Cout assume, un constructeur par"
+		+ "type"
+	REJECTED "generer les fixtures depuis les schemas JSON"
+	REJECTED "un barrel sur le repertoire de test : il recreerait exactement le couplage retire"
+	REJECTED "convertir aussi les valeurs attendues, ce qui les rendrait recalculees"
+	SPEC "les constructeurs sont declares une fois et importes finement"
+		IMPL "packages/shared-save-processing/testing/createSaveRecords.js"
+	SOURCE "decision du 2026-09-08, T21, PR #35 ; regle du balayage etendue en revue de T19, PR #46"
+
+DECISION UnIndiceDeSectionNeSEcritJamaisEnDur
+	DESC "un indice de section ne s'ecrit jamais en dur, pas meme dans une spec : les indices sont"
+		+ "lus depuis leur module"
+	DESC "cela vise aussi la destructuration a trous, qui cache l'indice qu'elle compte"
+	STATUS specified
+	RATIONALE "arbitrage de l'utilisateur, pose deux fois sur la meme pull request"
+	RATIONALE "restent des nombres les comptes de parties : ce sont des attendus, pas des acces"
+	REJECTED "tolerer un indice litteral dans une spec"
+	SPEC "les indices de section, y compris ceux du format herite et la partie reservee, sont"
+		+ "declares une fois"
+		IMPL "packages/shared-save-processing/sectionIndexes.js"
+	SOURCE "decision du 2026-09-09, revue de T19 et de T26"
+
+DECISION UnImportDeTypeJsdocQuiTraverseUnPackageSEcritTypedef
+	DESC "un import de type JSDoc qui traverse une frontiere de package s'ecrit en typedef portant"
+		+ "l'import, la balise import restant admise a l'interieur d'un package"
+	STATUS implemented
+	RATIONALE "l'outil d'audit qualite suit les imports de type ecrits sous forme d'appel dans les"
+		+ "annotations, et la balise import de TypeScript 5.5 lui est invisible : la dependance"
+		+ "declaree remonte alors comme inutilisee"
+	RATIONALE "l'entree d'exclusion de dependances de l'outil n'est pas une reponse a un faux"
+		+ "positif localise : elle desactive a la fois la detection des dependances inutilisees et"
+		+ "celle des non declarees, pour tout le depot et sans echeance"
+	REJECTED "exclure le package de l'audit de dependances"
+	REJECTED "laisser la balise import traverser une frontiere de package"
+	SPEC "le seul cas du depot porte la forme et le commentaire qui empeche de la normaliser"
+		IMPL "packages/shared-platforms/platform.js"
+	SOURCE "decision du 2026-09-08, T17, PR #44"
+
+DECISION UnArgumentInconnuEstUneErreurDUsage
+	DESC "les deux CLI nomment sur la sortie d'erreur chaque argument prefixe d'un tiret qui ne"
+		+ "designe aucun de leurs drapeaux, impriment une ligne d'usage et sortent en erreur avant"
+		+ "de lire quoi que ce soit"
+	DESC "limite assumee : seuls les arguments commencant par un tiret sont examines, le vecteur"
+		+ "d'arguments rendu par la plateforme portant aussi l'interpreteur et le script"
+	DESC "la banniere d'usage nomme la commande documentee, dans sa forme Bun, sous les deux"
+		+ "runtimes"
+	STATUS implemented
+	RATIONALE "un drapeau mal orthographie silencieusement ignore fait travailler l'outil sur les"
+		+ "repertoires par defaut, et le resultat est indiscernable d'un succes"
+	RATIONALE "Bun est l'outil principal et maintenu ; les commandes Node n'existent que pour une"
+		+ "compatibilite assumee cote utilisateur, donc la banniere n'a pas a etre consciente du"
+		+ "runtime"
+	REJECTED "avertir sans changer le code de retour"
+	REJECTED "decouper le vecteur d'arguments pour attraper les positionnels, ce qui deplacerait le"
+		+ "contrat de la plateforme"
+	REJECTED "faire dependre la banniere du runtime"
+	SPEC "l'analyse des drapeaux et la detection des arguments inconnus sont partagees par les deux"
+		+ "CLI, sans creer de package"
+		IMPL "packages/shared-platforms/cliArguments.js"
+	SOURCE "decision du 2026-09-10, T34, PR #60 ; banniere arbitree en revue"
+
+// Les tests : ce qu'ils couvrent, a quel niveau, et ce qui les garde.
+DECISION TestsEtImplementationNeChangentPasDansLeMemeCommit
+	DESC "les agents menent les refactors en mode tests toujours verts, sans confirmation"
+		+ "interactive de cycle"
+	DESC "tests et implementation ne changent jamais dans le meme commit quand le comportement"
+		+ "change ; un changement de signature a comportement inchange, prouve par une verification"
+		+ "de bout en bout, en est l'exception"
+	STATUS specified
+	RATIONALE "un commit qui change les deux ne prouve rien : on ne peut plus dire si le test est"
+		+ "passe au vert parce que le code est bon ou parce que l'attendu a bouge"
+	RATIONALE "les scenarios de bout en bout ne sont pas ramasses par le lanceur de tests unitaires"
+		+ ": un commit qui n'apporte qu'eux laisse donc la porte qualite verte tout en gardant les"
+		+ "deux moities separees"
+	REJECTED "valider tests et implementation ensemble quand le comportement change"
+	REJECTED "demander confirmation a chaque phase du cycle"
+	SOURCE "decision du 2026-09-03, question Q7 du chantier de conformite"
+
+DECISION PasDEtageDeTestsComposantsPourLUi
+	DESC "ui-save-manager n'a pas d'etage de tests composants ; le niveau bout en bout couvre les"
+		+ "flux et remplace la verification manuelle"
+	STATUS specified
+	RATIONALE "l'etage composants aurait double la couverture de ce que les scenarios de bout en"
+		+ "bout font deja sur trois moteurs reels"
+	RATIONALE "consequence a connaitre : un comportement d'UI livre avant que le harnais existe a"
+		+ "pu rester sans test, et c'est le harnais qui le rattrape, pas un etage intermediaire"
+	REJECTED "un etage de tests composants"
+	SOURCE "decision du 2026-09-03, question Q6 ; niveau bout en bout ouvert par T23"
+
+DECISION LesScenariosDUiSontDesSpecsPlaywrightSurTroisMoteurs
+	DESC "un scenario est une spec Playwright directe, sans couche de langage naturel : l'echec"
+		+ "d'un locator imprime l'arbre accessible de la page, ce qu'une phrase perdrait"
+	DESC "trois moteurs a chaque execution, l'application manipulant fichiers, blobs, objet-URL et"
+		+ "telechargements, la ou les moteurs divergent"
+	DESC "les scenarios vivent dans le repertoire de bout en bout du package et portent un suffixe"
+		+ "que le lanceur de tests unitaires ne ramasse pas ; leurs fixtures sont versionnees a"
+		+ "cote d'eux, le repertoire d'entree ne l'etant pas"
+	DESC "un double de lecture porte sur toute la surface de lecture d'un blob, pas sur la seule"
+		+ "methode que la production appelle aujourd'hui"
+	STATUS implemented
+	RATIONALE "la CI ne declenche la suite que sur les pull requests visant la branche par defaut,"
+		+ "plus a la demande : les PR de taches ne la declenchent pas et le job ne doit pas devenir"
+		+ "un controle requis"
+	RATIONALE "divergence assumee entre l'installation locale des navigateurs et celle de la CI :"
+		+ "l'installation avec dependances systeme passe par une elevation de privileges et echoue"
+		+ "sur un poste sans droits administrateur, alors que les moteurs seuls suffisent"
+	RATIONALE "la commande de previsualisation sert la sortie reelle du serveur de production, pas"
+		+ "celle du serveur de developpement"
+	REJECTED "une couche de langage naturel au-dessus des specs"
+	REJECTED "un seul moteur"
+	REJECTED "un double de lecture porte sur la seule methode appelee par la production"
+	SPEC "les scenarios et leurs fixtures vivent dans le repertoire de bout en bout du package"
+		IMPL "packages/ui-save-manager/e2e"
+	SPEC "le declenchement de la suite en CI est restreint et ne devient pas un controle requis"
+		IMPL ".github/workflows/ui-tests.yml"
+	SOURCE "decision du 2026-09-07, T23, PR #38 ; scenarios etendus par T31"
+
+DECISION UnChangementDUiDansUneTacheDeTestDoitValoirParLuiMeme
+	DESC "un changement d'interface non demande n'est acceptable dans une tache de test que s'il"
+		+ "vaut par lui-meme en dehors du test"
+	DESC "un champ de fichier sans libelle reste atteignable par son role et son nom accessible :"
+		+ "aucune regle de test n'oblige donc a modifier l'interface pour rendre un champ"
+		+ "atteignable"
+	STATUS specified
+	RATIONALE "la revue a d'abord refuse le changement puis l'a maintenu une fois le motif propre"
+		+ "enonce — un gain d'accessibilite —, le commit ayant ete annule puis retabli"
+	REJECTED "modifier l'interface pour la seule commodite d'un locator"
+	SOURCE "decision du 2026-09-08, revue de T23, PR #38"
+
+DECISION UneSpecDeControleurCouvreLeCablagePasLesBranches
+	DESC "une spec de controleur couvre le cablage : un cas nominal et un cas d'echec, le second"
+		+ "chemin de cablage passant par la presentation d'erreur"
+	DESC "les cas plus fins restent dans les specs d'application, d'infrastructure et de"
+		+ "presentation"
+	STATUS specified
+	RATIONALE "rejouer les branches au niveau du controleur duplique une couverture deja acquise et"
+		+ "fait payer deux fois chaque changement de regle"
+	REJECTED "couvrir les branches metier depuis les specs de controleur"
+	SOURCE "decision du 2026-09-05, revue de T9"
+
+DECISION UneSpecAsserteUnChampDiscriminantQuandLAttenduNEstPasLitteral
+	DESC "une spec de CLI asserte un champ discriminant de la sortie, pas la sortie entiere"
+	DESC "une spec asserte le ViewModel entier quand l'attendu s'ecrit en litteral, et se rabat sur"
+		+ "une correspondance partielle quand il ne peut pas l'etre"
+	DESC "deux tests que la reecriture des assertions rend identiques sont fusionnes en un seul"
+	STATUS specified
+	RATIONALE "comparer une sortie complete de plusieurs milliers de caracteres rejouerait au"
+		+ "niveau du CLI les regles deja couvertes dans core-mapping"
+	RATIONALE "certaines sections d'une save valide ne s'ecrivent pas en litteral — l'une est une"
+		+ "fabrique de generateur, comparee par identite"
+	REJECTED "comparer la sortie complete d'un CLI"
+	REJECTED "renoncer au ViewModel entier quand l'attendu s'ecrit en litteral"
+	SOURCE "decision du 2026-09-08, revue de T12, PR #40"
+
+DECISION UnTestNeTireJamaisSonEnsembleDEntreeDeLObjetTeste
+	DESC "un test dont l'ensemble d'entree derive de l'objet teste ne couvre pas la regle"
+		+ "d'exhaustivite correspondante, et son titre ne doit pas la revendiquer"
+	STATUS implemented
+	RATIONALE "une iteration sur les cles de la table perd un cas quand on retire une entree, en"
+		+ "silence : elle ne peut pas mettre en defaut la regle qui contraint cette table"
+	RATIONALE "meme defaut constate ailleurs : une constante videe faisait executer zero cas sans"
+		+ "un mot, d'ou le test qui l'epingle a ses valeurs"
+	REJECTED "iterer sur les cles de la table testee et revendiquer l'exhaustivite"
+	SPEC "la partition des noms d'objets est declaree, et les deux sens en sont assertes"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts"
+	SOURCE "decision du 2026-09-07, T25, PR #43 ; forme finale arretee en revue"
+
+DECISION UneEntreeIllegaleTesteeSEcritTsExpectError
+	DESC "une entree illegale testee volontairement s'ecrit par une directive d'erreur attendue"
+		+ "portant un commentaire qui nomme l'invalidite, posee sur le champ fautif et non sur la"
+		+ "ligne d'appel"
+	STATUS implemented
+	RATIONALE "la directive echoue le jour ou la fabrique cesse de rejeter la donnee, ce qu'un"
+		+ "transtypage ne fait pas : un test d'entree illegale bati sur un cast est incapable"
+		+ "d'echouer"
+	REJECTED "un transtypage vers le type attendu"
+	SPEC "une garde parcourt toutes les specs du depot et refuse les fixtures non typees"
+		IMPL "scripts/check-fixture-typing.ts"
+	SOURCE "decision du 2026-09-09, T19, PR #46"
+
+DECISION LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
+	DESC "les gardes du depot sont des scripts qui ne lisent pas l'historique git et repondent en"
+		+ "une fraction de seconde ; elles sont groupees derriere une seule commande et restent"
+		+ "lancables seules"
+	DESC "ce que deux gardes partagent — le parcours des fichiers de spec, le masquage des"
+		+ "litteraux de chaine, la forme du rapport — est extrait dans un module commun, jamais"
+		+ "fusionne en une garde unique"
+	DESC "limite acceptee et fixee par un test : la lecture est ligne a ligne, donc une assertion"
+		+ "etalee sur plusieurs lignes echappe a la garde"
+	STATUS implemented
+	RATIONALE "deux gardes fusionnees donneraient un script a deux raisons de changer : l'une lit"
+		+ "des assertions, l'autre des fixtures"
+	RATIONALE "la garde ne lit que l'expression assertee de plus haut niveau : sans cela une"
+		+ "comparaison dans une fonction de rappel, un argument de type ou un element JSX passait"
+		+ "pour un booleen fabrique et cassait la build sur une assertion legitime"
+	RATIONALE "le perimetre est tout le depot, dependances et sorties de build exclues : un motif"
+		+ "restreint aux packages laissait hors perimetre les specs de la racine, des scripts et de"
+		+ "la garde elle-meme"
+	REJECTED "fusionner les deux gardes en un seul script"
+	REJECTED "un linter configure a la place d'un script dedie"
+	REJECTED "concatener les lignes jusqu'a equilibrage des parentheses pour lever la limite"
+	SPEC "le parcours des specs et la forme du rapport sont declares une fois"
+		IMPL "scripts/specSources.ts"
+	SPEC "les gardes sont declarees en points d'entree de l'audit qualite, sans quoi elles"
+		+ "remontent comme fichiers inatteignables"
+		IMPL "fallow.toml"
+	SOURCE "decision du 2026-09-08, T12, PR #40 ; extraction en revue de T19, PR #46"
+
+DECISION UneSignatureDeProductionNeSeDeformePasPourUnTest
+	DESC "une signature de production ne se deforme pas pour rendre une branche atteignable : une"
+		+ "branche non couverte est preferable a une couture de test dans le code de production"
+	STATUS specified
+	RATIONALE "arbitrage de l'utilisateur en revue : le controleur avait ete injecte avec une"
+		+ "valeur par defaut, seul moyen d'atteindre en spec une branche dont le seul declencheur"
+		+ "est un invariant rompu, inatteignable depuis deux saves que la validation a acceptees"
+	RATIONALE "un double de module global n'avait aucun precedent dans le depot"
+	REJECTED "injecter une dependance avec valeur par defaut pour atteindre la branche"
+	REJECTED "un double de module global"
+	SOURCE "decision du 2026-09-10, revue de T27, PR #54"
+
+DECISION LesDoublesDUneSpecPartagentUneSeuleFabrique
+	DESC "une spec monte son sujet par une fabrique nommee avec un verbe d'action, si bien que"
+		+ "chaque cas n'enonce que le comportement qu'il change"
+	DESC "les doubles d'un meme port repondent par une seule fabrique indexee, jamais par autant"
+		+ "d'inventions qu'il y a de cas"
+	DESC "un double porte son poids ou il est retire : la verification est une mutation qui le"
+		+ "force a tout accepter et compte les tests qui tombent"
+	STATUS implemented
+	RATIONALE "cinq doubles de la meme spec inventaient chacun leur facon de reconnaitre une save"
+		+ "et ne s'accordaient meme pas sur ce qui l'identifie ; laisser le double frere hors"
+		+ "perimetre est ce qui faisait paraitre arbitraire celui qui restait"
+	REJECTED "un double par cas, chacun avec son critere de reconnaissance"
+	REJECTED "laisser hors perimetre le double frere d'un double corrige"
+	SPEC "les doubles du cas d'utilisation de fusion passent par une seule fabrique"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
+	SOURCE "decision du 2026-09-11, troisieme passe de revue de T28, PR #59"
+
+DECISION UneFonctionAuxParametresIndistinctsPrendUnObjetNomme
+	DESC "une fonction dont plusieurs parametres consecutifs ne se distinguent pas au point d'appel"
+		+ "prend un objet nomme"
+	DESC "laisser une methode sur deux en positionnel rend le port moins lisible que le probleme"
+		+ "corrige : les methodes voisines suivent"
+	STATUS implemented
+	RATIONALE "les noms vivent alors dans la signature, donc tous les appelants se lisent pareil et"
+		+ "un appelant de plus ne peut pas se tromper d'ordre"
+	REJECTED "nommer les valeurs en variables au point d'appel : les noms restent locaux et le"
+		+ "suivant peut les inverser"
+	REJECTED "ne corriger que la methode signalee"
+	SPEC "le port de resultat de fusion prend des objets nommes, declares a cote du cas"
+		+ "d'utilisation"
+		IMPL "packages/core-mapping/src/application/responses"
+	SOURCE "decision du 2026-09-09, revue de T19 ; etendue en revue de T28, PR #59"
+
+DECISION TouteCommandePublieeALUnTestQuiLaLanceReellement
+	DESC "toute commande publiee par le depot a un test qui la lance en processus reel, depuis le"
+		+ "lanceur de tests, jamais un job de CI dedie"
+	DESC "une garde qui n'observe que le code de retour ne voit que les echecs bruyants : les cas"
+		+ "de fusion assertent le contenu produit"
+	DESC "chaque save d'entree debloque un groupe qu'aucune autre ne debloque, de sorte que le"
+		+ "fichier produit nomme les saves qui ont reellement atteint le moteur de fusion"
+	STATUS implemented
+	RATIONALE "une spec en memoire prouve qu'un cas d'usage se comporte comme prevu, jamais qu'un"
+		+ "binaire demarre : trois defauts sont passes par ce trou, dont une commande cassee trois"
+		+ "jours et sept pull requests durant"
+	RATIONALE "la perte d'une section entiere sur une save prefixee d'une marque d'ordre des octets"
+		+ "sortait en code zero en annoncant un succes"
+	RATIONALE "une garde posee dans le lanceur de tests couvre le poste de travail et la CI d'un"
+		+ "seul geste"
+	REJECTED "un job de CI dedie au lieu d'un test"
+	REJECTED "n'observer que le code de retour"
+	SPEC "les deux CLI sont lances en processus reel avec assertion de contenu"
+		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
+		IMPL "packages/cli-validate/cli/validate-cli.node.spec.js"
+	SOURCE "decision du 2026-09-09, T22, PR #45"
+
+DECISION LIsolationDesMocksEstUnPreloadGlobal
+	DESC "l'isolation des doubles est globale : un preload du lanceur de tests restaure et vide les"
+		+ "doubles apres chaque test, jamais un bloc de nettoyage par spec"
+	DESC "le preload est declare a la racine et dans chaque package, tous appelant la meme fonction"
+		+ "d'isolation"
+	STATUS implemented
+	RATIONALE "le fichier de configuration du lanceur n'est resolu que depuis le repertoire"
+		+ "courant, sans remonter : une seule declaration a la racine laisse sans isolation tout"
+		+ "lancement fait depuis un package"
+	RATIONALE "la primitive de reinitialisation annoncee par les types n'existe pas a l'execution"
+		+ "dans la version en vigueur"
+	REJECTED "un bloc de nettoyage par fichier de spec"
+	SPEC "l'isolation est declaree une fois et exercee par une spec qui echoue quand le preload ne"
+		+ "s'applique pas"
+		IMPL "testing/testIsolation.ts::enforceTestIsolation"
+		IMPL "testIsolation.spec.ts"
+	SOURCE "decision du 2026-09-05, revue de T9"
+
+DECISION AucuneSaveNEstCommiteeDansLeDepotPublic
+	DESC "aucune save n'est commitee dans le depot public : les specs qui en ont besoin generent"
+		+ "leurs fixtures a l'execution, les ecrivent dans un dossier temporaire et le suppriment"
+	DESC "un dossier temporaire par test, cree avant et supprime apres — jamais un registre partage"
+		+ "que l'on vide"
+	STATUS implemented
+	RATIONALE "un registre partage laisse un espion pose sur l'objet global pour la suite du"
+		+ "processus de test si personne ne le restaure, ce qui s'est produit"
+	REJECTED "commiter une save de reference dans le depot public"
+	REJECTED "un registre de dossiers temporaires partage entre les tests d'un fichier"
+	SPEC "le contrat des adaptateurs de fichiers est exerce sans save versionnee"
+		IMPL "packages/shared-platforms/platform.fs.adapters.spec.js"
+	SOURCE "decision du 2026-09-09, T22, PR #45 ; forme du dossier temporaire arretee en revue de"
+		+ "T36"
+
+DECISION LeContratDesAdaptateursEstTesteUneFoisParametreParAdaptateur
+	DESC "les cas du contrat d'acces aux fichiers sont listes une fois et executes contre chaque"
+		+ "adaptateur, en assertant contre le systeme de fichiers et jamais contre la fonction"
+		+ "soeur du meme adaptateur"
+	DESC "restent dans les specs par adaptateur les comportements dont la semantique diverge par"
+		+ "conception"
+	STATUS implemented
+	RATIONALE "deux specs independantes par adaptateur sont exactement ce qui a laisse passer une"
+		+ "divergence de lecture entre les deux"
+	REJECTED "deux specs independantes, une par adaptateur"
+	REJECTED "asserter un adaptateur contre sa propre fonction soeur"
+	SPEC "le contrat est exerce contre chaque adaptateur depuis un seul fichier"
+		IMPL "packages/shared-platforms/platform.fs.adapters.spec.js"
+	SOURCE "decision du 2026-09-07, revue de T18, PR #33"
+
+// L'outillage, la chaine de build et la CI.
+DECISION LesCommandesNodeExecutentLesSourcesParDesHooks
+	DESC "les commandes Node executent les sources du depot par les hooks de personnalisation de"
+		+ "modules de Node : un hook de resolution essaie les deux extensions, un hook de"
+		+ "chargement confie les modules TypeScript a un transformateur"
+	DESC "aucune regle de source, aucune build, aucun Bun a l'execution ; les tests, le type-check,"
+		+ "la build de l'UI et les commandes Bun ne voient jamais les hooks"
+	STATUS implemented
+	RATIONALE "les alternatives demandaient soit de faire dependre de Bun une commande de"
+		+ "compatibilite Node, soit de commiter un bundle, soit de tenir a la main des regles de"
+		+ "source — 112 fichiers non conformes, enfreintes le jour de leur enregistrement, et 344"
+		+ "imports pour la variante par option du compilateur"
+	REJECTED "empaqueter les sources avec l'outillage Bun"
+	REJECTED "commiter un bundle"
+	REJECTED "tenir a la main des regles de source dans tout le depot"
+	SPEC "les hooks sont installes par un module d'enregistrement, et rien d'autre ne les charge"
+		IMPL "scripts/node/register.js"
+		IMPL "scripts/node/hooks.js"
+	SOURCE "decision du 2026-09-07, PR #34"
+
+DECISION NpmEstSupportePourLesUtilisateursPasPourLeProjet
+	DESC "le workspace declare des plages de versions explicites plutot que des references de"
+		+ "catalogue, pour qu'une installation npm passe chez un utilisateur ; une version partagee"
+		+ "passe par une surcharge a la racine"
+	DESC "le lockfile de Bun est le seul lockfile du projet ; celui de npm est ignore par git et"
+		+ "jamais maintenu"
+	STATUS implemented
+	RATIONALE "npm rejette les protocoles de catalogue et de workspace, et l'outil de mise a jour"
+		+ "de dependances ne resout pas non plus un catalogue : une dependance declaree par"
+		+ "catalogue n'est jamais montee, sans pull request ni avertissement"
+	REJECTED "garder les references de catalogue et renoncer au support npm"
+	REJECTED "maintenir un second lockfile"
+	SPEC "le manifeste racine declare les versions explicitement"
+		IMPL "package.json"
+	SOURCE "decision du 2026-09-07, PR #34 ; angle mort des catalogues constate le 2026-09-10"
+
+DECISION LeTypeCheckEstParPackageSansOrchestrateur
+	DESC "un fichier de configuration TypeScript et un script de type-check par package, enchaines"
+		+ "par le filtre de workspace : aucun orchestrateur de monorepo"
+	DESC "seuls les packages d'UI declarent les bibliotheques du navigateur ; une globale"
+		+ "navigateur referencee depuis un package core ou cli echoue au lieu de se resoudre en"
+		+ "silence"
+	DESC "aucun script de la racine ne nomme un chemin interne a un package : un package qui porte"
+		+ "deux programmes les enchaine lui-meme"
+	STATUS implemented
+	RATIONALE "la reserve posee a la planification — ne pas introduire d'orchestrateur de monorepo"
+		+ "sans en rediscuter — n'a jamais eu a etre engagee : un fichier de configuration et un"
+		+ "script par package suffisent"
+	RATIONALE "les deux programmes d'un meme package portaient la meme cle de script et la fusion"
+		+ "des manifestes en avait garde une seule, en silence"
+	REJECTED "un orchestrateur de monorepo"
+	REJECTED "un script de la racine nommant un chemin interne a un package"
+	SPEC "chaque package porte son programme de type-check et la racine les enchaine"
+		IMPL "package.json::lint:types"
+	SOURCE "decision du 2026-09-04, T17 ; livree par la PR #44"
+
+DECISION LaPorteQualiteEstPartageeEnDeuxJobsDeCi
+	DESC "la CI couvre le terrain de l'audit qualite en deux jobs : l'un lance les gardes, l'autre"
+		+ "l'audit et le rapport de sante de l'outil d'analyse, tous deux rendus dans le resume du"
+		+ "run"
+	DESC "la commande d'audit complete reste celle d'une copie de travail et n'est pas rebranchee"
+		+ "telle quelle dans un job"
+	STATUS implemented
+	RATIONALE "la CI n'a pas a lancer la meme commande que le poste de travail, elle a a couvrir le"
+		+ "meme terrain ; deux conclusions anterieures du meme jour, qui ecartaient l'outil"
+		+ "d'analyse de la CI puis supprimaient son job, ont ete annulees"
+	RATIONALE "les scripts d'audit cadrent sur un nom de branche nu, qu'un checkout de CI ne resout"
+		+ "pas : mesure, le cadrage par nom nu sort en erreur la ou le cadrage par reference de"
+		+ "suivi passe. L'action, elle, cadre sur la base de la pull request, plus juste sur une"
+		+ "pile de branches"
+	REJECTED "rebrancher la commande d'audit complete dans un job"
+	REJECTED "ecarter l'outil d'analyse de la CI"
+	REJECTED "basculer les scripts sur une reference de suivi et supprimer le job d'analyse, ce qui"
+		+ "reglait le symptome au prix du resume"
+	SPEC "les deux jobs couvrent les gardes et l'audit sans rien executer deux fois"
+		IMPL ".github/workflows/quality.yml"
+	SOURCE "decision du 2026-09-09, T22, PR #45, second tour"
+
+DECISION NodeSuitSesVersionsBunResteEpingle
+	DESC "les deux chaines d'outils sont lues depuis le manifeste : la version de Node y est une"
+		+ "plage ouverte, celle de Bun est epinglee"
+	STATUS implemented
+	RATIONALE "Node est le runtime cible des commandes de compatibilite : les suivre est de la"
+		+ "couverture, et une release qui casse les hooks doit se voir. Bun est l'outillage de"
+		+ "build et de test, suivre ses releases ne teste rien que le produit promette"
+	RATIONALE "cout mesure en prime : demander la derniere version de Bun desactive le cache de"
+		+ "l'action d'installation, soit un telechargement a chaque job de chaque run"
+	REJECTED "epingler Node comme Bun"
+	REJECTED "suivre les releases de Bun"
+	REJECTED "repeter les versions dans les workflows au lieu de les lire depuis le manifeste"
+	SPEC "les workflows lisent les deux versions depuis le manifeste"
+		IMPL "package.json"
+	SOURCE "decision du 2026-09-09, revue de T22, PR #45"
+
+DECISION LesTachesDOutillagePortentLaFamilleDep
+	DESC "les taches d'outillage du depot sont numerotees dans une famille propre, a cote de la"
+		+ "serie du chantier de conformite, et ne participent d'aucune vague"
+	DESC "convention propre a ce projet : le gabarit general de fiche ne connait que la serie"
+		+ "ordinaire"
+	STATUS specified
+	RATIONALE "elles ne partagent aucun fichier avec le chantier et ne dependent d'aucune de ses"
+		+ "taches"
+	REJECTED "les numeroter dans la serie du chantier"
+	REJECTED "generaliser la convention aux instructions generales"
+	SOURCE "decision du 2026-09-10, ouverture de DEP1"
+
+DECISION DependabotSuitDeuxEcosystemesEnGroupesHebdomadaires
+	DESC "deux ecosystemes suivis, les actions de CI et les dependances du workspace, un groupe par"
+		+ "ecosysteme, hebdomadaire, avec une limite de pull requests relevee explicitement"
+	DESC "l'ecosysteme du gestionnaire de paquets ne fait que des mises a jour de version : l'audit"
+		+ "de vulnerabilites reste le filet de securite"
+	DESC "les pull requests ouvertes par le robot sont exclues de la revue automatique : elles"
+		+ "recoivent un jeton en lecture seule et aucun secret, donc le job echouerait a chaque"
+		+ "fois"
+	STATUS implemented
+	RATIONALE "la valeur par defaut de la limite est cinq : une file tronquee en silence est"
+		+ "refusee"
+	RATIONALE "la separation production / developpement dans un groupe n'est pas honoree par cet"
+		+ "ecosysteme ; le fichier porte le commentaire qui le dit, pour qu'un relecteur ne"
+		+ "retablisse pas une separation inerte"
+	RATIONALE "verifie sur la premiere execution reelle : deux pull requests ouvertes dans les"
+		+ "trois minutes, les deux defauts amont redoutes ne se reproduisent pas, et la garde"
+		+ "d'acteur fonctionne"
+	REJECTED "laisser la limite de pull requests a sa valeur par defaut"
+	REJECTED "separer production et developpement dans le groupe du gestionnaire de paquets"
+	REJECTED "garder la revue automatique sur les pull requests du robot"
+	SPEC "la configuration declare les deux ecosystemes depuis la racine"
+		IMPL ".github/dependabot.yml"
+	SOURCE "decision du 2026-09-10, DEP1, PR #53 ; verifiee sur execution reelle"
+
+// La documentation publique et les donnees du jeu.
+DECISION LesReglesDeFusionNOntQuUnDomicilePublic
+	DESC "les regles de fusion ont une seule source publique, le document des regles de jeu ; le"
+		+ "README ne les reenonce pas et porte un index renvoyant a ses sections"
+	DESC "les schemas JSON sont documentes en anglais, leur titre et leur description etant de la"
+		+ "documentation publique"
+	DESC "le schema global du fichier de save est conserve comme description formelle du format,"
+		+ "bien qu'aucun code ne le consomme"
+	STATUS implemented
+	RATIONALE "c'est la duplication qui avait laisse le README affirmer une union des joueurs par"
+		+ "identifiant, des planetes communes non implementees et des statistiques reduites a un"
+		+ "seul champ"
+	REJECTED "corriger la duplication au lieu de la supprimer"
+	SPEC "le document des regles de jeu est la seule source publique des regles de fusion"
+		IMPL "docs/game-rules.md"
+	SOURCE "decision du 2026-09-07, T35"
+
+DECISION LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
+	DESC "un nom d'objet du monde n'est conserve que s'il est atteste par le fichier de libelles"
+		+ "servant d'inventaire des identifiants de groupe, ou s'il est lu dans une des saves de"
+		+ "reference"
+	DESC "un identifiant de groupe est identifie contre ce fichier, jamais par ressemblance de nom"
+		+ "avec un titre de page du wiki"
+	DESC "les libelles du depot ne sont pas remplaces par ceux de cette source : les notres"
+		+ "desambiguisent des noms que le jeu repete et portent des informations que la source"
+		+ "n'imprime pas"
+	DESC "les noms typent les libelles dans les deux sens : un libelle sans nom et un nom sans"
+		+ "libelle sont deux erreurs de type"
+	STATUS implemented
+	RATIONALE "la regle d'identification a evite trois erreurs de donnees, chacune attribuant a une"
+		+ "machine la valeur d'une autre"
+	RATIONALE "la source est le fichier de libelles d'un mod communautaire : ses libelles sont donc"
+		+ "communautaires, mais ses cles sont les identifiants de groupe du jeu, puisqu'un fichier"
+		+ "de traduction ne se resout pas autrement en jeu. C'est cette distinction qui autorise a"
+		+ "s'en servir pour l'inventaire et interdit de s'en servir pour les libelles"
+	RATIONALE "la table des libelles etait construite par etalement d'objets constants, ce qui"
+		+ "neutralise le controle des proprietes excedentaires : elle portait 33 cles typees nulle"
+		+ "part"
+	REJECTED "identifier un identifiant de groupe par ressemblance avec un titre de page du wiki"
+	REJECTED "remplacer les libelles du depot par ceux de la source d'attestation"
+	SPEC "la table des libelles et la liste des noms se contraignent mutuellement"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts"
+	SPEC "la provenance des identifiants est documentee hors du code"
+		IMPL "docs/energy-levels.md"
+	SOURCE "decision du 2026-09-09, revue de la PR #43"
+
+DECISION LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
+	DESC "history.md est supprime : ce qui contraint encore le travail est devenu des entites de ce"
+		+ "corpus, le reste avait deja un domicile ailleurs et a ete retire"
+	DESC "les quatre autres domiciles, a ne pas recopier ici : les regles de fusion dans"
+		+ "docs/game-rules.md, les regles generales de code et de test dans ~/.ai, les sources"
+		+ "externes dans resources.md, les mesures de non-regression dans plans/plan.md"
+	DESC "la chronologie — quoi, quand, dans quelle pull request — n'est plus tenue nulle part :"
+		+ "elle se lit dans git et dans les pull requests"
+	STATUS specified
+	SUPERSEDES @DECISION.LeCorpusEstLeDomicileDesDecisionsEtHistoryResteLeJournal
+	RATIONALE "ce qui a change depuis la decision precedente : le tri a ete fait, et il a montre"
+		+ "que le journal ne portait presque plus que trois choses — des arbitrages encore vivants,"
+		+ "des faits deja domicilies ailleurs, et des verifications de pull request. Garder le"
+		+ "fichier pour la troisieme famille ne valait pas la discipline de le tenir"
+	RATIONALE "deux domiciles pour un meme arbitrage se contredisent des la premiere correction ;"
+		+ "la decision precedente le savait pour les nouvelles decisions, elle laissait le passe"
+		+ "dans l'ambiguite"
+	RATIONALE "le cout est reel et assume : la chronologie datee disparait, et avec elle la lecture"
+		+ "lineaire de ce qui s'est passe. Le corpus repond par arete et par requete, pas par date"
+	REJECTED "garder history.md comme journal date : sa seule matiere restante etait les"
+		+ "verifications de pull request, que git et GitHub portent deja"
+	REJECTED "migrer le fichier entier : le corpus se serait rempli d'arbitrages caducs, ce que la"
+		+ "decision precedente refusait a juste titre"
+	REJECTED "recreer la chronologie sous forme d'entites datees : ce serait reecrire history.md"
+		+ "dans une autre syntaxe, sans gagner d'arete"
+	SPEC "aucun fichier du contexte prive ne renvoie plus a history.md"
+		IMPL "AGENTS.md"
+	SOURCE "decision du 2026-09-11, compactage puis suppression de history.md"
+
+// Les points ouverts nes du tri de history.md : des constats que personne n'a tranches et qui
+// n'avaient pas d'autre domicile que le journal.
+OPEN_QUESTION WoIdsNEstAttesteeParAucuneSave
+	DESC "la propriete de liste d'objets lies declaree sur un objet du monde n'apparait sur aucune"
+		+ "des 190338 entrees relevees"
+	DESC "deux lectures : elle existe et l'echantillon ne la rencontre pas, ou elle n'existe pas et"
+		+ "le contenu passe par l'inventaire lie"
+	DESC "si la seconde se confirme, le type, le remappage de references et la ligne correspondante"
+		+ "de la regle d'identifiants tombent ensemble, pas le schema seul"
+	STATUS specified
+	BLOCKS @PACKAGE.SharedSaveProcessing
+	RATIONALE "elle reste declaree par precaution : sous un schema ferme aux proprietes"
+		+ "supplementaires, la taire ferait refuser une save que la reecriture de references"
+		+ "pretend traiter"
+	SOURCE "constate le 2026-09-10, T39 ; laisse ouvert en revue de la PR #48"
+
+OPEN_QUESTION LesBornesDeHungerSontPoseesSurUneHypothese
+	DESC "les deux bornes du niveau de faim d'un animal sont posees sur une hypothese de jeu, pas"
+		+ "sur une source"
+	DESC "le premier contre-exemple rencontre les leve ; l'utilisateur a assume le risque, on"
+		+ "avisera si une save est un jour refusee"
+	STATUS specified
+	BLOCKS @PACKAGE.SharedSaveProcessing
+	RATIONALE "champ observe sur les seules entrees d'un identifiant de groupe, 345 occurrences sur"
+		+ "190338, plage relevee de -100 a 94,22. L'echelle symetrique se justifie par le fait"
+		+ "qu'un animal fournit un ADN quand son niveau est positif, ce qui est coherent avec un"
+		+ "plafond sans le demontrer"
+	RATIONALE "c'est exactement le risque que la regle sur les schemas nomme : une borne posee sur"
+		+ "la seule foi de l'echantillon refusera demain une save legitime"
+		REF @DECISION.UneRegleDeSchemaTientParLeSensAvantDeTenirParLaMesure
+	SOURCE "constate le 2026-09-10, T39, PR #48"
+
+OPEN_QUESTION LesLibellesDeSectionDivergentDeLaDocumentation
+	DESC "les libelles courts employes dans la localisation d'une erreur ne sont pas alignes sur le"
+		+ "sommaire du document des regles de jeu"
+	DESC "a trancher : la documentation doit-elle devenir la reference unique des noms de section"
+	STATUS specified
+	BLOCKS @PACKAGE.CoreMapping
+	RATIONALE "les libelles courts sont plus lisibles dans un prefixe d'erreur ; la divergence a"
+		+ "ete signalee comme reversible en revue"
+	SOURCE "constate le 2026-09-08, revue de T20, PR #37"
+
+OPEN_QUESTION LesReglesDeCirculationDesObjetsNeSontPasAcquises
+	DESC "les regles de circulation des objets entre couches sont redigees et proposees dans les"
+		+ "instructions generales, pas encore fusionnees"
+	DESC "tant que la pull request n'est pas fusionnee, aucune session ne lit ces regles, et la"
+		+ "tache est a reprendre si elle est fermee au lieu d'etre fusionnee"
+	STATUS specified
+	BLOCKS @PACKAGE.CoreMapping
+	RATIONALE "le trou est mesure : le mot Response n'apparaissait qu'une fois dans tout le dossier"
+		+ "d'architecture, dans une liste de noms de methode interdits. Aucune regle ne disait que"
+		+ "la sortie d'un cas d'utilisation est une Response, ou elle vit, qui a le droit de"
+		+ "l'instancier, ni qu'il ne faut pas la confondre avec le ViewModel"
+	SOURCE "constate le 2026-09-11, troisieme passe de revue de T28, PR #59"
+
+OPEN_QUESTION LesAlertesDependabotSontDesactivees
+	DESC "les alertes de securite du depot sont desactivees : l'API les refuse, et sans elles le"
+		+ "suivi de dependances ne rend que des mises a jour de version"
+	DESC "geste a la charge de l'utilisateur, hors depot : les activer dans les reglages de"
+		+ "securite"
+	DESC "l'autre issue est de planifier le job d'audit a date fixe, ce que le depot ne fait pas :"
+		+ "il ne le lance que sur une pull request et sur la branche par defaut"
+	STATUS specified
+	BLOCKS @SEC.ChaineDeDependancesEtDeBuild
+	RATIONALE "les avis de vulnerabilite n'apparaissent aujourd'hui que dans le job d'audit, a"
+		+ "l'occasion d'une pull request, jamais a date fixe"
+	SOURCE "constate le 2026-09-10, verification de DEP1 apres la fusion de la PR #53"
+
+OPEN_QUESTION LAuditDeSecuriteEstRougeSurDesAvisTransitifs
+	DESC "deux avis de severite haute portes par des dependances transitives, que le depot ne"
+		+ "declare pas lui-meme, font echouer l'audit"
+	DESC "ils sont aujourd'hui ignores nommement dans le script d'audit : le job est vert, les avis"
+		+ "ne sont pas resolus"
+	DESC "a trancher : attendre la montee amont, ou forcer une resolution depuis la racine"
+	STATUS specified
+	BLOCKS @SEC.ChaineDeDependancesEtDeBuild
+	RATIONALE "le rouge prexiste aux pull requests qui le rencontrent et ne vient pas d'elles :"
+		+ "constate a l'identique sur une pull request ne touchant qu'un fichier d'exclusion"
+	RATIONALE "c'est exactement le terrain que le suivi de dependances doit remonter a date fixe"
+		+ "plutot qu'un jour de fusion"
+	SOURCE "constate le 2026-09-10, DEP1, PR #53"
+
+SCHEMA TASK
+	DESC "un lot de travail qui fusionne en une ou plusieurs pull requests"
+	DESC "specified : la fiche est ecrite, la tache est ouverte. implemented : elle est fusionnee,"
+		+ "et elle reste"
+	FIELD AFTER @TASK
+		REPEATABLE
+		DESC "la tache qui doit fusionner avant celle-ci ; l'arete inverse est calculee, personne"
+			+ "n'ecrit BEFORE"
+		CONVERSE BEFORE
+	FIELD WAVE string
+		DESC "la vague du plan a laquelle elle appartient"
+	FIELD PR string
+		REPEATABLE
+		DESC "la pull request qui la livre, une fois ouverte"
+
+// Les taches ouvertes. Les taches deja fusionnees ne sont pas des entites : le graphe
+// ci-dessous ne porte que ce qui reste a ordonner
+// (@DECISION.UneTacheFusionneeResteDansLeCorpus).
+//
+//   T37 ─┬─ T15 ─┐
+//        └─ T32 ─┴─ T38
+//              └─ T24
+TASK T37
+	DESC "Clean Architecture de core-mapping : les frontieres restantes, deux PR, comportement"
+		+ "inchange"
+	DESC "PR A : decisions 1 a 5, un commit par decision. PR B : decision 6, le contrat controleur"
+		+ "vers UI"
+	STATUS specified
+	WAVE "4"
+	RATIONALE "issue de la revue de code complete du 2026-09-07 : deux violations de la regle de"
+		+ "dependance, critiques au sens de architecture/review.md, et quatre violations de"
+		+ "responsabilite, toutes hors des fiches existantes"
+	RATIONALE "apres T26, T27 et T28, fusionnees : elles reecrivent validateSaveContent.js,"
+		+ "MergeSaveFiles.ts, les ports et presenters du merge, que la partie A touche aussi. Les"
+		+ "prendre avant aurait oblige trois PR a rebaser sur un deplacement de types"
+	RATIONALE "recouvrement avec T30 sur validateUniqueHost, dont T30 change le type de Player.id :"
+		+ "ordre libre, rebase trivial"
+	SPEC "le domaine ne depend plus de l'application : validateUniqueHost et"
+		+ "validateFloatSerialization cessent d'importer VALIDATION_ISSUE_CODES et ValidationIssue"
+		IMPL "packages/core-mapping/src/domain/rules/validateUniqueHost.ts"
+		IMPL "packages/core-mapping/src/domain/rules/validateFloatSerialization.ts"
+	SPEC "la verification du suffixe .0 ne se fait plus par expression reguliere sur le texte JSON"
+		+ "dans le domaine"
+		IMPL "packages/core-mapping/src/domain/rules/validateFloatSerialization.ts"
+	SPEC "l'encodage liste d'identifiants separes par des virgules n'est plus analyse ni"
+		+ "reserialise dans le domaine, et le separateur n'est declare qu'une fois"
+		IMPL "packages/core-mapping/src/domain/rules/merge/collectEjectedPlayerInventoryIds.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/rewriteReferences.ts"
+	SPEC "MergedSaveValueObject ne modelise plus un artefact de fichier dans le domaine"
+		IMPL "packages/core-mapping/src/domain/valueObjects/MergedSaveValueObject.ts"
+	SPEC "aucun presenter ne decide quel resultat s'est produit : le cas section absente est choisi"
+		+ "par le use case, et les ports perdent leur union avec undefined"
+		IMPL "packages/core-mapping/src/presentation/SaveConfigurationPresenter.ts"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.ts"
+	SPEC "les controleurs de section n'instancient plus SaveSectionsReaderService : le composition"
+		+ "root expose une fabrique"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts"
+	SPEC "le ViewModel n'expose plus ParsedSections a l'UI"
+		IMPL "packages/core-mapping/src/presentation/viewModels/LoadSaveFileViewModel.ts"
+	SPEC "le repli sections[3] ?? [] affecte a un champ type fabrique de generateur est supprime ou"
+		+ "type"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts"
+	RATIONALE "tsc l'accepte parce que l'operande gauche n'est pas nullable ; si le repli etait"
+		+ "pris, l'appel de la fabrique leverait une TypeError. Mort ou faux"
+	SPEC "acceptation : aucun import d'application dans domain, aucun import d'infrastructure dans"
+		+ "controllers hors composition et specs, aucun ViewModel important ParsedSections"
+		IMPL "packages/core-mapping/src/domain"
+		IMPL "packages/core-mapping/src/controllers"
+	SPEC "acceptation : sortie de la fusion identique a la reference sur les deux dossiers"
+		+ "d'entree, verdicts de validation identiques, tests et type-check verts"
+		IMPL "packages/core-mapping/package.json::core-mapping"
+
+TASK T15
+	DESC "convertir les cinq entites du domaine en classes, les onze value objects restant des"
+		+ "enregistrements readonly"
+	DESC "une entite par commit, dans l'ordre WorldObject, Inventory, PlacedWorldObject, Player,"
+		+ "TerraformationLevel"
+	STATUS specified
+	WAVE "4"
+	AFTER @TASK.T37
+	RATIONALE "T37 laisse en place les entites que T15 convertit et sa partie A deplace des types"
+		+ "du domaine ; a executer en dernier des taches domaine"
+	RATIONALE "les value objects restent des enregistrements readonly plus factory createXxx : ce"
+		+ "sont des resultats de calcul ou des lectures de configuration, sans comportement propre"
+	RATIONALE "champs private readonly TypeScript et non champs prives natifs : avec des champs"
+		+ "natifs une instance n'a aucune propriete propre enumerable, et toEqual entre deux"
+		+ "instances de valeurs differentes passerait. Le depot n'utilise jamais toStrictEqual."
+		+ "Verifie sur Bun"
+	RATIONALE "le spread perd le prototype : les quatre sites qui etalent une entite sont reecrits"
+		+ "en construction explicite"
+	SPEC "les cinq entites sont des classes a champs private readonly, accesseurs get, validation"
+		+ "dans le constructeur levant InvalidSaveDataError"
+		IMPL "packages/core-mapping/src/domain/entities"
+	SPEC "trois comportements migrent sur les entites : summarize sur TerraformationLevelEntity,"
+		+ "isWithinRadius sur PlacedWorldObjectEntity, contains sur InventoryEntity"
+		IMPL "packages/core-mapping/src/domain/entities"
+	SPEC "les deux use cases de section construisent leurs value objects par factory et non par"
+		+ "litteral et spread"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
+		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts"
+	SPEC "acceptation : aucune fabrique createXxxEntity ne subsiste, aucun champ prive natif dans"
+		+ "domain/entities, aucun spread d'entite ou de value object dans domain/rules et"
+		+ "application"
+		IMPL "packages/core-mapping/src/domain/entities"
+	SPEC "acceptation : computeTerraformationSummary et son spec sont supprimes, distanceBetween"
+		+ "est absent de domain/rules ou prive"
+		IMPL "packages/core-mapping/src/domain/rules"
+
+TASK T32
+	DESC "conformite de ui-save-manager : idiomes Solid, messages, duplication ; aucun changement"
+		+ "de comportement visible"
+	STATUS specified
+	WAVE "4"
+	AFTER @TASK.T37
+	RATIONALE "issue de la revue de code complete du 2026-09-07 ; travail de conformite STD-3 et"
+		+ "ARCH-4"
+	RATIONALE "apres T20, T27 et T31, fusionnees, qui reecrivent routes/index.tsx,"
+		+ "useLoadSaveFile.ts, MergeSection.tsx et ValidationMessagesList.tsx ; la partie B de T37"
+		+ "change le contrat controleur vers UI dont T32 part"
+	RATIONALE "de preference apres T17, qui etend le type-check aux fichiers tsx, pour que les"
+		+ "corrections soient verifiees par tsc"
+	RATIONALE "l'etat des lieux note que la matrice de dependances est respectee, qu'il n'y a aucun"
+		+ "appel reseau, que l'objet-URL est revoque a chaque resultat et au demontage, et que le"
+		+ "nom du fichier telecharge est normalise en infrastructure de core-mapping"
+	SPEC "la liste des messages de validation est rendue par le primitif de liste de Solid et non"
+		+ "par un map dans le JSX"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx"
+	RATIONALE "rendue une fois, elle ne se met plus a jour ; masque aujourd'hui parce que les"
+		+ "appelants demontent et remontent le bloc"
+	SPEC "aucun composant ne destructure ses props en signature : la reactivite est perdue a tout"
+		+ "changement de prop"
+		IMPL "packages/ui-save-manager/src/components"
+	SPEC "acceptation : aucun map rendant du JSX, aucune prop destructuree en signature, aucune"
+		+ "assertion non nulle sous un affichage conditionnel dans src"
+		IMPL "packages/ui-save-manager/src"
+	SPEC "acceptation : aucune chaine utilisateur hors du repertoire des messages, hors attributs"
+		+ "techniques"
+		IMPL "packages/ui-save-manager/src"
+	SPEC "acceptation : une seule definition de ColumnViewModel dans le depot"
+		IMPL "packages/ui-save-manager/src"
+	SPEC "acceptation : la build de l'UI est verte, le type-check l'est une fois T17 fusionnee"
+		IMPL "packages/ui-save-manager/package.json::ui-save-manager"
+
+TASK T24
+	DESC "harnais complet de tests d'UI par scenarios, quatre livrables, chacun fusionnable seul"
+	DESC "derniere tache UI a fusionner : chaque tache UI qui la precede peut deplacer un libelle"
+		+ "et casser un locator"
+	STATUS specified
+	WAVE "4"
+	AFTER @TASK.T32
+	RATIONALE "T23 a pose le runner, la configuration, le serveur, la convention de nommage, la"
+		+ "premiere fixture et le workflow CI ; T24 n'ajoute que des scenarios et l'outillage de"
+		+ "fixtures qui les alimente"
+	RATIONALE "T13 est necessaire au livrable qui verifie le spinner, l'etat de section et"
+		+ "l'indicateur global ; T18 pour que les scenarios d'avertissement attendent une phrase en"
+		+ "clair et non un code ; T20 pour la localisation affichee des erreurs de validation"
+	RATIONALE "l'etat des lieux date du 2026-09-06, avant l'execution de T23 : a reauditer au"
+		+ "demarrage, les libelles et la structure de la liste des messages ayant change"
+	RATIONALE "T24 ne bloque aucune autre tache"
+	SPEC "les deux flux critiques sont couverts de bout en bout : afficher une save, fusionner deux"
+		+ "saves et recuperer le fichier produit"
+		IMPL "packages/ui-save-manager"
+	SPEC "le contenu du fichier telecharge est verifie, pas seulement la presence du lien"
+		IMPL "packages/ui-save-manager"
+	SPEC "aucun scenario ne rejoue une regle de merge ou de validation deja couverte dans"
+		+ "core-mapping : la revue le verifie fiche en main"
+		IMPL "packages/core-mapping/src/domain/rules"
+	SPEC "regenerer les fixtures ne produit aucun ecart avec les fichiers versionnes, et un ecart"
+		+ "introduit volontairement fait echouer le controle"
+		IMPL "packages/ui-save-manager"
+	SPEC "la suite ne depend d'aucun fichier du repertoire d'entree et passe sur une machine sans"
+		+ "acces au depot prive"
+		IMPL "packages/ui-save-manager"
+	SPEC "aucun identifiant de test ni selecteur CSS ajoute, aucune capture de reference"
+		IMPL "packages/ui-save-manager"
+	SPEC "la duree totale de la suite est mesuree et consignee dans la PR du quatrieme livrable"
+		IMPL "packages/ui-save-manager"
+
+TASK T38
+	DESC "conformite de core-mapping aux standards de code et de tests : tout ce qui viole STD ou"
+		+ "TEST-1 sans relever d'une fiche existante ni de T37"
+	DESC "decoupable en trois PR : production, specs de domaine, specs d'application,"
+		+ "d'infrastructure et de presentation"
+	STATUS specified
+	WAVE "4"
+	AFTER @TASK.T15
+	AFTER @TASK.T37
+	RATIONALE "issue de la revue de code complete du 2026-09-07 ; aucun changement de comportement"
+	RATIONALE "derniere des taches core-mapping : les precedentes reecrivent la plupart des"
+		+ "fichiers listes, et la prendre avant reviendrait a corriger des lignes qu'elles"
+		+ "suppriment"
+	RATIONALE "l'etat des lieux est a reauditer au demarrage : la moitie des constats aura disparu"
+		+ "avec les taches precedentes. Les ancres ci-dessous le disent — un constat dont le"
+		+ "fichier n'existe plus tombe en L016"
+	SPEC "production, domaine : accolades sur les if de validateUniqueHost, abreviations hors DTO"
+		+ "dans resolvePlanetName, code mort de computeOptimizers, cast inutile de"
+		+ "energyOptimizerConfig, forme anonyme ecrite deux fois dans computeOptimizerBoosts"
+		IMPL "packages/core-mapping/src/domain/rules/validateUniqueHost.ts"
+		IMPL "packages/core-mapping/src/domain/rules/resolvePlanetName.ts"
+		IMPL "packages/core-mapping/src/domain/rules/computeOptimizers.ts"
+		IMPL "packages/core-mapping/src/domain/rules/energyOptimizerConfig.ts"
+		IMPL "packages/core-mapping/src/domain/rules/computeOptimizerBoosts.ts"
+	SPEC "production, fusion : les valeurs par defaut de mergeGlobalMetadata et mergeStatistics ne"
+		+ "sont plus nommees validated, l'indentation revient aux tabulations, le generateur vide"
+		+ "de mergeSaveSections cesse d'etre nomme comme une constante et les dix sections sont"
+		+ "destructurees par leur nom"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeStatistics.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveSections.ts"
+	SPEC "production : le recit historique et la note de suite quittent le code des tables"
+		+ "d'energie"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts"
+		IMPL "packages/core-mapping/src/domain/rules/computePlanetEnergyLevels.ts"
+	SPEC "presentation : les trois marqueurs de tache et la question en commentaire quittent"
+		+ "worldObjectLabels.ts, et les deux doublons de cle sont tranches"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts"
+	SPEC "presentation : le texte utilisateur en dur des trois presenters passe dans le repertoire"
+		+ "des messages du package"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts"
+		IMPL "packages/core-mapping/src/presentation/TerraformationLevelsPresenter.ts"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.ts"
+	SPEC "presentation : l'espace insecable est declaree une seule fois, les deux interfaces"
+		+ "Threshold de meme nom sont unifiees et la table des strategies est typee par cle"
+		IMPL "packages/core-mapping/src/presentation/formatters/formatNumber"
+	SPEC "infrastructure : le retrait de l'extension json est partage au lieu d'etre duplique avec"
+		+ "une sensibilite a la casse differente"
+		IMPL "packages/core-mapping/src/infrastructure/SaveFilesMergerService.ts"
+	SPEC "infrastructure : les abreviations et la note restituant ce que fait la methode quittent"
+		+ "SaveSectionsReaderService"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts"
+	SPEC "infrastructure : l'indice de section en dur de validateSaveContent passe par sa constante"
+		+ "nommee, et le parametre par lequel passe toute save cesse de s'appeler mergedSave"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js"
+	SPEC "application : le port lecteur cesse de retourner un value object de progression, et les"
+		+ "use cases cessent de nommer analyseur le parametre d'un port lecteur"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsReaderPort.ts"
+	SPEC "specs : dix-sept tests de seize fichiers separent leurs phases d'action et d'assertion,"
+		+ "que TEST-1 impose toujours presentes"
+		IMPL "packages/core-mapping/src/domain/entities"
+		IMPL "packages/core-mapping/src/domain/valueObjects"
+	SPEC "specs : aucun titre de test ne contient when, les deux fichiers indentes en espaces"
+		+ "reviennent aux tabulations, et le premier describe de determineSaveOrder perd son"
+		+ "prefixe technique"
+		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveSections.spec.ts"
+	SPEC "specs : les assertions reprojetees assertent la valeur, les attendus sont litteraux et"
+		+ "non calcules ni etales depuis une fixture"
+		IMPL "packages/core-mapping/src/domain/rules/computeOptimizers.spec.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts"
+	SPEC "specs : les appels de use case dans un test non asynchrone sont attendus, meme quand le"
+		+ "corps est synchrone"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.spec.ts"
+	SPEC "specs : la couverture dupliquee entre niveaux est retiree, les specs de controleur"
+		+ "reviennent a un nominal et un echec, et les tests sans objet sont supprimes ou reecrits"
+		IMPL "packages/core-mapping/src/controllers"
+	SPEC "specs : aucun indice de section n'est ecrit en dur, pas meme dans une spec, et les casts"
+		+ "sur des litteraux deja conformes sont retires"
+		IMPL "packages/core-mapping/src/infrastructure/SaveFilesMergerService.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.spec.ts"
+	RATIONALE "decision du 2026-09-09 : les specs lisent le module d'indices de section ; le releve"
+		+ "a ete mis a jour apres la revue de T26, qui a nomme tous ceux de"
+		+ "validateSaveContent.spec.js"
+	SPEC "specs : les deux cas manquants sont ajoutes, si T37 ne les a pas fait disparaitre"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/SaveConfigurationPresenter.spec.ts"
+	SPEC "acceptation : la porte qualite est verte avec la garde des assertions, aucune phase"
+		+ "d'action et d'assertion fusionnee ne subsiste dans le package"
+		IMPL "packages/core-mapping"
+
+// Les points que T37 et T38 laissent a trancher au demarrage. Ils etaient dans la section
+// « Decisions » de leur fiche, ou personne ne pouvait les compter ; ce sont des questions, avec
+// une recommandation, pas des arbitrages rendus.
+OPEN_QUESTION SortDuBasculementDeBrancheParPrivateSync
+	DESC "private:sync repositionne le clone prive sur la branche nommee d'apres le projet : il"
+		+ "defait la convention des branches awawa sans le dire"
+		REF @DECISION.LesDepotsSatellitesRestentSurLeurBrancheAwawa
+	DESC "deux sorties envisagees : apprendre a install.sh une branche surchargeable, ou remettre"
+		+ "pcst/awawa a la main apres chaque bun install"
+	STATUS superseded
+	BLOCKS @DECISION.LesDepotsSatellitesRestentSurLeurBrancheAwawa
+	RATIONALE "install.sh, sur la branche main du depot prive, fait git checkout <projet> des que"
+		+ "la branche courante en differe ; la sortie est un echo avale par le || du script"
+		+ "appelant, donc un bun install suffit a perdre la branche en silence"
+	SOURCE "constate le 2026-09-11, lecture de install.sh sur .do-not-commit main"
+
+OPEN_QUESTION FormeDesErreursDeRegleDomaine
+	DESC "sous quel type validateUniqueHost et validateFloatSerialization rendent-elles leur echec"
+	DESC "recommandation : un type du domaine, que l'infrastructure traduit en issue de validation"
+		+ "avec son code ; les codes restent en application, sans celui que le domaine decide"
+	STATUS specified
+	BLOCKS @TASK.T37
+	SOURCE "fiche T37, decision 1"
+
+OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
+	DESC "la verification du suffixe .0 reste-t-elle une regle de domaine"
+	DESC "recommandation : non, elle sort vers l'infrastructure, a cote des schemas — la propriete"
+		+ "est celle du texte"
+	STATUS specified
+	BLOCKS @TASK.T37
+	RATIONALE "l'alternative, une regle de domaine recevant des entrees analysees et verifiant"
+		+ "l'integrite du nombre, ne verifie rien : la propriete n'est pas observable apres analyse"
+		+ "JSON"
+	SOURCE "fiche T37, decision 2"
+
+OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
+	DESC "le domaine garde-t-il les chaines d'identifiants separees par des virgules, ou les"
+		+ "recoit-il decodees"
+	DESC "recommandation : decodage en infrastructure avant le domaine et re-encodage apres, une"
+		+ "seule declaration du separateur"
+	STATUS specified
+	BLOCKS @TASK.T37
+	RATIONALE "T11 a tranche que les DTO wire restent l'entree et la sortie du domaine ; elle n'a"
+		+ "pas tranche l'analyse d'un encodage de champ dans le domaine. L'alternative est"
+		+ "d'elargir explicitement cette question aux encodages de champ"
+	SOURCE "fiche T37, decision 3"
+
+OPEN_QUESTION SortDeMergedSaveValueObject
+	DESC "MergedSaveValueObject est-il supprime ou renomme en type d'infrastructure"
+	DESC "recommandation : supprime ; le port de fusion retourne les sections fusionnees et la"
+		+ "serialisation comme le nommage du fichier restent en infrastructure"
+	STATUS specified
+	BLOCKS @TASK.T37
+	RATIONALE "T27 a deja note que son invariant est vide : la seule erreur de domaine atteignable"
+		+ "sur le chemin de fusion est un test de chaine vide sur un blob"
+	SOURCE "fiche T37, decision 4"
+
+OPEN_QUESTION FormeDuContratControleurVersUi
+	DESC "comment l'UI cesse-t-elle de connaitre la representation de persistance des sections"
+	DESC "recommandation : les controleurs de section recoivent le contenu texte deja valide et le"
+		+ "composition root fabrique lecteur et analyseur ; l'alternative est un identifiant opaque"
+		+ "de save chargee porte par le ViewModel"
+	STATUS specified
+	BLOCKS @TASK.T37
+	BLOCKS @TASK.T32
+	RATIONALE "mesure prealable de T13 : l'analyse coute 2 ms sur 2 Mo, donc la refaire par"
+		+ "controleur de section ne coute rien"
+	SOURCE "fiche T37, decision 6"
+
+OPEN_QUESTION SortDesCleusDupliqueesDeWorldObjectLabels
+	DESC "que faire des deux definitions de OutsideLamp1 et de la paire Keycard1 / KeyCard1,"
+		+ "probablement la meme cle"
+	DESC "recommandation : conserver la premiere occurrence et verifier la casse contre les saves"
+		+ "de reference"
+	STATUS specified
+	BLOCKS @TASK.T38
+	SOURCE "fiche T38, decision 2"
+
+DECISION UneTacheFusionneeResteDansLeCorpus
+	DESC "une tache fusionnee passe implemented et reste une entite ; sa fiche markdown n'est plus"
+		+ "supprimee, parce qu'il n'y a plus de fiche"
+	DESC "les taches fusionnees avant le 2026-09-11 ne sont pas retro-creees : le graphe ne porte"
+		+ "que ce qui reste a ordonner, et leur ordre n'a plus d'effet sur rien"
+	STATUS implemented
+	RATIONALE "une tache ouverte nomme ses prerequis par AFTER ; si l'entite du prerequis"
+		+ "disparaissait a sa fusion, la reference pendrait chez toutes celles qui l'attendaient."
+		+ "Le corpus impose donc de la garder, et status --where STATUS!=implemented rend les"
+		+ "ouvertes"
+	RATIONALE "la raison d'etre de la suppression a la fusion — une PR fermee au lieu d'etre"
+		+ "fusionnee laissait la fiche silencieusement absente — disparait : c'est le STATUS qui"
+		+ "porte l'etat, plus la presence d'un fichier"
+	REJECTED "supprimer l'entite a la fusion, comme la fiche l'etait : chaque suppression casserait"
+		+ "les references des taches restantes"
+	REJECTED "marquer la tache fusionnee superseded : le schema exige alors une arete entrante"
+		+ "CLOSED_BY ou SUPERSEDED_BY, qu'une tache achevee n'a pas — elle n'a pas ete remplacee,"
+		+ "elle a ete faite"
+	REJECTED "retro-creer les taches deja fusionnees pour completer le graphe : leur ordre n'a plus"
+		+ "d'effet sur rien"
+	SPEC "le plan d'ordonnancement se lit par le corpus, plans/ ne portant plus que les vagues et"
+		+ "la prose de cadrage"
+		IMPL "spec.awawa"
+	SOURCE "decision du 2026-09-11, migration de tasks/"
+
+// La sécurité de l'application publiée, migrée de plans/plan-secu.md le 2026-09-12 quand ce
+// fichier a été supprimé : une entité par surface protégée, et les cases à cocher devenues des
+// SPEC ancrées (@DECISION.LesMesuresDeSecuriteSontDesEntitesSEC).
+SCHEMA SEC
+	DESC "une mesure de securite : la surface qu'elle protege, la menace qu'elle reduit, et ou elle"
+		+ "est verifiee"
+	DESC "specified : la mesure est requise et pas en place. implemented : elle est en place et"
+		+ "ancree"
+	FIELD THREAT string
+		REQUIRED
+		REPEATABLE
+		DESC "ce qu'un attaquant obtiendrait sans cette mesure"
+		FIELD REF reference
+			REPEATABLE
+	FIELD SCOPE repo|console
+		REQUIRED
+		DESC "repo : verifiable par une commande du depot. console : reglage hors depot, verifiable"
+			+ "a la main seulement"
+
+SEC TelechargementDeLaSaveFusionnee
+	DESC "le fichier offert au telechargement est nomme, relu et decrit dans le navigateur, et"
+		+ "n'est offert que par une action explicite"
+	THREAT "un nom de fichier venu d'une save qui echappe au dossier de telechargement, masque son"
+		+ "extension ou porte un caractere de controle"
+	THREAT "une save exfiltree hors du navigateur par le code de l'UI"
+	SCOPE repo
+	STATUS implemented
+	SPEC "le nom du fichier produit est normalise NFKC, reduit a un alphabet sur liste blanche,"
+		+ "prive de ses points de tete, tronque a cent caracteres, et retombe sur un nom fixe s'il"
+		+ "devient vide"
+		IMPL "packages/core-mapping/src/infrastructure/buildMergedFileName.ts::sanitizeFileName"
+		IMPL "packages/core-mapping/src/infrastructure/buildMergedFileName.spec.ts::path separators"
+			+ "or unsafe characters"
+	SPEC "le fichier produit garde l'extension .json et le type application/json"
+		IMPL "packages/core-mapping/src/infrastructure/buildMergedFileName.ts::-merged.json"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::application/json"
+	SPEC "le contenu fusionne est relu par le validateur avant d'etre offert, et les erreurs de la"
+		+ "sortie sont affichees a cote du lien"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::mergedSaveValidation"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::mergeResultSectionMergedSaveInvalidMessage"
+	SPEC "le telechargement part d'un lien porteur de download, jamais d'un clic programme"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::download="
+	SPEC "le nom du fichier est affiche avant que le lien soit suivi"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::mergeResultSectionFileCreatedMessage"
+	SPEC "aucun appel reseau dans le paquet d'UI : les saves ne quittent pas le navigateur"
+		IMPL "packages/ui-save-manager/src"
+	RATIONALE "la relecture n'interdit pas le telechargement : une fusion qui produit un fichier"
+		+ "reste un succes, et l'utilisateur voit les erreurs de la sortie a cote du lien"
+		REF @DECISION.UneFusionQuiProduitUnFichierResteUnSucces
+	RATIONALE "la relecture de la sortie n'existe que depuis T28, fusionnee le 2026-09-11, alors"
+		+ "que la case correspondante du plan etait cochee depuis le 2026-09-08 : une case ne dit"
+		+ "pas ou la mesure est realisee, une ancre le dit"
+	SOURCE "plans/plan-secu.md, phase 1"
+
+SEC EnTetesDuSitePublie
+	DESC "le repertoire publie porte les en-tetes de securite du site, que l'hebergeur lit au"
+		+ "deploiement"
+	THREAT "un script injecte dans la page qui atteint une origine tierce ou exfiltre une save"
+	THREAT "la page encadree par un site tiers, ou servie en clair"
+	SCOPE repo
+	STATUS implemented
+	SPEC "la politique de contenu ferme la source par defaut, les connexions et les soumissions de"
+		+ "formulaire a l'origine, et refuse les objets, la base d'URL et l'encadrement"
+		IMPL "packages/ui-save-manager/public/_headers::Content-Security-Policy"
+	SPEC "les quatre autres en-tetes sont declares : transport strict, refus du reniflage de type,"
+		+ "politique de referent et politique de permissions"
+		IMPL "packages/ui-save-manager/public/_headers::Strict-Transport-Security"
+		IMPL "packages/ui-save-manager/public/_headers::X-Content-Type-Options"
+		IMPL "packages/ui-save-manager/public/_headers::Referrer-Policy"
+		IMPL "packages/ui-save-manager/public/_headers::Permissions-Policy"
+	RATIONALE "les en-tetes ne valent qu'au deploiement de production : une politique appliquee en"
+		+ "developpement entre en conflit avec le rechargement a chaud"
+	SOURCE "plans/plan-secu.md, phase 2"
+
+SEC ChaineDeDependancesEtDeBuild
+	DESC "ce qui entre dans le bundle livre au navigateur est declare, gele et audite"
+	THREAT "une dependance compromise ou vulnerable livree au navigateur par le build"
+	SCOPE repo
+	STATUS implemented
+	SPEC "tout package consomme par l'UI est une dependance de workspace declaree, verifiee par une"
+		+ "garde"
+		IMPL "package.json::check:dependencies"
+	SPEC "le fichier de verrouillage est versionne et l'installation de CI est gelee sur lui"
+		IMPL "bun.lock"
+		IMPL ".github/workflows/dependencies.yml::--frozen-lockfile"
+	SPEC "l'audit de vulnerabilites tourne en CI sur chaque pull request et sur la branche par"
+		+ "defaut, et echoue a partir de la severite haute"
+		IMPL ".github/workflows/dependencies.yml::bun run audit"
+		IMPL "package.json::--audit-level=high"
+	SPEC "le suivi de versions est planifie, pour les actions de CI comme pour les dependances du"
+		+ "workspace"
+		IMPL ".github/dependabot.yml::package-ecosystem"
+	RATIONALE "le suivi de versions ne remonte aucune vulnerabilite pour cet ecosysteme : l'audit"
+		+ "est le seul filet"
+		REF @DECISION.DependabotSuitDeuxEcosystemesEnGroupesHebdomadaires
+	SOURCE "plans/plan-secu.md, phase 3"
+
+SEC JetonsEtSecretsDeLaCi
+	DESC "les workflows tournent avec le jeton le plus etroit qui les fasse passer, et ne portent"
+		+ "aucun secret en clair"
+	THREAT "un workflow detourne qui ecrit dans le depot ou lit un secret de production"
+	SCOPE repo
+	STATUS implemented
+	SPEC "chaque workflow declare ses permissions, et aucune ne va au-dela de la lecture du contenu"
+		+ "hors de celles que l'action de revue exige"
+		IMPL ".github/workflows/dependencies.yml::permissions"
+		IMPL ".github/workflows/quality.yml::permissions"
+		IMPL ".github/workflows/ui-tests.yml::permissions"
+		IMPL ".github/workflows/claude.yml::permissions"
+		IMPL ".github/workflows/claude-code-review.yml::permissions"
+	SPEC "aucun secret n'est ecrit dans le depot : les workflows les lisent par le magasin de"
+		+ "secrets de la forge"
+		IMPL ".github/workflows/claude.yml::secrets.CLAUDE_CODE_OAUTH_TOKEN"
+	SOURCE "plans/plan-secu.md, phase 4"
+
+SEC ProtectionDesComptesEtDuDeploiement
+	DESC "ce qui protege la chaine de publication hors du depot : les deux comptes, la branche de"
+		+ "production et le build de l'hebergeur"
+	THREAT "un compte pris qui deploie en production sans passer par une revue"
+	THREAT "une previsualisation de deploiement qui expose un secret de production"
+	SCOPE console
+	STATUS specified
+	SPEC "l'authentification a deux facteurs est active sur les deux comptes et les droits"
+		+ "d'administration sont limites"
+	SPEC "la branche de production exige une revue et des verifications vertes"
+	SPEC "l'audit est bloquant dans le build de l'hebergeur : un deploiement echoue sur une"
+		+ "vulnerabilite haute ou critique"
+	SPEC "les previsualisations de deploiement ne disposent d'aucun secret de production"
+	SPEC "les secrets de l'hebergeur et de la forge sont limites a la portee qui les consomme"
+	SPEC "les deploiements sont notifies et tracables"
+	RATIONALE "aucune de ces obligations n'a d'ancre dans le depot : elle ne peut pas passer"
+		+ "implemented, et c'est SCOPE console qui dit pourquoi, pas son STATUS"
+	SOURCE "plans/plan-secu.md, phase 4"
+
+OPEN_QUESTION LaPolitiqueDeContenuAutoriseLeScriptEnLigne
+	DESC "la politique de contenu autorise le script et le style en ligne : un script injecte dans"
+		+ "la page s'execute malgre elle"
+	DESC "a trancher : hachage ou nonce sur le script d'hydratation, ou constat que le cadre ne le"
+		+ "permet pas"
+	STATUS specified
+	BLOCKS @SEC.EnTetesDuSitePublie
+	RATIONALE "la politique a ete posee compatible avec le build de production, sans que le retrait"
+		+ "de l'inline soit tente ni mesure"
+	RATIONALE "la case du plan restait cochee : la politique existe, et c'est sa force qui n'etait"
+		+ "ecrite nulle part"
+	SOURCE "relu le 2026-09-12, migration de plans/plan-secu.md, phase 2"
+
+DECISION LeRisqueEstLIntegriteDuJavaScriptLivrePasLeTransport
+	DESC "le modele de confiance : la save ne quitte pas le navigateur, donc le risque n'est pas"
+		+ "son transport mais l'integrite du JavaScript que l'hebergeur livre"
+	DESC "l'objectif n'est pas de rendre fiable un site compromis : reduire la probabilite de"
+		+ "compromission, et en limiter les consequences"
+	STATUS specified
+	RATIONALE "le traitement local ecarte le serveur de la chaine de traitement, pas de la chaine"
+		+ "de livraison : un script compromis fabrique un fichier malveillant ou exfiltre la save"
+		+ "sans qu'un traitement local y change rien"
+	REJECTED "traiter le caractere local du traitement comme suffisant"
+	REJECTED "fusionner cote serveur pour maitriser le code execute : les saves quitteraient la"
+		+ "machine de l'utilisateur, ce qui echange la menace contre une pire"
+	SPEC "le modele de confiance est expose dans la documentation publique du depot"
+	SOURCE "plans/plan-secu.md, probleme et approche"
+
+DECISION LesMesuresDeSecuriteSontDesEntitesSEC
+	DESC "plans/plan-secu.md est supprime : ses phases sont des entites SEC, une par surface"
+		+ "protegee, et ses cases a cocher des SPEC falsifiables ancrees dans le depot"
+	DESC "une mesure hors depot reste specified : faute d'ancre elle ne peut pas passer"
+		+ "implemented, et SCOPE console dit qu'aucune commande ne la verifiera"
+	STATUS implemented
+	RATIONALE "une case cochee ne dit ni ou la mesure est realisee, ni ce qu'elle protege, ni ce"
+		+ "qui la fragilise encore : la relecture de la sortie de fusion etait cochee trois jours"
+		+ "avant d'exister, et la politique de contenu cochee sans que son autorisation du script"
+		+ "en ligne soit ecrite nulle part"
+		REF @OPEN_QUESTION.LaPolitiqueDeContenuAutoriseLeScriptEnLigne
+	RATIONALE "la migration suit celle du journal et des fiches de defauts : un fichier dont la"
+		+ "matiere a un domicile dans le corpus est supprime, pas garde en double"
+		REF @DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
+	REJECTED "une entite par case a cocher : vingt-huit entites sans arete, la ou une surface porte"
+		+ "ses obligations comme un package porte ses SPEC"
+	REJECTED "des OPEN_QUESTION pour les mesures non faites : une mesure requise et absente n'est"
+		+ "pas un point non tranche, son STATUS le dit"
+	REJECTED "garder le plan a cote du corpus pour la seule phase hors depot : les deux se seraient"
+		+ "contredits a la premiere verification"
+	SPEC "aucun fichier du contexte prive ne renvoie plus a plans/plan-secu.md"
+		IMPL "AGENTS.md"
+	SOURCE "decision du 2026-09-12, migration de plans/plan-secu.md"
