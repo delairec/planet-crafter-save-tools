@@ -1,8 +1,6 @@
-import {
-  MergeResultPresenterPort,
-  MergeSucceededOutcome,
-  SaveFilesInvalidOutcome
-} from "../application/ports/MergeResultPresenterPort";
+import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
+import {MergeSucceededResponse} from "../application/responses/MergeSucceededResponse";
+import {SaveFilesInvalidResponse} from "../application/responses/SaveFilesInvalidResponse";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
@@ -29,7 +27,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     return this._viewModel;
   }
 
-  presentMergeSucceeded({fileName, content, mergeErrors, saveAWarnings, saveBWarnings}: MergeSucceededOutcome): void {
+  presentMergeSucceeded({fileName, content, mergeErrors, saveAWarnings, saveBWarnings}: MergeSucceededResponse): void {
     this._viewModel = {
       status: 'success',
       fileName,
@@ -43,7 +41,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     };
   }
 
-  presentSaveFilesInvalid({saveAErrors, saveBErrors, saveAWarnings, saveBWarnings}: SaveFilesInvalidOutcome): void {
+  presentSaveFilesInvalid({saveAErrors, saveBErrors, saveAWarnings, saveBWarnings}: SaveFilesInvalidResponse): void {
     this._viewModel = {
       status: 'validationError',
       fileName: '',
