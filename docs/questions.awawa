@@ -121,7 +121,7 @@ OPEN_QUESTION FormeDesErreursDeRegleDomaine
 	DESC "recommandation : un type du domaine, que l'infrastructure traduit en issue de validation"
 		+ "avec son code ; les codes restent en application, sans celui que le domaine decide"
 	STATUS specified
-	BLOCKS @TASK.T37
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	SOURCE "fiche T37, decision 1"
 
 OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
@@ -129,7 +129,7 @@ OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
 	DESC "recommandation : non, elle sort vers l'infrastructure, a cote des schemas — la propriete"
 		+ "est celle du texte"
 	STATUS specified
-	BLOCKS @TASK.T37
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "l'alternative, une regle de domaine recevant des entrees analysees et verifiant"
 		+ "l'integrite du nombre, ne verifie rien : la propriete n'est pas observable apres analyse"
 		+ "JSON"
@@ -141,7 +141,7 @@ OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
 	DESC "recommandation : decodage en infrastructure avant le domaine et re-encodage apres, une"
 		+ "seule declaration du separateur"
 	STATUS specified
-	BLOCKS @TASK.T37
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T11 a tranche que les DTO wire restent l'entree et la sortie du domaine ; elle n'a"
 		+ "pas tranche l'analyse d'un encodage de champ dans le domaine. L'alternative est"
 		+ "d'elargir explicitement cette question aux encodages de champ"
@@ -152,7 +152,7 @@ OPEN_QUESTION SortDeMergedSaveValueObject
 	DESC "recommandation : supprime ; le port de fusion retourne les sections fusionnees et la"
 		+ "serialisation comme le nommage du fichier restent en infrastructure"
 	STATUS specified
-	BLOCKS @TASK.T37
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T27 a deja note que son invariant est vide : la seule erreur de domaine atteignable"
 		+ "sur le chemin de fusion est un test de chaine vide sur un blob"
 	SOURCE "fiche T37, decision 4"
@@ -163,8 +163,8 @@ OPEN_QUESTION FormeDuContratControleurVersUi
 		+ "composition root fabrique lecteur et analyseur ; l'alternative est un identifiant opaque"
 		+ "de save chargee porte par le ViewModel"
 	STATUS specified
-	BLOCKS @TASK.T37
-	BLOCKS @TASK.T32
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	BLOCKS @TASK.T32_ConformiteUiSaveManager
 	RATIONALE "mesure prealable de T13 : l'analyse coute 2 ms sur 2 Mo, donc la refaire par"
 		+ "controleur de section ne coute rien"
 	SOURCE "fiche T37, decision 6"
@@ -175,5 +175,5 @@ OPEN_QUESTION SortDesCleusDupliqueesDeWorldObjectLabels
 	DESC "recommandation : conserver la premiere occurrence et verifier la casse contre les saves"
 		+ "de reference"
 	STATUS specified
-	BLOCKS @TASK.T38
+	BLOCKS @TASK.T38_ConformiteCoreMapping
 	SOURCE "fiche T38, decision 2"
