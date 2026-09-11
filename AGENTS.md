@@ -3,15 +3,17 @@
 Contexte projet pour les agents IA travaillant dans ce dépôt, en complément des instructions générales `~/.ai`.
 
 **Ce fichier n'est plus le domicile des décisions.** Depuis le 2026-09-11, la spécification, les arbitrages et les
-questions ouvertes vivent dans le corpus awawa `spec.awawa` et se lisent avec l'outil. Ce qui reste ici est ce qu'il
+questions ouvertes vivent dans le corpus awawa de `docs/` et se lisent avec l'outil. Ce qui reste ici est ce qu'il
 faut savoir *avant* d'avoir lancé la moindre commande : où est le corpus, comment le lire, les commandes du dépôt,
 et les règles qu'on ne peut pas se permettre de découvrir par une requête.
 
 ## Corpus de spécification (awawa)
 
-La spécification du projet est le corpus awawa `spec.awawa`, à la racine du dépôt public. **La racine de workspace
+La spécification du projet est le corpus awawa de `docs/` : un fichier `.awawa` par domaine, plus
+`docs/_schema.awawa` pour le schéma transverse (@DECISION.LeCorpusEstDecoupeParDomaine). **La racine de workspace
 est la racine du dépôt** — c'est de là que les ancres `IMPL` résolvent, et c'est elle que prend le dernier argument
-de chaque commande (@DECISION.LeCorpusVitDansLeDepotPublic).
+de chaque commande (@DECISION.LeCorpusVitDansLeDepotPublic). Ne jamais passer un fichier seul : chaque commande agit
+sur tout l'espace de travail, et un fichier isolé rapporte comme cassées des références qui tiennent.
 
 **Lancer `awawa` depuis un worktree du dépôt public**, avec `.` pour racine.
 
@@ -54,7 +56,7 @@ awawa lint --strict .               # doit sortir en 0
 
 ## Emplacement
 
-Ce fichier et le corpus `spec.awawa` sont versionnés à la racine du dépôt public. Le dépôt satellite privé
+Ce fichier est versionné à la racine du dépôt public, le corpus dans `docs/`. Le dépôt satellite privé
 `delairec/.do-not-commit`, branche `planet-crafter-save-tools`, reste cloné dans `.do-not-commit/` (git-ignoré ici)
 et ne porte plus que ce qui ne peut pas être public (@DECISION.LeCorpusVitDansLeDepotPublic).
 
@@ -75,9 +77,9 @@ entité `SEC` (@DECISION.LesMesuresDeSecuriteSontDesEntitesSEC), une tâche une 
 (@DECISION.UneTacheFusionneeResteDansLeCorpus). Une nouvelle tâche s'écrit avec `awawa new TASK T40 .` ; la famille
 d'outillage du dépôt, hors chantier de conformité, garde ses numéros `DEP{N}`.
 
-**Langue** : `spec.awawa` et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
-générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, `docs/`,
-commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts
+**Langue** : le corpus et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
+générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, les `.md` de
+`docs/`, commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts
 (@DECISION.LaSpecificationResteEnFrancaisMemePubliee).
 
 **Rafraîchir le clone privé avant de lire une save ou un plan.** `.do-not-commit/` est un clone figé au dernier
