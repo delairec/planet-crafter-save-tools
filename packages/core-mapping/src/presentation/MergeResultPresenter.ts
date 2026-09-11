@@ -1,6 +1,6 @@
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
-import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveWarningCode} from "shared-save-processing/gameDefinitions";
+import {MergeSucceededResponse} from "../application/responses/MergeSucceededResponse";
+import {SaveFilesInvalidResponse} from "../application/responses/SaveFilesInvalidResponse";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
@@ -15,6 +15,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       fileName: '',
       content: '',
       mergeFailureMessage: '',
+      mergeErrors: [],
       saveAErrors: [],
       saveBErrors: [],
       saveAWarnings: [],
@@ -26,12 +27,13 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     return this._viewModel;
   }
 
-  presentMergeSucceeded(fileName: string, content: string, saveAWarnings: SaveWarningCode[], saveBWarnings: SaveWarningCode[]): void {
+  presentMergeSucceeded({fileName, content, mergeErrors, saveAWarnings, saveBWarnings}: MergeSucceededResponse): void {
     this._viewModel = {
       status: 'success',
       fileName,
       content,
       mergeFailureMessage: '',
+      mergeErrors: mergeErrors.map(formatValidationError),
       saveAErrors: [],
       saveBErrors: [],
       saveAWarnings: saveAWarnings.map(formatSaveWarning),
@@ -39,12 +41,13 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     };
   }
 
-  presentSaveFilesInvalid(saveAErrors: ValidationIssue[], saveBErrors: ValidationIssue[], saveAWarnings: SaveWarningCode[], saveBWarnings: SaveWarningCode[]): void {
+  presentSaveFilesInvalid({saveAErrors, saveBErrors, saveAWarnings, saveBWarnings}: SaveFilesInvalidResponse): void {
     this._viewModel = {
       status: 'validationError',
       fileName: '',
       content: '',
       mergeFailureMessage: '',
+      mergeErrors: [],
       saveAErrors: saveAErrors.map(formatValidationError),
       saveBErrors: saveBErrors.map(formatValidationError),
       saveAWarnings: saveAWarnings.map(formatSaveWarning),
@@ -58,6 +61,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       fileName: '',
       content: '',
       mergeFailureMessage: mergedSaveUnusableMessage,
+      mergeErrors: [],
       saveAErrors: [],
       saveBErrors: [],
       saveAWarnings: [],

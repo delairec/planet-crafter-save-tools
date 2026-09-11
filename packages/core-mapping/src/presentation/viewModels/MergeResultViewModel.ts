@@ -5,6 +5,7 @@ export interface MergeResultViewModel {
   fileName: string;
   content: string;
   mergeFailureMessage: string;
+  mergeErrors: SaveValidationMessageViewModel[];
   saveAErrors: SaveValidationMessageViewModel[];
   saveBErrors: SaveValidationMessageViewModel[];
   saveAWarnings: SaveValidationMessageViewModel[];

@@ -17,7 +17,12 @@ export class MergeSaveFiles {
     const validationB = this.validator.validate(fileNameB, contentB);
 
     if (!validationA.isValid || !validationB.isValid) {
-      this.presenter.presentSaveFilesInvalid(validationA.errors, validationB.errors, validationA.warnings, validationB.warnings);
+      this.presenter.presentSaveFilesInvalid({
+        saveAErrors: validationA.errors,
+        saveBErrors: validationB.errors,
+        saveAWarnings: validationA.warnings,
+        saveBWarnings: validationB.warnings
+      });
       return;
     }
 
@@ -32,6 +37,14 @@ export class MergeSaveFiles {
       return;
     }
 
-    this.presenter.presentMergeSucceeded(mergedSave.fileName, mergedSave.content, validationA.warnings, validationB.warnings);
+    const mergedSaveValidation = this.validator.validate(mergedSave.fileName, mergedSave.content);
+
+    this.presenter.presentMergeSucceeded({
+      fileName: mergedSave.fileName,
+      content: mergedSave.content,
+      mergeErrors: mergedSaveValidation.errors,
+      saveAWarnings: validationA.warnings,
+      saveBWarnings: validationB.warnings
+    });
   }
 }

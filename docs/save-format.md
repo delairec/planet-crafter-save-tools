@@ -39,6 +39,11 @@ position), and merging refuses to write a save whose input carries one. Blank se
 trimmed first, which covers the reserved part the terminating `@` produces and the line break the game writes before
 the first entry of a section.
 
+The save a merge produces is held to the same rules as the saves the tool accepts: it is read back and validated
+before the result reaches the user, so a defect the merge introduced is named instead of being handed over in
+silence. It is named as a defect of the produced save, never of one of the input files, and it does not withhold the
+file: a merge that produced a save stays a success.
+
 ---
 
 ## Entity Relationship Diagram

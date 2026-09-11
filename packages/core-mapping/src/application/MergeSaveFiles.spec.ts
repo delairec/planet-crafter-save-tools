@@ -3,13 +3,25 @@ import {MergeSaveFiles} from './MergeSaveFiles';
 import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {SaveFilesMergerPort} from './ports/SaveFilesMergerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
-import {VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
+import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
+import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
+import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
+import {SaveValidationResult} from './ports/SaveValidationResult';
+import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
 import {InvalidSaveDataError} from '../domain/errors/InvalidSaveDataError';
 
 describe('MergeSaveFiles', () => {
 
   const MERGED_SAVE = {fileName: 'Save-A-Save-B-merged.json', content: 'merged content'};
   const TWO_VALID_SAVES = {fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'};
+  const noErrorsFromTheMerge: ValidationIssue[] = [];
+
+  const ACCEPTED: SaveValidationResult = {isValid: true, errors: [], warnings: []};
+  const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResult => ({isValid: false, errors, warnings: []});
+  const acceptedWith = (...warnings: SaveWarningCode[]): SaveValidationResult => ({isValid: true, errors: [], warnings});
+
+  const validatorAnswering = (resultsByFileName: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
+    (fileName: string) => resultsByFileName[fileName] ?? ACCEPTED;
 
   interface UseCaseOverrides {
     validate?: SaveValidatorPort['validate'];
@@ -33,7 +45,13 @@ describe('MergeSaveFiles', () => {
       await useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith('Save-A-Save-B-merged.json', 'merged content', [], []);
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
+        fileName: 'Save-A-Save-B-merged.json',
+        content: 'merged content',
+        mergeErrors: noErrorsFromTheMerge,
+        saveAWarnings: [],
+        saveBWarnings: []
+      } satisfies MergeSucceededResponse);
     });
   });
 
@@ -42,9 +60,7 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const invalidJsonError = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'};
       const {useCase, merger, presenter} = createUseCase({
-        validate: (fileName: string, content: string) => content === 'contentA'
-          ? {isValid: false, errors: [invalidJsonError], warnings: []}
-          : {isValid: true, errors: [], warnings: []}
+        validate: validatorAnswering({'Save-A.json': rejectedWith(invalidJsonError)})
       });
 
       // Act
@@ -52,7 +68,12 @@ describe('MergeSaveFiles', () => {
 
       // Assert
       expect(merger.merge).not.toHaveBeenCalled();
-      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith([invalidJsonError], [], [], []);
+      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
+        saveAErrors: [invalidJsonError],
+        saveBErrors: [],
+        saveAWarnings: [],
+        saveBWarnings: []
+      } satisfies SaveFilesInvalidResponse);
     });
   });
 
@@ -61,9 +82,7 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const invalidExtensionError = {code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'};
       const {useCase, validator, merger, presenter} = createUseCase({
-        validate: (fileName: string) => fileName === 'Save-A.txt'
-          ? {isValid: false, errors: [invalidExtensionError], warnings: []}
-          : {isValid: true, errors: [], warnings: []}
+        validate: validatorAnswering({'Save-A.txt': rejectedWith(invalidExtensionError)})
       });
 
       // Act
@@ -74,7 +93,12 @@ describe('MergeSaveFiles', () => {
       expect(validator.validate).toHaveBeenCalledWith('Save-A.txt', 'contentA');
       expect(validator.validate).toHaveBeenCalledWith('Save-B.json', 'contentB');
       expect(merger.merge).not.toHaveBeenCalled();
-      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith([invalidExtensionError], [], [], []);
+      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
+        saveAErrors: [invalidExtensionError],
+        saveBErrors: [],
+        saveAWarnings: [],
+        saveBWarnings: []
+      } satisfies SaveFilesInvalidResponse);
     });
   });
 
@@ -82,32 +106,88 @@ describe('MergeSaveFiles', () => {
     it('should present the warnings of each save on a successful merge', () => {
       // Arrange
       const {useCase, presenter} = createUseCase({
-        validate: (fileName: string, content: string) => content === 'contentA'
-          ? {isValid: true, errors: [], warnings: ['legacy-save-format' as const]}
-          : {isValid: true, errors: [], warnings: []}
+        validate: validatorAnswering({'Save-A.json': acceptedWith('legacy-save-format')})
       });
 
       // Act
       useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith('Save-A-Save-B-merged.json', 'merged content', ['legacy-save-format'], []);
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
+        fileName: 'Save-A-Save-B-merged.json',
+        content: 'merged content',
+        mergeErrors: noErrorsFromTheMerge,
+        saveAWarnings: ['legacy-save-format'],
+        saveBWarnings: []
+      } satisfies MergeSucceededResponse);
     });
 
     it('should present the warnings of each save when the merge is rejected', () => {
       // Arrange
       const invalidJsonError = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentB'};
       const {useCase, presenter} = createUseCase({
-        validate: (fileName: string, content: string) => content === 'contentA'
-          ? {isValid: true, errors: [], warnings: ['legacy-save-format' as const]}
-          : {isValid: false, errors: [invalidJsonError], warnings: []}
+        validate: validatorAnswering({
+          'Save-A.json': acceptedWith('legacy-save-format'),
+          'Save-B.json': rejectedWith(invalidJsonError)
+        })
       });
 
       // Act
       useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith([], [invalidJsonError], ['legacy-save-format'], []);
+      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
+        saveAErrors: [],
+        saveBErrors: [invalidJsonError],
+        saveAWarnings: ['legacy-save-format'],
+        saveBWarnings: []
+      } satisfies SaveFilesInvalidResponse);
+    });
+  });
+
+  describe('When the merged save does not pass validation', () => {
+    const uniqueHostError = {code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2'};
+
+    const rejectOnlyTheMergedSave = validatorAnswering({[MERGED_SAVE.fileName]: rejectedWith(uniqueHostError)});
+
+    it('should present a success carrying the errors of the produced save', async () => {
+      // Arrange
+      const {useCase, presenter} = createUseCase({validate: rejectOnlyTheMergedSave});
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
+        fileName: 'Save-A-Save-B-merged.json',
+        content: 'merged content',
+        mergeErrors: [uniqueHostError],
+        saveAWarnings: [],
+        saveBWarnings: []
+      } satisfies MergeSucceededResponse);
+    });
+
+    it('should not blame the input files, which validation has already accepted', async () => {
+      // Arrange
+      const {useCase, presenter} = createUseCase({validate: rejectOnlyTheMergedSave});
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(presenter.presentSaveFilesInvalid).not.toHaveBeenCalled();
+    });
+
+    it('should validate the file name and the content the merger produced', async () => {
+      // Arrange
+      const {useCase, validator} = createUseCase({validate: rejectOnlyTheMergedSave});
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(validator.validate).toHaveBeenCalledTimes(3);
+      expect(validator.validate).toHaveBeenCalledWith('Save-A-Save-B-merged.json', 'merged content');
     });
   });
 

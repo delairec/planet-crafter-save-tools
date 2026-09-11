@@ -72,6 +72,12 @@ processed, and the command exits with code `0`. A merge that runs and produces n
 the output directory refuses, is a different matter: the command names the folder, stops there and exits with a
 non-zero code. Code `2` is reserved for an input directory holding no folder to merge.
 
+The save the merge produces is validated in turn, by the same rules as the saves it accepts. What that save does not
+pass is named on stderr, folder by folder — never as a defect of one of the input files, since it is the merge that
+produced it. This changes nothing else: the file is written where stdout announces it, the command still exits with
+code `0`, and the remaining folders are still processed. The merged save is yours to use or to discard, with the
+diagnostic in hand.
+
 ```
 bun merge -- --input=<directory> --output=<directory>
 ```
