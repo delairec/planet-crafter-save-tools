@@ -60,7 +60,6 @@ et ne porte plus que ce qui ne peut pas être public (@DECISION.LeCorpusVitDansL
 
 Organisation de `.do-not-commit/planet-crafter-save-tools/` :
 
-- `AGENTS.md` — les deux tables de correspondance de l'anonymisation, et rien d'autre.
 - `plans/plan.md` — ce que le corpus ne dit pas : le protocole de vérification et ses mesures (md5 de la sortie de
   référence, forme de la sortie d'erreur). Ni les tâches, ni leur ordre : l'ordre est calculé à partir des `AFTER`
   du corpus, et la chronologie se lit dans git et dans les pull requests.
@@ -69,22 +68,25 @@ Organisation de `.do-not-commit/planet-crafter-save-tools/` :
 - `saves/` — saves de référence privées, fichiers très lourds (jusqu'à 3 Mo, 8 Mo au total) : ne les ouvrir que si
   la tâche l'exige, et jamais en entier. Ne jamais les copier dans l'arbre public.
 
-`history.md`, `tasks/`, `known-issues/` et `plans/plan-secu.md` ont été supprimés en septembre 2026 : ce qui
-contraignait encore le travail est devenu des entités du corpus
-(@DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime, @DECISION.UneTacheFusionneeResteDansLeCorpus,
-@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues, @DECISION.LesMesuresDeSecuriteSontDesEntitesSEC). Une décision va
-dans le corpus et nulle part ailleurs ; avertir quand elle en contredit une enregistrée, ce que
-`awawa status DECISION .` permet de vérifier. Une nouvelle tâche s'écrit avec `awawa new TASK T40 .` ; la famille
+**Une décision va dans le corpus et nulle part ailleurs**, et avertir quand elle en contredit une enregistrée — ce
+que `awawa status DECISION .` permet de vérifier (@DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime). Un défaut
+constaté est une `OPEN_QUESTION` (@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues), une mesure de sécurité une
+entité `SEC` (@DECISION.LesMesuresDeSecuriteSontDesEntitesSEC), une tâche une entité `TASK` qui reste après sa fusion
+(@DECISION.UneTacheFusionneeResteDansLeCorpus). Une nouvelle tâche s'écrit avec `awawa new TASK T40 .` ; la famille
 d'outillage du dépôt, hors chantier de conformité, garde ses numéros `DEP{N}`.
+
+**Le corpus ne garde que ce qui évite de refaire une erreur.** Une entité dont la matière est portée ailleurs est
+supprimée, pas conservée en `superseded` : la chronologie se lit dans git et dans les pull requests
+(@DECISION.LeCorpusNeGardeQueCeQuiEviteDeRefaireUneErreur).
 
 **Langue** : `spec.awawa` et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
 générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, `docs/`,
 commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts
 (@DECISION.LaSpecificationResteEnFrancaisMemePubliee).
 
-**Rafraîchir le clone privé avant de lire une save, un plan ou une table d'anonymisation.** `.do-not-commit/` est un
-clone figé au dernier `bun install`, et chaque worktree lié porte le sien : `bun run private:sync` (fetch plus
-fast-forward sur la branche du projet). Le corpus, lui, ne demande plus rien — il est dans la branche
+**Rafraîchir le clone privé avant de lire une save ou un plan.** `.do-not-commit/` est un clone figé au dernier
+`bun install`, et chaque worktree lié porte le sien : `bun run private:sync` (fetch plus fast-forward sur la branche
+du projet). Le corpus, lui, ne demande plus rien — il est dans la branche
 (@DECISION.LeContextePriveSeReduitAuxSavesEtAuxPlans).
 
 ## Commandes
@@ -140,7 +142,7 @@ n'a pas à le faire.
 
 **Ne jamais `cd` dans `.do-not-commit/`.** C'est un dépôt à part entière imbriqué dans celui-ci, et un worktree est
 découpé dans le dépôt qui contient le **répertoire de travail du shell au moment de l'appel**. Une session qui entre
-dans le clone privé pour y lire une fiche donne ensuite à chaque agent qu'elle lance un worktree du dépôt privé au
+dans le clone privé pour y lire une save donne ensuite à chaque agent qu'elle lance un worktree du dépôt privé au
 lieu du projet : la garde d'isolation refuse alors tout `git` visant le dépôt public, et l'agent se rabat sur un
 clone à lui — le travail aboutit, hors de l'isolation prévue, et `/worktree-clean` ne voit pas ce clone. Lire le
 clone là où il est (`git -C .do-not-commit <commande>`, chemins absolus pour le reste) ; avant de lancer un agent,
@@ -182,10 +184,10 @@ démonstration doit rester un couple d'arrondi vrai — texte exact non représe
 `JSON.stringify` différente — sinon la démonstration devient fausse. Les fixtures publiques portent
 `76561190000000001` et `76561190000000007`.
 
-**Les deux tables de correspondance — nom réel → pseudonyme, identifiant réel → substitut — restent dans le dépôt
-privé**, en `.do-not-commit/planet-crafter-save-tools/AGENTS.md` : les publier publierait exactement la donnée que
-la règle protège (@DECISION.LesTablesDAnonymisationRestentPrivees). Le dépôt privé reste la source de vérité et
-conserve les noms réels dans `saves/` ; c'est au moment de sortir en public qu'il faut substituer. L'historique git
+**Aucune correspondance entre un pseudonyme et un nom réel n'est conservée nulle part**, et la substitution n'en a
+pas besoin : `76561198…` est un identifiant réel, `765611900000000xx` un identifiant synthétique, et ce couple de
+motifs suffit à reconnaître ce qui ne doit pas sortir. Le dépôt privé garde les noms réels dans `saves/`, qui sont la
+source de vérité ; c'est au moment de sortir en public qu'il faut substituer. L'historique git
 déjà poussé n'est pas réécrit — le coût est hors de proportion, et la branche `refactor/...` sera vraisemblablement
 écrasée (squash) à sa fusion dans `master`.
 

@@ -351,35 +351,6 @@ DECISION LaGarantieDUnicitePorteSurCeQueLaFusionIntroduit
 
 // Les arbitrages qui tiennent. Ils vivaient dans l'AGENTS.md prive, qui les enonce sans les
 // indexer.
-DECISION LeCorpusVitDansLeDepotPriveEtSeLitParUnLien
-	DESC "spec.awawa vit dans le depot prive et un lien symbolique du meme nom, a la racine du"
-		+ "depot public, le rend lisible"
-	DESC "la racine de workspace est la racine du depot public : c'est de la que les ancres IMPL"
-		+ "resolvent"
-	DESC "toujours lancer awawa depuis un worktree du depot public qui porte le lien, avec . pour"
-		+ "racine"
-	DESC "lance depuis le clone prive, status sort en 0 et chaque ancre IMPL tombe en L016 : un"
-		+ "corpus sain qui parait casse, et le symptome ne nomme pas sa cause"
-	STATUS superseded
-	RATIONALE "awawa saute les fichiers ignores par git, et /.do-not-commit/ est ignore : un corpus"
-		+ "pose la est invisible — status rend « ignored by git rules » et zero entite. Une"
-		+ "negation dans .gitignore ne le sauve pas, git ne re-inclut pas un fichier sous un"
-		+ "repertoire exclu"
-	RATIONALE "l'ancre ne peut pas remonter — .. y est une erreur — donc une racine de workspace"
-		+ "posee sur le depot prive interdirait toute ancre vers le code, c'est-a-dire L016, qui"
-		+ "est l'essentiel de ce que le corpus apporte"
-	RATIONALE "verifie : awawa suit le lien, les ancres packages/… resolvent, L016 tombe sur une"
-		+ "ancre cassee, et fmt ecrit a travers le lien sans le remplacer par un fichier ordinaire"
-	REJECTED "poser le corpus dans le depot public : l'AGENTS.md public interdit d'y ecrire du"
-		+ "contexte projet"
-	REJECTED "prendre le depot prive pour racine de workspace : le corpus est lisible mais perd"
-		+ "toutes ses ancres"
-	REJECTED "ré-inclure le chemin par une negation .gitignore : sans effet, mesure"
-	SPEC "le lien est versionne dans le depot public et n'y porte aucun contenu prive ; il pend"
-		+ "pour qui n'a pas le clone prive"
-		IMPL "spec.awawa"
-	SOURCE "decision du 2026-09-11, mise en place du corpus"
-
 DECISION LeCorpusVitDansLeDepotPublic
 	DESC "spec.awawa est un fichier ordinaire a la racine du depot public, qui est aussi la racine"
 		+ "de workspace"
@@ -392,7 +363,6 @@ DECISION LeCorpusVitDansLeDepotPublic
 		+ "donc invisible en revue"
 	RATIONALE "le corpus dans la branche fait entrer la decision dans la pull request qui"
 		+ "l'implemente et la fait suivre les rebases de la pile"
-	SUPERSEDES @DECISION.LeCorpusVitDansLeDepotPriveEtSeLitParUnLien
 	REJECTED "attendre la confirmation de l'experimentation awawa : le repli tient a un tag, pas a"
 		+ "l'emplacement du corpus"
 	REJECTED "decouper le corpus en plusieurs fichiers dans le meme mouvement : le deplacement se"
@@ -402,26 +372,6 @@ DECISION LeCorpusVitDansLeDepotPublic
 		IMPL "spec.awawa"
 	SOURCE "decision du 2026-09-12"
 
-DECISION LesDepotsSatellitesRestentSurLeurBrancheAwawa
-	DESC "l'integration d'awawa est experimentale : jusqu'a nouvel ordre, les deux depots"
-		+ "satellites travaillent sur leur branche portant awawa — .do-not-commit sur pcst/awawa,"
-		+ "~/.ai sur awawa"
-	DESC "le depot public ne suit pas cette convention : dep2-corpus-awawa y est une branche de"
-		+ "tache ordinaire, partie de la base en vigueur et destinee a fusionner"
-		REF @DECISION.LaBaseDesTachesEstTemporairementLaBrancheDeConformite
-	DESC "quand l'integration sera acquise, cette entite est le seul endroit a corriger"
-	STATUS superseded
-	RATIONALE "les deux satellites sont prives et sans revue : leur branche par defaut reste l'etat"
-		+ "de repli tant que l'integration n'a pas fait ses preuves"
-	RATIONALE "la convention est ecrite pour que la branche en vigueur ne soit plus demandee a"
-		+ "chaque session"
-	REJECTED "aligner le depot public sur la meme convention : son cycle de branches et de PR est"
-		+ "inchange"
-	REJECTED "fusionner l'integration dans la branche par defaut des satellites avant qu'elle ait"
-		+ "fait ses preuves"
-	REJECTED "demander a chaque session quelle branche des depots satellites est en vigueur"
-	SOURCE "decision du 2026-09-11, session d'installation d'awawa"
-
 DECISION LExperimentationAwawaEstReversibleParUnTagPasParUneBranche
 	DESC "l'etat d'avant awawa est marque par un tag dans chacun des trois depots :"
 		+ "pcst/before-awawa dans .do-not-commit, before-awawa dans ~/.ai, before-awawa sur la base"
@@ -430,8 +380,6 @@ DECISION LExperimentationAwawaEstReversibleParUnTagPasParUneBranche
 		+ "prive sur planet-crafter-save-tools, les instructions par PR sur main, le public sur sa"
 		+ "base de taches"
 	STATUS specified
-	SUPERSEDES @DECISION.LesDepotsSatellitesRestentSurLeurBrancheAwawa
-	CLOSES @OPEN_QUESTION.SortDuBasculementDeBrancheParPrivateSync
 	RATIONALE "private:sync repositionne le clone prive sur la branche nommee d'apres le projet :"
 		+ "une branche experimentale y est defaite en silence, un tag ne depend d'aucune branche"
 		+ "courante"
@@ -441,6 +389,27 @@ DECISION LExperimentationAwawaEstReversibleParUnTagPasParUneBranche
 	REJECTED "nommer le tag before-awawa dans .do-not-commit, qui porte plusieurs projets : le"
 		+ "prefixe pcst/ le desambigue"
 	SOURCE "decision du 2026-09-11, session d'installation d'awawa"
+
+DECISION LeCorpusNeGardeQueCeQuiEviteDeRefaireUneErreur
+	DESC "une entite dont la matiere est portee ailleurs est supprimee du corpus, pas conservee en"
+		+ "superseded"
+	DESC "ce qui reste : la regle en vigueur, et ce qui empeche de refaire une erreur deja faite"
+	DESC "ce qui part : l'historique d'un montage remplace, dont plus rien ne depend"
+	DESC "une entite qui reste superseded nomme toujours sa successeure ; la suppression ne"
+		+ "dispense pas de l'arete, elle la rend sans objet"
+		REF @DECISION.UneDecisionRetireeNommeSaSuccesseure
+	STATUS specified
+	RATIONALE "le corpus est un instrument de decision, pas un journal : la chronologie se lit dans"
+		+ "git et dans les pull requests, et chaque entite morte gardee est une ligne que status"
+		+ "compte et qu'un lecteur doit ecarter"
+	RATIONALE "la garde est l'arete entrante : verifier par refs qu'une suppression ne laisse"
+		+ "aucune reference pendante, et que ce qui devait survivre est porte par la successeure,"
+		+ "avant de supprimer"
+	REJECTED "garder toute entite remplacee en superseded : le gating la rend invisible en"
+		+ "recuperation, elle reste dans le fichier et dans chaque comptage"
+	REJECTED "supprimer sans verifier les referents : une reference pendante casse le lint, et une"
+		+ "successeure orpheline ne dit plus ce qu'elle remplace"
+	SOURCE "decision du 2026-09-12"
 
 DECISION UneLimitationAccepteeGardeSaMatiereDansLaDecision
 	DESC "une limitation acceptee se modelise en question superseded plus decision qui la ferme, et"
@@ -494,15 +463,6 @@ DECISION UneBrancheDeTacheEstRebaseeJamaisFusionnee
 	REJECTED "fusionner la base dans la branche de tache"
 	SOURCE "AGENTS.md prive, section Branches"
 
-DECISION LeDepotPriveEstEnFrancais
-	DESC "tout le contenu du depot prive est en francais ; la regle generale documentation commitee"
-		+ "en anglais ne vise que le depot public"
-	DESC "les messages de commit restent en anglais dans tous les depots, celui-ci compris"
-	STATUS superseded
-	RATIONALE "le depot est prive et son seul lecteur humain travaille en francais"
-	REJECTED "aligner le depot prive sur la regle anglaise du depot public"
-	SOURCE "decision du 2026-09-07"
-
 DECISION LaSpecificationResteEnFrancaisMemePubliee
 	DESC "spec.awawa et AGENTS.md restent en francais bien qu'ils soient publics"
 	DESC "le reste du depot public reste en anglais : README, docs, commentaires de code, messages"
@@ -514,7 +474,6 @@ DECISION LaSpecificationResteEnFrancaisMemePubliee
 		+ "par un seul lecteur humain qui travaille en francais"
 	RATIONALE "l'exception est ici et nulle part ailleurs : elle est a reporter dans les"
 		+ "instructions generales si elle doit valoir pour d'autres projets"
-	SUPERSEDES @DECISION.LeDepotPriveEstEnFrancais
 	REJECTED "traduire le corpus en anglais au moment de le publier : deux mille trois cents lignes"
 		+ "a traduire, et une traduction fige mal un texte reecrit a chaque session"
 	REJECTED "aligner AGENTS.md sur la regle anglaise et laisser le corpus en francais : les deux"
@@ -528,6 +487,8 @@ DECISION AucunNomReelDansUnContenuPublic
 		+ "Sakia, Anya"
 	DESC "le depot prive reste la source de verite et conserve les noms reels ; c'est au moment de"
 		+ "sortir en public qu'il faut substituer"
+	DESC "aucune correspondance entre un pseudonyme et un nom reel n'est conservee nulle part :"
+		+ "elle ne servirait qu'a defaire l'anonymisation"
 	STATUS specified
 	RATIONALE "les saves privees portent les noms reels des joueurs, qui n'ont pas consenti a leur"
 		+ "publication"
@@ -535,26 +496,11 @@ DECISION AucunNomReelDansUnContenuPublic
 		+ "conformite sera vraisemblablement ecrasee a sa fusion"
 	SOURCE "decision du 2026-09-10, PR #49"
 
-DECISION LesTablesDAnonymisationRestentPrivees
-	DESC "AGENTS.md porte la regle d'anonymisation et la liste des pseudonymes autorises, jamais la"
-		+ "correspondance avec les noms reels ni les identifiants de compte reels"
-		REF @DECISION.AucunNomReelDansUnContenuPublic
-		REF @DECISION.LesIdentifiantsSteamSontAnonymisesCommeLesNoms
-	DESC "les deux tables de correspondance restent dans le depot prive"
-	STATUS implemented
-	RATIONALE "publier la table publierait exactement la donnee que la regle protege : un"
-		+ "pseudonyme ne protege plus rien des qu'il parait a cote du nom qu'il remplace"
-	REJECTED "publier AGENTS.md tel quel au moment de le rendre public : sa section anonymisation"
-		+ "portait les six noms reels et quatre identifiants de compte reels"
-	REJECTED "retirer la regle avec la table : c'est la seule regle du projet dont l'oubli publie"
-		+ "une donnee personnelle, elle doit etre lisible sans avoir rien lance"
-	SPEC "AGENTS.md ne porte ni nom reel de joueur ni identifiant de compte reel"
-		IMPL "AGENTS.md"
-	SOURCE "decision du 2026-09-12"
-
 DECISION LesIdentifiantsSteamSontAnonymisesCommeLesNoms
 	DESC "un contenu public porte un identifiant synthetique de la famille 765611900000000xx,"
 		+ "jamais celui d'un compte reel"
+	DESC "le discriminant suffit et remplace toute correspondance : 76561198… est un identifiant"
+		+ "reel, 765611900000000xx un identifiant synthetique"
 	DESC "un identifiant de demonstration doit rester un couple d'arrondi vrai — texte exact non"
 		+ "representable en double, valeur imprimee differente — sinon la demonstration devient"
 		+ "fausse"
@@ -593,29 +539,14 @@ DECISION UnWorktreeEstDecoupeDansLeDepotDuRepertoireCourant
 	REJECTED "entrer dans le clone prive pour y lire une fiche"
 	SOURCE "constate le 2026-09-10, vague T39/T30"
 
-DECISION LeContextePriveEstRafraichiAvantLecture
-	DESC "lancer la synchronisation du contexte prive avant de lire une fiche, de citer une"
-		+ "decision ou de choisir un numero de tache"
-	STATUS superseded
-	RATIONALE "le clone est fige au dernier install et chaque worktree porte le sien : une fiche,"
-		+ "une decision ou un numero libre lus sur un clone perime sont faux sans aucun signe"
-		+ "qu'ils le sont"
-	REJECTED "lire le clone tel qu'il est et corriger apres coup"
-	SPEC "la synchronisation est un script du depot, appele par l'installation des dependances et"
-		+ "relancable seul"
-		IMPL "scripts/sync-private-context.sh"
-		IMPL "package.json::private:sync"
-	SOURCE "AGENTS.md prive, section Emplacement"
-
 DECISION LeContextePriveSeReduitAuxSavesEtAuxPlans
-	DESC "le depot prive ne porte plus que les saves de reference, les plans, resources.md et les"
-		+ "tables d'anonymisation"
-	DESC "le rafraichir avant de lire une save, un plan ou une table ; plus avant de citer une"
-		+ "decision ou de choisir un numero de tache"
+	DESC "le depot prive ne porte plus que les saves de reference, les plans et resources.md : ni"
+		+ "instructions, ni specification, ni AGENTS.md"
+	DESC "le rafraichir avant de lire une save ou un plan ; plus avant de citer une decision ou de"
+		+ "choisir un numero de tache"
 	STATUS implemented
 	RATIONALE "la specification, les decisions et les numeros de tache sont dans le depot public :"
 		+ "ce qu'un clone perime rendait faux sans signe ne s'y lit plus"
-	SUPERSEDES @DECISION.LeContextePriveEstRafraichiAvantLecture
 	REJECTED "supprimer le depot prive : les saves portent les noms reels des joueurs et pesent"
 		+ "huit megaoctets"
 	REJECTED "garder la synchronisation en tete de session : elle ne conditionne plus rien de ce"
@@ -626,45 +557,21 @@ DECISION LeContextePriveSeReduitAuxSavesEtAuxPlans
 		IMPL "package.json::private:sync"
 	SOURCE "decision du 2026-09-12"
 
-DECISION LesFichesSontSupprimeesALaFusionPasALOuverture
-	DESC "une fiche de known-issues ou de tasks est supprimee a la fusion du correctif, jamais a"
-		+ "l'ouverture de sa PR"
-	STATUS specified
-	RATIONALE "une PR fermee au lieu d'etre fusionnee laisse la fiche silencieusement absente, et"
-		+ "personne ne se souvient de la retablir"
-	REJECTED "supprimer la fiche en ouvrant la PR qui la traite"
-	SOURCE "AGENTS.md prive, section Emplacement"
-
 DECISION UneFixturePeutReposerSurUnDefautOuvert
-	DESC "une fixture peut reposer sur un defaut ouvert, a condition que la fiche du defaut nomme"
-		+ "la spec a reformuler quand il sera corrige"
+	DESC "une fixture peut reposer sur un defaut ouvert, a condition que la question ouverte du"
+		+ "defaut nomme la spec a reformuler quand il sera corrige"
 	DESC "le couplage se documente du cote du defaut, pas du cote du test"
 	STATUS specified
 	RATIONALE "certains comportements n'ont pas de producteur naturel — verifier qu'une sortie"
 		+ "invalide est bien signalee demande une entree qui en produit une — et le seul"
 		+ "arrangement honnete est alors un defaut reel plutot qu'une entree fabriquee qui ne se"
 		+ "rencontre jamais"
-	RATIONALE "c'est la fiche qui est lue au moment de corriger, et elle porte la preuve que la"
+	RATIONALE "c'est la question qui est lue au moment de corriger, et elle porte la preuve que la"
 		+ "spec echoue une fois le defaut parti, plus ce qu'il faudra faire : trouver un autre"
 		+ "producteur, pas seulement remettre l'assertion au vert"
 	REJECTED "fabriquer une entree qui ne se rencontre jamais pour eviter de dependre d'un defaut"
 	REJECTED "documenter le couplage du cote du test"
 	SOURCE "AGENTS.md prive ; exemple en vigueur T28, PR #59"
-
-DECISION ToutePrPorteUneChecklistAFaireALaFusion
-	DESC "toute PR de tache porte un commentaire « A faire a la fusion » : decisions a consigner,"
-		+ "fiches a supprimer ou corriger, lignes de plan a mettre a jour, regles d'instruction a"
-		+ "promouvoir"
-	DESC "l'agent de tache l'ecrit en ouvrant la PR, l'agent de revue la complete, et un"
-		+ "commentaire absent est un oubli, pas un rien a faire"
-	STATUS superseded
-	RATIONALE "l'agent de tache est le seul a connaitre l'inventaire de ce que sa tache laisse"
-		+ "derriere elle, et cet inventaire disparait avec sa session"
-	RATIONALE "distinguer une PR sans travail de fusion d'une PR dont personne n'a fait"
-		+ "l'inventaire est la raison d'etre de la regle : le suivi de fusion s'arrete et le"
-		+ "signale plutot que d'improviser"
-	REJECTED "omettre le commentaire quand il n'y a rien a faire"
-	SOURCE "constate le 2026-09-10, PR #55"
 
 DECISION LeCorpusRemplaceLaChecklistDeFusion
 	DESC "une PR de tache ne porte plus de commentaire « A faire a la fusion » : ce que la"
@@ -679,7 +586,6 @@ DECISION LeCorpusRemplaceLaChecklistDeFusion
 		+ "OPEN_QUESTION a la revue : general ou specifique au projet est l'arbitrage de"
 		+ "l'utilisateur, et rien hors du corpus ne survit a la session qui l'a appris"
 	STATUS specified
-	SUPERSEDES @DECISION.ToutePrPorteUneChecklistAFaireALaFusion
 	RATIONALE "le motif de la checklist etait qu'un inventaire disparait avec la session de l'agent"
 		+ "de tache ; le corpus est cet inventaire et il ne disparait pas"
 	RATIONALE "la moitie post-fusion ne peut pas tourner avant le git merge de l'utilisateur et"
@@ -755,22 +661,6 @@ DECISION LeCorpusRemplaceLesFichesDeKnownIssues
 	SPEC "l'inventaire des defauts se lit par status OPEN_QUESTION, jamais par un repertoire de"
 		+ "fiches"
 		IMPL "spec.awawa"
-	SOURCE "decision du 2026-09-11"
-
-DECISION LeCorpusEstLeDomicileDesDecisionsEtHistoryResteLeJournal
-	DESC "une decision prise avec l'utilisateur s'enregistre dans ce corpus, plus dans history.md"
-	DESC "history.md reste le journal date : ce qui s'est passe, quand, dans quelle PR — il n'est"
-		+ "pas reecrit et ses entrees anterieures au 2026-09-11 ne sont pas migrees"
-	STATUS superseded
-	RATIONALE "history.md croit sans index : 2047 lignes au moment du basculement, ou retrouver un"
-		+ "arbitrage demande de lire des sections datees. Le corpus repond par requete — status"
-		+ "DECISION, refs, context — et rattache l'arbitrage a ce qu'il contraint"
-	RATIONALE "migrer les 2047 lignes n'aurait pas de valeur : le journal vaut par sa chronologie,"
-		+ "le corpus par ses aretes ; ce qui devait passer est ce qui contraint encore le travail"
-	REJECTED "migrer tout history.md : la chronologie serait perdue et le corpus rempli"
-		+ "d'arbitrages caducs"
-	REJECTED "garder history.md comme domicile des decisions et n'utiliser le corpus que pour la"
-		+ "specification : les deux se seraient contredits des la premiere revue"
 	SOURCE "decision du 2026-09-11"
 
 // Les arbitrages techniques, migres de history.md le 2026-09-11 quand ce fichier a ete supprime.
@@ -1683,7 +1573,6 @@ DECISION LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
 	DESC "la chronologie — quoi, quand, dans quelle pull request — n'est plus tenue nulle part :"
 		+ "elle se lit dans git et dans les pull requests"
 	STATUS specified
-	SUPERSEDES @DECISION.LeCorpusEstLeDomicileDesDecisionsEtHistoryResteLeJournal
 	RATIONALE "ce qui a change depuis la decision precedente : le tri a ete fait, et il a montre"
 		+ "que le journal ne portait presque plus que trois choses — des arbitrages encore vivants,"
 		+ "des faits deja domicilies ailleurs, et des verifications de pull request. Garder le"
@@ -2058,19 +1947,6 @@ TASK T38
 // Les points que T37 et T38 laissent a trancher au demarrage. Ils etaient dans la section
 // « Decisions » de leur fiche, ou personne ne pouvait les compter ; ce sont des questions, avec
 // une recommandation, pas des arbitrages rendus.
-OPEN_QUESTION SortDuBasculementDeBrancheParPrivateSync
-	DESC "private:sync repositionne le clone prive sur la branche nommee d'apres le projet : il"
-		+ "defait la convention des branches awawa sans le dire"
-		REF @DECISION.LesDepotsSatellitesRestentSurLeurBrancheAwawa
-	DESC "deux sorties envisagees : apprendre a install.sh une branche surchargeable, ou remettre"
-		+ "pcst/awawa a la main apres chaque bun install"
-	STATUS superseded
-	BLOCKS @DECISION.LesDepotsSatellitesRestentSurLeurBrancheAwawa
-	RATIONALE "install.sh, sur la branche main du depot prive, fait git checkout <projet> des que"
-		+ "la branche courante en differe ; la sortie est un echo avale par le || du script"
-		+ "appelant, donc un bun install suffit a perdre la branche en silence"
-	SOURCE "constate le 2026-09-11, lecture de install.sh sur .do-not-commit main"
-
 OPEN_QUESTION FormeDesErreursDeRegleDomaine
 	DESC "sous quel type validateUniqueHost et validateFloatSerialization rendent-elles leur echec"
 	DESC "recommandation : un type du domaine, que l'infrastructure traduit en issue de validation"
