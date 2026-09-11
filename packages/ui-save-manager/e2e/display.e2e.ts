@@ -21,7 +21,12 @@ test.describe('Save display', () => {
     test('should report the failure and leave the form usable', async ({page}) => {
       // Arrange
       await page.addInitScript(() => {
-        File.prototype.text = () => Promise.reject(new Error('The file is no longer readable.'));
+        const refuseToRead = () => Promise.reject(new Error('The file is no longer readable.'));
+        Blob.prototype.text = refuseToRead;
+        Blob.prototype.arrayBuffer = refuseToRead;
+        Blob.prototype.stream = () => {
+          throw new Error('The file is no longer readable.');
+        };
       });
       await page.goto('/');
       await page.getByLabel('Save file:').setInputFiles(validSaveFixturePath);
