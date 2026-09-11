@@ -2,33 +2,38 @@
 // n'est pas recopiee ici : elle a un seul domicile, `bun run check:dependencies` et le README
 // public. Ce que le corpus ajoute est l'ancre : un package dissous ou renomme fait tomber L016
 // ici (@DECISION.LesPackagesDissousNeSontPasRecrees).
+SHAPE package_name
+	DESC "le nom reel du package, souligne la ou le manifeste porte un tiret"
+	MATCH "(core|util|cli|ui|shared)(_[a-z0-9]+)+(:v[0-9]+)?"
+
 SCHEMA PACKAGE
 	DESC "un package du monorepo ; le prefixe du nom fixe ses dependances autorisees"
+	NAME package_name
 	FIELD PREFIX core|util|cli|ui|shared
 		REQUIRED
 
-PACKAGE SharedSaveProcessing
+PACKAGE shared_save_processing
 	DESC "format wire des saves : types, analyse, serialisation, schemas JSON, fixtures de test"
 	PREFIX shared
 	STATUS implemented
 	SPEC "expose l'analyse et la serialisation des sections de save, sans dependance hors util-*"
 		IMPL "packages/shared-save-processing/package.json::shared-save-processing"
 
-PACKAGE SharedPlatforms
+PACKAGE shared_platforms
 	DESC "adaptateurs fs/process pour Bun et Node, sans effet de bord a l'import"
 	PREFIX shared
 	STATUS implemented
 	SPEC "les deux adaptateurs honorent le meme contrat, verifie par une spec commune"
 		IMPL "packages/shared-platforms/package.json::shared-platforms"
 
-PACKAGE UtilTypes
+PACKAGE util_types
 	DESC "le seul type de contrat RuntimePlatform, consomme type-only par shared-platforms"
 	PREFIX util
 	STATUS implemented
 	SPEC "ne depend de rien"
 		IMPL "packages/util-types/package.json::util-types"
 
-PACKAGE CoreMapping
+PACKAGE core_mapping
 	DESC "domaine, application, infrastructure et presentation du mapping de saves"
 	DESC "seuls les controleurs et les ViewModels sont exportes"
 	PREFIX core
@@ -43,21 +48,21 @@ PACKAGE CoreMapping
 		+ "tenait deja l'autre moitie de la regle"
 	SOURCE "T28, PR #59"
 
-PACKAGE CliMerge
+PACKAGE cli_merge
 	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
 	PREFIX cli
 	STATUS implemented
 	SPEC "ne porte aucune regle de fusion"
 		IMPL "packages/cli-merge/package.json::cli-merge"
 
-PACKAGE CliValidate
+PACKAGE cli_validate
 	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
 	PREFIX cli
 	STATUS implemented
 	SPEC "ne porte aucune regle de validation"
 		IMPL "packages/cli-validate/package.json::cli-validate"
 
-PACKAGE UiSaveManager
+PACKAGE ui_save_manager
 	DESC "UI SolidStart consommant directement les controleurs de core-mapping"
 	PREFIX ui
 	STATUS implemented
@@ -190,3 +195,18 @@ DECISION UnArgumentInconnuEstUneErreurDUsage
 		+ "CLI, sans creer de package"
 		IMPL "packages/shared-platforms/cliArguments.js"
 	SOURCE "decision du 2026-09-10, T34, PR #60 ; banniere arbitree en revue"
+
+DECISION UnPackageEstNommeCommeSonManifeste
+	DESC "l'entite PACKAGE porte le nom reel du package, le tiret du manifeste ecrit en souligne :"
+		+ "core-mapping devient core_mapping"
+	DESC "le shape de nom impose le prefixe de couche, comme le champ PREFIX"
+	STATUS implemented
+	RATIONALE "le nom en PascalCase obligeait a traduire mentalement entre l'identite du corpus et"
+		+ "le repertoire, le manifeste, les imports et les commandes --filter, qui portent tous la"
+		+ "forme a tiret"
+	REJECTED "ecrire le tiret dans l'identite : le tiret n'appartient pas a la grammaire des noms"
+	REJECTED "garder le PascalCase et porter le nom reel dans un champ : status et refs impriment"
+		+ "l'identite, pas un champ"
+	SPEC "le nom de tout package est accepte par le shape package_name"
+		IMPL "docs/packages.awawa::SHAPE package_name"
+	SOURCE "decision du 2026-09-12, apres le renommage des taches"

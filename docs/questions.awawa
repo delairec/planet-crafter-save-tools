@@ -6,7 +6,7 @@ OPEN_QUESTION NomDeDossierAvecArobaseCorromptLaSaveFusionnee
 	DESC "correction a instruire : assainir le nom affiche a la frontiere qui le recoit, ou refuser"
 		+ "un nom que le format ne peut pas porter"
 	STATUS specified
-	BLOCKS @PACKAGE.CoreMapping
+	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "@ est le separateur de sections du format ; mergeSaveConfigurations recopie tel quel"
 		+ "le saveDisplayName que les deux appelants prennent du nom de dossier ou de la saisie."
 		+ "buildMergedFileName assainit le nom de *fichier*, rien n'assainit le nom *affiche* de la"
@@ -31,7 +31,7 @@ OPEN_QUESTION WoIdsNEstAttesteeParAucuneSave
 	DESC "si la seconde se confirme, le type, le remappage de references et la ligne correspondante"
 		+ "de la regle d'identifiants tombent ensemble, pas le schema seul"
 	STATUS specified
-	BLOCKS @PACKAGE.SharedSaveProcessing
+	BLOCKS @PACKAGE.shared_save_processing
 	RATIONALE "elle reste declaree par precaution : sous un schema ferme aux proprietes"
 		+ "supplementaires, la taire ferait refuser une save que la reecriture de references"
 		+ "pretend traiter"
@@ -43,7 +43,7 @@ OPEN_QUESTION LesBornesDeHungerSontPoseesSurUneHypothese
 	DESC "le premier contre-exemple rencontre les leve ; l'utilisateur a assume le risque, on"
 		+ "avisera si une save est un jour refusee"
 	STATUS specified
-	BLOCKS @PACKAGE.SharedSaveProcessing
+	BLOCKS @PACKAGE.shared_save_processing
 	RATIONALE "champ observe sur les seules entrees d'un identifiant de groupe, 345 occurrences sur"
 		+ "190338, plage relevee de -100 a 94,22. L'echelle symetrique se justifie par le fait"
 		+ "qu'un animal fournit un ADN quand son niveau est positif, ce qui est coherent avec un"
@@ -58,7 +58,7 @@ OPEN_QUESTION LesLibellesDeSectionDivergentDeLaDocumentation
 		+ "sommaire du document des regles de jeu"
 	DESC "a trancher : la documentation doit-elle devenir la reference unique des noms de section"
 	STATUS specified
-	BLOCKS @PACKAGE.CoreMapping
+	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "les libelles courts sont plus lisibles dans un prefixe d'erreur ; la divergence a"
 		+ "ete signalee comme reversible en revue"
 	SOURCE "constate le 2026-09-08, revue de T20, PR #37"
@@ -69,7 +69,7 @@ OPEN_QUESTION LesReglesDeCirculationDesObjetsNeSontPasAcquises
 	DESC "tant que la pull request n'est pas fusionnee, aucune session ne lit ces regles, et la"
 		+ "tache est a reprendre si elle est fermee au lieu d'etre fusionnee"
 	STATUS specified
-	BLOCKS @PACKAGE.CoreMapping
+	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "le trou est mesure : le mot Response n'apparaissait qu'une fois dans tout le dossier"
 		+ "d'architecture, dans une liste de noms de methode interdits. Aucune regle ne disait que"
 		+ "la sortie d'un cas d'utilisation est une Response, ou elle vit, qui a le droit de"

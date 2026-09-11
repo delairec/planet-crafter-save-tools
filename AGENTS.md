@@ -20,7 +20,7 @@ sur tout l'espace de travail, et un fichier isolé rapporte comme cassées des r
 ```
 awawa status .                      # où en est le projet : entités par type et par STATUS
 awawa status OPEN_QUESTION --where STATUS!=superseded .   # ce qui n'est pas tranché
-awawa context @PACKAGE.CoreMapping --skip reasoning .     # le paquet de contexte avant d'implémenter
+awawa context @PACKAGE.core_mapping --skip reasoning .     # le paquet de contexte avant d'implémenter
 awawa lint --strict .               # doit sortir en 0
 ```
 
