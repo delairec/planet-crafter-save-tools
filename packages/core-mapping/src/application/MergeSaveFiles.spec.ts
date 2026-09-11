@@ -6,6 +6,8 @@ import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
+import {SaveValidationResult} from './ports/SaveValidationResult';
+import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
 import {InvalidSaveDataError} from '../domain/errors/InvalidSaveDataError';
 
 describe('MergeSaveFiles', () => {
@@ -13,6 +15,19 @@ describe('MergeSaveFiles', () => {
   const MERGED_SAVE = {fileName: 'Save-A-Save-B-merged.json', content: 'merged content'};
   const TWO_VALID_SAVES = {fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'};
   const noErrorsFromTheMerge: ValidationIssue[] = [];
+
+  const ACCEPTED: SaveValidationResult = {isValid: true, errors: [], warnings: []};
+  const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResult => ({isValid: false, errors, warnings: []});
+  const acceptedWith = (...warnings: SaveWarningCode[]): SaveValidationResult => ({isValid: true, errors: [], warnings});
+
+  /**
+   * The use case calls `validate` once per save it handles — save A, save B, then the save the
+   * merger produced — so a double has to answer differently on each call. It keys on the file
+   * name, the identity the use case actually passes, and accepts every save the table does not
+   * name.
+   */
+  const validatorAnswering = (resultsByFileName: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
+    (fileName: string) => resultsByFileName[fileName] ?? ACCEPTED;
 
   interface UseCaseOverrides {
     validate?: SaveValidatorPort['validate'];
@@ -51,9 +66,7 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const invalidJsonError = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'};
       const {useCase, merger, presenter} = createUseCase({
-        validate: (fileName: string, content: string) => content === 'contentA'
-          ? {isValid: false, errors: [invalidJsonError], warnings: []}
-          : {isValid: true, errors: [], warnings: []}
+        validate: validatorAnswering({'Save-A.json': rejectedWith(invalidJsonError)})
       });
 
       // Act
@@ -75,9 +88,7 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const invalidExtensionError = {code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'};
       const {useCase, validator, merger, presenter} = createUseCase({
-        validate: (fileName: string) => fileName === 'Save-A.txt'
-          ? {isValid: false, errors: [invalidExtensionError], warnings: []}
-          : {isValid: true, errors: [], warnings: []}
+        validate: validatorAnswering({'Save-A.txt': rejectedWith(invalidExtensionError)})
       });
 
       // Act
@@ -101,9 +112,7 @@ describe('MergeSaveFiles', () => {
     it('should present the warnings of each save on a successful merge', () => {
       // Arrange
       const {useCase, presenter} = createUseCase({
-        validate: (fileName: string, content: string) => content === 'contentA'
-          ? {isValid: true, errors: [], warnings: ['legacy-save-format' as const]}
-          : {isValid: true, errors: [], warnings: []}
+        validate: validatorAnswering({'Save-A.json': acceptedWith('legacy-save-format')})
       });
 
       // Act
@@ -123,9 +132,10 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const invalidJsonError = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentB'};
       const {useCase, presenter} = createUseCase({
-        validate: (fileName: string, content: string) => content === 'contentA'
-          ? {isValid: true, errors: [], warnings: ['legacy-save-format' as const]}
-          : {isValid: false, errors: [invalidJsonError], warnings: []}
+        validate: validatorAnswering({
+          'Save-A.json': acceptedWith('legacy-save-format'),
+          'Save-B.json': rejectedWith(invalidJsonError)
+        })
       });
 
       // Act
@@ -144,13 +154,11 @@ describe('MergeSaveFiles', () => {
   describe('When the merged save does not pass validation', () => {
     const uniqueHostError = {code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2'};
 
-    const acceptBothInputsAndRejectTheMergedSave = (fileName: string) => fileName === MERGED_SAVE.fileName
-      ? {isValid: false, errors: [uniqueHostError], warnings: []}
-      : {isValid: true, errors: [], warnings: []};
+    const rejectOnlyTheMergedSave = validatorAnswering({[MERGED_SAVE.fileName]: rejectedWith(uniqueHostError)});
 
     it('should present a success carrying the errors of the produced save', async () => {
       // Arrange
-      const {useCase, presenter} = createUseCase({validate: acceptBothInputsAndRejectTheMergedSave});
+      const {useCase, presenter} = createUseCase({validate: rejectOnlyTheMergedSave});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -167,7 +175,7 @@ describe('MergeSaveFiles', () => {
 
     it('should not blame the input files, which validation has already accepted', async () => {
       // Arrange
-      const {useCase, presenter} = createUseCase({validate: acceptBothInputsAndRejectTheMergedSave});
+      const {useCase, presenter} = createUseCase({validate: rejectOnlyTheMergedSave});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -178,7 +186,7 @@ describe('MergeSaveFiles', () => {
 
     it('should validate the file name and the content the merger produced', async () => {
       // Arrange
-      const {useCase, validator} = createUseCase({validate: acceptBothInputsAndRejectTheMergedSave});
+      const {useCase, validator} = createUseCase({validate: rejectOnlyTheMergedSave});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
