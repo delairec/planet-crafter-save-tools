@@ -74,8 +74,10 @@ Organisation de `.do-not-commit/planet-crafter-save-tools/` :
 que `awawa status DECISION .` permet de vérifier (@DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime). Un défaut
 constaté est une `OPEN_QUESTION` (@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues), une mesure de sécurité une
 entité `SEC` (@DECISION.LesMesuresDeSecuriteSontDesEntitesSEC), une tâche une entité `TASK` qui reste après sa fusion
-(@DECISION.UneTacheFusionneeResteDansLeCorpus). Une nouvelle tâche s'écrit avec `awawa new TASK T40 .` ; la famille
-d'outillage du dépôt, hors chantier de conformité, garde ses numéros `DEP{N}`.
+(@DECISION.UneTacheFusionneeResteDansLeCorpus). **Le nom d'une tâche est son étiquette, un souligné, puis ce qu'elle
+couvre** : `awawa new TASK T40_NomLisible .` — le schéma le vérifie, et l'étiquette seule est refusée
+(@DECISION.UneTachePorteSonEtiquetteEtUnNomLisible). La famille d'outillage du dépôt, hors chantier de conformité,
+garde ses numéros `DEP{N}`, sous la même forme.
 
 **Langue** : le corpus et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
 générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, les `.md` de

@@ -5,10 +5,15 @@
 //   T37 ─┬─ T15 ─┐
 //        └─ T32 ─┴─ T38
 //              └─ T24
+SHAPE task_name
+	DESC "l'etiquette de la tache, un souligne, puis ce qu'elle couvre en PascalCase"
+	MATCH "(T|DEP)[0-9]+_[A-Z][A-Za-z0-9]*(:v[0-9]+)?"
+
 SCHEMA TASK
 	DESC "un lot de travail qui fusionne en une ou plusieurs pull requests"
 	DESC "specified : la fiche est ecrite, la tache est ouverte. implemented : elle est fusionnee,"
 		+ "et elle reste"
+	NAME task_name
 	FIELD AFTER @TASK
 		REPEATABLE
 		DESC "la tache qui doit fusionner avant celle-ci ; l'arete inverse est calculee, personne"
@@ -267,6 +272,28 @@ TASK T38_ConformiteCoreMapping
 	SPEC "acceptation : la porte qualite est verte avec la garde des assertions, aucune phase"
 		+ "d'action et d'assertion fusionnee ne subsiste dans le package"
 		IMPL "packages/core-mapping"
+
+DECISION UneTachePorteSonEtiquetteEtUnNomLisible
+	DESC "le nom d'une tache est son etiquette, un souligne, puis ce qu'elle couvre :"
+		+ "T37_FrontieresCleanArchitectureCoreMapping"
+	DESC "l'etiquette reste le prefixe stable et la forme courte employee en prose, dans les"
+		+ "SOURCE, les messages de commit et les noms de branche"
+	STATUS implemented
+	RATIONALE "une tache nommee par sa seule etiquette obligeait status TASK, refs et le pied de"
+		+ "page de context a etre relus fiche par fiche pour savoir de quoi ils parlaient : le"
+		+ "listing ne portait aucune information"
+	RATIONALE "le shape de nom est declare sur SCHEMA TASK, donc fmt --rename refuse un nom qui le"
+		+ "manque et lint le signale : la convention ne depend plus de la memoire de la session"
+	REJECTED "remplacer l'etiquette par le nom seul : l'etiquette est citee dans les branches, les"
+		+ "pull requests et les revues deja ecrites"
+	REJECTED "porter le nom dans un champ plutot que dans l'identite : status et refs impriment"
+		+ "l'identite, pas un champ, et le probleme resterait entier"
+	REJECTED "separer l'etiquette du nom par un point : le point porte une portee par convention,"
+		+ "et T37 n'est pas la portee de son nom"
+	SPEC "le nom de toute tache est accepte par le shape task_name, la famille d'outillage DEP"
+		+ "comprise"
+		IMPL "docs/taches.awawa::SHAPE task_name"
+	SOURCE "decision du 2026-09-12, apres le decoupage du corpus par domaine"
 
 DECISION UneTacheFusionneeResteDansLeCorpus
 	DESC "une tache fusionnee passe implemented et reste une entite ; sa fiche markdown n'est plus"
