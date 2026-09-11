@@ -63,20 +63,19 @@ export default function Home() {
         <Show when={isLoading()}>
           <Spinner/>
         </Show>
+        <Show when={hasLoadCallFailed()}>
+          <p class="text-color-danger">{displayRouteCallFailedMessage}</p>
+        </Show>
 
         <MergeSection onMergeStarted={handleMergeStarted} onMergeResult={handleMergeResult}/>
 
         <h2>{displayRouteVisualizationTitle}</h2>
 
-        <Show when={!errors().length && !sections() && !mergeResult() && !hasLoadCallFailed()}>
+        <Show when={!errors().length && !sections() && !mergeResult()}>
           <p class="text-color-muted">{displayRouteParsedDataPlaceholder}</p>
         </Show>
 
         <MergeResultSection result={mergeResult}/>
-
-        <Show when={hasLoadCallFailed()}>
-          <p class="text-color-danger">{displayRouteCallFailedMessage}</p>
-        </Show>
 
         <Show when={errors().length}>
           <code>{file()?.name}</code>
