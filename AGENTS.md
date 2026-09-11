@@ -236,12 +236,14 @@ général ou spécifique au projet est ton arbitrage, et rien hors du corpus ne 
 Les commandes `/pr-review-followup` et `/pr-merge-followup` restent pour les projets sans corpus ; elles décrivent
 des fiches sur disque que ce projet n'a plus.
 
-## Le corps d'une PR se met à jour pendant la revue
+## Le corps d'une PR décrit la tête de branche
 
-**Une revue qui change une signature, un nom public ou une phrase d'interface met à jour le corps de la PR**, pas
-seulement le code et le corpus. Dans une pile `git machete`, le corps d'une pull request est ce que lit la tâche
-empilée pour savoir ce qu'elle rebase, et ce que lit le relecteur suivant pour savoir ce qu'il relit. Un corps qui
-décrit encore la signature d'avant la revue envoie la tâche suivante travailler sur un contrat qui n'existe plus,
-sans qu'aucun outil ne le signale (@DECISION.LeCorpsDeLaPrSeMetAJourPendantLaRevue).
+**Le corps d'une pull request décrit la tête de branche, pas l'intention d'ouverture** : tout commit qui change la
+conception l'invalide, qu'une revue soit passée ou non. Dans une pile `git machete`, ce corps est ce que lit la tâche
+empilée pour savoir ce qu'elle rebase, et ce que lit le relecteur suivant pour savoir ce qu'il relit ; aucun outil ne
+signale qu'il décrit une conception abandonnée. Avant de demander une revue et avant de déclarer la PR prête, relire
+le corps contre le journal des commits depuis la base et le réécrire si la conception a bougé
+(@DECISION.LeCorpsDeLaPrDecritLaTeteDeBranche).
 
-Constaté le 2026-09-11 sur la PR #59 (T28).
+Constaté le 2026-09-11 sur la PR #59 (T28), puis le 2026-09-12 sur la PR #61 (DEP2), où le corps décrivait encore
+un montage par lien symbolique abandonné trois commits plus tôt.

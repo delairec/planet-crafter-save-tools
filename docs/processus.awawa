@@ -257,13 +257,35 @@ DECISION LeCorpusRemplaceLaChecklistDeFusion
 DECISION LeCorpsDeLaPrSeMetAJourPendantLaRevue
 	DESC "une revue qui change une signature, un nom public ou une phrase d'interface met a jour le"
 		+ "corps de la PR, pas seulement le code et les fiches"
-	STATUS specified
+	STATUS superseded
 	RATIONALE "dans une pile git machete, le corps d'une PR est ce que lit la tache empilee pour"
 		+ "savoir ce qu'elle rebase, et ce que lit le relecteur suivant pour savoir ce qu'il relit."
 		+ "Un corps qui decrit encore la signature d'avant la revue envoie la tache suivante"
 		+ "travailler sur un contrat qui n'existe plus, sans qu'aucun outil ne le signale"
 	REJECTED "traiter le corps de la PR comme un resume d'ouverture fige"
 	SOURCE "constate le 2026-09-11, PR #59"
+
+DECISION LeCorpsDeLaPrDecritLaTeteDeBranche
+	DESC "le corps d'une PR decrit la tete de branche, pas l'intention d'ouverture : tout commit"
+		+ "qui change la conception l'invalide, qu'une revue soit passee ou non"
+	DESC "avant de demander une revue et avant de declarer la PR prete, relire le corps contre le"
+		+ "journal des commits depuis la base, et le reecrire si un commit a change la conception"
+	STATUS specified
+	SUPERSEDES @DECISION.LeCorpsDeLaPrSeMetAJourPendantLaRevue
+	RATIONALE "dans une pile de branches, le corps d'une PR est ce que lit la tache empilee pour"
+		+ "savoir ce qu'elle rebase, et ce que lit le relecteur suivant pour savoir ce qu'il relit"
+		+ "; aucun outil ne signale qu'il decrit une conception abandonnee"
+	RATIONALE "mesure sur la PR #61 : le corps decrivait encore spec.awawa comme un lien vers le"
+		+ "depot prive alors que trois commits plus loin le corpus etait versionne en clair dans"
+		+ "docs/, et la revue a depense l'essentiel de son passage sur cet ecart au lieu du"
+		+ "contenu. Le declencheur d'origine — une revue qui change une signature — ne couvrait pas"
+		+ "ce cas, ou l'ecart nait des commits de la branche avant toute revue"
+	REJECTED "traiter le corps de la PR comme un resume d'ouverture fige"
+	REJECTED "garder le declencheur limite a la revue : l'ecart le plus couteux mesure ici est ne"
+		+ "avant elle"
+	REJECTED "confier le constat au relecteur : la revue de la PR #61 l'a fait, et au prix d'un"
+		+ "passage entier"
+	SOURCE "constate le 2026-09-12, revue de DEP2, PR #61"
 
 DECISION UneDecisionRetireeNommeSaSuccesseure
 	DESC "SCHEMA * exige une arete entrante CLOSED_BY ou SUPERSEDED_BY sur toute entite superseded"

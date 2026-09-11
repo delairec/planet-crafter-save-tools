@@ -174,3 +174,14 @@ OPEN_QUESTION SortDesCleusDupliqueesDeWorldObjectLabels
 	STATUS specified
 	BLOCKS @TASK.T38_ConformiteCoreMapping
 	SOURCE "fiche T38, decision 2"
+
+OPEN_QUESTION LaRegleDuCorpsDePrVautElleAuDelaDeCeDepot
+	DESC "a trancher : la regle qui veut qu'un corps de PR decrive la tete de branche ne dit rien"
+		+ "de propre a ce projet et vaut pour tout depot conduit en pile de branches"
+		REF @DECISION.LeCorpsDeLaPrDecritLaTeteDeBranche
+	DESC "destination proposee si elle est generale : la section git de"
+		+ "~/.ai/instructions/commands.md"
+	STATUS specified
+	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
+		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
+	SOURCE "constate le 2026-09-12, revue de DEP2, PR #61"
