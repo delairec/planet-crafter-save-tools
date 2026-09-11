@@ -20,7 +20,6 @@ sur tout l'espace de travail, et un fichier isolé rapporte comme cassées des r
 ```
 awawa status .                      # où en est le projet : entités par type et par STATUS
 awawa status OPEN_QUESTION --where STATUS!=superseded .   # ce qui n'est pas tranché
-awawa status SEC .                  # les mesures de sécurité, et lesquelles ne sont pas en place
 awawa context @PACKAGE.CoreMapping --skip reasoning .     # le paquet de contexte avant d'implémenter
 awawa lint --strict .               # doit sortir en 0
 ```
@@ -72,8 +71,8 @@ Organisation de `.do-not-commit/planet-crafter-save-tools/` :
 
 **Une décision va dans le corpus et nulle part ailleurs**, et avertir quand elle en contredit une enregistrée — ce
 que `awawa status DECISION .` permet de vérifier (@DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime). Un défaut
-constaté est une `OPEN_QUESTION` (@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues), une mesure de sécurité une
-entité `SEC` (@DECISION.LesMesuresDeSecuriteSontDesEntitesSEC), une tâche une entité `TASK` qui reste après sa fusion
+constaté est une `OPEN_QUESTION` (@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues), une tâche une entité `TASK`
+qui reste après sa fusion
 (@DECISION.UneTacheFusionneeResteDansLeCorpus). **Le nom d'une tâche est son étiquette, un souligné, puis ce qu'elle
 couvre** : `awawa new TASK T40_NomLisible .` — le schéma le vérifie, et l'étiquette seule est refusée
 (@DECISION.UneTachePorteSonEtiquetteEtUnNomLisible). La famille d'outillage du dépôt, hors chantier de conformité,

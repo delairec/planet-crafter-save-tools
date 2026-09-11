@@ -84,7 +84,6 @@ OPEN_QUESTION LesAlertesDependabotSontDesactivees
 	DESC "l'autre issue est de planifier le job d'audit a date fixe, ce que le depot ne fait pas :"
 		+ "il ne le lance que sur une pull request et sur la branche par defaut"
 	STATUS specified
-	BLOCKS @SEC.ChaineDeDependancesEtDeBuild
 	RATIONALE "les avis de vulnerabilite n'apparaissent aujourd'hui que dans le job d'audit, a"
 		+ "l'occasion d'une pull request, jamais a date fixe"
 	SOURCE "constate le 2026-09-10, verification de DEP1 apres la fusion de la PR #53"
@@ -96,7 +95,6 @@ OPEN_QUESTION LAuditDeSecuriteEstRougeSurDesAvisTransitifs
 		+ "ne sont pas resolus"
 	DESC "a trancher : attendre la montee amont, ou forcer une resolution depuis la racine"
 	STATUS specified
-	BLOCKS @SEC.ChaineDeDependancesEtDeBuild
 	RATIONALE "le rouge prexiste aux pull requests qui le rencontrent et ne vient pas d'elles :"
 		+ "constate a l'identique sur une pull request ne touchant qu'un fichier d'exclusion"
 	RATIONALE "c'est exactement le terrain que le suivi de dependances doit remonter a date fixe"
@@ -109,7 +107,6 @@ OPEN_QUESTION LaPolitiqueDeContenuAutoriseLeScriptEnLigne
 	DESC "a trancher : hachage ou nonce sur le script d'hydratation, ou constat que le cadre ne le"
 		+ "permet pas"
 	STATUS specified
-	BLOCKS @SEC.EnTetesDuSitePublie
 	RATIONALE "la politique a ete posee compatible avec le build de production, sans que le retrait"
 		+ "de l'inline soit tente ni mesure"
 	RATIONALE "la case du plan restait cochee : la politique existe, et c'est sa force qui n'etait"
