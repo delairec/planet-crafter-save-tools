@@ -20,12 +20,6 @@ describe('MergeSaveFiles', () => {
   const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResult => ({isValid: false, errors, warnings: []});
   const acceptedWith = (...warnings: SaveWarningCode[]): SaveValidationResult => ({isValid: true, errors: [], warnings});
 
-  /**
-   * The use case calls `validate` once per save it handles — save A, save B, then the save the
-   * merger produced — so a double has to answer differently on each call. It keys on the file
-   * name, the identity the use case actually passes, and accepts every save the table does not
-   * name.
-   */
   const validatorAnswering = (resultsByFileName: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
     (fileName: string) => resultsByFileName[fileName] ?? ACCEPTED;
 
