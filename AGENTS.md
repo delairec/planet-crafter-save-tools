@@ -135,9 +135,9 @@ que rien ne rappelle et dont l'oubli ne produit aucune erreur, seulement un verd
    (@DECISION.LaRegleDuContextePrivePerdSaBarreFinale).
 
 `.do-not-commit/` suit la même logique : chaque worktree porte son propre clone, à rafraîchir par `bun run
-private:sync` — voir « Emplacement ». **Le corpus vit dans ce clone**, donc `awawa` lancé dans un worktree lit le
-corpus de *ce* worktree : une session isolée en worktree ne peut pas écrire dans le clone du dépôt principal, et
-n'a pas à le faire.
+private:sync` — voir « Emplacement ». **Le corpus, lui, est versionné dans la branche** : `awawa` lancé dans un
+worktree lit et écrit le corpus de *ce* worktree, et ce qu'une session y enregistre arrive par sa pull request
+comme le reste.
 
 **Ne jamais `cd` dans `.do-not-commit/`.** C'est un dépôt à part entière imbriqué dans celui-ci, et un worktree est
 découpé dans le dépôt qui contient le **répertoire de travail du shell au moment de l'appel**. Une session qui entre
