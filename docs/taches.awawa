@@ -388,8 +388,8 @@ TASK AWA2_LesChampsDuSchemaTransverseSontDocumentes
 	STATUS specified
 	KIND awawa
 	RATIONALE "un paquet --with-schema ne dit ni ce qu'est une SPEC, ni ce que vaut chaque barreau"
-		+ "de STATUS, ni que implemented ne s'applique pas a une question ; le squelette de awawa"
-		+ "new OPEN_QUESTION l'exige pourtant"
+		+ "de STATUS ; ce que vaut implemented pour une question releve de l'echelle par type"
+		REF @TASK.AWA7_ChaqueTypePorteSonEchelleDeStatus
 	RATIONALE "IMPL de niveau entite n'a aucun usage ; WAVE vaut 4 sur toutes les taches et les"
 		+ "vagues ont plans/ pour domicile"
 		REF @DECISION.UneTacheFusionneeResteDansLeCorpus
@@ -397,9 +397,6 @@ TASK AWA2_LesChampsDuSchemaTransverseSontDocumentes
 		IMPL "docs/_schema.awawa::SCHEMA *"
 	SPEC "le DESC de SPEC enonce la frontiere : ce qui ne peut pas echouer n'est pas une SPEC"
 		IMPL "docs/_schema.awawa::FIELD SPEC"
-	SPEC "le DESC de STATUS dit que implemented ne vaut que pour une entite qui s'ancre, jamais"
-		+ "pour une question"
-		IMPL "docs/_schema.awawa::FIELD STATUS"
 	SPEC "IMPL de niveau entite n'est plus declare sur SCHEMA *"
 		IMPL "docs/_schema.awawa::SCHEMA *"
 	SPEC "WAVE n'est plus declare sur TASK et aucune tache ne le porte"
@@ -493,3 +490,38 @@ TASK T40_LAuditFallowCouvreLUi
 	SPEC "la section health n'est plus vide ou n'existe plus"
 		IMPL "fallow.toml"
 	SOURCE "audit du schema du 2026-09-12"
+
+TASK AWA7_ChaqueTypePorteSonEchelleDeStatus
+	DESC "STATUS quitte SCHEMA * : chaque type declare l'echelle qui lui correspond, et une"
+		+ "question ne connait plus implemented"
+	DESC "echelles proposees : draft, specified, implemented, superseded pour DECISION, TASK et"
+		+ "PACKAGE, par un FIELDSET ; draft, open, closed pour OPEN_QUESTION"
+	STATUS specified
+	KIND awawa
+	RATIONALE "l'echelle est declaree une fois sur SCHEMA * et vaut pour tout type : implemented"
+		+ "n'a pas de sens sur une question, superseded y signifie fermee et non remplacee, et le"
+		+ "squelette de awawa new OPEN_QUESTION annonce une SPEC requise sous implemented"
+	RATIONALE "mesure le 2026-09-12 sur awawa 2.7 avec un corpus jetable : STATUS se declare par"
+		+ "type ou dans un FIELDSET inclus, les blocs WHEN STATUS restent sur SCHEMA * et tirent"
+		+ "sur toute entite qui ecrit la valeur, ou se posent sur le type ; L006, L004, L016, L007"
+		+ "et L026 gardent leur severite par valeur ; un FIELDSET refuse un bloc WHEN (L023) ; un"
+		+ "type sans STATUS reste en avertissement sur toute regle gatee, donc en erreur sous"
+		+ "--strict"
+	RATIONALE "la valeur closed remplace superseded sur les questions : ce que filtrent AGENTS.md,"
+		+ "les commandes /awawa-pr-review et /awawa-pr-merged et le skill awawa par"
+		+ "STATUS!=superseded doit suivre, ainsi que les huit questions de limitations.awawa et"
+		+ "celle de questions.awawa"
+		REF @DECISION.UneLimitationAccepteeGardeSaMatiereDansLaDecision
+	SPEC "SCHEMA * ne declare plus FIELD STATUS"
+		IMPL "docs/_schema.awawa::SCHEMA *"
+	SPEC "OPEN_QUESTION declare sa propre echelle sans implemented, et sa valeur terminale exige"
+		+ "INCOMING CLOSED_BY"
+		IMPL "docs/_schema.awawa::SCHEMA OPEN_QUESTION"
+	SPEC "chaque barreau de chaque echelle porte un DESC qui dit ce qu'il signifie pour le type"
+		IMPL "docs/_schema.awawa::FIELD STATUS"
+	SPEC "awawa new OPEN_QUESTION n'annonce plus de SPEC requise"
+		IMPL "docs/_schema.awawa::SCHEMA OPEN_QUESTION"
+	SPEC "aucune commande, aucun skill ni AGENTS.md ne filtre les questions par une valeur qui"
+		+ "n'est plus dans leur echelle"
+		IMPL "AGENTS.md::STATUS!="
+	SOURCE "constate par l'utilisateur le 2026-09-12, audit du schema"
