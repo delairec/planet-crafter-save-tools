@@ -19,7 +19,7 @@ export class LoadAndValidateSaveFile {
       return;
     }
 
-    const {sections, errors} = this.parser.parse(content);
-    this.presenter.presentLoadedSaveFile(sections, errors, validation.warnings);
+    const {errors} = this.parser.parse(content);
+    this.presenter.presentLoadedSaveFile(errors, validation.warnings);
   }
 }

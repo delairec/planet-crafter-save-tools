@@ -60,7 +60,7 @@ describe('LoadAndValidateSaveFile', () => {
 
       // Assert
       expect(parser.parse).toHaveBeenCalledWith('content');
-      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith(loadedSections, [{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}], []);
+      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith([{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}], []);
       expect(presenter.presentInvalidSaveFile).not.toHaveBeenCalled();
     });
   });
@@ -74,7 +74,7 @@ describe('LoadAndValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
-      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith(loadedSections, [], ['legacy-save-format']);
+      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith([], ['legacy-save-format']);
     });
 
     it('should present the warnings of an invalid save file too', async () => {
