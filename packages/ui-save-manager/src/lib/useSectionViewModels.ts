@@ -1,5 +1,4 @@
 import {Accessor, createResource, Resource} from 'solid-js';
-import {LoadSaveFileViewModel} from "core-mapping/presentation/viewModels/LoadSaveFileViewModel";
 import {LoadSaveConfigurationSectionController} from "core-mapping/controllers/LoadSaveConfigurationSectionController";
 import {LoadGlobalProgressionSectionController} from "core-mapping/controllers/LoadGlobalProgressionSectionController";
 import {LoadEnergyLevelsSectionController} from "core-mapping/controllers/LoadEnergyLevelsSectionController";
@@ -20,23 +19,23 @@ export interface SectionViewModels {
 }
 
 /**
- * Loads the view model for each save section whenever the loaded sections change, so the section
- * components only ever receive a ready-made view model, never the sections themselves.
+ * Loads the view model for each save section whenever the validated save text changes, so the
+ * section components only ever receive a ready-made view model, never the save itself.
  *
  * Each section is a resource: it carries its own loading and error state, and a controller rejection
  * is reported through that resource instead of becoming an unhandled rejection.
  */
-export function useSectionViewModels(sections: Accessor<LoadSaveFileViewModel['sections']>): SectionViewModels {
-  const [saveConfiguration] = createResource(sections,
-    (loadedSections) => LoadSaveConfigurationSectionController.loadSaveConfigurationSection(loadedSections));
-  const [globalProgression] = createResource(sections,
-    (loadedSections) => LoadGlobalProgressionSectionController.loadGlobalProgressionSection(loadedSections));
-  const [energyLevels] = createResource(sections,
-    (loadedSections) => LoadEnergyLevelsSectionController.loadEnergyLevelsSection(loadedSections));
-  const [terraformationLevels] = createResource(sections,
-    (loadedSections) => LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(loadedSections));
-  const [players] = createResource(sections,
-    (loadedSections) => LoadPlayersSectionController.loadPlayersSection(loadedSections));
+export function useSectionViewModels(validatedContent: Accessor<string | null>): SectionViewModels {
+  const [saveConfiguration] = createResource(validatedContent,
+    (content) => LoadSaveConfigurationSectionController.loadSaveConfigurationSection(content));
+  const [globalProgression] = createResource(validatedContent,
+    (content) => LoadGlobalProgressionSectionController.loadGlobalProgressionSection(content));
+  const [energyLevels] = createResource(validatedContent,
+    (content) => LoadEnergyLevelsSectionController.loadEnergyLevelsSection(content));
+  const [terraformationLevels] = createResource(validatedContent,
+    (content) => LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
+  const [players] = createResource(validatedContent,
+    (content) => LoadPlayersSectionController.loadPlayersSection(content));
 
   return {saveConfiguration, globalProgression, energyLevels, terraformationLevels, players};
 }

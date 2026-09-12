@@ -1,5 +1,4 @@
 import {describe, expect, it} from 'bun:test';
-import {createSaveSectionsParser} from '../composition/compositionRoot';
 import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {LoadSaveConfigurationSectionController} from "./LoadSaveConfigurationSectionController";
 import {SaveConfigurationViewModel} from "../presentation/viewModels/SaveConfigurationViewModel";
@@ -7,10 +6,10 @@ import {SaveConfigurationViewModel} from "../presentation/viewModels/SaveConfigu
 describe('LoadSaveConfigurationSectionController', () => {
   it('should present save configuration from the parsed save', async () => {
     // Arrange
-    const {sections} = createSaveSectionsParser().parse(createFakeSaveContent());
+    const validatedContent = createFakeSaveContent();
 
     // Act
-    const viewModel = await LoadSaveConfigurationSectionController.loadSaveConfigurationSection(sections);
+    const viewModel = await LoadSaveConfigurationSectionController.loadSaveConfigurationSection(validatedContent);
 
     // Assert
       expect(viewModel).toEqual<SaveConfigurationViewModel>({
