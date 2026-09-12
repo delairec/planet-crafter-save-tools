@@ -233,8 +233,9 @@ OPEN_QUESTION UneRecommandationEstExamineeAvantDEtreProposeeALaRatification
 		REF @TASK.T37_FrontieresCleanArchitectureCoreMapping
 		REF @DECISION.LArtefactDuFichierFusionneNEstPasUnObjetDuDomaine
 		REF @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
-	DESC "destination proposee si elle est generale : la section Always de ~/.ai/CLAUDE.md, a cote"
-		+ "de la regle qui veut qu'une decision prise avec l'utilisateur soit enregistree"
+	DESC "destination proposee si elle est generale : la section Always de ~/.ai/AGENTS.md, que"
+		+ "~/.claude/CLAUDE.md lie, a cote de la regle qui veut qu'une decision prise avec"
+		+ "l'utilisateur soit enregistree"
 	STATUS superseded
 	RATIONALE "les deux defauts n'ont ete trouves que parce que l'utilisateur a refuse la"
 		+ "ratification en bloc et demande un examen question par question ; la procedure ne les"
