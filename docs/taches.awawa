@@ -370,7 +370,7 @@ DECISION LaFamilleDepEstAbandonnee
 TASK AWA1_LeCorpusEstGardeEnCi
 	DESC "lint --strict et fmt --check du corpus tournent dans le workflow Quality, en echec"
 		+ "bloquant"
-	STATUS specified
+	STATUS superseded
 	KIND awawa
 	RATIONALE "aucun job ne lit le corpus : sa canonicite et sa proprete ne tiennent qu'a la"
 		+ "discipline de session, alors que le depot awawa lui-meme se garde par un preflight"

@@ -251,7 +251,7 @@ OPEN_QUESTION CommentObtenirAwawaSurUnRunner
 		+ "sait l'obtenir"
 	DESC "a trancher : archive de release publiee et telechargee par le workflow, action dediee, ou"
 		+ "binaire commite"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.AWA1_LeCorpusEstGardeEnCi
 	SOURCE "constate le 2026-09-12, audit du schema"
 

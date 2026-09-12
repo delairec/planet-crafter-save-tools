@@ -127,3 +127,20 @@ DECISION DependabotSuitDeuxEcosystemesEnGroupesHebdomadaires
 	SPEC "la configuration declare les deux ecosystemes depuis la racine"
 		IMPL ".github/dependabot.yml"
 	SOURCE "decision du 2026-09-10, DEP1, PR #53 ; verifiee sur execution reelle"
+
+DECISION AwawaResteUnOutilDePosteDeTravail
+	DESC "aucun job de CI ne lit le corpus : lint --strict et fmt --check tournent en session, a"
+		+ "chaque mise a jour, et c'est la seule garde"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.CommentObtenirAwawaSurUnRunner
+	SUPERSEDES @TASK.AWA1_LeCorpusEstGardeEnCi
+	RATIONALE "awawa est un outil de poste de travail, installe depuis une archive de release ;"
+		+ "l'obtenir sur un runner demande une publication, une action ou un binaire commite pour"
+		+ "une garde que la discipline de session couvre deja"
+	RATIONALE "la tache AWA1 et la question qui la bloquait tombent ensemble : sans job, la facon"
+		+ "d'obtenir le binaire sur un runner n'a plus d'objet"
+	REJECTED "un job du workflow Quality qui lance lint --strict et fmt --check du corpus, le"
+		+ "binaire venant d'une archive de release telechargee, d'une action dediee ou d'un binaire"
+		+ "commite"
+	SPEC "aucun workflow de .github/workflows ne lance awawa"
+	SOURCE "decision du 2026-09-12, revue des schemas, PR #64"
