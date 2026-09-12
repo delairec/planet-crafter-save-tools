@@ -149,7 +149,7 @@ DECISION LesReglesDeFusionRecoiventUnModeleDeFusion
 	DESC "ce modele est depuis la revue de la PR #62 le modele de save du domaine, dans domain/save"
 		+ ": les regles de fusion le recoivent et le rendent"
 		REF @DECISION.UneFusionProduitUneSaveOrdinaire
-	STATUS specified
+	STATUS implemented
 	SUPERSEDES @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 	CLOSES @OPEN_QUESTION.UnEncodageDeChampReleveDuFormatOuNon
 	RATIONALE "la v2 gardait le rejet d'un modele de fusion tout en creant un demi-modele : trois"

@@ -168,7 +168,7 @@ DECISION UneFusionProduitUneSaveOrdinaire
 		+ "identifiants entre l'analyseur et le serialiseur"
 	DESC "l'issue de fusion inutilisable garde son declencheur : une ligne illisible rapportee par"
 		+ "l'analyseur, qui parcourt la section des objets du monde a la lecture"
-	STATUS specified
+	STATUS implemented
 	SUPERSEDES @DECISION.LeCasDUtilisationDeFusionInvoqueLesReglesDuDomaine
 	RATIONALE "revue de la PR #62 : un service de serialisation propre aux resultats de fusion n'a"
 		+ "pas de raison d'etre, et un second port de lecture non plus quand le chargement en a"

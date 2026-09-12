@@ -145,7 +145,7 @@ DECISION UneRegleDeDomaineIgnoreLeVocabulaireDeValidation
 		+ "phrase de detail"
 	DESC "les six codes d'issue restent en application et sont tous attaches depuis"
 		+ "l'infrastructure"
-	STATUS specified
+	STATUS implemented
 	CLOSES @OPEN_QUESTION.FormeDesErreursDeRegleDomaine
 	RATIONALE "exactement un hote est une invariante metier : la regle reste au domaine, seul son"
 		+ "vocabulaire d'erreur en sort"

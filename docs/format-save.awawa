@@ -116,7 +116,7 @@ DECISION LaSerialisationDesFlottantsSeVerifieEnInfrastructure
 	DESC "la verification du suffixe .0 vit en infrastructure, a cote de la validation des schemas"
 	DESC "elle garde son expression reguliere sur le texte de la save et attache elle-meme le code"
 		+ "d'issue"
-	STATUS specified
+	STATUS implemented
 	CLOSES @OPEN_QUESTION.OuVerifierLaSerialisationDesFlottants
 	RATIONALE "le domaine ne serialise ni n'analyse le format, et les erreurs de serialisation se"
 		+ "rangent en infrastructure : un .0 manquant est un defaut d'ecriture, pas une violation"
