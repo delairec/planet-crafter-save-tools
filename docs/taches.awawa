@@ -391,8 +391,8 @@ TASK AWA2_LesChampsDuSchemaTransverseSontDocumentes
 	RATIONALE "un paquet --with-schema ne dit ni ce qu'est une SPEC, ni ce que vaut chaque barreau"
 		+ "de STATUS ; ce que vaut implemented pour une question releve de l'echelle par type"
 		REF @TASK.AWA7_ChaqueTypePorteSonEchelleDeStatus
-	RATIONALE "IMPL de niveau entite n'a aucun usage ; WAVE vaut 4 sur toutes les taches et les"
-		+ "vagues ont plans/ pour domicile"
+	RATIONALE "IMPL de niveau entite n'a aucun usage ; WAVE n'a pas lieu d'etre, les vagues ont"
+		+ "plans/ pour domicile"
 		REF @DECISION.UneTacheFusionneeResteDansLeCorpus
 	SPEC "SPEC, RATIONALE, STATUS, DESC et chaque REF et IMPL niches portent un DESC"
 		IMPL "docs/_schema.awawa::SCHEMA *"
@@ -515,8 +515,7 @@ TASK AWA7_ChaqueTypePorteSonEchelleDeStatus
 		+ "--strict"
 	RATIONALE "la valeur closed remplace superseded sur les questions : ce que filtrent AGENTS.md,"
 		+ "les commandes /awawa-pr-review et /awawa-pr-merged et le skill awawa par"
-		+ "STATUS!=superseded doit suivre, ainsi que les huit questions de limitations.awawa et"
-		+ "celle de questions.awawa"
+		+ "STATUS!=superseded doit suivre, ainsi que toute question deja superseded"
 		REF @DECISION.UneLimitationAccepteeGardeSaMatiereDansLaDecision
 	SPEC "SCHEMA * ne declare plus FIELD STATUS"
 		IMPL "docs/_schema.awawa::SCHEMA *"
