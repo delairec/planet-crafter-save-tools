@@ -357,8 +357,8 @@ DECISION UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
 		+ "Claude Fable 5.1 en effort medium, qui ecrit un rapport par PR fusionnee dans"
 		+ "docs/awawa-usage-reports/"
 	DESC "la forme a un seul domicile, le gabarit _template.md : verdict nous / verdict outil,"
-		+ "chacun en bien passe, mal passe, remediations ; points recurrents avec leur nombre"
-		+ "d'occurrences ; mesures tirees des transcriptions en annexe"
+		+ "chacun en bien passe, mal passe, remediations ; points recurrents, douloureux et"
+		+ "positifs, avec leur nombre d'occurrences ; mesures tirees des transcriptions en annexe"
 	DESC "le rapport cite les entites, n'en recopie aucune"
 		REF @DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
 	STATUS specified
