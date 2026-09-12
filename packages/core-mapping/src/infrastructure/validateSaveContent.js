@@ -37,9 +37,24 @@ export function validateSaveContent(mergedSave) {
   errors.push(...validateSchemas(sections));
   errors.push(...worldObjectIssues);
   errors.push(...validateFloatSerialization(mergedSave));
-  errors.push(...validateUniqueHost(sections[PLAYERS_SECTION_INDEX]));
+
+  const uniqueHostViolation = validateUniqueHost(sections[PLAYERS_SECTION_INDEX]);
+  if (uniqueHostViolation !== null) {
+    errors.push(toUniqueHostIssue(uniqueHostViolation));
+  }
 
   return {isValid: errors.length === 0, errors, warnings};
+}
+
+/**
+ * @param {import('../domain/rules/validateUniqueHost').UniqueHostViolation} violation
+ * @returns {import('../application/ports/ValidationIssue').ValidationIssue}
+ */
+function toUniqueHostIssue({hostCount}) {
+  return {
+    code: VALIDATION_ISSUE_CODES.UNIQUE_HOST,
+    detail: `Expected exactly one host player, found ${hostCount}`
+  };
 }
 
 /**
