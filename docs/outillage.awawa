@@ -97,7 +97,7 @@ DECISION LesTachesDOutillagePortentLaFamilleDep
 		+ "serie du chantier de conformite, et ne participent d'aucune vague"
 	DESC "convention propre a ce projet : le gabarit general de fiche ne connait que la serie"
 		+ "ordinaire"
-	STATUS specified
+	STATUS superseded
 	RATIONALE "elles ne partagent aucun fichier avec le chantier et ne dependent d'aucune de ses"
 		+ "taches"
 	REJECTED "les numeroter dans la serie du chantier"

@@ -75,8 +75,9 @@ constaté est une `OPEN_QUESTION` (@DECISION.LeCorpusRemplaceLesFichesDeKnownIss
 qui reste après sa fusion
 (@DECISION.UneTacheFusionneeResteDansLeCorpus). **Le nom d'une tâche est son étiquette, un souligné, puis ce qu'elle
 couvre** : `awawa new TASK T40_NomLisible .` — le schéma le vérifie, et l'étiquette seule est refusée
-(@DECISION.UneTachePorteSonEtiquetteEtUnNomLisible). La famille d'outillage du dépôt, hors chantier de conformité,
-garde ses numéros `DEP{N}`, sous la même forme.
+(@DECISION.UneTachePorteSonEtiquetteEtUnNomLisible:v2). Le préfixe dit le type de la tâche, porté par son champ
+`KIND` : `T` pour `generic`, `AWA` pour une tâche qui touche la configuration d'awawa. La famille `DEP` est
+abandonnée (@DECISION.LaFamilleDepEstAbandonnee).
 
 **Langue** : le corpus et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
 générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, les `.md` de

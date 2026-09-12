@@ -1,19 +1,20 @@
-// Les taches ouvertes. Les taches deja fusionnees ne sont pas des entites : le graphe
-// ci-dessous ne porte que ce qui reste a ordonner
-// (@DECISION.UneTacheFusionneeResteDansLeCorpus).
-//
-//   T37 ─┬─ T15 ─┐
-//        └─ T32 ─┴─ T38
-//              └─ T24
+// Les taches ouvertes et leur typage. Les taches fusionnees avant le 2026-09-11 ne sont pas
+// retro-creees ; celles fusionnees depuis restent et passent implemented
+// (@DECISION.UneTacheFusionneeResteDansLeCorpus). L'ordre se lit par refs et par BEFORE, jamais ici.
 SHAPE task_name
-	DESC "l'etiquette de la tache, un souligne, puis ce qu'elle couvre en PascalCase"
-	MATCH "(T|DEP)[0-9]+_[A-Z][A-Za-z0-9]*(:v[0-9]+)?"
+	DESC "le prefixe de son KIND, son numero, un souligne, puis ce qu'elle couvre en PascalCase"
+	MATCH "(T|AWA)[0-9]+_[A-Z][A-Za-z0-9]*(:v[0-9]+)?"
 
 SCHEMA TASK
 	DESC "un lot de travail qui fusionne en une ou plusieurs pull requests"
 	DESC "specified : la fiche est ecrite, la tache est ouverte. implemented : elle est fusionnee,"
 		+ "et elle reste"
 	NAME task_name
+	FIELD KIND generic|awawa
+		REQUIRED
+		DESC "ce que la tache touche ; fixe le prefixe du nom : T pour generic, AWA pour awawa"
+		DESC "la correspondance entre le prefixe et le KIND n'est verifiee par aucune regle : NAME"
+			+ "ne se declare pas sous WHEN"
 	FIELD AFTER @TASK
 		REPEATABLE
 		DESC "la tache qui doit fusionner avant celle-ci ; l'arete inverse est calculee, personne"
@@ -31,6 +32,7 @@ TASK T37_FrontieresCleanArchitectureCoreMapping
 	DESC "PR A : decisions 1 a 5, un commit par decision. PR B : decision 6, le contrat controleur"
 		+ "vers UI"
 	STATUS specified
+	KIND generic
 	WAVE "4"
 	RATIONALE "issue de la revue de code complete du 2026-09-07 : deux violations de la regle de"
 		+ "dependance, critiques au sens de architecture/review.md, et quatre violations de"
@@ -81,6 +83,7 @@ TASK T15_EntitesDuDomaineEnClasses
 	DESC "une entite par commit, dans l'ordre WorldObject, Inventory, PlacedWorldObject, Player,"
 		+ "TerraformationLevel"
 	STATUS specified
+	KIND generic
 	WAVE "4"
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T37 laisse en place les entites que T15 convertit et sa partie A deplace des types"
@@ -115,6 +118,7 @@ TASK T32_ConformiteUiSaveManager
 	DESC "conformite de ui-save-manager : idiomes Solid, messages, duplication ; aucun changement"
 		+ "de comportement visible"
 	STATUS specified
+	KIND generic
 	WAVE "4"
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "issue de la revue de code complete du 2026-09-07 ; travail de conformite STD-3 et"
@@ -151,6 +155,7 @@ TASK T24_HarnaisDeTestsUiParScenarios
 	DESC "derniere tache UI a fusionner : chaque tache UI qui la precede peut deplacer un libelle"
 		+ "et casser un locator"
 	STATUS specified
+	KIND generic
 	WAVE "4"
 	AFTER @TASK.T32_ConformiteUiSaveManager
 	RATIONALE "T23 a pose le runner, la configuration, le serveur, la convention de nommage, la"
@@ -187,6 +192,7 @@ TASK T38_ConformiteCoreMapping
 	DESC "decoupable en trois PR : production, specs de domaine, specs d'application,"
 		+ "d'infrastructure et de presentation"
 	STATUS specified
+	KIND generic
 	WAVE "4"
 	AFTER @TASK.T15_EntitesDuDomaineEnClasses
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
@@ -278,7 +284,7 @@ DECISION UneTachePorteSonEtiquetteEtUnNomLisible
 		+ "T37_FrontieresCleanArchitectureCoreMapping"
 	DESC "l'etiquette reste le prefixe stable et la forme courte employee en prose, dans les"
 		+ "SOURCE, les messages de commit et les noms de branche"
-	STATUS implemented
+	STATUS superseded
 	RATIONALE "une tache nommee par sa seule etiquette obligeait status TASK, refs et le pied de"
 		+ "page de context a etre relus fiche par fiche pour savoir de quoi ils parlaient : le"
 		+ "listing ne portait aucune information"
@@ -319,3 +325,171 @@ DECISION UneTacheFusionneeResteDansLeCorpus
 		+ "la prose de cadrage"
 		IMPL "docs/taches.awawa"
 	SOURCE "decision du 2026-09-11, migration de tasks/"
+
+DECISION UneTachePorteSonEtiquetteEtUnNomLisible:v2
+	DESC "le nom d'une tache est le prefixe de son KIND, son numero, un souligne, puis ce qu'elle"
+		+ "couvre : T pour generic, AWA pour awawa"
+	DESC "KIND est un champ requis de TASK ; le shape task_name admet les deux prefixes, et la"
+		+ "correspondance entre le prefixe et le KIND reste une discipline"
+	STATUS implemented
+	SUPERSEDES @DECISION.UneTachePorteSonEtiquetteEtUnNomLisible
+	RATIONALE "NAME se declare par type, un shape par type, et un bloc WHEN ne porte que FIELD,"
+		+ "GATE et INCOMING : awawa 2.7 ne sait pas deriver le shape d'un nom de la valeur d'un"
+		+ "champ. Le champ rend le type interrogeable par --where, le prefixe le rend lisible dans"
+		+ "status et refs"
+	RATIONALE "ce qui change par rapport a la premiere version : la famille DEP sort du shape, et"
+		+ "le prefixe dit le type"
+		REF @DECISION.LaFamilleDepEstAbandonnee
+	REJECTED "un type d'entite par famille, TASK et AWA_TASK : AFTER ne pourrait plus viser les"
+		+ "deux, L020 n'admettant qu'un type de reference par slot"
+	REJECTED "faire deriver le prefixe du champ par l'outil : aucune primitive ne le permet ; un"
+		+ "NAME sous WHEN serait une evolution d'awawa, pas de ce corpus"
+	REJECTED "le prefixe seul, sans champ : status ne sait pas filtrer sur un fragment de nom"
+	SPEC "le nom de toute tache est accepte par le shape task_name et son prefixe est celui de son"
+		+ "KIND"
+		IMPL "docs/taches.awawa::SHAPE task_name"
+		IMPL "docs/taches.awawa::FIELD KIND"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-12, audit du schema"
+
+DECISION LaFamilleDepEstAbandonnee
+	DESC "plus aucune tache ne porte le prefixe DEP ; une tache d'outillage est une tache generic"
+		+ "de la serie T"
+	DESC "DEP1 et DEP2, fusionnees, gardent leur nom dans l'historique, les pull requests et les"
+		+ "SOURCE"
+	STATUS implemented
+	SUPERSEDES @DECISION.LesTachesDOutillagePortentLaFamilleDep
+	RATIONALE "la famille avait ete creee pour tenir l'outillage hors des vagues du chantier ; le"
+		+ "typage par KIND rend ce role a un champ, et une serie de plus n'apporte qu'une"
+		+ "numerotation a tenir"
+	REJECTED "garder DEP comme troisieme KIND"
+	SPEC "le shape task_name refuse le prefixe DEP"
+		IMPL "docs/taches.awawa::SHAPE task_name"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-12"
+
+TASK AWA1_LeCorpusEstGardeEnCi
+	DESC "lint --strict et fmt --check du corpus tournent dans le workflow Quality, en echec"
+		+ "bloquant"
+	STATUS specified
+	KIND awawa
+	RATIONALE "aucun job ne lit le corpus : sa canonicite et sa proprete ne tiennent qu'a la"
+		+ "discipline de session, alors que le depot awawa lui-meme se garde par un preflight"
+	RATIONALE "le binaire est installe localement depuis une archive de release, sans depot ni"
+		+ "registre connu : la facon de l'obtenir sur un runner est la question qui bloque"
+	SPEC "un job du workflow Quality echoue quand awawa lint --strict . sort en 1"
+		IMPL ".github/workflows/quality.yml"
+	SPEC "le meme job echoue quand awawa fmt --check . sort en 1"
+		IMPL ".github/workflows/quality.yml"
+	SPEC "la version du binaire est epinglee dans le workflow"
+		IMPL ".github/workflows/quality.yml"
+	SOURCE "audit du schema du 2026-09-12"
+
+TASK AWA2_LesChampsDuSchemaTransverseSontDocumentes
+	DESC "chaque champ de SCHEMA * porte un DESC ; IMPL de niveau entite et WAVE disparaissent"
+	STATUS specified
+	KIND awawa
+	RATIONALE "un paquet --with-schema ne dit ni ce qu'est une SPEC, ni ce que vaut chaque barreau"
+		+ "de STATUS, ni que implemented ne s'applique pas a une question ; le squelette de awawa"
+		+ "new OPEN_QUESTION l'exige pourtant"
+	RATIONALE "IMPL de niveau entite n'a aucun usage ; WAVE vaut 4 sur toutes les taches et les"
+		+ "vagues ont plans/ pour domicile"
+		REF @DECISION.UneTacheFusionneeResteDansLeCorpus
+	SPEC "SPEC, RATIONALE, STATUS, DESC et chaque REF et IMPL niches portent un DESC"
+		IMPL "docs/_schema.awawa::SCHEMA *"
+	SPEC "le DESC de SPEC enonce la frontiere : ce qui ne peut pas echouer n'est pas une SPEC"
+		IMPL "docs/_schema.awawa::FIELD SPEC"
+	SPEC "le DESC de STATUS dit que implemented ne vaut que pour une entite qui s'ancre, jamais"
+		+ "pour une question"
+		IMPL "docs/_schema.awawa::FIELD STATUS"
+	SPEC "IMPL de niveau entite n'est plus declare sur SCHEMA *"
+		IMPL "docs/_schema.awawa::SCHEMA *"
+	SPEC "WAVE n'est plus declare sur TASK et aucune tache ne le porte"
+		IMPL "docs/taches.awawa::SCHEMA TASK"
+	SOURCE "audit du schema du 2026-09-12"
+
+TASK AWA3_LaSourceDevientUneDateEtUnePr
+	DESC "SOURCE eclate en une date de forme declaree et un numero de pull request, interrogeables"
+		+ "par --where"
+	STATUS specified
+	KIND awawa
+	AFTER @TASK.AWA2_LesChampsDuSchemaTransverseSontDocumentes
+	RATIONALE "SOURCE porte quatre grammaires concurrentes : decision du, constate le, chemins de"
+		+ "fiches supprimees, fiche Tn decision k ; aucun --where ne sait en tirer une date ni une"
+		+ "PR"
+	RATIONALE "PR existe deja sur TASK et vaut pour toute entite : il remonte sur SCHEMA *"
+	SPEC "SCHEMA * declare un SHAPE date et un champ RULED de ce shape"
+		IMPL "docs/_schema.awawa::SCHEMA *"
+	SPEC "PR est declare sur SCHEMA * et retire de TASK"
+		IMPL "docs/_schema.awawa::SCHEMA *"
+	SPEC "toute entite qui portait une date dans SOURCE porte RULED, toute PR citee est portee par"
+		+ "PR, et SOURCE ne garde que ce qui n'est ni l'un ni l'autre"
+		IMPL "docs/_schema.awawa::FIELD SOURCE"
+	SOURCE "audit du schema du 2026-09-12"
+
+TASK AWA4_LesAncresDeRepertoireSontResolues
+	DESC "les 35 ancres IMPL qui pointent un repertoire sont ramenees a un fichier ou a un"
+		+ "litteral, ou leur SPEC est reconnue non falsifiable et retrogradee en DESC"
+	STATUS specified
+	KIND awawa
+	RATIONALE "une ancre de repertoire resout toujours et ne verifie rien : implemented y vaut"
+		+ "ancre, donc rien. Les six ancres packages/ui-save-manager de T24 et les deux ancres docs"
+		+ "en sont les cas extremes"
+	SPEC "aucune ancre IMPL du corpus ne designe un repertoire"
+		IMPL "docs/_schema.awawa::FIELD IMPL anchor"
+	SPEC "chaque SPEC dont l'obligation n'avait pas de fichier est retrogradee en DESC ou"
+		+ "reformulee pour en avoir un"
+		IMPL "docs/_schema.awawa::FIELD SPEC"
+	SOURCE "audit du schema du 2026-09-12"
+
+TASK AWA5_LeCorpsDUneDecisionQuitteLeDesc
+	DESC "une DECISION porte un DESC unique et court ; sa matiere normative vit dans un champ qui"
+		+ "n'est pas relu a chaque recuperation"
+	STATUS specified
+	KIND awawa
+	RATIONALE "188 DESC pour 80 decisions, jusqu'a quatre par entite, en phrases completes : le"
+		+ "DESC sert de corps de decision, contre sa doctrine, et plusieurs decisions redisent en"
+		+ "SPEC ce que le DESC enonce"
+		REF @DECISION.LaSpecificationResteEnFrancaisMemePubliee
+	RATIONALE "la forme du champ d'accueil est la question qui bloque : SPEC seule, ou un champ"
+		+ "DECIDES declare sur DECISION"
+	SPEC "aucune DECISION ne porte plus d'un DESC"
+		IMPL "docs/_schema.awawa::SCHEMA DECISION"
+	SPEC "aucun DESC de DECISION n'excede une ligne de source"
+		IMPL "docs/_schema.awawa::SCHEMA DECISION"
+	SOURCE "audit du schema du 2026-09-12"
+
+TASK AWA6_AgentsMdNeReditPlusLeCorpus
+	DESC "AGENTS.md ne restitue plus in extenso ce que le corpus et commands.md portent ; seule"
+		+ "l'anonymisation garde sa redite"
+	STATUS specified
+	KIND awawa
+	RATIONALE "la regle du corps de PR a trois domiciles, commands.md, AGENTS.md et sa decision ;"
+		+ "la section worktree redit deux decisions mot pour mot ; le fichier annonce pourtant ne"
+		+ "garder que ce qu'il faut savoir avant la premiere commande"
+		REF @DECISION.LeCorpsDeLaPrDecritLaTeteDeBranche
+		REF @DECISION.ChaqueWorktreeInstalleSesDependances
+		REF @DECISION.UnWorktreeEstDecoupeDansLeDepotDuRepertoireCourant
+	RATIONALE "les mentions @DECISION.X d'AGENTS.md ne sont indexees par rien et fmt --rename ne"
+		+ "les suit pas : grep apres chaque renommage"
+	SPEC "la section sur le corps de PR renvoie a commands.md et a la decision sans les reenoncer"
+		IMPL "AGENTS.md::Le corps d'une PR décrit la tête de branche"
+	SPEC "la section worktree se limite aux gestes que le corpus ne porte pas et cite les decisions"
+		+ "pour le reste"
+		IMPL "AGENTS.md::Travail dans un arbre de travail lié"
+	SPEC "la section d'anonymisation reste en toutes lettres"
+		IMPL "AGENTS.md::Anonymisation des noms de joueurs"
+	SOURCE "audit du schema du 2026-09-12"
+
+TASK T40_LAuditFallowCouvreLUi
+	DESC "fallow.toml cesse d'ignorer packages/ui-save-manager en entier, ou une decision dit"
+		+ "pourquoi ; la section health vide est renseignee ou retiree"
+	STATUS specified
+	KIND generic
+	RATIONALE "le fichier declare entry-client et entry-server de l'UI en entrees tout en ignorant"
+		+ "le package entier : les deux lignes se contredisent, et aucune decision du corpus"
+		+ "n'explique l'exclusion de l'UI de l'audit de code mort"
+	SPEC "packages/ui-save-manager/** n'est plus dans ignorePatterns, ou une DECISION du corpus"
+		+ "justifie l'exclusion"
+		IMPL "fallow.toml::ignorePatterns"
+	SPEC "la section health n'est plus vide ou n'existe plus"
+		IMPL "fallow.toml"
+	SOURCE "audit du schema du 2026-09-12"

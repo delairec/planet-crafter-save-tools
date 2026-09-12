@@ -185,3 +185,21 @@ OPEN_QUESTION LaRegleDuCorpsDePrVautElleAuDelaDeCeDepot
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
 	SOURCE "constate le 2026-09-12, revue de DEP2, PR #61"
+
+OPEN_QUESTION CommentObtenirAwawaSurUnRunner
+	DESC "le binaire awawa est installe localement depuis une archive de release ; aucun runner ne"
+		+ "sait l'obtenir"
+	DESC "a trancher : archive de release publiee et telechargee par le workflow, action dediee, ou"
+		+ "binaire commite"
+	STATUS specified
+	BLOCKS @TASK.AWA1_LeCorpusEstGardeEnCi
+	SOURCE "constate le 2026-09-12, audit du schema"
+
+OPEN_QUESTION OuVitLaMatiereDUneDecision
+	DESC "quel champ accueille la matiere normative d'une DECISION une fois que son DESC redevient"
+		+ "un fragment"
+	DESC "recommandation : SPEC quand l'obligation est falsifiable, sinon un champ DECIDES declare"
+		+ "sur DECISION, sans CATEGORY reasoning pour rester dans les paquets"
+	STATUS specified
+	BLOCKS @TASK.AWA5_LeCorpsDUneDecisionQuitteLeDesc
+	SOURCE "constate le 2026-09-12, audit du schema"
