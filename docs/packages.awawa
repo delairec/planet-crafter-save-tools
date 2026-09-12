@@ -146,6 +146,9 @@ DECISION LesReglesDeFusionRecoiventUnModeleDeFusion
 	DESC "l'infrastructure fait le mapping dans les deux sens ; la lecture et l'ecriture d'une"
 		+ "liste d'identifiants vivent dans shared-save-processing, a cote du DTO qui declare le"
 		+ "champ, et seuls les mappers d'infrastructure les appellent"
+	DESC "ce modele est depuis la revue de la PR #62 le modele de save du domaine, dans domain/save"
+		+ ": les regles de fusion le recoivent et le rendent"
+		REF @DECISION.UneFusionProduitUneSaveOrdinaire
 	STATUS specified
 	SUPERSEDES @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 	CLOSES @OPEN_QUESTION.UnEncodageDeChampReleveDuFormatOuNon

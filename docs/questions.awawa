@@ -209,3 +209,15 @@ OPEN_QUESTION UneSaveSansJoueurMeriteUnAvertissement
 	STATUS specified
 	SOURCE "constate le 2026-09-12, revue de la PR #62 par l'utilisateur,"
 		+ "validateUniqueHost.spec.ts"
+
+OPEN_QUESTION UnOctetDeControleBrutRendUneSourceBinairePourGit
+	DESC "buildMergedFileName.ts portait NUL-US et DEL en octets bruts dans une classe de"
+		+ "caracteres : git le traitait comme binaire, la revue ne voyait pas son diff, et une"
+		+ "recopie l'a changee sans bruit en un intervalle espace-barre qui avalait le tiret"
+	DESC "regle candidate pour ~/.ai/instructions/standards/coding.md : un caractere de controle"
+		+ "s'ecrit par sa sequence d'echappement, jamais en octet brut dans une source"
+	STATUS specified
+	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
+		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
+	SOURCE "constate le 2026-09-12, revue de la PR #62, deplacement de buildMergedFileName vers"
+		+ "nameMergedFile ; corrige en escapes dans le meme commit"
