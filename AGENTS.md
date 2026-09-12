@@ -75,13 +75,15 @@ constaté est une `OPEN_QUESTION` (@DECISION.LeCorpusRemplaceLesFichesDeKnownIss
 qui reste après sa fusion
 (@DECISION.UneTacheFusionneeResteDansLeCorpus). **Le nom d'une tâche est son étiquette, un souligné, puis ce qu'elle
 couvre** : `awawa new TASK T40_NomLisible .` — le schéma le vérifie, et l'étiquette seule est refusée
-(@DECISION.UneTachePorteSonEtiquetteEtUnNomLisible). La famille d'outillage du dépôt, hors chantier de conformité,
-garde ses numéros `DEP{N}`, sous la même forme.
+(@DECISION.UneTachePorteSonEtiquetteEtUnNomLisible:v2). Le préfixe dit le type de la tâche, porté par son champ
+`KIND` : `T` pour `generic`, `AWA` pour une tâche qui touche la configuration d'awawa. La famille `DEP` est
+abandonnée (@DECISION.LaFamilleDepEstAbandonnee).
 
 **Langue** : le corpus et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
 générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, les `.md` de
 `docs/`, commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts
-(@DECISION.LaSpecificationResteEnFrancaisMemePubliee).
+(@DECISION.LaSpecificationResteEnFrancaisMemePubliee). Le passage du corpus à l'anglais est décidé
+(@DECISION.LeCorpusEstEcritEnAnglais) et livré par la tâche AWA10 ; jusque-là cette règle tient.
 
 **Rafraîchir le clone privé avant de lire une save ou un plan.** `.do-not-commit/` est un clone figé au dernier
 `bun install`, et chaque worktree lié porte le sien : `bun run private:sync` (fetch plus fast-forward sur la branche
