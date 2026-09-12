@@ -117,7 +117,7 @@ OPEN_QUESTION FormeDesErreursDeRegleDomaine
 	DESC "sous quel type validateUniqueHost et validateFloatSerialization rendent-elles leur echec"
 	DESC "recommandation : un type du domaine, que l'infrastructure traduit en issue de validation"
 		+ "avec son code ; les codes restent en application, sans celui que le domaine decide"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	SOURCE "fiche T37, decision 1"
 
@@ -125,7 +125,7 @@ OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
 	DESC "la verification du suffixe .0 reste-t-elle une regle de domaine"
 	DESC "recommandation : non, elle sort vers l'infrastructure, a cote des schemas — la propriete"
 		+ "est celle du texte"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "l'alternative, une regle de domaine recevant des entrees analysees et verifiant"
 		+ "l'integrite du nombre, ne verifie rien : la propriete n'est pas observable apres analyse"
@@ -137,7 +137,7 @@ OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
 		+ "recoit-il decodees"
 	DESC "recommandation : decodage en infrastructure avant le domaine et re-encodage apres, une"
 		+ "seule declaration du separateur"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T11 a tranche que les DTO wire restent l'entree et la sortie du domaine ; elle n'a"
 		+ "pas tranche l'analyse d'un encodage de champ dans le domaine. L'alternative est"
@@ -148,7 +148,7 @@ OPEN_QUESTION SortDeMergedSaveValueObject
 	DESC "MergedSaveValueObject est-il supprime ou renomme en type d'infrastructure"
 	DESC "recommandation : supprime ; le port de fusion retourne les sections fusionnees et la"
 		+ "serialisation comme le nommage du fichier restent en infrastructure"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T27 a deja note que son invariant est vide : la seule erreur de domaine atteignable"
 		+ "sur le chemin de fusion est un test de chaine vide sur un blob"
@@ -185,3 +185,27 @@ OPEN_QUESTION LaRegleDuCorpsDePrVautElleAuDelaDeCeDepot
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
 	SOURCE "constate le 2026-09-12, revue de DEP2, PR #61"
+
+OPEN_QUESTION UnEncodageDeChampReleveDuFormatOuNon
+	DESC "a trancher : l'encodage interne d'un champ compte-t-il comme le format que le domaine ne"
+		+ "doit jamais analyser"
+	DESC "la regle d'architecture dit que le domaine n'analyse jamais ce format, sans dire ou"
+		+ "s'arrete ce format"
+	DESC "la question s'est posee sur les listes d'identifiants separees par des virgules et se"
+		+ "reposera sur tout champ a encodage"
+		REF @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
+	DESC "destination proposee si elle est generale : ~/.ai/instructions/architecture/domain.md,"
+		+ "plutot que de rester propre au projet"
+	STATUS superseded
+	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
+		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
+	SOURCE "constate le 2026-09-12, T37 partie A, PR #62"
+
+OPEN_QUESTION UneSaveSansJoueurMeriteUnAvertissement
+	DESC "a trancher : une save dont la section des joueurs est vide passe la regle de l'hote"
+		+ "unique sans un mot ; faut-il en avertir l'utilisateur"
+	DESC "hors perimetre de T37, comportement inchange : un avertissement de plus est un changement"
+		+ "visible"
+	STATUS specified
+	SOURCE "constate le 2026-09-12, revue de la PR #62 par l'utilisateur,"
+		+ "validateUniqueHost.spec.ts"

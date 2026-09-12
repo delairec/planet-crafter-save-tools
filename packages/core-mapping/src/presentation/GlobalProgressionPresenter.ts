@@ -8,46 +8,50 @@ import {
   globalProgressionSectionTotalCraftedObjectsLabel
 } from "./messages/globalProgressionSectionMessages.js";
 
-export class GlobalProgressionPresenter implements GlobalProgressionPresenterPort {
-  private _viewModel: GlobalProgressionViewModel;
+const NO_CRAFTED_OBJECT_COUNTED = 0;
 
-  constructor() {
-    this._viewModel = {
-      statistics: {
-        columns: [
-          {
-            header: globalProgressionSectionAllTimeTerraTokensLabel,
-            values: []
-          },
-          {
-            header: globalProgressionSectionTotalCraftedObjectsLabel,
-            values: []
-          },
-        ]
-      },
-    }
-  }
+export class GlobalProgressionPresenter implements GlobalProgressionPresenterPort {
+  private _viewModel: GlobalProgressionViewModel = {
+    statistics: {
+      columns: [
+        {
+          header: globalProgressionSectionAllTimeTerraTokensLabel,
+          values: []
+        },
+        {
+          header: globalProgressionSectionTotalCraftedObjectsLabel,
+          values: []
+        },
+      ]
+    },
+  };
 
   get viewModel(): GlobalProgressionViewModel {
     return this._viewModel;
   }
 
-  displayGlobalProgression(globalProgression: GlobalProgressionValueObject, statistics: StatisticsValueObject | undefined): void {
-    const allTimeTerraTokens = formatNumber(globalProgression.allTimeTerraTokens);
-
-    this._viewModel = {
-      statistics: {
-        columns: [
-          {
-            header: globalProgressionSectionAllTimeTerraTokensLabel,
-            values: [`${allTimeTerraTokens} =tt=`]
-          },
-          {
-            header: globalProgressionSectionTotalCraftedObjectsLabel,
-            values: [`${statistics?.totalCraftedObjects ?? 0}`]
-          },
-        ]
-      }
-    };
+  displayGlobalProgression(globalProgression: GlobalProgressionValueObject, statistics: StatisticsValueObject): void {
+    this._viewModel = createViewModel(globalProgression, statistics.totalCraftedObjects);
   }
+
+  displayGlobalProgressionWithoutStatistics(globalProgression: GlobalProgressionValueObject): void {
+    this._viewModel = createViewModel(globalProgression, NO_CRAFTED_OBJECT_COUNTED);
+  }
+}
+
+function createViewModel(globalProgression: GlobalProgressionValueObject, totalCraftedObjects: number): GlobalProgressionViewModel {
+  return {
+    statistics: {
+      columns: [
+        {
+          header: globalProgressionSectionAllTimeTerraTokensLabel,
+          values: [`${formatNumber(globalProgression.allTimeTerraTokens)} =tt=`]
+        },
+        {
+          header: globalProgressionSectionTotalCraftedObjectsLabel,
+          values: [`${totalCraftedObjects}`]
+        },
+      ]
+    }
+  };
 }

@@ -5,18 +5,23 @@ import {SaveConfigurationPresenterPort} from "./ports/SaveConfigurationPresenter
 import {LoadSaveConfigurationSection} from "./LoadSaveConfigurationSection";
 
 describe('LoadSaveConfigurationSection', () => {
-  it('should present save configuration from the parsed save', async () => {
-    // Arrange
-    const saveParser: SaveSectionsReaderPort = new FakeSaveParserService();
-    const presenter: SaveConfigurationPresenterPort = {displaySaveConfiguration: mock()}
-    const useCase = new LoadSaveConfigurationSection(saveParser, presenter);
+  function createPresenter(): SaveConfigurationPresenterPort {
+    return {displaySaveConfiguration: mock(), displayMissingSaveConfigurationSection: mock()};
+  }
 
-    // Act
-    await useCase.execute();
+  describe('When the save carries a configuration section', () => {
+    it('should present the save configuration from the parsed save', async () => {
+      // Arrange
+      const saveParser: SaveSectionsReaderPort = new FakeSaveParserService();
+      const presenter = createPresenter();
+      const useCase = new LoadSaveConfigurationSection(saveParser, presenter);
 
-    // Assert
-    expect(presenter.displaySaveConfiguration).toHaveBeenCalledTimes(1);
-    expect(presenter.displaySaveConfiguration).toHaveBeenCalledWith({
+      // Act
+      await useCase.execute();
+
+      // Assert
+      expect(presenter.displaySaveConfiguration).toHaveBeenCalledTimes(1);
+      expect(presenter.displaySaveConfiguration).toHaveBeenCalledWith({
         mode: 'Standard',
         title: 'Fake Save',
         modifiers: {
@@ -27,5 +32,22 @@ describe('LoadSaveConfigurationSection', () => {
           powerConsumption: 0.5
         }
       });
+    });
+  });
+
+  describe('When the save carries no configuration section', () => {
+    it('should present the section as missing', async () => {
+      // Arrange
+      const saveParser: SaveSectionsReaderPort = Object.assign(new FakeSaveParserService(), {getSaveConfiguration: () => undefined});
+      const presenter = createPresenter();
+      const useCase = new LoadSaveConfigurationSection(saveParser, presenter);
+
+      // Act
+      await useCase.execute();
+
+      // Assert
+      expect(presenter.displayMissingSaveConfigurationSection).toHaveBeenCalledTimes(1);
+      expect(presenter.displaySaveConfiguration).not.toHaveBeenCalled();
+    });
   });
 });

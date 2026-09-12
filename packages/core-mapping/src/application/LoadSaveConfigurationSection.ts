@@ -10,6 +10,12 @@ export class LoadSaveConfigurationSection {
 
   async execute(): Promise<void> {
     const saveConfiguration = this.saveParser.getSaveConfiguration();
+
+    if (!saveConfiguration) {
+      this.presenter.displayMissingSaveConfigurationSection();
+      return;
+    }
+
     this.presenter.displaySaveConfiguration(saveConfiguration);
   }
 }

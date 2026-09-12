@@ -39,6 +39,44 @@ describe('SaveConfigurationPresenter', () => {
     });
   });
 
+  it('should present a missing save configuration section as an empty configuration', () => {
+    // Arrange
+    const presenter = new SaveConfigurationPresenter();
+
+    // Act
+    presenter.displayMissingSaveConfigurationSection();
+
+    // Assert
+    expect(presenter.viewModel).toEqual<SaveConfigurationViewModel>({
+      mode: '',
+      title: '',
+      modifiers: {
+        columns: [
+          {
+            header: 'Terraformation Pace',
+            values: []
+          },
+          {
+            header: 'Gauge Drain',
+            values: []
+          },
+          {
+            header: 'Meteo Occurrence',
+            values: []
+          },
+          {
+            header: 'Multiplayer Factor',
+            values: []
+          },
+          {
+            header: 'Power Consumption',
+            values: []
+          }
+        ]
+      }
+    });
+  });
+
   it('should present the save configuration', () => {
     // Arrange
     const presenter = new SaveConfigurationPresenter();

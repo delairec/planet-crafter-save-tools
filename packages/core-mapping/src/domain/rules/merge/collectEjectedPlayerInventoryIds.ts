@@ -1,4 +1,5 @@
-import {Player, Inventory} from 'shared-save-processing/gameDefinitions';
+import {Player} from 'shared-save-processing/gameDefinitions';
+import {InventoryEntry} from './InventoryEntry';
 
 export interface EjectedPlayerInventoryIds {
   orphanInventoryIds: Set<number>;
@@ -8,7 +9,7 @@ export interface EjectedPlayerInventoryIds {
 /**
  * @see GR-PLAYER-1, GR-WO-3, GR-INV-2 in docs/game-rules.md
  */
-export function collectEjectedPlayerInventoryIds(playersA: Player[], playersB: Player[], inventoriesB: Inventory[]): EjectedPlayerInventoryIds {
+export function collectEjectedPlayerInventoryIds(playersA: Player[], playersB: Player[], inventoriesB: InventoryEntry[]): EjectedPlayerInventoryIds {
   const ejectedPlayersFromB = playersB.filter(playerB =>
     playersA.some(playerA => playerA.name === playerB.name)
   );
@@ -21,9 +22,9 @@ export function collectEjectedPlayerInventoryIds(playersA: Player[], playersB: P
 
   const orphanWorldObjectIds = new Set<number>();
   for (const inventory of inventoriesB) {
-    if (orphanInventoryIds.has(inventory.id) && inventory.woIds) {
-      for (const woId of inventory.woIds.split(',').map(Number).filter(Boolean)) {
-        orphanWorldObjectIds.add(woId);
+    if (orphanInventoryIds.has(inventory.id)) {
+      for (const worldObjectId of inventory.woIds) {
+        orphanWorldObjectIds.add(worldObjectId);
       }
     }
   }

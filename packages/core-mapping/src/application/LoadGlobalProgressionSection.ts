@@ -10,6 +10,12 @@ export class LoadGlobalProgressionSection {
   async execute(): Promise<void> {
     const globalProgression = this.saveParser.getGlobalMetadata();
     const statistics = this.saveParser.getStatistics();
+
+    if (!statistics) {
+      this.presenter.displayGlobalProgressionWithoutStatistics(globalProgression);
+      return;
+    }
+
     this.presenter.displayGlobalProgression(globalProgression, statistics);
   }
 }

@@ -1,4 +1,5 @@
-import {Inventory, WorldObject} from 'shared-save-processing/gameDefinitions';
+import {InventoryEntry} from './InventoryEntry';
+import {WorldObjectEntry} from './WorldObjectEntry';
 
 /**
  * Source of the identifiers handed to the entries renumbered during conflict resolution.
@@ -24,7 +25,7 @@ const FIRST_ID = 1;
  *
  * @see GR-ID-1, GR-ID-2, GR-ID-6 in docs/game-rules.md
  */
-export function createIdSequence(inventories: readonly Inventory[], worldObjects: readonly WorldObject[]): IdSequence {
+export function createIdSequence(inventories: readonly InventoryEntry[], worldObjects: readonly WorldObjectEntry[]): IdSequence {
   let nextId = Math.max(findHighestId(inventories), findHighestId(worldObjects)) + 1;
 
   return {next: () => nextId++};

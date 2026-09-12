@@ -1,16 +1,16 @@
 import {
   GlobalMetadata,
-  Inventory,
   MailboxMessage,
   Player,
   SaveConfiguration,
   Statistics,
   StoryEvent,
   TerraformationLevel,
-  WorldEvent,
-  WorldObject
+  WorldEvent
 } from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
+import {InventoryEntry} from './InventoryEntry';
+import {WorldObjectEntry} from './WorldObjectEntry';
 
 /**
  * The ten sections of a save once merged, still structured: serialization happens in
@@ -23,8 +23,8 @@ export interface MergedSaveSections {
   readonly globalMetadata: GlobalMetadata;
   readonly terraformationLevels: readonly TerraformationLevel[];
   readonly players: EntriesByOrigin<Player>;
-  readonly worldObjects: EntriesByOrigin<WorldObject>;
-  readonly inventories: EntriesByOrigin<Inventory>;
+  readonly worldObjects: EntriesByOrigin<WorldObjectEntry>;
+  readonly inventories: EntriesByOrigin<InventoryEntry>;
   readonly statistics: Statistics | undefined;
   readonly mailboxes: readonly MailboxMessage[];
   readonly storyEvents: readonly StoryEvent[];
