@@ -9,28 +9,101 @@ Authors: `awawa-usage-report.md` was written by Claude Opus 5 (1M context), the 
 the T37 launch and the session it assesses. This review was written by Claude Fable 5.1, in a
 session with no memory of that launch.
 
-## Verdict
+Two verdicts, kept apart: what belongs to us (our method, our corpus, our conduct) and what belongs
+to the tool. Each is split into what went well, what went wrong, and the remediations. The figures
+and the claim-by-claim check of the report are in the appendix.
 
-The report is accurate on the facts but it is a self-assessment written by the session that
-failed, thirty minutes after the fact. It overstates two of its findings and misses the three
-structural problems: decisions isolated in the graph, an empty context package for packages, and
-stale instructions living outside the corpus. awawa keeps its promise on integrity, not yet on
-retrieval.
+## Verdict in two lines
 
-## 1. The report against the measurements
+**Ours**: the method delivered a correct PR in one session, but the corpus is written as a list
+of isolated texts rather than a graph, the sessions read files instead of packages, and the
+instructions around the corpus have fallen out of date since it moved.
 
-| Claim in the report | Check | Verdict |
+**The tool's**: awawa keeps its promise on integrity (anchors, references, forced alternatives)
+and does not yet keep it on retrieval (the footer does not tell live from closed, a package's
+context is empty, referrers are named but not expanded).
+
+## Part A — Us: method, corpus, conduct
+
+### What went well
+
+| What | Evidence |
+|---|---|
+| The five blocking questions were known before a line of code | One `lint --closure` footer, read by the pilot within two minutes |
+| Every ruling faced its alternative | The four decisions of #62 carry 2 to 3 `REJECTED` each; the third `REJECTED` of `LArtefactDuFichierFusionneNEstPasUnObjetDuDomaine` is what exposed the weak recommendation |
+| A standing decision was superseded rather than silently contradicted | `LesReglesDeFusionRecoiventDesDtoWireTypes:v2` with `SUPERSEDES` and `CLOSES` |
+| The agent measured instead of asserting | 6,607 fields scanned, two md5 sums, baseline taken on the untouched branch first |
+| The corpus did not weigh the PR down | 139 changed corpus lines out of 1,294 in #62, 11 % |
+| Two branches appended to the same corpus file without conflict | `fmt` then `git diff --stat` discipline held |
+| The user refused the bulk ratification | That refusal, not the procedure, found the two defects |
+
+### What went wrong
+
+| What | Evidence | Whose fault |
 |---|---|---|
-| Ratifying the five recommendations was offered without opening the code | First question 2 min after launch, after 13 tool calls, no file under `packages/` read | Confirmed |
-| The `SortDeMergedSaveValueObject` recommendation was "not implementable as written" | Implementable with a second serialization port. The decision records exactly that as its third `REJECTED` | Overstated: suboptimal, not impossible |
-| The contradiction with T11 was "invisible to retrieval" | The question's `RATIONALE` names T11 in words. The session read it through `awawa show` and `sed` before its first question | Wrong: visible, not read. The missing `REF` is still the right fix |
-| `BLOCKED_BY (root, 5)` overstated the block on part A | Exact, and still true after the merge: the footer still lists 5 questions, 4 of them `superseded` | Confirmed, and the defect is the tool's (section 3) |
-| Two `IMPL` anchors retargeted thanks to L016 | Diff of #62: two moves, plus 9 anchors added of which 3 are directories | Confirmed |
-| "80 recorded arbitrations readable in one call" | 80 decisions before #62, 11 KB of output, about 3k tokens | Confirmed, and cheap |
-| Permission classifier refusal "External System Writes" | Present in the transcript at 11:36 local | Confirmed |
-| Worktree base trap | The agent recreated its branch with `checkout -b` on the base | Confirmed |
-| "lint has 22 rules" | The manual declares 25 `L0xx` identifiers | Unverifiable as stated, no consequence |
-| "Four rulings before a line of code, proportionate but does not scale down" | See the cost table | Mistargeted: the corpus is 11 % of the PR's lines, the human arbitration is what does not scale |
+| Bulk ratification of five unverified recommendations offered as the first option | First question 2 min after launch, 13 tool calls, no file under `packages/` opened | Conduct |
+| The T11 contradiction was in front of the session and not read | The question's `RATIONALE` names T11 in words; the pilot read it through `awawa show` and `sed` before asking anything. The report calls it "invisible to retrieval": it was visible and not read | Conduct, then report |
+| The corpus is a list, not a graph | 77 decisions out of 84 have no incoming edge; 7 `REF` in 2,282 lines. No decision points at what it governs, so nothing retrieves "the decisions constraining X" | Corpus modelling |
+| Fields hidden in prose | `recommandation :`, `a trancher :`, `constat :`, `destination proposee :` are four undeclared fields inside `DESC` | Schema |
+| Unfalsifiable anchors | 19 of 111 `IMPL` anchors are directories; L016 can never fire on them | Schema |
+| One task for two pull requests | T37 still `specified`, `PR "62"` only; part B inherits the entity and a false block count | Corpus modelling |
+| The pilot read files, not packages | 0 `awawa context` call in the piloting session; 9 corpus files read with `cat` and `sed`. The agent read 6 in full to imitate the style | Conduct and doctrine |
+| Arbitration is the bottleneck | 32 user minutes, 8 questions for 4 decisions; every first option labelled "(recommandation)" | Method |
+| Instructions stale since the corpus moved | `awawa-pr-merged.md` still says the corpus lives in the private clone; `plan.md` points at a "Branches" section of a private `AGENTS.md` that no longer exists; the corpus names the base in a decision. Three homes, two stale | Method |
+| The usage report grades its own author | Written by the failing session in answer to "do you find this efficient?"; eight "what held" against eight findings, not one measurement; two claims overstated (appendix) | Report |
+
+### Remediations, by return
+
+| # | Change | What it fixes |
+|---|---|---|
+| 1 | On `DECISION`, `FIELD APPLIES_TO reference` with `CONVERSE GOVERNED_BY`, pointing at the `PACKAGE` or `TASK` it governs | `context @TASK.X` would list the constraining decisions in its footer. Retrofit: 84 lines |
+| 2 | On `OPEN_QUESTION`, `FIELD RECOMMENDATION string` with a required nested `REJECTED` and a nested `REF`; declare or drop the three other prose prefixes | The report's proposal, widened to every hidden field |
+| 3 | Forbid by schema a directory anchor under `SPEC` | Makes the 19 dead anchors falsifiable |
+| 4 | Split T37 now: a `:v2` entity for part B | 15 lines; otherwise part B launches on a false `BLOCKED_BY` |
+| 5 | Before each arbitration question: open the task's `IMPL` anchors and grep `awawa status DECISION` on the subject | Two minutes per question; it is the rule recorded in #63, made concrete |
+| 6 | Decide whether to ratify on the diff: a question whose recommendation carries a `REJECTED` and contradicts no decision starts with a `draft` `DECISION`, ratified in PR review with the code in hand | Removes most of the 32 minutes. Contradicts the current wave-launch rule, so it is a decision to take, not to improvise |
+| 7 | Strip every project fact from `~/.claude/commands/awawa-*.md` and from `plan.md`, or add a check confronting them with the corpus | Ends the three-homes problem |
+| 8 | A model entity per type, or a `docs/_example.awawa` | Saves the six full-file reads the agent did for style |
+| 9 | A usage report carries the transcript figures (active minutes, tool calls, awawa calls, tokens) and is written by a session other than the one it judges | Turns testimony into measurement |
+
+## Part B — The tool: awawa 2.7.0
+
+### What went well
+
+| Promise | Kept | Evidence |
+|---|---|---|
+| Anchor integrity | Yes | L016 fired on the two moves of #62 (`validateFloatSerialization.ts`, `MergedSaveValueObject.ts`) |
+| Closure integrity | Yes | L026 required a `CLOSED_BY` on each of the four questions closed |
+| No prose references | Yes | L025 at zero on the whole corpus |
+| Forcing the alternative | Yes | Required `REJECTED` on `SCHEMA DECISION` is the single mechanism that caught the defect |
+| Finding incoming blockers | Yes | The footer named the five questions in one call |
+| Cheap inventory | Yes | `status DECISION`: 84 rulings in 11 KB, about 3k tokens |
+| Cheap edits | Yes | `--overlay` let the pilot test a `STATUS` change and a renamed anchor without writing |
+
+### What went wrong
+
+| Defect | Observation | Checked against |
+|---|---|---|
+| The `BLOCKED_BY` footer ignores the referrers' `STATUS` | After #62, `BLOCKED_BY (root, 5)` while one question is live. The wave-launch rule "no live open question in the footer" reads false | Manual: reached suppressed entities are "listed but not expanded"; nothing marks them in the footer |
+| `context` returns nothing useful for a `PACKAGE` | `context @PACKAGE.core_mapping --skip reasoning` is 12 lines, 900 bytes | Run on the current corpus |
+| Referrers are named, not expanded | The agent chained five `show` after its one `context` to read the blocking questions | Agent transcript |
+| No semantic consistency check | True by construction, as the report says | Manual |
+| `awawa lint --help` is a usage error | Both sessions tried it | Transcripts |
+
+### Remediations
+
+| Proposal | What it would have changed on T37 |
+|---|---|
+| Footer: `BLOCKED_BY (root, 1 live, 4 superseded)`, or exclude `GATE suppressed` referrers | Part B would read its real block count |
+| A mechanical proxy for consistency: warn when a `SPEC` of a non-`implemented` entity has an anchor intersecting the anchor of an `implemented` `DECISION` with no `REF` between them | Would have flagged the T37 `SPEC` on `domain/rules/merge` against T11's decision anchored there |
+| `context --with-referrers` to expand incoming entities | One call instead of six for the agent |
+| Per-subcommand help | Two wasted calls |
+
+Note that defect 2 (empty package context) is mostly ours: the tool can only traverse edges the
+corpus writes, and remediation A1 supplies them. The tool's share is that `context` gives no hint
+that a 12-line package is suspicious.
+
+## Appendix — measurements and claim check
 
 Measured cost of the T37 part A launch:
 
@@ -42,67 +115,19 @@ Measured cost of the T37 part A launch:
 | Tokens read from cache | 21.2 M pilot, 50.8 M agent |
 | Tokens produced | 230k pilot, 60k agent |
 | Corpus in #62 | 139 changed lines out of 1,294 |
-| Corpus total | 129 entities, 2,282 lines, 141 KB for 17.6k lines of code |
+| Corpus total | 129 entities, 2,282 lines, 141 KB for 17.6k lines of code; 84 decisions, 20 of them on process |
 
-The report was written in answer to "do you find this efficient?" by the session being judged. It
-is honest about its conduct but grades itself favourably: eight "what held" rows against eight
-findings, and not one measurement. A usage report must carry the figures above; they come out of the
-transcript in one command.
+The report's claims, one by one:
 
-## 2. Does awawa keep its promise, and how to use it better
-
-| Promise | Kept? | Evidence on T37 |
+| Claim in the report | Check | Verdict |
 |---|---|---|
-| Reference and anchor integrity | Yes | L016 on two moves, L026 on the four closures, L025 at zero |
-| Forcing the alternative | Yes | Required `REJECTED` made the second port get written, which exposed the recommendation |
-| Finding what blocks | Yes, with a defect | The five questions in one footer, but no live / closed distinction |
-| Read the package instead of the files | No | `context @PACKAGE.core_mapping` is 12 lines; the pilot read 9 corpus files, the agent 6 in full |
-| Semantic consistency | No, by construction | The report says so; a mechanical substitute exists (section 3) |
-
-The figure that explains the retrieval failure: **77 decisions out of 84 have no incoming edge**,
-and the whole corpus carries 7 `REF`. A decision points at nothing it governs, so `context` on a
-package or a task never brings back the applicable decisions. The only path is the list of 84 names,
-which worked once by luck of naming.
-
-Improvements to our usage, by return:
-
-| # | Change | What it fixes |
-|---|---|---|
-| 1 | On `DECISION`, `FIELD APPLIES_TO reference` with `CONVERSE GOVERNED_BY`, pointing at the `PACKAGE` or `TASK` | The footer of `context @TASK.X` would list the decisions constraining it. Retrofit: 84 lines |
-| 2 | On `OPEN_QUESTION`, `FIELD RECOMMENDATION string` with a required `REJECTED` and a nested `REF` | The report proposes it; `a trancher :`, `constat :` and `destination proposee :` are three more fields hidden in `DESC`, to declare or drop |
-| 3 | Forbid by schema a directory `IMPL` anchor under `SPEC` | 19 anchors out of 111 are directories, never falsifiable by L016 |
-| 4 | One task per pull request: split T37 now into a `:v2` for part B | The report declines the retrofit; it costs 15 lines, and part B otherwise inherits a false `BLOCKED_BY` |
-| 5 | The pilot reads `context`, not `cat` | No `context` call in the piloting session; the doctrine is not followed because the package is empty (item 1) |
-
-## 3. The tool, and the method around it
-
-awawa improvements, checked against the manual:
-
-| Defect | Observation | Proposal |
-|---|---|---|
-| The `BLOCKED_BY` footer ignores the referrers' `STATUS` | After #62, `BLOCKED_BY (root, 5)` while one question is live. The wave-launch rule "no live open question" therefore reads false | `BLOCKED_BY (root, 1 live, 4 superseded)`, or exclude `GATE suppressed` referrers |
-| No semantic consistency | True, but a mechanical substitute exists | Rule: a `SPEC` of a non-`implemented` entity whose anchor intersects the anchor of an `implemented` `DECISION` with no `REF` between them warns. It would have flagged T37 against T11 |
-| `context` does not expand referrers | The agent chained 5 `show` after its `context` | A `--with-referrers` option |
-| `awawa lint --help` is an error | Both sessions tried it | Per-subcommand help |
-
-Working method outside the tool, where the costliest frictions are:
-
-- **Three homes for the base branch, two stale.** The corpus names it in a decision. The private
-  `plan.md` points at a "Branches" section of a private `AGENTS.md` that no longer exists. The
-  `awawa-pr-merged` command still asks to refresh the private clone "where the corpus lives", false
-  since #61. Instructions under `~/.claude/commands` are read by no lint. Either strip every project
-  fact from them, or add a check that confronts them with the corpus.
-- **Arbitration is the bottleneck, not the corpus.** 32 user minutes and 8 questions for 4
-  decisions, each labelled "(recommandation)" on its first option. The rule recorded in #63 is
-  right. Its concrete cost is opening the task's `IMPL` anchors and grepping `awawa status DECISION`
-  on the subject before each question, two minutes per question.
-- **Ratify on the diff rather than on the text.** A stronger lever: a question whose recommendation
-  carries a `REJECTED` and contradicts no decision could be launched with a `draft` `DECISION`,
-  ratified in PR review with the code in hand. This contradicts the current wave-launch rule "the
-  ruling is the user's, never improvised by an agent". It is a decision to take, not to improvise.
-- **Style is read from the files.** The agent read six corpus files in full to imitate the writing,
-  `awawa new` giving only the structure. A `docs/_example.awawa` or one model entity per type would
-  save those reads.
-
-If only three things get done: the `APPLIES_TO` field on decisions, the footer that tells live from
-closed, and the purge of stale project facts from `awawa-pr-merged.md` and `plan.md`.
+| Ratifying the five recommendations was offered without opening the code | First question 2 min after launch, after 13 tool calls, no file under `packages/` read | Confirmed |
+| The `SortDeMergedSaveValueObject` recommendation was "not implementable as written" | Implementable with a second serialization port. The decision records exactly that as its third `REJECTED` | Overstated: suboptimal, not impossible |
+| The contradiction with T11 was "invisible to retrieval" | The question's `RATIONALE` names T11 in words, and the session read it | Wrong: visible, not read. The missing `REF` is still the right fix |
+| `BLOCKED_BY (root, 5)` overstated the block on part A | Exact, and still true after the merge | Confirmed, and the defect is the tool's |
+| Two `IMPL` anchors retargeted thanks to L016 | Diff of #62: two moves, plus 9 anchors added of which 3 are directories | Confirmed |
+| "80 recorded arbitrations readable in one call" | 80 decisions before #62, 11 KB of output | Confirmed, and cheap |
+| Permission classifier refusal "External System Writes" | Present in the transcript at 11:36 local | Confirmed |
+| Worktree base trap | The agent recreated its branch with `checkout -b` on the base | Confirmed |
+| "lint has 22 rules" | The manual declares 25 `L0xx` identifiers | Unverifiable as stated, no consequence |
+| "Four rulings before a line of code, proportionate but does not scale down" | The corpus is 11 % of the PR's lines | Mistargeted: the human arbitration is what does not scale |
