@@ -115,7 +115,7 @@ DECISION LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 	DESC "champs concernes : Inventory.woIds, WorldObject.siIds, WorldObject.woIds"
 	DESC "le rejet d'un modele de domaine dedie a la fusion tient toujours : trois champs decodes"
 		+ "ne sont pas un modele"
-	STATUS specified
+	STATUS superseded
 	SUPERSEDES @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes
 	CLOSES @OPEN_QUESTION.OuDecoderLEncodageDesListesDIdentifiants
 	RATIONALE "trois sites faisaient trois split de la virgule aux semantiques differentes, deux"
@@ -135,6 +135,41 @@ DECISION LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 	SPEC "le separateur de liste d'identifiants est declare dans un seul module d'infrastructure"
 		IMPL "packages/core-mapping/src/infrastructure"
 	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A, PR #62"
+
+DECISION LesReglesDeFusionRecoiventUnModeleDeFusion
+	DESC "les regles de fusion recoivent un modele de fusion du domaine : un enregistrement a"
+		+ "sections nommees, dont les inventaires et les objets du monde portent leurs listes"
+		+ "d'identifiants en nombres"
+	DESC "les autres sections restent les DTO wire, documentes comme entree du domaine"
+	DESC "aucun type du domaine ne se nomme d'apres une operation d'infrastructure, et le domaine"
+		+ "ne connait ni la disposition en tuple du fichier ni ses index de section"
+	DESC "l'infrastructure fait le mapping dans les deux sens ; la lecture et l'ecriture d'une"
+		+ "liste d'identifiants vivent dans shared-save-processing, a cote du DTO qui declare le"
+		+ "champ, et seuls les mappers d'infrastructure les appellent"
+	STATUS specified
+	SUPERSEDES @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
+	CLOSES @OPEN_QUESTION.UnEncodageDeChampReleveDuFormatOuNon
+	RATIONALE "la v2 gardait le rejet d'un modele de fusion tout en creant un demi-modele : trois"
+		+ "types Decoded* derives des DTO wire par Omit, et un tuple de onze cases recopiant la"
+		+ "disposition du fichier, case reservee comprise, indexe par une constante de"
+		+ "shared-save-processing depuis le domaine. Ni la v1 a la lettre, ni un modele"
+	RATIONALE "un encodage de champ releve du format : le domaine recoit le champ sous sa forme"
+		+ "metier, et c'est le paquet qui declare le DTO qui sait ce que la chaine contient"
+	RATIONALE "le rejet par la v2 d'une lecture dans shared-save-processing ne tenait que si le"
+		+ "domaine l'appelait ; avec le modele, seule l'infrastructure l'appelle"
+	REJECTED "revenir a la v1 a la lettre, la virgule faisant partie du format documente : le"
+		+ "domaine analyserait un encodage de persistance"
+	REJECTED "garder les types Decoded* et le tuple en les renommant : le nom n'etait que le"
+		+ "symptome, la disposition du fichier dans le domaine etait la violation"
+	REJECTED "un module codec en infrastructure de core-mapping : deux mappers d'infrastructure en"
+		+ "avaient besoin, et la connaissance du champ appartient au paquet qui le declare"
+	SPEC "aucune regle de fusion du domaine n'importe un index de section ni le type de tuple"
+		+ "analyse"
+		IMPL "packages/core-mapping/src/domain/rules/merge"
+	SPEC "la lecture et l'ecriture d'une liste d'identifiants sont declarees dans"
+		+ "shared-save-processing et appelees depuis l'infrastructure seule"
+		IMPL "packages/shared-save-processing/idList.js"
+	SOURCE "decision du 2026-09-12, revue d'architecture de la PR #62 par l'utilisateur"
 
 DECISION LesAbreviationsWireRestentDansSharedSaveProcessing
 	DESC "les abreviations du format wire ne sont tolerees que dans les enregistrements de"

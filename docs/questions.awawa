@@ -196,7 +196,16 @@ OPEN_QUESTION UnEncodageDeChampReleveDuFormatOuNon
 		REF @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 	DESC "destination proposee si elle est generale : ~/.ai/instructions/architecture/domain.md,"
 		+ "plutot que de rester propre au projet"
-	STATUS specified
+	STATUS superseded
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
 	SOURCE "constate le 2026-09-12, T37 partie A, PR #62"
+
+OPEN_QUESTION UneSaveSansJoueurMeriteUnAvertissement
+	DESC "a trancher : une save dont la section des joueurs est vide passe la regle de l'hote"
+		+ "unique sans un mot ; faut-il en avertir l'utilisateur"
+	DESC "hors perimetre de T37, comportement inchange : un avertissement de plus est un changement"
+		+ "visible"
+	STATUS specified
+	SOURCE "constate le 2026-09-12, revue de la PR #62 par l'utilisateur,"
+		+ "validateUniqueHost.spec.ts"
