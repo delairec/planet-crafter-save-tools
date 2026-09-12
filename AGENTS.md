@@ -51,6 +51,8 @@ awawa lint --strict .               # doit sortir en 0
   la question à `specified` sans toucher à la décision passe `lint --strict` sans un mot : c'est mesuré, et c'est la
   moitié qui reste une discipline (@DECISION.UneDecisionRetireeNommeSaSuccesseure).
 - **Une entité remplacée n'est jamais supprimée** : elle passe `superseded`, et sa successeure écrit `SUPERSEDES`.
+- **Après la fusion d'une PR** : `/awawa-pr-merged <N>`, puis `/awawa-usage-report <N>` — voir « Suivi d'une PR :
+  trois commandes, deux moments » plus bas.
 - Protocole complet : `awawa --help`. Le manuel et le protocole agent sont dans l'archive awawa.
 
 ## Emplacement
@@ -216,7 +218,7 @@ poussée, et en particulier avant de traiter une revue : `git fetch origin <base
 `--force-with-lease`, avant de lire le premier commentaire. Garder une réf de secours jusqu'au vert des tests, et
 vérifier que `gh pr view <N> --json mergeable` rend `MERGEABLE` avant de considérer le travail fini.
 
-## Suivi d'une PR : deux commandes, deux moments
+## Suivi d'une PR : trois commandes, deux moments
 
 **Il n'y a plus de commentaire « À faire à la fusion ».** Ce que cette checklist inventoriait entre dans le corpus au
 moment où la décision est prise, et non à la fusion : une décision est une entité `DECISION`, un défaut une
@@ -228,6 +230,9 @@ moment où la décision est prise, et non à la fusion : une décision est une e
   `awawa lint --strict .`, signaler la PR prête.
 - **`/awawa-pr-merged <N>`, après ta fusion** : promouvoir les `STATUS`, fermer les questions que la fusion tranche,
   promouvoir vers `~/.ai` les règles qui y vont, nettoyer worktree et branche.
+- **`/awawa-usage-report <N>`, après `/awawa-pr-merged`** : faire écrire par un agent indépendant, sans mémoire du
+  travail jugé, le rapport de `docs/awawa-usage-reports/` mesurant ce que le corpus a coûté et rendu sur cette PR,
+  points récurrents compris (@DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante).
 
 **Une règle apprise en revue qui pourrait aller dans `~/.ai` s'écrit en `OPEN_QUESTION`**, pas dans un commentaire :
 général ou spécifique au projet est ton arbitrage, et rien hors du corpus ne survit à la session qui l'a apprise.
