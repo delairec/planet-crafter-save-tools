@@ -51,6 +51,9 @@ awawa lint --strict .               # doit sortir en 0
   la question à `specified` sans toucher à la décision passe `lint --strict` sans un mot : c'est mesuré, et c'est la
   moitié qui reste une discipline (@DECISION.UneDecisionRetireeNommeSaSuccesseure).
 - **Une entité remplacée n'est jamais supprimée** : elle passe `superseded`, et sa successeure écrit `SUPERSEDES`.
+- **Après la fusion d'une PR** : `/awawa-pr-merged <N>`, puis `/awawa-usage-report <N>`, qui fait écrire par un
+  agent indépendant la section de `docs/awawa-usage-report.md` mesurant ce que le corpus a coûté et rendu sur cette
+  PR (@DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante).
 - Protocole complet : `awawa --help`. Le manuel et le protocole agent sont dans l'archive awawa.
 
 ## Emplacement
