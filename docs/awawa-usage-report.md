@@ -5,6 +5,9 @@ home for project facts.** Entities are cited by name so they can be retrieved, n
 the moment it starts carrying arbitrations of its own it has become `history.md` again, which
 @DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime deleted on purpose.
 
+Author: Claude Opus 5 (1M context), the model that piloted the session this report assesses. An
+independent review of it is in `awawa-usage-review.md`.
+
 ## 2026-09-12 — launching T37 part A
 
 One session: read the corpus, find the next task, settle what blocked it, launch a background
