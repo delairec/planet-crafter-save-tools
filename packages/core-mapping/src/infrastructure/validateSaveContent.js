@@ -2,7 +2,7 @@ import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
 import {PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {validateSchemas, validateSectionEntry} from './validateSchemas.js';
-import {validateFloatSerialization} from '../domain/rules/validateFloatSerialization.ts';
+import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {validateUniqueHost} from '../domain/rules/validateUniqueHost.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
 
