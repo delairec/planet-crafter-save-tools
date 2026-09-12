@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {Player} from 'shared-save-processing/gameDefinitions';
 import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
-import {DecodedInventory} from './DecodedInventory';
+import {InventoryEntry} from './InventoryEntry';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
 
 describe('collectEjectedPlayerInventoryIds', () => {
@@ -10,7 +10,7 @@ describe('collectEjectedPlayerInventoryIds', () => {
       // Arrange
       const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
       const playersB: Player[] = [createPlayer({name: 'Chileny', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: DecodedInventory[] = [{id: 50, woIds: [900, 901], size: 20}];
+      const inventoriesB: InventoryEntry[] = [{id: 50, woIds: [900, 901], size: 20}];
 
       // Act
       const result = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);
@@ -26,7 +26,7 @@ describe('collectEjectedPlayerInventoryIds', () => {
       // Arrange
       const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
       const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: DecodedInventory[] = [];
+      const inventoriesB: InventoryEntry[] = [];
 
       // Act
       const result = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);
@@ -39,7 +39,7 @@ describe('collectEjectedPlayerInventoryIds', () => {
       // Arrange
       const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
       const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: DecodedInventory[] = [
+      const inventoriesB: InventoryEntry[] = [
         {id: 50, woIds: [900, 901], size: 20},
         {id: 51, woIds: [902], size: 10}
       ];
@@ -58,7 +58,7 @@ describe('collectEjectedPlayerInventoryIds', () => {
         createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51}),
         createPlayer({id: '999', name: 'Chileny', inventoryId: 60, equipmentId: 61})
       ];
-      const inventoriesB: DecodedInventory[] = [
+      const inventoriesB: InventoryEntry[] = [
         {id: 50, woIds: [900], size: 20},
         {id: 60, woIds: [901], size: 20}
       ];
@@ -76,7 +76,7 @@ describe('collectEjectedPlayerInventoryIds', () => {
       // Arrange
       const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
       const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: DecodedInventory[] = [{id: 50, woIds: [], size: 20}];
+      const inventoriesB: InventoryEntry[] = [{id: 50, woIds: [], size: 20}];
 
       // Act
       const result = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);

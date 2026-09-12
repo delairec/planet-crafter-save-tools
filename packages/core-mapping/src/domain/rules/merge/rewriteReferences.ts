@@ -1,7 +1,7 @@
 import {Player} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {DecodedInventory} from './DecodedInventory';
-import {DecodedWorldObject} from './DecodedWorldObject';
+import {InventoryEntry} from './InventoryEntry';
+import {WorldObjectEntry} from './WorldObjectEntry';
 
 export interface IdRemappings {
   readonly inventoryIds: ReadonlyMap<number, number>;
@@ -29,7 +29,7 @@ export function rewritePlayerReferences(players: EntriesByOrigin<Player>, remapp
 }
 
 /** @see GR-ID-3, GR-ID-5 in docs/game-rules.md */
-export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<DecodedWorldObject>, remappings: IdRemappings): EntriesByOrigin<DecodedWorldObject> {
+export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<WorldObjectEntry>, remappings: IdRemappings): EntriesByOrigin<WorldObjectEntry> {
   return {
     fromSaveA: worldObjects.fromSaveA,
     fromSaveB: worldObjects.fromSaveB.map(worldObject => ({
@@ -51,7 +51,7 @@ export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<Decod
  *
  * @see GR-ID-3, GR-ID-5 in docs/game-rules.md
  */
-export function rewriteInventoryReferences(inventories: EntriesByOrigin<DecodedInventory>, remappings: IdRemappings): EntriesByOrigin<DecodedInventory> {
+export function rewriteInventoryReferences(inventories: EntriesByOrigin<InventoryEntry>, remappings: IdRemappings): EntriesByOrigin<InventoryEntry> {
   return {
     fromSaveA: inventories.fromSaveA,
     fromSaveB: inventories.fromSaveB.map(inventory => ({

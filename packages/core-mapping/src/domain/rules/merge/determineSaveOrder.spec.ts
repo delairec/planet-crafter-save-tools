@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeSaveSections} from './mergeSaveSections';
 import {createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
-import {createDecodedSections} from '../../../testing/createDecodedSections';
+import {createSaveSections} from '../../../testing/createSaveSections';
 
 describe('Merge saves — #determineSaveOrder', () => {
     const saveDisplayName = 'SAVE_NAME';
@@ -13,8 +13,8 @@ describe('Merge saves — #determineSaveOrder', () => {
     describe('When only the second save has Prime as planetId', () => {
         it('should return the Prime save as save A', () => {
             // Arrange
-            const saveA = createDecodedSections({saveConfigurations: [toxicityConfig]});
-            const saveB = createDecodedSections({saveConfigurations: [primeConfig]});
+            const saveA = createSaveSections({saveConfigurations: [toxicityConfig]});
+            const saveB = createSaveSections({saveConfigurations: [primeConfig]});
 
             // Act
             const result = mergeSaveSections(saveA, saveB, saveDisplayName);
@@ -27,8 +27,8 @@ describe('Merge saves — #determineSaveOrder', () => {
     describe('When only the first save has Prime as planetId', () => {
         it('should keep the Prime save as save A', () => {
             // Arrange
-            const saveA = createDecodedSections({saveConfigurations: [primeConfig]});
-            const saveB = createDecodedSections({saveConfigurations: [toxicityConfig]});
+            const saveA = createSaveSections({saveConfigurations: [primeConfig]});
+            const saveB = createSaveSections({saveConfigurations: [toxicityConfig]});
 
             // Act
             const result = mergeSaveSections(saveA, saveB, saveDisplayName);
@@ -41,8 +41,8 @@ describe('Merge saves — #determineSaveOrder', () => {
     describe('When neither save has Prime as planetId', () => {
         it('should return saves in the original order', () => {
             // Arrange
-            const saveA = createDecodedSections({saveConfigurations: [toxicityConfig]});
-            const saveB = createDecodedSections({saveConfigurations: [aqualisConfig]});
+            const saveA = createSaveSections({saveConfigurations: [toxicityConfig]});
+            const saveB = createSaveSections({saveConfigurations: [aqualisConfig]});
 
             // Act
             const result = mergeSaveSections(saveA, saveB, saveDisplayName);
@@ -55,8 +55,8 @@ describe('Merge saves — #determineSaveOrder', () => {
     describe('When both saves have Prime as planetId', () => {
         it('should return saves in the original order', () => {
             // Arrange
-            const saveA = createDecodedSections({saveConfigurations: [{...primeConfig, worldSeed: 1}]});
-            const saveB = createDecodedSections({saveConfigurations: [{...primeConfig, worldSeed: 2}]});
+            const saveA = createSaveSections({saveConfigurations: [{...primeConfig, worldSeed: 1}]});
+            const saveB = createSaveSections({saveConfigurations: [{...primeConfig, worldSeed: 2}]});
 
             // Act
             const result = mergeSaveSections(saveA, saveB, saveDisplayName);
@@ -69,8 +69,8 @@ describe('Merge saves — #determineSaveOrder', () => {
     describe('When a save has no configuration', () => {
         it('should still promote the Prime save to save A', () => {
             // Arrange
-            const saveA = createDecodedSections();
-            const saveB = createDecodedSections({saveConfigurations: [primeConfig]});
+            const saveA = createSaveSections();
+            const saveB = createSaveSections({saveConfigurations: [primeConfig]});
 
             // Act
             const result = mergeSaveSections(saveA, saveB, saveDisplayName);

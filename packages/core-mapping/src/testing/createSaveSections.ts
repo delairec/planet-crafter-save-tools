@@ -9,16 +9,16 @@ import {
   WorldEvent
 } from 'shared-save-processing/gameDefinitions';
 import {createGlobalMetadata} from 'shared-save-processing/testing/createSaveRecords.js';
-import {DecodedInventory} from '../domain/rules/merge/DecodedInventory';
-import {DecodedSections} from '../domain/rules/merge/DecodedSections';
-import {DecodedWorldObject} from '../domain/rules/merge/DecodedWorldObject';
+import {InventoryEntry} from '../domain/rules/merge/InventoryEntry';
+import {SaveSections} from '../domain/rules/merge/SaveSections';
+import {WorldObjectEntry} from '../domain/rules/merge/WorldObjectEntry';
 
-interface DecodedSectionsOptions {
+interface SaveSectionsOptions {
   globalMetadata?: GlobalMetadata[];
   terraformationLevels?: TerraformationLevel[];
   players?: Player[];
-  worldObjects?: () => Generator<DecodedWorldObject>;
-  inventories?: DecodedInventory[];
+  worldObjects?: WorldObjectEntry[];
+  inventories?: InventoryEntry[];
   statistics?: Statistics[];
   mailboxes?: MailboxMessage[];
   storyEvents?: StoryEvent[];
@@ -26,26 +26,19 @@ interface DecodedSectionsOptions {
   worldEvents?: WorldEvent[];
 }
 
-function* createEmptyGenerator(): Generator<never> {
-}
-
-/**
- * The sections the merge rules take as input, with one override per section in business language
- * rather than raw section indexes.
- */
-export function createDecodedSections({
+export function createSaveSections({
   globalMetadata = [createGlobalMetadata()],
   terraformationLevels = [],
   players = [],
-  worldObjects = () => createEmptyGenerator(),
+  worldObjects = [],
   inventories = [],
   statistics = [],
   mailboxes = [],
   storyEvents = [],
   saveConfigurations = [],
   worldEvents = []
-}: DecodedSectionsOptions = {}): DecodedSections {
-  return [
+}: SaveSectionsOptions = {}): SaveSections {
+  return {
     globalMetadata,
     terraformationLevels,
     players,
@@ -55,7 +48,6 @@ export function createDecodedSections({
     mailboxes,
     storyEvents,
     saveConfigurations,
-    worldEvents,
-    []
-  ];
+    worldEvents
+  };
 }

@@ -1,11 +1,11 @@
 import {describe, it, expect} from 'bun:test';
 import {mergeInventories} from './mergeInventories';
-import {DecodedInventory} from './DecodedInventory';
+import {InventoryEntry} from './InventoryEntry';
 
 describe('Merge Inventories', () => {
   const noOrphanInventoryIds = new Set<number>();
-  const inventoryFromSaveA: DecodedInventory = {id: 44, woIds: [79111656, 58524136], size: 20};
-  const inventoryFromSaveB: DecodedInventory = {id: 77, woIds: [79111656, 58524136], size: 20};
+  const inventoryFromSaveA: InventoryEntry = {id: 44, woIds: [79111656, 58524136], size: 20};
+  const inventoryFromSaveB: InventoryEntry = {id: 77, woIds: [79111656, 58524136], size: 20};
 
   describe('When inventories come from both saves', () => {
     it('should keep the inventories of each save under their own origin', () => {
@@ -23,7 +23,7 @@ describe('Merge Inventories', () => {
   describe('When an inventory has no ejected player id', () => {
     it('should keep the inventory as it may belong to a world object', () => {
       // Arrange
-      const worldObjectInventory: DecodedInventory = {id: 999, woIds: [], size: 5};
+      const worldObjectInventory: InventoryEntry = {id: 999, woIds: [], size: 5};
 
       // Act
       const result = mergeInventories([inventoryFromSaveA, worldObjectInventory], [inventoryFromSaveB], noOrphanInventoryIds);
@@ -37,8 +37,8 @@ describe('Merge Inventories', () => {
 
     it('should keep equipment inventories from both saves', () => {
       // Arrange
-      const equipmentFromSaveA: DecodedInventory = {id: 45, woIds: [], size: 10};
-      const equipmentFromSaveB: DecodedInventory = {id: 4, woIds: [], size: 10};
+      const equipmentFromSaveA: InventoryEntry = {id: 45, woIds: [], size: 10};
+      const equipmentFromSaveB: InventoryEntry = {id: 4, woIds: [], size: 10};
 
       // Act
       const result = mergeInventories([inventoryFromSaveA, equipmentFromSaveA], [inventoryFromSaveB, equipmentFromSaveB], noOrphanInventoryIds);
@@ -54,7 +54,7 @@ describe('Merge Inventories', () => {
   describe('When two inventories share the same id', () => {
     it('should keep both inventories as the duplicate id will be resolved later', () => {
       // Arrange
-      const duplicatedInventoryFromSaveB: DecodedInventory = {...inventoryFromSaveA};
+      const duplicatedInventoryFromSaveB: InventoryEntry = {...inventoryFromSaveA};
 
       // Act
       const result = mergeInventories([inventoryFromSaveA], [duplicatedInventoryFromSaveB], noOrphanInventoryIds);
@@ -70,9 +70,9 @@ describe('Merge Inventories', () => {
   describe('When save B contains inventories from an ejected player', () => {
     it('should drop the orphan inventories of the ejected player', () => {
       // Arrange
-      const orphanInventory: DecodedInventory = {id: 77, woIds: [901, 902], size: 10};
-      const orphanEquipment: DecodedInventory = {id: 78, woIds: [903], size: 5};
-      const remainingInventory: DecodedInventory = {id: 79, woIds: [904], size: 20};
+      const orphanInventory: InventoryEntry = {id: 77, woIds: [901, 902], size: 10};
+      const orphanEquipment: InventoryEntry = {id: 78, woIds: [903], size: 5};
+      const remainingInventory: InventoryEntry = {id: 79, woIds: [904], size: 20};
       const orphanInventoryIds = new Set([77, 78]);
 
       // Act

@@ -1,11 +1,11 @@
 import {describe, expect, it} from 'bun:test';
 import {resolveInventoryIdConflicts} from './resolveInventoryIdConflicts';
 import {createIdSequence} from './createIdSequence';
-import {DecodedInventory} from './DecodedInventory';
+import {InventoryEntry} from './InventoryEntry';
 
 describe('Resolve inventory id conflicts', () => {
-  const inventoryOfSaveA: DecodedInventory = {id: 10, woIds: [], size: 20};
-  const equipmentOfSaveA: DecodedInventory = {id: 11, woIds: [], size: 10};
+  const inventoryOfSaveA: InventoryEntry = {id: 10, woIds: [], size: 20};
+  const equipmentOfSaveA: InventoryEntry = {id: 11, woIds: [], size: 10};
   const noWorldObjects: never[] = [];
 
   describe('When a save B inventory uses an id already taken in save A', () => {

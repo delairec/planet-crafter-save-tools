@@ -2,13 +2,13 @@ import {describe, expect, it} from 'bun:test';
 import {resolveWorldObjectIdConflicts} from './resolveWorldObjectIdConflicts';
 import {createIdSequence} from './createIdSequence';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {DecodedInventory} from './DecodedInventory';
-import {DecodedWorldObject} from './DecodedWorldObject';
+import {InventoryEntry} from './InventoryEntry';
+import {WorldObjectEntry} from './WorldObjectEntry';
 
 describe('Resolve world object id conflicts', () => {
-  const anInventory: DecodedInventory = {id: 10, woIds: [], size: 20};
+  const anInventory: InventoryEntry = {id: 10, woIds: [], size: 20};
 
-  function createIdSequenceSeededOn(worldObjects: EntriesByOrigin<DecodedWorldObject>) {
+  function createIdSequenceSeededOn(worldObjects: EntriesByOrigin<WorldObjectEntry>) {
     return createIdSequence([anInventory], [...worldObjects.fromSaveA, ...worldObjects.fromSaveB]);
   }
 

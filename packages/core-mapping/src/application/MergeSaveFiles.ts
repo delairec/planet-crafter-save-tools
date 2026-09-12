@@ -1,12 +1,16 @@
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
-import {SaveFilesMergerPort} from "./ports/SaveFilesMergerPort";
+import {MergeSourceReaderPort} from "./ports/MergeSourceReaderPort";
+import {MergedSaveSerializerPort} from "./ports/MergedSaveSerializerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
+import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
+import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 
 export class MergeSaveFiles {
   constructor(
     private readonly validator: SaveValidatorPort,
-    private readonly merger: SaveFilesMergerPort,
+    private readonly sourceReader: MergeSourceReaderPort,
+    private readonly serializer: MergedSaveSerializerPort,
     private readonly presenter: MergeResultPresenterPort
   ) {}
 
@@ -24,12 +28,17 @@ export class MergeSaveFiles {
       return;
     }
 
-    const mergedSave = this.merger.merge(fileNameA, contentA, fileNameB, contentB, saveDisplayName);
+    const sourceA = this.sourceReader.read(contentA);
+    const sourceB = this.sourceReader.read(contentB);
 
-    if (mergedSave.content.length === 0) {
+    if (sourceA.errors.length > 0 || sourceB.errors.length > 0) {
       this.presenter.presentMergedSaveUnusable();
       return;
     }
+
+    const mergedFileName = this.serializer.buildFileName({fileNameA, fileNameB});
+    const mergedSections = mergeSaveSections(sourceA.sections, sourceB.sections, saveDisplayName ?? mergedFileName.stem);
+    const mergedSave = this.serializer.serialize({fileName: mergedFileName.fileName, sections: resolveIdConflicts(mergedSections)});
 
     const mergedSaveValidation = this.validator.validate(mergedSave.fileName, mergedSave.content);
 

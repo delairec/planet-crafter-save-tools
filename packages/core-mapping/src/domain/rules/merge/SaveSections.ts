@@ -8,23 +8,18 @@ import {
   TerraformationLevel,
   WorldEvent
 } from 'shared-save-processing/gameDefinitions';
-import {DecodedInventory} from './DecodedInventory';
-import {DecodedWorldObject} from './DecodedWorldObject';
+import {InventoryEntry} from './InventoryEntry';
+import {WorldObjectEntry} from './WorldObjectEntry';
 
-/**
- * The eleven parts of a parsed save once the identifier lists of its inventories and world objects
- * are decoded: what the merge rules take as input.
- */
-export type DecodedSections = [
-  GlobalMetadata[],
-  TerraformationLevel[],
-  Player[],
-  () => Generator<DecodedWorldObject>,
-  DecodedInventory[],
-  Statistics[],
-  MailboxMessage[],
-  StoryEvent[],
-  SaveConfiguration[],
-  WorldEvent[],
-  never[]
-];
+export interface SaveSections {
+  readonly globalMetadata: GlobalMetadata[];
+  readonly terraformationLevels: TerraformationLevel[];
+  readonly players: Player[];
+  readonly worldObjects: WorldObjectEntry[];
+  readonly inventories: InventoryEntry[];
+  readonly statistics: Statistics[];
+  readonly mailboxes: MailboxMessage[];
+  readonly storyEvents: StoryEvent[];
+  readonly saveConfigurations: SaveConfiguration[];
+  readonly worldEvents: WorldEvent[];
+}

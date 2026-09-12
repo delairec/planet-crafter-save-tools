@@ -11,37 +11,30 @@ import {mergeWorldEvents} from './mergeWorldEvents';
 import {determineSaveOrder} from './determineSaveOrder';
 import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
 import {MergedSaveSections} from './MergedSaveSections';
-import {DecodedSections} from './DecodedSections';
-
-function* EMPTY_GENERATOR(): Generator<never> {
-}
+import {SaveSections} from './SaveSections';
 
 /**
- * Merges two parsed Planet Crafter saves section by section.
+ * Merges two Planet Crafter saves section by section.
  * If one save has `planetId === 'Prime'` in its configuration, it is promoted to save A.
- * Every section rule receives the sections it needs already defaulted, and returns structured
- * entries: nothing is serialized here.
+ * Every section rule returns structured entries: nothing is serialized here.
  * @param saveDisplayName - Overrides `saveDisplayName` in the merged configuration.
  * @see GR-ORDER-1 in docs/game-rules.md
  */
-export function mergeSaveSections(sectionsA: DecodedSections, sectionsB: DecodedSections, saveDisplayName: string): MergedSaveSections {
+export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSections, saveDisplayName: string): MergedSaveSections {
   const [mainSave, secondarySave] = determineSaveOrder(sectionsA, sectionsB);
 
-  const [metadataA = [], terraformationLevelsA = [], playersA = [], worldObjectsFactoryA = () => EMPTY_GENERATOR(), inventoriesA = [], statisticsA = [], mailboxA = [], storyEventsA = [], saveConfigurationsA = [], worldEventsA = []] = mainSave;
-  const [metadataB = [], terraformationLevelsB = [], playersB = [], worldObjectsFactoryB = () => EMPTY_GENERATOR(), inventoriesB = [], statisticsB = [], mailboxB = [], storyEventsB = [], saveConfigurationsB = [], worldEventsB = []] = secondarySave;
-
-  const ejectedPlayerIds = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);
+  const ejectedPlayerIds = collectEjectedPlayerInventoryIds(mainSave.players, secondarySave.players, secondarySave.inventories);
 
   return {
-    globalMetadata: mergeGlobalMetadata(metadataA, metadataB),
-    terraformationLevels: mergeTerraformationLevels(terraformationLevelsA, terraformationLevelsB),
-    players: mergePlayers(playersA, playersB),
-    worldObjects: mergeWorldObjects(worldObjectsFactoryA(), worldObjectsFactoryB(), ejectedPlayerIds.orphanWorldObjectIds),
-    inventories: mergeInventories(inventoriesA, inventoriesB, ejectedPlayerIds.orphanInventoryIds),
-    statistics: mergeStatistics(statisticsA, statisticsB),
-    mailboxes: mergeMailboxes(mailboxA, mailboxB),
-    storyEvents: mergeStoryEvents(storyEventsA, storyEventsB),
-    saveConfiguration: mergeSaveConfigurations(saveConfigurationsA, saveConfigurationsB, saveDisplayName),
-    worldEvents: mergeWorldEvents(worldEventsA, worldEventsB)
+    globalMetadata: mergeGlobalMetadata(mainSave.globalMetadata, secondarySave.globalMetadata),
+    terraformationLevels: mergeTerraformationLevels(mainSave.terraformationLevels, secondarySave.terraformationLevels),
+    players: mergePlayers(mainSave.players, secondarySave.players),
+    worldObjects: mergeWorldObjects(mainSave.worldObjects, secondarySave.worldObjects, ejectedPlayerIds.orphanWorldObjectIds),
+    inventories: mergeInventories(mainSave.inventories, secondarySave.inventories, ejectedPlayerIds.orphanInventoryIds),
+    statistics: mergeStatistics(mainSave.statistics, secondarySave.statistics),
+    mailboxes: mergeMailboxes(mainSave.mailboxes, secondarySave.mailboxes),
+    storyEvents: mergeStoryEvents(mainSave.storyEvents, secondarySave.storyEvents),
+    saveConfiguration: mergeSaveConfigurations(mainSave.saveConfigurations, secondarySave.saveConfigurations, saveDisplayName),
+    worldEvents: mergeWorldEvents(mainSave.worldEvents, secondarySave.worldEvents)
   };
 }

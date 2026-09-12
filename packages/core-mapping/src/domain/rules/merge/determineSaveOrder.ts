@@ -1,19 +1,18 @@
-import {SAVE_CONFIGURATION_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
-import {DecodedSections} from './DecodedSections';
+import {SaveSections} from './SaveSections';
 
 const PRIME_PLANET_ID = 'Prime';
 
 /**
  * @see GR-ORDER-1 in docs/game-rules.md
  */
-export function determineSaveOrder(parsedSaveA: DecodedSections, parsedSaveB: DecodedSections): [DecodedSections, DecodedSections] {
-  if (!isPrimePlanetSave(parsedSaveA) && isPrimePlanetSave(parsedSaveB)) {
-    return [parsedSaveB, parsedSaveA];
+export function determineSaveOrder(saveA: SaveSections, saveB: SaveSections): [SaveSections, SaveSections] {
+  if (!isPrimePlanetSave(saveA) && isPrimePlanetSave(saveB)) {
+    return [saveB, saveA];
   }
 
-  return [parsedSaveA, parsedSaveB];
+  return [saveA, saveB];
 }
 
-function isPrimePlanetSave(parsedSave: DecodedSections): boolean {
-  return parsedSave[SAVE_CONFIGURATION_SECTION_INDEX]?.[0]?.planetId === PRIME_PLANET_ID;
+function isPrimePlanetSave(save: SaveSections): boolean {
+  return save.saveConfigurations[0]?.planetId === PRIME_PLANET_ID;
 }

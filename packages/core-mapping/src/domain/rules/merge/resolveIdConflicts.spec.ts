@@ -4,14 +4,14 @@ import {MergedSaveSections} from './MergedSaveSections';
 import {Player} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
 import {createGlobalMetadata, createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
-import {DecodedInventory} from './DecodedInventory';
-import {DecodedWorldObject} from './DecodedWorldObject';
+import {InventoryEntry} from './InventoryEntry';
+import {WorldObjectEntry} from './WorldObjectEntry';
 
 describe('Resolve id conflicts', () => {
   function createMergedSections(overrides: {
     players?: EntriesByOrigin<Player>,
-    inventories?: EntriesByOrigin<DecodedInventory>,
-    worldObjects?: EntriesByOrigin<DecodedWorldObject>
+    inventories?: EntriesByOrigin<InventoryEntry>,
+    worldObjects?: EntriesByOrigin<WorldObjectEntry>
   }): MergedSaveSections {
     return {
       globalMetadata: createGlobalMetadata(),

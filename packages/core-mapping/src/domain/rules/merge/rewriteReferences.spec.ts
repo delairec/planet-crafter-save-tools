@@ -1,15 +1,15 @@
 import {describe, expect, it} from 'bun:test';
 import {rewriteInventoryReferences, rewritePlayerReferences, rewriteWorldObjectReferences} from './rewriteReferences';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
-import {DecodedInventory} from './DecodedInventory';
-import {DecodedWorldObject} from './DecodedWorldObject';
+import {InventoryEntry} from './InventoryEntry';
+import {WorldObjectEntry} from './WorldObjectEntry';
 
 describe('Rewrite references', () => {
   const noRemapping = {inventoryIds: new Map<number, number>(), worldObjectIds: new Map<number, number>()};
   const inventory10BecameInventory51 = {inventoryIds: new Map([[10, 51]]), worldObjectIds: new Map<number, number>()};
   const worldObject100BecameWorldObject501 = {inventoryIds: new Map<number, number>(), worldObjectIds: new Map([[100, 501]])};
-  const noWorldObjects: DecodedWorldObject[] = [];
-  const noInventories: DecodedInventory[] = [];
+  const noWorldObjects: WorldObjectEntry[] = [];
+  const noInventories: InventoryEntry[] = [];
 
   describe('When both saves have a player on a renumbered inventory', () => {
     it('should point the save B player at the new inventory id', () => {

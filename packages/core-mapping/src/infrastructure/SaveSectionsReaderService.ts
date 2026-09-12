@@ -18,7 +18,7 @@ import {
   WORLD_OBJECTS_SECTION_INDEX
 } from 'shared-save-processing/sectionIndexes.js';
 import {SaveSectionsReaderPort} from '../application/ports/SaveSectionsReaderPort';
-import {decodeIdList} from './idListCodec';
+import {parseIdList} from 'shared-save-processing/idList.js';
 import {GlobalProgressionValueObject, createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {PlayerEntity, createPlayerEntity} from "../domain/entities/PlayerEntity";
 import {TerraformationLevelEntity, createTerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
@@ -190,7 +190,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   private mapInventories(): InventoryEntity[] {
     return this.inventories.map((inventory: Inventory): InventoryEntity => createInventoryEntity({
       id: inventory.id,
-      worldObjectIds: decodeIdList(inventory.woIds).map(String),
+      worldObjectIds: parseIdList(inventory.woIds).map(String),
       size: inventory.size
     }));
   }
