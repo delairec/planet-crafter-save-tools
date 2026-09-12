@@ -1,0 +1,212 @@
+// Les sept packages, leurs frontieres et leurs exports. La matrice de dependances par prefixe
+// n'est pas recopiee ici : elle a un seul domicile, `bun run check:dependencies` et le README
+// public. Ce que le corpus ajoute est l'ancre : un package dissous ou renomme fait tomber L016
+// ici (@DECISION.LesPackagesDissousNeSontPasRecrees).
+SHAPE package_name
+	DESC "le nom reel du package, souligne la ou le manifeste porte un tiret"
+	MATCH "(core|util|cli|ui|shared)(_[a-z0-9]+)+(:v[0-9]+)?"
+
+SCHEMA PACKAGE
+	DESC "un package du monorepo ; le prefixe du nom fixe ses dependances autorisees"
+	NAME package_name
+	FIELD PREFIX core|util|cli|ui|shared
+		REQUIRED
+
+PACKAGE shared_save_processing
+	DESC "format wire des saves : types, analyse, serialisation, schemas JSON, fixtures de test"
+	PREFIX shared
+	STATUS implemented
+	SPEC "expose l'analyse et la serialisation des sections de save, sans dependance hors util-*"
+		IMPL "packages/shared-save-processing/package.json::shared-save-processing"
+
+PACKAGE shared_platforms
+	DESC "adaptateurs fs/process pour Bun et Node, sans effet de bord a l'import"
+	PREFIX shared
+	STATUS implemented
+	SPEC "les deux adaptateurs honorent le meme contrat, verifie par une spec commune"
+		IMPL "packages/shared-platforms/package.json::shared-platforms"
+
+PACKAGE util_types
+	DESC "le seul type de contrat RuntimePlatform, consomme type-only par shared-platforms"
+	PREFIX util
+	STATUS implemented
+	SPEC "ne depend de rien"
+		IMPL "packages/util-types/package.json::util-types"
+
+PACKAGE core_mapping
+	DESC "domaine, application, infrastructure et presentation du mapping de saves"
+	DESC "seuls les controleurs et les ViewModels sont exportes"
+	PREFIX core
+	STATUS implemented
+	SPEC "seuls les controleurs et les ViewModels sont exportes : aucun module d'infrastructure"
+		+ "n'est atteignable de l'exterieur du package"
+		IMPL "packages/core-mapping/package.json::core-mapping"
+	SPEC "les Responses des use cases se declarent dans application/responses, une interface par"
+		+ "fichier"
+		IMPL "packages/core-mapping/src/application/responses"
+	RATIONALE "le port est la frontiere, pas la charge utile qui la traverse ; application/requests"
+		+ "tenait deja l'autre moitie de la regle"
+	SOURCE "T28, PR #59"
+
+PACKAGE cli_merge
+	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
+	PREFIX cli
+	STATUS implemented
+	SPEC "ne porte aucune regle de fusion"
+		IMPL "packages/cli-merge/package.json::cli-merge"
+
+PACKAGE cli_validate
+	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
+	PREFIX cli
+	STATUS implemented
+	SPEC "ne porte aucune regle de validation"
+		IMPL "packages/cli-validate/package.json::cli-validate"
+
+PACKAGE ui_save_manager
+	DESC "UI SolidStart consommant directement les controleurs de core-mapping"
+	PREFIX ui
+	STATUS implemented
+	SPEC "hors perimetre qualite fallow pour l'instant"
+		IMPL "fallow.toml"
+	SOURCE "decision du 2026-09-03, question Q5"
+
+DECISION LesPackagesDissousNeSontPasRecrees
+	DESC "util-parsing, util-messages et shared-mapping ont ete dissous dans shared-save-processing"
+		+ "et core-mapping ; util-platforms a ete renomme shared-platforms"
+	DESC "pas de nouveau package util-* non plus, sauf helper reellement generique ; les helpers de"
+		+ "format de fichier vont dans shared-save-processing"
+	STATUS specified
+	RATIONALE "YAGNI : un package par famille de helpers multiplie les frontieres sans separer de"
+		+ "responsabilites"
+	REJECTED "recreer un package util-* pour un helper de format de fichier"
+	SOURCE "AGENTS.md prive, section Organisation des packages"
+
+DECISION LesInvariantsDuDomaineSontComplets
+	DESC "champs en lecture seule et fabriques validantes sur chaque entite et chaque value object,"
+		+ "pas seulement sur les critiques"
+	STATUS specified
+	RATIONALE "une conformite partielle demande de se souvenir, a chaque ajout, de quel objet etait"
+		+ "juge critique ; la regle complete ne demande rien"
+	REJECTED "n'appliquer les invariants qu'aux entites jugees critiques"
+	SOURCE "decision du 2026-09-03, question Q3 du chantier de conformite"
+
+DECISION LesReglesDeFusionRecoiventDesDtoWireTypes
+	DESC "les regles de fusion recoivent et retournent des enregistrements du format wire types,"
+		+ "avec l'origine save A ou save B explicite, jamais des chaines"
+	DESC "la serialisation se fait une fois, en infrastructure, et le nommage du fichier produit y"
+		+ "reste"
+	DESC "pas de modele de domaine dedie a la fusion"
+	STATUS implemented
+	RATIONALE "YAGNI : un modele de domaine du merge ajouterait une traduction aller-retour pour"
+		+ "des regles qui operent sur la forme du fichier"
+	REJECTED "faire circuler des chaines entre les regles de fusion"
+	REJECTED "un modele de domaine dedie a la fusion"
+	SPEC "les regles de fusion vivent dans un seul repertoire du domaine et n'y serialisent rien"
+		IMPL "packages/core-mapping/src/domain/rules/merge"
+	SOURCE "decision du 2026-09-04, planification de T11"
+
+DECISION LesAbreviationsWireRestentDansSharedSaveProcessing
+	DESC "les abreviations du format wire ne sont tolerees que dans les enregistrements de"
+		+ "shared-save-processing, et sont traduites en langage metier a la frontiere du domaine"
+	DESC "la tolerance s'appuie sur la description du package, pas sur un commentaire d'en-tete par"
+		+ "fichier"
+	STATUS implemented
+	RATIONALE "un commentaire par fichier ne dit rien que l'interface ne dise, et il nomme une"
+		+ "section par son index — un numero qu'aucun test ne tient et qui devient faux le jour ou"
+		+ "un index bouge"
+	REJECTED "tolerer les abreviations wire au-dela de ce package"
+	REJECTED "un commentaire d'en-tete par fichier de DTO"
+	SPEC "la description du package porte la tolerance"
+		IMPL "packages/shared-save-processing/package.json::shared-save-processing"
+	SOURCE "decision du 2026-09-03, question Q8 ; commentaires retires en revue de T36, PR #55"
+
+DECISION CreateSaveRecordsEstLaSourceUniqueDesBuilders
+	DESC "un seul module porte les constructeurs d'enregistrements de save ; les deux rendus —"
+		+ "chaine de save et sections deja analysees — en sont des consommateurs, jamais des"
+		+ "sources"
+	DESC "tout enregistrement du format wire declare dans la phase de preparation d'une spec passe"
+		+ "par son constructeur"
+	DESC "les constructeurs vivent dans le repertoire de test de shared-save-processing, y compris"
+		+ "quand seul un package core les consomme : ils decrivent le format wire, pas le domaine"
+	DESC "un module ne reexporte pas ce qu'il importe d'un autre pour le confort d'un appelant"
+		+ "historique, et ce repertoire n'a pas de barrel"
+	STATUS implemented
+	RATIONALE "trois frontieres que la regle ne franchit pas : une valeur attendue reste litterale,"
+		+ "les types du domaine ne sont pas des enregistrements de save, et la spec du serialiseur"
+		+ "garde ses litteraux parce que chaque attendu y est le JSON exact de son jeu de champs"
+	RATIONALE "une generation depuis les schemas JSON produirait une donnee que personne ne lit :"
+		+ "un attendu litteral se lit, une valeur generee non. Cout assume, un constructeur par"
+		+ "type"
+	REJECTED "generer les fixtures depuis les schemas JSON"
+	REJECTED "un barrel sur le repertoire de test : il recreerait exactement le couplage retire"
+	REJECTED "convertir aussi les valeurs attendues, ce qui les rendrait recalculees"
+	SPEC "les constructeurs sont declares une fois et importes finement"
+		IMPL "packages/shared-save-processing/testing/createSaveRecords.js"
+	SOURCE "decision du 2026-09-08, T21, PR #35 ; regle du balayage etendue en revue de T19, PR #46"
+
+DECISION UnIndiceDeSectionNeSEcritJamaisEnDur
+	DESC "un indice de section ne s'ecrit jamais en dur, pas meme dans une spec : les indices sont"
+		+ "lus depuis leur module"
+	DESC "cela vise aussi la destructuration a trous, qui cache l'indice qu'elle compte"
+	STATUS specified
+	RATIONALE "arbitrage de l'utilisateur, pose deux fois sur la meme pull request"
+	RATIONALE "restent des nombres les comptes de parties : ce sont des attendus, pas des acces"
+	REJECTED "tolerer un indice litteral dans une spec"
+	SPEC "les indices de section, y compris ceux du format herite et la partie reservee, sont"
+		+ "declares une fois"
+		IMPL "packages/shared-save-processing/sectionIndexes.js"
+	SOURCE "decision du 2026-09-09, revue de T19 et de T26"
+
+DECISION UnImportDeTypeJsdocQuiTraverseUnPackageSEcritTypedef
+	DESC "un import de type JSDoc qui traverse une frontiere de package s'ecrit en typedef portant"
+		+ "l'import, la balise import restant admise a l'interieur d'un package"
+	STATUS implemented
+	RATIONALE "l'outil d'audit qualite suit les imports de type ecrits sous forme d'appel dans les"
+		+ "annotations, et la balise import de TypeScript 5.5 lui est invisible : la dependance"
+		+ "declaree remonte alors comme inutilisee"
+	RATIONALE "l'entree d'exclusion de dependances de l'outil n'est pas une reponse a un faux"
+		+ "positif localise : elle desactive a la fois la detection des dependances inutilisees et"
+		+ "celle des non declarees, pour tout le depot et sans echeance"
+	REJECTED "exclure le package de l'audit de dependances"
+	REJECTED "laisser la balise import traverser une frontiere de package"
+	SPEC "le seul cas du depot porte la forme et le commentaire qui empeche de la normaliser"
+		IMPL "packages/shared-platforms/platform.js"
+	SOURCE "decision du 2026-09-08, T17, PR #44"
+
+DECISION UnArgumentInconnuEstUneErreurDUsage
+	DESC "les deux CLI nomment sur la sortie d'erreur chaque argument prefixe d'un tiret qui ne"
+		+ "designe aucun de leurs drapeaux, impriment une ligne d'usage et sortent en erreur avant"
+		+ "de lire quoi que ce soit"
+	DESC "limite assumee : seuls les arguments commencant par un tiret sont examines, le vecteur"
+		+ "d'arguments rendu par la plateforme portant aussi l'interpreteur et le script"
+	DESC "la banniere d'usage nomme la commande documentee, dans sa forme Bun, sous les deux"
+		+ "runtimes"
+	STATUS implemented
+	RATIONALE "un drapeau mal orthographie silencieusement ignore fait travailler l'outil sur les"
+		+ "repertoires par defaut, et le resultat est indiscernable d'un succes"
+	RATIONALE "Bun est l'outil principal et maintenu ; les commandes Node n'existent que pour une"
+		+ "compatibilite assumee cote utilisateur, donc la banniere n'a pas a etre consciente du"
+		+ "runtime"
+	REJECTED "avertir sans changer le code de retour"
+	REJECTED "decouper le vecteur d'arguments pour attraper les positionnels, ce qui deplacerait le"
+		+ "contrat de la plateforme"
+	REJECTED "faire dependre la banniere du runtime"
+	SPEC "l'analyse des drapeaux et la detection des arguments inconnus sont partagees par les deux"
+		+ "CLI, sans creer de package"
+		IMPL "packages/shared-platforms/cliArguments.js"
+	SOURCE "decision du 2026-09-10, T34, PR #60 ; banniere arbitree en revue"
+
+DECISION UnPackageEstNommeCommeSonManifeste
+	DESC "l'entite PACKAGE porte le nom reel du package, le tiret du manifeste ecrit en souligne :"
+		+ "core-mapping devient core_mapping"
+	DESC "le shape de nom impose le prefixe de couche, comme le champ PREFIX"
+	STATUS implemented
+	RATIONALE "le nom en PascalCase obligeait a traduire mentalement entre l'identite du corpus et"
+		+ "le repertoire, le manifeste, les imports et les commandes --filter, qui portent tous la"
+		+ "forme a tiret"
+	REJECTED "ecrire le tiret dans l'identite : le tiret n'appartient pas a la grammaire des noms"
+	REJECTED "garder le PascalCase et porter le nom reel dans un champ : status et refs impriment"
+		+ "l'identite, pas un champ"
+	SPEC "le nom de tout package est accepte par le shape package_name"
+		IMPL "docs/packages.awawa::SHAPE package_name"
+	SOURCE "decision du 2026-09-12, apres le renommage des taches"

@@ -1,0 +1,183 @@
+// Les limitations acceptees. La question est fermee — superseded, donc hors des paquets de
+// recuperation — et la decision qui la ferme porte la matiere que la fiche gardait.
+OPEN_QUESTION LaRegleGitignoreDuContextePriveNeCouvrePasUnLien
+	DESC "la regle /.do-not-commit/ du .gitignore public ne vise qu'un repertoire : un lien"
+		+ "symbolique du meme nom y echappe et se fait indexer par git add -A"
+	STATUS superseded
+	SOURCE "constate le 2026-09-11, montage du corpus awawa"
+
+DECISION LaRegleDuContextePrivePerdSaBarreFinale
+	DESC "la regle du .gitignore public vise .do-not-commit sans barre ni prefixe, comme input, et"
+		+ "porte le commentaire qui dit pourquoi"
+	CLOSES @OPEN_QUESTION.LaRegleGitignoreDuContextePriveNeCouvrePasUnLien
+	STATUS implemented
+	RATIONALE "c'est exactement le defaut deja rencontre sur input/, elargi a input par la PR #37 ;"
+		+ "le lien porte le chemin absolu du clone prive de l'utilisateur, et un commit"
+		+ "l'exposerait dans le depot public"
+	RATIONALE "le montage du corpus rend le cas courant : lier le clone prive dans un worktree"
+		+ "devient un geste normal, la ou il etait jusqu'ici exceptionnel"
+	RATIONALE "CFG-2 le prescrit mot pour mot : pas de barre finale quand un lien symbolique vers"
+		+ "le repertoire doit etre pris, et le commentaire qui dit pourquoi fait partie de la regle"
+	REJECTED "garder la barre finale et compter sur la vigilance au moment d'indexer"
+	SPEC "la regle prend le lien comme le repertoire"
+		IMPL ".gitignore::.do-not-commit"
+	SOURCE "constate le 2026-09-11, montage du corpus awawa"
+
+OPEN_QUESTION ErreursTardivesDeLaSectionTroisPerdues
+	DESC "une erreur d'analyse decouverte apres coup dans la section des objets du monde n'atteint"
+		+ "jamais l'ecran"
+	STATUS superseded
+
+DECISION LesErreursTardivesDeLaSectionTroisRestentUneFragiliteLatente
+	DESC "fragilite laissee telle quelle : aujourd'hui le chemin est mort, la validation draine le"
+		+ "generateur avant de lire les erreurs d'analyse"
+	DESC "le jour ou cette garde saute, le defaut apparait sans qu'aucun test ne tombe"
+	CLOSES @OPEN_QUESTION.ErreursTardivesDeLaSectionTroisPerdues
+	STATUS specified
+	RATIONALE "parseSaveSections rend un tableau errors partage et mutable ; les dix sections"
+		+ "ordinaires sont materialisees tout de suite, la section 3 est rendue comme fabrique de"
+		+ "generateur non iteree — une save de reference y porte jusqu'a 28425 objets et on n'en"
+		+ "garde qu'un en memoire. Ses erreurs ne sont poussees qu'a l'iteration, or le cas"
+		+ "d'utilisation passe le tableau au presenter immediatement et le presenter le fige par un"
+		+ "map : le ViewModel est un instantane pris avant que quiconque ait lu la section 3"
+	RATIONALE "sans effet aujourd'hui parce que validateSaveContent draine le generateur avant de"
+		+ "lire parseErrors — l'ordre de ces deux lignes est porteur et rien ne le dit sur place."
+		+ "Une save dont la section 3 ne s'analyse pas proprement sort en invalid et n'atteint"
+		+ "jamais le chemin fautif"
+	RATIONALE "ce qui le rendrait visible : une optimisation cessant de drainer la section 3, un"
+		+ "appelant utilisant l'analyseur sans le validateur, un affichage progressif de la"
+		+ "section, ou toute inversion des deux lignes"
+	REJECTED "corriger par anticipation : le chemin est mort, YAGNI"
+	REJECTED "faire cesser le ViewModel d'etre un instantane — erreurs lues a la demande, ou"
+		+ "section 3 analysee sans paresse, ce que sa taille interdit"
+	SPEC "le geste le moins cher, le jour venu, est une spec qui epingle la garde : la validation"
+		+ "refuse une save dont seule la section 3 porte une ligne illisible"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js"
+	SOURCE "known-issues/erreurs-tardives-des-objets-du-monde-perdues.md"
+	SOURCE "constate le 2026-09-11, revue de la PR #58"
+
+OPEN_QUESTION PreloadDIsolationIgnoreHorsRacineDePackage
+	DESC "bun test lance d'un dossier plus profond qu'une racine de package n'applique pas"
+		+ "l'isolation des tests"
+	STATUS superseded
+
+DECISION LePreloadHorsRacineDePackageSeContourneParBunOptions
+	DESC "limitation acceptee : Bun resout bunfig.toml depuis le repertoire courant seulement, sans"
+		+ "remonter"
+	DESC "contournement : la variable BUN_OPTIONS pointant le preload en chemin absolu, sur le"
+		+ "modele de configuration Bun de l'IDE"
+	CLOSES @OPEN_QUESTION.PreloadDIsolationIgnoreHorsRacineDePackage
+	STATUS specified
+	RATIONALE "sans le preload, enforceTestIsolation n'est pas applique et les mocks ne sont pas"
+		+ "restaures entre tests, sans aucun signal. C'est le cas d'IntelliJ, dont une"
+		+ "configuration Bun generee prend le dossier du spec comme repertoire de travail"
+	REJECTED "faire remonter la resolution de bunfig.toml : ce n'est pas le projet qui decide"
+	SPEC "la spec d'isolation, lancee avec le cwd a verifier, echoue quand le preload ne s'applique"
+		+ "pas"
+		IMPL "testIsolation.spec.ts"
+		IMPL "testing/testIsolation.ts::enforceTestIsolation"
+	SOURCE "known-issues/preload-des-tests-ignore-hors-racine-de-package.md"
+	SOURCE "decision du 2026-09-05, revue T9"
+
+OPEN_QUESTION StandardDeuxMergedNEstPasUneSortieDeLOutil
+	DESC "la save de reference Standard-2-merged.json peut-elle servir de reference de sortie"
+	STATUS superseded
+
+DECISION StandardDeuxMergedNeSertJamaisDeReferenceDeSortie
+	DESC "non : le fichier a ete retouche, aucune version de l'outil ne l'a ecrit"
+	DESC "toute comparaison de sortie de la fusion se fait contre une reference capturee par"
+		+ "l'outil lui-meme, celle prise au debut de T11"
+	CLOSES @OPEN_QUESTION.StandardDeuxMergedNEstPasUneSortieDeLOutil
+	STATUS specified
+	RATIONALE "trois de ses quatre identifiants de joueurs sont les formes arrondies d'identifiants"
+		+ "reels, mais son hote porte un identifiant qu'aucun number ne peut produire par"
+		+ "serialisation JSON — a cette magnitude seuls les multiples de 16 sont representables, et"
+		+ "les deux doubles voisins de celui-la s'impriment a …60 et …70. stringifyEntry repose sur"
+		+ "cette serialisation depuis le premier commit. Le fichier porte aussi une marque d'ordre"
+		+ "des octets que l'outil n'ecrit jamais"
+	REJECTED "corriger le fichier pour en faire une reference : il n'aurait plus de provenance"
+		+ "connue"
+	SOURCE "known-issues/save-de-reference-standard-2-merged-retouchee.md"
+	SOURCE "constat du 2026-09-07, T30"
+
+OPEN_QUESTION OnzeMachinesPlaceesHorsDesTablesDEnergie
+	DESC "quelle valeur d'energie donner aux onze gId places dont le wiki n'imprime aucun champ"
+		+ "energy"
+	STATUS superseded
+
+DECISION LesOnzeMachinesRestentSansNiveauDEnergieConnu
+	DESC "limitation acceptee sans tache : la lever demande une source de donnees du jeu, que le"
+		+ "projet n'a pas"
+	DESC "les onze gId restent dans le groupe sans niveau d'energie connu, qui ne leur affirme"
+		+ "aucun cout"
+	DESC "TradePlatform1 (29 places), LightBoxMedium (28), ButterflyDisplayer1 (18), Megadome1 (7),"
+		+ "HologramGenerator, Server1, PlanetViewer1, FishDisplayer1, CookingStation1,"
+		+ "FrogDisplayer1, et les presentoirs et mobilier associes"
+	CLOSES @OPEN_QUESTION.OnzeMachinesPlaceesHorsDesTablesDEnergie
+	STATUS specified
+	RATIONALE "le wiki est la seule source de valeurs et il est muet sur ces machines ; une valeur"
+		+ "non imprimee n'est pas zero (decision du 2026-09-07)"
+	RATIONALE "Megadome1 et LightBoxMedium sont les deux qui consomment probablement : tant qu'ils"
+		+ "sont hors table, la consommation affichee d'une partie qui en pose reste sous-evaluee"
+	RATIONALE "T25 (PR #43) a ferme l'essentiel : 23 candidats tarifes ou ecartes avec motif"
+		+ "(consommateurs 75 puis 104), six variantes *T* supprimees, quatorze gId places ajoutes"
+		+ "sous une regle d'attestation, Incubator2 et InsideLamp2 sources"
+	REJECTED "deduire les valeurs d'un raisonnement sur la regularite entre paliers"
+	REJECTED "poser zero pour une valeur que le wiki n'imprime pas"
+	SPEC "GeneticManipulator1 porte une valeur suspecte : ses 117,5 kW sont anterieurs au"
+		+ "recoupement wiki de T25, aucune page ne les atteste, et le gId a change de nom a cette"
+		+ "occasion"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::GeneticManipulator1"
+	SPEC "la partition des noms d'objets reste explicite, jamais deduite par un test circulaire"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_PRODUCING_ENERGY"
+	SOURCE "known-issues/tables-d-energie-incompletes.md"
+	SOURCE "decision du 2026-09-09 ; constate le 2026-09-06, reduit a la fusion de la PR #43"
+
+OPEN_QUESTION MarqueDOrdreDesOctetsNonPreservee
+	DESC "faut-il preserver la marque d'ordre des octets d'une save qui en porte une"
+	STATUS superseded
+
+DECISION LaMarqueDOrdreDesOctetsNEstPasPreservee
+	DESC "non : les deux adaptateurs retirent la marque a la lecture et n'en ecrivent aucune"
+	DESC "l'aller-retour n'est donc pas identique octet pour octet sur un fichier qui en porte une"
+	CLOSES @OPEN_QUESTION.MarqueDOrdreDesOctetsNonPreservee
+	STATUS implemented
+	RATIONALE "le jeu charge les deux formes, et les marques presentes dans les saves de reference"
+		+ "viennent d'un editeur, pas du jeu — Custom-1.json en porte une, Standard-1, 3 et 4 non"
+	RATIONALE "preserver la marque imposerait de la transporter comme metadonnee a travers un"
+		+ "domaine qui n'a pas a connaitre les encodages, avec des entrees de fusion en desaccord"
+		+ "et donc aucune regle defendable pour la sortie"
+	REJECTED "transporter la marque comme metadonnee du domaine"
+	SPEC "les deux adaptateurs honorent le meme contrat de lecture et d'ecriture, marque comprise"
+		IMPL "packages/shared-platforms/platform.fs.adapters.spec.js"
+	SPEC "une save prefixee d'une marque fusionne correctement en processus Node reel, contenu"
+		+ "asserte et pas seulement le code de retour"
+		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
+	SOURCE "known-issues/merge/marque-d-ordre-des-octets-non-preservee.md"
+	SOURCE "decision du 2026-09-07, PR #33 ; garde Node depuis T22, PR #45"
+
+OPEN_QUESTION RecouvrementDIdentifiantsDansLesSavesDEntree
+	DESC "la fusion peut-elle garantir que chaque identifiant de l'union inventaires + world"
+		+ "objects est unique"
+	STATUS superseded
+
+DECISION LaGarantieDUnicitePorteSurCeQueLaFusionIntroduit
+	DESC "non : les saves d'entree portent deja le recouvrement, sorti du jeu, et aucune fusion ne"
+		+ "peut le supprimer"
+	DESC "la garantie tenable, et tenue depuis T16, est plus etroite : la fusion n'introduit aucun"
+		+ "recouvrement qui ne soit deja present dans les saves d'entree"
+	CLOSES @OPEN_QUESTION.RecouvrementDIdentifiantsDansLesSavesDEntree
+	STATUS implemented
+	RATIONALE "mesure du 2026-09-07 sur les dossiers de reference : Standard-3 721 valeurs portees"
+		+ "a la fois par un inventaire et un world object, Standard-4 549, Standard-1-unlocked-ivy"
+		+ "203, Standard-1 171. Les deux sections numerotent dans la meme plage 101 000 000 – 110"
+		+ "000 000 et le jeu reutilise volontiers une valeur de l'une dans l'autre"
+	RATIONALE "supprimer le recouvrement demanderait de renumeroter des entrees de la save A, dont"
+		+ "les identifiants font autorite et que l'outil n'a aucune raison de toucher"
+	RATIONALE "1 recouvrement introduit par dossier avant T16, 0 apres"
+	REJECTED "renumeroter des entrees de la save A pour rendre l'union unique"
+	REJECTED "laisser GR-ID-1 enoncer l'unicite de l'union, qui est fausse sur de vraies saves"
+	SPEC "GR-ID-1 enonce ce que la fusion n'introduit pas, jamais l'unicite de l'union"
+		IMPL "docs/game-rules.md::GR-ID-1"
+	SOURCE "known-issues/merge/recouvrement-d-identifiants-deja-present-dans-les-saves-d-entree.md"
+	SOURCE "decision du 2026-09-09, revue de la PR #41 ; GR-ID-1 reformulee par T30, PR #49"
