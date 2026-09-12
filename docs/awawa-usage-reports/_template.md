@@ -4,7 +4,8 @@
 Template for a usage report, one file per merged pull request, named `<merge date>-pr-<N>.md`.
 Written by /awawa-usage-report through the awawa-usage-reporter agent, never by a session that took
 part in the work (@DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante).
-Keep every heading, in this order. Delete the comments. Entities are cited by name and never
+Reports dated before this template do not follow it: they are sources for the recurring points, not
+examples of the shape. Keep every heading, in this order. Delete the comments. Entities are cited by name and never
 restated: this file is about the method and the instrument, not a second home for project facts.
 Every judgment carries a number or a name. A claim that could not be checked is reported as unchecked.
 -->
@@ -69,13 +70,14 @@ Delivered: <one line on what the PR changed>.
 <!--
 Every point a previous report raised, in its "What went wrong" tables or its own recurring-points
 section, that this PR's evidence shows again. Read all previous reports of this folder, not the last
-one only. A point seen for the third time or more is flagged: the remediation was not done or does
+one only. "Times seen" counts the reports in which the point appears, this one included: the count of
+the previous report plus one. A count of 3 or more is flagged: the remediation was not done or does
 not work, and the report says which.
 -->
 
-| Point | First raised in | Seen again here | Remediation proposed then | Done? |
-|---|---|---|---|---|
-| | `<file>.md`, part <A/B> | <evidence> | | yes / no / partly |
+| Point | Times seen | First raised in | Seen again here | Remediation proposed then | Done? |
+|---|---|---|---|---|---|
+| | <n> | `<file>.md`, part <A/B> | <evidence> | | yes / no / partly |
 
 Raised before and not seen again, closed by observation: <one line per point, or "none">.
 
