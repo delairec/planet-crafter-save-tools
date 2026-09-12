@@ -1,20 +1,17 @@
 import {GlobalProgressionViewModel} from '../presentation/viewModels/GlobalProgressionViewModel';
 import {GlobalProgressionPresenter} from '../presentation/GlobalProgressionPresenter';
 import {LoadGlobalProgressionSection} from '../application/LoadGlobalProgressionSection';
-import {SaveSectionsReaderService} from '../infrastructure/SaveSectionsReaderService';
-import {SaveSections} from "../domain/save/SaveSections";
+import {createSaveSectionsReader} from '../composition/compositionRoot';
 
 export class LoadGlobalProgressionSectionController {
 
-  static async loadGlobalProgressionSection(sections: SaveSections): Promise<GlobalProgressionViewModel> {
-    const saveParser = new SaveSectionsReaderService(sections);
+  static async loadGlobalProgressionSection(validatedContent: string): Promise<GlobalProgressionViewModel> {
+    const saveReader = createSaveSectionsReader(validatedContent);
     const presenter = new GlobalProgressionPresenter();
-    const useCase = new LoadGlobalProgressionSection(saveParser, presenter);
+    const useCase = new LoadGlobalProgressionSection(saveReader, presenter);
 
     await useCase.execute();
 
     return presenter.viewModel;
   }
 }
-
-

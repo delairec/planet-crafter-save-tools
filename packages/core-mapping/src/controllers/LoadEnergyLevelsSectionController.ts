@@ -1,15 +1,14 @@
-import {SaveSections} from "../domain/save/SaveSections";
 import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsViewModel";
-import {SaveSectionsReaderService} from "../infrastructure/SaveSectionsReaderService";
+import {createSaveSectionsReader} from "../composition/compositionRoot";
 import {EnergyLevelsPresenter} from "../presentation/EnergyLevelsPresenter";
 import {LoadEnergyLevelsSection} from "../application/LoadEnergyLevelsSection";
 
 export class LoadEnergyLevelsSectionController {
 
-  static async loadEnergyLevelsSection(sections: SaveSections): Promise<EnergyLevelsViewModel> {
-    const saveParser = new SaveSectionsReaderService(sections);
+  static async loadEnergyLevelsSection(validatedContent: string): Promise<EnergyLevelsViewModel> {
+    const saveReader = createSaveSectionsReader(validatedContent);
     const presenter = new EnergyLevelsPresenter();
-    const useCase = new LoadEnergyLevelsSection(saveParser, presenter);
+    const useCase = new LoadEnergyLevelsSection(saveReader, presenter);
 
     await useCase.execute();
 

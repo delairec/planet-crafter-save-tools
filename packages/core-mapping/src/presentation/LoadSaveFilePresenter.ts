@@ -1,7 +1,6 @@
 import {LoadAndValidateSaveFilePresenterPort} from "../application/ports/LoadAndValidateSaveFilePresenterPort";
 import {ValidationIssue} from "../application/ports/ValidationIssue";
 import {SaveParseError, SaveWarningCode} from "shared-save-processing/gameDefinitions";
-import {SaveSections} from "../domain/save/SaveSections";
 import {LoadSaveFileViewModel} from "./viewModels/LoadSaveFileViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatErrorLocation} from "./formatErrorLocation";
@@ -11,7 +10,7 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
   private _viewModel: LoadSaveFileViewModel;
 
   constructor() {
-    this._viewModel = {status: 'idle', sections: null, errors: [], warnings: []};
+    this._viewModel = {status: 'idle', errors: [], warnings: []};
   }
 
   get viewModel(): LoadSaveFileViewModel {
@@ -21,7 +20,6 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
   presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarningCode[]): void {
     this._viewModel = {
       status: 'invalid',
-      sections: null,
       errors: errors.map(formatValidationError),
       warnings: warnings.map(formatSaveWarning)
     };
@@ -31,10 +29,9 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
    * The errors of a save that parsed name the line the parser could not read, so they reach the
    * screen located like the validation ones.
    */
-  presentLoadedSaveFile(sections: SaveSections, errors: SaveParseError[], warnings: SaveWarningCode[]): void {
+  presentLoadedSaveFile(errors: SaveParseError[], warnings: SaveWarningCode[]): void {
     this._viewModel = {
       status: 'valid',
-      sections,
       errors: errors.map(error => ({message: error.detail, location: formatErrorLocation(error)})),
       warnings: warnings.map(formatSaveWarning)
     };

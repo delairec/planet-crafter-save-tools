@@ -6,14 +6,13 @@ import {LoadSaveFileViewModel} from '../presentation/viewModels/LoadSaveFileView
 describe('LoadAndValidateSaveFileController', () => {
 
   describe('When the file name has an invalid extension', () => {
-    it('should return an invalid view model without sections', async () => {
+    it('should return an invalid view model', async () => {
       // Act
       const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile('Save-A.txt', createFakeSaveContent());
 
       // Assert
       expect<LoadSaveFileViewModel>(viewModel).toEqual({
         status: 'invalid',
-        sections: null,
         errors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
         warnings: []
       });
@@ -21,13 +20,12 @@ describe('LoadAndValidateSaveFileController', () => {
   });
 
   describe('When the file name has a valid extension and the content is a valid save', () => {
-    it('should return a valid view model with the parsed sections', async () => {
+    it('should return a valid view model', async () => {
       // Act
       const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile('Save-A.json', createFakeSaveContent());
 
       // Assert
-      expect<LoadSaveFileViewModel>(viewModel).toMatchObject({status: 'valid', errors: [], warnings: []});
-      expect(viewModel.sections).not.toBeNull();
+      expect<LoadSaveFileViewModel>(viewModel).toEqual({status: 'valid', errors: [], warnings: []});
     });
   });
 
@@ -39,7 +37,6 @@ describe('LoadAndValidateSaveFileController', () => {
       // Assert
       expect<LoadSaveFileViewModel>(viewModel).toEqual({
         status: 'invalid',
-        sections: null,
         errors: [{message: 'Expected 11 sections but found 1', location: null}],
         warnings: []
       });
@@ -52,7 +49,7 @@ describe('LoadAndValidateSaveFileController', () => {
       const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile('Save-A.json', createLegacyFakeSaveContent());
 
       // Assert
-      expect<LoadSaveFileViewModel>(viewModel).toMatchObject({
+      expect<LoadSaveFileViewModel>(viewModel).toEqual({
         status: 'valid',
         errors: [],
         warnings: [{

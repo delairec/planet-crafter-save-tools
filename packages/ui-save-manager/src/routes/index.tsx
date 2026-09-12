@@ -31,7 +31,7 @@ export default function Home() {
 
   const {
     file,
-    sections,
+    validatedContent,
     errors,
     warnings,
     mergeResult,
@@ -42,7 +42,7 @@ export default function Home() {
     handleMergeStarted,
     handleSubmitMerge
   } = useLoadSaveFile();
-  const viewModels = useSectionViewModels(sections);
+  const viewModels = useSectionViewModels(validatedContent);
 
   const handleMergeResult: typeof handleSubmitMerge = (result) => {
     handleSubmitMerge(result);
@@ -71,7 +71,7 @@ export default function Home() {
 
         <h2>{displayRouteVisualizationTitle}</h2>
 
-        <Show when={!errors().length && !sections() && !mergeResult()}>
+        <Show when={!errors().length && !validatedContent() && !mergeResult()}>
           <p class="text-color-muted">{displayRouteParsedDataPlaceholder}</p>
         </Show>
 
@@ -87,7 +87,7 @@ export default function Home() {
           <ValidationMessagesList title={displayRouteWarningsTitle} severity="warning" messages={warnings()}/>
         </Show>
 
-        <Show when={sections() && !errors().length}>
+        <Show when={validatedContent() && !errors().length}>
           <div class="grid-container">
             <SaveConfigurationSection viewModel={viewModels.saveConfiguration}/>
             <GlobalProgressionSection viewModel={viewModels.globalProgression}/>

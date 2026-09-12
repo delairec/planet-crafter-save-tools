@@ -159,7 +159,7 @@ OPEN_QUESTION FormeDuContratControleurVersUi
 	DESC "recommandation : les controleurs de section recoivent le contenu texte deja valide et le"
 		+ "composition root fabrique lecteur et analyseur ; l'alternative est un identifiant opaque"
 		+ "de save chargee porte par le ViewModel"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	BLOCKS @TASK.T32_ConformiteUiSaveManager
 	RATIONALE "mesure prealable de T13 : l'analyse coute 2 ms sur 2 Mo, donc la refaire par"

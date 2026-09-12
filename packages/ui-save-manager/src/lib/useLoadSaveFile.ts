@@ -2,12 +2,11 @@ import {Accessor, createSignal, JSX} from 'solid-js';
 import {LoadAndValidateSaveFileController} from "core-mapping/controllers/LoadAndValidateSaveFileController";
 import {MergeResultViewModel} from "core-mapping/presentation/viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
-import {LoadSaveFileViewModel} from "core-mapping/presentation/viewModels/LoadSaveFileViewModel";
 import {yieldToPaint} from "./yieldToPaint";
 
 export interface LoadSaveFile {
   file: Accessor<File | null>;
-  sections: Accessor<LoadSaveFileViewModel['sections']>;
+  validatedContent: Accessor<string | null>;
   errors: Accessor<SaveValidationMessageViewModel[]>;
   warnings: Accessor<SaveValidationMessageViewModel[]>;
   mergeResult: Accessor<MergeResultViewModel | null>;
@@ -21,7 +20,7 @@ export interface LoadSaveFile {
 
 export function useLoadSaveFile(): LoadSaveFile {
   const [file, setFile] = createSignal<File | null>(null);
-  const [sections, setSections] = createSignal<LoadSaveFileViewModel['sections']>(null);
+  const [validatedContent, setValidatedContent] = createSignal<string | null>(null);
   const [errors, setErrors] = createSignal<SaveValidationMessageViewModel[]>([]);
   const [warnings, setWarnings] = createSignal<SaveValidationMessageViewModel[]>([]);
   const [mergeResult, setMergeResult] = createSignal<MergeResultViewModel | null>(null);
@@ -31,7 +30,7 @@ export function useLoadSaveFile(): LoadSaveFile {
   const resetDisplayFields = () => {
     setErrors([]);
     setWarnings([]);
-    setSections(null);
+    setValidatedContent(null);
     setMergeResult(null);
     setHasLoadCallFailed(false);
   };
@@ -56,7 +55,7 @@ export function useLoadSaveFile(): LoadSaveFile {
       const content = await selectedFile.text();
       const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile(selectedFile.name, content);
 
-      setSections(viewModel.sections);
+      setValidatedContent(viewModel.status === 'valid' ? content : null);
       setErrors(viewModel.errors);
       setWarnings(viewModel.warnings);
     } catch (error) {
@@ -75,7 +74,7 @@ export function useLoadSaveFile(): LoadSaveFile {
 
   return {
     file,
-    sections,
+    validatedContent,
     errors,
     warnings,
     mergeResult,
