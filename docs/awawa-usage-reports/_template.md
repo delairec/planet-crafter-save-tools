@@ -68,11 +68,16 @@ Delivered: <one line on what the PR changed>.
 ## Recurring points
 
 <!--
-Every point a previous report raised, in its "What went wrong" tables or its own recurring-points
-section, that this PR's evidence shows again. Read all previous reports of this folder, not the last
-one only. "Times seen" counts the reports in which the point appears, this one included: the count of
-the previous report plus one. A count of 3 or more is flagged: the remediation was not done or does
-not work, and the report says which.
+Read all previous reports of this folder, not the last one only. "Times seen" counts the reports in
+which the point appears, this one included: the count of the previous report plus one.
+-->
+
+### Recurring pain points
+
+<!--
+Every point a previous report raised in its "What went wrong" tables or in this subsection, that
+this PR's evidence shows again. A count of 3 or more is flagged: the remediation was not done or
+does not work, and the report says which.
 -->
 
 | Point | Times seen | First raised in | Seen again here | Remediation proposed then | Done? |
@@ -80,6 +85,20 @@ not work, and the report says which.
 | | <n> | `<file>.md`, part <A/B> | <evidence> | | yes / no / partly |
 
 Raised before and not seen again, closed by observation: <one line per point, or "none">.
+
+### Recurring strengths
+
+<!--
+Every mechanism a previous report listed in its "What went well" tables or in this subsection, that
+this PR's evidence shows holding again. A count of 3 or more says the mechanism is established: it
+can leave the "What went well" tables of the next reports and stay here.
+-->
+
+| Mechanism | Times seen | First noted in | Held again here |
+|---|---|---|---|
+| | <n> | `<file>.md`, part <A/B> | <evidence> |
+
+Noted before and not seen holding here: <one line per mechanism, or "none">.
 
 ## Follow-up on the previous report's remediations
 
