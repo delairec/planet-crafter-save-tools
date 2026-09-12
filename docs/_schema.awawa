@@ -12,11 +12,16 @@ PROJECT PlanetCrafterSaveTools
 	DESC "outils de fusion et de validation de sauvegardes du jeu The Planet Crafter"
 	DESC "monorepo Bun, packages prefixes par leur couche, UI SolidStart"
 
+SHAPE nom_borne
+	DESC "un segment de nom d'au plus soixante-quatre caracteres ; la casse n'est pas imposee"
+	MATCH ".{1,64}"
+
 SCHEMA PROJECT
 	DESC "configuration de niveau projet, exactement une par corpus"
 
 SCHEMA *
 	DESC "champs licites sur toute entite de ce corpus"
+	NAME nom_borne
 	FIELD DESC string
 		REPEATABLE
 		FIELD REF reference
@@ -73,5 +78,11 @@ SCHEMA OPEN_QUESTION
 		REPEATABLE
 		DESC "ce que ce point empeche ou fragilise ; l'arete inverse est calculee"
 		CONVERSE BLOCKED_BY
+	FIELD PROPOSED string
+		DESC "la recommandation de qui a ouvert le point ; approuvee par la seule DECISION qui la"
+			+ "reprend, jamais par sa presence ici"
+		FIELD REF reference
+			REPEATABLE
+			DESC "l'entite que la recommandation nomme"
 	WHEN STATUS superseded
 		INCOMING CLOSED_BY

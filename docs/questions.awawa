@@ -115,16 +115,16 @@ OPEN_QUESTION LaPolitiqueDeContenuAutoriseLeScriptEnLigne
 
 OPEN_QUESTION FormeDesErreursDeRegleDomaine
 	DESC "sous quel type validateUniqueHost et validateFloatSerialization rendent-elles leur echec"
-	DESC "recommandation : un type du domaine, que l'infrastructure traduit en issue de validation"
-		+ "avec son code ; les codes restent en application, sans celui que le domaine decide"
+	PROPOSED "un type du domaine, que l'infrastructure traduit en issue de validation avec son code"
+		+ "; les codes restent en application, sans celui que le domaine decide"
 	STATUS specified
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	SOURCE "fiche T37, decision 1"
 
 OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
 	DESC "la verification du suffixe .0 reste-t-elle une regle de domaine"
-	DESC "recommandation : non, elle sort vers l'infrastructure, a cote des schemas — la propriete"
-		+ "est celle du texte"
+	PROPOSED "non, elle sort vers l'infrastructure, a cote des schemas — la propriete est celle du"
+		+ "texte"
 	STATUS specified
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "l'alternative, une regle de domaine recevant des entrees analysees et verifiant"
@@ -135,8 +135,8 @@ OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
 OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
 	DESC "le domaine garde-t-il les chaines d'identifiants separees par des virgules, ou les"
 		+ "recoit-il decodees"
-	DESC "recommandation : decodage en infrastructure avant le domaine et re-encodage apres, une"
-		+ "seule declaration du separateur"
+	PROPOSED "decodage en infrastructure avant le domaine et re-encodage apres, une seule"
+		+ "declaration du separateur"
 	STATUS specified
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T11 a tranche que les DTO wire restent l'entree et la sortie du domaine ; elle n'a"
@@ -146,8 +146,8 @@ OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
 
 OPEN_QUESTION SortDeMergedSaveValueObject
 	DESC "MergedSaveValueObject est-il supprime ou renomme en type d'infrastructure"
-	DESC "recommandation : supprime ; le port de fusion retourne les sections fusionnees et la"
-		+ "serialisation comme le nommage du fichier restent en infrastructure"
+	PROPOSED "supprime ; le port de fusion retourne les sections fusionnees et la serialisation"
+		+ "comme le nommage du fichier restent en infrastructure"
 	STATUS specified
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T27 a deja note que son invariant est vide : la seule erreur de domaine atteignable"
@@ -156,9 +156,9 @@ OPEN_QUESTION SortDeMergedSaveValueObject
 
 OPEN_QUESTION FormeDuContratControleurVersUi
 	DESC "comment l'UI cesse-t-elle de connaitre la representation de persistance des sections"
-	DESC "recommandation : les controleurs de section recoivent le contenu texte deja valide et le"
-		+ "composition root fabrique lecteur et analyseur ; l'alternative est un identifiant opaque"
-		+ "de save chargee porte par le ViewModel"
+	PROPOSED "les controleurs de section recoivent le contenu texte deja valide et le composition"
+		+ "root fabrique lecteur et analyseur ; l'alternative est un identifiant opaque de save"
+		+ "chargee porte par le ViewModel"
 	STATUS specified
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	BLOCKS @TASK.T32_ConformiteUiSaveManager
@@ -169,8 +169,7 @@ OPEN_QUESTION FormeDuContratControleurVersUi
 OPEN_QUESTION SortDesCleusDupliqueesDeWorldObjectLabels
 	DESC "que faire des deux definitions de OutsideLamp1 et de la paire Keycard1 / KeyCard1,"
 		+ "probablement la meme cle"
-	DESC "recommandation : conserver la premiere occurrence et verifier la casse contre les saves"
-		+ "de reference"
+	PROPOSED "conserver la premiere occurrence et verifier la casse contre les saves de reference"
 	STATUS specified
 	BLOCKS @TASK.T38_ConformiteCoreMapping
 	SOURCE "fiche T38, decision 2"
@@ -198,8 +197,23 @@ OPEN_QUESTION CommentObtenirAwawaSurUnRunner
 OPEN_QUESTION OuVitLaMatiereDUneDecision
 	DESC "quel champ accueille la matiere normative d'une DECISION une fois que son DESC redevient"
 		+ "un fragment"
-	DESC "recommandation : SPEC quand l'obligation est falsifiable, sinon un champ DECIDES declare"
-		+ "sur DECISION, sans CATEGORY reasoning pour rester dans les paquets"
+	PROPOSED "SPEC quand l'obligation est falsifiable, sinon un champ DECIDES declare sur DECISION,"
+		+ "sans CATEGORY reasoning pour rester dans les paquets"
 	STATUS specified
 	BLOCKS @TASK.AWA5_LeCorpsDUneDecisionQuitteLeDesc
 	SOURCE "constate le 2026-09-12, audit du schema"
+
+OPEN_QUESTION LePerimetreDeLaTraductionDuCorpus
+	DESC "les noms d'entites, francais en PascalCase, sont-ils traduits, et AGENTS.md suit-il le"
+		+ "corpus vers l'anglais"
+	DESC "un renommage passe par fmt --rename, qui ne suit ni AGENTS.md, ni les skills, ni les"
+		+ "messages de commit qui citent le nom"
+	PROPOSED "les types produit naissent avec des noms anglais et les noms existants restent ;"
+		+ "AGENTS.md reste en francais tant qu'il n'est relu que par un seul lecteur"
+	STATUS specified
+	BLOCKS @TASK.AWA10_LeCorpusPasseEnAnglais
+	RATIONALE "la decision remplacee couplait le corpus et AGENTS.md parce qu'ils se lisent"
+		+ "ensemble ; ce qui a change ne vaut que pour le corpus, devenu le domicile des regles du"
+		+ "produit"
+		REF @DECISION.LeCorpusEstEcritEnAnglais
+	SOURCE "constate le 2026-09-12, revue du schema avec la PR #64"
