@@ -227,9 +227,12 @@ OPEN_QUESTION UneRecommandationEstExamineeAvantDEtreProposeeALaRatification
 		+ "ouvertes contre le code et contre les decisions enregistrees avant d'en proposer la"
 		+ "ratification"
 	DESC "constat : sur les cinq recommandations qui bloquaient la tache, deux etaient defectueuses"
-		+ "— l'une n'etait pas implementable telle qu'ecrite, l'autre contredisait une decision en"
-		+ "vigueur — et l'option proposee en premier a l'utilisateur etait de les ratifier en bloc"
+		+ "— l'une etait sous-optimale, implementable seulement au prix d'un second port de"
+		+ "serialisation et ecartee a l'examen, l'autre contredisait une decision en vigueur — et"
+		+ "l'option proposee en premier a l'utilisateur etait de les ratifier en bloc"
 		REF @TASK.T37_FrontieresCleanArchitectureCoreMapping
+		REF @DECISION.LArtefactDuFichierFusionneNEstPasUnObjetDuDomaine
+		REF @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 	DESC "destination proposee si elle est generale : la section Always de ~/.ai/CLAUDE.md, a cote"
 		+ "de la regle qui veut qu'une decision prise avec l'utilisateur soit enregistree"
 	STATUS superseded
