@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {createIdSequence} from './createIdSequence';
-import {InventoryEntry} from './InventoryEntry';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 describe('Create id sequence', () => {
 

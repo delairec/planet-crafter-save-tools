@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'bun:test';
 import {mergeWorldObjects} from './mergeWorldObjects';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 describe('Merge world objects', () => {
   const noOrphanWorldObjectIds = new Set<number>();

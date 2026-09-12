@@ -1,5 +1,5 @@
-import {InventoryEntry} from './InventoryEntry';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 /**
  * Source of the identifiers handed to the entries renumbered during conflict resolution.

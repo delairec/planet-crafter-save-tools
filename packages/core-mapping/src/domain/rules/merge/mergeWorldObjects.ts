@@ -1,5 +1,5 @@
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 /**
  * @see GR-WO-1, GR-WO-2, GR-WO-3, GR-WO-4 in docs/game-rules.md

@@ -1,5 +1,5 @@
 import {Player} from 'shared-save-processing/gameDefinitions';
-import {InventoryEntry} from './InventoryEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
 
 export interface EjectedPlayerInventoryIds {
   orphanInventoryIds: Set<number>;

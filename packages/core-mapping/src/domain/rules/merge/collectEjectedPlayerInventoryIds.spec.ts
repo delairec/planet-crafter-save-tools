@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {Player} from 'shared-save-processing/gameDefinitions';
 import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
-import {InventoryEntry} from './InventoryEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
 
 describe('collectEjectedPlayerInventoryIds', () => {

@@ -1,8 +1,8 @@
 import {describe, expect, it} from 'bun:test';
 import {rewriteInventoryReferences, rewritePlayerReferences, rewriteWorldObjectReferences} from './rewriteReferences';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
-import {InventoryEntry} from './InventoryEntry';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 describe('Rewrite references', () => {
   const noRemapping = {inventoryIds: new Map<number, number>(), worldObjectIds: new Map<number, number>()};

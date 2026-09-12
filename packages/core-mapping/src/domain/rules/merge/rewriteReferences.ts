@@ -1,7 +1,7 @@
 import {Player} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {InventoryEntry} from './InventoryEntry';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 export interface IdRemappings {
   readonly inventoryIds: ReadonlyMap<number, number>;

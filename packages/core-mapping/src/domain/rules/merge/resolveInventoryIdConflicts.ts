@@ -1,7 +1,7 @@
 import {EntriesByOrigin} from './EntriesByOrigin';
 import {IdSequence} from './createIdSequence';
 import {ResolvedEntries} from './ResolvedEntries';
-import {InventoryEntry} from './InventoryEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
 
 /**
  * Gives a new identifier to every save B inventory whose identifier is already used in save A.

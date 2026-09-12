@@ -1,7 +1,7 @@
 import {EntriesByOrigin} from './EntriesByOrigin';
 import {IdSequence} from './createIdSequence';
 import {ResolvedEntries} from './ResolvedEntries';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 /**
  * Gives a new identifier to every save B world object whose identifier is already used in save A.

@@ -1,4 +1,4 @@
-import {SaveSections} from './SaveSections';
+import {SaveSections} from '../../save/SaveSections';
 
 const PRIME_PLANET_ID = 'Prime';
 

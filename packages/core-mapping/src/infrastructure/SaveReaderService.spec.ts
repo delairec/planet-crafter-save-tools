@@ -1,19 +1,19 @@
 import {describe, expect, it} from 'bun:test';
-import {MergeSourceReaderService} from './MergeSourceReaderService';
+import {SaveReaderService} from './SaveReaderService';
 import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {createFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 import {createEquipment, createInventory, createPlayer, createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 import {SaveParseError} from 'shared-save-processing/gameDefinitions';
-import {InventoryEntry} from '../domain/rules/merge/InventoryEntry';
-import {WorldObjectEntry} from '../domain/rules/merge/WorldObjectEntry';
+import {InventoryEntry} from '../domain/save/InventoryEntry';
+import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 
-describe('MergeSourceReaderService', () => {
+describe('SaveReaderService', () => {
 
   describe('When reading a save whose lines are all readable', () => {
     it('should hand over the inventories with their world object identifiers as numbers', () => {
       // Arrange
-      const service = new MergeSourceReaderService();
+      const service = new SaveReaderService();
       const content = createFakeSaveString({
         inventories: [createInventory({id: 10, woIds: '100,101', size: 20}), createEquipment({id: 11, woIds: '', size: 10})]
       });
@@ -30,7 +30,7 @@ describe('MergeSourceReaderService', () => {
 
     it('should hand over the world objects with their identifier lists as numbers and their absent lists still absent', () => {
       // Arrange
-      const service = new MergeSourceReaderService();
+      const service = new SaveReaderService();
       const content = createFakeSaveString({
         worldObjects: [
           createWorldObject({id: 100, gId: 'Farm1', siIds: '10,11', woIds: '200'}),
@@ -50,7 +50,7 @@ describe('MergeSourceReaderService', () => {
 
     it('should hand over the other sections as the save carries them', () => {
       // Arrange
-      const service = new MergeSourceReaderService();
+      const service = new SaveReaderService();
       const player = createPlayer({id: '76561190000000001', name: 'Nikowa'});
       const saveConfiguration = createSaveConfiguration({saveDisplayName: 'Save A'});
       const content = createFakeSaveString({players: [player], saveConfiguration});
@@ -68,7 +68,7 @@ describe('MergeSourceReaderService', () => {
   describe('When a save carries a line that cannot be read', () => {
     it('should report the unreadable line rather than drop it silently', () => {
       // Arrange
-      const service = new MergeSourceReaderService();
+      const service = new SaveReaderService();
       const unreadableInventory = createEquipment({id: 45, woIds: '', size: 20});
       const content = createFakeSaveContent({inventories: [unreadableInventory]})
         .replace(JSON.stringify(unreadableInventory), '{not valid json');
@@ -82,7 +82,7 @@ describe('MergeSourceReaderService', () => {
 
     it('should report the unreadable line as soon as the save is read, even when it is a world object', () => {
       // Arrange
-      const service = new MergeSourceReaderService();
+      const service = new SaveReaderService();
       const unreadableWorldObject = createWorldObject({id: 79111656, gId: 'Phytoplankton3'});
       const content = createFakeSaveContent()
         .replace(stringifyEntry(unreadableWorldObject), '{not valid json');

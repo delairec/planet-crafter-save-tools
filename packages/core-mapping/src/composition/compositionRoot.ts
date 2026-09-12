@@ -1,22 +1,22 @@
 import {SaveValidatorService} from "../infrastructure/SaveValidatorService";
-import {MergeSourceReaderService} from "../infrastructure/MergeSourceReaderService";
-import {MergedSaveSerializerService} from "../infrastructure/MergedSaveSerializerService";
+import {SaveReaderService} from "../infrastructure/SaveReaderService";
+import {SaveSerializerService} from "../infrastructure/SaveSerializerService";
 import {SaveSectionsParserService} from "../infrastructure/SaveSectionsParserService";
 import {SaveValidatorPort} from "../application/ports/SaveValidatorPort";
-import {MergeSourceReaderPort} from "../application/ports/MergeSourceReaderPort";
-import {MergedSaveSerializerPort} from "../application/ports/MergedSaveSerializerPort";
+import {SaveReaderPort} from "../application/ports/SaveReaderPort";
+import {SaveSerializerPort} from "../application/ports/SaveSerializerPort";
 import {SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
 
 export function createSaveValidator(): SaveValidatorPort {
   return new SaveValidatorService();
 }
 
-export function createMergeSourceReader(): MergeSourceReaderPort {
-  return new MergeSourceReaderService();
+export function createSaveReader(): SaveReaderPort {
+  return new SaveReaderService();
 }
 
-export function createMergedSaveSerializer(): MergedSaveSerializerPort {
-  return new MergedSaveSerializerService();
+export function createSaveSerializer(): SaveSerializerPort {
+  return new SaveSerializerService();
 }
 
 export function createSaveSectionsParser(): SaveSectionsParserPort {

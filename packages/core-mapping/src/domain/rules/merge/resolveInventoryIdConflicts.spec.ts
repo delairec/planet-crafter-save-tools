@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {resolveInventoryIdConflicts} from './resolveInventoryIdConflicts';
 import {createIdSequence} from './createIdSequence';
-import {InventoryEntry} from './InventoryEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
 
 describe('Resolve inventory id conflicts', () => {
   const inventoryOfSaveA: InventoryEntry = {id: 10, woIds: [], size: 20};

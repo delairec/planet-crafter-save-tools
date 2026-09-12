@@ -11,7 +11,7 @@ import {mergeWorldEvents} from './mergeWorldEvents';
 import {determineSaveOrder} from './determineSaveOrder';
 import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
 import {MergedSaveSections} from './MergedSaveSections';
-import {SaveSections} from './SaveSections';
+import {SaveSections} from '../../save/SaveSections';
 
 /**
  * Merges two Planet Crafter saves section by section.

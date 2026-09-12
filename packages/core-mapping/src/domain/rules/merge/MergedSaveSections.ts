@@ -9,8 +9,8 @@ import {
   WorldEvent
 } from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {InventoryEntry} from './InventoryEntry';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 /**
  * The ten sections of a save once merged, still structured: serialization happens in

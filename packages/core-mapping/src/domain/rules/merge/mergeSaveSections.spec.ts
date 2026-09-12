@@ -2,8 +2,8 @@ import {describe, expect, it} from 'bun:test';
 import {mergeSaveSections} from './mergeSaveSections';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
 import {createSaveSections} from '../../../testing/createSaveSections';
-import {InventoryEntry} from './InventoryEntry';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 describe('Merge saves', () => {
     const saveDisplayName = 'SAVE_NAME';

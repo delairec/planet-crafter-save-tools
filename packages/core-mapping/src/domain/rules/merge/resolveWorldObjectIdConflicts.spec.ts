@@ -2,8 +2,8 @@ import {describe, expect, it} from 'bun:test';
 import {resolveWorldObjectIdConflicts} from './resolveWorldObjectIdConflicts';
 import {createIdSequence} from './createIdSequence';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {InventoryEntry} from './InventoryEntry';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {InventoryEntry} from '../../save/InventoryEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 describe('Resolve world object id conflicts', () => {
   const anInventory: InventoryEntry = {id: 10, woIds: [], size: 20};

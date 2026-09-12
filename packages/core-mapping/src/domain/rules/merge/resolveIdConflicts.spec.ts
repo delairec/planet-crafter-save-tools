@@ -3,9 +3,9 @@ import {resolveIdConflicts} from './resolveIdConflicts';
 import {MergedSaveSections} from './MergedSaveSections';
 import {Player} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {createGlobalMetadata, createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
-import {InventoryEntry} from './InventoryEntry';
-import {WorldObjectEntry} from './WorldObjectEntry';
+import {createGlobalMetadata, createPlayer, createSaveConfiguration, createStatistics} from 'shared-save-processing/testing/createSaveRecords.js';
+import {InventoryEntry} from '../../save/InventoryEntry';
+import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 describe('Resolve id conflicts', () => {
   function createMergedSections(overrides: {
@@ -46,15 +46,12 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.players).toEqual({fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]});
-      expect(result.inventories).toEqual({
-        fromSaveA: [{id: 10, woIds: [100], size: 20}, {id: 11, woIds: [], size: 10}],
-        fromSaveB: [{id: 20, woIds: [], size: 20}, {id: 21, woIds: [], size: 10}]
-      });
-      expect(result.worldObjects).toEqual({
-        fromSaveA: [{id: 100, gId: 'SomeObject'}],
-        fromSaveB: [{id: 200, gId: 'OtherObject'}]
-      });
+      expect(result.players).toEqual([playerFromSaveA, playerFromSaveB]);
+      expect(result.inventories).toEqual([
+        {id: 10, woIds: [100], size: 20}, {id: 11, woIds: [], size: 10},
+        {id: 20, woIds: [], size: 20}, {id: 21, woIds: [], size: 10}
+      ]);
+      expect(result.worldObjects).toEqual([{id: 100, gId: 'SomeObject'}, {id: 200, gId: 'OtherObject'}]);
     });
   });
 
@@ -76,25 +73,20 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.players).toEqual({
-        fromSaveA: [playerFromSaveA],
-        fromSaveB: [{...playerFromSaveB, inventoryId: 101, equipmentId: 102}]
-      });
-      expect(result.inventories).toEqual({
-        fromSaveA: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}],
-        fromSaveB: [{id: 101, woIds: [], size: 35}, {id: 102, woIds: [], size: 5}]
-      });
-      expect(result.worldObjects).toEqual({
-        fromSaveA: [{id: 100, gId: 'SomeObject'}],
-        fromSaveB: [{id: 103, gId: 'OtherObject'}]
-      });
+      expect(result.players).toEqual([playerFromSaveA, {...playerFromSaveB, inventoryId: 101, equipmentId: 102}]);
+      expect(result.inventories).toEqual([
+        {id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10},
+        {id: 101, woIds: [], size: 35}, {id: 102, woIds: [], size: 5}
+      ]);
+      expect(result.worldObjects).toEqual([{id: 100, gId: 'SomeObject'}, {id: 103, gId: 'OtherObject'}]);
     });
 
     it('should point the save B player at its own renumbered inventory and equipment', () => {
       // Arrange
       const playerFromSaveB = createPlayer({id: '2', name: 'Chileny', inventoryId: 10, equipmentId: 11});
+      const playerFromSaveA = createPlayer({id: '1', inventoryId: 10, equipmentId: 11});
       const sections = createMergedSections({
-        players: {fromSaveA: [createPlayer({id: '1', inventoryId: 10, equipmentId: 11})], fromSaveB: [playerFromSaveB]},
+        players: {fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]},
         inventories: {
           fromSaveA: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}],
           fromSaveB: [{id: 10, woIds: [], size: 35}, {id: 11, woIds: [], size: 5}]
@@ -105,7 +97,7 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.players.fromSaveB).toEqual([{...playerFromSaveB, inventoryId: 12, equipmentId: 13}]);
+      expect(result.players).toEqual([playerFromSaveA, {...playerFromSaveB, inventoryId: 12, equipmentId: 13}]);
     });
   });
 
@@ -126,7 +118,7 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.players).toEqual({fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]});
+      expect(result.players).toEqual([playerFromSaveA, playerFromSaveB]);
     });
   });
 
@@ -134,8 +126,9 @@ describe('Resolve id conflicts', () => {
     it('should point that player at its own renumbered inventory rather than at the save A one', () => {
       // Arrange
       const playerFromSaveB = createPlayer({id: '2', name: 'Chileny', inventoryId: 44, equipmentId: 45});
+      const playerFromSaveA = createPlayer({id: '1', inventoryId: 3, equipmentId: 4});
       const sections = createMergedSections({
-        players: {fromSaveA: [createPlayer({id: '1', inventoryId: 3, equipmentId: 4})], fromSaveB: [playerFromSaveB]},
+        players: {fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]},
         inventories: {
           fromSaveA: [{id: 3, woIds: [], size: 20}, {id: 4, woIds: [], size: 10}, {id: 44, woIds: [], size: 35}, {id: 45, woIds: [], size: 35}],
           fromSaveB: [{id: 44, woIds: [], size: 20}, {id: 45, woIds: [], size: 10}]
@@ -146,8 +139,11 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.players.fromSaveB).toEqual([{...playerFromSaveB, inventoryId: 46, equipmentId: 47}]);
-      expect(result.inventories.fromSaveB).toEqual([{id: 46, woIds: [], size: 20}, {id: 47, woIds: [], size: 10}]);
+      expect(result.players).toEqual([playerFromSaveA, {...playerFromSaveB, inventoryId: 46, equipmentId: 47}]);
+      expect(result.inventories).toEqual([
+        {id: 3, woIds: [], size: 20}, {id: 4, woIds: [], size: 10}, {id: 44, woIds: [], size: 35}, {id: 45, woIds: [], size: 35},
+        {id: 46, woIds: [], size: 20}, {id: 47, woIds: [], size: 10}
+      ]);
     });
   });
 
@@ -170,11 +166,11 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.worldObjects).toEqual({
-        fromSaveA: [{id: 100, gId: 'Container2', liId: 50}],
-        fromSaveB: [{id: 200, gId: 'Container2', liId: 201}]
-      });
-      expect(result.inventories.fromSaveB).toEqual([{id: 201, woIds: [200], size: 12}]);
+      expect(result.worldObjects).toEqual([{id: 100, gId: 'Container2', liId: 50}, {id: 200, gId: 'Container2', liId: 201}]);
+      expect(result.inventories).toEqual([
+        {id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}, {id: 50, woIds: [100], size: 35},
+        {id: 201, woIds: [200], size: 12}
+      ]);
     });
   });
 
@@ -196,11 +192,8 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.inventories).toEqual({
-        fromSaveA: [{id: 30, woIds: [100], size: 50}],
-        fromSaveB: [{id: 31, woIds: [101], size: 50}]
-      });
-      expect(result.worldObjects.fromSaveB).toEqual([{id: 101, gId: 'Cobalt'}]);
+      expect(result.inventories).toEqual([{id: 30, woIds: [100], size: 50}, {id: 31, woIds: [101], size: 50}]);
+      expect(result.worldObjects).toEqual([{id: 100, gId: 'Iron'}, {id: 101, gId: 'Cobalt'}]);
     });
   });
 
@@ -219,8 +212,8 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.inventories.fromSaveB).toEqual([{id: 12, woIds: [], size: 35}]);
-      expect(result.worldObjects.fromSaveA).toEqual([{id: 11, gId: 'Iron'}]);
+      expect(result.inventories).toEqual([{id: 10, woIds: [], size: 20}, {id: 12, woIds: [], size: 35}]);
+      expect(result.worldObjects).toEqual([{id: 11, gId: 'Iron'}]);
     });
   });
 
@@ -238,10 +231,43 @@ describe('Resolve id conflicts', () => {
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.worldObjects.fromSaveB).toEqual([
+      expect(result.worldObjects).toEqual([
+        {id: 100, gId: 'Lake1'},
         {id: 202, gId: 'Lake2'},
         {id: 201, gId: 'WaterGenerator', linkedWo: 202}
       ]);
+    });
+  });
+
+  describe('When the merged sections carry statistics and a save configuration', () => {
+    it('should yield a save whose single-entry sections hold that entry', () => {
+      // Arrange
+      const globalMetadata = createGlobalMetadata({terraTokens: 42});
+      const statistics = createStatistics({craftedObjects: 7});
+      const saveConfiguration = createSaveConfiguration({saveDisplayName: 'Our merged world'});
+      const sections = {...createMergedSections({}), globalMetadata, statistics, saveConfiguration};
+
+      // Act
+      const result = resolveIdConflicts(sections);
+
+      // Assert
+      expect(result.globalMetadata).toEqual([globalMetadata]);
+      expect(result.statistics).toEqual([statistics]);
+      expect(result.saveConfigurations).toEqual([saveConfiguration]);
+    });
+  });
+
+  describe('When the merged sections carry neither statistics nor a save configuration', () => {
+    it('should yield a save whose single-entry sections are empty', () => {
+      // Arrange
+      const sections = createMergedSections({});
+
+      // Act
+      const result = resolveIdConflicts(sections);
+
+      // Assert
+      expect(result.statistics).toEqual([]);
+      expect(result.saveConfigurations).toEqual([]);
     });
   });
 });

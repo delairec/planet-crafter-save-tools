@@ -1,13 +1,13 @@
 import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
 import {parseIdList} from "shared-save-processing/idList.js";
 import {Inventory, ParsedSections, WorldObject} from "shared-save-processing/gameDefinitions";
-import {MergeSource, MergeSourceReaderPort} from "../application/ports/MergeSourceReaderPort";
-import {InventoryEntry} from "../domain/rules/merge/InventoryEntry";
-import {SaveSections} from "../domain/rules/merge/SaveSections";
-import {WorldObjectEntry} from "../domain/rules/merge/WorldObjectEntry";
+import {ReadSaveSections, SaveReaderPort} from "../application/ports/SaveReaderPort";
+import {InventoryEntry} from "../domain/save/InventoryEntry";
+import {SaveSections} from "../domain/save/SaveSections";
+import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
 
-export class MergeSourceReaderService implements MergeSourceReaderPort {
-  read(content: string): MergeSource {
+export class SaveReaderService implements SaveReaderPort {
+  read(content: string): ReadSaveSections {
     const {sections, errors} = parseSaveSections(content);
 
     return {sections: toSaveSections(sections), errors};
