@@ -55,7 +55,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
     this.globalMetadata = sections[GLOBAL_METADATA_SECTION_INDEX] ?? [];
     this.terraformationLevels = sections[TERRAFORMATION_LEVELS_SECTION_INDEX] ?? [];
     this.players = sections[PLAYERS_SECTION_INDEX] ?? [];
-    this.worldObjectsFactory = sections[WORLD_OBJECTS_SECTION_INDEX] ?? [];
+    this.worldObjectsFactory = sections[WORLD_OBJECTS_SECTION_INDEX];
     this.inventories = sections[INVENTORIES_SECTION_INDEX] ?? [];
     this.statistics = sections[STATISTICS_SECTION_INDEX] ?? [];
     this.saveConfiguration = sections[SAVE_CONFIGURATION_SECTION_INDEX] ?? [];
