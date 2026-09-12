@@ -217,3 +217,14 @@ OPEN_QUESTION LePerimetreDeLaTraductionDuCorpus
 		+ "produit"
 		REF @DECISION.LeCorpusEstEcritEnAnglais
 	SOURCE "constate le 2026-09-12, revue du schema avec la PR #64"
+
+OPEN_QUESTION CommentLeCorpusPorteLesSourcesExternes
+	DESC "sous quelle forme le corpus porte la provenance des donnees du jeu — wiki, saves de"
+		+ "reference, fichier de libelles — et ce que chaque source atteste ou non"
+	DESC "energy-levels.md la porte en prose et resources.md du depot prive en tient une autre part"
+		+ "; ni RULE ni SECTION n'ont de place pour elle"
+	PROPOSED "un type EXTERNAL, lu par les paquets et jamais valide par L004, une entite par"
+		+ "source, cite par REF depuis la RULE ou la DECISION qui s'y appuie"
+	STATUS specified
+	BLOCKS @TASK.AWA8_LeCorpusSpecifieLeProduit
+	SOURCE "constate le 2026-09-12, revue du schema avec la PR #64"
