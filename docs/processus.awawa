@@ -290,6 +290,28 @@ DECISION LeCorpsDeLaPrDecritLaTeteDeBranche
 		+ "passage entier"
 	SOURCE "constate le 2026-09-12, revue de DEP2, PR #61"
 
+DECISION LaRegleDuCorpsDePrEstGeneraleEtVaDansCommandsMd
+	DESC "la regle qui veut qu'un corps de PR decrive la tete de branche est generale et vit"
+		+ "desormais dans ~/.ai/instructions/commands.md"
+		REF @DECISION.LeCorpsDeLaPrDecritLaTeteDeBranche
+	DESC "elle s'y designe par son titre de section, « Git: the body of a pull request describes"
+		+ "the branch head », et par rien d'autre : commands.md ne porte aucun identifiant de regle"
+		+ "par construction, etant une procedure operationnelle jamais citee en revue"
+	DESC "ce qui reste propre au projet — quelle branche est la base en vigueur — ne voyage pas"
+		+ "avec la regle et garde son entite ici"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LaRegleDuCorpsDePrVautElleAuDelaDeCeDepot
+	RATIONALE "la regle n'enonce aucun fait propre a ce projet : elle repose sur la propriete de"
+		+ "pile de branches que commands.md suppose deja dans ses deux autres sections de git, et"
+		+ "le cout qu'elle evite est generique — un corps perime envoie la tache empilee rebaser"
+		+ "contre une conception qui n'existe plus, et rien ne le signale"
+	REJECTED "la garder specifique au projet : rien dans son enonce ne nomme ce depot"
+	REJECTED "lui attribuer un identifiant de regle : commands.md est hors du schema"
+		+ "d'identifiants, et en inventer un rendrait citable une reference qu'aucune revue ne"
+		+ "pourrait resoudre"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-12, fusion de DEP2, PR #61 ; promue par"
+		+ "delairec/.ai#14"
+
 DECISION UneDecisionRetireeNommeSaSuccesseure
 	DESC "SCHEMA * exige une arete entrante CLOSED_BY ou SUPERSEDED_BY sur toute entite superseded"
 		+ ": une decision retiree qui ne nomme pas ce qui la remplace tombe en L026"

@@ -181,7 +181,7 @@ OPEN_QUESTION LaRegleDuCorpsDePrVautElleAuDelaDeCeDepot
 		REF @DECISION.LeCorpsDeLaPrDecritLaTeteDeBranche
 	DESC "destination proposee si elle est generale : la section git de"
 		+ "~/.ai/instructions/commands.md"
-	STATUS specified
+	STATUS superseded
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
 	SOURCE "constate le 2026-09-12, revue de DEP2, PR #61"
