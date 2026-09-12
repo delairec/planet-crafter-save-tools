@@ -386,7 +386,7 @@ DECISION UnOctetDeControleBrutResteUnCasMarginalSansRegle
 		IMPL "packages/core-mapping/src/application/nameMergedFile.ts"
 	SOURCE "arbitrage de l'utilisateur du 2026-09-12, fusion de la PR #62"
 
-DECISION UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
+DECISION UnRapportDUsageIndependantEstEcritApresChaqueFusion
 	DESC "apres /awawa-pr-merged, /awawa-usage-report lance un agent sans memoire du travail juge,"
 		+ "Claude Fable 5.1 en effort medium, qui ecrit un rapport par PR fusionnee dans"
 		+ "docs/awawa-usage-reports/"
@@ -407,7 +407,7 @@ DECISION UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
 		IMPL "docs/awawa-usage-reports/_template.md"
 	SOURCE "decision du 2026-09-12, revue du premier rapport d'usage, PR #63"
 
-DECISION UneRecommandationEstExamineeAvantLaRatificationEstUneRegleGenerale
+DECISION LExamenDUneRecommandationAvantRatificationEstUneRegleGenerale
 	DESC "la regle est generale : elle vit dans la section Always de ~/.ai/AGENTS.md, a cote de la"
 		+ "regle d'enregistrement des decisions, livree par delairec/.ai PR #15"
 	DESC "une recommandation posee a cote d'une question ouverte n'est pas pre-approuvee : la"

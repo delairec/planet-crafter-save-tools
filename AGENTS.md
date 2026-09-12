@@ -234,7 +234,7 @@ moment où la décision est prise, et non à la fusion : une décision est une e
   promouvoir vers `~/.ai` les règles qui y vont, nettoyer worktree et branche.
 - **`/awawa-usage-report <N>`, après `/awawa-pr-merged`** : faire écrire par un agent indépendant, sans mémoire du
   travail jugé, le rapport de `docs/awawa-usage-reports/` mesurant ce que le corpus a coûté et rendu sur cette PR,
-  points récurrents compris (@DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante).
+  points récurrents compris (@DECISION.UnRapportDUsageIndependantEstEcritApresChaqueFusion).
 
 **Une règle apprise en revue qui pourrait aller dans `~/.ai` s'écrit en `OPEN_QUESTION`**, pas dans un commentaire :
 général ou spécifique au projet est ton arbitrage, et rien hors du corpus ne survit à la session qui l'a apprise.
