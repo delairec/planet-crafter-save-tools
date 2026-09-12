@@ -9,7 +9,7 @@ DECISION LesReglesDeFusionNOntQuUnDomicilePublic
 		+ "documentation publique"
 	DESC "le schema global du fichier de save est conserve comme description formelle du format,"
 		+ "bien qu'aucun code ne le consomme"
-	STATUS implemented
+	STATUS superseded
 	RATIONALE "c'est la duplication qui avait laisse le README affirmer une union des joueurs par"
 		+ "identifiant, des planetes communes non implementees et des statistiques reduites a un"
 		+ "seul champ"
@@ -17,6 +17,38 @@ DECISION LesReglesDeFusionNOntQuUnDomicilePublic
 	SPEC "le document des regles de jeu est la seule source publique des regles de fusion"
 		IMPL "docs/game-rules.md"
 	SOURCE "decision du 2026-09-07, T35"
+
+DECISION LeProduitEstSpecifieDansLeCorpus
+	DESC "les regles de fusion et de validation, le format de save et les parcours UI et CLI sont"
+		+ "des entites du corpus ; les documents markdown qui les portaient disparaissent et le"
+		+ "README renvoie au corpus"
+	DESC "trois types : RULE pour une regle, SECTION pour une section du format, USE_CASE pour un"
+		+ "parcours"
+	DESC "l'etiquette historique GR-X-n est un champ LABEL de la RULE, interrogeable par --where,"
+		+ "jamais un segment de nom"
+	STATUS specified
+	SUPERSEDES @DECISION.LesReglesDeFusionNOntQuUnDomicilePublic
+	RATIONALE "seize decisions de format-save, fusion et erreurs n'ont aucune entite a designer :"
+		+ "elles parlent d'un produit que le corpus ne represente pas"
+	RATIONALE "le document des regles de jeu est deja un corpus d'entites ecrit en markdown : 37"
+		+ "regles GR en douze familles, chacune avec cle de fusion, rationale et ancres"
+		+ "d'implementation ; ses dix-huit chemins existent le 2026-09-12 mais rien ne le verifie,"
+		+ "et le corpus ne l'ancre qu'en deux points, GR-ID-1 et GR-ID-7"
+	RATIONALE "un fait a un domicile : garder le markdown a cote des entites, c'est la duplication"
+		+ "que la decision remplacee avait supprimee entre le README et le document"
+	RATIONALE "consequence acceptee : le seul domicile des regles devient le corpus, qui passe en"
+		+ "anglais pour rester lisible aux contributeurs du depot public"
+		REF @DECISION.LeCorpusEstEcritEnAnglais
+	REJECTED "garder le markdown et n'y poser que des ancres depuis les decisions : deux domiciles"
+		+ "pour chaque regle"
+	REJECTED "un index markdown en anglais renvoyant a chaque RULE : une liste derivee tenue a la"
+		+ "main, que status RULE rend deja"
+	REJECTED "porter l'etiquette dans le nom comme task_name le fait : le tiret est illegal dans un"
+		+ "nom (L017, mesure sur awawa 2.7), et une regle se lit par ce qu'elle dit, pas par son"
+		+ "numero"
+	SPEC "aucun fichier markdown de docs/ ne porte une regle de fusion ni une section du format"
+	SPEC "le README renvoie au corpus pour les regles de fusion, sans les reenoncer"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-12, revue du schema avec la PR #64"
 
 DECISION LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
 	DESC "un nom d'objet du monde n'est conserve que s'il est atteste par le fichier de libelles"

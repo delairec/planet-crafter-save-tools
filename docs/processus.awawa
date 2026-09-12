@@ -122,7 +122,7 @@ DECISION LaSpecificationResteEnFrancaisMemePubliee
 	DESC "le reste du depot public reste en anglais : README, docs, commentaires de code, messages"
 		+ "de commit"
 	DESC "le depot prive reste integralement en francais"
-	STATUS implemented
+	STATUS superseded
 	RATIONALE "la regle generale, documentation publique commitee en anglais, vise ce qu'un lecteur"
 		+ "du depot lit ; ces deux fichiers sont des instructions d'agent, relues a chaque session"
 		+ "par un seul lecteur humain qui travaille en francais"
@@ -136,6 +136,23 @@ DECISION LaSpecificationResteEnFrancaisMemePubliee
 		IMPL "docs"
 		IMPL "AGENTS.md"
 	SOURCE "decision du 2026-09-12"
+
+DECISION LeCorpusEstEcritEnAnglais
+	DESC "le corpus est redige en anglais, comme le reste du depot public"
+	STATUS specified
+	SUPERSEDES @DECISION.LaSpecificationResteEnFrancaisMemePubliee
+	RATIONALE "ce qui a change : le corpus devient le seul domicile des regles de fusion et du"
+		+ "format de save, lus par des contributeurs qui n'ont ni awawa ni le francais ;"
+		+ "l'exception tenait a ce qu'un seul lecteur le relisait"
+		REF @DECISION.LeProduitEstSpecifieDansLeCorpus
+	RATIONALE "le sort des noms d'entites et d'AGENTS.md reste ouvert"
+		REF @OPEN_QUESTION.LePerimetreDeLaTraductionDuCorpus
+	REJECTED "ne traduire que les entites produit : un corpus bilingue, et une frontiere a tenir a"
+		+ "chaque entite"
+	REJECTED "garder le francais et laisser le README porter une version anglaise des regles : la"
+		+ "duplication que le corpus refuse"
+	SPEC "toute prose du corpus est en anglais"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-12, revue du schema avec la PR #64"
 
 DECISION AucunNomReelDansUnContenuPublic
 	DESC "aucun nom reel de joueur n'apparait dans un contenu public : corps et titre de PR,"
