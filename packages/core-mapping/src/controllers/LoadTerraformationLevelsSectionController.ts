@@ -2,10 +2,10 @@ import {TerraformationLevelsViewModel} from '../presentation/viewModels/Terrafor
 import {TerraformationLevelsPresenter} from '../presentation/TerraformationLevelsPresenter';
 import {LoadTerraformationLevelsSection} from '../application/LoadTerraformationLevelsSection';
 import {SaveSectionsReaderService} from '../infrastructure/SaveSectionsReaderService';
-import {ParsedSections} from "shared-save-processing/gameDefinitions";
+import {SaveSections} from "../domain/save/SaveSections";
 
 export class LoadTerraformationLevelsSectionController {
-  static async loadTerraformationLevelsSection(sections: ParsedSections): Promise<TerraformationLevelsViewModel> {
+  static async loadTerraformationLevelsSection(sections: SaveSections): Promise<TerraformationLevelsViewModel> {
     const saveParser = new SaveSectionsReaderService(sections);
     const presenter = new TerraformationLevelsPresenter();
     const useCase = new LoadTerraformationLevelsSection(saveParser, presenter);

@@ -111,3 +111,26 @@ DECISION UneRegleDeSchemaTientParLeSensAvantDeTenirParLaMesure
 		+ "la meta-schema draft-07 des dix schemas ; basculer les dix schemas et le validateur"
 		+ "serait une tache a elle seule"
 	SOURCE "decision du 2026-09-09, revue de T26 ; appliquee par T39, PR #48"
+
+DECISION LaSerialisationDesFlottantsSeVerifieEnInfrastructure
+	DESC "la verification du suffixe .0 vit en infrastructure, a cote de la validation des schemas"
+	DESC "elle garde son expression reguliere sur le texte de la save et attache elle-meme le code"
+		+ "d'issue"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.OuVerifierLaSerialisationDesFlottants
+	RATIONALE "le domaine ne serialise ni n'analyse le format, et les erreurs de serialisation se"
+		+ "rangent en infrastructure : un .0 manquant est un defaut d'ecriture, pas une violation"
+		+ "de regle metier"
+	RATIONALE "l'emission du suffixe et sa verification sont deux moments distincts : l'emission"
+		+ "reste champ par champ a la serialisation"
+		REF @DECISION.LeSuffixeDesFlottantsEstAppliqueALEmission
+	REJECTED "garder la regle au domaine en lui passant des entrees analysees : apres JSON.parse,"
+		+ "5.0 et 5 sont le meme double, elle ne verifierait plus rien"
+	REJECTED "deplacer la verification vers shared-save-processing, qui ne connait pas"
+		+ "ValidationIssue et n'a qu'un appelant"
+	SPEC "aucune regle du domaine ne lit le texte d'une save"
+		IMPL "packages/core-mapping/src/domain/rules"
+	SPEC "la verification du suffixe des flottants vit en infrastructure et y importe le code"
+		+ "d'issue depuis application"
+		IMPL "packages/core-mapping/src/infrastructure"
+	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A, PR #62"

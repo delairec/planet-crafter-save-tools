@@ -1,8 +1,10 @@
 import {MergedSaveSections} from './MergedSaveSections';
+import {SaveSections} from '../../save/SaveSections';
 import {createIdSequence} from './createIdSequence';
 import {resolveInventoryIdConflicts} from './resolveInventoryIdConflicts';
 import {resolveWorldObjectIdConflicts} from './resolveWorldObjectIdConflicts';
 import {rewriteInventoryReferences, rewritePlayerReferences, rewriteWorldObjectReferences} from './rewriteReferences';
+import {EntriesByOrigin} from './EntriesByOrigin';
 
 /**
  * Renumbers the save B inventories and world objects whose identifier is already used in save A,
@@ -12,11 +14,12 @@ import {rewriteInventoryReferences, rewritePlayerReferences, rewriteWorldObjectR
  * and which the game reuses from one save to the next, so a duplicate between the two saves is not
  * a conflict to resolve.
  *
- * Runs on the merged sections, as the last step before they are serialized.
+ * The origin of an entry has no consumer past this point, so the result is a save like any other:
+ * the entries of save A come first, those of save B follow.
  *
  * @see GR-ID-1, GR-ID-2, GR-ID-3, GR-ID-4, GR-ID-5 in docs/game-rules.md
  */
-export function resolveIdConflicts(mergedSections: MergedSaveSections): MergedSaveSections {
+export function resolveIdConflicts(mergedSections: MergedSaveSections): SaveSections {
   const idSequence = createIdSequence(
     [...mergedSections.inventories.fromSaveA, ...mergedSections.inventories.fromSaveB],
     [...mergedSections.worldObjects.fromSaveA, ...mergedSections.worldObjects.fromSaveB]
@@ -27,9 +30,19 @@ export function resolveIdConflicts(mergedSections: MergedSaveSections): MergedSa
 
   const remappings = {inventoryIds: inventories.saveBIdRemapping, worldObjectIds: worldObjects.saveBIdRemapping};
   return {
-    ...mergedSections,
-    players: rewritePlayerReferences(mergedSections.players, remappings),
-    inventories: rewriteInventoryReferences(inventories.entries, remappings),
-    worldObjects: rewriteWorldObjectReferences(worldObjects.entries, remappings)
+    globalMetadata: [mergedSections.globalMetadata],
+    terraformationLevels: [...mergedSections.terraformationLevels],
+    players: inOriginOrder(rewritePlayerReferences(mergedSections.players, remappings)),
+    worldObjects: inOriginOrder(rewriteWorldObjectReferences(worldObjects.entries, remappings)),
+    inventories: inOriginOrder(rewriteInventoryReferences(inventories.entries, remappings)),
+    statistics: mergedSections.statistics ? [mergedSections.statistics] : [],
+    mailboxes: [...mergedSections.mailboxes],
+    storyEvents: [...mergedSections.storyEvents],
+    saveConfigurations: mergedSections.saveConfiguration ? [mergedSections.saveConfiguration] : [],
+    worldEvents: [...mergedSections.worldEvents]
   };
+}
+
+function inOriginOrder<TEntry>({fromSaveA, fromSaveB}: EntriesByOrigin<TEntry>): TEntry[] {
+  return [...fromSaveA, ...fromSaveB];
 }

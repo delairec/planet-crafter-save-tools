@@ -24,6 +24,31 @@ describe('GlobalProgressionPresenter', () => {
     });
   });
 
+  it('should present the global progression without statistics as no crafted object', () => {
+    // Arrange
+    const presenter = new GlobalProgressionPresenter();
+    const globalProgression = {allTimeTerraTokens: 200_345};
+
+    // Act
+    presenter.displayGlobalProgressionWithoutStatistics(globalProgression);
+
+    // Assert
+    expect(presenter.viewModel).toEqual<GlobalProgressionViewModel>({
+      statistics: {
+        columns: [
+          {
+            header: 'All time Terra Tokens',
+            values: ['200,345 =tt=']
+          },
+          {
+            header: 'Total crafted objects',
+            values: ['0']
+          }
+        ]
+      },
+    });
+  });
+
   it('should present all GlobalProgression', () => {
     // Arrange
     const presenter = new GlobalProgressionPresenter();

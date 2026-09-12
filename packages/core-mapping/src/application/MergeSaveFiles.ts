@@ -1,14 +1,17 @@
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
-import {SaveFilesMergerPort} from "./ports/SaveFilesMergerPort";
+import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
+import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
-import {MergedSaveValueObject} from "../domain/valueObjects/MergedSaveValueObject";
-import {InvalidSaveDataError} from "../domain/errors/InvalidSaveDataError";
+import {nameMergedFile} from "./nameMergedFile";
+import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
+import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 
 export class MergeSaveFiles {
   constructor(
     private readonly validator: SaveValidatorPort,
-    private readonly merger: SaveFilesMergerPort,
+    private readonly parser: SaveSectionsParserPort,
+    private readonly serializer: SaveSectionsSerializerPort,
     private readonly presenter: MergeResultPresenterPort
   ) {}
 
@@ -26,22 +29,23 @@ export class MergeSaveFiles {
       return;
     }
 
-    let mergedSave: MergedSaveValueObject;
-    try {
-      mergedSave = this.merger.merge(fileNameA, contentA, fileNameB, contentB, saveDisplayName);
-    } catch (error) {
-      if (!(error instanceof InvalidSaveDataError)) {
-        throw error;
-      }
+    const saveA = this.parser.parse(contentA);
+    const saveB = this.parser.parse(contentB);
+
+    if (saveA.errors.length > 0 || saveB.errors.length > 0) {
       this.presenter.presentMergedSaveUnusable();
       return;
     }
 
-    const mergedSaveValidation = this.validator.validate(mergedSave.fileName, mergedSave.content);
+    const {fileName, stem} = nameMergedFile({fileNameA, fileNameB});
+    const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, saveDisplayName ?? stem));
+    const content = this.serializer.serialize(mergedSave);
+
+    const mergedSaveValidation = this.validator.validate(fileName, content);
 
     this.presenter.presentMergeSucceeded({
-      fileName: mergedSave.fileName,
-      content: mergedSave.content,
+      fileName,
+      content,
       mergeErrors: mergedSaveValidation.errors,
       saveAWarnings: validationA.warnings,
       saveBWarnings: validationB.warnings

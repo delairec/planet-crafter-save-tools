@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
+import {createSaveSectionsParser} from '../composition/compositionRoot';
 import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {LoadGlobalProgressionSectionController} from './LoadGlobalProgressionSectionController';
 import {GlobalProgressionViewModel} from '../presentation/viewModels/GlobalProgressionViewModel';
@@ -7,7 +7,7 @@ import {GlobalProgressionViewModel} from '../presentation/viewModels/GlobalProgr
 describe('LoadGlobalProgressionSectionController', () => {
   it('should present global progression from the parsed save', async () => {
     // Arrange
-    const {sections} = parseSaveSections(createFakeSaveContent());
+    const {sections} = createSaveSectionsParser().parse(createFakeSaveContent());
 
     // Act
     const viewModel = await LoadGlobalProgressionSectionController.loadGlobalProgressionSection(sections);

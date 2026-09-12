@@ -1,56 +1,59 @@
 import {describe, expect, it} from 'bun:test';
-import {validateUniqueHost} from './validateUniqueHost';
-import {VALIDATION_ISSUE_CODES} from '../../application/ports/ValidationIssue';
+import {UniqueHostViolation, validateUniqueHost} from './validateUniqueHost';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {Player} from 'shared-save-processing/gameDefinitions';
 
 describe('validateUniqueHost', () => {
 
   describe('When there are no players', () => {
-    it('should return no issue', () => {
+    it('should report no violation', () => {
+      // Arrange
+      const noPlayers: Player[] = [];
+
       // Act
-      const issues = validateUniqueHost([]);
+      const violation = validateUniqueHost(noPlayers);
 
       // Assert
-      expect(issues).toEqual([]);
+      expect<UniqueHostViolation | null>(violation).toBeNull();
     });
   });
 
   describe('When exactly one player is host', () => {
-    it('should return no issue', () => {
+    it('should report no violation', () => {
       // Arrange
       const players = [createPlayer({host: true}), createPlayer({host: false})];
 
       // Act
-      const issues = validateUniqueHost(players);
+      const violation = validateUniqueHost(players);
 
       // Assert
-      expect(issues).toEqual([]);
+      expect<UniqueHostViolation | null>(violation).toBeNull();
     });
   });
 
   describe('When no player is host', () => {
-    it('should return a unique-host issue', () => {
+    it('should report a violation counting the hosts found', () => {
       // Arrange
       const players = [createPlayer({host: false})];
 
       // Act
-      const issues = validateUniqueHost(players);
+      const violation = validateUniqueHost(players);
 
       // Assert
-      expect(issues).toEqual([{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 0'}]);
+      expect<UniqueHostViolation | null>(violation).toEqual({hostCount: 0});
     });
   });
 
   describe('When more than one player is host', () => {
-    it('should return a unique-host issue', () => {
+    it('should report a violation counting the hosts found', () => {
       // Arrange
       const players = [createPlayer({host: true}), createPlayer({host: true})];
 
       // Act
-      const issues = validateUniqueHost(players);
+      const violation = validateUniqueHost(players);
 
       // Assert
-      expect(issues).toEqual([{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2'}]);
+      expect<UniqueHostViolation | null>(violation).toEqual({hostCount: 2});
     });
   });
 });

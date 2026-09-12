@@ -4,10 +4,11 @@ import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {ParsedSaveSections, SaveSectionsParserPort} from './ports/SaveSectionsParserPort';
 import {LoadAndValidateSaveFilePresenterPort} from './ports/LoadAndValidateSaveFilePresenterPort';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
-import {ParsedSections, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {createSaveSections} from '../testing/createSaveSections';
 import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 
-const emptySections: ParsedSections = [[], [], [], function* () {}, [], [], [], [], [], [], []];
+const loadedSections = createSaveSections();
 
 interface UseCaseOverrides {
   validationErrors?: ValidationIssue[];
@@ -18,7 +19,7 @@ interface UseCaseOverrides {
 function setupUseCase({
                         validationErrors = [],
                         validationWarnings = [],
-                        parsedSaveSections = {sections: emptySections, errors: []}
+                        parsedSaveSections = {sections: loadedSections, errors: []}
                       }: UseCaseOverrides = {}) {
   const validator: SaveValidatorPort = {
     validate: mock(() => ({isValid: validationErrors.length === 0, errors: validationErrors, warnings: validationWarnings}))
@@ -51,7 +52,7 @@ describe('LoadAndValidateSaveFile', () => {
     it('should parse the content and present the loaded save file', async () => {
       // Arrange
       const {useCase, parser, presenter} = setupUseCase({
-        parsedSaveSections: {sections: emptySections, errors: [{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}]}
+        parsedSaveSections: {sections: loadedSections, errors: [{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}]}
       });
 
       // Act
@@ -59,7 +60,7 @@ describe('LoadAndValidateSaveFile', () => {
 
       // Assert
       expect(parser.parse).toHaveBeenCalledWith('content');
-      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith(emptySections, [{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}], []);
+      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith(loadedSections, [{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}], []);
       expect(presenter.presentInvalidSaveFile).not.toHaveBeenCalled();
     });
   });
@@ -73,7 +74,7 @@ describe('LoadAndValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
-      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith(emptySections, [], ['legacy-save-format']);
+      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith(loadedSections, [], ['legacy-save-format']);
     });
 
     it('should present the warnings of an invalid save file too', async () => {

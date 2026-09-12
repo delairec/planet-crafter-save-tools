@@ -11,49 +11,45 @@ import {
   saveConfigurationSectionTerraformationPaceLabel
 } from "./messages/saveConfigurationSectionMessages.js";
 
-export class SaveConfigurationPresenter implements SaveConfigurationPresenterPort {
-  private _viewModel: SaveConfigurationViewModel;
+function createEmptySaveConfigurationViewModel(): SaveConfigurationViewModel {
+  return {
+    mode: '',
+    title: '',
+    modifiers: {
+      columns: [
+        {
+          header: saveConfigurationSectionTerraformationPaceLabel,
+          values: []
+        },
+        {
+          header: saveConfigurationSectionGaugeDrainLabel,
+          values: []
+        },
+        {
+          header: saveConfigurationSectionMeteoOccurrenceLabel,
+          values: []
+        },
+        {
+          header: saveConfigurationSectionMultiplayerFactorLabel,
+          values: []
+        },
+        {
+          header: saveConfigurationSectionPowerConsumptionLabel,
+          values: []
+        }
+      ]
+    }
+  };
+}
 
-  constructor() {
-    this._viewModel = {
-      mode: '',
-      title: '',
-      modifiers: {
-        columns: [
-          {
-            header: saveConfigurationSectionTerraformationPaceLabel,
-            values: []
-          },
-          {
-            header: saveConfigurationSectionGaugeDrainLabel,
-            values: []
-          },
-          {
-            header: saveConfigurationSectionMeteoOccurrenceLabel,
-            values: []
-          },
-          {
-            header: saveConfigurationSectionMultiplayerFactorLabel,
-            values: []
-          },
-          {
-            header: saveConfigurationSectionPowerConsumptionLabel,
-            values: []
-          }
-        ]
-      }
-    };
-  }
+export class SaveConfigurationPresenter implements SaveConfigurationPresenterPort {
+  private _viewModel: SaveConfigurationViewModel = createEmptySaveConfigurationViewModel();
 
   get viewModel(): SaveConfigurationViewModel {
     return this._viewModel;
   }
 
-  displaySaveConfiguration(saveConfiguration: SaveConfigurationValueObject | undefined): void {
-    if (!saveConfiguration) {
-      return;
-    }
-
+  displaySaveConfiguration(saveConfiguration: SaveConfigurationValueObject): void {
     this._viewModel = {
       mode: saveConfiguration.mode,
       title: saveConfiguration.title,
@@ -82,5 +78,9 @@ export class SaveConfigurationPresenter implements SaveConfigurationPresenterPor
         ]
       }
     };
+  }
+
+  displayMissingSaveConfigurationSection(): void {
+    this._viewModel = createEmptySaveConfigurationViewModel();
   }
 }

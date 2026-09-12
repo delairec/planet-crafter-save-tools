@@ -1,5 +1,5 @@
 import {Accessor, createResource, Resource} from 'solid-js';
-import {ParsedSections} from "shared-save-processing/gameDefinitions";
+import {LoadSaveFileViewModel} from "core-mapping/presentation/viewModels/LoadSaveFileViewModel";
 import {LoadSaveConfigurationSectionController} from "core-mapping/controllers/LoadSaveConfigurationSectionController";
 import {LoadGlobalProgressionSectionController} from "core-mapping/controllers/LoadGlobalProgressionSectionController";
 import {LoadEnergyLevelsSectionController} from "core-mapping/controllers/LoadEnergyLevelsSectionController";
@@ -20,13 +20,13 @@ export interface SectionViewModels {
 }
 
 /**
- * Loads the view model for each save section whenever the parsed sections change, so the section
- * components only ever receive a ready-made view model — never the wire format (`ParsedSections`).
+ * Loads the view model for each save section whenever the loaded sections change, so the section
+ * components only ever receive a ready-made view model, never the sections themselves.
  *
  * Each section is a resource: it carries its own loading and error state, and a controller rejection
  * is reported through that resource instead of becoming an unhandled rejection.
  */
-export function useSectionViewModels(sections: Accessor<ParsedSections | null>): SectionViewModels {
+export function useSectionViewModels(sections: Accessor<LoadSaveFileViewModel['sections']>): SectionViewModels {
   const [saveConfiguration] = createResource(sections,
     (loadedSections) => LoadSaveConfigurationSectionController.loadSaveConfigurationSection(loadedSections));
   const [globalProgression] = createResource(sections,
