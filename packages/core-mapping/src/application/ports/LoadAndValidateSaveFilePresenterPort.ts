@@ -1,8 +1,9 @@
 import {ValidationIssue} from "./ValidationIssue";
-import {ParsedSections, SaveParseError, SaveWarningCode} from "shared-save-processing/gameDefinitions";
+import {SaveParseError, SaveWarningCode} from "shared-save-processing/gameDefinitions";
+import {SaveSections} from "../../domain/save/SaveSections";
 
 export interface LoadAndValidateSaveFilePresenterPort {
   presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarningCode[]): void;
 
-  presentLoadedSaveFile(sections: ParsedSections, errors: SaveParseError[], warnings: SaveWarningCode[]): void;
+  presentLoadedSaveFile(sections: SaveSections, errors: SaveParseError[], warnings: SaveWarningCode[]): void;
 }

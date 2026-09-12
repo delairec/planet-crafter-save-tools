@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsViewModel";
-import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
+import {createSaveSectionsParser} from '../composition/compositionRoot';
 import {createFakeSaveContent} from "shared-save-processing/testing/createFakeSaveContent.js";
 import {LoadEnergyLevelsSectionController} from "./LoadEnergyLevelsSectionController";
 
@@ -9,7 +9,7 @@ const nbsp = '\u00A0';
 describe('LoadEnergyLevelsSectionController', () => {
   it('should present computed energy levels from the parsed save', async () => {
     // Arrange
-    const {sections} = parseSaveSections(createFakeSaveContent());
+    const {sections} = createSaveSectionsParser().parse(createFakeSaveContent());
 
     // Act
     const viewModel = await LoadEnergyLevelsSectionController.loadEnergyLevelsSection(sections);

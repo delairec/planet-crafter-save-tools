@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
+import {createSaveSectionsParser} from '../composition/compositionRoot';
 import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {LoadTerraformationLevelsSectionController} from './LoadTerraformationLevelsSectionController';
 import {TerraformationLevelsViewModel} from '../presentation/viewModels/TerraformationLevelsViewModel';
@@ -9,7 +9,7 @@ const nbsp = '\u00A0';
 describe('LoadTerraformationLevelsSectionController', () => {
   it('should present terraformation levels from the parsed save', async () => {
     // Arrange
-    const {sections} = parseSaveSections(createFakeSaveContent());
+    const {sections} = createSaveSectionsParser().parse(createFakeSaveContent());
 
     // Act
     const viewModel = await LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(sections);

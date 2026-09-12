@@ -1,12 +1,12 @@
 import {serializeSave} from "shared-save-processing/serializeSave.js";
 import {serializeIdList} from "shared-save-processing/idList.js";
 import {Inventory, WorldObject} from "shared-save-processing/gameDefinitions";
-import {SaveSerializerPort} from "../application/ports/SaveSerializerPort";
+import {SaveSectionsSerializerPort} from "../application/ports/SaveSectionsSerializerPort";
 import {InventoryEntry} from "../domain/save/InventoryEntry";
 import {SaveSections} from "../domain/save/SaveSections";
 import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
 
-export class SaveSerializerService implements SaveSerializerPort {
+export class SaveSectionsSerializerService implements SaveSectionsSerializerPort {
   serialize(sections: SaveSections): string {
     return serializeSave({
       metadata: sections.globalMetadata,

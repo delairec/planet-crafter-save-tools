@@ -15,18 +15,22 @@
       "name": "cli-merge",
       "version": "1.0.0",
       "dependencies": {
-        "core-mapping": "workspace:*",
-        "shared-platforms": "workspace:*",
-        "shared-save-processing": "workspace:*",
+        "core-mapping": "*",
+        "shared-platforms": "*",
+      },
+      "devDependencies": {
+        "shared-save-processing": "*",
       },
     },
     "packages/cli-validate": {
       "name": "cli-validate",
       "version": "1.0.0",
       "dependencies": {
-        "core-mapping": "workspace:*",
-        "shared-platforms": "workspace:*",
-        "shared-save-processing": "workspace:*",
+        "core-mapping": "*",
+        "shared-platforms": "*",
+      },
+      "devDependencies": {
+        "shared-save-processing": "*",
       },
     },
     "packages/core-mapping": {
@@ -55,7 +59,6 @@
         "@solidjs/start": "2.0.0",
         "core-mapping": "*",
         "nitro": "3.0.260610-beta",
-        "shared-save-processing": "*",
         "solid-js": "^1.9.14",
         "vite": "^8.2.1",
       },

@@ -15,7 +15,6 @@
     "@solidjs/start": "2.0.0",
     "core-mapping": "*",
     "nitro": "3.0.260610-beta",
-    "shared-save-processing": "*",
     "solid-js": "^1.9.14",
     "vite": "^8.2.1"
   },

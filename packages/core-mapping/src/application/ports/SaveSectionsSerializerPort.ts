@@ -1,5 +1,5 @@
 import {SaveSections} from "../../domain/save/SaveSections";
 
-export interface SaveSerializerPort {
+export interface SaveSectionsSerializerPort {
   serialize(sections: SaveSections): string;
 }

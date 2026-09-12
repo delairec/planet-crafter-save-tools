@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
+import {createSaveSectionsParser} from '../composition/compositionRoot';
 import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {LoadPlayersSectionController} from './LoadPlayersSectionController';
 import {PlayersViewModel} from '../presentation/viewModels/PlayersViewModel';
@@ -7,7 +7,7 @@ import {PlayersViewModel} from '../presentation/viewModels/PlayersViewModel';
 describe('LoadPlayersSectionController', () => {
   it('should present players from the parsed save', async () => {
     // Arrange
-    const {sections} = parseSaveSections(createFakeSaveContent());
+    const {sections} = createSaveSectionsParser().parse(createFakeSaveContent());
 
     // Act
     const viewModel = await LoadPlayersSectionController.loadPlayersSection(sections);

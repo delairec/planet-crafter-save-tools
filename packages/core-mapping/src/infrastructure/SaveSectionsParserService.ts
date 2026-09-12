@@ -1,13 +1,13 @@
 import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
 import {parseIdList} from "shared-save-processing/idList.js";
 import {Inventory, ParsedSections, WorldObject} from "shared-save-processing/gameDefinitions";
-import {ReadSaveSections, SaveReaderPort} from "../application/ports/SaveReaderPort";
+import {ParsedSaveSections, SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
 import {InventoryEntry} from "../domain/save/InventoryEntry";
 import {SaveSections} from "../domain/save/SaveSections";
 import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
 
-export class SaveReaderService implements SaveReaderPort {
-  read(content: string): ReadSaveSections {
+export class SaveSectionsParserService implements SaveSectionsParserPort {
+  parse(content: string): ParsedSaveSections {
     const {sections, errors} = parseSaveSections(content);
 
     return {sections: toSaveSections(sections), errors};

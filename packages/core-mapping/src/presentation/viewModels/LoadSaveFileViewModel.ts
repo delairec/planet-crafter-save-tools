@@ -1,9 +1,9 @@
-import {ParsedSections} from "shared-save-processing/gameDefinitions";
+import {SaveSections} from "../../domain/save/SaveSections";
 import {SaveValidationMessageViewModel} from "./SaveFileValidationViewModel";
 
 export interface LoadSaveFileViewModel {
   status: 'idle' | 'invalid' | 'valid';
-  sections: ParsedSections | null;
+  sections: SaveSections | null;
   errors: SaveValidationMessageViewModel[];
   warnings: SaveValidationMessageViewModel[];
 }

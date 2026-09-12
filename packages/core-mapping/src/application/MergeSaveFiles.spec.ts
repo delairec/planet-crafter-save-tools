@@ -1,8 +1,8 @@
 import {describe, expect, it, mock} from 'bun:test';
 import {MergeSaveFiles} from './MergeSaveFiles';
 import {SaveValidatorPort} from './ports/SaveValidatorPort';
-import {ReadSaveSections, SaveReaderPort} from './ports/SaveReaderPort';
-import {SaveSerializerPort} from './ports/SaveSerializerPort';
+import {ParsedSaveSections, SaveSectionsParserPort} from './ports/SaveSectionsParserPort';
+import {SaveSectionsSerializerPort} from './ports/SaveSectionsSerializerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
@@ -26,21 +26,21 @@ describe('MergeSaveFiles', () => {
   const validatorAnswering = (resultsByFileName: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
     (fileName: string) => resultsByFileName[fileName] ?? ACCEPTED;
 
-  const readerAnswering = (savesByContent: Record<string, ReadSaveSections>): SaveReaderPort['read'] =>
+  const parserAnswering = (savesByContent: Record<string, ParsedSaveSections>): SaveSectionsParserPort['parse'] =>
     (content: string) => savesByContent[content] ?? {sections: createSaveSections(), errors: noParseErrors};
 
   interface UseCaseOverrides {
     validate?: SaveValidatorPort['validate'];
-    read?: SaveReaderPort['read'];
+    parse?: SaveSectionsParserPort['parse'];
   }
 
-  function createUseCase({validate = () => ACCEPTED, read = readerAnswering({})}: UseCaseOverrides = {}) {
+  function createUseCase({validate = () => ACCEPTED, parse = parserAnswering({})}: UseCaseOverrides = {}) {
     const validator: SaveValidatorPort = {validate: mock(validate)};
-    const saveReader: SaveReaderPort = {read: mock(read)};
-    const saveSerializer: SaveSerializerPort = {serialize: mock(() => 'merged content')};
+    const parser: SaveSectionsParserPort = {parse: mock(parse)};
+    const serializer: SaveSectionsSerializerPort = {serialize: mock(() => 'merged content')};
     const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
 
-    return {useCase: new MergeSaveFiles(validator, saveReader, saveSerializer, presenter), validator, saveReader, saveSerializer, presenter};
+    return {useCase: new MergeSaveFiles(validator, parser, serializer, presenter), validator, parser, serializer, presenter};
   }
 
   describe('When both saves are valid', () => {
@@ -65,8 +65,8 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const playerFromSaveA = createPlayer({id: '1', name: 'Nikowa', inventoryId: 10, equipmentId: 11});
       const playerFromSaveB = createPlayer({id: '2', name: 'Sakia', inventoryId: 10, equipmentId: 11, host: false});
-      const {useCase, saveSerializer} = createUseCase({
-        read: readerAnswering({
+      const {useCase, serializer} = createUseCase({
+        parse: parserAnswering({
           contentA: {sections: createSaveSections({players: [playerFromSaveA], inventories: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}]}), errors: noParseErrors},
           contentB: {sections: createSaveSections({players: [playerFromSaveB], inventories: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}]}), errors: noParseErrors}
         })
@@ -76,7 +76,7 @@ describe('MergeSaveFiles', () => {
       await useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(saveSerializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
+      expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
         players: [playerFromSaveA, {...playerFromSaveB, inventoryId: 12, equipmentId: 13}],
         inventories: [
           {id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10},
@@ -89,8 +89,8 @@ describe('MergeSaveFiles', () => {
   describe('When no display name is requested for the merged save', () => {
     it('should name the merged save after the stem of the merged file', async () => {
       // Arrange
-      const {useCase, saveSerializer} = createUseCase({
-        read: readerAnswering({
+      const {useCase, serializer} = createUseCase({
+        parse: parserAnswering({
           contentA: {sections: createSaveSections({saveConfigurations: [createSaveConfiguration({saveDisplayName: 'Save A'})]}), errors: noParseErrors}
         })
       });
@@ -99,7 +99,7 @@ describe('MergeSaveFiles', () => {
       await useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(saveSerializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
+      expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
         saveConfigurations: [expect.objectContaining({saveDisplayName: 'Save-A-Save-B-merged'})]
       }));
     });
@@ -108,8 +108,8 @@ describe('MergeSaveFiles', () => {
   describe('When a display name is requested for the merged save', () => {
     it('should give the merged save that display name', async () => {
       // Arrange
-      const {useCase, saveSerializer} = createUseCase({
-        read: readerAnswering({
+      const {useCase, serializer} = createUseCase({
+        parse: parserAnswering({
           contentA: {sections: createSaveSections({saveConfigurations: [createSaveConfiguration({saveDisplayName: 'Save A'})]}), errors: noParseErrors}
         })
       });
@@ -118,17 +118,17 @@ describe('MergeSaveFiles', () => {
       await useCase.execute({...TWO_VALID_SAVES, saveDisplayName: 'Our merged world'});
 
       // Assert
-      expect(saveSerializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
+      expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
         saveConfigurations: [expect.objectContaining({saveDisplayName: 'Our merged world'})]
       }));
     });
   });
 
   describe('When at least one save is invalid', () => {
-    it('should present a validation error result without reading the saves for the merge', async () => {
+    it('should present a validation error result without parsing the saves for the merge', async () => {
       // Arrange
       const invalidJsonError = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'};
-      const {useCase, saveReader, presenter} = createUseCase({
+      const {useCase, parser, presenter} = createUseCase({
         validate: validatorAnswering({'Save-A.json': rejectedWith(invalidJsonError)})
       });
 
@@ -136,7 +136,7 @@ describe('MergeSaveFiles', () => {
       await useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(saveReader.read).not.toHaveBeenCalled();
+      expect(parser.parse).not.toHaveBeenCalled();
       expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
         saveAErrors: [invalidJsonError],
         saveBErrors: [],
@@ -150,7 +150,7 @@ describe('MergeSaveFiles', () => {
     it('should present a validation error result reported by the validator', async () => {
       // Arrange
       const invalidExtensionError = {code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'};
-      const {useCase, validator, saveReader, presenter} = createUseCase({
+      const {useCase, validator, parser, presenter} = createUseCase({
         validate: validatorAnswering({'Save-A.txt': rejectedWith(invalidExtensionError)})
       });
 
@@ -161,7 +161,7 @@ describe('MergeSaveFiles', () => {
       expect(validator.validate).toHaveBeenCalledTimes(2);
       expect(validator.validate).toHaveBeenCalledWith('Save-A.txt', 'contentA');
       expect(validator.validate).toHaveBeenCalledWith('Save-B.json', 'contentB');
-      expect(saveReader.read).not.toHaveBeenCalled();
+      expect(parser.parse).not.toHaveBeenCalled();
       expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
         saveAErrors: [invalidExtensionError],
         saveBErrors: [],
@@ -262,11 +262,11 @@ describe('MergeSaveFiles', () => {
 
   describe('When a save reaches the merge with a line that cannot be read', () => {
     const unreadableLine: SaveParseError = {section: 4, entryIndex: 0, detail: 'Invalid JSON: {not valid json'};
-    const readSaveAWithAnUnreadableLine = readerAnswering({contentA: {sections: createSaveSections(), errors: [unreadableLine]}});
+    const parseSaveAWithAnUnreadableLine = parserAnswering({contentA: {sections: createSaveSections(), errors: [unreadableLine]}});
 
     it('should present the merged save as unusable instead of a success', async () => {
       // Arrange
-      const {useCase, presenter} = createUseCase({read: readSaveAWithAnUnreadableLine});
+      const {useCase, presenter} = createUseCase({parse: parseSaveAWithAnUnreadableLine});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -278,7 +278,7 @@ describe('MergeSaveFiles', () => {
 
     it('should not blame the input files, which validation has already accepted', async () => {
       // Arrange
-      const {useCase, presenter} = createUseCase({read: readSaveAWithAnUnreadableLine});
+      const {useCase, presenter} = createUseCase({parse: parseSaveAWithAnUnreadableLine});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -289,24 +289,24 @@ describe('MergeSaveFiles', () => {
 
     it('should not produce a save amputated of what could not be read', async () => {
       // Arrange
-      const {useCase, saveSerializer, validator} = createUseCase({read: readSaveAWithAnUnreadableLine});
+      const {useCase, serializer, validator} = createUseCase({parse: parseSaveAWithAnUnreadableLine});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      expect(saveSerializer.serialize).not.toHaveBeenCalled();
+      expect(serializer.serialize).not.toHaveBeenCalled();
       expect(validator.validate).toHaveBeenCalledTimes(2);
     });
   });
 
-  describe('When reading a save fails', () => {
+  describe('When parsing a save fails', () => {
     it('should let the failure surface rather than turn it into a merge outcome', async () => {
       // Arrange
-      const readFailure = new Error('Unexpected failure while reading the save');
+      const parseFailure = new Error('Unexpected failure while parsing the save');
       const {useCase, presenter} = createUseCase({
-        read: () => {
-          throw readFailure;
+        parse: () => {
+          throw parseFailure;
         }
       });
 
@@ -314,7 +314,7 @@ describe('MergeSaveFiles', () => {
       const mergeSaveFiles = useCase.execute(TWO_VALID_SAVES);
 
       // Assert
-      await expect(mergeSaveFiles).rejects.toThrow(readFailure);
+      await expect(mergeSaveFiles).rejects.toThrow(parseFailure);
       expect(presenter.presentMergedSaveUnusable).not.toHaveBeenCalled();
     });
   });

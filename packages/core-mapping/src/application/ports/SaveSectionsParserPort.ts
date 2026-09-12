@@ -1,4 +1,5 @@
-import {ParsedSections, SaveParseError} from "shared-save-processing/gameDefinitions";
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {SaveSections} from "../../domain/save/SaveSections";
 
 /**
  * Parsing reports the errors it hits while reading the sections. Format adaptations are not
@@ -6,8 +7,8 @@ import {ParsedSections, SaveParseError} from "shared-save-processing/gameDefinit
  * (see `SaveValidationResult`).
  */
 export interface ParsedSaveSections {
-  sections: ParsedSections;
-  errors: SaveParseError[];
+  readonly sections: SaveSections;
+  readonly errors: SaveParseError[];
 }
 
 export interface SaveSectionsParserPort {

@@ -1,15 +1,13 @@
 import {describe, expect, it} from 'bun:test';
 import {LoadSaveFilePresenter} from './LoadSaveFilePresenter';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {ParsedSections, SaveParseError, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SaveParseError, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {createSaveSections} from '../testing/createSaveSections';
 import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {LoadSaveFileViewModel} from './viewModels/LoadSaveFileViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
-const parsedSectionCount: ParsedSections['length'] = 11;
-
-const emptySections = Array(parsedSectionCount).fill([]) as ParsedSections;
-emptySections[WORLD_OBJECTS_SECTION_INDEX] = function* EMPTY_GENERATOR() {};
+const loadedSections = createSaveSections();
 
 const noParsingErrors: SaveParseError[] = [];
 const noWarnings: SaveWarningCode[] = [];
@@ -22,12 +20,12 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile(emptySections, [{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}], noWarnings);
+      presenter.presentLoadedSaveFile(loadedSections, [{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}], noWarnings);
 
       // Assert
       expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
         status: 'valid',
-        sections: emptySections,
+        sections: loadedSections,
         errors: [{message: 'Invalid JSON: {', location: 'World objects (section 3), entry 2'}],
         warnings: []
       });
@@ -38,7 +36,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile(emptySections, [{detail: 'Expected 11 sections but found 2'}], noWarnings);
+      presenter.presentLoadedSaveFile(loadedSections, [{detail: 'Expected 11 sections but found 2'}], noWarnings);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors)
@@ -50,7 +48,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile(emptySections, noParsingErrors, ['legacy-save-format']);
+      presenter.presentLoadedSaveFile(loadedSections, noParsingErrors, ['legacy-save-format']);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
