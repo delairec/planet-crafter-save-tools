@@ -6,15 +6,14 @@ import {DecodedWorldObject} from "../domain/rules/merge/DecodedWorldObject";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 import {buildMergedFileName} from "./buildMergedFileName";
 import {decodeIdList, encodeIdList} from "./idListCodec";
-import {SaveFilesMergerPort} from "../application/ports/SaveFilesMergerPort";
-import {createMergedSaveValueObject, MergedSaveValueObject} from "../domain/valueObjects/MergedSaveValueObject";
+import {MergedSaveFile, SaveFilesMergerPort} from "../application/ports/SaveFilesMergerPort";
 import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
 import {serializeSave} from "shared-save-processing/serializeSave.js";
 import {Inventory, ParsedSections, SaveParseError, WorldObject} from "shared-save-processing/gameDefinitions";
 import {UnreadableSaveContentError} from "./errors/UnreadableSaveContentError";
 
 export class SaveFilesMergerService implements SaveFilesMergerPort {
-  merge(fileNameA: string, contentA: string, fileNameB: string, contentB: string, saveDisplayName?: string): MergedSaveValueObject {
+  merge(fileNameA: string, contentA: string, fileNameB: string, contentB: string, saveDisplayName?: string): MergedSaveFile {
     const fileName = buildMergedFileName(fileNameA, fileNameB);
     const resolvedSaveDisplayName = saveDisplayName ?? fileName.replace(/\.json$/, '');
 
@@ -27,7 +26,7 @@ export class SaveFilesMergerService implements SaveFilesMergerPort {
     failOnUnreadableSave(fileNameA, parsedSaveA.errors);
     failOnUnreadableSave(fileNameB, parsedSaveB.errors);
 
-    return createMergedSaveValueObject({fileName, content});
+    return {fileName, content};
   }
 }
 

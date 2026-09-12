@@ -2,8 +2,6 @@ import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveFilesMergerPort} from "./ports/SaveFilesMergerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
-import {MergedSaveValueObject} from "../domain/valueObjects/MergedSaveValueObject";
-import {InvalidSaveDataError} from "../domain/errors/InvalidSaveDataError";
 
 export class MergeSaveFiles {
   constructor(
@@ -26,13 +24,9 @@ export class MergeSaveFiles {
       return;
     }
 
-    let mergedSave: MergedSaveValueObject;
-    try {
-      mergedSave = this.merger.merge(fileNameA, contentA, fileNameB, contentB, saveDisplayName);
-    } catch (error) {
-      if (!(error instanceof InvalidSaveDataError)) {
-        throw error;
-      }
+    const mergedSave = this.merger.merge(fileNameA, contentA, fileNameB, contentB, saveDisplayName);
+
+    if (mergedSave.content.length === 0) {
       this.presenter.presentMergedSaveUnusable();
       return;
     }

@@ -52,7 +52,7 @@ TASK T37_FrontieresCleanArchitectureCoreMapping
 		IMPL "packages/core-mapping/src/domain/rules/merge/collectEjectedPlayerInventoryIds.ts"
 		IMPL "packages/core-mapping/src/domain/rules/merge/rewriteReferences.ts"
 	SPEC "MergedSaveValueObject ne modelise plus un artefact de fichier dans le domaine"
-		IMPL "packages/core-mapping/src/domain/valueObjects/MergedSaveValueObject.ts"
+		IMPL "packages/core-mapping/src/application/ports/SaveFilesMergerPort.ts"
 	SPEC "aucun presenter ne decide quel resultat s'est produit : le cas section absente est choisi"
 		+ "par le use case, et les ports perdent leur union avec undefined"
 		IMPL "packages/core-mapping/src/presentation/SaveConfigurationPresenter.ts"

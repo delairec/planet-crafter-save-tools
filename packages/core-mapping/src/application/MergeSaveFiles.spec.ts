@@ -8,7 +8,6 @@ import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
 import {SaveValidationResult} from './ports/SaveValidationResult';
 import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
-import {InvalidSaveDataError} from '../domain/errors/InvalidSaveDataError';
 
 describe('MergeSaveFiles', () => {
 
@@ -192,13 +191,11 @@ describe('MergeSaveFiles', () => {
   });
 
   describe('When the merge produces a save that cannot be used', () => {
-    function throwInvalidSaveData(): never {
-      throw new InvalidSaveDataError('MergedSaveValueObject.content must be a non-empty string, received ');
-    }
+    const mergeToEmptyContent = () => ({fileName: 'Save-A-Save-B-merged.json', content: ''});
 
     it('should present the merged save as unusable instead of a success', async () => {
       // Arrange
-      const {useCase, presenter} = createUseCase({merge: throwInvalidSaveData});
+      const {useCase, presenter} = createUseCase({merge: mergeToEmptyContent});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -210,7 +207,7 @@ describe('MergeSaveFiles', () => {
 
     it('should not blame the input files, which validation has already accepted', async () => {
       // Arrange
-      const {useCase, presenter} = createUseCase({merge: throwInvalidSaveData});
+      const {useCase, presenter} = createUseCase({merge: mergeToEmptyContent});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -218,9 +215,20 @@ describe('MergeSaveFiles', () => {
       // Assert
       expect(presenter.presentSaveFilesInvalid).not.toHaveBeenCalled();
     });
+
+    it('should not validate a merged save it will not hand over', async () => {
+      // Arrange
+      const {useCase, validator} = createUseCase({merge: mergeToEmptyContent});
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(validator.validate).toHaveBeenCalledTimes(2);
+    });
   });
 
-  describe('When the merge fails on anything other than unusable save data', () => {
+  describe('When the merge fails', () => {
     it('should let the failure surface rather than turn it into a merge outcome', async () => {
       // Arrange
       const unreadableSaveContentError = new Error('Save file "Save-A.json" cannot be parsed: Invalid JSON: {not valid json');
