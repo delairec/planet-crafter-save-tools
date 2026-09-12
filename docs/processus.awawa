@@ -387,6 +387,7 @@ DECISION UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
 		+ "nous et l'outil, chacune en trois blocs, bien passe, mal passe, remediations, puis les"
 		+ "points recurrents"
 		IMPL "docs/awawa-usage-reports/_template.md"
-	SPEC "chaque rapport nomme le modele qui l'a ecrit et les sessions qu'il mesure"
+	SPEC "chaque rapport nomme le modele qui l'a ecrit, le modele qui a conduit les sessions"
+		+ "evaluees, et les sessions qu'il mesure"
 		IMPL "docs/awawa-usage-reports/_template.md"
 	SOURCE "decision du 2026-09-12, revue du premier rapport d'usage, PR #63"

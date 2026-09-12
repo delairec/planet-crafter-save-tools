@@ -9,7 +9,9 @@ restated: this file is about the method and the instrument, not a second home fo
 Every judgment carries a number or a name. A claim that could not be checked is reported as unchecked.
 -->
 
-Author: <model name and version>. Sessions measured: `session_<id>` (piloting), `session_<id>` (agent).
+Author of this report: <model name and version>.
+Model that drove the sessions under review: <model name and version, from the `Co-Authored-By` trailers of the PR's commits; one line per model when several took part>.
+Sessions measured: `session_<id>` (piloting), `session_<id>` (agent).
 Delivered: <one line on what the PR changed>.
 
 ## Verdict in two lines
