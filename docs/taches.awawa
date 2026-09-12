@@ -384,7 +384,7 @@ TASK AWA1_LeCorpusEstGardeEnCi
 	SOURCE "audit du schema du 2026-09-12"
 
 TASK AWA2_LesChampsDuSchemaTransverseSontDocumentes
-	DESC "chaque champ de SCHEMA * porte un DESC ; IMPL de niveau entite et WAVE disparaissent"
+	DESC "chaque champ du schema porte un DESC ; IMPL de niveau entite et WAVE disparaissent"
 	STATUS specified
 	KIND awawa
 	RATIONALE "un paquet --with-schema ne dit ni ce qu'est une SPEC, ni ce que vaut chaque barreau"
@@ -397,6 +397,9 @@ TASK AWA2_LesChampsDuSchemaTransverseSontDocumentes
 		IMPL "docs/_schema.awawa::SCHEMA *"
 	SPEC "le DESC de SPEC enonce la frontiere : ce qui ne peut pas echouer n'est pas une SPEC"
 		IMPL "docs/_schema.awawa::FIELD SPEC"
+	SPEC "les champs declares par un type — CLOSES, BLOCKS, AFTER et leurs REF niches — portent un"
+		+ "DESC"
+		IMPL "docs/_schema.awawa::SCHEMA DECISION"
 	SPEC "IMPL de niveau entite n'est plus declare sur SCHEMA *"
 		IMPL "docs/_schema.awawa::SCHEMA *"
 	SPEC "WAVE n'est plus declare sur TASK et aucune tache ne le porte"
@@ -448,6 +451,8 @@ TASK AWA5_LeCorpsDUneDecisionQuitteLeDesc
 		REF @DECISION.LaSpecificationResteEnFrancaisMemePubliee
 	RATIONALE "la forme du champ d'accueil est la question qui bloque : SPEC seule, ou un champ"
 		+ "DECIDES declare sur DECISION"
+	RATIONALE "un type ne retire pas REPEATABLE a un champ herite de SCHEMA * (L013) : le DESC"
+		+ "unique reste une discipline verifiee par relecture, aucune regle du lint ne le compte"
 	SPEC "aucune DECISION ne porte plus d'un DESC"
 		IMPL "docs/_schema.awawa::SCHEMA DECISION"
 	SPEC "aucun DESC de DECISION n'excede une ligne de source"
@@ -525,3 +530,69 @@ TASK AWA7_ChaqueTypePorteSonEchelleDeStatus
 		+ "n'est plus dans leur echelle"
 		IMPL "AGENTS.md::STATUS!="
 	SOURCE "constate par l'utilisateur le 2026-09-12, audit du schema"
+
+TASK AWA8_LeCorpusSpecifieLeProduit
+	DESC "RULE, SECTION et USE_CASE sont declares ; les 37 regles et les 11 sections des deux"
+		+ "documents markdown deviennent des entites, les parcours de l'UI et du CLI aussi ; les"
+		+ "documents sont supprimes et le README renvoie au corpus"
+	STATUS specified
+	KIND awawa
+	AFTER @TASK.AWA7_ChaqueTypePorteSonEchelleDeStatus
+	AFTER @TASK.AWA10_LeCorpusPasseEnAnglais
+	RATIONALE "la decision qui la fonde et ce qu'elle a ecarte"
+		REF @DECISION.LeProduitEstSpecifieDansLeCorpus
+	RATIONALE "apres AWA7 pour que chaque type produit declare son echelle de STATUS des sa"
+		+ "creation ; apres AWA10 pour ecrire les regles en anglais depuis leur source anglaise au"
+		+ "lieu de les traduire deux fois"
+	RATIONALE "les ancres du document des regles resolvent toutes le 2026-09-12 sans qu'aucune"
+		+ "regle le verifie ; portees par IMPL sous SPEC, L016 les garde"
+	RATIONALE "aucun document ne decrit les parcours : la matiere des USE_CASE est le scenario"
+		+ "packages/ui-save-manager/e2e/display.e2e.ts et les specs des deux CLI"
+	SPEC "SCHEMA RULE declare LABEL unique par entite, la SECTION visee, et une SPEC par obligation"
+		+ "avec son IMPL"
+	SPEC "status RULE . compte 37 entites, une par regle GR du document, et chaque LABEL est unique"
+	SPEC "status SECTION . compte 11 entites, indexees 0 a 10"
+	SPEC "chaque scenario de test:ui et chaque commande CLI a une USE_CASE"
+	SPEC "docs/game-rules.md et docs/save-format.md n'existent plus et le README renvoie au corpus"
+	SPEC "aucune entite ne nomme plus un document markdown comme domicile des regles"
+	SPEC "chaque DECISION de format-save, fusion et erreurs designe par REF la RULE ou la SECTION"
+		+ "qu'elle contraint"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-12, revue du schema avec la PR #64"
+
+TASK AWA9_LesObjetsDuJeuSontDesEntites
+	DESC "chaque sorte d'objet du jeu — joueur, objet du monde, inventaire, message, evenement — a"
+		+ "un type d'entite derive du schema JSON qui la valide"
+	STATUS specified
+	KIND awawa
+	AFTER @TASK.AWA8_LeCorpusSpecifieLeProduit
+	RATIONALE "les onze schemas JSON de shared-save-processing decrivent deja les champs et leurs"
+		+ "bornes ; le corpus n'en a qu'une vue par decision, et une RULE n'a aucun champ d'objet a"
+		+ "designer"
+	RATIONALE "la vue en entites rend interrogeable ce que l'outil represente du jeu ;"
+		+ "l'utilisateur la juge lourde et la detache d'AWA8 pour cela"
+	SPEC "un type d'entite par sorte d'objet, ses champs derives du schema JSON qui le valide, et"
+		+ "une ancre IMPL sur ce schema"
+	SPEC "chaque SECTION designe les objets qu'elle porte"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-12, revue du schema avec la PR #64"
+
+TASK AWA10_LeCorpusPasseEnAnglais
+	DESC "toute la prose du corpus passe en anglais ; AGENTS.md dit que le corpus est en anglais et"
+		+ "cite la decision"
+	STATUS specified
+	KIND awawa
+	AFTER @TASK.AWA2_LesChampsDuSchemaTransverseSontDocumentes
+	AFTER @TASK.AWA3_LaSourceDevientUneDateEtUnePr
+	AFTER @TASK.AWA4_LesAncresDeRepertoireSontResolues
+	AFTER @TASK.AWA5_LeCorpsDUneDecisionQuitteLeDesc
+	AFTER @TASK.AWA7_ChaqueTypePorteSonEchelleDeStatus
+	RATIONALE "la decision qui la fonde"
+		REF @DECISION.LeCorpusEstEcritEnAnglais
+	RATIONALE "apres les taches de l'audit qui reecrivent la prose et les champs, pour ne traduire"
+		+ "qu'une fois ce qu'elles auront fixe"
+	RATIONALE "le perimetre — noms d'entites, AGENTS.md — est la question qui bloque"
+		REF @OPEN_QUESTION.LePerimetreDeLaTraductionDuCorpus
+	SPEC "toute prose du corpus — DESC, RATIONALE, SPEC, REJECTED, PROPOSED, SOURCE — est en"
+		+ "anglais"
+	SPEC "les commentaires // des fichiers .awawa sont en anglais"
+	SPEC "AGENTS.md dit que le corpus est en anglais et cite la decision"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-12, revue du schema avec la PR #64"

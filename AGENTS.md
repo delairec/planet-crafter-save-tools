@@ -82,7 +82,8 @@ abandonnée (@DECISION.LaFamilleDepEstAbandonnee).
 **Langue** : le corpus et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
 générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, les `.md` de
 `docs/`, commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts
-(@DECISION.LaSpecificationResteEnFrancaisMemePubliee).
+(@DECISION.LaSpecificationResteEnFrancaisMemePubliee). Le passage du corpus à l'anglais est décidé
+(@DECISION.LeCorpusEstEcritEnAnglais) et livré par la tâche AWA10 ; jusque-là cette règle tient.
 
 **Rafraîchir le clone privé avant de lire une save ou un plan.** `.do-not-commit/` est un clone figé au dernier
 `bun install`, et chaque worktree lié porte le sien : `bun run private:sync` (fetch plus fast-forward sur la branche
