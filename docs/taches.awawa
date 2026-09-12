@@ -30,7 +30,7 @@ TASK T37_FrontieresCleanArchitectureCoreMapping
 		+ "inchange"
 	DESC "PR A : decisions 1 a 5, un commit par decision. PR B : decision 6, le contrat controleur"
 		+ "vers UI"
-	STATUS specified
+	STATUS implemented
 	WAVE "4"
 	PR "62"
 	PR "65"

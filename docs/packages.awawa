@@ -293,7 +293,7 @@ DECISION LesControleursDeSectionRecoiventLeTexteValide
 	DESC "cette decision remplace, pour le ViewModel de chargement et les controleurs de section,"
 		+ "ce que la decision sur la save ordinaire disait de la SaveSections qu'ils portaient"
 		REF @DECISION.UneFusionProduitUneSaveOrdinaire
-	STATUS specified
+	STATUS implemented
 	CLOSES @OPEN_QUESTION.FormeDuContratControleurVersUi
 	RATIONALE "les lignes illisibles sont ecartees sans perte : le chargement, seul presenter de"
 		+ "ces erreurs, les a deja rendues, et une seconde analyse du meme texte est deterministe"
