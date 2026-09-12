@@ -372,3 +372,17 @@ DECISION UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
 	SPEC "le rapport nomme son auteur, le modele des sessions evaluees et les sessions mesurees"
 		IMPL "docs/awawa-usage-reports/_template.md"
 	SOURCE "decision du 2026-09-12, revue du premier rapport d'usage, PR #63"
+
+DECISION UneRecommandationEstExamineeAvantLaRatificationEstUneRegleGenerale
+	DESC "la regle est generale : elle vit dans la section Always de ~/.ai/AGENTS.md, a cote de la"
+		+ "regle d'enregistrement des decisions, livree par delairec/.ai PR #15"
+	DESC "une recommandation posee a cote d'une question ouverte n'est pas pre-approuvee : la"
+		+ "session l'examine contre le code et les decisions enregistrees avant d'en proposer la"
+		+ "ratification, et la ratification en bloc n'est jamais la premiere option"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.UneRecommandationEstExamineeAvantDEtreProposeeALaRatification
+	RATIONALE "rien dans le defaut ne tient au projet : toute question qui porte une"
+		+ "recommandation, dans tout corpus, se lit comme pre-approuvee"
+	REJECTED "specifique au projet, portee par le corpus seul : la prochaine session sur un autre"
+		+ "projet referait la meme faute"
+	SOURCE "arbitrage utilisateur du 2026-09-12, PR #63"
