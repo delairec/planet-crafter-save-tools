@@ -1,11 +1,11 @@
-import {WorldObject} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
+import {DecodedWorldObject} from './DecodedWorldObject';
 
 /**
  * @see GR-WO-1, GR-WO-2, GR-WO-3, GR-WO-4 in docs/game-rules.md
  */
-export function mergeWorldObjects(worldObjectsGeneratorA: Generator<WorldObject>, worldObjectsGeneratorB: Generator<WorldObject>, orphanWorldObjectIds: Set<number>): EntriesByOrigin<WorldObject> {
-  const fromSaveA: WorldObject[] = [];
+export function mergeWorldObjects(worldObjectsGeneratorA: Generator<DecodedWorldObject>, worldObjectsGeneratorB: Generator<DecodedWorldObject>, orphanWorldObjectIds: Set<number>): EntriesByOrigin<DecodedWorldObject> {
+  const fromSaveA: DecodedWorldObject[] = [];
   const positionKeysFromA = new Set<string>();
   for (const worldObject of worldObjectsGeneratorA) {
     if (worldObject.pos) {
@@ -14,7 +14,7 @@ export function mergeWorldObjects(worldObjectsGeneratorA: Generator<WorldObject>
     fromSaveA.push(worldObject);
   }
 
-  const fromSaveB: WorldObject[] = [];
+  const fromSaveB: DecodedWorldObject[] = [];
   for (const worldObject of worldObjectsGeneratorB) {
     if (orphanWorldObjectIds.has(worldObject.id)) {
       continue;
@@ -28,6 +28,6 @@ export function mergeWorldObjects(worldObjectsGeneratorA: Generator<WorldObject>
   return {fromSaveA, fromSaveB};
 }
 
-function buildWorldObjectPositionKey(worldObject: WorldObject): string {
+function buildWorldObjectPositionKey(worldObject: DecodedWorldObject): string {
   return `${worldObject.planet ?? ''}:${worldObject.pos}`;
 }

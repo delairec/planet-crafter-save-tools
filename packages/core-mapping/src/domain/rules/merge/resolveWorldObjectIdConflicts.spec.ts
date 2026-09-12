@@ -2,13 +2,13 @@ import {describe, expect, it} from 'bun:test';
 import {resolveWorldObjectIdConflicts} from './resolveWorldObjectIdConflicts';
 import {createIdSequence} from './createIdSequence';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {WorldObject} from 'shared-save-processing/gameDefinitions';
-import {createInventory, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
+import {DecodedInventory} from './DecodedInventory';
+import {DecodedWorldObject} from './DecodedWorldObject';
 
 describe('Resolve world object id conflicts', () => {
-  const anInventory = createInventory({id: 10, woIds: '', size: 20});
+  const anInventory: DecodedInventory = {id: 10, woIds: [], size: 20};
 
-  function createIdSequenceSeededOn(worldObjects: EntriesByOrigin<WorldObject>) {
+  function createIdSequenceSeededOn(worldObjects: EntriesByOrigin<DecodedWorldObject>) {
     return createIdSequence([anInventory], [...worldObjects.fromSaveA, ...worldObjects.fromSaveB]);
   }
 
@@ -16,8 +16,8 @@ describe('Resolve world object id conflicts', () => {
     it('should give that world object a new id', () => {
       // Arrange
       const worldObjects = {
-        fromSaveA: [createWorldObject({id: 100, gId: 'SomeObject'})],
-        fromSaveB: [createWorldObject({id: 100, gId: 'OtherObject'})]
+        fromSaveA: [{id: 100, gId: 'SomeObject'}],
+        fromSaveB: [{id: 100, gId: 'OtherObject'}]
       };
 
       // Act
@@ -30,8 +30,8 @@ describe('Resolve world object id conflicts', () => {
     it('should report the new id under the id it replaces', () => {
       // Arrange
       const worldObjects = {
-        fromSaveA: [createWorldObject({id: 100, gId: 'SomeObject'})],
-        fromSaveB: [createWorldObject({id: 100, gId: 'OtherObject'})]
+        fromSaveA: [{id: 100, gId: 'SomeObject'}],
+        fromSaveB: [{id: 100, gId: 'OtherObject'}]
       };
 
       // Act
@@ -44,8 +44,8 @@ describe('Resolve world object id conflicts', () => {
     it('should leave the save A world objects untouched', () => {
       // Arrange
       const worldObjects = {
-        fromSaveA: [createWorldObject({id: 100, gId: 'SomeObject'})],
-        fromSaveB: [createWorldObject({id: 100, gId: 'OtherObject'})]
+        fromSaveA: [{id: 100, gId: 'SomeObject'}],
+        fromSaveB: [{id: 100, gId: 'OtherObject'}]
       };
 
       // Act
@@ -60,8 +60,8 @@ describe('Resolve world object id conflicts', () => {
     it('should keep its id and report no remapping', () => {
       // Arrange
       const worldObjects = {
-        fromSaveA: [createWorldObject({id: 100, gId: 'SomeObject'})],
-        fromSaveB: [createWorldObject({id: 200, gId: 'OtherObject'})]
+        fromSaveA: [{id: 100, gId: 'SomeObject'}],
+        fromSaveB: [{id: 200, gId: 'OtherObject'}]
       };
 
       // Act

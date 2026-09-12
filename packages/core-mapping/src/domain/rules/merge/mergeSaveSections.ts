@@ -1,4 +1,3 @@
-import {ParsedSections} from 'shared-save-processing/gameDefinitions';
 import {mergeGlobalMetadata} from './mergeGlobalMetadata';
 import {mergeTerraformationLevels} from './mergeTerraformationLevels';
 import {mergePlayers} from './mergePlayers';
@@ -12,6 +11,7 @@ import {mergeWorldEvents} from './mergeWorldEvents';
 import {determineSaveOrder} from './determineSaveOrder';
 import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
 import {MergedSaveSections} from './MergedSaveSections';
+import {DecodedSections} from './DecodedSections';
 
 function* EMPTY_GENERATOR(): Generator<never> {
 }
@@ -24,7 +24,7 @@ function* EMPTY_GENERATOR(): Generator<never> {
  * @param saveDisplayName - Overrides `saveDisplayName` in the merged configuration.
  * @see GR-ORDER-1 in docs/game-rules.md
  */
-export function mergeSaveSections(sectionsA: ParsedSections, sectionsB: ParsedSections, saveDisplayName: string): MergedSaveSections {
+export function mergeSaveSections(sectionsA: DecodedSections, sectionsB: DecodedSections, saveDisplayName: string): MergedSaveSections {
   const [mainSave, secondarySave] = determineSaveOrder(sectionsA, sectionsB);
 
   const [metadataA = [], terraformationLevelsA = [], playersA = [], worldObjectsFactoryA = () => EMPTY_GENERATOR(), inventoriesA = [], statisticsA = [], mailboxA = [], storyEventsA = [], saveConfigurationsA = [], worldEventsA = []] = mainSave;

@@ -1,7 +1,7 @@
-import {Inventory, Player, WorldObject} from 'shared-save-processing/gameDefinitions';
+import {Player} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
-
-const ID_LIST_SEPARATOR = ',';
+import {DecodedInventory} from './DecodedInventory';
+import {DecodedWorldObject} from './DecodedWorldObject';
 
 export interface IdRemappings {
   readonly inventoryIds: ReadonlyMap<number, number>;
@@ -29,7 +29,7 @@ export function rewritePlayerReferences(players: EntriesByOrigin<Player>, remapp
 }
 
 /** @see GR-ID-3, GR-ID-5 in docs/game-rules.md */
-export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<WorldObject>, remappings: IdRemappings): EntriesByOrigin<WorldObject> {
+export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<DecodedWorldObject>, remappings: IdRemappings): EntriesByOrigin<DecodedWorldObject> {
   return {
     fromSaveA: worldObjects.fromSaveA,
     fromSaveB: worldObjects.fromSaveB.map(worldObject => ({
@@ -51,7 +51,7 @@ export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<World
  *
  * @see GR-ID-3, GR-ID-5 in docs/game-rules.md
  */
-export function rewriteInventoryReferences(inventories: EntriesByOrigin<Inventory>, remappings: IdRemappings): EntriesByOrigin<Inventory> {
+export function rewriteInventoryReferences(inventories: EntriesByOrigin<DecodedInventory>, remappings: IdRemappings): EntriesByOrigin<DecodedInventory> {
   return {
     fromSaveA: inventories.fromSaveA,
     fromSaveB: inventories.fromSaveB.map(inventory => ({
@@ -71,20 +71,10 @@ function remapOptionalId(id: number | undefined, remapping: ReadonlyMap<number, 
 }
 
 /** A field absent from the save stays absent: `undefined` is dropped when the entry is serialized. */
-function remapOptionalIdList(idList: string | undefined, remapping: ReadonlyMap<number, number>): string | undefined {
+function remapOptionalIdList(idList: readonly number[] | undefined, remapping: ReadonlyMap<number, number>): readonly number[] | undefined {
   return idList === undefined ? undefined : remapIdList(idList, remapping);
 }
 
-function remapIdList(idList: string, remapping: ReadonlyMap<number, number>): string {
-  if (!idList) {
-    return idList;
-  }
-
-  return idList
-    .split(ID_LIST_SEPARATOR)
-    .map(id => {
-      const remappedId = remapping.get(Number(id));
-      return remappedId === undefined ? id : String(remappedId);
-    })
-    .join(ID_LIST_SEPARATOR);
+function remapIdList(idList: readonly number[], remapping: ReadonlyMap<number, number>): readonly number[] {
+  return idList.map(id => remapId(id, remapping));
 }

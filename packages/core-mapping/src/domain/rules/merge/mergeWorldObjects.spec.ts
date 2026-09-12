@@ -1,17 +1,16 @@
 import {describe, it, expect} from 'bun:test';
 import {mergeWorldObjects} from './mergeWorldObjects';
-import {WorldObject} from 'shared-save-processing/gameDefinitions';
-import {createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
+import {DecodedWorldObject} from './DecodedWorldObject';
 
 describe('Merge world objects', () => {
-  function* createWorldObjectsGenerator(worldObjects: WorldObject[]): Generator<WorldObject> {
+  function* createWorldObjectsGenerator(worldObjects: DecodedWorldObject[]): Generator<DecodedWorldObject> {
     yield* worldObjects;
   }
 
   const noOrphanWorldObjectIds = new Set<number>();
-  const worldObjectFromSaveA = createWorldObject({id: 101, gId: 'SomeObject', pos: '100,200,300', rot: '0,0,0,1', planet: 110910047});
-  const worldObjectFromSaveB = createWorldObject({id: 201, gId: 'OtherObject', pos: '400,500,600', rot: '0,0,0,1', planet: 110910047});
-  const sharedWorldObject = createWorldObject({id: 301, gId: 'SharedObject', pos: '700,800,900', rot: '0,0,0,1', planet: 110910047});
+  const worldObjectFromSaveA: DecodedWorldObject = {id: 101, gId: 'SomeObject', pos: '100,200,300', rot: '0,0,0,1', planet: 110910047};
+  const worldObjectFromSaveB: DecodedWorldObject = {id: 201, gId: 'OtherObject', pos: '400,500,600', rot: '0,0,0,1', planet: 110910047};
+  const sharedWorldObject: DecodedWorldObject = {id: 301, gId: 'SharedObject', pos: '700,800,900', rot: '0,0,0,1', planet: 110910047};
 
   describe('When world objects are unique', () => {
     it('should keep the world objects of each save under their own origin', () => {
@@ -35,15 +34,16 @@ describe('Merge world objects', () => {
       // Arrange
       const noWorldObjectsFromSaveA: never[] = [];
       const orphanWorldObjectIds = new Set([901, 902, 903]);
+      const worldObjectsFromSaveB: DecodedWorldObject[] = [
+        {id: 901, gId: 'Iron'},
+        {id: 902, gId: 'Cobalt'},
+        {id: 903, gId: 'AirFilter1'}
+      ];
 
       // Act
       const result = mergeWorldObjects(
         createWorldObjectsGenerator(noWorldObjectsFromSaveA),
-        createWorldObjectsGenerator([
-          createWorldObject({id: 901, gId: 'Iron'}),
-          createWorldObject({id: 902, gId: 'Cobalt'}),
-          createWorldObject({id: 903, gId: 'AirFilter1'})
-        ]),
+        createWorldObjectsGenerator(worldObjectsFromSaveB),
         orphanWorldObjectIds
       );
 
@@ -55,8 +55,8 @@ describe('Merge world objects', () => {
   describe('When a world object appears in both saves with the same pos', () => {
     it('should deduplicate by pos and keep only the one from save A', () => {
       // Arrange
-      const worldObjectInSaveA = {...sharedWorldObject, id: 301};
-      const worldObjectInSaveB = {...sharedWorldObject, id: 999};
+      const worldObjectInSaveA: DecodedWorldObject = {...sharedWorldObject, id: 301};
+      const worldObjectInSaveB: DecodedWorldObject = {...sharedWorldObject, id: 999};
 
       // Act
       const result = mergeWorldObjects(
@@ -76,8 +76,8 @@ describe('Merge world objects', () => {
   describe('When two world objects share the same pos but are on different planets', () => {
     it('should keep both world objects as they are distinct objects', () => {
       // Arrange
-      const worldObjectOnPlanetA = createWorldObject({id: 101, gId: 'SomeObject', pos: '100,200,300', rot: '0,0,0,1', planet: 111111111});
-      const worldObjectOnPlanetB = createWorldObject({id: 201, gId: 'SomeObject', pos: '100,200,300', rot: '0,0,0,1', planet: 222222222});
+      const worldObjectOnPlanetA: DecodedWorldObject = {id: 101, gId: 'SomeObject', pos: '100,200,300', rot: '0,0,0,1', planet: 111111111};
+      const worldObjectOnPlanetB: DecodedWorldObject = {id: 201, gId: 'SomeObject', pos: '100,200,300', rot: '0,0,0,1', planet: 222222222};
 
       // Act
       const result = mergeWorldObjects(

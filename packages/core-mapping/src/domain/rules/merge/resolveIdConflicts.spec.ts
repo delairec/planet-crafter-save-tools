@@ -1,15 +1,17 @@
 import {describe, expect, it} from 'bun:test';
 import {resolveIdConflicts} from './resolveIdConflicts';
 import {MergedSaveSections} from './MergedSaveSections';
-import {Inventory, Player, WorldObject} from 'shared-save-processing/gameDefinitions';
+import {Player} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {createGlobalMetadata, createInventory, createPlayer, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createGlobalMetadata, createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {DecodedInventory} from './DecodedInventory';
+import {DecodedWorldObject} from './DecodedWorldObject';
 
 describe('Resolve id conflicts', () => {
   function createMergedSections(overrides: {
     players?: EntriesByOrigin<Player>,
-    inventories?: EntriesByOrigin<Inventory>,
-    worldObjects?: EntriesByOrigin<WorldObject>
+    inventories?: EntriesByOrigin<DecodedInventory>,
+    worldObjects?: EntriesByOrigin<DecodedWorldObject>
   }): MergedSaveSections {
     return {
       globalMetadata: createGlobalMetadata(),
@@ -34,10 +36,10 @@ describe('Resolve id conflicts', () => {
       const sections = createMergedSections({
         players: {fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]},
         inventories: {
-          fromSaveA: [createInventory({id: 10, woIds: '100', size: 20}), createInventory({id: 11, woIds: '', size: 10})],
-          fromSaveB: [createInventory({id: 20, woIds: '', size: 20}), createInventory({id: 21, woIds: '', size: 10})]
+          fromSaveA: [{id: 10, woIds: [100], size: 20}, {id: 11, woIds: [], size: 10}],
+          fromSaveB: [{id: 20, woIds: [], size: 20}, {id: 21, woIds: [], size: 10}]
         },
-        worldObjects: {fromSaveA: [createWorldObject({id: 100, gId: 'SomeObject'})], fromSaveB: [createWorldObject({id: 200, gId: 'OtherObject'})]}
+        worldObjects: {fromSaveA: [{id: 100, gId: 'SomeObject'}], fromSaveB: [{id: 200, gId: 'OtherObject'}]}
       });
 
       // Act
@@ -46,8 +48,8 @@ describe('Resolve id conflicts', () => {
       // Assert
       expect(result.players).toEqual({fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]});
       expect(result.inventories).toEqual({
-        fromSaveA: [{id: 10, woIds: '100', size: 20}, {id: 11, woIds: '', size: 10}],
-        fromSaveB: [{id: 20, woIds: '', size: 20}, {id: 21, woIds: '', size: 10}]
+        fromSaveA: [{id: 10, woIds: [100], size: 20}, {id: 11, woIds: [], size: 10}],
+        fromSaveB: [{id: 20, woIds: [], size: 20}, {id: 21, woIds: [], size: 10}]
       });
       expect(result.worldObjects).toEqual({
         fromSaveA: [{id: 100, gId: 'SomeObject'}],
@@ -64,10 +66,10 @@ describe('Resolve id conflicts', () => {
       const sections = createMergedSections({
         players: {fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]},
         inventories: {
-          fromSaveA: [createInventory({id: 10, woIds: '', size: 20}), createInventory({id: 11, woIds: '', size: 10})],
-          fromSaveB: [createInventory({id: 10, woIds: '', size: 35}), createInventory({id: 11, woIds: '', size: 5})]
+          fromSaveA: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}],
+          fromSaveB: [{id: 10, woIds: [], size: 35}, {id: 11, woIds: [], size: 5}]
         },
-        worldObjects: {fromSaveA: [createWorldObject({id: 100, gId: 'SomeObject'})], fromSaveB: [createWorldObject({id: 100, gId: 'OtherObject'})]}
+        worldObjects: {fromSaveA: [{id: 100, gId: 'SomeObject'}], fromSaveB: [{id: 100, gId: 'OtherObject'}]}
       });
 
       // Act
@@ -79,8 +81,8 @@ describe('Resolve id conflicts', () => {
         fromSaveB: [{...playerFromSaveB, inventoryId: 101, equipmentId: 102}]
       });
       expect(result.inventories).toEqual({
-        fromSaveA: [{id: 10, woIds: '', size: 20}, {id: 11, woIds: '', size: 10}],
-        fromSaveB: [{id: 101, woIds: '', size: 35}, {id: 102, woIds: '', size: 5}]
+        fromSaveA: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}],
+        fromSaveB: [{id: 101, woIds: [], size: 35}, {id: 102, woIds: [], size: 5}]
       });
       expect(result.worldObjects).toEqual({
         fromSaveA: [{id: 100, gId: 'SomeObject'}],
@@ -94,8 +96,8 @@ describe('Resolve id conflicts', () => {
       const sections = createMergedSections({
         players: {fromSaveA: [createPlayer({id: '1', inventoryId: 10, equipmentId: 11})], fromSaveB: [playerFromSaveB]},
         inventories: {
-          fromSaveA: [createInventory({id: 10, woIds: '', size: 20}), createInventory({id: 11, woIds: '', size: 10})],
-          fromSaveB: [createInventory({id: 10, woIds: '', size: 35}), createInventory({id: 11, woIds: '', size: 5})]
+          fromSaveA: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}],
+          fromSaveB: [{id: 10, woIds: [], size: 35}, {id: 11, woIds: [], size: 5}]
         }
       });
 
@@ -115,8 +117,8 @@ describe('Resolve id conflicts', () => {
       const sections = createMergedSections({
         players: {fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]},
         inventories: {
-          fromSaveA: [createInventory({id: 10, woIds: '', size: 20}), createInventory({id: 11, woIds: '', size: 10})],
-          fromSaveB: [createInventory({id: 20, woIds: '', size: 35}), createInventory({id: 21, woIds: '', size: 5})]
+          fromSaveA: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}],
+          fromSaveB: [{id: 20, woIds: [], size: 35}, {id: 21, woIds: [], size: 5}]
         }
       });
 
@@ -135,8 +137,8 @@ describe('Resolve id conflicts', () => {
       const sections = createMergedSections({
         players: {fromSaveA: [createPlayer({id: '1', inventoryId: 3, equipmentId: 4})], fromSaveB: [playerFromSaveB]},
         inventories: {
-          fromSaveA: [createInventory({id: 3, woIds: '', size: 20}), createInventory({id: 4, woIds: '', size: 10}), createInventory({id: 44, woIds: '', size: 35}), createInventory({id: 45, woIds: '', size: 35})],
-          fromSaveB: [createInventory({id: 44, woIds: '', size: 20}), createInventory({id: 45, woIds: '', size: 10})]
+          fromSaveA: [{id: 3, woIds: [], size: 20}, {id: 4, woIds: [], size: 10}, {id: 44, woIds: [], size: 35}, {id: 45, woIds: [], size: 35}],
+          fromSaveB: [{id: 44, woIds: [], size: 20}, {id: 45, woIds: [], size: 10}]
         }
       });
 
@@ -145,7 +147,7 @@ describe('Resolve id conflicts', () => {
 
       // Assert
       expect(result.players.fromSaveB).toEqual([{...playerFromSaveB, inventoryId: 46, equipmentId: 47}]);
-      expect(result.inventories.fromSaveB).toEqual([{id: 46, woIds: '', size: 20}, {id: 47, woIds: '', size: 10}]);
+      expect(result.inventories.fromSaveB).toEqual([{id: 46, woIds: [], size: 20}, {id: 47, woIds: [], size: 10}]);
     });
   });
 
@@ -155,12 +157,12 @@ describe('Resolve id conflicts', () => {
       const sections = createMergedSections({
         players: {fromSaveA: [createPlayer({id: '1', inventoryId: 10, equipmentId: 11})], fromSaveB: []},
         inventories: {
-          fromSaveA: [createInventory({id: 10, woIds: '', size: 20}), createInventory({id: 11, woIds: '', size: 10}), createInventory({id: 50, woIds: '100', size: 35})],
-          fromSaveB: [createInventory({id: 50, woIds: '200', size: 12})]
+          fromSaveA: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}, {id: 50, woIds: [100], size: 35}],
+          fromSaveB: [{id: 50, woIds: [200], size: 12}]
         },
         worldObjects: {
-          fromSaveA: [createWorldObject({id: 100, gId: 'Container2', liId: 50})],
-          fromSaveB: [createWorldObject({id: 200, gId: 'Container2', liId: 50})]
+          fromSaveA: [{id: 100, gId: 'Container2', liId: 50}],
+          fromSaveB: [{id: 200, gId: 'Container2', liId: 50}]
         }
       });
 
@@ -172,7 +174,7 @@ describe('Resolve id conflicts', () => {
         fromSaveA: [{id: 100, gId: 'Container2', liId: 50}],
         fromSaveB: [{id: 200, gId: 'Container2', liId: 201}]
       });
-      expect(result.inventories.fromSaveB).toEqual([{id: 201, woIds: '200', size: 12}]);
+      expect(result.inventories.fromSaveB).toEqual([{id: 201, woIds: [200], size: 12}]);
     });
   });
 
@@ -181,12 +183,12 @@ describe('Resolve id conflicts', () => {
       // Arrange
       const sections = createMergedSections({
         inventories: {
-          fromSaveA: [createInventory({id: 30, woIds: '100', size: 50})],
-          fromSaveB: [createInventory({id: 31, woIds: '100', size: 50})]
+          fromSaveA: [{id: 30, woIds: [100], size: 50}],
+          fromSaveB: [{id: 31, woIds: [100], size: 50}]
         },
         worldObjects: {
-          fromSaveA: [createWorldObject({id: 100, gId: 'Iron'})],
-          fromSaveB: [createWorldObject({id: 100, gId: 'Cobalt'})]
+          fromSaveA: [{id: 100, gId: 'Iron'}],
+          fromSaveB: [{id: 100, gId: 'Cobalt'}]
         }
       });
 
@@ -195,8 +197,8 @@ describe('Resolve id conflicts', () => {
 
       // Assert
       expect(result.inventories).toEqual({
-        fromSaveA: [{id: 30, woIds: '100', size: 50}],
-        fromSaveB: [{id: 31, woIds: '101', size: 50}]
+        fromSaveA: [{id: 30, woIds: [100], size: 50}],
+        fromSaveB: [{id: 31, woIds: [101], size: 50}]
       });
       expect(result.worldObjects.fromSaveB).toEqual([{id: 101, gId: 'Cobalt'}]);
     });
@@ -207,17 +209,17 @@ describe('Resolve id conflicts', () => {
       // Arrange
       const sections = createMergedSections({
         inventories: {
-          fromSaveA: [createInventory({id: 10, woIds: '', size: 20})],
-          fromSaveB: [createInventory({id: 10, woIds: '', size: 35})]
+          fromSaveA: [{id: 10, woIds: [], size: 20}],
+          fromSaveB: [{id: 10, woIds: [], size: 35}]
         },
-        worldObjects: {fromSaveA: [createWorldObject({id: 11, gId: 'Iron'})], fromSaveB: []}
+        worldObjects: {fromSaveA: [{id: 11, gId: 'Iron'}], fromSaveB: []}
       });
 
       // Act
       const result = resolveIdConflicts(sections);
 
       // Assert
-      expect(result.inventories.fromSaveB).toEqual([{id: 12, woIds: '', size: 35}]);
+      expect(result.inventories.fromSaveB).toEqual([{id: 12, woIds: [], size: 35}]);
       expect(result.worldObjects.fromSaveA).toEqual([{id: 11, gId: 'Iron'}]);
     });
   });
@@ -227,8 +229,8 @@ describe('Resolve id conflicts', () => {
       // Arrange
       const sections = createMergedSections({
         worldObjects: {
-          fromSaveA: [createWorldObject({id: 100, gId: 'Lake1'})],
-          fromSaveB: [createWorldObject({id: 100, gId: 'Lake2'}), createWorldObject({id: 201, gId: 'WaterGenerator', linkedWo: 100})]
+          fromSaveA: [{id: 100, gId: 'Lake1'}],
+          fromSaveB: [{id: 100, gId: 'Lake2'}, {id: 201, gId: 'WaterGenerator', linkedWo: 100}]
         }
       });
 

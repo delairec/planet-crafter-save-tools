@@ -1,7 +1,8 @@
 import {describe, expect, it} from 'bun:test';
-import {Player, Inventory} from 'shared-save-processing/gameDefinitions';
+import {Player} from 'shared-save-processing/gameDefinitions';
 import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
-import {createInventory, createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {DecodedInventory} from './DecodedInventory';
+import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
 
 describe('collectEjectedPlayerInventoryIds', () => {
   describe('When no player in save B shares a name with a player in save A', () => {
@@ -9,7 +10,7 @@ describe('collectEjectedPlayerInventoryIds', () => {
       // Arrange
       const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
       const playersB: Player[] = [createPlayer({name: 'Chileny', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: Inventory[] = [createInventory({id: 50, woIds: '900,901', size: 20})];
+      const inventoriesB: DecodedInventory[] = [{id: 50, woIds: [900, 901], size: 20}];
 
       // Act
       const result = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);
@@ -25,7 +26,7 @@ describe('collectEjectedPlayerInventoryIds', () => {
       // Arrange
       const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
       const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: Inventory[] = [];
+      const inventoriesB: DecodedInventory[] = [];
 
       // Act
       const result = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);
@@ -38,9 +39,9 @@ describe('collectEjectedPlayerInventoryIds', () => {
       // Arrange
       const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
       const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: Inventory[] = [
-        createInventory({id: 50, woIds: '900,901', size: 20}),
-        createInventory({id: 51, woIds: '902', size: 10})
+      const inventoriesB: DecodedInventory[] = [
+        {id: 50, woIds: [900, 901], size: 20},
+        {id: 51, woIds: [902], size: 10}
       ];
 
       // Act
@@ -57,9 +58,9 @@ describe('collectEjectedPlayerInventoryIds', () => {
         createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51}),
         createPlayer({id: '999', name: 'Chileny', inventoryId: 60, equipmentId: 61})
       ];
-      const inventoriesB: Inventory[] = [
-        createInventory({id: 50, woIds: '900', size: 20}),
-        createInventory({id: 60, woIds: '901', size: 20})
+      const inventoriesB: DecodedInventory[] = [
+        {id: 50, woIds: [900], size: 20},
+        {id: 60, woIds: [901], size: 20}
       ];
 
       // Act
@@ -75,7 +76,7 @@ describe('collectEjectedPlayerInventoryIds', () => {
       // Arrange
       const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
       const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: Inventory[] = [createInventory({id: 50, woIds: '', size: 20})];
+      const inventoriesB: DecodedInventory[] = [{id: 50, woIds: [], size: 20}];
 
       // Act
       const result = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);
