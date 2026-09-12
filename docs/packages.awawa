@@ -9,26 +9,21 @@ SHAPE package_name
 SCHEMA PACKAGE
 	DESC "un package du monorepo ; le prefixe du nom fixe ses dependances autorisees"
 	NAME package_name
-	FIELD PREFIX core|util|cli|ui|shared
-		REQUIRED
 
 PACKAGE shared_save_processing
 	DESC "format wire des saves : types, analyse, serialisation, schemas JSON, fixtures de test"
-	PREFIX shared
 	STATUS implemented
 	SPEC "expose l'analyse et la serialisation des sections de save, sans dependance hors util-*"
 		IMPL "packages/shared-save-processing/package.json::shared-save-processing"
 
 PACKAGE shared_platforms
 	DESC "adaptateurs fs/process pour Bun et Node, sans effet de bord a l'import"
-	PREFIX shared
 	STATUS implemented
 	SPEC "les deux adaptateurs honorent le meme contrat, verifie par une spec commune"
 		IMPL "packages/shared-platforms/package.json::shared-platforms"
 
 PACKAGE util_types
 	DESC "le seul type de contrat RuntimePlatform, consomme type-only par shared-platforms"
-	PREFIX util
 	STATUS implemented
 	SPEC "ne depend de rien"
 		IMPL "packages/util-types/package.json::util-types"
@@ -36,7 +31,6 @@ PACKAGE util_types
 PACKAGE core_mapping
 	DESC "domaine, application, infrastructure et presentation du mapping de saves"
 	DESC "seuls les controleurs et les ViewModels sont exportes"
-	PREFIX core
 	STATUS implemented
 	SPEC "seuls les controleurs et les ViewModels sont exportes : aucun module d'infrastructure"
 		+ "n'est atteignable de l'exterieur du package"
@@ -50,21 +44,18 @@ PACKAGE core_mapping
 
 PACKAGE cli_merge
 	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
-	PREFIX cli
 	STATUS implemented
 	SPEC "ne porte aucune regle de fusion"
 		IMPL "packages/cli-merge/package.json::cli-merge"
 
 PACKAGE cli_validate
 	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
-	PREFIX cli
 	STATUS implemented
 	SPEC "ne porte aucune regle de validation"
 		IMPL "packages/cli-validate/package.json::cli-validate"
 
 PACKAGE ui_save_manager
 	DESC "UI SolidStart consommant directement les controleurs de core-mapping"
-	PREFIX ui
 	STATUS implemented
 	SPEC "hors perimetre qualite fallow pour l'instant"
 		IMPL "fallow.toml"
