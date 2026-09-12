@@ -1,0 +1,187 @@
+// Les points non tranches, tous domaines confondus. Une limitation acceptee est un point *ferme* :
+// sa question passe superseded et la DECISION qui la ferme porte la matiere — elle vit dans
+// limitations.awawa (@DECISION.UneLimitationAccepteeGardeSaMatiereDansLaDecision).
+OPEN_QUESTION NomDeDossierAvecArobaseCorromptLaSaveFusionnee
+	DESC "un nom de dossier contenant @ fait ecrire par bun merge une save que bun validate refuse"
+	DESC "correction a instruire : assainir le nom affiche a la frontiere qui le recoit, ou refuser"
+		+ "un nom que le format ne peut pas porter"
+	STATUS specified
+	BLOCKS @PACKAGE.core_mapping
+	RATIONALE "@ est le separateur de sections du format ; mergeSaveConfigurations recopie tel quel"
+		+ "le saveDisplayName que les deux appelants prennent du nom de dossier ou de la saisie."
+		+ "buildMergedFileName assainit le nom de *fichier*, rien n'assainit le nom *affiche* de la"
+		+ "section 8 : un @ de plus porte le decoupage de 11 a 12 parties, verifySectionCount"
+		+ "accepte 12 comme un format ancien legitime, et la section 8 est lue tronquee"
+	RATIONALE "T28 rend le defaut visible sans le supprimer : le fichier est ecrit, le code de"
+		+ "retour reste 0, les erreurs sortent sur stderr"
+	SPEC "un correctif doit reformuler la spec de bout en bout de T28 et lui trouver un autre"
+		+ "producteur de sortie invalide"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::does not pass validation"
+	RATIONALE "c'est la seule reproduction vivante d'une sortie fusionnee invalide depuis la fusion"
+		+ "de T29 ; verifie en revue de la PR #59, assainir le @ fait tomber l'assertion d'en-tete"
+		+ "et elle seule, les trois autres cas du bloc restant vrais avec ou sans le defaut"
+	SOURCE "known-issues/merge/nom-de-dossier-qui-corrompt-la-save-produite.md"
+	SOURCE "constate le 2026-09-10, mise en oeuvre de T28"
+
+OPEN_QUESTION WoIdsNEstAttesteeParAucuneSave
+	DESC "la propriete de liste d'objets lies declaree sur un objet du monde n'apparait sur aucune"
+		+ "des 190338 entrees relevees"
+	DESC "deux lectures : elle existe et l'echantillon ne la rencontre pas, ou elle n'existe pas et"
+		+ "le contenu passe par l'inventaire lie"
+	DESC "si la seconde se confirme, le type, le remappage de references et la ligne correspondante"
+		+ "de la regle d'identifiants tombent ensemble, pas le schema seul"
+	STATUS specified
+	BLOCKS @PACKAGE.shared_save_processing
+	RATIONALE "elle reste declaree par precaution : sous un schema ferme aux proprietes"
+		+ "supplementaires, la taire ferait refuser une save que la reecriture de references"
+		+ "pretend traiter"
+	SOURCE "constate le 2026-09-10, T39 ; laisse ouvert en revue de la PR #48"
+
+OPEN_QUESTION LesBornesDeHungerSontPoseesSurUneHypothese
+	DESC "les deux bornes du niveau de faim d'un animal sont posees sur une hypothese de jeu, pas"
+		+ "sur une source"
+	DESC "le premier contre-exemple rencontre les leve ; l'utilisateur a assume le risque, on"
+		+ "avisera si une save est un jour refusee"
+	STATUS specified
+	BLOCKS @PACKAGE.shared_save_processing
+	RATIONALE "champ observe sur les seules entrees d'un identifiant de groupe, 345 occurrences sur"
+		+ "190338, plage relevee de -100 a 94,22. L'echelle symetrique se justifie par le fait"
+		+ "qu'un animal fournit un ADN quand son niveau est positif, ce qui est coherent avec un"
+		+ "plafond sans le demontrer"
+	RATIONALE "c'est exactement le risque que la regle sur les schemas nomme : une borne posee sur"
+		+ "la seule foi de l'echantillon refusera demain une save legitime"
+		REF @DECISION.UneRegleDeSchemaTientParLeSensAvantDeTenirParLaMesure
+	SOURCE "constate le 2026-09-10, T39, PR #48"
+
+OPEN_QUESTION LesLibellesDeSectionDivergentDeLaDocumentation
+	DESC "les libelles courts employes dans la localisation d'une erreur ne sont pas alignes sur le"
+		+ "sommaire du document des regles de jeu"
+	DESC "a trancher : la documentation doit-elle devenir la reference unique des noms de section"
+	STATUS specified
+	BLOCKS @PACKAGE.core_mapping
+	RATIONALE "les libelles courts sont plus lisibles dans un prefixe d'erreur ; la divergence a"
+		+ "ete signalee comme reversible en revue"
+	SOURCE "constate le 2026-09-08, revue de T20, PR #37"
+
+OPEN_QUESTION LesReglesDeCirculationDesObjetsNeSontPasAcquises
+	DESC "les regles de circulation des objets entre couches sont redigees et proposees dans les"
+		+ "instructions generales, pas encore fusionnees"
+	DESC "tant que la pull request n'est pas fusionnee, aucune session ne lit ces regles, et la"
+		+ "tache est a reprendre si elle est fermee au lieu d'etre fusionnee"
+	STATUS specified
+	BLOCKS @PACKAGE.core_mapping
+	RATIONALE "le trou est mesure : le mot Response n'apparaissait qu'une fois dans tout le dossier"
+		+ "d'architecture, dans une liste de noms de methode interdits. Aucune regle ne disait que"
+		+ "la sortie d'un cas d'utilisation est une Response, ou elle vit, qui a le droit de"
+		+ "l'instancier, ni qu'il ne faut pas la confondre avec le ViewModel"
+	SOURCE "constate le 2026-09-11, troisieme passe de revue de T28, PR #59"
+
+OPEN_QUESTION LesAlertesDependabotSontDesactivees
+	DESC "les alertes de securite du depot sont desactivees : l'API les refuse, et sans elles le"
+		+ "suivi de dependances ne rend que des mises a jour de version"
+	DESC "geste a la charge de l'utilisateur, hors depot : les activer dans les reglages de"
+		+ "securite"
+	DESC "l'autre issue est de planifier le job d'audit a date fixe, ce que le depot ne fait pas :"
+		+ "il ne le lance que sur une pull request et sur la branche par defaut"
+	STATUS specified
+	RATIONALE "les avis de vulnerabilite n'apparaissent aujourd'hui que dans le job d'audit, a"
+		+ "l'occasion d'une pull request, jamais a date fixe"
+	SOURCE "constate le 2026-09-10, verification de DEP1 apres la fusion de la PR #53"
+
+OPEN_QUESTION LAuditDeSecuriteEstRougeSurDesAvisTransitifs
+	DESC "deux avis de severite haute portes par des dependances transitives, que le depot ne"
+		+ "declare pas lui-meme, font echouer l'audit"
+	DESC "ils sont aujourd'hui ignores nommement dans le script d'audit : le job est vert, les avis"
+		+ "ne sont pas resolus"
+	DESC "a trancher : attendre la montee amont, ou forcer une resolution depuis la racine"
+	STATUS specified
+	RATIONALE "le rouge prexiste aux pull requests qui le rencontrent et ne vient pas d'elles :"
+		+ "constate a l'identique sur une pull request ne touchant qu'un fichier d'exclusion"
+	RATIONALE "c'est exactement le terrain que le suivi de dependances doit remonter a date fixe"
+		+ "plutot qu'un jour de fusion"
+	SOURCE "constate le 2026-09-10, DEP1, PR #53"
+
+OPEN_QUESTION LaPolitiqueDeContenuAutoriseLeScriptEnLigne
+	DESC "la politique de contenu autorise le script et le style en ligne : un script injecte dans"
+		+ "la page s'execute malgre elle"
+	DESC "a trancher : hachage ou nonce sur le script d'hydratation, ou constat que le cadre ne le"
+		+ "permet pas"
+	STATUS specified
+	RATIONALE "la politique a ete posee compatible avec le build de production, sans que le retrait"
+		+ "de l'inline soit tente ni mesure"
+	RATIONALE "la case du plan restait cochee : la politique existe, et c'est sa force qui n'etait"
+		+ "ecrite nulle part"
+	SOURCE "relu le 2026-09-12, migration de plans/plan-secu.md, phase 2"
+
+OPEN_QUESTION FormeDesErreursDeRegleDomaine
+	DESC "sous quel type validateUniqueHost et validateFloatSerialization rendent-elles leur echec"
+	DESC "recommandation : un type du domaine, que l'infrastructure traduit en issue de validation"
+		+ "avec son code ; les codes restent en application, sans celui que le domaine decide"
+	STATUS specified
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	SOURCE "fiche T37, decision 1"
+
+OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
+	DESC "la verification du suffixe .0 reste-t-elle une regle de domaine"
+	DESC "recommandation : non, elle sort vers l'infrastructure, a cote des schemas — la propriete"
+		+ "est celle du texte"
+	STATUS specified
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	RATIONALE "l'alternative, une regle de domaine recevant des entrees analysees et verifiant"
+		+ "l'integrite du nombre, ne verifie rien : la propriete n'est pas observable apres analyse"
+		+ "JSON"
+	SOURCE "fiche T37, decision 2"
+
+OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
+	DESC "le domaine garde-t-il les chaines d'identifiants separees par des virgules, ou les"
+		+ "recoit-il decodees"
+	DESC "recommandation : decodage en infrastructure avant le domaine et re-encodage apres, une"
+		+ "seule declaration du separateur"
+	STATUS specified
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	RATIONALE "T11 a tranche que les DTO wire restent l'entree et la sortie du domaine ; elle n'a"
+		+ "pas tranche l'analyse d'un encodage de champ dans le domaine. L'alternative est"
+		+ "d'elargir explicitement cette question aux encodages de champ"
+	SOURCE "fiche T37, decision 3"
+
+OPEN_QUESTION SortDeMergedSaveValueObject
+	DESC "MergedSaveValueObject est-il supprime ou renomme en type d'infrastructure"
+	DESC "recommandation : supprime ; le port de fusion retourne les sections fusionnees et la"
+		+ "serialisation comme le nommage du fichier restent en infrastructure"
+	STATUS specified
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	RATIONALE "T27 a deja note que son invariant est vide : la seule erreur de domaine atteignable"
+		+ "sur le chemin de fusion est un test de chaine vide sur un blob"
+	SOURCE "fiche T37, decision 4"
+
+OPEN_QUESTION FormeDuContratControleurVersUi
+	DESC "comment l'UI cesse-t-elle de connaitre la representation de persistance des sections"
+	DESC "recommandation : les controleurs de section recoivent le contenu texte deja valide et le"
+		+ "composition root fabrique lecteur et analyseur ; l'alternative est un identifiant opaque"
+		+ "de save chargee porte par le ViewModel"
+	STATUS specified
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	BLOCKS @TASK.T32_ConformiteUiSaveManager
+	RATIONALE "mesure prealable de T13 : l'analyse coute 2 ms sur 2 Mo, donc la refaire par"
+		+ "controleur de section ne coute rien"
+	SOURCE "fiche T37, decision 6"
+
+OPEN_QUESTION SortDesCleusDupliqueesDeWorldObjectLabels
+	DESC "que faire des deux definitions de OutsideLamp1 et de la paire Keycard1 / KeyCard1,"
+		+ "probablement la meme cle"
+	DESC "recommandation : conserver la premiere occurrence et verifier la casse contre les saves"
+		+ "de reference"
+	STATUS specified
+	BLOCKS @TASK.T38_ConformiteCoreMapping
+	SOURCE "fiche T38, decision 2"
+
+OPEN_QUESTION LaRegleDuCorpsDePrVautElleAuDelaDeCeDepot
+	DESC "a trancher : la regle qui veut qu'un corps de PR decrive la tete de branche ne dit rien"
+		+ "de propre a ce projet et vaut pour tout depot conduit en pile de branches"
+		REF @DECISION.LeCorpsDeLaPrDecritLaTeteDeBranche
+	DESC "destination proposee si elle est generale : la section git de"
+		+ "~/.ai/instructions/commands.md"
+	STATUS specified
+	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
+		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
+	SOURCE "constate le 2026-09-12, revue de DEP2, PR #61"

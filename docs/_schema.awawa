@@ -1,0 +1,77 @@
+// Corpus de specification de planet-crafter-save-tools.
+//
+// Il vit dans docs/ ; la racine de workspace reste la racine du depot public, c'est de la
+// que les ancres IMPL resolvent et c'est elle que prend le dernier argument de chaque commande.
+// Voir @DECISION.LeCorpusVitDansLeDepotPublic et @DECISION.LeCorpusEstDecoupeParDomaine.
+//
+// Langue : francais, par exception a la regle anglaise du depot public
+// (@DECISION.LaSpecificationResteEnFrancaisMemePubliee).
+//
+// Ce fichier porte le schema transverse ; chaque domaine porte le sien a cote de ses donnees.
+PROJECT PlanetCrafterSaveTools
+	DESC "outils de fusion et de validation de sauvegardes du jeu The Planet Crafter"
+	DESC "monorepo Bun, packages prefixes par leur couche, UI SolidStart"
+
+SCHEMA PROJECT
+	DESC "configuration de niveau projet, exactement une par corpus"
+
+SCHEMA *
+	DESC "champs licites sur toute entite de ce corpus"
+	FIELD DESC string
+		REPEATABLE
+		FIELD REF reference
+			REPEATABLE
+			DESC "l'entite que cette phrase nomme, pour qu'elle soit indexee"
+	FIELD RATIONALE string
+		REPEATABLE
+		CATEGORY reasoning
+		FIELD REF reference
+			REPEATABLE
+	FIELD SPEC string
+		REPEATABLE
+		FIELD IMPL anchor
+			REPEATABLE
+	FIELD STATUS draft|specified|implemented|superseded
+		DEFAULT draft
+	FIELD SOURCE string
+		REPEATABLE
+		DESC "ou cela a ete decide ou lu : date, numero de PR, revue"
+	FIELD IMPL anchor
+		REPEATABLE
+		DESC "ou cela est realise, pour une entite qui ne porte pas de SPEC"
+	FIELD SUPERSEDES reference
+		DESC "l'entite que celle-ci remplace ; les rapports impriment SUPERSEDED_BY sur l'ancienne"
+		CONVERSE SUPERSEDED_BY
+	WHEN STATUS specified
+		GATE error
+	WHEN STATUS implemented
+		GATE error
+		FIELD SPEC
+			REQUIRED
+			FIELD IMPL
+				REQUIRED
+	WHEN STATUS superseded
+		GATE suppressed
+		INCOMING CLOSED_BY|SUPERSEDED_BY
+
+SCHEMA DECISION
+	DESC "un arbitrage, et ce qu'il a ecarte"
+	FIELD REJECTED string
+		REQUIRED
+		REPEATABLE
+		DESC "ce qui a ete envisage et ecarte"
+		FIELD REF reference
+			REPEATABLE
+	FIELD CLOSES @OPEN_QUESTION
+		REPEATABLE
+		CONVERSE CLOSED_BY
+
+SCHEMA OPEN_QUESTION
+	DESC "un point non tranche, ou une limitation dont personne n'a encore decide du sort"
+	DESC "ferme par une DECISION qui pointe ici, et passe superseded alors, jamais supprime"
+	FIELD BLOCKS reference
+		REPEATABLE
+		DESC "ce que ce point empeche ou fragilise ; l'arete inverse est calculee"
+		CONVERSE BLOCKED_BY
+	WHEN STATUS superseded
+		INCOMING CLOSED_BY

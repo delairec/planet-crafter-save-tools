@@ -23,5 +23,7 @@ input
 next-steps.txt
 
 
-# private agent context (satellite repository .do-not-commit)
-/.do-not-commit/
+# private agent context (satellite repository .do-not-commit): no trailing slash, so the rule also
+# covers the symlink a linked worktree points at the clone of the main checkout — a trailing slash
+# would match the directory only, and the link would be committed
+.do-not-commit
