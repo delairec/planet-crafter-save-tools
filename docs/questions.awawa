@@ -200,3 +200,24 @@ OPEN_QUESTION UnEncodageDeChampReleveDuFormatOuNon
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
 	SOURCE "constate le 2026-09-12, T37 partie A, PR #62"
+
+OPEN_QUESTION UneRecommandationEstExamineeAvantDEtreProposeeALaRatification
+	DESC "a trancher : la session qui ouvre une tache examine les recommandations de ses questions"
+		+ "ouvertes contre le code et contre les decisions enregistrees avant d'en proposer la"
+		+ "ratification"
+	DESC "constat : sur les cinq recommandations qui bloquaient la tache, deux etaient defectueuses"
+		+ "— l'une n'etait pas implementable telle qu'ecrite, l'autre contredisait une decision en"
+		+ "vigueur — et l'option proposee en premier a l'utilisateur etait de les ratifier en bloc"
+		REF @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	DESC "destination proposee si elle est generale : la section Always de ~/.ai/CLAUDE.md, a cote"
+		+ "de la regle qui veut qu'une decision prise avec l'utilisateur soit enregistree"
+	STATUS superseded
+	RATIONALE "les deux defauts n'ont ete trouves que parce que l'utilisateur a refuse la"
+		+ "ratification en bloc et demande un examen question par question ; la procedure ne les"
+		+ "avait pas arretes"
+	RATIONALE "une recommandation posee a cote d'une question se lit comme pre-approuvee et"
+		+ "court-circuite l'examen qu'elle n'a jamais subi ; SCHEMA DECISION impose REJECTED en"
+		+ "champ requis, SCHEMA OPEN_QUESTION n'impose rien de tel a sa recommandation"
+	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
+		+ "par /awawa-pr-merged"
+	SOURCE "constate le 2026-09-12, lancement de T37 partie A, PR #62"
