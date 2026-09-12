@@ -56,7 +56,7 @@ DECISION LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
 		+ "externes dans resources.md, les mesures de non-regression dans plans/plan.md"
 	DESC "la chronologie — quoi, quand, dans quelle pull request — n'est plus tenue nulle part :"
 		+ "elle se lit dans git et dans les pull requests"
-	STATUS specified
+	STATUS implemented
 	RATIONALE "ce qui a change depuis la decision precedente : le tri a ete fait, et il a montre"
 		+ "que le journal ne portait presque plus que trois choses — des arbitrages encore vivants,"
 		+ "des faits deja domicilies ailleurs, et des verifications de pull request. Garder le"

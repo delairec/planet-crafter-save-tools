@@ -122,7 +122,7 @@ DECISION LaSpecificationResteEnFrancaisMemePubliee
 	DESC "le reste du depot public reste en anglais : README, docs, commentaires de code, messages"
 		+ "de commit"
 	DESC "le depot prive reste integralement en francais"
-	STATUS specified
+	STATUS implemented
 	RATIONALE "la regle generale, documentation publique commitee en anglais, vise ce qu'un lecteur"
 		+ "du depot lit ; ces deux fichiers sont des instructions d'agent, relues a chaque session"
 		+ "par un seul lecteur humain qui travaille en francais"
@@ -132,6 +132,9 @@ DECISION LaSpecificationResteEnFrancaisMemePubliee
 		+ "a traduire, et une traduction fige mal un texte reecrit a chaque session"
 	REJECTED "aligner AGENTS.md sur la regle anglaise et laisser le corpus en francais : les deux"
 		+ "fichiers se lisent ensemble"
+	SPEC "le corpus et AGENTS.md du depot public sont rediges en francais"
+		IMPL "docs"
+		IMPL "AGENTS.md"
 	SOURCE "decision du 2026-09-12"
 
 DECISION AucunNomReelDansUnContenuPublic
