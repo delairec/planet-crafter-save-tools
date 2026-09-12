@@ -134,7 +134,7 @@ DECISION LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 		IMPL "packages/core-mapping/src/domain/rules/merge"
 	SPEC "le separateur de liste d'identifiants est declare dans un seul module d'infrastructure"
 		IMPL "packages/core-mapping/src/infrastructure"
-	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A"
+	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A, PR #62"
 
 DECISION LesAbreviationsWireRestentDansSharedSaveProcessing
 	DESC "les abreviations du format wire ne sont tolerees que dans les enregistrements de"

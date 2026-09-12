@@ -108,4 +108,4 @@ DECISION LArtefactDuFichierFusionneNEstPasUnObjetDuDomaine
 		IMPL "packages/core-mapping/src/domain/valueObjects"
 	SPEC "le port de fusion declare le type de resultat qu'il rend"
 		IMPL "packages/core-mapping/src/application/ports/SaveFilesMergerPort.ts"
-	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A"
+	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A, PR #62"

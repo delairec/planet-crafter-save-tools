@@ -164,4 +164,4 @@ DECISION UneRegleDeDomaineIgnoreLeVocabulaireDeValidation
 		IMPL "packages/core-mapping/src/domain/rules/validateUniqueHost.ts"
 	SPEC "l'issue unique-host est fabriquee en infrastructure, code et phrase de detail compris"
 		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js"
-	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A"
+	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A, PR #62"

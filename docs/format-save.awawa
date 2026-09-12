@@ -133,4 +133,4 @@ DECISION LaSerialisationDesFlottantsSeVerifieEnInfrastructure
 	SPEC "la verification du suffixe des flottants vit en infrastructure et y importe le code"
 		+ "d'issue depuis application"
 		IMPL "packages/core-mapping/src/infrastructure"
-	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A"
+	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A, PR #62"

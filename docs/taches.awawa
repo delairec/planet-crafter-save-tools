@@ -32,6 +32,7 @@ TASK T37_FrontieresCleanArchitectureCoreMapping
 		+ "vers UI"
 	STATUS specified
 	WAVE "4"
+	PR "62"
 	RATIONALE "issue de la revue de code complete du 2026-09-07 : deux violations de la regle de"
 		+ "dependance, critiques au sens de architecture/review.md, et quatre violations de"
 		+ "responsabilite, toutes hors des fiches existantes"
