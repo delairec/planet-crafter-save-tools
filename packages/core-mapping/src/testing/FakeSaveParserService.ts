@@ -1,7 +1,7 @@
 import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPort";
 import {createGlobalProgressionValueObject, GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {PlayerEntity} from "../domain/entities/PlayerEntity";
-import {createTerraformationLevelEntity, TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
+import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
 import {createStatisticsValueObject, StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {createSaveConfigurationValueObject, SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
 import {
@@ -65,7 +65,7 @@ export class FakeSaveParserService implements SaveSectionsReaderPort {
   }
 
   getTerraformationLevels(): TerraformationLevelEntity[] {
-    return [createTerraformationLevelEntity({
+    return [new TerraformationLevelEntity({
       planetId: "Toxicity",
       unitOxygenLevel: 100,
       unitHeatLevel: 200,

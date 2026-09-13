@@ -111,7 +111,7 @@ describe('SaveSectionsReaderService', () => {
     const levels = service.getTerraformationLevels();
 
     // Assert
-    expect(levels).toEqual<TerraformationLevelEntity[]>([{
+    expect<TerraformationLevelEntity[]>(levels).toEqual([new TerraformationLevelEntity({
       planetId: 'Toxicity',
       unitOxygenLevel: 100,
       unitHeatLevel: 200,
@@ -120,7 +120,7 @@ describe('SaveSectionsReaderService', () => {
       unitInsectsLevel: 500,
       unitAnimalsLevel: 600,
       unitPurificationLevel: 700
-    }]);
+    })]);
   });
 
   it('should extract statistics', () => {

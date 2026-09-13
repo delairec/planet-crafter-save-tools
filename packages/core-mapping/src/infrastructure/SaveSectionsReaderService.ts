@@ -5,7 +5,7 @@ import {SaveSections} from '../domain/save/SaveSections';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 import {GlobalProgressionValueObject, createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {PlayerEntity} from "../domain/entities/PlayerEntity";
-import {TerraformationLevelEntity, createTerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
+import {TerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
 import {InventoryEntity} from "../domain/entities/InventoryEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
@@ -64,7 +64,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   }
 
   getTerraformationLevels(): TerraformationLevelEntity[] {
-    return this.sections.terraformationLevels.map((level: TerraformationLevel): TerraformationLevelEntity => createTerraformationLevelEntity({
+    return this.sections.terraformationLevels.map((level: TerraformationLevel): TerraformationLevelEntity => new TerraformationLevelEntity({
       planetId: level.planetId,
       unitOxygenLevel: level.unitOxygenLevel,
       unitHeatLevel: level.unitHeatLevel,
