@@ -345,3 +345,26 @@ DECISION LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
 		+ "objets, places ou non"
 		IMPL "packages/core-mapping/src/testing/createWholeSaveWorldObjects.ts"
 	SOURCE "decision du 2026-09-13, T15, conversion des entites du domaine en classes"
+
+DECISION LeComportementMigreSurLEntiteEtLaRegleLInterroge
+	DESC "le comptage des fusibles d'un optimiseur filtre les objets du monde de toute la save par"
+		+ "leur nom et par inventory.contains, au lieu de parcourir la liste d'identifiants de"
+		+ "l'inventaire dans une table d'objets indexee par identifiant"
+	STATUS implemented
+	RATIONALE "contains est le comportement que la tache fait migrer sur InventoryEntity ; garder"
+		+ "le parcours d'origine aurait laisse le getter worldObjectIds porter la regle et contains"
+		+ "sans appelant"
+	RATIONALE "les deux formes comptent la meme chose tant que les identifiants d'objets du monde"
+		+ "sont uniques dans une save : la forme d'origine dedupliquait deja par une Map indexee"
+		+ "par identifiant, donc elle faisait la meme hypothese sans la dire. Un identifiant"
+		+ "duplique compterait desormais une fois par objet du monde et non une fois par entree"
+		+ "d'inventaire ; aucune save lue ne presente ce cas"
+	REJECTED "un contains prenant un WorldObjectEntity plutot qu'un identifiant : l'inventaire"
+		+ "dependrait d'une autre entite pour une question d'appartenance, et un objet place ne lui"
+		+ "serait pas passable depuis que les classes sont nominales"
+		REF @DECISION.LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
+	SPEC "computeOptimizerBoosts n'indexe plus les objets du monde et demande a l'inventaire s'il"
+		+ "contient l'objet"
+		IMPL "packages/core-mapping/src/domain/rules/computeOptimizerBoosts.ts"
+		IMPL "packages/core-mapping/src/domain/entities/InventoryEntity.ts"
+	SOURCE "decision du 2026-09-13, T15, migration des comportements sur les entites"

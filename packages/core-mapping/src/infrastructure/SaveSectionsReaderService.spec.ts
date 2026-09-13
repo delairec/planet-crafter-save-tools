@@ -17,6 +17,7 @@ import {StatisticsValueObject} from '../domain/valueObjects/StatisticsValueObjec
 import {SaveConfigurationValueObject} from '../domain/valueObjects/SaveConfigurationValueObject';
 import {EnergyLevelsRawDataValueObject} from '../domain/valueObjects/EnergyLevelsRawDataValueObject';
 import {WorldObjectEntity} from '../domain/entities/WorldObjectEntity';
+import {InventoryEntity} from '../domain/entities/InventoryEntity';
 
 const PRIME_PLANET_NUMERIC_ID = -1140328421;
 const UNKNOWN_PLANET_NUMERIC_ID = 1;
@@ -322,8 +323,8 @@ describe('SaveSectionsReaderService', () => {
 
       // Assert
       expect(rawData.inventories).toEqual([
-        {id: 100, worldObjectIds: ['20', '21'], size: 3},
-        {id: 101, worldObjectIds: [], size: 1}
+        new InventoryEntity({id: 100, worldObjectIds: ['20', '21'], size: 3}),
+        new InventoryEntity({id: 101, worldObjectIds: [], size: 1})
       ]);
     });
   });

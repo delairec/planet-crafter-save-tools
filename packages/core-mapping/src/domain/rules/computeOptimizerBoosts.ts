@@ -15,7 +15,6 @@ export function computeOptimizerBoosts(
   positionedWorldObjects: readonly PlacedWorldObjectEntity[],
   inventories: readonly InventoryEntity[]
 ): { optimizer: PlacedWorldObjectEntity; fuseCount: number; boostedProducers: PlacedWorldObjectEntity[] }[] {
-  const worldObjectById = new Map(allWorldObjects.map((worldObject) => [worldObject.id, worldObject]));
   const producers = positionedWorldObjects.filter(
     (worldObject) => energyProductionLevelsByWorldObjectName[worldObject.name] !== undefined
   );
@@ -35,8 +34,8 @@ export function computeOptimizerBoosts(
       continue;
     }
 
-    const fuseCount = inventory.worldObjectIds
-      .filter((id) => worldObjectById.get(id)?.name === ENERGY_FUSE_NAME)
+    const fuseCount = allWorldObjects
+      .filter((worldObject) => worldObject.name === ENERGY_FUSE_NAME && inventory.contains(worldObject.id))
       .length;
     if (fuseCount === 0) {
       continue;

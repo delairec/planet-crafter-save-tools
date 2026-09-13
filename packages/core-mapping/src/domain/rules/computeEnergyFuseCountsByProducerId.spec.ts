@@ -19,7 +19,7 @@ describe('computeEnergyFuseCountsByProducerId', () => {
       };
       const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
-      const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
+      const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
       // Act
       const result = computeEnergyFuseCountsByProducerId(allWorldObjects, [optimizer, producer], inventories);
@@ -42,9 +42,9 @@ describe('computeEnergyFuseCountsByProducerId', () => {
       const fuseB1 = new WorldObjectEntity({id: 'fuse-b1', name: 'FuseEnergy1' as WorldObjectName});
       const fuseB2 = new WorldObjectEntity({id: 'fuse-b2', name: 'FuseEnergy1' as WorldObjectName});
       const allWorldObjects = createWholeSaveWorldObjects(optimizerA, optimizerB, producer, fuseA, fuseB1, fuseB2);
-      const inventories: InventoryEntity[] = [
-        {id: 99, worldObjectIds: ['fuse-a'], size: 1},
-        {id: 98, worldObjectIds: ['fuse-b1', 'fuse-b2'], size: 2}
+      const inventories = [
+        new InventoryEntity({id: 99, worldObjectIds: ['fuse-a'], size: 1}),
+        new InventoryEntity({id: 98, worldObjectIds: ['fuse-b1', 'fuse-b2'], size: 2})
       ];
 
       // Act

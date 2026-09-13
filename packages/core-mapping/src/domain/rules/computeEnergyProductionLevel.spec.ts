@@ -45,7 +45,7 @@ describe('computeEnergyProductionLevel', () => {
     };
     const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
     const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
-    const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
+    const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
     // Act
     const result = computeEnergyProductionLevel(allWorldObjects, [optimizer, producer], inventories);
@@ -67,8 +67,8 @@ describe('computeEnergyProductionLevel', () => {
     const firstEnergyFuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
     const secondEnergyFuse = new WorldObjectEntity({id: 'fuse-2', name: 'FuseEnergy1' as WorldObjectName});
     const allWorldObjects = createWholeSaveWorldObjects(tierTwoOptimizer, boostedProducer, firstEnergyFuse, secondEnergyFuse);
-    const optimizerInventoryHoldingBothFuses: InventoryEntity[] = [
-      {id: optimizerInventoryId, worldObjectIds: [firstEnergyFuse.id, secondEnergyFuse.id], size: 3}
+    const optimizerInventoryHoldingBothFuses = [
+      new InventoryEntity({id: optimizerInventoryId, worldObjectIds: [firstEnergyFuse.id, secondEnergyFuse.id], size: 3})
     ];
 
     // Act

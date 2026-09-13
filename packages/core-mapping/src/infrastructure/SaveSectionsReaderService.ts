@@ -6,7 +6,7 @@ import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 import {GlobalProgressionValueObject, createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {PlayerEntity, createPlayerEntity} from "../domain/entities/PlayerEntity";
 import {TerraformationLevelEntity, createTerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
-import {InventoryEntity, createInventoryEntity} from "../domain/entities/InventoryEntity";
+import {InventoryEntity} from "../domain/entities/InventoryEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 import {PlacedWorldObjectEntity, createPlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {StatisticsValueObject, createStatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
@@ -157,7 +157,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   }
 
   private mapInventories(): InventoryEntity[] {
-    return this.sections.inventories.map((inventory: InventoryEntry): InventoryEntity => createInventoryEntity({
+    return this.sections.inventories.map((inventory: InventoryEntry): InventoryEntity => new InventoryEntity({
       id: inventory.id,
       worldObjectIds: inventory.woIds.map(String),
       size: inventory.size

@@ -19,7 +19,7 @@ describe('computeOptimizerBoosts', () => {
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1
       };
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
-      const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
+      const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
       // Act
       const result = computeOptimizerBoosts(allWorldObjects, [optimizer, producer], inventories);
@@ -36,7 +36,7 @@ describe('computeOptimizerBoosts', () => {
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1
       };
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer);
-      const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: [], size: 1}];
+      const inventories = [new InventoryEntity({id: 99, worldObjectIds: [], size: 1})];
 
       // Act
       const result = computeOptimizerBoosts(allWorldObjects, [optimizer, producer], inventories);
@@ -50,7 +50,7 @@ describe('computeOptimizerBoosts', () => {
     it('should not report the optimizer at all', () => {
       // Arrange
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, fuse);
-      const inventories: InventoryEntity[] = [];
+      const inventories = [];
 
       // Act
       const result = computeOptimizerBoosts(allWorldObjects, [optimizer], inventories);
@@ -67,7 +67,7 @@ describe('computeOptimizerBoosts', () => {
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [200, 0, 0], planetId: 1
       };
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, farProducer, fuse);
-      const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
+      const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
       // Act
       const result = computeOptimizerBoosts(allWorldObjects, [optimizer, farProducer], inventories);
@@ -84,7 +84,7 @@ describe('computeOptimizerBoosts', () => {
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 2
       };
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, producerOnOtherPlanet, fuse);
-      const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
+      const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
       // Act
       const result = computeOptimizerBoosts(allWorldObjects, [optimizer, producerOnOtherPlanet], inventories);
@@ -104,7 +104,7 @@ describe('computeOptimizerBoosts', () => {
         planetId: 1
       }));
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, ...producers, fuse);
-      const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
+      const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
       // Act
       const result = computeOptimizerBoosts(allWorldObjects, [optimizer, ...producers], inventories);
