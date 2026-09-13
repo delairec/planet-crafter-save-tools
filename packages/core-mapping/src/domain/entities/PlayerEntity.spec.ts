@@ -1,17 +1,19 @@
 import {describe, expect, it} from 'bun:test';
-import {createPlayerEntity} from './PlayerEntity';
+import {PlayerEntity} from './PlayerEntity';
 import {InvalidSaveDataError} from '../errors/InvalidSaveDataError';
 
 describe('PlayerEntity', () => {
-  it('should build a player entity from valid data', () => {
+  it('should expose the belongings it was built from', () => {
     // Arrange
     const input = {name: 'Nikowa', inventory: ['Backpack4'], equipment: ['OxygenTank5']};
 
     // Act
-    const player = createPlayerEntity(input);
+    const player = new PlayerEntity(input);
 
     // Assert
-    expect(player).toEqual(input);
+    expect(player.name).toBe('Nikowa');
+    expect(player.inventory).toEqual(['Backpack4']);
+    expect(player.equipment).toEqual(['OxygenTank5']);
   });
 
   it('should reject an empty name', () => {
@@ -19,6 +21,6 @@ describe('PlayerEntity', () => {
     const input = {name: '', inventory: [], equipment: []};
 
     // Act & Assert
-    expect(() => createPlayerEntity(input)).toThrow(InvalidSaveDataError);
+    expect(() => new PlayerEntity(input)).toThrow(InvalidSaveDataError);
   });
 });

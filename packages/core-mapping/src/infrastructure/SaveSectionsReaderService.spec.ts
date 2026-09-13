@@ -92,15 +92,15 @@ describe('SaveSectionsReaderService', () => {
     const players = service.getPlayers();
 
     // Assert
-    expect(players).toEqual<PlayerEntity[]>([{
+    expect<PlayerEntity[]>(players).toEqual([new PlayerEntity({
       name: 'Nikowa',
       inventory: ['Phytoplankton3', 'MagnetarQuartz'],
       equipment: ['Backpack4', 'OxygenTank5']
-    }, {
+    }), new PlayerEntity({
       name: 'Chileny',
       inventory: ['Phytoplankton1', 'PulsarQuartz'],
       equipment: ['Backpack7', 'OxygenTank4']
-    }]);
+    })]);
   });
 
   it('should extract terraformation levels', () => {

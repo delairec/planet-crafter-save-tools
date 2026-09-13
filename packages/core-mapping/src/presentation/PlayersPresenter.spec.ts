@@ -17,12 +17,12 @@ describe('PlayersPresenter', () => {
   it('should present all players', () => {
     // Arrange
     const presenter = new PlayersPresenter();
-    const playerNikowa: PlayerEntity = {
+    const playerNikowa = new PlayerEntity({
       name: 'Nikowa',
       inventory: ['Phytoplankton3', 'MagnetarQuartz'],
       equipment: ['Backpack4', 'OxygenTank5']
-    };
-    const playerChileny: PlayerEntity = {name: 'Chileny', inventory: [], equipment: []};
+    });
+    const playerChileny = new PlayerEntity({name: 'Chileny', inventory: [], equipment: []});
 
     // Act
     presenter.displayPlayers([playerNikowa, playerChileny]);
@@ -62,7 +62,7 @@ describe('PlayersPresenter', () => {
     it('should use a placeholder value', () => {
       // Arrange
       const presenter = new PlayersPresenter();
-      const playerNikowa: PlayerEntity = {name: 'Nikowa', inventory: ['Phytoplankton99'], equipment: ['Backpack99']};
+      const playerNikowa = new PlayerEntity({name: 'Nikowa', inventory: ['Phytoplankton99'], equipment: ['Backpack99']});
 
       // Act
       presenter.displayPlayers([playerNikowa]);

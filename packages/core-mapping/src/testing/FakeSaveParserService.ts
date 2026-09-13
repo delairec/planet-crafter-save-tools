@@ -1,6 +1,6 @@
 import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPort";
 import {createGlobalProgressionValueObject, GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
-import {createPlayerEntity, PlayerEntity} from "../domain/entities/PlayerEntity";
+import {PlayerEntity} from "../domain/entities/PlayerEntity";
 import {createTerraformationLevelEntity, TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
 import {createStatisticsValueObject, StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {createSaveConfigurationValueObject, SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
@@ -53,11 +53,11 @@ export class FakeSaveParserService implements SaveSectionsReaderPort {
   }
 
   getPlayers(): PlayerEntity[] {
-    return [createPlayerEntity({
+    return [new PlayerEntity({
       name: 'Nikowa',
       inventory: [],
       equipment: []
-    }), createPlayerEntity({
+    }), new PlayerEntity({
       name: 'Chileny',
       inventory: [],
       equipment: []

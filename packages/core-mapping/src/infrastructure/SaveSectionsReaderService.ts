@@ -4,7 +4,7 @@ import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {SaveSections} from '../domain/save/SaveSections';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 import {GlobalProgressionValueObject, createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
-import {PlayerEntity, createPlayerEntity} from "../domain/entities/PlayerEntity";
+import {PlayerEntity} from "../domain/entities/PlayerEntity";
 import {TerraformationLevelEntity, createTerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
 import {InventoryEntity} from "../domain/entities/InventoryEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
@@ -55,7 +55,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
       const playerEquipmentIds = playerEquipment?.worldObjectIds ?? [];
       const worldObjects = this.findWorldObjectByIds([...playerInventoryIds, ...playerEquipmentIds]);
 
-      return createPlayerEntity({
+      return new PlayerEntity({
         name: player.name,
         inventory: playerInventoryIds.map((id) => worldObjects.find((wo) => wo.id === id)?.name ?? id),
         equipment: playerEquipmentIds.map((id) => worldObjects.find((wo) => wo.id === id)?.name ?? id)
