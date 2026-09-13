@@ -24,10 +24,10 @@ export class PlayerEntity {
   }
 
   get inventory(): readonly string[] {
-    return this._inventory;
+    return [...this._inventory];
   }
 
   get equipment(): readonly string[] {
-    return this._equipment;
+    return [...this._equipment];
   }
 }

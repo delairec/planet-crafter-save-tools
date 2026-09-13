@@ -39,7 +39,7 @@ export class PlacedWorldObjectEntity {
   }
 
   get position(): readonly [number, number, number] {
-    return this._position;
+    return [...this._position];
   }
 
   get planetId(): number {

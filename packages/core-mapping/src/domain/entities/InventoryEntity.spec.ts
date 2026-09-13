@@ -47,4 +47,18 @@ describe('InventoryEntity', () => {
       expect(holdsTheWorldObject).toBe(false);
     });
   });
+
+  describe('When its world object ids are read', () => {
+    it('should hand out a copy that cannot alter what it holds', () => {
+      // Arrange
+      const inventory = new InventoryEntity({id: 42, worldObjectIds: ['1', '2'], size: 10});
+
+      // Act
+      (inventory.worldObjectIds as string[]).push('3');
+
+      // Assert
+      expect(inventory.worldObjectIds).toEqual(['1', '2']);
+      expect(inventory.contains('3')).toBe(false);
+    });
+  });
 });

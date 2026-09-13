@@ -23,7 +23,7 @@ export class InventoryEntity {
   }
 
   get worldObjectIds(): readonly string[] {
-    return this._worldObjectIds;
+    return [...this._worldObjectIds];
   }
 
   get size(): number {

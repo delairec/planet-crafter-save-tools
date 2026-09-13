@@ -76,4 +76,19 @@ describe('PlacedWorldObjectEntity', () => {
       expect(reached).toBe(false);
     });
   });
+
+  describe('When its position is read', () => {
+    it('should hand out a copy that cannot move it', () => {
+      // Arrange
+      const worldObject = new PlacedWorldObjectEntity({
+        id: 'wo-1', name: 'Drill0' as const, position: [1, 2, 3], planetId: 1
+      });
+
+      // Act
+      (worldObject.position as unknown as number[])[0] = 99;
+
+      // Assert
+      expect(worldObject.position).toEqual([1, 2, 3]);
+    });
+  });
 });

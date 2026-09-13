@@ -383,7 +383,7 @@ OPEN_QUESTION UneEntiteRendSonTableauInterneSansLeCopier
 		+ "l'entite"
 	DESC "option retenue faute d'arbitrage : rendre le tableau tel quel, protege par le type"
 		+ "readonly seul, comme avant la conversion en classes"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
 	RECOMMENDATION "garder le tableau readonly sans copie : la copie defensive coute une allocation"
 		+ "a chaque lecture, et computeOptimizerBoosts lit contains une fois par objet du monde et"
