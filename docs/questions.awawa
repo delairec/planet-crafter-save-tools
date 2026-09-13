@@ -463,4 +463,4 @@ OPEN_QUESTION LaVentilationParMachineIgnoreLeBoostDesOptimiseurs
 	RATIONALE "les parts productionRatio des entrees ne somment donc pas a 1 quand un optimiseur"
 		+ "booste une machine ventilee : c'est la contrepartie du choix de ne compter le boost"
 		+ "qu'une fois, dans la contribution de l'optimiseur, pour ne pas le compter deux fois"
-	SOURCE "constate le 2026-09-13 en deplaçant les regles d'energie dans PlanetEnergyGrid, PR #72"
+	SOURCE "constate le 2026-09-13 en deplacant les regles d'energie dans PlanetEnergyGrid, PR #72"

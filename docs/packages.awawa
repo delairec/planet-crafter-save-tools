@@ -527,7 +527,7 @@ DECISION LaGrilleEnergetiqueDUnePlaneteEstUnAgregat
 		+ "fois depuis computeOptimizers directement. Chaque tour refaisait le balayage des"
 		+ "fusibles, optimiseurs fois objets du monde, et la selection des producteurs boostes"
 	RATIONALE "ce n'est pas l'option refusee par la decision sur les regles d'energie : ce que"
-		+ "cette dernière refuse, c'est de faire d'une somme ou d'une jointure sur une collection"
+		+ "cette derniere refuse, c'est de faire d'une somme ou d'une jointure sur une collection"
 		+ "une methode d'une entite prise seule. Le motif est juste, et c'est precisement pourquoi"
 		+ "l'objet a creer est un agregat, la grille de la planete, et non une methode de plus sur"
 		+ "PlacedWorldObjectEntity"
