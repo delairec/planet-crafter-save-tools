@@ -16,6 +16,7 @@ import {TerraformationLevelEntity} from '../domain/entities/TerraformationLevelE
 import {StatisticsValueObject} from '../domain/valueObjects/StatisticsValueObject';
 import {SaveConfigurationValueObject} from '../domain/valueObjects/SaveConfigurationValueObject';
 import {EnergyLevelsRawDataValueObject} from '../domain/valueObjects/EnergyLevelsRawDataValueObject';
+import {WorldObjectEntity} from '../domain/entities/WorldObjectEntity';
 
 const PRIME_PLANET_NUMERIC_ID = -1140328421;
 const UNKNOWN_PLANET_NUMERIC_ID = 1;
@@ -199,10 +200,10 @@ describe('SaveSectionsReaderService', () => {
       // Assert
       expect(rawData).toEqual<EnergyLevelsRawDataValueObject>({
         allWorldObjects: [
-          {id: '1', name: 'EnergyGenerator1'},
-          {id: '2', name: 'FuseEnergy1'},
-          {id: '3', name: 'EnergyGenerator1'},
-          {id: '4', name: 'EnergyGenerator1'}
+          new WorldObjectEntity({id: '1', name: 'EnergyGenerator1'}),
+          new WorldObjectEntity({id: '2', name: 'FuseEnergy1'}),
+          new WorldObjectEntity({id: '3', name: 'EnergyGenerator1'}),
+          new WorldObjectEntity({id: '4', name: 'EnergyGenerator1'})
         ],
         inventories: [],
         planets: [{

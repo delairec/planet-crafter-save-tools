@@ -4,6 +4,7 @@ import {PlacedWorldObjectEntity} from '../entities/PlacedWorldObjectEntity';
 import {WorldObjectEntity} from '../entities/WorldObjectEntity';
 import {InventoryEntity} from '../entities/InventoryEntity';
 import {WorldObjectName} from '../worldObjectNames';
+import {createWholeSaveWorldObjects} from '../../testing/createWholeSaveWorldObjects';
 
 describe('computeOptimizers', () => {
   describe('When an optimizer holds one fuse and boosts one producer', () => {
@@ -15,8 +16,8 @@ describe('computeOptimizers', () => {
       const producer: PlacedWorldObjectEntity = {
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1
       };
-      const fuse: WorldObjectEntity = {id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName};
-      const allWorldObjects: WorldObjectEntity[] = [optimizer, producer, fuse];
+      const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
+      const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
       const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
 
       // Act
@@ -38,8 +39,8 @@ describe('computeOptimizers', () => {
       const optimizer: PlacedWorldObjectEntity = {
         id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: 99
       };
-      const fuse: WorldObjectEntity = {id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName};
-      const allWorldObjects: WorldObjectEntity[] = [optimizer, fuse];
+      const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
+      const allWorldObjects = createWholeSaveWorldObjects(optimizer, fuse);
       const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
 
       // Act
@@ -62,10 +63,10 @@ describe('computeOptimizers', () => {
       const producer: PlacedWorldObjectEntity = {
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1
       };
-      const fuseA: WorldObjectEntity = {id: 'fuse-a', name: 'FuseEnergy1' as WorldObjectName};
-      const fuseB1: WorldObjectEntity = {id: 'fuse-b1', name: 'FuseEnergy1' as WorldObjectName};
-      const fuseB2: WorldObjectEntity = {id: 'fuse-b2', name: 'FuseEnergy1' as WorldObjectName};
-      const allWorldObjects: WorldObjectEntity[] = [optimizerA, optimizerB, producer, fuseA, fuseB1, fuseB2];
+      const fuseA = new WorldObjectEntity({id: 'fuse-a', name: 'FuseEnergy1' as WorldObjectName});
+      const fuseB1 = new WorldObjectEntity({id: 'fuse-b1', name: 'FuseEnergy1' as WorldObjectName});
+      const fuseB2 = new WorldObjectEntity({id: 'fuse-b2', name: 'FuseEnergy1' as WorldObjectName});
+      const allWorldObjects = createWholeSaveWorldObjects(optimizerA, optimizerB, producer, fuseA, fuseB1, fuseB2);
       const inventories: InventoryEntity[] = [
         {id: 99, worldObjectIds: ['fuse-a'], size: 1},
         {id: 98, worldObjectIds: ['fuse-b1', 'fuse-b2'], size: 2}

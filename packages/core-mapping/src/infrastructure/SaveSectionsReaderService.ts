@@ -7,7 +7,7 @@ import {GlobalProgressionValueObject, createGlobalProgressionValueObject} from "
 import {PlayerEntity, createPlayerEntity} from "../domain/entities/PlayerEntity";
 import {TerraformationLevelEntity, createTerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
 import {InventoryEntity, createInventoryEntity} from "../domain/entities/InventoryEntity";
-import {WorldObjectEntity, createWorldObjectEntity} from "../domain/entities/WorldObjectEntity";
+import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 import {PlacedWorldObjectEntity, createPlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {StatisticsValueObject, createStatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {SaveConfigurationValueObject, createSaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
@@ -120,7 +120,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
 
     // Energy Fuses live inside an Optimizer's inventory and are never themselves positioned, so
     // the fuse lookup needs every world object in the save, not just positioned/placed ones.
-    const allWorldObjectEntities: WorldObjectEntity[] = allWorldObjects.map((worldObject) => createWorldObjectEntity({
+    const allWorldObjectEntities: WorldObjectEntity[] = allWorldObjects.map((worldObject) => new WorldObjectEntity({
       id: String(worldObject.id),
       name: worldObject.gId as WorldObjectName
     }));
@@ -168,7 +168,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
     const result: WorldObjectEntity[] = [];
     for (const worldObject of this.sections.worldObjects) {
       if (ids.includes(String(worldObject.id))) {
-        result.push(createWorldObjectEntity({id: String(worldObject.id), name: worldObject.gId as WorldObjectName}));
+        result.push(new WorldObjectEntity({id: String(worldObject.id), name: worldObject.gId as WorldObjectName}));
       }
     }
     return result;

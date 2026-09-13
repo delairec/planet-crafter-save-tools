@@ -4,6 +4,7 @@ import {PlacedWorldObjectEntity} from '../entities/PlacedWorldObjectEntity';
 import {WorldObjectEntity} from '../entities/WorldObjectEntity';
 import {InventoryEntity} from '../entities/InventoryEntity';
 import {WorldObjectName} from '../worldObjectNames';
+import {createWholeSaveWorldObjects} from '../../testing/createWholeSaveWorldObjects';
 
 describe('computePlanetEnergyLevels', () => {
   it('should report available energy as production minus consumption', () => {
@@ -14,7 +15,7 @@ describe('computePlanetEnergyLevels', () => {
     ];
 
     // Act
-    const result = computePlanetEnergyLevels(worldObjects, worldObjects, []);
+    const result = computePlanetEnergyLevels(createWholeSaveWorldObjects(...worldObjects), worldObjects, []);
 
     // Assert
     expect(result.production).toBe(1.2);
@@ -32,7 +33,7 @@ describe('computePlanetEnergyLevels', () => {
     const noInventories: InventoryEntity[] = [];
 
     // Act
-    const result = computePlanetEnergyLevels(worldObjects, worldObjects, noInventories);
+    const result = computePlanetEnergyLevels(createWholeSaveWorldObjects(...worldObjects), worldObjects, noInventories);
 
     // Assert
     expect(result.production).toBe(26);
@@ -54,8 +55,8 @@ describe('computePlanetEnergyLevels', () => {
     const producerOutOfOptimizerRadius: PlacedWorldObjectEntity = {
       id: 'prod-2', name: 'WindTurbine1' as WorldObjectName, position: [200, 0, 0], planetId: 1
     };
-    const energyFuse: WorldObjectEntity = {id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName};
-    const allWorldObjects: WorldObjectEntity[] = [optimizer, boostedProducer, producerOutOfOptimizerRadius, energyFuse];
+    const energyFuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
+    const allWorldObjects = createWholeSaveWorldObjects(optimizer, boostedProducer, producerOutOfOptimizerRadius, energyFuse);
     const optimizerInventoryHoldingOneFuse: InventoryEntity[] = [
       {id: optimizerInventoryId, worldObjectIds: [energyFuse.id], size: 1}
     ];
@@ -83,8 +84,8 @@ describe('computePlanetEnergyLevels', () => {
     const optimizer: PlacedWorldObjectEntity = {
       id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: 99
     };
-    const fuse: WorldObjectEntity = {id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName};
-    const allWorldObjects: WorldObjectEntity[] = [optimizer, fuse];
+    const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
+    const allWorldObjects = createWholeSaveWorldObjects(optimizer, fuse);
     const inventories: InventoryEntity[] = [{id: 99, worldObjectIds: ['fuse-1'], size: 1}];
 
     // Act
@@ -116,9 +117,9 @@ describe('computePlanetEnergyLevels', () => {
     const consumerOutsideThePlanetSubset: PlacedWorldObjectEntity = {
       id: '3', name: 'Drill4' as WorldObjectName, position: [10, 0, 0], planetId: 2
     };
-    const wholeSaveWorldObjects: WorldObjectEntity[] = [
+    const wholeSaveWorldObjects = createWholeSaveWorldObjects(
       producerInThePlanetSubset, producerOutsideThePlanetSubset, consumerOutsideThePlanetSubset
-    ];
+    );
     const noInventories: InventoryEntity[] = [];
 
     // Act

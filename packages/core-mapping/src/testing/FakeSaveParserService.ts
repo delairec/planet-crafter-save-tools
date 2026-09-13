@@ -10,6 +10,7 @@ import {
   EnergyLevelsRawDataValueObject
 } from "../domain/valueObjects/EnergyLevelsRawDataValueObject";
 import {createPlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
+import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 
 export class FakeSaveParserService implements SaveSectionsReaderPort {
   getEnergyLevelsRawData(): EnergyLevelsRawDataValueObject {
@@ -17,7 +18,7 @@ export class FakeSaveParserService implements SaveSectionsReaderPort {
     const consumer = createPlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
     return createEnergyLevelsRawDataValueObject({
-      allWorldObjects: [producer, consumer],
+      allWorldObjects: [new WorldObjectEntity(producer), new WorldObjectEntity(consumer)],
       inventories: [],
       planets: [createPlanetWorldObjectsValueObject({
         planetId: 1,
