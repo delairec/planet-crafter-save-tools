@@ -625,4 +625,4 @@ DECISION LaFormeDUneColonneEstDeriveeDuViewModelQuiLaProduit
 		+ "ViewModel de table"
 		IMPL "packages/core-mapping/src/presentation/viewModels/TableViewModel.ts::ColumnViewModel"
 		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::ColumnViewModel"
-	SOURCE "decision du 2026-09-13, T32"
+	SOURCE "decision du 2026-09-13, T32, PR #71"

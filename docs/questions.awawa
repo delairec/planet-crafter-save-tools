@@ -506,4 +506,4 @@ OPEN_QUESTION RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
 			+ "parce qu'une revue ne tient pas un motif repete"
 		REJECTED "couvrir les quatre motifs : les deux autres demandent de lire le JSX, pas des"
 			+ "lignes"
-	SOURCE "constat du 2026-09-13, T32"
+	SOURCE "constat du 2026-09-13, T32, PR #71"

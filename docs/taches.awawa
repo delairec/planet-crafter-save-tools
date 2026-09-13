@@ -120,6 +120,7 @@ TASK T32_ConformiteUiSaveManager
 		+ "de comportement visible"
 	STATUS implemented
 	WAVE "4"
+	PR "71"
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "issue de la revue de code complete du 2026-09-07 ; travail de conformite STD-3 et"
 		+ "ARCH-4"
