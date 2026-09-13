@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {PlacedWorldObjectEntity} from './PlacedWorldObjectEntity';
 import {InvalidSaveDataError} from '../errors/InvalidSaveDataError';
+import {WorldObjectEntity} from './WorldObjectEntity';
 
 describe('PlacedWorldObjectEntity', () => {
   it('should expose the placement it was built from', () => {
@@ -78,17 +79,29 @@ describe('PlacedWorldObjectEntity', () => {
   });
 
   describe('When its position is read', () => {
-    it('should hand out a copy that cannot move it', () => {
+    it('should hand out a fresh copy on each read', () => {
       // Arrange
       const worldObject = new PlacedWorldObjectEntity({
         id: 'wo-1', name: 'Drill0' as const, position: [1, 2, 3], planetId: 1
       });
 
       // Act
-      (worldObject.position as unknown as number[])[0] = 99;
+      const [firstRead, secondRead] = [worldObject.position, worldObject.position];
 
       // Assert
-      expect(worldObject.position).toEqual([1, 2, 3]);
+      expect(firstRead).not.toBe(secondRead);
+      expect(firstRead).toEqual([1, 2, 3]);
     });
+  });
+
+  it('should be a world object of the whole save', () => {
+    // Arrange
+    const input = {id: '1', name: 'Drill0' as const, position: [1, 2, 3] as [number, number, number], planetId: 1};
+
+    // Act
+    const placedWorldObject = new PlacedWorldObjectEntity(input);
+
+    // Assert
+    expect(placedWorldObject).toBeInstanceOf(WorldObjectEntity);
   });
 });

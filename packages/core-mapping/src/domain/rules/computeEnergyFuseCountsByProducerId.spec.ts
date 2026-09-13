@@ -4,7 +4,6 @@ import {PlacedWorldObjectEntity} from '../entities/PlacedWorldObjectEntity';
 import {WorldObjectEntity} from '../entities/WorldObjectEntity';
 import {InventoryEntity} from '../entities/InventoryEntity';
 import {WorldObjectName} from '../worldObjectNames';
-import {createWholeSaveWorldObjects} from '../../testing/createWholeSaveWorldObjects';
 
 describe('computeEnergyFuseCountsByProducerId', () => {
   const producer = new PlacedWorldObjectEntity({
@@ -18,7 +17,7 @@ describe('computeEnergyFuseCountsByProducerId', () => {
         id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: 99
       });
       const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
-      const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
+      const allWorldObjects = [optimizer, producer, fuse];
       const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
       // Act
@@ -41,7 +40,7 @@ describe('computeEnergyFuseCountsByProducerId', () => {
       const fuseA = new WorldObjectEntity({id: 'fuse-a', name: 'FuseEnergy1' as WorldObjectName});
       const fuseB1 = new WorldObjectEntity({id: 'fuse-b1', name: 'FuseEnergy1' as WorldObjectName});
       const fuseB2 = new WorldObjectEntity({id: 'fuse-b2', name: 'FuseEnergy1' as WorldObjectName});
-      const allWorldObjects = createWholeSaveWorldObjects(optimizerA, optimizerB, producer, fuseA, fuseB1, fuseB2);
+      const allWorldObjects = [optimizerA, optimizerB, producer, fuseA, fuseB1, fuseB2];
       const inventories = [
         new InventoryEntity({id: 99, worldObjectIds: ['fuse-a'], size: 1}),
         new InventoryEntity({id: 98, worldObjectIds: ['fuse-b1', 'fuse-b2'], size: 2})
@@ -62,7 +61,7 @@ describe('computeEnergyFuseCountsByProducerId', () => {
   describe('When no producer is boosted by any optimizer', () => {
     it('should return an empty map', () => {
       // Act
-      const result = computeEnergyFuseCountsByProducerId(createWholeSaveWorldObjects(producer), [producer], []);
+      const result = computeEnergyFuseCountsByProducerId([producer], [producer], []);
 
       // Assert
       expect(result).toEqual(new Map());

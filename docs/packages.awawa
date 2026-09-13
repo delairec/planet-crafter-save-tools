@@ -322,7 +322,7 @@ DECISION LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
 	DESC "une spec qui a besoin de la liste de toute la save la construit par"
 		+ "createWholeSaveWorldObjects, qui prend l'identite de chaque objet, place ou non, et en"
 		+ "fait un WorldObjectEntity"
-	STATUS implemented
+	STATUS superseded
 	RATIONALE "des qu'une entite porte un champ private, TypeScript la compare nominalement : un"
 		+ "PlacedWorldObjectEntity cesse d'etre assignable a un WorldObjectEntity, ce que le"
 		+ "sous-typage structurel autorisait tant que les deux etaient des interfaces. Les specs"
@@ -438,4 +438,29 @@ DECISION UneEntiteRendUneCopieDeSonTableauInterne
 		IMPL "packages/core-mapping/src/domain/entities/InventoryEntity.ts"
 		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts"
 		IMPL "packages/core-mapping/src/domain/entities/PlacedWorldObjectEntity.ts"
+	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+DECISION UnObjetPlaceEstUnObjetDuMonde
+	DESC "PlacedWorldObjectEntity etend WorldObjectEntity : un objet place est un objet du monde"
+		+ "qui porte en plus une position, une planete et un inventaire"
+	DESC "une spec qui a besoin de la liste de toute la save y met directement les entites"
+		+ "construites ; createWholeSaveWorldObjects est supprime"
+	STATUS implemented
+	SUPERSEDES @DECISION.LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
+	RATIONALE "la raison qui imposait deux classes distinctes etait l'ordre des commits de T15 : au"
+		+ "commit qui transformait WorldObjectEntity, PlacedWorldObjectEntity etait encore une"
+		+ "interface. Les cinq entites sont converties, la contrainte a disparu, et ce qu'elle a"
+		+ "laisse est un helper de test qui n'existait que pour rendre les deux vues compatibles"
+	RATIONALE "la substitution de Liskov tient : tout appelant attendant l'identite d'un objet du"
+		+ "monde accepte un objet place, et aucune signature n'a a connaitre la position"
+	RATIONALE "l'heritage ne change rien a la production : le lecteur de sections construit deja la"
+		+ "liste de toute la save et les objets places par deux passes separees, les objets non"
+		+ "places restant des WorldObjectEntity"
+	REJECTED "garder les deux classes independantes et le helper de test : le helper construisait"
+		+ "une seconde entite a partir de l'identite d'une premiere, du travail que seule"
+		+ "l'incompatibilite nominale rendait necessaire"
+	SPEC "un PlacedWorldObjectEntity est une instance de WorldObjectEntity"
+		IMPL "packages/core-mapping/src/domain/entities/PlacedWorldObjectEntity.ts"
+	SPEC "aucun helper de conversion d'objet place vers objet du monde ne subsiste dans src/testing"
+		IMPL "packages/core-mapping/src/testing"
 	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"

@@ -4,7 +4,6 @@ import {PlacedWorldObjectEntity} from '../entities/PlacedWorldObjectEntity';
 import {WorldObjectEntity} from '../entities/WorldObjectEntity';
 import {InventoryEntity} from '../entities/InventoryEntity';
 import {WorldObjectName, worldObjectNamesByEnergyRole} from '../worldObjectNames';
-import {createWholeSaveWorldObjects} from '../../testing/createWholeSaveWorldObjects';
 
 describe('computeEnergyProductionLevel', () => {
   it('should sum the base production of positioned world objects with known production levels', () => {
@@ -15,7 +14,7 @@ describe('computeEnergyProductionLevel', () => {
     ];
 
     // Act
-    const result = computeEnergyProductionLevel(createWholeSaveWorldObjects(...worldObjects), worldObjects, []);
+    const result = computeEnergyProductionLevel([...worldObjects], worldObjects, []);
 
     // Assert
     expect(result).toBe(1.2 + 6.5);
@@ -29,7 +28,7 @@ describe('computeEnergyProductionLevel', () => {
     ];
 
     // Act
-    const result = computeEnergyProductionLevel(createWholeSaveWorldObjects(...worldObjects), worldObjects, []);
+    const result = computeEnergyProductionLevel([...worldObjects], worldObjects, []);
 
     // Assert
     expect(result).toBe(1.2);
@@ -44,7 +43,7 @@ describe('computeEnergyProductionLevel', () => {
       id: 'prod-1', name: 'EnergyGenerator2' as WorldObjectName, position: [1, 0, 0], planetId: 1
     });
     const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
-    const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
+    const allWorldObjects = [optimizer, producer, fuse];
     const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
     // Act
@@ -66,7 +65,7 @@ describe('computeEnergyProductionLevel', () => {
     });
     const firstEnergyFuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
     const secondEnergyFuse = new WorldObjectEntity({id: 'fuse-2', name: 'FuseEnergy1' as WorldObjectName});
-    const allWorldObjects = createWholeSaveWorldObjects(tierTwoOptimizer, boostedProducer, firstEnergyFuse, secondEnergyFuse);
+    const allWorldObjects = [tierTwoOptimizer, boostedProducer, firstEnergyFuse, secondEnergyFuse];
     const optimizerInventoryHoldingBothFuses = [
       new InventoryEntity({id: optimizerInventoryId, worldObjectIds: [firstEnergyFuse.id, secondEnergyFuse.id], size: 3})
     ];
@@ -88,7 +87,7 @@ describe('computeEnergyProductionLevel', () => {
   const producedAlone = (name: WorldObjectName): number => {
     const producer = new PlacedWorldObjectEntity({id: name, name, position: [0, 0, 0], planetId: 1});
 
-    return computeEnergyProductionLevel(createWholeSaveWorldObjects(producer), [producer], []);
+    return computeEnergyProductionLevel([producer], [producer], []);
   };
 
   it.each([...producing])('should read a strictly positive production level for %s', (name) => {

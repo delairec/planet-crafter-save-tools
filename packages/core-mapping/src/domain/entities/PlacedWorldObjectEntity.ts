@@ -1,26 +1,23 @@
 import {WorldObjectName} from "../worldObjectNames";
-import {assertFiniteNumber, assertNonEmptyString, assertOptionalFiniteNumber} from "../errors/assertions";
+import {assertFiniteNumber, assertOptionalFiniteNumber} from "../errors/assertions";
+import {WorldObjectEntity, WorldObjectEntityInput} from "./WorldObjectEntity";
 
-export interface PlacedWorldObjectEntityInput {
-  readonly id: string;
-  readonly name: WorldObjectName;
+export interface PlacedWorldObjectEntityInput extends WorldObjectEntityInput {
   readonly position: readonly [number, number, number];
   readonly planetId: number;
   readonly inventoryId?: number;
 }
 
-export class PlacedWorldObjectEntity {
-  private readonly _id: string;
-  private readonly _name: WorldObjectName;
+export class PlacedWorldObjectEntity extends WorldObjectEntity {
   private readonly _position: readonly [number, number, number];
   private readonly _planetId: number;
   private readonly _inventoryId: number | undefined;
 
   constructor(input: PlacedWorldObjectEntityInput) {
+    super(input);
+
     const [x, y, z] = input.position;
 
-    this._id = assertNonEmptyString(input.id, 'PlacedWorldObjectEntity.id');
-    this._name = assertNonEmptyString(input.name, 'PlacedWorldObjectEntity.name') as WorldObjectName;
     this._position = [
       assertFiniteNumber(x, 'PlacedWorldObjectEntity.position[0]'),
       assertFiniteNumber(y, 'PlacedWorldObjectEntity.position[1]'),
@@ -28,14 +25,6 @@ export class PlacedWorldObjectEntity {
     ];
     this._planetId = assertFiniteNumber(input.planetId, 'PlacedWorldObjectEntity.planetId');
     this._inventoryId = assertOptionalFiniteNumber(input.inventoryId, 'PlacedWorldObjectEntity.inventoryId');
-  }
-
-  get id(): string {
-    return this._id;
-  }
-
-  get name(): WorldObjectName {
-    return this._name;
   }
 
   get position(): readonly [number, number, number] {
