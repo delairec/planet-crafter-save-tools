@@ -9,11 +9,11 @@ interface FieldsGroupProps {
   columns: Accessor<Column[]>,
 }
 
-export default function FieldsGroup({columns}: FieldsGroupProps) {
+export default function FieldsGroup(props: FieldsGroupProps) {
 
   return (
     <div class="fields-group readonly mb-2">
-      <For each={columns()}>
+      <For each={props.columns()}>
         {(column) => (
           <div class="field">
             <div class="label">{column.header}</div>

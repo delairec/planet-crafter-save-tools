@@ -8,16 +8,16 @@ interface FieldsGroupGridProps<T> {
   columns: (item: T) => Column[];
 }
 
-export default function FieldsGroupGrid<T>({title, items, itemLabel, columns}: FieldsGroupGridProps<T>) {
+export default function FieldsGroupGrid<T>(props: FieldsGroupGridProps<T>) {
   return (
     <>
-      <h5>{title}</h5>
+      <h5>{props.title}</h5>
       <div class="grid-container">
-        <For each={items}>
+        <For each={props.items}>
           {(item) => (
             <div class="grid-item">
-              <h5>{itemLabel(item)}</h5>
-              <FieldsGroup columns={() => columns(item)}/>
+              <h5>{props.itemLabel(item)}</h5>
+              <FieldsGroup columns={() => props.columns(item)}/>
             </div>
           )}
         </For>
