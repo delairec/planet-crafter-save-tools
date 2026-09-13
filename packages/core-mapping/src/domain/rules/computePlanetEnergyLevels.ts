@@ -6,6 +6,8 @@ import {
   energyProductionLevelsByWorldObjectName
 } from "../energyLevelsByWorldObjectName";
 import {PlanetEnergyLevelsValueObject} from "../valueObjects/PlanetEnergyLevelsValueObject";
+import {createEnergyBreakdownEntryValueObject} from "../valueObjects/EnergyBreakdownEntryValueObject";
+import {createOptimizerValueObject} from "../valueObjects/OptimizerValueObject";
 import {computeEnergyProductionLevel} from "./computeEnergyProductionLevel";
 import {computeEnergyConsumptionLevel} from "./computeEnergyConsumptionLevel";
 import {computeEnergyBreakdown} from "./computeEnergyBreakdown";
@@ -33,9 +35,21 @@ export function computePlanetEnergyLevels(
   // section in docs/energy-levels.md. Reflecting Optimizer effects in the per-machine
   // breakdown is a follow-up improvement.
   const productionBreakdown = computeEnergyBreakdown(positionedWorldObjectsOnPlanet, energyProductionLevelsByWorldObjectName)
-    .map((entry) => ({...entry, productionRatio: production ? entry.totalLevel / production : undefined}));
+    .map((entry) => createEnergyBreakdownEntryValueObject({
+      name: entry.name,
+      quantity: entry.quantity,
+      unitLevel: entry.unitLevel,
+      totalLevel: entry.totalLevel,
+      productionRatio: production ? entry.totalLevel / production : undefined
+    }));
   const optimizers = computeOptimizers(allWorldObjects, positionedWorldObjectsOnPlanet, inventories)
-    .map((optimizer) => ({...optimizer, productionRatio: production ? optimizer.contribution / production : undefined}));
+    .map((optimizer) => createOptimizerValueObject({
+      name: optimizer.name,
+      fuseCount: optimizer.fuseCount,
+      boostedMachines: optimizer.boostedMachines,
+      contribution: optimizer.contribution,
+      productionRatio: production ? optimizer.contribution / production : undefined
+    }));
 
   return {
     production,

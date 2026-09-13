@@ -1,7 +1,7 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
-import {EnergyLevelsValueObject} from "../domain/valueObjects/EnergyLevelsValueObject";
-import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
+import {createEnergyLevelsValueObject} from "../domain/valueObjects/EnergyLevelsValueObject";
+import {createPlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
 import {computePlanetEnergyLevels} from "../domain/rules/computePlanetEnergyLevels";
 
 export class LoadEnergyLevelsSection {
@@ -14,13 +14,22 @@ export class LoadEnergyLevelsSection {
   async execute(): Promise<void> {
     const {allWorldObjects, inventories, planets} = this.saveParser.getEnergyLevelsRawData();
 
-    const energyLevels: EnergyLevelsValueObject = {
-      planets: planets.map((planet): PlanetEnergyLevelsValueObject => ({
-        planetId: planet.planetId,
-        planetName: planet.planetName,
-        ...computePlanetEnergyLevels(allWorldObjects, planet.placedWorldObjects, inventories)
-      }))
-    };
+    const energyLevels = createEnergyLevelsValueObject({
+      planets: planets.map((planet) => {
+        const levels = computePlanetEnergyLevels(allWorldObjects, planet.placedWorldObjects, inventories);
+
+        return createPlanetEnergyLevelsValueObject({
+          planetId: planet.planetId,
+          planetName: planet.planetName,
+          production: levels.production,
+          consumption: levels.consumption,
+          available: levels.available,
+          productionBreakdown: levels.productionBreakdown,
+          consumptionBreakdown: levels.consumptionBreakdown,
+          optimizers: levels.optimizers
+        });
+      })
+    });
 
     this.presenter.displayEnergyLevels(energyLevels);
   }

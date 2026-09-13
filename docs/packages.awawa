@@ -393,3 +393,23 @@ DECISION LeComportementMigreSurLEntiteEtLaRegleLInterroge
 		IMPL "packages/core-mapping/src/domain/entities/TerraformationLevelEntity.ts"
 		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts"
 	SOURCE "decision du 2026-09-13, T15, migration des comportements sur les entites"
+
+DECISION LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
+	DESC "LoadEnergyLevelsSection construit EnergyLevelsValueObject et"
+		+ "PlanetEnergyLevelsValueObject par leurs fabriques, champ par champ, au lieu d'etaler le"
+		+ "resultat de la regle dans un litteral"
+	DESC "computePlanetEnergyLevels garde sa signature et rend toujours les niveaux sans planetId ;"
+		+ "il n'etale plus les value objects qu'il enrichit d'une part de production"
+	STATUS implemented
+	RATIONALE "un etalement contourne la fabrique : le value object sort non valide, et un champ"
+		+ "ajoute a l'interface passe sans que rien ne le reclame au site de construction"
+	REJECTED "faire prendre a computePlanetEnergyLevels le PlanetWorldObjectsValueObject entier et"
+		+ "rendre le PlanetEnergyLevelsValueObject complet : la regle cesserait d'etre une regle de"
+		+ "calcul de niveaux pour devenir l'assemblage d'une vue, et les ancres IMPL de la tache"
+		+ "designent les cas d'utilisation, pas la regle"
+	SPEC "les deux cas d'utilisation de section construisent leurs value objects par fabrique"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
+		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts"
+	SPEC "aucun etalement de value object ne subsiste dans computePlanetEnergyLevels"
+		IMPL "packages/core-mapping/src/domain/rules/computePlanetEnergyLevels.ts"
+	SOURCE "decision du 2026-09-13, T15, construction explicite des value objects"
