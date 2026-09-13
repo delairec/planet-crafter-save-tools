@@ -10,7 +10,8 @@ SHAPE task_name
 	MATCH "(T|DEP)[0-9]+_[A-Z][A-Za-z0-9]*(:v[0-9]+)?"
 
 SCHEMA TASK
-	DESC "un lot de travail qui fusionne en une ou plusieurs pull requests"
+	DESC "un lot de travail qui fusionne en une pull request ; livre en plusieurs, il est une tache"
+		+ "par pull request, la suivante en AFTER de la precedente"
 	DESC "specified : la fiche est ecrite, la tache est ouverte. implemented : elle est fusionnee,"
 		+ "et elle reste"
 	NAME task_name
@@ -321,3 +322,27 @@ DECISION UneTacheFusionneeResteDansLeCorpus
 		+ "la prose de cadrage"
 		IMPL "docs/taches.awawa"
 	SOURCE "decision du 2026-09-11, migration de tasks/"
+
+DECISION UneTacheEstUneEntiteParPullRequest
+	DESC "une tache livree en plusieurs pull requests est une entite par pull request, la suivante"
+		+ "en AFTER de la precedente ; chaque entite porte les seules lignes SPEC que sa pull"
+		+ "request livre"
+	DESC "T37, deja implemented en une entite sur deux pull requests, n'est pas redecoupee"
+		REF @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.UneTacheLivreeEnPlusieursPrEstUneEntiteParPr
+	RATIONALE "conflit de schema, tranche ici : SCHEMA TASK disait « fusionne en une ou plusieurs"
+		+ "pull requests » et son champ PR est REPEATABLE ; le DESC est revise, le champ reste pour"
+		+ "une pull request rouverte sous un autre numero"
+	RATIONALE "sur T37, le prompt de lancement de la partie B a du lister a la main les deux lignes"
+		+ "SPEC encore ouvertes, parce qu'une entite unique ne sait pas dire lesquelles de ses"
+		+ "obligations sont livrees ; la moitie de l'autre symptome — cinq bloqueurs superseded"
+		+ "dans le pied de page — tient a l'outil et se traite a part"
+		REF @DECISION.LePiedDePageBlockedBySeCroiseAvecStatus
+	REJECTED "un STATUS par ligne SPEC : le schema ne gate que l'entite, pas un champ"
+	REJECTED "redecouper T37 apres coup : elle est implemented, et son ordre n'a plus d'effet sur"
+		+ "rien"
+	SPEC "SCHEMA TASK dit qu'une tache fusionne en une pull request et qu'une livraison en"
+		+ "plusieurs est une tache par pull request"
+		IMPL "docs/taches.awawa::SCHEMA TASK"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"

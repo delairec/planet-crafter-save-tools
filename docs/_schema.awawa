@@ -73,5 +73,13 @@ SCHEMA OPEN_QUESTION
 		REPEATABLE
 		DESC "ce que ce point empeche ou fragilise ; l'arete inverse est calculee"
 		CONVERSE BLOCKED_BY
+	FIELD RECOMMENDATION string
+		DESC "l'option proposee, une fois qu'elle a affronte son alternative"
+		FIELD REF reference
+			REPEATABLE
+		FIELD REJECTED string
+			REQUIRED
+			REPEATABLE
+			DESC "l'alternative examinee et ecartee, et pourquoi"
 	WHEN STATUS superseded
 		INCOMING CLOSED_BY

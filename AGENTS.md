@@ -31,6 +31,11 @@ awawa lint --strict .               # doit sortir en 0
   et la ligne `BLOCKED_BY` dit ce qui bloque X — une arête entrante, qu'aucune traversée ne trouve.
 - **Éditer le corpus comme du texte**, puis `awawa fmt .` et `awawa lint --strict .`. `awawa new TYPE Nom .` imprime
   un squelette conforme au schéma : l'utiliser plutôt que réciter le schéma.
+- **Avant `awawa new`, lire une entité modèle du type avec `awawa show`** plutôt que les fichiers du corpus :
+  `@DECISION.UneDecisionRetireeNommeSaSuccesseure` (décision), `@DECISION.UneFusionProduitUneSaveOrdinaire`
+  (décision avec `SUPERSEDES` et `SPEC`), `@OPEN_QUESTION.UneSaveSansJoueurMeriteUnAvertissement` (question),
+  `@TASK.T37_FrontieresCleanArchitectureCoreMapping` (tâche). Pas de fichier d'exemple : la marche le chargerait
+  et `status` le compterait (@DECISION.AgentsMdNommeUneEntiteModeleParType).
 - **Les commentaires `//` ne sont lus par aucune commande.** Un fait écrit là n'atteint pas la session suivante ; ce
   qu'un outil doit savoir est un champ.
 - `DESC` est une instruction, pas de la documentation : fragment en minuscules, sans point final, un fait par `DESC`.

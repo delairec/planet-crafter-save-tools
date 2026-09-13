@@ -115,28 +115,30 @@ OPEN_QUESTION LaPolitiqueDeContenuAutoriseLeScriptEnLigne
 
 OPEN_QUESTION FormeDesErreursDeRegleDomaine
 	DESC "sous quel type validateUniqueHost et validateFloatSerialization rendent-elles leur echec"
-	DESC "recommandation : un type du domaine, que l'infrastructure traduit en issue de validation"
-		+ "avec son code ; les codes restent en application, sans celui que le domaine decide"
+	DESC "a trancher, sans alternative examinee : un type du domaine, que l'infrastructure traduit"
+		+ "en issue de validation avec son code ; les codes restent en application, sans celui que"
+		+ "le domaine decide"
 	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	SOURCE "fiche T37, decision 1"
 
 OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
 	DESC "la verification du suffixe .0 reste-t-elle une regle de domaine"
-	DESC "recommandation : non, elle sort vers l'infrastructure, a cote des schemas — la propriete"
-		+ "est celle du texte"
+	RECOMMENDATION "non, elle sort vers l'infrastructure, a cote des schemas — la propriete est"
+		+ "celle du texte"
+		REJECTED "une regle de domaine recevant des entrees analysees et verifiant l'integrite du"
+			+ "nombre : elle ne verifie rien, la propriete n'est pas observable apres analyse JSON"
 	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
-	RATIONALE "l'alternative, une regle de domaine recevant des entrees analysees et verifiant"
-		+ "l'integrite du nombre, ne verifie rien : la propriete n'est pas observable apres analyse"
-		+ "JSON"
 	SOURCE "fiche T37, decision 2"
 
 OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
 	DESC "le domaine garde-t-il les chaines d'identifiants separees par des virgules, ou les"
 		+ "recoit-il decodees"
-	DESC "recommandation : decodage en infrastructure avant le domaine et re-encodage apres, une"
-		+ "seule declaration du separateur"
+	RECOMMENDATION "decodage en infrastructure avant le domaine et re-encodage apres, une seule"
+		+ "declaration du separateur"
+		REJECTED "elargir la decision de T11 sur les DTO wire aux encodages de champ, pour garder"
+			+ "l'analyse dans le domaine : T11 n'a tranche que l'entree et la sortie"
 	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T11 a tranche que les DTO wire restent l'entree et la sortie du domaine ; elle n'a"
@@ -146,8 +148,9 @@ OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
 
 OPEN_QUESTION SortDeMergedSaveValueObject
 	DESC "MergedSaveValueObject est-il supprime ou renomme en type d'infrastructure"
-	DESC "recommandation : supprime ; le port de fusion retourne les sections fusionnees et la"
-		+ "serialisation comme le nommage du fichier restent en infrastructure"
+	DESC "a trancher, sans alternative examinee : supprime ; le port de fusion retourne les"
+		+ "sections fusionnees et la serialisation comme le nommage du fichier restent en"
+		+ "infrastructure"
 	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T27 a deja note que son invariant est vide : la seule erreur de domaine atteignable"
@@ -156,9 +159,10 @@ OPEN_QUESTION SortDeMergedSaveValueObject
 
 OPEN_QUESTION FormeDuContratControleurVersUi
 	DESC "comment l'UI cesse-t-elle de connaitre la representation de persistance des sections"
-	DESC "recommandation : les controleurs de section recoivent le contenu texte deja valide et le"
-		+ "composition root fabrique lecteur et analyseur ; l'alternative est un identifiant opaque"
-		+ "de save chargee porte par le ViewModel"
+	RECOMMENDATION "les controleurs de section recoivent le contenu texte deja valide et le"
+		+ "composition root fabrique lecteur et analyseur"
+		REJECTED "un identifiant opaque de save chargee porte par le ViewModel : de l'etat dans un"
+			+ "package sans etat, et le controleur de fusion resterait sur un autre contrat"
 	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	BLOCKS @TASK.T32_ConformiteUiSaveManager
@@ -169,8 +173,8 @@ OPEN_QUESTION FormeDuContratControleurVersUi
 OPEN_QUESTION SortDesCleusDupliqueesDeWorldObjectLabels
 	DESC "que faire des deux definitions de OutsideLamp1 et de la paire Keycard1 / KeyCard1,"
 		+ "probablement la meme cle"
-	DESC "recommandation : conserver la premiere occurrence et verifier la casse contre les saves"
-		+ "de reference"
+	DESC "a trancher, sans alternative examinee : conserver la premiere occurrence et verifier la"
+		+ "casse contre les saves de reference"
 	STATUS specified
 	BLOCKS @TASK.T38_ConformiteCoreMapping
 	SOURCE "fiche T38, decision 2"
@@ -256,7 +260,7 @@ OPEN_QUESTION UnRemplacementPartielDUneDecisionImplementeeNEstPasMarque
 		+ "REF sortant de la nouvelle decision le signale, et lint --strict sort en 0"
 		REF @DECISION.UneFusionProduitUneSaveOrdinaire
 		REF @DECISION.LesControleursDeSectionRecoiventLeTexteValide
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.UneFusionProduitUneSaveOrdinaire
 	BLOCKS @DECISION.LesControleursDeSectionRecoiventLeTexteValide
 	RATIONALE "SUPERSEDES ne porte que sur une entite entiere ; un context qui atteint l'ancienne"
@@ -282,7 +286,7 @@ OPEN_QUESTION UneTacheLivreeEnPlusieursPrEstUneEntiteParPr
 		+ "contredit ce DESC et demande de le reviser"
 	DESC "proposee pour la troisieme fois : par les deux rapports de la PR #62, puis par celui de"
 		+ "la PR #65"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T37 en une entite : lint --closure imprime BLOCKED_BY (root, 5) dont les cinq sont"
 		+ "superseded, et le prompt de lancement de la partie B a du lister a la main les deux"
@@ -295,7 +299,7 @@ OPEN_QUESTION LaRecommandationDUneQuestionEstUnChampAvecSonRejet
 		+ "destination proposee : » de questions.awawa sont convertis une fois"
 	DESC "proposee pour la troisieme fois : par les deux rapports de la PR #62, puis par celui de"
 		+ "la PR #65"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @SCHEMA.OPEN_QUESTION
 	RATIONALE "une recommandation qui n'a jamais affronte son alternative est indistinguable d'une"
 		+ "qui l'a fait ; sur la PR #62 deux recommandations sur cinq etaient defectueuses, et la"
@@ -305,7 +309,7 @@ OPEN_QUESTION LaRecommandationDUneQuestionEstUnChampAvecSonRejet
 OPEN_QUESTION UneAncreDeRepertoireSousSpecEstInterdite
 	DESC "le schema interdit une ancre IMPL de repertoire sous SPEC : une obligation s'ancre sur un"
 		+ "fichier ou un symbole"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.LesControleursDeSectionRecoiventLeTexteValide
 	RATIONALE "44 des 180 ancres IMPL du corpus pointent un repertoire, sur lesquelles L016 ne peut"
 		+ "jamais se declencher ; la decision de la PR #65 en ajoute une,"
@@ -335,7 +339,7 @@ OPEN_QUESTION LeRelancementDUnRapportDUsageButeSurSaBranche
 OPEN_QUESTION UnModeleDEntiteEviteLaLectureDesFichiersDuCorpus
 	DESC "un docs/_example.awawa, ou une entite modele par type, donne a un agent la forme"
 		+ "d'ecriture sans qu'il lise les fichiers du corpus"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.LeCorpusEstDecoupeParDomaine
 	RATIONALE "l'agent de la PR #65 a lu quatre plages sed de packages, questions, fusion et"
 		+ "limitations puis head -12 des douze fichiers, apres un context et un new ; l'agent de la"
