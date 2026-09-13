@@ -1,8 +1,7 @@
 import {PlacedWorldObjectEntity} from "../entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "../entities/WorldObjectEntity";
 import {InventoryEntity} from "../entities/InventoryEntity";
-import {energyProductionLevelsByWorldObjectName} from "../energyLevelsByWorldObjectName";
-import {ENERGY_FUSE_MULTIPLIER_PER_FUSE} from "./energyOptimizerConfig";
+import {ENERGY_FUSE_MULTIPLIER_PER_FUSE} from "../energyOptimizerConfig";
 import {computeEnergyFuseCountsByProducerId} from "./computeEnergyFuseCountsByProducerId";
 
 /**
@@ -18,7 +17,7 @@ export function computeEnergyProductionLevel(
   const fuseCountByProducerId = computeEnergyFuseCountsByProducerId(allWorldObjects, positionedWorldObjectsOnPlanet, inventories);
 
   return positionedWorldObjectsOnPlanet.reduce((total, worldObject) => {
-    const baseLevel = energyProductionLevelsByWorldObjectName[worldObject.name];
+    const baseLevel = worldObject.energyProductionLevel;
     if (baseLevel === undefined) {
       return total;
     }

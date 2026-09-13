@@ -1,5 +1,6 @@
 import {WorldObjectName} from "../worldObjectNames";
 import {assertNonEmptyString} from "../errors/assertions";
+import {ENERGY_FUSE_NAME} from "../energyOptimizerConfig";
 
 export interface WorldObjectEntityInput {
   readonly id: string;
@@ -21,5 +22,9 @@ export class WorldObjectEntity {
 
   get name(): WorldObjectName {
     return this._name;
+  }
+
+  isEnergyFuse(): boolean {
+    return this._name === ENERGY_FUSE_NAME;
   }
 }

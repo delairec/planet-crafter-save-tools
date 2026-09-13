@@ -207,7 +207,7 @@ TASK T38_ConformiteCoreMapping
 		IMPL "packages/core-mapping/src/domain/rules/validateUniqueHost.ts"
 		IMPL "packages/core-mapping/src/domain/rules/resolvePlanetName.ts"
 		IMPL "packages/core-mapping/src/domain/rules/computeOptimizers.ts"
-		IMPL "packages/core-mapping/src/domain/rules/energyOptimizerConfig.ts"
+		IMPL "packages/core-mapping/src/domain/energyOptimizerConfig.ts"
 		IMPL "packages/core-mapping/src/domain/rules/computeOptimizerBoosts.ts"
 	SPEC "production, fusion : les valeurs par defaut de mergeGlobalMetadata et mergeStatistics ne"
 		+ "sont plus nommees validated, l'indentation revient aux tabulations, le generateur vide"

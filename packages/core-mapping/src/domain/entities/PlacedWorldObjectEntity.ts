@@ -1,6 +1,11 @@
 import {WorldObjectName} from "../worldObjectNames";
 import {assertFiniteNumber, assertOptionalFiniteNumber} from "../errors/assertions";
 import {WorldObjectEntity, WorldObjectEntityInput} from "./WorldObjectEntity";
+import {
+  energyConsumptionLevelsByWorldObjectName,
+  energyProductionLevelsByWorldObjectName
+} from "../energyLevelsByWorldObjectName";
+import {OPTIMIZER_CONFIG_BY_NAME} from "../energyOptimizerConfig";
 
 export interface PlacedWorldObjectEntityInput extends WorldObjectEntityInput {
   readonly position: readonly [number, number, number];
@@ -39,14 +44,42 @@ export class PlacedWorldObjectEntity extends WorldObjectEntity {
     return this._inventoryId;
   }
 
-  distanceTo(other: PlacedWorldObjectEntity): number {
+  get energyProductionLevel(): number | undefined {
+    return energyProductionLevelsByWorldObjectName[this.name];
+  }
+
+  get energyConsumptionLevel(): number | undefined {
+    return energyConsumptionLevelsByWorldObjectName[this.name];
+  }
+
+  isOptimizer(): boolean {
+    return OPTIMIZER_CONFIG_BY_NAME[this.name] !== undefined;
+  }
+
+  boostedProducersAmong(candidates: readonly PlacedWorldObjectEntity[]): PlacedWorldObjectEntity[] {
+    const config = OPTIMIZER_CONFIG_BY_NAME[this.name];
+    if (config === undefined) {
+      return [];
+    }
+
+    return candidates
+      .filter((candidate) => candidate.energyProductionLevel !== undefined)
+      .filter((candidate) => candidate.planetId === this._planetId)
+      .filter((candidate) => this.isWithinRadius(candidate, config.radius))
+      .map((candidate) => ({candidate, distance: this.distanceTo(candidate)}))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, config.maxMachines)
+      .map(({candidate}) => candidate);
+  }
+
+  private isWithinRadius(other: PlacedWorldObjectEntity, radius: number): boolean {
+    return this.distanceTo(other) <= radius;
+  }
+
+  private distanceTo(other: PlacedWorldObjectEntity): number {
     const [x, y, z] = this._position;
     const [otherX, otherY, otherZ] = other._position;
 
     return Math.sqrt((x - otherX) ** 2 + (y - otherY) ** 2 + (z - otherZ) ** 2);
-  }
-
-  isWithinRadius(other: PlacedWorldObjectEntity, radius: number): boolean {
-    return this.distanceTo(other) <= radius;
   }
 }

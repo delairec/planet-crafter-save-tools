@@ -4,8 +4,7 @@ import {WorldObjectEntity} from "../entities/WorldObjectEntity";
 import {InventoryEntity} from "../entities/InventoryEntity";
 import {OptimizerValueObject, createOptimizerValueObject} from "../valueObjects/OptimizerValueObject";
 import {createOptimizerBoostedMachineValueObject} from "../valueObjects/OptimizerBoostedMachineValueObject";
-import {energyProductionLevelsByWorldObjectName} from "../energyLevelsByWorldObjectName";
-import {ENERGY_FUSE_MULTIPLIER_PER_FUSE} from "./energyOptimizerConfig";
+import {ENERGY_FUSE_MULTIPLIER_PER_FUSE} from "../energyOptimizerConfig";
 import {computeOptimizerBoosts} from "./computeOptimizerBoosts";
 import {computeEnergyFuseCountsByProducerId} from "./computeEnergyFuseCountsByProducerId";
 
@@ -33,7 +32,7 @@ export function computeOptimizers(
 
       for (const producer of boostedProducers) {
         quantityByName.set(producer.name, (quantityByName.get(producer.name) ?? 0) + 1);
-        const baseLevel = energyProductionLevelsByWorldObjectName[producer.name]!;
+        const baseLevel = producer.energyProductionLevel!;
         const totalFuseCount = fuseCountByProducerId.get(producer.id) ?? fuseCount;
         if (totalFuseCount === 0) {
           continue;

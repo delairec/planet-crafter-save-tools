@@ -1,25 +1,17 @@
 import {PlacedWorldObjectEntity} from "../entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "../entities/WorldObjectEntity";
 import {InventoryEntity} from "../entities/InventoryEntity";
-import {ENERGY_FUSE_NAME, OPTIMIZER_CONFIG_BY_NAME} from "./energyOptimizerConfig";
-import {energyProductionLevelsByWorldObjectName} from "../energyLevelsByWorldObjectName";
 
 /**
  * Implements rules EN-OPT-1..3 and EN-FUSE-1..4: for each Optimizer holding at least one Energy
- * Fuse, finds the closest eligible energy producers (same planet, within radius, up to the
- * optimizer's machine capacity) reached by that Optimizer.
+ * Fuse, reports the producers that Optimizer boosts.
  */
 export function computeOptimizerBoosts(
   allWorldObjects: readonly WorldObjectEntity[],
   positionedWorldObjects: readonly PlacedWorldObjectEntity[],
   inventories: readonly InventoryEntity[]
 ): { optimizer: PlacedWorldObjectEntity; fuseCount: number; boostedProducers: PlacedWorldObjectEntity[] }[] {
-  const producers = positionedWorldObjects.filter(
-    (worldObject) => energyProductionLevelsByWorldObjectName[worldObject.name] !== undefined
-  );
-  const optimizers = positionedWorldObjects.filter(
-    (worldObject) => OPTIMIZER_CONFIG_BY_NAME[worldObject.name] !== undefined
-  );
+  const optimizers = positionedWorldObjects.filter((worldObject) => worldObject.isOptimizer());
 
   const result: {
     optimizer: PlacedWorldObjectEntity;
@@ -34,23 +26,13 @@ export function computeOptimizerBoosts(
     }
 
     const fuseCount = allWorldObjects
-      .filter((worldObject) => worldObject.name === ENERGY_FUSE_NAME && inventory.contains(worldObject.id))
+      .filter((worldObject) => worldObject.isEnergyFuse() && inventory.contains(worldObject.id))
       .length;
     if (fuseCount === 0) {
       continue;
     }
 
-    const {radius, maxMachines} = OPTIMIZER_CONFIG_BY_NAME[optimizer.name]!;
-
-    const boostedProducers = producers
-      .filter((producer) => producer.planetId === optimizer.planetId)
-      .filter((producer) => optimizer.isWithinRadius(producer, radius))
-      .map((producer) => ({producer, distance: optimizer.distanceTo(producer)}))
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, maxMachines)
-      .map(({producer}) => producer);
-
-    result.push({optimizer, fuseCount, boostedProducers});
+    result.push({optimizer, fuseCount, boostedProducers: optimizer.boostedProducersAmong(positionedWorldObjects)});
   }
 
   return result;

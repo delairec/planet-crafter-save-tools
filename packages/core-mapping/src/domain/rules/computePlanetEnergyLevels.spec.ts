@@ -14,7 +14,7 @@ describe('computePlanetEnergyLevels', () => {
     ];
 
     // Act
-    const result = computePlanetEnergyLevels([...worldObjects], worldObjects, []);
+    const result = computePlanetEnergyLevels(worldObjects, worldObjects, []);
 
     // Assert
     expect(result.production).toBe(1.2);
@@ -32,7 +32,7 @@ describe('computePlanetEnergyLevels', () => {
     const noInventories = [];
 
     // Act
-    const result = computePlanetEnergyLevels([...worldObjects], worldObjects, noInventories);
+    const result = computePlanetEnergyLevels(worldObjects, worldObjects, noInventories);
 
     // Assert
     expect(result.production).toBe(26);

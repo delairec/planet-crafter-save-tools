@@ -14,7 +14,7 @@ describe('computeEnergyProductionLevel', () => {
     ];
 
     // Act
-    const result = computeEnergyProductionLevel([...worldObjects], worldObjects, []);
+    const result = computeEnergyProductionLevel(worldObjects, worldObjects, []);
 
     // Assert
     expect(result).toBe(1.2 + 6.5);
@@ -28,7 +28,7 @@ describe('computeEnergyProductionLevel', () => {
     ];
 
     // Act
-    const result = computeEnergyProductionLevel([...worldObjects], worldObjects, []);
+    const result = computeEnergyProductionLevel(worldObjects, worldObjects, []);
 
     // Assert
     expect(result).toBe(1.2);
