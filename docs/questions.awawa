@@ -394,4 +394,4 @@ OPEN_QUESTION UneEntiteRendSonTableauInterneSansLeCopier
 		REJECTED "figer le tableau par Object.freeze dans le constructeur : la mutation echouerait"
 			+ "silencieusement hors mode strict, et le cout tombe une fois par entite sans rendre"
 			+ "l'erreur lisible"
-	SOURCE "constate le 2026-09-13, T15, conversion des entites du domaine en classes"
+	SOURCE "constate le 2026-09-13, T15, PR #72, conversion des entites du domaine en classes"

@@ -85,6 +85,7 @@ TASK T15_EntitesDuDomaineEnClasses
 		+ "TerraformationLevel"
 	STATUS implemented
 	WAVE "4"
+	PR "72"
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T37 laisse en place les entites que T15 convertit et sa partie A deplace des types"
 		+ "du domaine ; a executer en dernier des taches domaine"

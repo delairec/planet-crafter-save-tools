@@ -344,7 +344,7 @@ DECISION LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
 	SPEC "createWholeSaveWorldObjects construit la liste de toute la save depuis l'identite des"
 		+ "objets, places ou non"
 		IMPL "packages/core-mapping/src/testing/createWholeSaveWorldObjects.ts"
-	SOURCE "decision du 2026-09-13, T15, conversion des entites du domaine en classes"
+	SOURCE "decision du 2026-09-13, T15, PR #72, conversion des entites du domaine en classes"
 
 DECISION LeComportementMigreSurLEntiteEtLaRegleLInterroge
 	DESC "le comptage des fusibles d'un optimiseur filtre les objets du monde de toute la save par"
@@ -392,7 +392,7 @@ DECISION LeComportementMigreSurLEntiteEtLaRegleLInterroge
 		+ "l'entite"
 		IMPL "packages/core-mapping/src/domain/entities/TerraformationLevelEntity.ts"
 		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts"
-	SOURCE "decision du 2026-09-13, T15, migration des comportements sur les entites"
+	SOURCE "decision du 2026-09-13, T15, PR #72, migration des comportements sur les entites"
 
 DECISION LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
 	DESC "LoadEnergyLevelsSection construit EnergyLevelsValueObject et"
@@ -412,4 +412,4 @@ DECISION LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
 		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts"
 	SPEC "aucun etalement de value object ne subsiste dans computePlanetEnergyLevels"
 		IMPL "packages/core-mapping/src/domain/rules/computePlanetEnergyLevels.ts"
-	SOURCE "decision du 2026-09-13, T15, construction explicite des value objects"
+	SOURCE "decision du 2026-09-13, T15, PR #72, construction explicite des value objects"
