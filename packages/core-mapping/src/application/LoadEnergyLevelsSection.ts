@@ -1,8 +1,7 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
-import {EnergyLevelsValueObject} from "../domain/valueObjects/EnergyLevelsValueObject";
-import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
-import {computePlanetEnergyLevels} from "../domain/rules/computePlanetEnergyLevels";
+import {createEnergyLevelsValueObject} from "../domain/valueObjects/EnergyLevelsValueObject";
+import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 
 export class LoadEnergyLevelsSection {
   constructor(
@@ -14,13 +13,9 @@ export class LoadEnergyLevelsSection {
   async execute(): Promise<void> {
     const {allWorldObjects, inventories, planets} = this.saveParser.getEnergyLevelsRawData();
 
-    const energyLevels: EnergyLevelsValueObject = {
-      planets: planets.map((planet): PlanetEnergyLevelsValueObject => ({
-        planetId: planet.planetId,
-        planetName: planet.planetName,
-        ...computePlanetEnergyLevels(allWorldObjects, planet.placedWorldObjects, inventories)
-      }))
-    };
+    const energyLevels = createEnergyLevelsValueObject({
+      planets: planets.map((planet) => new PlanetEnergyGrid(planet, allWorldObjects, inventories).levels())
+    });
 
     this.presenter.displayEnergyLevels(energyLevels);
   }

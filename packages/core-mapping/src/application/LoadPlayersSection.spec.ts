@@ -3,6 +3,7 @@ import {FakeSaveParserService} from "../testing/FakeSaveParserService";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {PlayersPresenterPort} from "./ports/PlayersPresenterPort";
 import {LoadPlayersSection} from './LoadPlayersSection';
+import {createPlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';
 
 describe('LoadPlayersSection', () => {
   it('should present all players from the parsed save', async () => {
@@ -16,14 +17,14 @@ describe('LoadPlayersSection', () => {
 
     // Assert
     expect(presenter.displayPlayers).toHaveBeenCalledTimes(1);
-    expect(presenter.displayPlayers).toHaveBeenCalledWith([{
+    expect(presenter.displayPlayers).toHaveBeenCalledWith([createPlayerSummaryValueObject({
       name: 'Nikowa',
       equipment: [],
       inventory: []
-    }, {
+    }), createPlayerSummaryValueObject({
       name: 'Chileny',
       equipment: [],
       inventory: []
-    }]);
+    })]);
   });
 });

@@ -4,11 +4,11 @@ import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {SaveSections} from '../domain/save/SaveSections';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 import {GlobalProgressionValueObject, createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
-import {PlayerEntity, createPlayerEntity} from "../domain/entities/PlayerEntity";
-import {TerraformationLevelEntity, createTerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
-import {InventoryEntity, createInventoryEntity} from "../domain/entities/InventoryEntity";
-import {WorldObjectEntity, createWorldObjectEntity} from "../domain/entities/WorldObjectEntity";
-import {PlacedWorldObjectEntity, createPlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
+import {PlayerEntity} from "../domain/entities/PlayerEntity";
+import {TerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
+import {InventoryEntity} from "../domain/entities/InventoryEntity";
+import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
+import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {StatisticsValueObject, createStatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {SaveConfigurationValueObject, createSaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
 import {
@@ -55,7 +55,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
       const playerEquipmentIds = playerEquipment?.worldObjectIds ?? [];
       const worldObjects = this.findWorldObjectByIds([...playerInventoryIds, ...playerEquipmentIds]);
 
-      return createPlayerEntity({
+      return new PlayerEntity({
         name: player.name,
         inventory: playerInventoryIds.map((id) => worldObjects.find((wo) => wo.id === id)?.name ?? id),
         equipment: playerEquipmentIds.map((id) => worldObjects.find((wo) => wo.id === id)?.name ?? id)
@@ -64,7 +64,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   }
 
   getTerraformationLevels(): TerraformationLevelEntity[] {
-    return this.sections.terraformationLevels.map((level: TerraformationLevel): TerraformationLevelEntity => createTerraformationLevelEntity({
+    return this.sections.terraformationLevels.map((level: TerraformationLevel): TerraformationLevelEntity => new TerraformationLevelEntity({
       planetId: level.planetId,
       unitOxygenLevel: level.unitOxygenLevel,
       unitHeatLevel: level.unitHeatLevel,
@@ -101,7 +101,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
     // NOTE: production/consumption are scoped per-planet — each planet has its own independent
     // power grid in-game (see docs/energy-levels.md, section 4). The actual production/
     // consumption/optimizer-boost rules are domain logic — see
-    // `domain/rules/computePlanetEnergyLevels.ts`. This method only maps the save format's raw
+    // `domain/PlanetEnergyGrid.ts`. This method only maps the save format's raw
     // world objects into domain entities and groups them by planet.
 
     const allWorldObjects = this.sections.worldObjects;
@@ -120,7 +120,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
 
     // Energy Fuses live inside an Optimizer's inventory and are never themselves positioned, so
     // the fuse lookup needs every world object in the save, not just positioned/placed ones.
-    const allWorldObjectEntities: WorldObjectEntity[] = allWorldObjects.map((worldObject) => createWorldObjectEntity({
+    const allWorldObjectEntities: WorldObjectEntity[] = allWorldObjects.map((worldObject) => new WorldObjectEntity({
       id: String(worldObject.id),
       name: worldObject.gId as WorldObjectName
     }));
@@ -147,7 +147,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   }
 
   private toPlacedWorldObjectEntity(worldObject: WorldObjectEntry): PlacedWorldObjectEntity {
-    return createPlacedWorldObjectEntity({
+    return new PlacedWorldObjectEntity({
       id: String(worldObject.id),
       name: worldObject.gId as WorldObjectName,
       position: parsePosition(worldObject.pos!),
@@ -157,7 +157,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   }
 
   private mapInventories(): InventoryEntity[] {
-    return this.sections.inventories.map((inventory: InventoryEntry): InventoryEntity => createInventoryEntity({
+    return this.sections.inventories.map((inventory: InventoryEntry): InventoryEntity => new InventoryEntity({
       id: inventory.id,
       worldObjectIds: inventory.woIds.map(String),
       size: inventory.size
@@ -168,7 +168,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
     const result: WorldObjectEntity[] = [];
     for (const worldObject of this.sections.worldObjects) {
       if (ids.includes(String(worldObject.id))) {
-        result.push(createWorldObjectEntity({id: String(worldObject.id), name: worldObject.gId as WorldObjectName}));
+        result.push(new WorldObjectEntity({id: String(worldObject.id), name: worldObject.gId as WorldObjectName}));
       }
     }
     return result;

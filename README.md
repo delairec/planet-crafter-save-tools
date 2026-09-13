@@ -172,8 +172,8 @@ request and renders them into the run summary.
 bun run check:guards
 ```
 
-Runs the three guard scripts of this repository — `check:assertions`, `check:fixtures` and `check:dependencies` —
-which enforce conventions no off-the-shelf linter knows about. They read no git history and take a fraction of a
+Runs the four guard scripts of this repository — `check:assertions`, `check:fixtures`, `check:dependencies` and
+`check:presentation` — which enforce conventions no off-the-shelf linter knows about. They read no git history and take a fraction of a
 second, so they are the half of `audit:quality` to run while writing code.
 
 ```
@@ -209,6 +209,17 @@ specifiers imported by its `.js`, `.ts` and `.tsx` sources, then reports a depen
 an import of a forbidden prefix, an import of a workspace package the manifest does not declare, and a declared
 workspace dependency that is never imported. A dependency on a library outside the workspace is left to the Fallow
 audit. Type-only imports count, JSDoc `@import` directives included, so the check sees what `tsc` erases.
+
+```
+bun run check:presentation
+```
+
+Fails on any import of `domain/entities/` made from a `presentation/` directory. A presenter receives a value
+object, never a domain entity: an entity carries behaviour, so a presenter holding one decides when a domain
+computation runs, and its shape follows the save format rather than what is displayed. Infrastructure may still
+build entities — that is where a save is read and validated — and the reader port still hands them to the
+application layer; only the presentation boundary is closed. Every `.js`, `.ts` and `.tsx` source of every package
+is scanned, outside dependencies and build outputs, and type-only and dynamic imports count.
 
 #### Save Manager UI
 

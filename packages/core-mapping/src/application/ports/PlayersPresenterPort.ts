@@ -1,7 +1,5 @@
-import {PlayerEntity} from "../../domain/entities/PlayerEntity";
+import {PlayerSummaryValueObject} from "../../domain/valueObjects/PlayerSummaryValueObject";
 
 export interface PlayersPresenterPort {
-  displayPlayers(players: PlayerEntity[]): void;
+  displayPlayers(players: PlayerSummaryValueObject[]): void;
 }
-
-

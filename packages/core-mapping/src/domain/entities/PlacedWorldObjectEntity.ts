@@ -1,29 +1,85 @@
 import {WorldObjectName} from "../worldObjectNames";
-import {assertFiniteNumber, assertNonEmptyString, assertOptionalFiniteNumber} from "../errors/assertions";
+import {assertFiniteNumber, assertOptionalFiniteNumber} from "../errors/assertions";
+import {WorldObjectEntity, WorldObjectEntityInput} from "./WorldObjectEntity";
+import {
+  energyConsumptionLevelsByWorldObjectName,
+  energyProductionLevelsByWorldObjectName
+} from "../energyLevelsByWorldObjectName";
+import {OPTIMIZER_CONFIG_BY_NAME} from "../energyOptimizerConfig";
 
-// Represents a world object placed in the game world (has a position and belongs to a planet),
-// as opposed to `WorldObjectEntity`, which only carries identity/name and is used for
-// inventory/equipment labeling where placement is irrelevant.
-export interface PlacedWorldObjectEntity {
-  readonly id: string;
-  readonly name: WorldObjectName;
+export interface PlacedWorldObjectEntityInput extends WorldObjectEntityInput {
   readonly position: readonly [number, number, number];
   readonly planetId: number;
   readonly inventoryId?: number;
 }
 
-export function createPlacedWorldObjectEntity(input: PlacedWorldObjectEntity): PlacedWorldObjectEntity {
-  const [x, y, z] = input.position;
+export class PlacedWorldObjectEntity extends WorldObjectEntity {
+  private readonly _position: readonly [number, number, number];
+  private readonly _planetId: number;
+  private readonly _inventoryId: number | undefined;
 
-  return {
-    id: assertNonEmptyString(input.id, 'PlacedWorldObjectEntity.id'),
-    name: assertNonEmptyString(input.name, 'PlacedWorldObjectEntity.name') as WorldObjectName,
-    position: [
+  constructor(input: PlacedWorldObjectEntityInput) {
+    super(input);
+
+    const [x, y, z] = input.position;
+
+    this._position = [
       assertFiniteNumber(x, 'PlacedWorldObjectEntity.position[0]'),
       assertFiniteNumber(y, 'PlacedWorldObjectEntity.position[1]'),
       assertFiniteNumber(z, 'PlacedWorldObjectEntity.position[2]')
-    ],
-    planetId: assertFiniteNumber(input.planetId, 'PlacedWorldObjectEntity.planetId'),
-    inventoryId: assertOptionalFiniteNumber(input.inventoryId, 'PlacedWorldObjectEntity.inventoryId')
-  };
+    ];
+    this._planetId = assertFiniteNumber(input.planetId, 'PlacedWorldObjectEntity.planetId');
+    this._inventoryId = assertOptionalFiniteNumber(input.inventoryId, 'PlacedWorldObjectEntity.inventoryId');
+  }
+
+  get position(): readonly [number, number, number] {
+    return [...this._position];
+  }
+
+  get planetId(): number {
+    return this._planetId;
+  }
+
+  get inventoryId(): number | undefined {
+    return this._inventoryId;
+  }
+
+  get energyProductionLevel(): number | undefined {
+    return energyProductionLevelsByWorldObjectName[this.name];
+  }
+
+  get energyConsumptionLevel(): number | undefined {
+    return energyConsumptionLevelsByWorldObjectName[this.name];
+  }
+
+  isOptimizer(): boolean {
+    return OPTIMIZER_CONFIG_BY_NAME[this.name] !== undefined;
+  }
+
+  boostedProducersAmong(candidates: readonly PlacedWorldObjectEntity[]): PlacedWorldObjectEntity[] {
+    const config = OPTIMIZER_CONFIG_BY_NAME[this.name];
+    if (config === undefined) {
+      return [];
+    }
+
+    return candidates
+      .filter((candidate) => candidate.energyProductionLevel !== undefined)
+      .filter((candidate) => candidate.planetId === this._planetId)
+      .filter((candidate) => this.isWithinRadius(candidate, config.radius))
+      .map((candidate) => ({candidate, distance: this.distanceTo(candidate)}))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, config.maxMachines)
+      .map(({candidate}) => candidate);
+  }
+
+  private isWithinRadius(other: PlacedWorldObjectEntity, radius: number): boolean {
+    return this.distanceTo(other) <= radius;
+  }
+
+  private distanceTo(other: PlacedWorldObjectEntity): number {
+    const [x, y, z] = this._position;
+    const [otherX, otherY, otherZ] = other._position;
+
+    return Math.sqrt((x - otherX) ** 2 + (y - otherY) ** 2 + (z - otherZ) ** 2);
+  }
 }
