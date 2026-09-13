@@ -451,3 +451,16 @@ OPEN_QUESTION UnAccesseurDeTableauRendUneCopieEstUneRegleGeneraleOuDeProjet
 		REJECTED "la laisser dans le corpus seul : la prochaine classe a invariant ecrite ailleurs"
 			+ "refera l'accesseur sans copie"
 	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+OPEN_QUESTION LaVentilationParMachineIgnoreLeBoostDesOptimiseurs
+	DESC "a trancher : productionBreakdown ventile la production aux niveaux de base seuls, sans le"
+		+ "boost des optimiseurs et des fusibles, si bien que la somme des totalLevel des entrees"
+		+ "est inferieure a production des qu'un fusible est en jeu"
+	DESC "portee par un commentaire du code jusqu'a la PR #72, ou le passage a PlanetEnergyGrid l'a"
+		+ "supprime ; sans entite elle n'atteignait plus aucune session"
+	STATUS specified
+	BLOCKS @DECISION.LaGrilleEnergetiqueDUnePlaneteEstUnAgregat
+	RATIONALE "les parts productionRatio des entrees ne somment donc pas a 1 quand un optimiseur"
+		+ "booste une machine ventilee : c'est la contrepartie du choix de ne compter le boost"
+		+ "qu'une fois, dans la contribution de l'optimiseur, pour ne pas le compter deux fois"
+	SOURCE "constate le 2026-09-13 en deplaçant les regles d'energie dans PlanetEnergyGrid, PR #72"
