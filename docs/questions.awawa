@@ -375,3 +375,23 @@ OPEN_QUESTION LesReferentsDUnContexteSontNommesSansEtreDeveloppes
 		+ "lire la question bloquante et les decisions voisines ; l'agent de la PR #62 en avait"
 		+ "enchaine cinq"
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION UneEntiteRendSonTableauInterneSansLeCopier
+	DESC "a trancher : InventoryEntity.worldObjectIds, PlayerEntity.inventory et equipment, et"
+		+ "PlacedWorldObjectEntity.position rendent le tableau que le constructeur a valide, pas"
+		+ "une copie ; un appelant qui se defait du readonly par une assertion mute l'invariant de"
+		+ "l'entite"
+	DESC "option retenue faute d'arbitrage : rendre le tableau tel quel, protege par le type"
+		+ "readonly seul, comme avant la conversion en classes"
+	STATUS specified
+	BLOCKS @DECISION.LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
+	RECOMMENDATION "garder le tableau readonly sans copie : la copie defensive coute une allocation"
+		+ "a chaque lecture, et computeOptimizerBoosts lit contains une fois par objet du monde et"
+		+ "par optimiseur"
+		REJECTED "copier le tableau dans le constructeur et a chaque accesseur : deux allocations"
+			+ "par entite et par lecture pour un scenario qui demande une assertion de type"
+			+ "deliberee, jamais observe dans le depot"
+		REJECTED "figer le tableau par Object.freeze dans le constructeur : la mutation echouerait"
+			+ "silencieusement hors mode strict, et le cout tombe une fois par entite sans rendre"
+			+ "l'erreur lisible"
+	SOURCE "constate le 2026-09-13, T15, conversion des entites du domaine en classes"

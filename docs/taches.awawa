@@ -83,7 +83,7 @@ TASK T15_EntitesDuDomaineEnClasses
 		+ "enregistrements readonly"
 	DESC "une entite par commit, dans l'ordre WorldObject, Inventory, PlacedWorldObject, Player,"
 		+ "TerraformationLevel"
-	STATUS specified
+	STATUS implemented
 	WAVE "4"
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T37 laisse en place les entites que T15 convertit et sa partie A deplace des types"
