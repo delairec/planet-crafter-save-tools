@@ -9,9 +9,9 @@ import {createWholeSaveWorldObjects} from '../../testing/createWholeSaveWorldObj
 describe('computePlanetEnergyLevels', () => {
   it('should report available energy as production minus consumption', () => {
     // Arrange
-    const worldObjects: PlacedWorldObjectEntity[] = [
-      {id: '1', name: 'EnergyGenerator1' as WorldObjectName, position: [0, 0, 0], planetId: 1},
-      {id: '2', name: 'Drill0' as WorldObjectName, position: [0, 10, 0], planetId: 1}
+    const worldObjects = [
+      new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator1' as WorldObjectName, position: [0, 0, 0], planetId: 1}),
+      new PlacedWorldObjectEntity({id: '2', name: 'Drill0' as WorldObjectName, position: [0, 10, 0], planetId: 1})
     ];
 
     // Act
@@ -25,9 +25,9 @@ describe('computePlanetEnergyLevels', () => {
 
   it('should express each production breakdown entry as a share of the total production', () => {
     // Arrange
-    const worldObjects: PlacedWorldObjectEntity[] = [
-      {id: '1', name: 'EnergyGenerator2' as WorldObjectName, position: [0, 0, 0], planetId: 1},
-      {id: '2', name: 'EnergyGenerator3' as WorldObjectName, position: [0, 10, 0], planetId: 1}
+    const worldObjects = [
+      new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator2' as WorldObjectName, position: [0, 0, 0], planetId: 1}),
+      new PlacedWorldObjectEntity({id: '2', name: 'EnergyGenerator3' as WorldObjectName, position: [0, 10, 0], planetId: 1})
     ];
 
     const noInventories = [];
@@ -46,15 +46,15 @@ describe('computePlanetEnergyLevels', () => {
   it('should express each optimizer contribution as a share of the total production', () => {
     // Arrange
     const optimizerInventoryId = 99;
-    const optimizer: PlacedWorldObjectEntity = {
+    const optimizer = new PlacedWorldObjectEntity({
       id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: optimizerInventoryId
-    };
-    const boostedProducer: PlacedWorldObjectEntity = {
+    });
+    const boostedProducer = new PlacedWorldObjectEntity({
       id: 'prod-1', name: 'WindTurbine1' as WorldObjectName, position: [10, 0, 0], planetId: 1
-    };
-    const producerOutOfOptimizerRadius: PlacedWorldObjectEntity = {
+    });
+    const producerOutOfOptimizerRadius = new PlacedWorldObjectEntity({
       id: 'prod-2', name: 'WindTurbine1' as WorldObjectName, position: [200, 0, 0], planetId: 1
-    };
+    });
     const energyFuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
     const allWorldObjects = createWholeSaveWorldObjects(optimizer, boostedProducer, producerOutOfOptimizerRadius, energyFuse);
     const optimizerInventoryHoldingOneFuse = [
@@ -81,9 +81,9 @@ describe('computePlanetEnergyLevels', () => {
 
   it('should leave production shares undefined when the planet produces no energy', () => {
     // Arrange
-    const optimizer: PlacedWorldObjectEntity = {
+    const optimizer = new PlacedWorldObjectEntity({
       id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: 99
-    };
+    });
     const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
     const allWorldObjects = createWholeSaveWorldObjects(optimizer, fuse);
     const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
@@ -108,15 +108,15 @@ describe('computePlanetEnergyLevels', () => {
   // never from the whole-save list that only serves to resolve Energy Fuses held in optimizer inventories.
   it('should draw production and consumption from the planet subset alone, not from the whole save', () => {
     // Arrange
-    const producerInThePlanetSubset: PlacedWorldObjectEntity = {
+    const producerInThePlanetSubset = new PlacedWorldObjectEntity({
       id: '1', name: 'EnergyGenerator1' as WorldObjectName, position: [0, 0, 0], planetId: 1
-    };
-    const producerOutsideThePlanetSubset: PlacedWorldObjectEntity = {
+    });
+    const producerOutsideThePlanetSubset = new PlacedWorldObjectEntity({
       id: '2', name: 'EnergyGenerator6' as WorldObjectName, position: [0, 0, 0], planetId: 2
-    };
-    const consumerOutsideThePlanetSubset: PlacedWorldObjectEntity = {
+    });
+    const consumerOutsideThePlanetSubset = new PlacedWorldObjectEntity({
       id: '3', name: 'Drill4' as WorldObjectName, position: [10, 0, 0], planetId: 2
-    };
+    });
     const wholeSaveWorldObjects = createWholeSaveWorldObjects(
       producerInThePlanetSubset, producerOutsideThePlanetSubset, consumerOutsideThePlanetSubset
     );

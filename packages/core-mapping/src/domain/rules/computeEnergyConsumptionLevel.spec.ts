@@ -6,9 +6,9 @@ import {WorldObjectName, worldObjectNamesByEnergyRole} from '../worldObjectNames
 describe('computeEnergyConsumptionLevel', () => {
   it('should sum the consumption of positioned world objects with known consumption levels', () => {
     // Arrange
-    const worldObjects: PlacedWorldObjectEntity[] = [
-      {id: '1', name: 'Drill0' as WorldObjectName, position: [0, 0, 0], planetId: 1},
-      {id: '2', name: 'Heater1' as WorldObjectName, position: [1, 0, 0], planetId: 1}
+    const worldObjects = [
+      new PlacedWorldObjectEntity({id: '1', name: 'Drill0' as WorldObjectName, position: [0, 0, 0], planetId: 1}),
+      new PlacedWorldObjectEntity({id: '2', name: 'Heater1' as WorldObjectName, position: [1, 0, 0], planetId: 1})
     ];
 
     // Act
@@ -20,9 +20,9 @@ describe('computeEnergyConsumptionLevel', () => {
 
   it('should ignore world objects with no known consumption level', () => {
     // Arrange
-    const worldObjects: PlacedWorldObjectEntity[] = [
-      {id: '1', name: 'Drill0' as WorldObjectName, position: [0, 0, 0], planetId: 1},
-      {id: '2', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1}
+    const worldObjects = [
+      new PlacedWorldObjectEntity({id: '1', name: 'Drill0' as WorldObjectName, position: [0, 0, 0], planetId: 1}),
+      new PlacedWorldObjectEntity({id: '2', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1})
     ];
 
     // Act
@@ -34,13 +34,13 @@ describe('computeEnergyConsumptionLevel', () => {
 
   const {consuming, withoutKnownEnergyLevel} = worldObjectNamesByEnergyRole;
 
-  const placedAlone = (name: WorldObjectName): PlacedWorldObjectEntity[] => [
-    {id: name, name, position: [0, 0, 0], planetId: 1}
+  const placeAlone = (name: WorldObjectName): PlacedWorldObjectEntity[] => [
+    new PlacedWorldObjectEntity({id: name, name, position: [0, 0, 0], planetId: 1})
   ];
 
   it.each([...consuming])('should charge %s, a world object grouped as an energy consumer', (name) => {
     // Act
-    const consumptionLevel = computeEnergyConsumptionLevel(placedAlone(name));
+    const consumptionLevel = computeEnergyConsumptionLevel(placeAlone(name));
 
     // Assert
     expect(consumptionLevel).toBeGreaterThan(0);
@@ -48,7 +48,7 @@ describe('computeEnergyConsumptionLevel', () => {
 
   it('should charge nothing for the world objects without a known energy level', () => {
     // Act
-    const charged = withoutKnownEnergyLevel.filter((name) => computeEnergyConsumptionLevel(placedAlone(name)) > 0);
+    const charged = withoutKnownEnergyLevel.filter((name) => computeEnergyConsumptionLevel(placeAlone(name)) > 0);
 
     // Assert
     expect(charged).toEqual([]);
@@ -56,7 +56,7 @@ describe('computeEnergyConsumptionLevel', () => {
 
   it('should return zero for an empty list of world objects', () => {
     // Arrange
-    const worldObjects: PlacedWorldObjectEntity[] = [];
+    const worldObjects = [];
 
     // Act
     const result = computeEnergyConsumptionLevel(worldObjects);

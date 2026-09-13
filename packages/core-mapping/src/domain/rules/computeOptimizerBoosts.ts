@@ -1,7 +1,6 @@
 import {PlacedWorldObjectEntity} from "../entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "../entities/WorldObjectEntity";
 import {InventoryEntity} from "../entities/InventoryEntity";
-import {distanceBetween} from "./distanceBetween";
 import {ENERGY_FUSE_NAME, OPTIMIZER_CONFIG_BY_NAME} from "./energyOptimizerConfig";
 import {energyProductionLevelsByWorldObjectName} from "../energyLevelsByWorldObjectName";
 
@@ -45,8 +44,8 @@ export function computeOptimizerBoosts(
 
     const boostedProducers = producers
       .filter((producer) => producer.planetId === optimizer.planetId)
-      .map((producer) => ({producer, distance: distanceBetween(optimizer.position, producer.position)}))
-      .filter(({distance}) => distance <= radius)
+      .filter((producer) => optimizer.isWithinRadius(producer, radius))
+      .map((producer) => ({producer, distance: optimizer.distanceTo(producer)}))
       .sort((a, b) => a.distance - b.distance)
       .slice(0, maxMachines)
       .map(({producer}) => producer);

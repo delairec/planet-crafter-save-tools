@@ -9,9 +9,9 @@ import {createWholeSaveWorldObjects} from '../../testing/createWholeSaveWorldObj
 describe('computeEnergyProductionLevel', () => {
   it('should sum the base production of positioned world objects with known production levels', () => {
     // Arrange
-    const worldObjects: PlacedWorldObjectEntity[] = [
-      {id: '1', name: 'EnergyGenerator1' as WorldObjectName, position: [0, 0, 0], planetId: 1},
-      {id: '2', name: 'EnergyGenerator2' as WorldObjectName, position: [1, 0, 0], planetId: 1}
+    const worldObjects = [
+      new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator1' as WorldObjectName, position: [0, 0, 0], planetId: 1}),
+      new PlacedWorldObjectEntity({id: '2', name: 'EnergyGenerator2' as WorldObjectName, position: [1, 0, 0], planetId: 1})
     ];
 
     // Act
@@ -23,9 +23,9 @@ describe('computeEnergyProductionLevel', () => {
 
   it('should ignore world objects with no known production level', () => {
     // Arrange
-    const worldObjects: PlacedWorldObjectEntity[] = [
-      {id: '1', name: 'EnergyGenerator1' as WorldObjectName, position: [0, 0, 0], planetId: 1},
-      {id: '2', name: 'Drill0' as WorldObjectName, position: [1, 0, 0], planetId: 1}
+    const worldObjects = [
+      new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator1' as WorldObjectName, position: [0, 0, 0], planetId: 1}),
+      new PlacedWorldObjectEntity({id: '2', name: 'Drill0' as WorldObjectName, position: [1, 0, 0], planetId: 1})
     ];
 
     // Act
@@ -37,12 +37,12 @@ describe('computeEnergyProductionLevel', () => {
 
   it('should apply the energy fuse multiplier to a producer boosted by an optimizer', () => {
     // Arrange
-    const optimizer: PlacedWorldObjectEntity = {
+    const optimizer = new PlacedWorldObjectEntity({
       id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: 99
-    };
-    const producer: PlacedWorldObjectEntity = {
+    });
+    const producer = new PlacedWorldObjectEntity({
       id: 'prod-1', name: 'EnergyGenerator2' as WorldObjectName, position: [1, 0, 0], planetId: 1
-    };
+    });
     const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
     const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
     const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
@@ -58,12 +58,12 @@ describe('computeEnergyProductionLevel', () => {
   it('should stack several energy fuses held by the same optimizer (Rule EN-FUSE-3)', () => {
     // Arrange
     const optimizerInventoryId = 99;
-    const tierTwoOptimizer: PlacedWorldObjectEntity = {
+    const tierTwoOptimizer = new PlacedWorldObjectEntity({
       id: 'opt-1', name: 'Optimizer2' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: optimizerInventoryId
-    };
-    const boostedProducer: PlacedWorldObjectEntity = {
+    });
+    const boostedProducer = new PlacedWorldObjectEntity({
       id: 'prod-1', name: 'EnergyGenerator2' as WorldObjectName, position: [10, 0, 0], planetId: 1
-    };
+    });
     const firstEnergyFuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
     const secondEnergyFuse = new WorldObjectEntity({id: 'fuse-2', name: 'FuseEnergy1' as WorldObjectName});
     const allWorldObjects = createWholeSaveWorldObjects(tierTwoOptimizer, boostedProducer, firstEnergyFuse, secondEnergyFuse);
@@ -86,7 +86,7 @@ describe('computeEnergyProductionLevel', () => {
   const {producing, withoutKnownEnergyLevel} = worldObjectNamesByEnergyRole;
 
   const producedAlone = (name: WorldObjectName): number => {
-    const producer: PlacedWorldObjectEntity = {id: name, name, position: [0, 0, 0], planetId: 1};
+    const producer = new PlacedWorldObjectEntity({id: name, name, position: [0, 0, 0], planetId: 1});
 
     return computeEnergyProductionLevel(createWholeSaveWorldObjects(producer), [producer], []);
   };

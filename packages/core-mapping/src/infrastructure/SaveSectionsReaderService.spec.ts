@@ -18,6 +18,7 @@ import {SaveConfigurationValueObject} from '../domain/valueObjects/SaveConfigura
 import {EnergyLevelsRawDataValueObject} from '../domain/valueObjects/EnergyLevelsRawDataValueObject';
 import {WorldObjectEntity} from '../domain/entities/WorldObjectEntity';
 import {InventoryEntity} from '../domain/entities/InventoryEntity';
+import {PlacedWorldObjectEntity} from '../domain/entities/PlacedWorldObjectEntity';
 
 const PRIME_PLANET_NUMERIC_ID = -1140328421;
 const UNKNOWN_PLANET_NUMERIC_ID = 1;
@@ -211,7 +212,7 @@ describe('SaveSectionsReaderService', () => {
           planetId: 1,
           planetName: undefined,
           placedWorldObjects: [
-            {id: '1', name: 'EnergyGenerator1', position: [0, 0, 0], planetId: 1, inventoryId: undefined}
+            new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator1', position: [0, 0, 0], planetId: 1})
           ]
         }]
       });
@@ -237,15 +238,15 @@ describe('SaveSectionsReaderService', () => {
           planetId: 1,
           planetName: undefined,
           placedWorldObjects: [
-            {id: '1', name: 'EnergyGenerator1', position: [0, 0, 0], planetId: 1, inventoryId: undefined},
-            {id: '3', name: 'Heater1', position: [20, 0, 0], planetId: 1, inventoryId: undefined}
+            new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator1', position: [0, 0, 0], planetId: 1}),
+            new PlacedWorldObjectEntity({id: '3', name: 'Heater1', position: [20, 0, 0], planetId: 1})
           ]
         },
         {
           planetId: 2,
           planetName: undefined,
           placedWorldObjects: [
-            {id: '2', name: 'Drill0', position: [10, 0, 0], planetId: 2, inventoryId: undefined}
+            new PlacedWorldObjectEntity({id: '2', name: 'Drill0', position: [10, 0, 0], planetId: 2})
           ]
         }
       ]);
@@ -299,13 +300,13 @@ describe('SaveSectionsReaderService', () => {
       const rawData = service.getEnergyLevelsRawData();
 
       // Assert
-      expect(rawData.planets[0].placedWorldObjects).toEqual([{
+      expect(rawData.planets[0].placedWorldObjects).toEqual([new PlacedWorldObjectEntity({
         id: '95585241',
         name: 'Optimizer1',
         position: [1751.865, -472.58, 1106.104],
         planetId: 1,
         inventoryId: 100
-      }]);
+      })]);
     });
 
     it('should hand over the inventory content as a list of world object ids', () => {

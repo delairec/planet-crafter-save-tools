@@ -7,16 +7,16 @@ import {WorldObjectName} from '../worldObjectNames';
 import {createWholeSaveWorldObjects} from '../../testing/createWholeSaveWorldObjects';
 
 describe('computeEnergyFuseCountsByProducerId', () => {
-  const producer: PlacedWorldObjectEntity = {
+  const producer = new PlacedWorldObjectEntity({
     id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1
-  };
+  });
 
   describe('When a producer is boosted by a single optimizer', () => {
     it('should map the producer id to that optimizer fuse count', () => {
       // Arrange
-      const optimizer: PlacedWorldObjectEntity = {
+      const optimizer = new PlacedWorldObjectEntity({
         id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: 99
-      };
+      });
       const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
       const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
@@ -32,12 +32,12 @@ describe('computeEnergyFuseCountsByProducerId', () => {
   describe('When a producer is boosted by more than one optimizer', () => {
     it('should sum the fuse counts of every optimizer boosting it', () => {
       // Arrange
-      const optimizerA: PlacedWorldObjectEntity = {
+      const optimizerA = new PlacedWorldObjectEntity({
         id: 'opt-a', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: 99
-      };
-      const optimizerB: PlacedWorldObjectEntity = {
+      });
+      const optimizerB = new PlacedWorldObjectEntity({
         id: 'opt-b', name: 'Optimizer1' as WorldObjectName, position: [2, 0, 0], planetId: 1, inventoryId: 98
-      };
+      });
       const fuseA = new WorldObjectEntity({id: 'fuse-a', name: 'FuseEnergy1' as WorldObjectName});
       const fuseB1 = new WorldObjectEntity({id: 'fuse-b1', name: 'FuseEnergy1' as WorldObjectName});
       const fuseB2 = new WorldObjectEntity({id: 'fuse-b2', name: 'FuseEnergy1' as WorldObjectName});

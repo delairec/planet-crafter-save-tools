@@ -7,17 +7,17 @@ import {WorldObjectName} from '../worldObjectNames';
 import {createWholeSaveWorldObjects} from '../../testing/createWholeSaveWorldObjects';
 
 describe('computeOptimizerBoosts', () => {
-  const optimizer: PlacedWorldObjectEntity = {
+  const optimizer = new PlacedWorldObjectEntity({
     id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1, inventoryId: 99
-  };
+  });
   const fuse = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as WorldObjectName});
 
   describe('When an optimizer holds at least one energy fuse', () => {
     it('should report the optimizer with its fuse count and the producers it boosts', () => {
       // Arrange
-      const producer: PlacedWorldObjectEntity = {
+      const producer = new PlacedWorldObjectEntity({
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1
-      };
+      });
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer, fuse);
       const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
@@ -32,9 +32,9 @@ describe('computeOptimizerBoosts', () => {
   describe('When an optimizer holds no energy fuse', () => {
     it('should not report the optimizer at all', () => {
       // Arrange
-      const producer: PlacedWorldObjectEntity = {
+      const producer = new PlacedWorldObjectEntity({
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 1
-      };
+      });
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, producer);
       const inventories = [new InventoryEntity({id: 99, worldObjectIds: [], size: 1})];
 
@@ -63,9 +63,9 @@ describe('computeOptimizerBoosts', () => {
   describe('When a producer is beyond the optimizer radius', () => {
     it('should exclude that producer from the boosted producers', () => {
       // Arrange
-      const farProducer: PlacedWorldObjectEntity = {
+      const farProducer = new PlacedWorldObjectEntity({
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [200, 0, 0], planetId: 1
-      };
+      });
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, farProducer, fuse);
       const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
@@ -80,9 +80,9 @@ describe('computeOptimizerBoosts', () => {
   describe('When a producer is on a different planet than the optimizer', () => {
     it('should exclude that producer from the boosted producers', () => {
       // Arrange
-      const producerOnOtherPlanet: PlacedWorldObjectEntity = {
+      const producerOnOtherPlanet = new PlacedWorldObjectEntity({
         id: 'prod-1', name: 'EnergyGenerator1' as WorldObjectName, position: [1, 0, 0], planetId: 2
-      };
+      });
       const allWorldObjects = createWholeSaveWorldObjects(optimizer, producerOnOtherPlanet, fuse);
       const inventories = [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
 
@@ -97,7 +97,7 @@ describe('computeOptimizerBoosts', () => {
   describe('When more eligible producers exist than the optimizer machine capacity', () => {
     it('should keep only the closest producers up to that capacity', () => {
       // Arrange
-      const producers: PlacedWorldObjectEntity[] = Array.from({length: 6}, (_, index) => ({
+      const producers = Array.from({length: 6}, (_, index) => new PlacedWorldObjectEntity({
         id: `prod-${index}`,
         name: 'EnergyGenerator1' as WorldObjectName,
         position: [index + 1, 0, 0],

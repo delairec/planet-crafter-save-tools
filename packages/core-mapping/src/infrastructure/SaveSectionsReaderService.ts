@@ -8,7 +8,7 @@ import {PlayerEntity, createPlayerEntity} from "../domain/entities/PlayerEntity"
 import {TerraformationLevelEntity, createTerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
 import {InventoryEntity} from "../domain/entities/InventoryEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
-import {PlacedWorldObjectEntity, createPlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
+import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {StatisticsValueObject, createStatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {SaveConfigurationValueObject, createSaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
 import {
@@ -147,7 +147,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   }
 
   private toPlacedWorldObjectEntity(worldObject: WorldObjectEntry): PlacedWorldObjectEntity {
-    return createPlacedWorldObjectEntity({
+    return new PlacedWorldObjectEntity({
       id: String(worldObject.id),
       name: worldObject.gId as WorldObjectName,
       position: parsePosition(worldObject.pos!),
