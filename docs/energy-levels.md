@@ -52,7 +52,7 @@ on the very defect the rule describes, and must not be titled as if it could.
 
 **What the versioned guard covers.** `worldObjectNames.ts` declares every known `gId` in exactly one of three
 groups — producing energy, consuming energy, or without a known energy level (section 6) — and
-`computeEnergyConsumptionLevel.spec.ts` / `computeEnergyProductionLevel.spec.ts` assert the two directions of that
+`PlanetEnergyGrid.spec.ts` asserts the two directions of that
 partition: every name of the producing and consuming groups yields a strictly positive level, and no name of the
 third group yields any. Consequences: removing a table entry turns the suite red (including the entry of a machine
 that has no sibling tier, `Beacon` or `ComAntenna`, which the earlier by-family guard let through), pricing a name
@@ -203,10 +203,9 @@ never affected by the Energy Fuse.
 
 ## 4. Computation algorithm (implemented)
 
-Implemented in
-[
-`SaveSectionsReaderService.computeEnergyProductionLevel`](../packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts)
-(and its private helper `computeEnergyFuseCountsByProducerId`).
+Implemented in [`PlanetEnergyGrid`](../packages/core-mapping/src/domain/PlanetEnergyGrid.ts), the aggregate that
+is one planet's power grid: it counts the Energy Fuses reaching each producer once, in its constructor, and
+`levels()` reads that count back.
 
 To compute the true available energy level of a save, accounting for Optimizers:
 
@@ -262,13 +261,12 @@ used as the label; otherwise the label falls back to `` `Planet ${planetId}` ``.
 The UI's Power section displays one card per planet (`EnergyLevelsViewModel.planets`, one
 `PlanetEnergyLevelsViewModel` per distinct `WorldObject.planet` — see Rule EN-PLANET-1), each labelled with its
 resolved planet name (Rule EN-PLANET-2). Within each planet's card, one sub-card per qualifying Optimizer
-(`PlanetEnergyLevelsValueObject.optimizers`, built by `SaveSectionsReaderService.computeOptimizers` scoped to
-that planet's world objects) shows:
+(`PlanetEnergyLevelsValueObject.optimizers`, built by the planet's `PlanetEnergyGrid`) shows:
 
 - the label (`Machine optimizer T1` / `Machine Optimizer T2`);
 - its Energy Fuse count (`fuseCount`);
 - which machines it boosts and how many of each (`boostedMachines`, grouped by `gId` among the producers it
-  reaches — same selection as `computeEnergyFuseCountsByProducerId`, see section 4);
+  reaches — the same selection the fuse counts rest on, see section 4);
 - its **own contribution to production, computed in isolation** (`contribution`): for each producer it
   boosts, `baseLevel × fuseCount × 1.5`, summed across all boosted producers. When a producer is reached by
   several Optimizers (Rule EN-OPT-3), each Optimizer's card reports its own share rather than the producer's
