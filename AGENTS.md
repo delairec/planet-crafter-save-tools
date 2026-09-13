@@ -56,8 +56,9 @@ awawa lint --strict .               # doit sortir en 0
   la question à `specified` sans toucher à la décision passe `lint --strict` sans un mot : c'est mesuré, et c'est la
   moitié qui reste une discipline (@DECISION.UneDecisionRetireeNommeSaSuccesseure).
 - **Une entité remplacée n'est jamais supprimée** : elle passe `superseded`, et sa successeure écrit `SUPERSEDES`.
-- **Après la fusion d'une PR** : `/awawa-pr-merged <N>`, puis `/awawa-usage-report <N>` — voir « Suivi d'une PR :
-  trois commandes, deux moments » plus bas.
+- **Tout se fait dans la PR de tâche, rien après la fusion** : promotions et arbitrages écrits par l'agent de
+  tâche, vérifiés par `/awawa-pr-review <N>`, puis le rapport d'usage commité sur la branche par
+  `/awawa-usage-report <N>` — voir « Suivi d'une PR : une PR par tâche, rien après la fusion ».
 - Protocole complet : `awawa --help`. Le manuel et le protocole agent sont dans l'archive awawa.
 
 ## Emplacement
@@ -223,25 +224,28 @@ poussée, et en particulier avant de traiter une revue : `git fetch origin <base
 `--force-with-lease`, avant de lire le premier commentaire. Garder une réf de secours jusqu'au vert des tests, et
 vérifier que `gh pr view <N> --json mergeable` rend `MERGEABLE` avant de considérer le travail fini.
 
-## Suivi d'une PR : trois commandes, deux moments
+## Suivi d'une PR : une PR par tâche, rien après la fusion
 
-**Il n'y a plus de commentaire « À faire à la fusion ».** Ce que cette checklist inventoriait entre dans le corpus au
-moment où la décision est prise, et non à la fusion : une décision est une entité `DECISION`, un défaut une
-`OPEN_QUESTION`, une tâche fusionnée reste et passe `implemented`
-(@DECISION.LeCorpusRemplaceLaChecklistDeFusion).
+**Il n'y a plus de commentaire « À faire à la fusion », ni de promotion ni de rapport après la fusion.** Le corpus
+vit dans la branche : un `STATUS implemented` écrit dans la PR de tâche a la sémantique du code qu'elle livre — vrai
+dans l'arbre de la branche, vrai dans la base quand la fusion le porte, jamais vrai si la PR meurt
+(@DECISION.LeCorpusRemplaceLaChecklistDeFusion:v2). Une PR par tâche porte le code, les promotions, les arbitrages
+et le rapport d'usage ; la fusion porte le tout dans la base d'un coup.
 
-- **`/awawa-pr-review <N>`, avant la fusion** : traiter la revue, enregistrer dans le corpus chaque décision qu'elle
-  produit *avant* de répondre au fil qui l'a produite, rebaser sur la base, faire tourner les contrôles et
-  `awawa lint --strict .`, signaler la PR prête.
-- **`/awawa-pr-merged <N>`, après ta fusion** : promouvoir les `STATUS`, fermer les questions que la fusion tranche,
-  promouvoir vers `~/.ai` les règles qui y vont, nettoyer worktree et branche.
-- **`/awawa-usage-report <N>`, après `/awawa-pr-merged`** : faire écrire par un agent indépendant, sans mémoire du
-  travail jugé, le rapport de `docs/awawa-usage-reports/` mesurant ce que le corpus a coûté et rendu sur cette PR,
-  points récurrents compris (@DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante).
-
-**Une règle apprise en revue qui pourrait aller dans `~/.ai` s'écrit en `OPEN_QUESTION`**, pas dans un commentaire :
-général ou spécifique au projet est ton arbitrage, et rien hors du corpus ne survit à la session qui l'a apprise.
-`/awawa-pr-merged` les retrouve par `awawa status OPEN_QUESTION --where STATUS!=superseded .` et te pose la question.
+- **L'agent de tâche écrit les promotions et les arbitrages dans la PR** : la tâche passe `implemented`, les
+  décisions qu'elle livre passent `implemented`, les questions qu'elle tranche passent `superseded` par le `CLOSES`
+  d'une décision — chaque `SPEC` promue avec son `IMPL` résolu dans le diff. Une règle apprise en revue qui pourrait
+  aller dans `~/.ai` s'écrit en `OPEN_QUESTION` ; général ou spécifique au projet est ton arbitrage, posé à la revue.
+- **`/awawa-pr-review <N>`** : traiter la revue, enregistrer dans le corpus chaque décision qu'elle produit *avant*
+  de répondre au fil qui l'a produite, vérifier chaque promotion contre le diff — refuser celle dont l'ancre ne
+  résout pas ou dont le diff ne livre pas le `SPEC` —, poser l'arbitrage général ou spécifique des règles en
+  attente, rebaser sur la base, faire tourner les contrôles et `awawa lint --strict .`, signaler la PR prête.
+- **`/awawa-usage-report <N>`, une fois la revue traitée et la PR signalée prête** : faire commiter sur la branche
+  de la PR, par un agent indépendant — session neuve, sans mémoire du travail jugé, jamais un fork —, le rapport de
+  `docs/awawa-usage-reports/<date>-pr-<N>.md` mesurant ce que le corpus a coûté et rendu sur l'arbitrage,
+  l'implémentation et la revue, points récurrents compris. Seule une PR qu'une `TASK` nomme dans son champ `PR` en
+  reçoit un (@DECISION.UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante).
+- **Après ta fusion : `/worktree-clean`**, et rien d'autre.
 
 Les commandes `/pr-review-followup` et `/pr-merge-followup` restent pour les projets sans corpus ; elles décrivent
 des fiches sur disque que ce projet n'a plus.
