@@ -21,10 +21,6 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
   const [downloadUrl, setDownloadUrl] = createSignal<string | null>(null);
   let downloadFileUrl: string | null = null;
 
-  const isSuccess = () => props.result()?.status === 'success';
-  const isInvalid = () => props.result()?.status === 'validationError';
-  const hasMergeFailed = () => props.result()?.status === 'mergeFailed';
-
   createEffect(() => {
     const result = props.result();
 
@@ -44,44 +40,48 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
 
   return (
     <Show when={props.result()}>
-      <Show when={props.result()!.saveAWarnings.length > 0}>
-        <ValidationMessagesList title={mergeResultSectionSaveAWarningsTitle} severity="warning"
-                                messages={props.result()!.saveAWarnings}/>
-      </Show>
-      <Show when={props.result()!.saveBWarnings.length > 0}>
-        <ValidationMessagesList title={mergeResultSectionSaveBWarningsTitle} severity="warning"
-                                messages={props.result()!.saveBWarnings}/>
-      </Show>
-
-      <Show when={isSuccess()}>
-        <p class="text-color-success">{mergeResultSectionSuccessMessage}</p>
-        <p>{mergeResultSectionFileCreatedMessage} <code>{props.result()!.fileName}</code> <a class="button-link"
-                                                                                             href={downloadUrl() ?? undefined}
-                                                                                             download={props.result()!.fileName}>{mergeResultSectionDownloadLinkLabel}</a>
-        </p>
-        <Show when={props.result()!.mergeErrors.length > 0}>
-          <ValidationMessagesList title={mergeResultSectionMergedSaveInvalidMessage} severity="danger"
-                                  messages={props.result()!.mergeErrors}/>
-        </Show>
-      </Show>
-
-      <Show when={hasMergeFailed()}>
-        <p class="text-color-danger">{mergeResultSectionMergeFailedTitle}</p>
-        <p>{props.result()!.mergeFailureMessage}</p>
-      </Show>
-
-      <Show when={isInvalid()}>
-        <div>
-          <Show when={props.result()!.saveAErrors.length > 0}>
-            <ValidationMessagesList title={mergeResultSectionSaveAInvalidMessage} severity="danger"
-                                    messages={props.result()!.saveAErrors}/>
+      {(result) => (
+        <>
+          <Show when={result().saveAWarnings.length > 0}>
+            <ValidationMessagesList title={mergeResultSectionSaveAWarningsTitle} severity="warning"
+                                    messages={result().saveAWarnings}/>
           </Show>
-          <Show when={props.result()!.saveBErrors.length > 0}>
-            <ValidationMessagesList title={mergeResultSectionSaveBInvalidMessage} severity="danger"
-                                    messages={props.result()!.saveBErrors}/>
+          <Show when={result().saveBWarnings.length > 0}>
+            <ValidationMessagesList title={mergeResultSectionSaveBWarningsTitle} severity="warning"
+                                    messages={result().saveBWarnings}/>
           </Show>
-        </div>
-      </Show>
+
+          <Show when={result().status === 'success'}>
+            <p class="text-color-success">{mergeResultSectionSuccessMessage}</p>
+            <p>{mergeResultSectionFileCreatedMessage} <code>{result().fileName}</code> <a class="button-link"
+                                                                                          href={downloadUrl() ?? undefined}
+                                                                                          download={result().fileName}>{mergeResultSectionDownloadLinkLabel}</a>
+            </p>
+            <Show when={result().mergeErrors.length > 0}>
+              <ValidationMessagesList title={mergeResultSectionMergedSaveInvalidMessage} severity="danger"
+                                      messages={result().mergeErrors}/>
+            </Show>
+          </Show>
+
+          <Show when={result().status === 'mergeFailed'}>
+            <p class="text-color-danger">{mergeResultSectionMergeFailedTitle}</p>
+            <p>{result().mergeFailureMessage}</p>
+          </Show>
+
+          <Show when={result().status === 'validationError'}>
+            <div>
+              <Show when={result().saveAErrors.length > 0}>
+                <ValidationMessagesList title={mergeResultSectionSaveAInvalidMessage} severity="danger"
+                                        messages={result().saveAErrors}/>
+              </Show>
+              <Show when={result().saveBErrors.length > 0}>
+                <ValidationMessagesList title={mergeResultSectionSaveBInvalidMessage} severity="danger"
+                                        messages={result().saveBErrors}/>
+              </Show>
+            </div>
+          </Show>
+        </>
+      )}
     </Show>
   );
 }
