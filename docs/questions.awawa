@@ -346,7 +346,7 @@ OPEN_QUESTION LePiedDePageBlockedByIgnoreLeStatutDesReferents
 	DESC "le pied de page de context et de lint --closure separe les referents vivants des"
 		+ "referents suppressed — BLOCKED_BY (root, 0 live, 5 suppressed) — ou omet ces derniers"
 	DESC "defaut de l'outil awawa 2.7.0, vu par les rapports des PR #62 et #65"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T32_ConformiteUiSaveManager
 	RATIONALE "lint --closure sur T37 imprime BLOCKED_BY (root, 5), les cinq superseded ; sur T32,"
 		+ "BLOCKED_BY (root, 1) nomme une question superseded, alors que la session pilote a dit a"
@@ -356,7 +356,7 @@ OPEN_QUESTION LePiedDePageBlockedByIgnoreLeStatutDesReferents
 OPEN_QUESTION AwawaDiffNeCompareQueDeuxRepertoires
 	DESC "awawa diff accepte une revision git pour l'ancien cote — diff --git REV [PATH] — au lieu"
 		+ "de deux chemins"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.LeCorpusRemplaceLaChecklistDeFusion
 	RATIONALE "l'agent de cloture de la PR #65 a copie docs/ avant d'editer pour pouvoir lancer"
 		+ "awawa diff apres"
@@ -366,7 +366,7 @@ OPEN_QUESTION LesReferentsDUnContexteSontNommesSansEtreDeveloppes
 	DESC "context --with-referrers developpe les entites que le pied de page nomme, au lieu de les"
 		+ "lister"
 	DESC "defaut de l'outil awawa 2.7.0, vu par les rapports des PR #62 et #65"
-	STATUS specified
+	STATUS superseded
 	RATIONALE "l'agent de la PR #65 a enchaine six awawa show apres son unique awawa context pour"
 		+ "lire la question bloquante et les decisions voisines ; l'agent de la PR #62 en avait"
 		+ "enchaine cinq"

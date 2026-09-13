@@ -181,3 +181,53 @@ DECISION LaGarantieDUnicitePorteSurCeQueLaFusionIntroduit
 		IMPL "docs/game-rules.md::GR-ID-1"
 	SOURCE "known-issues/merge/recouvrement-d-identifiants-deja-present-dans-les-saves-d-entree.md"
 	SOURCE "decision du 2026-09-09, revue de la PR #41 ; GR-ID-1 reformulee par T30, PR #49"
+
+DECISION LePiedDePageBlockedBySeCroiseAvecStatus
+	DESC "limitation acceptee, awawa 2.7.0 : le pied de page BLOCKED_BY de context et de lint"
+		+ "--closure compte les referents superseded avec les vivants"
+	DESC "garde : avant de dire qu'une entite est bloquee, croiser les noms du pied de page avec"
+		+ "awawa status OPEN_QUESTION --where STATUS!=superseded . ; seuls ceux qui y figurent"
+		+ "bloquent"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LePiedDePageBlockedByIgnoreLeStatutDesReferents
+	RATIONALE "symptome reproduit le 2026-09-13 : lint --closure sur T32 imprime BLOCKED_BY (rest,"
+		+ "5), les cinq superseded ; context sur T37 en imprime six, cinq superseded. Cause : le"
+		+ "pied de page compte les aretes entrantes sans lire le STATUS du referent, et la"
+		+ "suppression par GATE ne porte que sur les diagnostics"
+	RATIONALE "rouvrir quand l'outil separe les referents vivants des supprimes : la decision passe"
+		+ "superseded, une :v2 la remplace"
+		REF @DECISION.UneDecisionRetireeNommeSaSuccesseure
+	REJECTED "laisser la question ouverte jusqu'au changement de l'outil : elle reviendrait dans"
+		+ "chaque rapport d'usage sans qu'aucune action de ce depot puisse la fermer"
+	REJECTED "une entite par pull request comme seul remede : elle reduit le nombre de bloqueurs"
+		+ "fermes par entite, elle ne change pas ce que le pied de page compte"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION AwawaDiffSeLanceContreUneCopie
+	DESC "limitation acceptee, awawa 2.7.0 : awawa diff ne prend que deux chemins, jamais une"
+		+ "revision git"
+	DESC "garde : la revue textuelle passe par git diff origin/<base> -- docs/ ; awawa diff se"
+		+ "lance contre une copie de docs/ faite avant l'edition quand la revue par entite est"
+		+ "voulue"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.AwawaDiffNeCompareQueDeuxRepertoires
+	RATIONALE "symptome reproduit le 2026-09-13 : awawa diff HEAD docs rend « HEAD: No such file or"
+		+ "directory ». Cause : la commande lit deux espaces de travail sur disque et ne connait"
+		+ "pas git"
+	REJECTED "laisser la question ouverte jusqu'au changement de l'outil : aucune action de ce"
+		+ "depot ne peut la fermer"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION LesReferentsDUnContexteSeLisentParShow
+	DESC "limitation acceptee, awawa 2.7.0 : le pied de page de context nomme ses referents sans"
+		+ "les developper"
+	DESC "garde : un awawa show par nom du pied de page qui compte pour la tache, cout accepte"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LesReferentsDUnContexteSontNommesSansEtreDeveloppes
+	RATIONALE "symptome reproduit le 2026-09-13 : context sur T37 imprime sept referents en deux"
+		+ "lignes de pied de page, aucun developpe ; l'agent de la PR #65 a enchaine six show,"
+		+ "celui de la PR #62 cinq. Cause : context traverse les aretes sortantes, et le pied de"
+		+ "page n'est qu'un compte des entrantes"
+	REJECTED "laisser la question ouverte jusqu'au changement de l'outil : aucune action de ce"
+		+ "depot ne peut la fermer"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
