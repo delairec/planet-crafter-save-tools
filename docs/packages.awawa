@@ -609,3 +609,20 @@ DECISION UnPresenterRecoitUnValueObjectJamaisUneEntite
 		IMPL "packages/core-mapping/src/domain/valueObjects/PlayerSummaryValueObject.ts"
 	SOURCE "arbitrage du proprietaire du depot en revue de la PR #72, 2026-09-13, lecture"
 		+ "restreinte, travail fait dans la PR et non dans T38"
+
+DECISION LaFormeDUneColonneEstDeriveeDuViewModelQuiLaProduit
+	DESC "la forme d'une colonne de tableau n'est declaree qu'une fois, dans le ViewModel de table"
+		+ "de core-mapping ; l'UI la derive de ce ViewModel au lieu de la redeclarer"
+	STATUS implemented
+	RATIONALE "l'UI portait un type Column structurellement identique a ColumnViewModel : deux"
+		+ "formes que rien ne relie, dont l'une pouvait deriver sans que l'autre s'en apercoive, la"
+		+ "compatibilite structurelle de TypeScript les acceptant l'une pour l'autre"
+	REJECTED "exporter ColumnViewModel depuis core-mapping et l'importer dans l'UI : la correction"
+		+ "quitterait le package que la fiche ancre pour un package qu'une autre branche de la meme"
+		+ "vague reecrit, pour une ligne que la derivation obtient sans y toucher"
+	REJECTED "garder les deux formes et se fier a la compatibilite structurelle"
+	SPEC "une seule definition de la forme d'une colonne dans le depot, l'UI la derivant du"
+		+ "ViewModel de table"
+		IMPL "packages/core-mapping/src/presentation/viewModels/TableViewModel.ts::ColumnViewModel"
+		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::ColumnViewModel"
+	SOURCE "decision du 2026-09-13, T32"

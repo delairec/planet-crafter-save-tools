@@ -478,3 +478,32 @@ OPEN_QUESTION UneEntiteNAtteintPasLaPresentationEstUneRegleGeneraleOuDeProjet
 		REJECTED "la laisser dans le corpus seul : le prochain package core- ecrit ailleurs refera"
 			+ "passer une entite par un PresenterPort"
 	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+OPEN_QUESTION RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
+	DESC "les quatre criteres d'idiome de T32 — aucun map rendant du JSX, aucune prop destructuree"
+		+ "en signature, aucune assertion non nulle sous un affichage conditionnel, aucune chaine"
+		+ "utilisateur hors du repertoire des messages — sont verifies une fois a la main et par"
+		+ "rien ensuite"
+	DESC "symptome a craindre : une prop destructuree reintroduite passe la build, le type-check et"
+		+ "les scenarios, la perte de reactivite restant masquee tant que les blocs concernes sont"
+		+ "demontes et remontes a chaque resultat"
+	STATUS specified
+	BLOCKS @PACKAGE.ui_save_manager
+	RATIONALE "T32 a corrige sept composants destructures, un map rendant du JSX et treize"
+		+ "assertions non nulles ; rien dans le depot n'empeche le prochain composant de les"
+		+ "reintroduire"
+	RATIONALE "les gardes du depot lisent ligne a ligne, et deux des quatre motifs ne se"
+		+ "distinguent pas a cette echelle : un map rendant du JSX ressemble a un map ordinaire,"
+		+ "une chaine utilisateur a un attribut technique. La garde serait donc plus fragile que"
+		+ "les trois existantes, et c'est ce qui rend la question ouverte plutot que tranchee"
+		REF @DECISION.LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
+	RECOMMENDATION "une quatrieme garde de depot, sur le modele des trois existantes, restreinte"
+		+ "aux deux motifs qui se lisent ligne a ligne : la prop destructuree en signature et"
+		+ "l'assertion non nulle sur un accesseur"
+		REJECTED "un linter configure a la place d'un script dedie : deja ecarte pour les gardes"
+			+ "existantes, et la raison n'a pas change"
+		REJECTED "s'en remettre a la revue seule : les trois gardes existantes ont ete ecrites"
+			+ "parce qu'une revue ne tient pas un motif repete"
+		REJECTED "couvrir les quatre motifs : les deux autres demandent de lire le JSX, pas des"
+			+ "lignes"
+	SOURCE "constat du 2026-09-13, T32"
