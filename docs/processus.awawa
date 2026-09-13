@@ -403,3 +403,133 @@ DECISION UneRecommandationEstExamineeAvantLaRatificationEstUneRegleGenerale
 	REJECTED "specifique au projet, portee par le corpus seul : la prochaine session sur un autre"
 		+ "projet referait la meme faute"
 	SOURCE "arbitrage utilisateur du 2026-09-12, PR #63"
+
+DECISION LaCommandeDeFusionPousseLeDepotDuCorpusParSonFluxDeTravail
+	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-pr-merged.md, section 4 : «"
+		+ "Push the repository that holds the corpus, by its own workflow — a branch and a pull"
+		+ "request, never its default branch »"
+	DESC "la ligne « Push the private context repository » est retiree : ou vit le corpus est un"
+		+ "fait du projet, que la commande ne nomme plus"
+		REF @DECISION.LeCorpusVitDansLeDepotPublic
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
+	RATIONALE "la commande sert tout projet a corpus awawa ; sa section 3 disait deja « follow that"
+		+ "repository's own workflow, a branch and a pull request », la ligne de la section 4"
+		+ "contredisait ce que la section 3 prescrivait"
+	REJECTED "garder la ligne et porter un contournement propre au projet dans AGENTS.md : un fait"
+		+ "perime dans une commande generale se relit a chaque fusion de chaque projet"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION LeRapportDUsageNettoieUneBrancheOrphelineAvantDeCouperLaSienne
+	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-usage-report.md, section 1 :"
+		+ "si docs/usage-report-pr-<N> existe, git rev-list origin/<base>..<branche> vide signifie"
+		+ "une orpheline — git worktree remove du worktree qui la tient, git branch -D, puis couper"
+		+ "a neuf ; non vide, couper docs/usage-report-pr-<N>-2"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LeRelancementDUnRapportDUsageButeSurSaBranche
+	RATIONALE "le premier rapporteur de la PR #65 est mort sur une limite de session en laissant sa"
+		+ "branche extraite, vide, dans son worktree ; a la cloture de la PR #68 cette branche"
+		+ "etait encore tenue par ce worktree, et sa suppression a exige de retirer le worktree"
+		+ "d'abord"
+	REJECTED "git branch -D seul : git refuse de supprimer une branche extraite dans un worktree,"
+		+ "et c'est precisement l'etat que laisse un agent mort"
+	REJECTED "toujours suffixer le nom : la branche orpheline resterait, et la suivante porterait"
+		+ "un nom sans rapport avec son contenu"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION LaRevueSansRetourNeLanceAucunAgent
+	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-pr-review.md, section 0, entre"
+		+ "les etapes 1 et 2 : « check there is feedback to act on » — gh pr view --json"
+		+ "reviews,comments et l'API des commentaires de revue ; les trois vides, aucun agent, une"
+		+ "ligne le dit, et la verification de base et de mergeable revient a la fusion"
+	DESC "la revue CI peut arriver apres ce controle : un appel ulterieur de la commande la prend"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LaRevueSansRetourLanceQuandMemeUnAgent
+	RATIONALE "sur la PR #65 : 0 revue, 0 fil, 0 commentaire ; l'agent a couru 2 min 33 s et 26"
+		+ "appels Bash pour l'etablir, puis a poste « review addressed » sur une revue qui"
+		+ "n'existait pas"
+	REJECTED "lancer l'agent pour qu'il constate lui-meme qu'il n'y a rien : un appel gh dans la"
+		+ "session pilote rend le meme verdict pour rien"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION UnDescRenduFauxEstSupprimeDansLeMemeCommit
+	DESC "quand une decision ne remplace qu'une phrase d'une decision implemented, le DESC rendu"
+		+ "faux est supprime ou reduit a ce qui reste vrai dans le meme commit ; le REF sortant de"
+		+ "la nouvelle decision est la trace"
+	DESC "une decision entiere ne passe par une successeure :v2 avec SUPERSEDES que quand sa"
+		+ "lecture change, pas pour une phrase"
+		REF @DECISION.UneDecisionRetireeNommeSaSuccesseure
+	DESC "applique : le troisieme DESC de la decision sur la save ordinaire ne parle plus que de"
+		+ "SaveSectionsReaderService"
+		REF @DECISION.UneFusionProduitUneSaveOrdinaire
+		REF @DECISION.LesControleursDeSectionRecoiventLeTexteValide
+	STATUS specified
+	CLOSES @OPEN_QUESTION.UnRemplacementPartielDUneDecisionImplementeeNEstPasMarque
+	RATIONALE "verifie le 2026-09-13 : LoadSaveFileViewModel.ts ne porte plus de champ sections et"
+		+ "aucun controleur ne nomme SaveSections, la phrase etait fausse depuis la PR #65 ; une"
+		+ ":v2 de soixante lignes pour une phrase est hors de proportion, et un context qui"
+		+ "atteignait l'ancienne decision lisait la phrase fausse sans aucun drapeau"
+	REJECTED "une successeure :v2 pour toute contradiction partielle : recopie l'entite entiere, et"
+		+ "SUPERSEDES ne sait pas dire que seule une phrase a change"
+	REJECTED "laisser la phrase et compter sur le REF de la nouvelle decision : le REF est une"
+		+ "arete, pas un drapeau, et aucune regle de lint ne compare deux entites"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION UneRecommandationEstUnChampAvecSonRejet
+	DESC "SCHEMA OPEN_QUESTION declare FIELD RECOMMENDATION string, avec un REJECTED REQUIRED niche"
+		+ "dessous : une recommandation qui n'a pas affronte son alternative ne s'ecrit pas"
+	DESC "les recommandations en prose « recommandation : » sont converties une fois : trois"
+		+ "portaient une alternative examinee et passent en RECOMMENDATION, trois n'en portaient"
+		+ "aucune et deviennent un DESC « a trancher, sans alternative examinee »"
+	DESC "« a trancher : » et « constat : » restent des DESC, ce ne sont pas des recommandations"
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.LaRecommandationDUneQuestionEstUnChampAvecSonRejet
+	RATIONALE "recompte du 2026-09-13 : les quatorze prefixes de questions.awawa etaient six «"
+		+ "recommandation : », sept « a trancher : », un « constat : » ; seuls les six etaient des"
+		+ "recommandations, et inventer apres coup un REJECTED aux trois sans alternative aurait"
+		+ "fabrique l'examen que le champ doit attester"
+	RATIONALE "la regle generale d'examen avant ratification gouverne la session qui lit ; ce champ"
+		+ "gouverne l'ecriture, les deux ne se contredisent pas"
+		REF @DECISION.UneRecommandationEstExamineeAvantLaRatificationEstUneRegleGenerale
+	REJECTED "un prefixe de prose : indistinguable d'une recommandation examinee, et lu par aucune"
+		+ "commande"
+	REJECTED "un REJECTED post hoc sur chaque recommandation existante : un examen que personne n'a"
+		+ "fait"
+	SPEC "toute RECOMMENDATION d'une OPEN_QUESTION porte au moins un REJECTED, et aucun DESC ne"
+		+ "commence par « recommandation : »"
+		IMPL "docs/_schema.awawa::FIELD RECOMMENDATION string"
+		IMPL "docs/questions.awawa"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION UneAncreSousSpecNommeUnFichierOuUnSymbole
+	DESC "un IMPL niche sous SPEC nomme un fichier ou un symbole ; un repertoire seulement pour une"
+		+ "obligation qui porte sur toute une couche, et le SPEC le dit alors"
+	DESC "discipline, pas schema : une ancre est path[:line][::literal], aucun shape ne s'y"
+		+ "applique et L016 resout un repertoire ; l'application attend une option de l'outil"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.UneAncreDeRepertoireSousSpecEstInterdite
+	RATIONALE "recompte du 2026-09-13 : 44 des 180 ancres IMPL du corpus pointent un repertoire,"
+		+ "sur lesquelles L016 ne se declenchera jamais ; une obligation d'absence — « aucun"
+		+ "controleur n'importe » — n'a de toute facon pas de litteral a ancrer"
+	REJECTED "un shape sur les ancres : le binaire ne connait que le terme anchor, un shape refuse"
+		+ "les references et ne s'applique pas a ce terme"
+	REJECTED "reecrire les 44 ancres maintenant : la plupart portent des obligations de couche,"
+		+ "formulees comme telles"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION AgentsMdNommeUneEntiteModeleParType
+	DESC "AGENTS.md, section « Corpus de specification », nomme une entite modele par type a lire"
+		+ "avec awawa show avant awawa new : une decision, une decision avec SUPERSEDES et SPEC,"
+		+ "une question, une tache"
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.UnModeleDEntiteEviteLaLectureDesFichiersDuCorpus
+	RATIONALE "l'agent de la PR #65 a lu quatre plages sed et la tete de douze fichiers pour"
+		+ "trouver la forme ; awawa new n'imprime que les types des champs, pas un exemple rempli"
+	REJECTED "un docs/_example.awawa : la marche du workspace le charge, status compte ses entites"
+		+ "et lint les valide"
+		REF @DECISION.LeCorpusEstDecoupeParDomaine
+	REJECTED "un fichier prefixe d'un point, saute par la marche : invisible a l'outil, il"
+		+ "vieillirait sans diagnostic"
+	SPEC "AGENTS.md nomme une entite modele par type, toutes existantes dans le corpus"
+		IMPL "AGENTS.md::Avant `awawa new`"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
