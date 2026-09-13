@@ -421,14 +421,14 @@ OPEN_QUESTION LeCasDUtilisationDeSectionEnergieRestitueSesValueObjectsChampParCh
 	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
 
 OPEN_QUESTION UnPresenterPortRecoitUneEntiteOuUnValueObject
-	DESC "a trancher : PlayersPresenterPort recoit des PlayerEntity quand"
-		+ "TerraformationLevelsPresenterPort recoit des TerraformationLevelSummaryValueObject ; les"
-		+ "deux sections de core-mapping ne font pas traverser la meme chose a la frontiere de"
-		+ "presentation"
+	DESC "sur les huit ports de presenter de core-mapping, un seul porte une entite :"
+		+ "PlayersPresenterPort declare PlayerEntity, les sept autres portent un value object ou"
+		+ "une Response. Ce n'est pas un desaccord entre deux conventions, c'est une convention et"
+		+ "une exception"
 	DESC "constate en repondant a la question du proprietaire sur le map de"
 		+ "LoadTerraformationLevelsSection : la reponse ne tient que si la convention est la meme"
-		+ "pour les deux sections"
-	STATUS specified
+		+ "pour toutes les sections"
+	STATUS superseded
 	BLOCKS @TASK.T38_ConformiteCoreMapping
 	RECOMMENDATION "aligner sur le value object : une entite qui traverse le port laisse la"
 		+ "presentation appeler ses methodes de domaine, et le presenter des joueurs lit deja"
@@ -464,3 +464,17 @@ OPEN_QUESTION LaVentilationParMachineIgnoreLeBoostDesOptimiseurs
 		+ "booste une machine ventilee : c'est la contrepartie du choix de ne compter le boost"
 		+ "qu'une fois, dans la contribution de l'optimiseur, pour ne pas le compter deux fois"
 	SOURCE "constate le 2026-09-13 en deplacant les regles d'energie dans PlanetEnergyGrid, PR #72"
+
+OPEN_QUESTION UneEntiteNAtteintPasLaPresentationEstUneRegleGeneraleOuDeProjet
+	DESC "a trancher : la regle « un presenter recoit un value object, jamais une entite du domaine"
+		+ "» va-t-elle dans ARCH-CA, ~/.ai/instructions/architecture/index.md, ou reste-t-elle"
+		+ "propre au projet"
+	DESC "elle ne dit rien du domaine des saves : elle contraint tout package core-, donc ARCH-CA"
+		+ "est sa place naturelle ; c'est l'arbitrage de l'utilisateur"
+		REF @DECISION.UnPresenterRecoitUnValueObjectJamaisUneEntite
+	STATUS specified
+	RECOMMENDATION "la porter en ARCH-CA : le projet n'y ajoute aucune condition, et la laisser ici"
+		+ "la rend invisible aux autres depots qui montent la meme frontiere"
+		REJECTED "la laisser dans le corpus seul : le prochain package core- ecrit ailleurs refera"
+			+ "passer une entite par un PresenterPort"
+	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
