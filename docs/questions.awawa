@@ -246,3 +246,128 @@ OPEN_QUESTION UneRecommandationEstExamineeAvantDEtreProposeeALaRatification
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged"
 	SOURCE "constate le 2026-09-12, lancement de T37 partie A, PR #62"
+
+OPEN_QUESTION UnRemplacementPartielDUneDecisionImplementeeNEstPasMarque
+	DESC "quand une decision remplace un seul DESC d'une decision implemented, ce DESC est supprime"
+		+ "dans le meme commit et le REF de la nouvelle decision en est la trace ; sinon l'ancienne"
+		+ "decision est remplacee entiere par une :v2"
+	DESC "le troisieme DESC de la decision sur la save ordinaire dit que le ViewModel de chargement"
+		+ "et les controleurs de section portent une SaveSections, faux depuis la PR #65 ; seul un"
+		+ "REF sortant de la nouvelle decision le signale, et lint --strict sort en 0"
+		REF @DECISION.UneFusionProduitUneSaveOrdinaire
+		REF @DECISION.LesControleursDeSectionRecoiventLeTexteValide
+	STATUS specified
+	BLOCKS @DECISION.UneFusionProduitUneSaveOrdinaire
+	BLOCKS @DECISION.LesControleursDeSectionRecoiventLeTexteValide
+	RATIONALE "SUPERSEDES ne porte que sur une entite entiere ; un context qui atteint l'ancienne"
+		+ "decision lit la phrase fausse sans aucun drapeau, et aucune des 22 regles de lint ne"
+		+ "compare deux entites"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION LaRevueSansRetourLanceQuandMemeUnAgent
+	DESC "/awawa-pr-review fait un seul appel gh dans la session pilote — revues, fils,"
+		+ "commentaires — et ne lance aucun agent quand les trois sont a zero ; le commentaire de"
+		+ "disponibilite dit alors « aucun retour de revue » et non « revue traitee »"
+	STATUS specified
+	BLOCKS @DECISION.LeCorpusRemplaceLaChecklistDeFusion
+	RATIONALE "sur la PR #65 : 0 revue, 0 fil, 0 commentaire, revue CI sans rien a poster ; l'agent"
+		+ "de revue a couru 2 min 33 s, 26 appels Bash et 2,78 M jetons lus du cache pour"
+		+ "l'etablir, puis a poste « review addressed »"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION UneTacheLivreeEnPlusieursPrEstUneEntiteParPr
+	DESC "une tache livree en plusieurs pull requests est une entite par pull request, la seconde"
+		+ "en AFTER de la premiere"
+	DESC "SCHEMA TASK dit qu'une tache fusionne en une ou plusieurs pull requests : la proposition"
+		+ "contredit ce DESC et demande de le reviser"
+	DESC "proposee pour la troisieme fois : par les deux rapports de la PR #62, puis par celui de"
+		+ "la PR #65"
+	STATUS specified
+	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
+	RATIONALE "T37 en une entite : lint --closure imprime BLOCKED_BY (root, 5) dont les cinq sont"
+		+ "superseded, et le prompt de lancement de la partie B a du lister a la main les deux"
+		+ "lignes SPEC encore ouvertes parce que l'entite ne pouvait pas le dire"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION LaRecommandationDUneQuestionEstUnChampAvecSonRejet
+	DESC "SCHEMA OPEN_QUESTION declare FIELD RECOMMENDATION string avec un REJECTED requis niche"
+		+ "dessous ; les 14 prefixes « recommandation : », « a trancher : », « constat : », «"
+		+ "destination proposee : » de questions.awawa sont convertis une fois"
+	DESC "proposee pour la troisieme fois : par les deux rapports de la PR #62, puis par celui de"
+		+ "la PR #65"
+	STATUS specified
+	BLOCKS @SCHEMA.OPEN_QUESTION
+	RATIONALE "une recommandation qui n'a jamais affronte son alternative est indistinguable d'une"
+		+ "qui l'a fait ; sur la PR #62 deux recommandations sur cinq etaient defectueuses, et la"
+		+ "question fermee par la PR #65 s'ouvrait encore sur « recommandation : »"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION UneAncreDeRepertoireSousSpecEstInterdite
+	DESC "le schema interdit une ancre IMPL de repertoire sous SPEC : une obligation s'ancre sur un"
+		+ "fichier ou un symbole"
+	STATUS specified
+	BLOCKS @DECISION.LesControleursDeSectionRecoiventLeTexteValide
+	RATIONALE "44 des 180 ancres IMPL du corpus pointent un repertoire, sur lesquelles L016 ne peut"
+		+ "jamais se declencher ; la decision de la PR #65 en ajoute une,"
+		+ "packages/core-mapping/src/controllers"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
+	DESC "la ligne « Push the private context repository » de ~/.claude/commands/awawa-pr-merged.md"
+		+ "est supprimee ou reecrite en « push the promotion pull request »"
+	STATUS specified
+	BLOCKS @DECISION.LeCorpusVitDansLeDepotPublic
+	RATIONALE "la promotion de la PR #65 est passee par la PR #66 du depot public ; l'agent de"
+		+ "cloture a du constater que « le depot prive n'a pas ete touche » ; cout nul cette fois,"
+		+ "fait de projet perime dans une commande"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION LeRelancementDUnRapportDUsageButeSurSaBranche
+	DESC "/awawa-usage-report supprime une branche docs/usage-report-pr-N existante sans commit"
+		+ "au-dessus de la base avant de couper la sienne, ou suffixe le nom"
+	STATUS specified
+	BLOCKS @DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
+	RATIONALE "le premier rapporteur de la PR #65 est mort sur une limite de session apres 3 min 02"
+		+ "s, laissant docs/usage-report-pr-65 extraite et vide dans son worktree ; le relancement"
+		+ "a du prendre un autre nom"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION UnModeleDEntiteEviteLaLectureDesFichiersDuCorpus
+	DESC "un docs/_example.awawa, ou une entite modele par type, donne a un agent la forme"
+		+ "d'ecriture sans qu'il lise les fichiers du corpus"
+	STATUS specified
+	BLOCKS @DECISION.LeCorpusEstDecoupeParDomaine
+	RATIONALE "l'agent de la PR #65 a lu quatre plages sed de packages, questions, fusion et"
+		+ "limitations puis head -12 des douze fichiers, apres un context et un new ; l'agent de la"
+		+ "PR #62 avait lu six fichiers entiers"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION LePiedDePageBlockedByIgnoreLeStatutDesReferents
+	DESC "le pied de page de context et de lint --closure separe les referents vivants des"
+		+ "referents suppressed — BLOCKED_BY (root, 0 live, 5 suppressed) — ou omet ces derniers"
+	DESC "defaut de l'outil awawa 2.7.0, vu par les rapports des PR #62 et #65"
+	STATUS specified
+	BLOCKS @TASK.T32_ConformiteUiSaveManager
+	RATIONALE "lint --closure sur T37 imprime BLOCKED_BY (root, 5), les cinq superseded ; sur T32,"
+		+ "BLOCKED_BY (root, 1) nomme une question superseded, alors que la session pilote a dit a"
+		+ "l'utilisateur que T32 etait liberee"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION AwawaDiffNeCompareQueDeuxRepertoires
+	DESC "awawa diff accepte une revision git pour l'ancien cote — diff --git REV [PATH] — au lieu"
+		+ "de deux chemins"
+	STATUS specified
+	BLOCKS @DECISION.LeCorpusRemplaceLaChecklistDeFusion
+	RATIONALE "l'agent de cloture de la PR #65 a copie docs/ avant d'editer pour pouvoir lancer"
+		+ "awawa diff apres"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
+
+OPEN_QUESTION LesReferentsDUnContexteSontNommesSansEtreDeveloppes
+	DESC "context --with-referrers developpe les entites que le pied de page nomme, au lieu de les"
+		+ "lister"
+	DESC "defaut de l'outil awawa 2.7.0, vu par les rapports des PR #62 et #65"
+	STATUS specified
+	RATIONALE "l'agent de la PR #65 a enchaine six awawa show apres son unique awawa context pour"
+		+ "lire la question bloquante et les decisions voisines ; l'agent de la PR #62 en avait"
+		+ "enchaine cinq"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-12-pr-65.md, PR #67"
