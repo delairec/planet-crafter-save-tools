@@ -403,3 +403,51 @@ DECISION UneRecommandationEstExamineeAvantLaRatificationEstUneRegleGenerale
 	REJECTED "specifique au projet, portee par le corpus seul : la prochaine session sur un autre"
 		+ "projet referait la meme faute"
 	SOURCE "arbitrage utilisateur du 2026-09-12, PR #63"
+
+DECISION LaCommandeDeFusionPousseLeDepotDuCorpusParSonFluxDeTravail
+	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-pr-merged.md, section 4 : «"
+		+ "Push the repository that holds the corpus, by its own workflow — a branch and a pull"
+		+ "request, never its default branch »"
+	DESC "la ligne « Push the private context repository » est retiree : ou vit le corpus est un"
+		+ "fait du projet, que la commande ne nomme plus"
+		REF @DECISION.LeCorpusVitDansLeDepotPublic
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
+	RATIONALE "la commande sert tout projet a corpus awawa ; sa section 3 disait deja « follow that"
+		+ "repository's own workflow, a branch and a pull request », la ligne de la section 4"
+		+ "contredisait ce que la section 3 prescrivait"
+	REJECTED "garder la ligne et porter un contournement propre au projet dans AGENTS.md : un fait"
+		+ "perime dans une commande generale se relit a chaque fusion de chaque projet"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION LeRapportDUsageNettoieUneBrancheOrphelineAvantDeCouperLaSienne
+	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-usage-report.md, section 1 :"
+		+ "si docs/usage-report-pr-<N> existe, git rev-list origin/<base>..<branche> vide signifie"
+		+ "une orpheline — git worktree remove du worktree qui la tient, git branch -D, puis couper"
+		+ "a neuf ; non vide, couper docs/usage-report-pr-<N>-2"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LeRelancementDUnRapportDUsageButeSurSaBranche
+	RATIONALE "le premier rapporteur de la PR #65 est mort sur une limite de session en laissant sa"
+		+ "branche extraite, vide, dans son worktree ; a la cloture de la PR #68 cette branche"
+		+ "etait encore tenue par ce worktree, et sa suppression a exige de retirer le worktree"
+		+ "d'abord"
+	REJECTED "git branch -D seul : git refuse de supprimer une branche extraite dans un worktree,"
+		+ "et c'est precisement l'etat que laisse un agent mort"
+	REJECTED "toujours suffixer le nom : la branche orpheline resterait, et la suivante porterait"
+		+ "un nom sans rapport avec son contenu"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION LaRevueSansRetourNeLanceAucunAgent
+	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-pr-review.md, section 0, entre"
+		+ "les etapes 1 et 2 : « check there is feedback to act on » — gh pr view --json"
+		+ "reviews,comments et l'API des commentaires de revue ; les trois vides, aucun agent, une"
+		+ "ligne le dit, et la verification de base et de mergeable revient a la fusion"
+	DESC "la revue CI peut arriver apres ce controle : un appel ulterieur de la commande la prend"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LaRevueSansRetourLanceQuandMemeUnAgent
+	RATIONALE "sur la PR #65 : 0 revue, 0 fil, 0 commentaire ; l'agent a couru 2 min 33 s et 26"
+		+ "appels Bash pour l'etablir, puis a poste « review addressed » sur une revue qui"
+		+ "n'existait pas"
+	REJECTED "lancer l'agent pour qu'il constate lui-meme qu'il n'y a rien : un appel gh dans la"
+		+ "session pilote rend le meme verdict pour rien"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"

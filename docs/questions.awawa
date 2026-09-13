@@ -268,7 +268,7 @@ OPEN_QUESTION LaRevueSansRetourLanceQuandMemeUnAgent
 	DESC "/awawa-pr-review fait un seul appel gh dans la session pilote — revues, fils,"
 		+ "commentaires — et ne lance aucun agent quand les trois sont a zero ; le commentaire de"
 		+ "disponibilite dit alors « aucun retour de revue » et non « revue traitee »"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.LeCorpusRemplaceLaChecklistDeFusion
 	RATIONALE "sur la PR #65 : 0 revue, 0 fil, 0 commentaire, revue CI sans rien a poster ; l'agent"
 		+ "de revue a couru 2 min 33 s, 26 appels Bash et 2,78 M jetons lus du cache pour"
@@ -315,7 +315,7 @@ OPEN_QUESTION UneAncreDeRepertoireSousSpecEstInterdite
 OPEN_QUESTION LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
 	DESC "la ligne « Push the private context repository » de ~/.claude/commands/awawa-pr-merged.md"
 		+ "est supprimee ou reecrite en « push the promotion pull request »"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.LeCorpusVitDansLeDepotPublic
 	RATIONALE "la promotion de la PR #65 est passee par la PR #66 du depot public ; l'agent de"
 		+ "cloture a du constater que « le depot prive n'a pas ete touche » ; cout nul cette fois,"
@@ -325,7 +325,7 @@ OPEN_QUESTION LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
 OPEN_QUESTION LeRelancementDUnRapportDUsageButeSurSaBranche
 	DESC "/awawa-usage-report supprime une branche docs/usage-report-pr-N existante sans commit"
 		+ "au-dessus de la base avant de couper la sienne, ou suffixe le nom"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
 	RATIONALE "le premier rapporteur de la PR #65 est mort sur une limite de session apres 3 min 02"
 		+ "s, laissant docs/usage-report-pr-65 extraite et vide dans son worktree ; le relancement"
