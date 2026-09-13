@@ -101,7 +101,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
     // NOTE: production/consumption are scoped per-planet — each planet has its own independent
     // power grid in-game (see docs/energy-levels.md, section 4). The actual production/
     // consumption/optimizer-boost rules are domain logic — see
-    // `domain/rules/computePlanetEnergyLevels.ts`. This method only maps the save format's raw
+    // `domain/PlanetEnergyGrid.ts`. This method only maps the save format's raw
     // world objects into domain entities and groups them by planet.
 
     const allWorldObjects = this.sections.worldObjects;

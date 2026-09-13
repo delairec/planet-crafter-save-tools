@@ -403,7 +403,7 @@ OPEN_QUESTION LeCasDUtilisationDeSectionEnergieRestitueSesValueObjectsChampParCh
 		+ "fabrique ne valide jamais"
 	DESC "revue demandee en revue de la PR #72 sur la decision qui a fixe cette forme"
 		REF @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
-	STATUS specified
+	STATUS superseded
 	BLOCKS @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
 	RATIONALE "verifie le 2026-09-13 dans le code : la regle assemble deja des value objects du"
 		+ "domaine, EnergyBreakdownEntryValueObject et OptimizerValueObject, par leurs fabriques ;"
