@@ -1,11 +1,11 @@
 import {For} from "solid-js";
-import FieldsGroup, {Column} from "./FieldsGroup";
+import FieldsGroup, {ColumnViewModel} from "./FieldsGroup";
 
 interface FieldsGroupGridProps<T> {
   title: string;
   items: T[];
   itemLabel: (item: T) => string;
-  columns: (item: T) => Column[];
+  columns: (item: T) => ColumnViewModel[];
 }
 
 export default function FieldsGroupGrid<T>(props: FieldsGroupGridProps<T>) {
