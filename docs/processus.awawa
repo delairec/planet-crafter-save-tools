@@ -242,7 +242,7 @@ DECISION LeCorpusRemplaceLaChecklistDeFusion
 	DESC "le residu que le corpus ne porte pas — une regle a promouvoir vers ~/.ai — s'ecrit en"
 		+ "OPEN_QUESTION a la revue : general ou specifique au projet est l'arbitrage de"
 		+ "l'utilisateur, et rien hors du corpus ne survit a la session qui l'a appris"
-	STATUS specified
+	STATUS superseded
 	RATIONALE "le motif de la checklist etait qu'un inventaire disparait avec la session de l'agent"
 		+ "de tache ; le corpus est cet inventaire et il ne disparait pas"
 	RATIONALE "la moitie post-fusion ne peut pas tourner avant le git merge de l'utilisateur et"
@@ -256,6 +256,51 @@ DECISION LeCorpusRemplaceLaChecklistDeFusion
 	REJECTED "corriger /pr-merge-followup et /pr-review-followup en place : elles servent les"
 		+ "projets sans corpus et gardent leur forme"
 	SOURCE "decision du 2026-09-11, session d'installation d'awawa"
+
+DECISION LeCorpusRemplaceLaChecklistDeFusion:v2
+	DESC "une PR de tache ne porte plus de commentaire « A faire a la fusion » : ce que la"
+		+ "checklist inventoriait entre dans le corpus au moment ou la decision est prise, pas a la"
+		+ "fusion"
+	DESC "la promotion se fait dans la pull request de tache elle-meme : la tache passe"
+		+ "implemented, les decisions qu'elle livre passent implemented, les questions qu'elle"
+		+ "tranche passent superseded par le CLOSES d'une decision — tout avant l'ouverture de la"
+		+ "PR, et la revue verifie ces promotions comme elle verifie le code, chaque SPEC promue"
+		+ "ayant son IMPL resolu dans le diff (L016)"
+	DESC "un STATUS implemented ecrit dans la branche a la semantique du code que la PR livre :"
+		+ "vrai dans l'arbre de la branche, vrai dans la base quand la fusion le porte, jamais vrai"
+		+ "si la PR meurt"
+		REF @DECISION.LeCorpusVitDansLeDepotPublic
+	DESC "il n'y a pas de promotion apres la fusion et /awawa-pr-merged est retiree ; l'arbitrage"
+		+ "general ou specifique au projet d'une regle d'instruction se pose a la revue, par"
+		+ "/awawa-pr-review, avant que la PR soit signalee prete"
+	DESC "le rapport d'usage se commite sur la branche de tache, par /awawa-usage-report <N> une"
+		+ "fois la revue traitee ; apres la fusion, rien ne tourne, les worktrees se nettoient par"
+		+ "/worktree-clean"
+		REF @DECISION.UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante
+	DESC "garde : la revue verifie chaque promotion contre le diff et refuse celle dont l'ancre ne"
+		+ "resout pas ou dont le diff ne livre pas le SPEC"
+	STATUS specified
+	SUPERSEDES @DECISION.LeCorpusRemplaceLaChecklistDeFusion
+	RATIONALE "ce qui change : le moment de la promotion. La regle « implemented n'est vrai que de"
+		+ "la base » date du corpus vivant dans le clone prive, ou une promotion sur une branche ne"
+		+ "voyageait pas avec la PR ; depuis que le corpus est dans la branche, elle voyage"
+	RATIONALE "chaque /awawa-pr-merged a ouvert une PR de plus : 65 a ouvert la PR #66, 68 la PR"
+		+ "#69, et un passage sur la PR #69 aurait ouvert une PR #70 sans rien a promouvoir"
+	RATIONALE "le motif de la checklist etait qu'un inventaire disparait avec la session de l'agent"
+		+ "de tache ; le corpus est cet inventaire et il ne disparait pas"
+	RATIONALE "la successeure garde le nom et prend :v2 parce que sa lecture change"
+		REF @DECISION.UneDecisionRetireeNommeSaSuccesseure
+	REJECTED "promouvoir apres la fusion dans une PR de suite : une PR de plus a chaque tour, sans"
+		+ "rien a promouvoir des la seconde"
+	REJECTED "une seule commande /awawa-pr-review couvrant les deux moments"
+	REJECTED "garder la checklist en la vidant de ce que le corpus porte : un commentaire reduit a"
+		+ "la promotion de STATUS ne vaut pas la discipline qu'il coute"
+	REJECTED "garder un commentaire de PR pour le seul residu ~/.ai : une entite le porte mieux,"
+		+ "elle est typee, interrogeable, et visible a chaque status jusqu'a sa fermeture"
+	REJECTED "corriger /pr-merge-followup et /pr-review-followup en place : elles servent les"
+		+ "projets sans corpus et gardent leur forme"
+	SOURCE "decision du 2026-09-11, session d'installation d'awawa"
+	SOURCE "arbitrage utilisateur du 2026-09-13 sur la PR #69, livre par la PR #70"
 
 DECISION LeCorpsDeLaPrSeMetAJourPendantLaRevue
 	DESC "une revue qui change une signature, un nom public ou une phrase d'interface met a jour le"
@@ -378,7 +423,7 @@ DECISION UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
 		+ "positifs, avec leur nombre d'occurrences ; mesures tirees des transcriptions en annexe"
 	DESC "le rapport cite les entites, n'en recopie aucune"
 		REF @DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
-	STATUS specified
+	STATUS superseded
 	RATIONALE "le premier rapport d'usage a ete ecrit par la session fautive : aucune mesure, deux"
 		+ "affirmations surestimees, relevees par une revue independante"
 	REJECTED "la session pilote ecrit le rapport : elle note son propre travail"
@@ -389,6 +434,48 @@ DECISION UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
 	SPEC "le rapport nomme son auteur, le modele des sessions evaluees et les sessions mesurees"
 		IMPL "docs/awawa-usage-reports/_template.md"
 	SOURCE "decision du 2026-09-12, revue du premier rapport d'usage, PR #63"
+
+DECISION UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante
+	DESC "le rapport d'usage d'une pull request qu'une entite TASK nomme dans son champ PR — tache"
+		+ "ou famille DEP — est commite sur la branche de cette pull request, avant la fusion, par"
+		+ "/awawa-usage-report <N> une fois la revue traitee et la PR signalee prete"
+	DESC "il est ecrit par un agent independant : une session neuve, sans memoire du travail juge,"
+		+ "jamais un fork, Claude Fable 5.1 en effort medium ; autre agent que celui qui a"
+		+ "implemente, aucun contexte partage"
+	DESC "une pull request par tache porte le code, les promotions, les arbitrages et le rapport ;"
+		+ "la fusion porte le tout dans la base d'un coup, et rien ne tourne apres"
+		REF @DECISION.LeCorpusRemplaceLaChecklistDeFusion:v2
+	DESC "le rapport mesure l'arbitrage, l'implementation et la revue, promotions comprises puisque"
+		+ "dans la PR ; il ne mesure plus de cloture, il n'y en a pas"
+	DESC "le fichier garde la forme docs/awawa-usage-reports/<date>-pr-<N>.md, la date etant celle"
+		+ "du rapport"
+	DESC "la forme a un seul domicile, le gabarit _template.md : verdict nous / verdict outil,"
+		+ "chacun en bien passe, mal passe, remediations ; points recurrents, douloureux et"
+		+ "positifs, avec leur nombre d'occurrences ; mesures tirees des transcriptions en annexe"
+	DESC "le rapport cite les entites, n'en recopie aucune"
+		REF @DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
+	STATUS specified
+	SUPERSEDES @DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
+	RATIONALE "ce qui change, d'ou le nouveau nom : le rapport n'est plus ecrit apres la fusion ni"
+		+ "dans une PR a lui. La chaine #65 → #67 → #68 → #69 a coute une PR de plus a fusionner"
+		+ "par tache, et un rapport sur les PR #66 a #69 mesurerait des sessions qui n'ont fait que"
+		+ "promouvoir un statut ou ecrire des entites"
+	RATIONALE "le premier rapport d'usage a ete ecrit par la session fautive : aucune mesure, deux"
+		+ "affirmations surestimees, relevees par une revue independante"
+	REJECTED "une PR de rapport a part : une PR de plus a fusionner par tache, la chaine #65 → #67"
+		+ "→ #68 → #69"
+	REJECTED "le rapport ecrit par la session qui implemente ou par celle qui relit : elle note son"
+		+ "propre travail"
+	REJECTED "un rapport sur chaque pull request fusionnee : la chaine ne se ferme jamais"
+	REJECTED "un rapport par session : seule la PR entiere voit le parcours complet"
+	REJECTED "les mesures dans le corpus : faits sur l'instrument, pas sur le projet"
+	SPEC "un fichier par PR de tache dans docs/awawa-usage-reports/, conforme au gabarit, commite"
+		+ "sur la branche de la PR avant sa fusion ; aucun pour une pull request de suite"
+		IMPL "docs/awawa-usage-reports/_template.md"
+	SPEC "le rapport nomme son auteur, le modele des sessions evaluees et les sessions mesurees"
+		IMPL "docs/awawa-usage-reports/_template.md"
+	SOURCE "decision du 2026-09-12, revue du premier rapport d'usage, PR #63"
+	SOURCE "arbitrage utilisateur du 2026-09-13 sur la PR #69, livre par la PR #70"
 
 DECISION UneRecommandationEstExamineeAvantLaRatificationEstUneRegleGenerale
 	DESC "la regle est generale : elle vit dans la section Always de ~/.ai/AGENTS.md, a cote de la"
@@ -411,6 +498,9 @@ DECISION LaCommandeDeFusionPousseLeDepotDuCorpusParSonFluxDeTravail
 	DESC "la ligne « Push the private context repository » est retiree : ou vit le corpus est un"
 		+ "fait du projet, que la commande ne nomme plus"
 		REF @DECISION.LeCorpusVitDansLeDepotPublic
+	DESC "la commande est retiree le meme jour : la promotion voyage avec la pull request de tache,"
+		+ "et la regle n'a plus de ligne a corriger"
+		REF @DECISION.LeCorpusRemplaceLaChecklistDeFusion:v2
 	STATUS specified
 	CLOSES @OPEN_QUESTION.LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
 	RATIONALE "la commande sert tout projet a corpus awawa ; sa section 3 disait deja « follow that"
@@ -425,6 +515,9 @@ DECISION LeRapportDUsageNettoieUneBrancheOrphelineAvantDeCouperLaSienne
 		+ "si docs/usage-report-pr-<N> existe, git rev-list origin/<base>..<branche> vide signifie"
 		+ "une orpheline — git worktree remove du worktree qui la tient, git branch -D, puis couper"
 		+ "a neuf ; non vide, couper docs/usage-report-pr-<N>-2"
+	DESC "sans objet le meme jour : le rapport se commite sur la branche de tache, il n'y a plus de"
+		+ "branche docs/usage-report-pr-<N> a couper"
+		REF @DECISION.UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante
 	STATUS specified
 	CLOSES @OPEN_QUESTION.LeRelancementDUnRapportDUsageButeSurSaBranche
 	RATIONALE "le premier rapporteur de la PR #65 est mort sur une limite de session en laissant sa"
