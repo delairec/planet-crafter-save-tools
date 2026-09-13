@@ -395,3 +395,59 @@ OPEN_QUESTION UneEntiteRendSonTableauInterneSansLeCopier
 			+ "silencieusement hors mode strict, et le cout tombe une fois par entite sans rendre"
 			+ "l'erreur lisible"
 	SOURCE "constate le 2026-09-13, T15, PR #72, conversion des entites du domaine en classes"
+
+OPEN_QUESTION LeCasDUtilisationDeSectionEnergieRestitueSesValueObjectsChampParChamp
+	DESC "a trancher avec le proprietaire du depot : LoadEnergyLevelsSection reenumere les huit"
+		+ "champs de PlanetEnergyLevelsValueObject que computePlanetEnergyLevels vient de calculer,"
+		+ "et la regle rend un litteral type Omit<PlanetEnergyLevelsValueObject, 'planetId'> que sa"
+		+ "fabrique ne valide jamais"
+	DESC "revue demandee en revue de la PR #72 sur la decision qui a fixe cette forme"
+		REF @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
+	STATUS specified
+	BLOCKS @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
+	RATIONALE "verifie le 2026-09-13 dans le code : la regle assemble deja des value objects du"
+		+ "domaine, EnergyBreakdownEntryValueObject et OptimizerValueObject, par leurs fabriques ;"
+		+ "le motif que la decision refuse est donc deja en place a l'interieur de la regle"
+	RECOMMENDATION "faire prendre a computePlanetEnergyLevels le PlanetWorldObjectsValueObject de"
+		+ "la planete et rendre le PlanetEnergyLevelsValueObject complet par sa fabrique : le type"
+		+ "Omit disparait, le litteral non valide disparait, et le cas d'utilisation se reduit a"
+		+ "collecter les planetes"
+		REJECTED "garder la forme actuelle : elle laisse la regle rendre une valeur que la fabrique"
+			+ "du value object ne valide pas, et le cas d'utilisation reenumere huit champs qu'un"
+			+ "ajout a l'interface ne lui rappellera pas"
+		REJECTED "faire assembler le value object par la presentation : le PresenterPort cesserait"
+			+ "de recevoir une valeur du domaine, et l'assemblage traverserait la frontiere que T37"
+			+ "vient d'etablir"
+	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+OPEN_QUESTION UnPresenterPortRecoitUneEntiteOuUnValueObject
+	DESC "a trancher : PlayersPresenterPort recoit des PlayerEntity quand"
+		+ "TerraformationLevelsPresenterPort recoit des TerraformationLevelSummaryValueObject ; les"
+		+ "deux sections de core-mapping ne font pas traverser la meme chose a la frontiere de"
+		+ "presentation"
+	DESC "constate en repondant a la question du proprietaire sur le map de"
+		+ "LoadTerraformationLevelsSection : la reponse ne tient que si la convention est la meme"
+		+ "pour les deux sections"
+	STATUS specified
+	BLOCKS @TASK.T38_ConformiteCoreMapping
+	RECOMMENDATION "aligner sur le value object : une entite qui traverse le port laisse la"
+		+ "presentation appeler ses methodes de domaine, et le presenter des joueurs lit deja"
+		+ "player.inventory et player.equipment pour les etiqueter"
+		REJECTED "aligner sur l'entite : le resume de terraformation est un calcul du domaine,"
+			+ "biomasse et indice, et le faire declencher par la presentation deplace le calcul"
+			+ "sans le supprimer"
+	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+OPEN_QUESTION UnAccesseurDeTableauRendUneCopieEstUneRegleGeneraleOuDeProjet
+	DESC "a trancher : la regle « un accesseur qui rend un tableau interne en rend une copie, le"
+		+ "type readonly seul se defaisant par une assertion » va-t-elle dans"
+		+ "~/.ai/instructions/standards/coding.md ou reste-t-elle propre au projet"
+	DESC "elle ne dit rien du domaine des saves : elle vaut pour toute classe a invariant, donc STD"
+		+ "est sa place naturelle ; c'est l'arbitrage de l'utilisateur"
+		REF @DECISION.UneEntiteRendUneCopieDeSonTableauInterne
+	STATUS specified
+	RECOMMENDATION "la porter en STD : le projet n'y ajoute aucune condition, et la laisser ici la"
+		+ "rend invisible aux autres depots"
+		REJECTED "la laisser dans le corpus seul : la prochaine classe a invariant ecrite ailleurs"
+			+ "refera l'accesseur sans copie"
+	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
