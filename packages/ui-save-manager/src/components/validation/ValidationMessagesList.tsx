@@ -3,7 +3,7 @@ import {
   showValidationMessagesDetails,
   validationMessageLocationPrefix
 } from "~/messages/validationMessages";
-import {createSignal, Show} from "solid-js";
+import {createSignal, For, Show} from "solid-js";
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
 
 export default function ValidationMessagesList(props: {
@@ -21,14 +21,17 @@ export default function ValidationMessagesList(props: {
         {isOpen() ? hideValidationMessagesDetails : showValidationMessagesDetails}
       </summary>
       <ul>
-        {props.messages.map(({message, location}) => <li class="validation-message">
-          <code>
-            {message}
-            <Show when={location}>
-              <span class="validation-message-location">{validationMessageLocationPrefix} {location}</span>
-            </Show>
-          </code>
-        </li>)}
+        <For each={props.messages}>
+          {(validationMessage) => <li class="validation-message">
+            <code>
+              {validationMessage.message}
+              <Show when={validationMessage.location}>
+                <span
+                  class="validation-message-location">{validationMessageLocationPrefix} {validationMessage.location}</span>
+              </Show>
+            </code>
+          </li>}
+        </For>
       </ul>
     </details>
   </>
