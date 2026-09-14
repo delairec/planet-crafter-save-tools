@@ -487,7 +487,7 @@ OPEN_QUESTION RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
 	DESC "symptome a craindre : une prop destructuree reintroduite passe la build, le type-check et"
 		+ "les scenarios, la perte de reactivite restant masquee tant que les blocs concernes sont"
 		+ "demontes et remontes a chaque resultat"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @PACKAGE.ui_save_manager
 	RATIONALE "T32 a corrige sept composants destructures, un map rendant du JSX et treize"
 		+ "assertions non nulles ; rien dans le depot n'empeche le prochain composant de les"
@@ -513,24 +513,45 @@ OPEN_QUESTION RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
 	SOURCE "constat du 2026-09-13, T32, PR #71"
 
 OPEN_QUESTION UnCaractereDecoratifCousuDansUneValeurDeViewModelEchappeAuMasquage
-	DESC "energyLevelsSectionWorkInProgressLabel porte l'emoji du chantier dans la chaine"
-		+ "elle-meme, et EnergyLevelsPresenter le coud dans des valeurs de ViewModel que l'UI rend"
-		+ "en texte : le composant Emoji ne peut pas l'atteindre"
-	DESC "symptome : le lecteur d'ecran annonce le nom de l'emoji dans chaque cellule de"
+	DESC "energyLevelsSectionWorkInProgressLabel porte l'icone du chantier dans la chaine"
+		+ "elle-meme, et EnergyLevelsPresenter la coud dans des valeurs de ViewModel que l'UI rend"
+		+ "en texte : le composant Icon ne peut pas l'atteindre"
+	DESC "symptome : le lecteur d'ecran annonce le nom du caractere dans chaque cellule de"
 		+ "consommation et de disponible, et dans le titre de la grille de consommation"
 	STATUS specified
 	BLOCKS @PACKAGE.ui_save_manager
 	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "la decision qui regle la fleche de la page 404 ne regle pas ce cas : elle suppose"
 		+ "que le caractere decoratif est un noeud de JSX, ce qu'une valeur de ViewModel n'est pas"
-		REF @DECISION.UnCaractereDecoratifEstRenduParLeComposantEmoji
+		REF @DECISION.UnCaractereDecoratifEstRenduParLeComposantIcon
 	RATIONALE "le libelle est declare deux fois, dans les messages de core-mapping et dans ceux de"
 		+ "l'UI, donc le sort de l'un est le sort de l'autre"
-	RECOMMENDATION "sortir l'emoji de la chaine des deux cotes et le rendre par le composant Emoji"
+	RECOMMENDATION "sortir l'icone de la chaine des deux cotes et la rendre par le composant Icon"
 		+ "la ou l'UI compose du JSX ; pour les valeurs de cellule, laisser le ViewModel porter le"
 		+ "texte seul et marquer l'etat de chantier au niveau de la grille, une fois"
 		REJECTED "rendre les valeurs de cellule en JSX depuis core-mapping : la presentation"
 			+ "rendrait du balisage, ce que la frontiere lui interdit"
-		REJECTED "laisser l'emoji dans la valeur : c'est le defaut constate, pas une limitation"
+		REJECTED "laisser l'icone dans la valeur : c'est le defaut constate, pas une limitation"
 			+ "acceptee"
 	SOURCE "constat en revue de la PR #71, 2026-09-14, T32"
+
+OPEN_QUESTION LaRegleDuVerbeDActionPourNommerUneFonctionEstGeneraleOuDeProjet
+	DESC "une fonction — declaration ou variable qui en porte une — se nomme d'apres un verbe"
+		+ "d'action ; la regle vient d'etre demandee en revue sur du code de production, ou aucune"
+		+ "instruction generale ne la pose"
+	DESC "a trancher par l'utilisateur : la remonter dans les standards de code generaux, ou la"
+		+ "garder specifique a ce projet"
+	STATUS specified
+	BLOCKS @PACKAGE.ui_save_manager
+	RATIONALE "les instructions de test la portent deja, mais pour les constructeurs de test ; rien"
+		+ "dans les standards de code ne la pose pour le reste, et c'est en revue qu'elle a ete"
+		+ "demandee sur deux fonctions de message"
+	RECOMMENDATION "la remonter dans les standards de code generaux : elle ne doit rien au contexte"
+		+ "de test, et une regle de nommage qui ne vaut que dans les specs se contredit des qu'une"
+		+ "fonction passe d'une spec au code"
+		REJECTED "la garder dans le corpus seul : elle sera redemandee en revue sur le projet"
+			+ "suivant"
+		REJECTED "la laisser dans les instructions de test en elargissant leur portee : une regle"
+			+ "de nommage du code de production lue depuis un fichier de test n'est lue par"
+			+ "personne"
+	SOURCE "revue de la PR #71 par le proprietaire du depot, 2026-09-14, T32"
