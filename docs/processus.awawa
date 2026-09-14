@@ -635,6 +635,13 @@ DECISION UneVueQueLeCorpusRendDejaNEstPasRecopieeDedans
 		+ "enregistree, et ce qu'il a d'irreductible — pourquoi telle ligne SPEC atterrit sur tel"
 		+ "livrable — s'ecrit en RATIONALE sur ce livrable"
 		REF @DECISION.UneTacheEstUneEntiteParPullRequest
+	DESC "une regle promue dans les instructions generales ne laisse pas d'entite de promotion : la"
+		+ "decision projet qui l'applique nomme son domicile et la pull request d'instructions qui"
+		+ "l'y a portee"
+	DESC "les deux entites de promotion deja fusionnees restent, chacune portant ce qui n'a pas"
+		+ "voyage avec sa regle ; elles ne sont pas retro-retirees"
+		REF @DECISION.LaRegleDuCorpsDePrEstGeneraleEtVaDansCommandsMd
+		REF @DECISION.UneRecommandationEstExamineeAvantLaRatificationEstUneRegleGenerale
 	STATUS implemented
 	RATIONALE "le graphe ASCII d'entete de taches.awawa a ete edite a la main a chaque decoupage"
 		+ "depuis son ecriture : c'est exactement l'information derivee que le manuel de l'outil"
@@ -643,6 +650,11 @@ DECISION UneVueQueLeCorpusRendDejaNEstPasRecopieeDedans
 		+ "quatre taches, que des alternatives que la regle generale avait deja ecartees ; sa"
 		+ "suppression ne perd aucune phrase, les RATIONALE de T40, T41 et T42 disant deja pourquoi"
 		+ "chaque ligne transverse atterrit chez elles"
+	RATIONALE "constate en revue de la PR #75 : la promotion de la regle du bloc Act tenait une"
+		+ "DECISION et une OPEN_QUESTION dont le sujet etait les instructions generales et non le"
+		+ "projet ; ni l'une ni l'autre n'a existe hors de la branche, et la decision projet garde"
+		+ "le domicile de la regle et le numero de la pull request qui l'y a portee"
+		REF @DECISION.LeBlocActDUnTestTientEnUneLigne
 	REJECTED "garder le graphe ASCII des dependances de taches : aucune commande ne le lit et"
 		+ "status, refs et context rendent les memes aretes"
 	REJECTED "une DECISION par decoupage de tache : elle recopie le DESC des entites produites et"
@@ -650,6 +662,12 @@ DECISION UneVueQueLeCorpusRendDejaNEstPasRecopieeDedans
 	REJECTED "passer la decision de decoupage superseded plutot que la supprimer : elle n'a jamais"
 		+ "existe hors de la branche de la PR #75, et le schema exigerait une successeure qui"
 		+ "n'existe pas"
+	REJECTED "une entite de promotion par regle partie dans les instructions generales : son sujet"
+		+ "n'est pas le projet, et la decision projet qui applique la regle loge deja son domicile"
+		+ "et sa pull request"
 	SPEC "taches.awawa ne porte aucune vue des dependances hors des champs AFTER"
 		IMPL "docs/taches.awawa"
+	SPEC "la promotion d'une regle vers les instructions generales vit sur la decision projet qui"
+		+ "l'applique, sans entite propre"
+		IMPL "docs/tests.awawa::DECISION LeBlocActDUnTestTientEnUneLigne"
 	SOURCE "revue de la PR #75, arbitrage utilisateur du 2026-09-14"
