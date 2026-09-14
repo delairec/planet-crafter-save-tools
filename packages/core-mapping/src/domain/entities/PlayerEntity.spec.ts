@@ -20,8 +20,11 @@ describe('PlayerEntity', () => {
     // Arrange
     const input = {name: '', inventory: [], equipment: []};
 
-    // Act & Assert
-    expect(() => new PlayerEntity(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildPlayer = () => new PlayerEntity(input);
+
+    // Assert
+    expect(buildPlayer).toThrow(InvalidSaveDataError);
   });
 
   describe('When its belongings are read', () => {

@@ -43,8 +43,11 @@ describe('TerraformationLevelEntity', () => {
       unitPurificationLevel: 700
     };
 
-    // Act & Assert
-    expect(() => new TerraformationLevelEntity(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildTerraformationLevel = () => new TerraformationLevelEntity(input);
+
+    // Assert
+    expect(buildTerraformationLevel).toThrow(InvalidSaveDataError);
   });
 
   describe('When summarized', () => {

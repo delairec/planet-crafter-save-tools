@@ -20,8 +20,11 @@ describe('InventoryEntity', () => {
     // Arrange
     const input = {id: 42, worldObjectIds: ['1', '2'], size: NaN};
 
-    // Act & Assert
-    expect(() => new InventoryEntity(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildInventory = () => new InventoryEntity(input);
+
+    // Assert
+    expect(buildInventory).toThrow(InvalidSaveDataError);
   });
 
   describe('When asked whether it holds a world object', () => {

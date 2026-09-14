@@ -20,12 +20,15 @@ describe('WorldObjectEntity', () => {
     // Arrange
     const input = {id: '', name: 'Drill0' as const};
 
-    // Act & Assert
-    expect(() => new WorldObjectEntity(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildWorldObject = () => new WorldObjectEntity(input);
+
+    // Assert
+    expect(buildWorldObject).toThrow(InvalidSaveDataError);
   });
 
-  describe('When asked whether it is an energy fuse', () => {
-    it('should be an energy fuse when it carries the energy fuse name', () => {
+  describe('When it carries the energy fuse name', () => {
+    it('should be an energy fuse', () => {
       // Arrange
       const worldObject = new WorldObjectEntity({id: '1', name: 'FuseEnergy1' as WorldObjectName});
 
@@ -35,8 +38,10 @@ describe('WorldObjectEntity', () => {
       // Assert
       expect(energyFuse).toBe(true);
     });
+  });
 
-    it('should not be an energy fuse when it carries any other name', () => {
+  describe('When it carries any other name', () => {
+    it('should not be an energy fuse', () => {
       // Arrange
       const worldObject = new WorldObjectEntity({id: '1', name: 'Drill0' as const});
 
