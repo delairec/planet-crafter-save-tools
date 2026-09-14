@@ -710,10 +710,13 @@ DECISION UneGardeDeDepotTientLesDeuxIdiomesSolidQuiSeLisentLigneALigne
 		+ "hors du repertoire des messages, demandent de lire le JSX et restent a la relecture"
 	STATUS implemented
 	CLOSES @OPEN_QUESTION.RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
-	RATIONALE "rejouee sur l'etat d'avant T32, la garde retrouve exactement ce que la tache a"
-		+ "corrige : la signature destructuree de FieldsGroup et les treize assertions non nulles"
-		+ "de MergeResultSection ; rejouee sur la coquille de document d'avant T32, elle ne rend"
-		+ "rien, ce qui mesure sa limite au lieu de la supposer"
+	RATIONALE "rejouee sur l'arbre de base entier, celui du commit 02e835c d'ou part la branche, la"
+		+ "garde rend vingt lignes : sept signatures destructurees — les cinq composants de"
+		+ "section, FieldsGroupGrid et FieldsGroup — et les treize assertions non nulles de"
+		+ "MergeResultSection, soit exactement ce que T32 a corrige"
+	RATIONALE "sur ce meme arbre de base, elle ne rend rien pour la coquille de document de"
+		+ "entry-server, que T32 a pourtant corrigee : c'est la limite, mesuree sur le meme"
+		+ "perimetre que le chiffre et non supposee"
 	RATIONALE "elle suit la forme des quatre gardes existantes : pas de lecture de l'historique"
 		+ "git, reponse en une fraction de seconde, lancable seule et groupee, parcours et rapport"
 		+ "pris au module commun"
