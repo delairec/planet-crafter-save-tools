@@ -743,27 +743,3 @@ OPEN_QUESTION UneDecisionNommeCeQuElleGouverneParUnChampAppliesTo
 			+ "2026-09-14, une recherche de texte la ou un pied de page devrait repondre"
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-76.md, PR #76, partie A"
 		+ "remediation 5"
-
-OPEN_QUESTION UnReferentDejaTraverseNApparaitPasDansLePiedDePage
-	DESC "a trancher : un referent GOVERNED_BY que la traversee atteint deja par une REF sortante"
-		+ "n'est pas repris dans le pied de page, et --skip reasoning le retire alors du paquet"
-		+ "sans le rendre au pied de page"
-	DESC "defaut de l'outil awawa 2.7.0, mesure le 2026-09-14 :"
-		+ "LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue porte APPLIES_TO_TASK vers"
-		+ "T42, refs la rend en arete entrante, et context --skip reasoning ne la nomme nulle part"
-	STATUS specified
-	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
-	RATIONALE "la REF qui masque l'arete est nichee sous RATIONALE, que AGENTS.md fait ecarter par"
-		+ "--skip reasoning avant d'implementer : la decision qui contraint le plus la garde de T42"
-		+ "disparait exactement de la commande recommandee"
-	RATIONALE "portee etroite : sur les sept cibles du retrofit, T42 est la seule ou le cas se"
-		+ "produit, les six autres rendant tous leurs referents"
-	RECOMMENDATION "signaler la limite a l'auteur de l'outil par un rapport d'usage, et d'ici la ne"
-		+ "pas nicher de REF vers une decision que la meme entite nomme deja par APPLIES_TO"
-		REF @DECISION.UneDecisionNommeLePaquetOuLaTacheQuElleContraint
-		REJECTED "retirer la REF de RATIONALE sur T42 pour forcer l'arete au pied de page : la"
-			+ "phrase de RATIONALE nomme la decision, et une mention non indexee est ce que L025"
-			+ "refuse"
-		REJECTED "accepter sans rien noter : le pied de page est precisement ce que le champ"
-			+ "APPLIES_TO a ete declare pour rendre, et une cible sur sept ne le rend pas"
-	SOURCE "mesure du 2026-09-14, livraison de APPLIES_TO_PACKAGE et APPLIES_TO_TASK, PR #77"
