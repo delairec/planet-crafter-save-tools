@@ -317,6 +317,7 @@ TASK T43_SpecsDeDomaineCoreMapping
 		+ "regles de fusion"
 	STATUS implemented
 	WAVE "4"
+	PR "79"
 	AFTER @TASK.T38_ConformiteCoreMapping
 	RATIONALE "deuxieme des trois pull requests de T38 ; le releve est celui de la revue du"
 		+ "2026-09-07 et se reaudite au demarrage, T15 ayant reecrit les specs d'entites"

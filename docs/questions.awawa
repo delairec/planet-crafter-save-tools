@@ -804,4 +804,4 @@ OPEN_QUESTION LesAttendusDeDeuxSpecsDeFusionRestentEtalesDepuisUneFixture
 			+ ": la spec de l'ordre des saves rejouerait la couverture de mergeSaveConfigurations"
 		REJECTED "laisser l'etalement en place : le test recopie son entree et ne peut pas echouer"
 			+ "sur la configuration retenue"
-	SOURCE "reaudit de T43 du 2026-09-14"
+	SOURCE "reaudit de T43 du 2026-09-14, PR #79"

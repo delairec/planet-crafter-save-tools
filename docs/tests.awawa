@@ -435,7 +435,7 @@ DECISION UnAttenduPartielLaisseAuTestVoisinLeChampQuIlCouvre
 	SPEC "la spec de la grille energetique asserte la collection des optimiseurs sans reprojection,"
 		+ "et laisse la part de production au test qui la couvre"
 		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts"
-	SOURCE "T43, reaudit du releve du 2026-09-07"
+	SOURCE "T43, reaudit du releve du 2026-09-07, PR #79"
 
 DECISION UneSpecDeFabriqueAsserteContreSonEntreeQuandLIdentiteEstLeComportement
 	DESC "une spec de fabrique dont le comportement est de rendre ce qu'on lui a donne compare son"
@@ -456,7 +456,7 @@ DECISION UneSpecDeFabriqueAsserteContreSonEntreeQuandLIdentiteEstLeComportement
 	SPEC "les specs de value objects du domaine gardent leur comparaison a l'entree, et leurs tests"
 		+ "de rejet separent action et assertion"
 		IMPL "packages/core-mapping/src/domain/valueObjects"
-	SOURCE "T43, reaudit du releve du 2026-09-07"
+	SOURCE "T43, reaudit du releve du 2026-09-07, PR #79"
 
 DECISION LePremierDescribeNommeLaRegleQueLaSpecCouvre
 	DESC "le premier describe d'une spec nomme en langage metier la regle que le fichier couvre,"
@@ -472,4 +472,4 @@ DECISION LePremierDescribeNommeLaRegleQueLaSpecCouvre
 		+ "describe"
 	SPEC "le premier describe de la spec de l'ordre des saves nomme cette regle"
 		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts"
-	SOURCE "T43, reaudit du releve du 2026-09-07"
+	SOURCE "T43, reaudit du releve du 2026-09-07, PR #79"
