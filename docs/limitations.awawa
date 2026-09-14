@@ -234,3 +234,44 @@ DECISION LesReferentsDUnContexteSeLisentParShow
 	REJECTED "laisser la question ouverte jusqu'au changement de l'outil : aucune action de ce"
 		+ "depot ne peut la fermer"
 	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+OPEN_QUESTION LEtatDAttenteDHydratationNEstCouvertParAucunScenario
+	DESC "le troisieme etat de chargement de la page — le repli affiche tant que l'UI n'est pas"
+		+ "montee — n'a pas de scenario"
+	STATUS superseded
+	SOURCE "constate le 2026-09-14, T40, PR #78"
+
+DECISION LEtatDAttenteDHydratationResteSansScenarioEtSeGardeParLeRole
+	DESC "limitation acceptee : le repli d'hydratation est le seul des trois etats de chargement"
+		+ "que le harnais ne couvre pas, et il reste sans scenario"
+	DESC "garde : un scenario designe l'indicateur d'activite par son role aria status, jamais par"
+		+ "son libelle, que le repli d'hydratation porte a l'identique"
+	CLOSES @OPEN_QUESTION.LEtatDAttenteDHydratationNEstCouvertParAucunScenario
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	STATUS implemented
+	RATIONALE "symptome : des trois etats de chargement de la page, seuls les deux qui entourent la"
+		+ "lecture d'un fichier ont un scenario. Cause : les deux autres s'observent en retenant la"
+		+ "lecture, ici il n'y a rien a retenir — routes/index.tsx leve isReady dans onMount, si"
+		+ "bien que la fenetre est l'hydratation elle-meme et se referme au montage"
+		REF @DECISION.UnEtatDeChargementSObserveEnRetenantLaLectureDuFichier
+	RATIONALE "le libelle est partage : displayRouteLoadingLabel et spinnerLoadingLabel valent tous"
+		+ "deux « Loading... » dans deux modules de messages distincts. Seul le role les separe —"
+		+ "le repli est un p sans role, l'indicateur un span role=status — et c'est par ce role que"
+		+ "les scenarios livres designent deja l'indicateur, donc aucun d'eux n'attrape l'un pour"
+		+ "l'autre"
+	RATIONALE "la garde des locators de T42 est l'endroit ou un libelle partage entre deux etats a"
+		+ "a etre appele ambigu : c'est pour cela que cette decision contraint cette tache"
+	REJECTED "ralentir le chargement du module d'hydratation par une interception de requete du"
+		+ "runner : le scenario porterait sur le decoupage en chunks de la build de production,"
+		+ "dont les noms sont hashes et qui n'est le contrat de personne, et n'asserterait que le"
+		+ "calendrier de montage du framework"
+	REJECTED "ajouter a la production un moyen de retarder l'hydratation : un crochet de test dans"
+		+ "la page, ce que la vague a deja ecarte pour les deux autres etats"
+	REJECTED "laisser la question ouverte pour que le manque reste visible : il est tranche, et la"
+		+ "garde du libelle partage est ce qui devait survivre"
+	SPEC "les scenarios d'etat de chargement designent l'indicateur d'activite par son role et"
+		+ "jamais par son libelle"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
+	SOURCE "constate le 2026-09-14, T40, PR #78"
+	SOURCE "arbitrage utilisateur du 2026-09-14, revue de la PR #78"
