@@ -664,36 +664,6 @@ OPEN_QUESTION LaCasseDeLExtensionJsonNEstPasLueDeLaMemeFaconPartout
 			+ "diagnostic qui ne nomme pas la cause"
 	SOURCE "T38, PR #76, 2026-09-14"
 
-OPEN_QUESTION LIndentationParTabulationDuFormatAwawaEstElleInherente
-	DESC "a trancher par les auteurs d'awawa : la tabulation en indentation unique est-elle"
-		+ "inherente au format — la region d'indentation portant un sens qu'un equivalent en"
-		+ "espaces n'exprimerait pas sans ambiguite, ou parti pris de forme canonique unique a la"
-		+ "gofmt — ou un choix d'implementation qui pourrait etre leve ou rendu configurable"
-	DESC "mesure sur awawa 2.7.0, corpus jetable : un corpus indente par espaces tombe en L001 au"
-		+ "niveau erreur, lint sort en 1 sans meme --strict, le parseur lit quand meme le fichier,"
-		+ "fmt reecrit l'indentation en une tabulation par niveau sans condition, et ni --help ni"
-		+ "un fichier de configuration n'offrent d'option d'indentation"
-	DESC "ce que la reponse change : un projet dont le code est indente par espaces paie un cout de"
-		+ "traduction recurrent quand sa specification s'ecrit dans un format a tabulation seule ;"
-		+ "la fiche T38 en portait une transcription fautive, un constat reclamant des tabulations"
-		+ "dans des sources qui n'en portent aucune"
-		REF @TASK.T38_ConformiteCoreMapping
-	STATUS specified
-	RATIONALE "la question est posee aux auteurs de l'outil et non au projet ; elle vit dans le"
-		+ "corpus parce que rien hors du corpus n'atteint la session suivante, et le rapport"
-		+ "d'usage de la PR est le canal vers eux"
-	SOURCE "revue de la PR #76, fil 4004912461, 2026-09-14"
-
-OPEN_QUESTION UnNomQuiNePortePasSonOperateurEstUneRegleGeneraleOuDeProjet
-	DESC "a trancher : general ou specifique au projet ; regle candidate pour"
-		+ "~/.ai/instructions/standards/coding.md, a cote de STD-8 qui ne couvre que les fonctions"
-		+ "— une valeur est nommee par son role, jamais par l'operateur qui la produit"
-	STATUS specified
-	BLOCKS @DECISION.UnNomDeValeurPorteSonRoleEtNonLOperateurQuiLaProduit
-	RATIONALE "la revue a produit la regle sur deux occurrences du meme repertoire de fusion, et"
-		+ "rien dans l'incident n'est propre a ce depot"
-	SOURCE "revue de la PR #76, fils 4005126361 et 4005132255, 2026-09-14"
-
 OPEN_QUESTION UnCaractereInvisibleEcritEnClairEstUneRegleGeneraleOuDeProjet
 	DESC "a trancher : general ou specifique au projet ; regle candidate — un caractere invisible"
 		+ "s'ecrit par sa sequence d'echappement, jamais en clair dans une source"
@@ -715,17 +685,6 @@ OPEN_QUESTION UnCaractereInvisibleEcritEnClairEstUneRegleGeneraleOuDeProjet
 		REJECTED "une garde de depot sur les caracteres invisibles : la regle n'est pas encore"
 			+ "tranchee, et CFG-5 met la garde apres l'arbitrage, pas avant"
 	SOURCE "revue de la PR #76, fil 4005182730, 2026-09-14"
-
-OPEN_QUESTION UnCommentairePanneauVersUneEntiteEstUneRegleGeneraleOuDeProjet
-	DESC "a trancher : general ou specifique au projet ; regle candidate pour"
-		+ "~/.ai/instructions/standards/coding.md, troisieme exception a STD-5 — un commentaire qui"
-		+ "ne fait que nommer l'element de suivi portant une interrogation non tranchee n'est pas"
-		+ "un commentaire explicatif"
-	STATUS specified
-	BLOCKS @DECISION.UneInterrogationEnCommentaireNommeLaQuestionOuverteQuiLaPorte
-	RATIONALE "STD-5 lu seul fait supprimer le commentaire, ce que T38 a fait ; la decision de"
-		+ "projet l'empeche ici et nulle part ailleurs"
-	SOURCE "revue de la PR #76, fil 4005208926, 2026-09-14"
 
 OPEN_QUESTION LeLienEntreEpaveProceduraleEtPortailEstInconnu
 	DESC "a trancher : les objets ProceduralWreck et ProceduralInstanceGenerator sont-ils engendres"

@@ -674,28 +674,6 @@ DECISION UneVueQueLeCorpusRendDejaNEstPasRecopieeDedans
 		IMPL "docs/taches.awawa"
 	SOURCE "revue de la PR #75, arbitrage utilisateur du 2026-09-14"
 
-DECISION UnNomDeValeurPorteSonRoleEtNonLOperateurQuiLaProduit
-	DESC "une valeur locale est nommee par son role dans la regle, jamais par l'operateur qui l'a"
-		+ "produite : metadataAContribution, pas metadataAOrDefault"
-	DESC "la constante neutre porte le meme role : NO_METADATA_CONTRIBUTION,"
-		+ "NO_STATISTICS_CONTRIBUTION"
-	STATUS implemented
-	RATIONALE "OrDefault est la signature de ?? : le nom cesse de dire ce que la valeur est des que"
-		+ "l'implementation change, et la regle de fusion dit deja ce qu'une save absente apporte,"
-		+ "rien"
-	RATIONALE "validatedMetadataA, le nom d'avant T38, etait faux — rien n'y est valide ; OrDefault"
-		+ "etait vrai et descriptif de l'operateur, ce que la revue refuse aussi"
-	REJECTED "metadataAOrDefault et statisticsAOrDefault : le nom porte l'operateur, detail"
-		+ "d'implementation"
-	REJECTED "metadataOfSaveA : indistinguable du parametre metadataA, et muet sur ce que vaut la"
-		+ "valeur quand la save n'a pas la section"
-	SPEC "aucune valeur locale de mergeGlobalMetadata ni de mergeStatistics ne porte OrDefault ni"
-		+ "Validated"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeStatistics.ts"
-	SOURCE "arbitrage de l'utilisateur du 2026-09-14, revue de la PR #76, fils 4005126361 et"
-		+ "4005132255"
-
 DECISION UneInterrogationEnCommentaireNommeLaQuestionOuverteQuiLaPorte
 	DESC "une interrogation laissee en commentaire dans une source est conservee et nomme, sur la"
 		+ "ligne suivante, la question ouverte qui la porte"
@@ -706,10 +684,9 @@ DECISION UneInterrogationEnCommentaireNommeLaQuestionOuverteQuiLaPorte
 		+ "supprimer emporte l'interrogation avec lui, ce que T38 avait fait"
 	RATIONALE "aucune commande ne lit un commentaire : l'interrogation laissee la seule n'atteint"
 		+ "pas la session suivante, d'ou l'entite a cote"
-	RATIONALE "exception a STD-5 propre au projet, pas de regle generale proposee : le panneau ne"
+	RATIONALE "exception a STD-5 propre au projet, pas de regle generale a proposer : le panneau ne"
 		+ "vaut que parce qu'une entite indexee existe a l'autre bout, ce que seul un projet a"
 		+ "corpus offre"
-		REF @OPEN_QUESTION.UnCommentairePanneauVersUneEntiteEstUneRegleGeneraleOuDeProjet
 	REJECTED "supprimer le commentaire et ne garder que la question ouverte : le lecteur de la"
 		+ "table des libelles ne trouve plus l'interrogation la ou elle porte"
 	REJECTED "garder le commentaire seul, sans entite : aucune commande ne le lit et status ne le"
