@@ -1,9 +1,11 @@
 import {A} from "@solidjs/router";
 import {
+  notFoundRouteBackHomeArrow,
   notFoundRouteBackHomeLabel,
   notFoundRouteStatusCode,
   notFoundRouteTitle
 } from "~/messages/notFoundRouteMessages";
+import Emoji from "~/components/Emoji";
 
 export default function NotFound() {
   return (
@@ -12,7 +14,7 @@ export default function NotFound() {
         {notFoundRouteStatusCode}&nbsp;
         <span class="uppercase middle text-lg">{notFoundRouteTitle}</span>
       </p>
-      <A href="/">{notFoundRouteBackHomeLabel}</A>
+      <A href="/"><Emoji content={notFoundRouteBackHomeArrow}/> {notFoundRouteBackHomeLabel}</A>
     </main>
   );
 }
