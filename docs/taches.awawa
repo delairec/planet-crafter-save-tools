@@ -118,8 +118,9 @@ TASK T15_EntitesDuDomaineEnClasses
 TASK T32_ConformiteUiSaveManager
 	DESC "conformite de ui-save-manager : idiomes Solid, messages, duplication ; aucun changement"
 		+ "de comportement visible"
-	STATUS specified
+	STATUS implemented
 	WAVE "4"
+	PR "71"
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "issue de la revue de code complete du 2026-09-07 ; travail de conformite STD-3 et"
 		+ "ARCH-4"
@@ -139,15 +140,16 @@ TASK T32_ConformiteUiSaveManager
 	SPEC "aucun composant ne destructure ses props en signature : la reactivite est perdue a tout"
 		+ "changement de prop"
 		IMPL "packages/ui-save-manager/src/components"
+		IMPL "packages/ui-save-manager/src/entry-server.tsx"
 	SPEC "acceptation : aucun map rendant du JSX, aucune prop destructuree en signature, aucune"
 		+ "assertion non nulle sous un affichage conditionnel dans src"
 		IMPL "packages/ui-save-manager/src"
 	SPEC "acceptation : aucune chaine utilisateur hors du repertoire des messages, hors attributs"
 		+ "techniques"
-		IMPL "packages/ui-save-manager/src"
+		IMPL "packages/ui-save-manager/src/messages"
 	SPEC "acceptation : une seule definition de ColumnViewModel dans le depot"
-		IMPL "packages/ui-save-manager/src"
-	SPEC "acceptation : la build de l'UI est verte, le type-check l'est une fois T17 fusionnee"
+		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::ColumnViewModel"
+	SPEC "acceptation : la build de l'UI, le type-check et les scenarios d'UI sont verts"
 		IMPL "packages/ui-save-manager/package.json::ui-save-manager"
 
 TASK T24_HarnaisDeTestsUiParScenarios

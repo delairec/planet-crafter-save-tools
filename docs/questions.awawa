@@ -478,3 +478,77 @@ OPEN_QUESTION UneEntiteNAtteintPasLaPresentationEstUneRegleGeneraleOuDeProjet
 		REJECTED "la laisser dans le corpus seul : le prochain package core- ecrit ailleurs refera"
 			+ "passer une entite par un PresenterPort"
 	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+OPEN_QUESTION RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
+	DESC "les quatre criteres d'idiome de T32 — aucun map rendant du JSX, aucune prop destructuree"
+		+ "en signature, aucune assertion non nulle sous un affichage conditionnel, aucune chaine"
+		+ "utilisateur hors du repertoire des messages — sont verifies une fois a la main et par"
+		+ "rien ensuite"
+	DESC "symptome a craindre : une prop destructuree reintroduite passe la build, le type-check et"
+		+ "les scenarios, la perte de reactivite restant masquee tant que les blocs concernes sont"
+		+ "demontes et remontes a chaque resultat"
+	STATUS superseded
+	BLOCKS @PACKAGE.ui_save_manager
+	RATIONALE "T32 a corrige sept composants destructures, un map rendant du JSX et treize"
+		+ "assertions non nulles ; rien dans le depot n'empeche le prochain composant de les"
+		+ "reintroduire"
+	RATIONALE "les gardes du depot lisent ligne a ligne, et deux des quatre motifs ne se"
+		+ "distinguent pas a cette echelle : un map rendant du JSX ressemble a un map ordinaire,"
+		+ "une chaine utilisateur a un attribut technique. La garde serait donc plus fragile que"
+		+ "les quatre existantes, et c'est ce qui rend la question ouverte plutot que tranchee"
+		REF @DECISION.LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
+	RATIONALE "le motif de la prop destructuree n'est pas une preference de style : la perte de"
+		+ "reactivite est mesuree, et c'est ce qui justifie de garder le critere plutot que de s'en"
+		+ "remettre a la relecture"
+		REF @DECISION.LesPropsSolidSeLisentParLObjetPropsJamaisDestructurees
+	RECOMMENDATION "une garde de depot supplementaire, sur le modele des quatre existantes,"
+		+ "restreinte aux deux motifs qui se lisent ligne a ligne : la prop destructuree en"
+		+ "signature et l'assertion non nulle sur un accesseur"
+		REJECTED "un linter configure a la place d'un script dedie : deja ecarte pour les gardes"
+			+ "existantes, et la raison n'a pas change"
+		REJECTED "s'en remettre a la revue seule : les quatre gardes existantes ont ete ecrites"
+			+ "parce qu'une revue ne tient pas un motif repete"
+		REJECTED "couvrir les quatre motifs : les deux autres demandent de lire le JSX, pas des"
+			+ "lignes"
+	SOURCE "constat du 2026-09-13, T32, PR #71"
+
+OPEN_QUESTION UnCaractereDecoratifCousuDansUneValeurDeViewModelEchappeAuMasquage
+	DESC "energyLevelsSectionWorkInProgressLabel porte l'icone du chantier dans la chaine"
+		+ "elle-meme, et EnergyLevelsPresenter la coud dans des valeurs de ViewModel que l'UI rend"
+		+ "en texte : le composant Icon ne peut pas l'atteindre"
+	DESC "symptome : le lecteur d'ecran annonce le nom du caractere dans chaque cellule de"
+		+ "consommation et de disponible, et dans le titre de la grille de consommation"
+	STATUS specified
+	BLOCKS @PACKAGE.ui_save_manager
+	BLOCKS @PACKAGE.core_mapping
+	RATIONALE "la decision qui regle la fleche de la page 404 ne regle pas ce cas : elle suppose"
+		+ "que le caractere decoratif est un noeud de JSX, ce qu'une valeur de ViewModel n'est pas"
+		REF @DECISION.UnCaractereDecoratifEstRenduParLeComposantIcon
+	RATIONALE "le libelle est declare deux fois, dans les messages de core-mapping et dans ceux de"
+		+ "l'UI, donc le sort de l'un est le sort de l'autre"
+	RECOMMENDATION "sortir l'icone de la chaine des deux cotes et la rendre par le composant Icon"
+		+ "la ou l'UI compose du JSX ; pour les valeurs de cellule, laisser le ViewModel porter le"
+		+ "texte seul et marquer l'etat de chantier au niveau de la grille, une fois"
+		REJECTED "rendre les valeurs de cellule en JSX depuis core-mapping : la presentation"
+			+ "rendrait du balisage, ce que la frontiere lui interdit"
+		REJECTED "laisser l'icone dans la valeur : c'est le defaut constate, pas une limitation"
+			+ "acceptee"
+	SOURCE "constat en revue de la PR #71, 2026-09-14, T32"
+
+OPEN_QUESTION LeTexteDuCorpusSEcritEnChainesDUneLigneQueFmtReplie
+	DESC "un ajout au corpus par heredoc avec des lignes de continuation + ecrites a la main a"
+		+ "coute 36 L014 et un git checkout du fichier dans la PR #71, 54 L014 dans la PR #72 ;"
+		+ "quatre ajouts en chaines d'une seule ligne, repliees par fmt, ont coute 0"
+	STATUS specified
+	BLOCKS @DECISION.LeCorpusEstDecoupeParDomaine
+	RATIONALE "la remediation 5 du rapport de la PR #72 disait la meme chose et vivait dans le"
+		+ "rapport seul ; l'agent suivant ne l'a pas lue"
+	RATIONALE "la forme qui marche est visible dans la transcription de la revue de la PR #71 : une"
+		+ "chaine par champ sur une ligne, puis awawa fmt"
+	RECOMMENDATION "la section « editer le corpus comme du texte » d'AGENTS.md dit la forme : une"
+		+ "chaine par champ sur une seule ligne, fmt la replie ; jamais de continuation + ecrite a"
+		+ "la main"
+		REJECTED "composer l'entite dans un fichier puis l'ajouter : la forme des continuations"
+			+ "reste a ecrire a la main"
+		REJECTED "s'en remettre au rapport : deja fait une fois, sans effet"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-71.md, PR #71"

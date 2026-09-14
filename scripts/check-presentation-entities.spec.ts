@@ -5,25 +5,37 @@ describe('isPresentationFile', () => {
 
   describe('When the file lives under a presentation directory', () => {
     it('should recognise it wherever that directory sits', () => {
-      // Act & Assert
-      expect(isPresentationFile('packages/core-mapping/src/presentation/PlayersPresenter.ts')).toBe(true);
-      expect(isPresentationFile('packages/core-mapping/src/presentation/viewModels/PlayersViewModel.ts')).toBe(true);
+      // Act
+      const isPresenter = isPresentationFile('packages/core-mapping/src/presentation/PlayersPresenter.ts');
+      const isViewModel = isPresentationFile('packages/core-mapping/src/presentation/viewModels/PlayersViewModel.ts');
+
+      // Assert
+      expect(isPresenter).toBe(true);
+      expect(isViewModel).toBe(true);
     });
   });
 
   describe('When the file lives outside a presentation directory', () => {
     it('should leave it alone', () => {
-      // Act & Assert
-      expect(isPresentationFile('packages/core-mapping/src/application/LoadPlayersSection.ts')).toBe(false);
-      expect(isPresentationFile('packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts')).toBe(false);
+      // Act
+      const isUseCase = isPresentationFile('packages/core-mapping/src/application/LoadPlayersSection.ts');
+      const isInfrastructureService = isPresentationFile('packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts');
+
+      // Assert
+      expect(isUseCase).toBe(false);
+      expect(isInfrastructureService).toBe(false);
     });
   });
 
   describe('When the file is generated', () => {
     it('should leave it alone even under a presentation directory', () => {
-      // Act & Assert
-      expect(isPresentationFile('packages/ui-save-manager/node_modules/x/presentation/Thing.ts')).toBe(false);
-      expect(isPresentationFile('packages/core-mapping/dist/presentation/PlayersPresenter.js')).toBe(false);
+      // Act
+      const isInstalledDependency = isPresentationFile('packages/ui-save-manager/node_modules/x/presentation/Thing.ts');
+      const isBuildOutput = isPresentationFile('packages/core-mapping/dist/presentation/PlayersPresenter.js');
+
+      // Assert
+      expect(isInstalledDependency).toBe(false);
+      expect(isBuildOutput).toBe(false);
     });
   });
 });

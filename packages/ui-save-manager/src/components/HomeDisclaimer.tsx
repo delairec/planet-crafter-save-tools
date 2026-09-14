@@ -1,13 +1,16 @@
 import {
+  disclaimerBulletIcon,
   fileSafetyDisclaimerLabel,
   fileSafetyDisclaimerMessage,
+  hideDisclaimersLabel,
   privacyDisclaimerLabel,
   privacyDisclaimerMessage,
   securityDisclaimerLabel,
-  securityDisclaimerMessage
+  securityDisclaimerMessage,
+  showDisclaimersLabel
 } from "~/messages/appMessages";
 import {createSignal} from "solid-js";
-import Emoji from "~/components/Emoji";
+import Icon from "~/components/Icon";
 
 export default function HomeDisclaimer() {
 
@@ -16,16 +19,17 @@ export default function HomeDisclaimer() {
   return (
     <details class="surface surface-warning">
       <summary class="text-center" onClick={() => setIsOpen((previous) => !previous)}>
-        Click here to {isOpen() ? 'hide' : 'show'} privacy, security and file safety disclaimers
+        {isOpen() ? hideDisclaimersLabel : showDisclaimersLabel}
       </summary>
       <p>
-        <strong><Emoji content="🥔"/> {privacyDisclaimerLabel}</strong>: {privacyDisclaimerMessage}
+        <strong><Icon content={disclaimerBulletIcon}/> {privacyDisclaimerLabel}</strong>: {privacyDisclaimerMessage}
       </p>
       <p>
-        <strong><Emoji content="🥔"/> {securityDisclaimerLabel}</strong>: {securityDisclaimerMessage}
+        <strong><Icon content={disclaimerBulletIcon}/> {securityDisclaimerLabel}</strong>: {securityDisclaimerMessage}
       </p>
       <p>
-        <strong><Emoji content="🥔"/> {fileSafetyDisclaimerLabel}</strong>: {fileSafetyDisclaimerMessage}
+        <strong><Icon
+          content={disclaimerBulletIcon}/> {fileSafetyDisclaimerLabel}</strong>: {fileSafetyDisclaimerMessage}
       </p>
     </details>)
 }

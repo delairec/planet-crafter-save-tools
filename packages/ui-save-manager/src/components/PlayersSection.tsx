@@ -8,9 +8,9 @@ interface PlayersProps {
   viewModel: Resource<PlayersViewModel>;
 }
 
-export default function PlayersSection({viewModel}: PlayersProps) {
+export default function PlayersSection(props: PlayersProps) {
   return (
-    <SectionState title={playersSectionTitle} resource={viewModel}>
+    <SectionState title={playersSectionTitle} resource={props.viewModel}>
       {(players) => (<>
         <h3>{playersSectionTitle}</h3>
         <div class="grid-container">

@@ -1,19 +1,17 @@
 import {Accessor, For} from "solid-js";
+import {TableViewModel} from "core-mapping/presentation/viewModels/TableViewModel";
 
-export interface Column {
-  header: string,
-  values: string[]
-}
+export type ColumnViewModel = TableViewModel['columns'][number];
 
 interface FieldsGroupProps {
-  columns: Accessor<Column[]>,
+  columns: Accessor<ColumnViewModel[]>,
 }
 
-export default function FieldsGroup({columns}: FieldsGroupProps) {
+export default function FieldsGroup(props: FieldsGroupProps) {
 
   return (
     <div class="fields-group readonly mb-2">
-      <For each={columns()}>
+      <For each={props.columns()}>
         {(column) => (
           <div class="field">
             <div class="label">{column.header}</div>

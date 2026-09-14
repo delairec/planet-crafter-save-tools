@@ -1,23 +1,23 @@
 import {For} from "solid-js";
-import FieldsGroup, {Column} from "./FieldsGroup";
+import FieldsGroup, {ColumnViewModel} from "./FieldsGroup";
 
 interface FieldsGroupGridProps<T> {
   title: string;
   items: T[];
   itemLabel: (item: T) => string;
-  columns: (item: T) => Column[];
+  columns: (item: T) => ColumnViewModel[];
 }
 
-export default function FieldsGroupGrid<T>({title, items, itemLabel, columns}: FieldsGroupGridProps<T>) {
+export default function FieldsGroupGrid<T>(props: FieldsGroupGridProps<T>) {
   return (
     <>
-      <h5>{title}</h5>
+      <h5>{props.title}</h5>
       <div class="grid-container">
-        <For each={items}>
+        <For each={props.items}>
           {(item) => (
             <div class="grid-item">
-              <h5>{itemLabel(item)}</h5>
-              <FieldsGroup columns={() => columns(item)}/>
+              <h5>{props.itemLabel(item)}</h5>
+              <FieldsGroup columns={() => props.columns(item)}/>
             </div>
           )}
         </For>

@@ -8,9 +8,9 @@ interface GlobalProgressionProps {
   viewModel: Resource<GlobalProgressionViewModel>;
 }
 
-export default function GlobalProgressionSection({viewModel}: GlobalProgressionProps) {
+export default function GlobalProgressionSection(props: GlobalProgressionProps) {
   return (
-    <SectionState title={globalProgressionSectionTitle} resource={viewModel}>
+    <SectionState title={globalProgressionSectionTitle} resource={props.viewModel}>
       {(globalProgression) => (
         <div>
           <h3>{globalProgressionSectionTitle}</h3>

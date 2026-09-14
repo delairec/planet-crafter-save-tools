@@ -8,9 +8,9 @@ interface SaveConfigurationProps {
   viewModel: Resource<SaveConfigurationViewModel>;
 }
 
-export default function SaveConfigurationSection({viewModel}: SaveConfigurationProps) {
+export default function SaveConfigurationSection(props: SaveConfigurationProps) {
   return (
-    <SectionState title={saveConfigurationSectionTitleLabel} resource={viewModel}>
+    <SectionState title={saveConfigurationSectionTitleLabel} resource={props.viewModel}>
       {(saveConfiguration) => (
         <div>
           <h3>{saveConfigurationSectionTitleLabel} {saveConfiguration().title} ({saveConfiguration().mode})</h3>

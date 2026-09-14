@@ -12,9 +12,9 @@ interface TerraformationLevelsProps {
   viewModel: Resource<TerraformationLevelsViewModel>;
 }
 
-export default function TerraformationLevelsSection({viewModel}: TerraformationLevelsProps) {
+export default function TerraformationLevelsSection(props: TerraformationLevelsProps) {
   return (
-    <SectionState title={terraformationLevelsSectionTitle} resource={viewModel}>
+    <SectionState title={terraformationLevelsSectionTitle} resource={props.viewModel}>
       {(terraformationLevels) => (<>
         <h3>{terraformationLevelsSectionTitle}</h3>
         <div class="grid-container">

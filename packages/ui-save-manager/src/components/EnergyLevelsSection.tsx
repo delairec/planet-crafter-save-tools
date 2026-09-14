@@ -21,9 +21,9 @@ interface EnergyLevelsProps {
   viewModel: Resource<EnergyLevelsViewModel>;
 }
 
-export default function EnergyLevelsSection({viewModel}: EnergyLevelsProps) {
+export default function EnergyLevelsSection(props: EnergyLevelsProps) {
   return (
-    <SectionState title={energyLevelsSectionTitle} resource={viewModel}>
+    <SectionState title={energyLevelsSectionTitle} resource={props.viewModel}>
       {(energyLevels) => (
         <div>
           <h3>{energyLevelsSectionTitle}</h3>
