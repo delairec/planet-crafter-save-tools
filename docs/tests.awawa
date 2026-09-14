@@ -362,3 +362,55 @@ DECISION UneFixtureDeScenarioEstNommeeParSonContenuEtSonVerdict
 		IMPL "packages/ui-save-manager/e2e/fixtures/README.md::## Naming"
 		IMPL "packages/ui-save-manager/e2e/fixtures"
 	SOURCE "revue de la PR #75, arbitrage utilisateur du 2026-09-14, T24"
+
+DECISION UnScenarioDUiAsserteCeQueLEcranMontrePasLaRegleQuiLAProduit
+	DESC "un scenario d'UI asserte ce que l'ecran montre d'un message de validation — sa presence,"
+		+ "sa localisation, le fait que ce soit une phrase — jamais le texte que la regle a produit"
+	DESC "un avertissement s'asserte sur un fragment discriminant de sa phrase et sur l'absence du"
+		+ "code qu'il porte dans l'application"
+	DESC "une fixture invalide ne porte qu'un seul manquement, localise sur un enregistrement :"
+		+ "l'attendu du scenario est alors la localisation seule"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
+	RATIONALE "reponse concrete a la ligne d'acceptation de T40 : une fixture invalide montre un"
+		+ "message sans reasserter la regle qui le produit, sinon le scenario double sur trois"
+		+ "moteurs une couverture que core-mapping tient deja"
+		REF @DECISION.UneSpecAsserteUnChampDiscriminantQuandLAttenduNEstPasLitteral
+	RATIONALE "la localisation et le choix d'une phrase plutot qu'un code sont des decisions de"
+		+ "presentation : les asserter a l'ecran couvre ce que seul le bout en bout couvre, et rien"
+		+ "de ce que la regle decide"
+	REJECTED "asserter le message complet que la regle produit"
+	REJECTED "une fixture invalide cumulant plusieurs manquements : l'attendu cesse d'etre une"
+		+ "localisation et redevient la liste des regles violees"
+	SPEC "les scenarios d'erreur et d'avertissement assertent la localisation affichee et un"
+		+ "fragment de phrase, jamais le message complet d'une regle"
+		IMPL "packages/ui-save-manager/e2e/validation-errors.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/warnings.e2e.ts"
+	SOURCE "T40, 2026-09-14"
+
+DECISION UnEtatDeChargementSObserveEnRetenantLaLectureDuFichier
+	DESC "un scenario d'etat de chargement retient la lecture du fichier choisi depuis le test,"
+		+ "puis la relache : l'etat d'activite s'observe au lieu de se courir"
+	DESC "la retenue est installee par un script d'initialisation de page et relachee par un appel"
+		+ "expose sur la fenetre ; la production n'est pas touchee"
+	DESC "la fin de l'etat de chargement du flux d'affichage s'asserte par le bouton rendu et la"
+		+ "donnee a l'ecran, pas par l'absence d'indicateur : chaque section de visualisation porte"
+		+ "le sien"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
+	RATIONALE "une fixture de quelques kilooctets se lit plus vite que le premier sondage du runner"
+		+ ": sans retenue, le scenario passe quand il attrape l'indicateur et casse quand il le"
+		+ "manque, ce qui est un test intermittent et non une couverture"
+	RATIONALE "la retenue a ete verifiee en neutralisant le relachement : les deux scenarios de fin"
+		+ "d'etat echouent alors, ce qui prouve qu'ils n'assertent pas sur un ecran deja arrive"
+	REJECTED "asserter l'indicateur sans retenir la lecture : l'assertion devient intermittente"
+	REJECTED "ralentir la production ou lui ajouter un crochet de test pour rendre l'etat"
+		+ "observable"
+	REJECTED "une retenue portee sur la seule methode de lecture que la production appelle"
+		REF @DECISION.LesScenariosDUiSontDesSpecsPlaywrightSurTroisMoteurs
+	SPEC "les scenarios d'etat de chargement retiennent la lecture sur toute la surface de lecture"
+		+ "d'un blob et la relachent explicitement"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
+	SOURCE "T40, 2026-09-14"
