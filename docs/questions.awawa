@@ -783,3 +783,24 @@ OPEN_QUESTION UneTacheLanceeSansSpecParLivrableEcritSesCriteresApresLeCode
 	STATUS specified
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-78.md, PR #78, partie A"
 		+ "remediation 2"
+
+OPEN_QUESTION UneRevueMeneeHorsDeLaCommandeLaisseLaPrSansCommentaireDeDisponibilite
+	DESC "a trancher : la revue de la PR #79 s'est faite en conversation, sans /awawa-pr-review ;"
+		+ "le fil unique n'a recu aucune reponse et a ete resolu a la main, aucun commentaire de"
+		+ "disponibilite n'a ete poste, et le rapport d'usage a du etre lance sur derogation"
+	DESC "propose : une conversation qui prend un arbitrage sur une PR de tache se clot par"
+		+ "/awawa-pr-review <N> — la reponse dans le fil qu'elle tranche, le commentaire de"
+		+ "disponibilite — et AGENTS.md, section Suivi d'une PR, le dit"
+	STATUS specified
+	BLOCKS @DECISION.UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante
+	RATIONALE "la porte du rapport d'usage repose sur ce commentaire ; sans lui la commande"
+		+ "s'arrete ou demande une derogation, ce qui s'est produit le 2026-09-14 a 22:29Z"
+	RECOMMENDATION "une session interrogee sur l'entite d'un fil de PR repond, puis propose la"
+		+ "ligne /awawa-pr-review <N> ; AGENTS.md nomme cet acte de cloture a cote des deux autres"
+		+ "commandes"
+		REJECTED "laisser la conversation clore la PR : le fil reste sans reponse, la porte du"
+			+ "rapport sans preuve, et l'arbitrage n'atteint la PR que par le corps"
+		REJECTED "ne poster que le commentaire de disponibilite a la main : la reponse dans le fil"
+			+ "et la relecture du corps sont ce que la commande fait et qu'une main oublie"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-15-pr-79.md, PR #79, partie A"
+		+ "remediation 1"
