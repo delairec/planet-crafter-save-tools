@@ -157,7 +157,7 @@ TASK T24_HarnaisDeTestsUiParScenarios
 		+ "bout en bout, du choix des deux saves au fichier telecharge"
 	DESC "derniere tache UI a fusionner : chaque tache UI qui la precede peut deplacer un libelle"
 		+ "et casser un locator"
-	STATUS specified
+	STATUS implemented
 	WAVE "4"
 	AFTER @TASK.T32_ConformiteUiSaveManager
 	RATIONALE "T23 a pose le runner, la configuration, le serveur, la convention de nommage, la"
