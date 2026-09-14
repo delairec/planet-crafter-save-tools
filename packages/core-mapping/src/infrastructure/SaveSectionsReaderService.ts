@@ -20,8 +20,8 @@ import {
 import {WorldObjectName} from "../domain/worldObjectNames";
 import {resolvePlanetName} from "../domain/rules/resolvePlanetName";
 
-function parsePosition(pos: string): [number, number, number] {
-  const [x, y, z] = pos.split(',').map(Number);
+function parsePosition(position: string): [number, number, number] {
+  const [x, y, z] = position.split(',').map(Number);
   return [x, y, z];
 }
 
@@ -57,8 +57,8 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
 
       return new PlayerEntity({
         name: player.name,
-        inventory: playerInventoryIds.map((id) => worldObjects.find((wo) => wo.id === id)?.name ?? id),
-        equipment: playerEquipmentIds.map((id) => worldObjects.find((wo) => wo.id === id)?.name ?? id)
+        inventory: playerInventoryIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),
+        equipment: playerEquipmentIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id)
       });
     });
   }
@@ -77,33 +77,26 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   }
 
   getStatistics(): StatisticsValueObject | undefined {
-    return this.sections.statistics.map((stat) => createStatisticsValueObject({
-      totalCraftedObjects: stat.craftedObjects
+    return this.sections.statistics.map((statistics) => createStatisticsValueObject({
+      totalCraftedObjects: statistics.craftedObjects
     }))[0];
   }
 
   getSaveConfiguration(): SaveConfigurationValueObject | undefined {
-    return this.sections.saveConfigurations.map((config) => createSaveConfigurationValueObject({
-      title: config.saveDisplayName,
-      mode: config.mode,
+    return this.sections.saveConfigurations.map((saveConfiguration) => createSaveConfigurationValueObject({
+      title: saveConfiguration.saveDisplayName,
+      mode: saveConfiguration.mode,
       modifiers: {
-        terraformationPace: config.modifierTerraformationPace,
-        powerConsumption: config.modifierPowerConsumption,
-        gaugeDrain: config.modifierGaugeDrain,
-        meteoOccurrence: config.modifierMeteoOccurence,
-        multiplayerFactor: config.modifierMultiplayerTerraformationFactor
+        terraformationPace: saveConfiguration.modifierTerraformationPace,
+        powerConsumption: saveConfiguration.modifierPowerConsumption,
+        gaugeDrain: saveConfiguration.modifierGaugeDrain,
+        meteoOccurrence: saveConfiguration.modifierMeteoOccurence,
+        multiplayerFactor: saveConfiguration.modifierMultiplayerTerraformationFactor
       }
     }))[0];
   }
 
   getEnergyLevelsRawData(): EnergyLevelsRawDataValueObject {
-
-    // NOTE: production/consumption are scoped per-planet — each planet has its own independent
-    // power grid in-game (see docs/energy-levels.md, section 4). The actual production/
-    // consumption/optimizer-boost rules are domain logic — see
-    // `domain/PlanetEnergyGrid.ts`. This method only maps the save format's raw
-    // world objects into domain entities and groups them by planet.
-
     const allWorldObjects = this.sections.worldObjects;
     const positionedWorldObjects = allWorldObjects.filter(
       (worldObject) => worldObject.pos !== undefined && worldObject.planet !== undefined
