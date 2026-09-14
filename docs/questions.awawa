@@ -766,4 +766,4 @@ OPEN_QUESTION UnReferentDejaTraverseNApparaitPasDansLePiedDePage
 			+ "refuse"
 		REJECTED "accepter sans rien noter : le pied de page est precisement ce que le champ"
 			+ "APPLIES_TO a ete declare pour rendre, et une cible sur sept ne le rend pas"
-	SOURCE "mesure du 2026-09-14, livraison de APPLIES_TO_PACKAGE et APPLIES_TO_TASK"
+	SOURCE "mesure du 2026-09-14, livraison de APPLIES_TO_PACKAGE et APPLIES_TO_TASK, PR #77"

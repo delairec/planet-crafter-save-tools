@@ -744,4 +744,4 @@ DECISION UneDecisionNommeLePaquetOuLaTacheQuElleContraint
 		IMPL "docs/erreurs.awawa"
 	SPEC "AGENTS.md cite cette entite au lieu de reformuler la regle"
 		IMPL "AGENTS.md::APPLIES_TO_PACKAGE"
-	SOURCE "arbitrage de l'utilisateur du 2026-09-14"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-14, PR #77"
