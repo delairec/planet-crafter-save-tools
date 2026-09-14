@@ -1,5 +1,5 @@
 import {describe, it, expect} from 'bun:test';
-import {hasJsonExtension} from './hasJsonExtension.js';
+import {hasJsonExtension} from './jsonExtension.js';
 
 describe('hasJsonExtension', () => {
 

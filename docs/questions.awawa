@@ -646,3 +646,20 @@ OPEN_QUESTION LaLectureDUnFichierDuCorpusPourYAjouterUneEntiteEstElleLegitime
 	STATUS specified
 	BLOCKS @DECISION.AgentsMdNommeUneEntiteModeleParType
 	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
+
+OPEN_QUESTION LaCasseDeLExtensionJsonNEstPasLueDeLaMemeFaconPartout
+	DESC "isJson de initMergeCli retient un fichier d'entree par endsWith('.json'), sensible a la"
+		+ "casse, la ou hasJsonExtension et stripJsonExtension de shared-save-processing ne le sont"
+		+ "pas : un fichier Standard-1.JSON n'est pas ramasse par le parcours du dossier alors que"
+		+ "la validation l'accepterait et que la fusion le nommerait correctement"
+	STATUS specified
+	BLOCKS @PACKAGE.cli_merge
+	RATIONALE "constate en partageant le retrait de l'extension, T38 : la correction sort de"
+		+ "core-mapping et change ce que bun merge ramasse, ce que la tache s'interdit"
+	RECOMMENDATION "faire lire le parcours par hasJsonExtension, seul module a savoir ce qu'est"
+		+ "l'extension json : un dossier de deux saves dont l'une porte .JSON cesse d'etre annonce"
+		+ "comme n'en portant qu'une"
+		REJECTED "garder la sensibilite a la casse et la declarer voulue : elle ne l'est nulle part"
+			+ "ailleurs, et le dossier est alors signale comme ne contenant pas deux saves, un"
+			+ "diagnostic qui ne nomme pas la cause"
+	SOURCE "T38, 2026-09-14"

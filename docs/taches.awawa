@@ -273,6 +273,7 @@ TASK T38_ConformiteCoreMapping
 		IMPL "packages/core-mapping/src/presentation/formatters/formatNumber"
 	SPEC "application : le retrait de l'extension json est partage au lieu d'etre duplique"
 		IMPL "packages/core-mapping/src/application/nameMergedFile.ts"
+		IMPL "packages/shared-save-processing/jsonExtension.js"
 	SPEC "infrastructure : les abreviations et la note restituant ce que fait la methode quittent"
 		+ "SaveSectionsReaderService"
 		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts"
