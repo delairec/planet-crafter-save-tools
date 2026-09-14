@@ -535,49 +535,6 @@ OPEN_QUESTION UnCaractereDecoratifCousuDansUneValeurDeViewModelEchappeAuMasquage
 			+ "acceptee"
 	SOURCE "constat en revue de la PR #71, 2026-09-14, T32"
 
-OPEN_QUESTION UneEntiteIntroduiteParLaPrEnCoursSeReecritOuSeRetireSansSupersession
-	DESC "une entite que la base ne porte pas encore se reecrit sur place, fmt --rename si son nom"
-		+ "change, ou se retire ; les trois gestes de la decision retiree valent pour une entite en"
-		+ "vigueur"
-	DESC "pratique appliquee deux fois dans la PR #71 — la decision Emoji reecrite en Icon le"
-		+ "2026-09-14 a 08:49, la question du verbe d'action supprimee a 09:06 — et ecrite nulle"
-		+ "part : proposee a 08:48, abandonnee a 08:51"
-	STATUS specified
-	BLOCKS @DECISION.UneDecisionRetireeNommeSaSuccesseure
-	RATIONALE "le pilote a verifie a 08:46 que la decision retiree ne contredit pas la reecriture :"
-		+ "son objet est une decision en vigueur ; la distinction tient dans un message de session"
-		+ "et le prochain tour de revue la reperd"
-	RATIONALE "la competence awawa dit qu'une entite remplacee n'est jamais supprimee ; sans regle,"
-		+ "un agent supersede dans la PR — instruction du pilote a 08:44 — ou supprime, selon le"
-		+ "tour"
-	RECOMMENDATION "une decision dit ou s'arrete l'etat de brouillon d'une entite : tant que la"
-		+ "base ne la porte pas, elle se reecrit ou se retire dans la PR qui l'introduit"
-		REJECTED "superseder dans la PR : deux entites et une suppressed pour toujours, pour une"
-			+ "formulation corrigee une heure plus tard par la meme revue"
-		REJECTED "laisser la distinction a la memoire : posee, abandonnee et appliquee deux fois"
-			+ "dans la meme matinee"
-	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-71.md, PR #71"
-
-OPEN_QUESTION UneAffirmationDeRevuePorteLePerimetreDeSaMesure
-	DESC "la garde des idiomes rejouee sur trois fichiers copies a ete annoncee rejouee sur l'etat"
-		+ "d'avant T32 ; sur l'arbre de base entier elle rend vingt lignes, sept signatures"
-		+ "destructurees et treize assertions, et le RATIONALE de la decision de la garde en compte"
-		+ "quatorze"
-	DESC "un grep limite a packages a ete annonce comme tout le depot ;"
-		+ "scripts/check-package-dependencies.spec.ts:298 porte encore le mot Emoji dans une chaine"
-		+ "de fixture"
-	STATUS specified
-	BLOCKS @DECISION.UneGardeDeDepotTientLesDeuxIdiomesSolidQuiSeLisentLigneALigne
-	RATIONALE "un lecteur qui rejoue la garde sur la base obtient vingt lignes et ne retrouve pas"
-		+ "le chiffre du corpus ; le chiffre sous-estime la couverture de la garde elle-meme"
-	RECOMMENDATION "corriger le RATIONALE a vingt lignes, et ecrire a cote de tout chiffre d'un fil"
-		+ "ou d'un RATIONALE le perimetre sur lequel il a ete mesure"
-		REJECTED "laisser le chiffre : il est dans une decision implemented, relue a chaque context"
-			+ "de la garde"
-		REJECTED "interdire les chiffres dans les fils : c'est la mesure qui a convaincu le"
-			+ "relecteur a 08:33"
-	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-71.md, PR #71"
-
 OPEN_QUESTION LeTexteDuCorpusSEcritEnChainesDUneLigneQueFmtReplie
 	DESC "un ajout au corpus par heredoc avec des lignes de continuation + ecrites a la main a"
 		+ "coute 36 L014 et un git checkout du fichier dans la PR #71, 54 L014 dans la PR #72 ;"
@@ -594,20 +551,4 @@ OPEN_QUESTION LeTexteDuCorpusSEcritEnChainesDUneLigneQueFmtReplie
 		REJECTED "composer l'entite dans un fichier puis l'ajouter : la forme des continuations"
 			+ "reste a ecrire a la main"
 		REJECTED "s'en remettre au rapport : deja fait une fois, sans effet"
-	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-71.md, PR #71"
-
-OPEN_QUESTION L014NeNommePasLaChaineQuIlNePeutPasContinuer
-	DESC "L014 cite une ligne de continuation orpheline sans dire quelle chaine ni quel champ elle"
-		+ "devait prolonger ; sur une decision de quinze lignes, 36 occurrences pointent la meme"
-		+ "faute et l'agent a jete le fichier au lieu de le reparer"
-	DESC "defaut de l'outil awawa 2.7.0, vu par les rapports des PR #72 et #71"
-	STATUS specified
-	BLOCKS @DECISION.LeCorpusEstDecoupeParDomaine
-	RATIONALE "le diagnostic dit « continuation line follows no string it can continue » a chaque"
-		+ "ligne + ; il ne dit ni l'ouverture de chaine manquante ni le champ, donc la reparation"
-		+ "demande de relire l'entite entiere"
-	RECOMMENDATION "L014 cite le debut de la chaine qu'il ne peut pas continuer et le champ qui la"
-		+ "porte, une fois par chaine et non par ligne"
-		REJECTED "laisser tel quel : deux rapports, 90 occurrences, deux scripts de reparation et"
-			+ "un fichier jete"
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-71.md, PR #71"
