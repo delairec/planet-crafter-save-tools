@@ -321,7 +321,7 @@ OPEN_QUESTION OuVontLesArtefactsDExecutionDeLaSuiteDeScenarios
 		+ "et non ignores dans le package, que le prochain ajout global commiterait"
 	DESC "deux issues : les ignorer par une regle, ou pointer la sortie du runner vers un"
 		+ "repertoire deja ignore"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
 	RATIONALE "hors perimetre du premier livrable, qui n'ajoute que des scenarios ; la question"
 		+ "releve de l'outillage de la suite, dont T42 porte la garde et la mesure"
@@ -473,3 +473,31 @@ DECISION LePremierDescribeNommeLaRegleQueLaSpecCouvre
 	SPEC "le premier describe de la spec de l'ordre des saves nomme cette regle"
 		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts"
 	SOURCE "T43, reaudit du releve du 2026-09-07, PR #79"
+
+DECISION LesArtefactsDeLaSuiteDeScenariosSontDejaIgnores
+	DESC "playwright-report/, test-results/ et blob-report/ sont ignores sans ancre par .gitignore,"
+		+ "donc a toute profondeur : la suite de scenarios n'a ni regle a ajouter ni sortie a"
+		+ "deplacer"
+	DESC "la question qui les disait non ignores reposait sur une observation non faite ; la mesure"
+		+ "est refaite ici et porte le troisieme repertoire qu'elle ne comptait pas"
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.OuVontLesArtefactsDExecutionDeLaSuiteDeScenarios
+	CLOSES @OPEN_QUESTION.LaQuestionDesArtefactsDeLaSuiteReposeSurUneObservationNonFaite
+	APPLIES_TO_TASK @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "mesure du 2026-09-15 sur 99a9699 : les trois repertoires crees et peuples sous"
+		+ "packages/ui-save-manager, le statut porcelaine en untracked-files=all ne rend rien, et"
+		+ "check-ignore -v nomme .gitignore:12 et .gitignore:13 sur les fichiers plantes"
+	RATIONALE "blob-report/ s'ajoute aux deux que la question comptait : c'est la sortie que"
+		+ "fusionne une execution repartie, et elle serait le prochain oubli d'un releve qui n'en"
+		+ "compte que deux"
+	REJECTED "pointer la sortie du runner vers un repertoire deja ignore, comme la question le"
+		+ "recommandait : les trois le sont deja, et deplacer la sortie changerait une"
+		+ "configuration qui marche pour un defaut qui n'existe pas"
+	REJECTED "ajouter deux regles d'ignorance : elles sont ecrites depuis .gitignore:12-13"
+	REJECTED "laisser la question ouverte jusqu'a T42 : elle bloquait la tache sur un non-defaut,"
+		+ "et context servait le fait faux a chaque session"
+	SPEC "les trois repertoires d'artefacts de la suite sont ignores sans ancre, donc a toute"
+		+ "profondeur du depot"
+		IMPL ".gitignore"
+	SOURCE "arbitrage utilisateur du 2026-09-15, commit de lancement de la vague 4"
