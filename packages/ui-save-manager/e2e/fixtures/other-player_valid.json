@@ -1,0 +1,26 @@
+{"terraTokens":250,"allTimeTerraTokens":310456,"unlockedGroups":"BootsSpeed2","openedInstanceSeed":0,"openedInstanceTimeLeft":0}
+@
+{"planetId":"Toxicity","unitOxygenLevel":100.0,"unitHeatLevel":200.0,"unitPressureLevel":300.0,"unitPlantsLevel":400.0,"unitInsectsLevel":500.0,"unitAnimalsLevel":600.0,"unitPurificationLevel":700.0}
+@
+{"id":76561190000000007,"name":"Sakia","inventoryId":144,"equipmentId":145,"playerPosition":"1751.865,472.58,-1106.104","playerRotation":"0,0.5740051,0,-0.8188518","playerGaugeOxygen":280.0,"playerGaugeThirst":96.3858642578125,"playerGaugeHealth":72.67363739013672,"playerGaugeToxic":0.0,"host":true,"planetId":"Toxicity","cameraView":0,"totalCraftedObjects":1820,"totalTerraTokenEarned":9000}
+@
+{"id":31000001,"gId":"Phytoplankton2"}|
+{"id":31000002,"gId":"NeptunQuartz"}|
+{"id":31000003,"gId":"Backpack5"}|
+{"id":31000004,"gId":"OxygenTank3"}|
+{"id":31000005,"gId":"WindTurbine2","pos":"20,0,0","planet":1}|
+{"id":31000006,"gId":"Heater2","pos":"21,0,0","planet":1}
+@
+{"id":144,"woIds":"31000001,31000002","size":20}|
+{"id":145,"woIds":"31000003,31000004","size":10}
+@
+{"craftedObjects":10,"totalSaveFileLoad":5,"totalSaveFileTime":3600}
+@
+
+@
+
+@
+{"saveDisplayName":"Companion Save","planetId":"Toxicity","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":0.1,"modifierPowerConsumption":0.2,"modifierGaugeDrain":0.3,"modifierMeteoOccurence":0.4,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"1.0","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":77,"hasPlayedIntro":true,"gameStartLocation":"Standard"}
+@
+
+@

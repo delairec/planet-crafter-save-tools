@@ -585,3 +585,64 @@ OPEN_QUESTION DeuxSectionsMetadataVidesFontPlanterLaFusion
 	SPEC "le correctif, quel qu'il soit, porte en test le cas des deux sections vides"
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts"
 	SOURCE "constate en revue de la PR #15, fil 3978907815 sur mergeGlobalMetadata.ts:17"
+
+OPEN_QUESTION LaQuestionDesArtefactsDeLaSuiteReposeSurUneObservationNonFaite
+	DESC "a trancher : la question sur les artefacts d'execution de la suite affirme que deux"
+		+ "repertoires ne sont ni versionnes ni ignores ; .gitignore:12-13 porte playwright-report/"
+		+ "et test-results/ sans ancre, donc a toute profondeur, et git status --porcelain"
+		+ "--untracked-files=all ne rend rien quand les deux existent sous"
+		+ "packages/ui-save-manager, mesure sur 77e7a8c"
+		REF @OPEN_QUESTION.OuVontLesArtefactsDExecutionDeLaSuiteDeScenarios
+	DESC "propose : la fermer par une decision qui enregistre les deux regles d'ignorance et la"
+		+ "mesure, et liberer la tache qu'elle bloque"
+	DESC "elle est en outre placee dans tests.awawa alors que les questions ouvertes sont groupees"
+		+ "dans questions.awawa"
+		REF @DECISION.LeCorpusEstDecoupeParDomaine
+	RECOMMENDATION "une decision qui la ferme, symptome et mesure portes par la decision, comme"
+		+ "pour toute limitation constatee puis infirmee"
+		REJECTED "la laisser ouverte jusqu'a T42 : une tache bloquee par un non-defaut, et un fait"
+			+ "faux servi par context a chaque session"
+		REJECTED "la supprimer de la branche avant la fusion comme les trois entites retirees en"
+			+ "revue : la trace que la revue a laisse passer un fait non verifie disparaitrait avec"
+			+ "elle"
+	STATUS specified
+	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
+
+OPEN_QUESTION AgentsMdDitCeQuUneReglePromueLaisseDansLeCorpus
+	DESC "a trancher : AGENTS.md dit qu'une regle apprise en revue et bonne pour ~/.ai s'ecrit en"
+		+ "OPEN_QUESTION, et rien de plus ; la revue de la PR #75 a ecrit en plus la decision"
+		+ "projet et la decision de promotion, puis les a retirees toutes deux avec la question, en"
+		+ "trois commits et deux fils"
+	DESC "propose : la phrase d'AGENTS.md cite la decision qui dit ce qu'une promotion livree"
+		+ "laisse ici — rien que ce que le projet possede en propre — pour qu'elle soit lue avant"
+		+ "la premiere commande et non seulement par context"
+		REF @DECISION.UneVueQueLeCorpusRendDejaNEstPasRecopieeDedans
+	RECOMMENDATION "une citation de la decision a la ligne d'AGENTS.md qui prescrit"
+		+ "l'OPEN_QUESTION, sans reenoncer la regle"
+		REJECTED "s'en remettre a la decision seule : AGENTS.md est lu avant toute commande, la"
+			+ "decision seulement par un context qui l'atteint"
+		REJECTED "reenoncer la regle dans AGENTS.md : c'est la copie derivee que la decision"
+			+ "interdit"
+	STATUS specified
+	BLOCKS @DECISION.UneVueQueLeCorpusRendDejaNEstPasRecopieeDedans
+	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
+
+OPEN_QUESTION LaLectureDUnFichierDuCorpusPourYAjouterUneEntiteEstElleLegitime
+	DESC "a trancher : cinq rapports comptent en defaut la lecture des fichiers du corpus par cat,"
+		+ "sed, tail et grep ; l'entite modele lue par show n'a pas fait cesser ces lectures, qui"
+		+ "servent pour partie a trouver ou ajouter une entite — aucune commande awawa ne dit ou"
+		+ "finit un fichier — et pour partie a imiter le style d'un fichier entier"
+		REF @DECISION.AgentsMdNommeUneEntiteModeleParType
+	DESC "propose : dire laquelle de ces deux lectures est legitime, pour que le point recurrent se"
+		+ "ferme par une regle ou par une acceptation plutot que par un sixieme comptage"
+	RECOMMENDATION "accepter tail et wc -l pour le placement d'un ajout, et ne compter en defaut"
+		+ "que la lecture d'un fichier entier ou d'une plage pour le style, que le prompt d'agent"
+		+ "interdit alors en toutes lettres"
+		REJECTED "interdire toute lecture par un garde-fou dans les prompts : l'ajout a besoin de"
+			+ "la fin du fichier et awawa n'ecrit jamais"
+		REJECTED "continuer a compter sans trancher : cinq rapports et deux remediations n'ont rien"
+			+ "change"
+	STATUS specified
+	BLOCKS @DECISION.AgentsMdNommeUneEntiteModeleParType
+	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
