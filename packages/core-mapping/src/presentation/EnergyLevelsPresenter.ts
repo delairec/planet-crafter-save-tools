@@ -16,7 +16,7 @@ import {
   energyLevelsSectionConsumptionTitle,
   energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
-  energyLevelsSectionUnnamedPlanetName,
+  resolveEnergyLevelsSectionUnnamedPlanetName,
   energyLevelsSectionWorkInProgressLabel
 } from "./messages/energyLevelsSectionMessages.js";
 
@@ -41,7 +41,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
 
   private buildPlanet(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsViewModel {
     return {
-      planetId: planet.planetName ?? energyLevelsSectionUnnamedPlanetName(planet.planetId),
+      planetId: planet.planetName ?? resolveEnergyLevelsSectionUnnamedPlanetName(planet.planetId),
       energyLevels: {
         columns: [
           {
