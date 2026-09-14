@@ -414,3 +414,24 @@ DECISION UnEtatDeChargementSObserveEnRetenantLaLectureDuFichier
 		+ "d'un blob et la relachent explicitement"
 		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
 	SOURCE "T40, 2026-09-14"
+
+OPEN_QUESTION LEtatDAttenteDHydratationNEstCouvertParAucunScenario
+	DESC "a trancher : le troisieme etat de chargement de la page — le repli affiche tant que l'UI"
+		+ "n'est pas montee — n'a pas de scenario, faute de moyen deterministe de l'observer"
+	DESC "les deux autres etats sont couverts en retenant la lecture du fichier ; ici il n'y a pas"
+		+ "de lecture a retenir, l'etat tenant a l'hydratation elle-meme"
+	STATUS specified
+	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	RATIONALE "consequence a connaitre : le repli d'hydratation et l'indicateur d'activite portent"
+		+ "aujourd'hui le meme libelle, si bien qu'un scenario ecrit sans precaution attraperait"
+		+ "l'un pour l'autre"
+	RATIONALE "la garde des locators de T42 est l'endroit ou le probleme se pose vraiment : c'est"
+		+ "elle qui aurait a dire qu'un libelle partage entre deux etats est un locator ambigu"
+	RECOMMENDATION "couvrir l'etat en ralentissant le chargement du module d'hydratation par une"
+		+ "interception de requete du runner, et non en changeant la page"
+		REF @DECISION.UnEtatDeChargementSObserveEnRetenantLaLectureDuFichier
+		REJECTED "ajouter a la production un moyen de retarder l'hydratation : un crochet de test"
+			+ "dans la page, ce que la vague a deja ecarte pour les deux autres etats"
+		REJECTED "laisser l'etat sans scenario sans le dire : c'est le seul des trois etats de"
+			+ "chargement que le livrable ne couvre pas"
+	SOURCE "constate le 2026-09-14, T40, PR #78"
