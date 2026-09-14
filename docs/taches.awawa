@@ -4,7 +4,7 @@
 //
 //   T37 ─┬─ T15 ─┐
 //        └─ T32 ─┴─ T38
-//              └─ T24
+//              └─ T24 ─ T40 ─ T41 ─ T42
 SHAPE task_name
 	DESC "l'etiquette de la tache, un souligne, puis ce qu'elle couvre en PascalCase"
 	MATCH "(T|DEP)[0-9]+_[A-Z][A-Za-z0-9]*(:v[0-9]+)?"
@@ -153,7 +153,8 @@ TASK T32_ConformiteUiSaveManager
 		IMPL "packages/ui-save-manager/package.json::ui-save-manager"
 
 TASK T24_HarnaisDeTestsUiParScenarios
-	DESC "harnais complet de tests d'UI par scenarios, quatre livrables, chacun fusionnable seul"
+	DESC "premier livrable du harnais de tests d'UI par scenarios : le flux de fusion couvert de"
+		+ "bout en bout, du choix des deux saves au fichier telecharge"
 	DESC "derniere tache UI a fusionner : chaque tache UI qui la precede peut deplacer un libelle"
 		+ "et casser un locator"
 	STATUS specified
@@ -168,20 +169,68 @@ TASK T24_HarnaisDeTestsUiParScenarios
 	RATIONALE "l'etat des lieux date du 2026-09-06, avant l'execution de T23 : a reauditer au"
 		+ "demarrage, les libelles et la structure de la liste des messages ayant change"
 	RATIONALE "T24 ne bloque aucune autre tache"
+	RATIONALE "les sept lignes SPEC d'origine sont reparties sur quatre entites, T24 puis T40, T41"
+		+ "et T42 ; T24 ne garde que les deux qui portent sur le flux de fusion"
+		REF @DECISION.LeHarnaisDeTestsUiEstDecoupeEnQuatrePullRequests
+	RATIONALE "reaudit du 2026-09-14 : T23 a livre les scenarios d'affichage, la premiere fixture"
+		+ "et le double de lecture de blob ; le flux de fusion n'etait couvert que par le scenario"
+		+ "qui verifie qu'une fusion vide le fichier choisi pour l'affichage, sans jamais toucher"
+		+ "au lien de telechargement"
 	SPEC "les deux flux critiques sont couverts de bout en bout : afficher une save, fusionner deux"
 		+ "saves et recuperer le fichier produit"
-		IMPL "packages/ui-save-manager"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
 	SPEC "le contenu du fichier telecharge est verifie, pas seulement la presence du lien"
-		IMPL "packages/ui-save-manager"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
+
+TASK T40_ScenariosDeValidationEtDEtatsDeChargement
+	DESC "deuxieme livrable du harnais : les scenarios couvrant les erreurs de validation, les"
+		+ "avertissements et les etats de chargement"
+	STATUS specified
+	WAVE "4"
+	AFTER @TASK.T24_HarnaisDeTestsUiParScenarios
+	RATIONALE "porte la ligne d'acceptation qui interdit de rejouer une regle de merge ou de"
+		+ "validation : c'est ce livrable qui ajoute les scenarios ou la tentation existe, les"
+		+ "fixtures invalides ayant a montrer un message sans reasserter la regle qui le produit"
+		REF @DECISION.LeHarnaisDeTestsUiEstDecoupeEnQuatrePullRequests
+	RATIONALE "un scenario d'avertissement attend une phrase en clair et non un code, et une erreur"
+		+ "de validation affiche sa localisation"
 	SPEC "aucun scenario ne rejoue une regle de merge ou de validation deja couverte dans"
 		+ "core-mapping : la revue le verifie fiche en main"
 		IMPL "packages/core-mapping/src/domain/rules"
+
+TASK T41_FixturesDeScenariosGenereesEtGardees
+	DESC "troisieme livrable du harnais : les fixtures de scenarios sont generees par une commande,"
+		+ "et une garde refuse tout ecart avec les fichiers versionnes"
+	STATUS specified
+	WAVE "4"
+	AFTER @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
+	RATIONALE "la recette de regeneration vit aujourd'hui dans un fichier de documentation, que"
+		+ "rien n'execute : une fixture peut diverger de son generateur sans qu'aucune commande le"
+		+ "dise"
+	RATIONALE "l'independance au repertoire d'entree est portee ici parce que c'est le livrable qui"
+		+ "la rend executable : la garde qui regenere les fixtures est aussi celle qui peut refuser"
+		+ "une reference au repertoire d'entree"
+		REF @DECISION.LeHarnaisDeTestsUiEstDecoupeEnQuatrePullRequests
 	SPEC "regenerer les fixtures ne produit aucun ecart avec les fichiers versionnes, et un ecart"
 		+ "introduit volontairement fait echouer le controle"
 		IMPL "packages/ui-save-manager"
 	SPEC "la suite ne depend d'aucun fichier du repertoire d'entree et passe sur une machine sans"
 		+ "acces au depot prive"
 		IMPL "packages/ui-save-manager"
+
+TASK T42_GardeDesLocatorsEtMesureDeLaSuite
+	DESC "quatrieme livrable du harnais : une garde refuse un identifiant de test, un selecteur CSS"
+		+ "ou une capture de reference dans un scenario, et la duree de la suite est mesuree"
+	STATUS specified
+	WAVE "4"
+	AFTER @TASK.T41_FixturesDeScenariosGenereesEtGardees
+	RATIONALE "aucune garde du depot ne lit les fichiers de scenario : leur parcours ne ramasse que"
+		+ "les fichiers de spec, si bien que l'hygiene des locators n'est verifiee qu'a l'oeil"
+		REF @DECISION.LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
+	RATIONALE "la mesure de la duree arrive en dernier parce qu'elle ne vaut que sur la suite"
+		+ "complete"
+		REF @DECISION.LeHarnaisDeTestsUiEstDecoupeEnQuatrePullRequests
 	SPEC "aucun identifiant de test ni selecteur CSS ajoute, aucune capture de reference"
 		IMPL "packages/ui-save-manager"
 	SPEC "la duree totale de la suite est mesuree et consignee dans la PR du quatrieme livrable"
@@ -374,3 +423,31 @@ DECISION UneTacheEstUneEntiteParPullRequest
 		+ "plusieurs est une tache par pull request"
 		IMPL "docs/taches.awawa::SCHEMA TASK"
 	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION LeHarnaisDeTestsUiEstDecoupeEnQuatrePullRequests
+	DESC "le harnais de tests d'UI par scenarios est quatre taches : T24 le flux de fusion de bout"
+		+ "en bout, T40 les scenarios de validation et d'etats de chargement, T41 la generation"
+		+ "gardee des fixtures, T42 la garde des locators et la mesure de la suite"
+		REF @TASK.T24_HarnaisDeTestsUiParScenarios
+	DESC "chaque entite ne porte que les lignes SPEC que sa pull request livre, la suivante en"
+		+ "AFTER de la precedente"
+		REF @DECISION.UneTacheEstUneEntiteParPullRequest
+	STATUS implemented
+	RATIONALE "la repartition suit ce que chaque livrable peut faire echouer seul : deux lignes sur"
+		+ "les scenarios de fusion, une sur le reste des scenarios, deux sur l'outillage de"
+		+ "fixtures, deux sur la garde et la mesure"
+	RATIONALE "les deux lignes transverses — aucune dependance au repertoire d'entree, aucun"
+		+ "identifiant de test ni selecteur CSS — ne sont pas recopiees sur les quatre entites :"
+		+ "chacune est portee par le livrable qui la rend executable par une garde, faute de quoi"
+		+ "elle resterait verifiee a l'oeil a chaque pull request et promue quatre fois pour n'etre"
+		+ "livree qu'une"
+	REJECTED "recopier les deux lignes transverses sur les quatre entites : quatre pull requests"
+		+ "promouvraient la meme obligation, une seule la livrant"
+	REJECTED "un livrable par ligne SPEC : sept pull requests pour un harnais dont deux lignes ne"
+		+ "sont qu'un critere d'acceptation"
+	REJECTED "garder T24 entiere et ouvrir quatre pull requests sous la meme entite : c'est ce que"
+		+ "la decision une tache est une entite par pull request a ecarte"
+	SPEC "T24, T40, T41 et T42 se partagent les sept lignes SPEC d'origine sans recouvrement ni"
+		+ "perte"
+		IMPL "docs/taches.awawa::TASK T24_HarnaisDeTestsUiParScenarios"
+	SOURCE "arbitrage utilisateur du 2026-09-14, T24"
