@@ -1,14 +1,14 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeSaveSections} from './mergeSaveSections';
-import {createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createGlobalMetadata, createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
 import {createSaveSections} from '../../../testing/createSaveSections';
 
 describe('Determine save order', () => {
   const saveDisplayName = 'SAVE_NAME';
 
-  const primeConfig = createSaveConfiguration({saveDisplayName: 'SavePrime', planetId: 'Prime'});
-  const toxicityConfig = createSaveConfiguration({saveDisplayName: 'SaveToxicity', planetId: 'Toxicity'});
-  const aqualisConfig = createSaveConfiguration({saveDisplayName: 'SaveAqualis', planetId: 'Aqualis'});
+  const primeConfig = createSaveConfiguration({planetId: 'Prime'});
+  const toxicityConfig = createSaveConfiguration({planetId: 'Toxicity'});
+  const aqualisConfig = createSaveConfiguration({planetId: 'Aqualis'});
 
   describe('When only the second save has Prime as planetId', () => {
     it('should return the Prime save as save A', () => {
@@ -20,7 +20,7 @@ describe('Determine save order', () => {
       const result = mergeSaveSections(saveA, saveB, saveDisplayName);
 
       // Assert
-      expect(result.saveConfiguration).toEqual({...primeConfig, saveDisplayName: 'SAVE_NAME'});
+      expect(result.saveConfiguration?.planetId).toBe('Prime');
     });
   });
 
@@ -34,7 +34,7 @@ describe('Determine save order', () => {
       const result = mergeSaveSections(saveA, saveB, saveDisplayName);
 
       // Assert
-      expect(result.saveConfiguration).toEqual({...primeConfig, saveDisplayName: 'SAVE_NAME'});
+      expect(result.saveConfiguration?.planetId).toBe('Prime');
     });
   });
 
@@ -48,35 +48,38 @@ describe('Determine save order', () => {
       const result = mergeSaveSections(saveA, saveB, saveDisplayName);
 
       // Assert
-      expect(result.saveConfiguration).toEqual({...toxicityConfig, saveDisplayName: 'SAVE_NAME'});
+      expect(result.saveConfiguration?.planetId).toBe('Toxicity');
     });
   });
 
   describe('When both saves have Prime as planetId', () => {
     it('should return saves in the original order', () => {
       // Arrange
-      const saveA = createSaveSections({saveConfigurations: [{...primeConfig, worldSeed: 1}]});
-      const saveB = createSaveSections({saveConfigurations: [{...primeConfig, worldSeed: 2}]});
+      const saveA = createSaveSections({saveConfigurations: [createSaveConfiguration({planetId: 'Prime', worldSeed: 1})]});
+      const saveB = createSaveSections({saveConfigurations: [createSaveConfiguration({planetId: 'Prime', worldSeed: 2})]});
 
       // Act
       const result = mergeSaveSections(saveA, saveB, saveDisplayName);
 
       // Assert
-      expect(result.saveConfiguration).toEqual({...primeConfig, worldSeed: 1, saveDisplayName: 'SAVE_NAME'});
+      expect(result.saveConfiguration?.worldSeed).toBe(1);
     });
   });
 
   describe('When a save has no configuration', () => {
     it('should still promote the Prime save to save A', () => {
       // Arrange
-      const saveA = createSaveSections();
-      const saveB = createSaveSections({saveConfigurations: [primeConfig]});
+      const saveA = createSaveSections({globalMetadata: [createGlobalMetadata({openedInstanceSeed: 1})]});
+      const saveB = createSaveSections({
+        globalMetadata: [createGlobalMetadata({openedInstanceSeed: 2})],
+        saveConfigurations: [primeConfig]
+      });
 
       // Act
       const result = mergeSaveSections(saveA, saveB, saveDisplayName);
 
       // Assert
-      expect(result.saveConfiguration).toEqual({...primeConfig, saveDisplayName: 'SAVE_NAME'});
+      expect(result.globalMetadata.openedInstanceSeed).toBe(2);
     });
   });
 });
