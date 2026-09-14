@@ -234,6 +234,7 @@ TASK T38_ConformiteCoreMapping
 		REF @TASK.T44_SpecsApplicationInfrastructurePresentation
 	STATUS implemented
 	WAVE "4"
+	PR "76"
 	AFTER @TASK.T15_EntitesDuDomaineEnClasses
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "issue de la revue de code complete du 2026-09-07 ; aucun changement de comportement"
@@ -287,7 +288,7 @@ TASK T38_ConformiteCoreMapping
 		+ "d'entree, verdicts de validation identiques, tests, type-check et gardes verts"
 		IMPL "packages/core-mapping"
 	SOURCE "revue de code complete du 2026-09-07"
-	SOURCE "arbitrage utilisateur du 2026-09-14 : trois pull requests, donc trois entites"
+	SOURCE "arbitrage utilisateur du 2026-09-14 : trois pull requests, donc trois entites, PR #76"
 
 TASK T43_SpecsDeDomaineCoreMapping
 	DESC "conformite a TEST-1 des specs du domaine de core-mapping : entites, value objects et"
@@ -310,7 +311,7 @@ TASK T43_SpecsDeDomaineCoreMapping
 		+ "non calcules ni etales depuis une fixture"
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts"
 	SOURCE "revue de code complete du 2026-09-07"
-	SOURCE "arbitrage utilisateur du 2026-09-14 : trois pull requests, donc trois entites"
+	SOURCE "arbitrage utilisateur du 2026-09-14 : trois pull requests, donc trois entites, PR #76"
 
 TASK T44_SpecsApplicationInfrastructurePresentation
 	DESC "conformite a TEST-1 des specs d'application, d'infrastructure et de presentation de"
@@ -341,7 +342,7 @@ TASK T44_SpecsApplicationInfrastructurePresentation
 		+ "d'action et d'assertion fusionnee ne subsiste dans le package"
 		IMPL "packages/core-mapping"
 	SOURCE "revue de code complete du 2026-09-07"
-	SOURCE "arbitrage utilisateur du 2026-09-14 : trois pull requests, donc trois entites"
+	SOURCE "arbitrage utilisateur du 2026-09-14 : trois pull requests, donc trois entites, PR #76"
 
 DECISION UneTachePorteSonEtiquetteEtUnNomLisible
 	DESC "le nom d'une tache est son etiquette, un souligne, puis ce qu'elle couvre :"

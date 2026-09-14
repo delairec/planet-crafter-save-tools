@@ -662,4 +662,4 @@ OPEN_QUESTION LaCasseDeLExtensionJsonNEstPasLueDeLaMemeFaconPartout
 		REJECTED "garder la sensibilite a la casse et la declarer voulue : elle ne l'est nulle part"
 			+ "ailleurs, et le dossier est alors signale comme ne contenant pas deux saves, un"
 			+ "diagnostic qui ne nomme pas la cause"
-	SOURCE "T38, 2026-09-14"
+	SOURCE "T38, PR #76, 2026-09-14"

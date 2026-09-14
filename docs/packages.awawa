@@ -634,7 +634,7 @@ DECISION UnPortLecteurSeNommePourCeQuIlLitEtNonPourUnAnalyseur
 		IMPL "packages/core-mapping/src/application/ports/SaveSectionsReaderPort.ts"
 		IMPL "packages/core-mapping/src/application/LoadGlobalProgressionSection.ts"
 		IMPL "packages/core-mapping/src/testing/FakeSaveSectionsReaderService.ts"
-	SOURCE "T38, 2026-09-14, lecture d'une ligne SPEC de la revue du 2026-09-07"
+	SOURCE "T38, PR #76, 2026-09-14, lecture d'une ligne SPEC de la revue du 2026-09-07"
 
 DECISION LaFormeDUneColonneEstDeriveeDuViewModelQuiLaProduit
 	DESC "la forme d'une colonne de tableau n'est declaree qu'une fois, dans le ViewModel de table"

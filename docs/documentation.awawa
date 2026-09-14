@@ -73,7 +73,7 @@ DECISION UneCleDupliqueeParLaCasseEstTrancheeParLAttestation
 		+ "l'union des noms"
 		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts"
-	SOURCE "arbitrage utilisateur du 2026-09-14, T38"
+	SOURCE "arbitrage utilisateur du 2026-09-14, T38, PR #76"
 
 DECISION LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
 	DESC "history.md est supprime : ce qui contraint encore le travail est devenu des entites de ce"
