@@ -23,6 +23,20 @@ Every judgment carries a number or a name. A claim that could not be checked is 
 
 **The tool's**: <awawa — one sentence>.
 
+## The owner's word
+
+<!--
+Optional section, and the only one in this file the report's author does not write.
+/awawa-usage-report asks the owner, before the reporting agent is launched, whether they have any
+feedback on this pull request's journey; they are free to give none. What they give is reproduced
+here verbatim — their words, their language, unabridged, with no paraphrase, no correction and no
+reply. It is testimony, not a finding: nothing in this section is checked, ranked or answered, and
+it feeds neither the verdict nor the remediations. When the owner gives nothing, delete this whole
+section, heading included, exactly as any unused part of the template is deleted.
+-->
+
+> <the owner's words, verbatim>
+
 ## Part A — Us: method, corpus, conduct
 
 ### What went well
