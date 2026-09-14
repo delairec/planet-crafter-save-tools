@@ -8,25 +8,37 @@ describe('isSolidComponentFile', () => {
 
   describe('When the file is a component of a package', () => {
     it('should recognise it wherever that component sits', () => {
-      // Act & Assert
-      expect(isSolidComponentFile('packages/ui-save-manager/src/components/structure/FieldsGroup.tsx')).toBe(true);
-      expect(isSolidComponentFile('packages/ui-save-manager/src/entry-server.tsx')).toBe(true);
+      // Act
+      const isNestedComponent = isSolidComponentFile('packages/ui-save-manager/src/components/structure/FieldsGroup.tsx');
+      const isServerEntry = isSolidComponentFile('packages/ui-save-manager/src/entry-server.tsx');
+
+      // Assert
+      expect(isNestedComponent).toBe(true);
+      expect(isServerEntry).toBe(true);
     });
   });
 
   describe('When the file carries no JSX', () => {
     it('should leave it alone', () => {
-      // Act & Assert
-      expect(isSolidComponentFile('packages/ui-save-manager/src/lib/useLoadSaveFile.ts')).toBe(false);
-      expect(isSolidComponentFile('packages/ui-save-manager/src/messages/appMessages.js')).toBe(false);
+      // Act
+      const isTypeScriptModule = isSolidComponentFile('packages/ui-save-manager/src/lib/useLoadSaveFile.ts');
+      const isJavaScriptModule = isSolidComponentFile('packages/ui-save-manager/src/messages/appMessages.js');
+
+      // Assert
+      expect(isTypeScriptModule).toBe(false);
+      expect(isJavaScriptModule).toBe(false);
     });
   });
 
   describe('When the file is generated', () => {
     it('should leave it alone even with the component extension', () => {
-      // Act & Assert
-      expect(isSolidComponentFile('packages/ui-save-manager/node_modules/solid/Thing.tsx')).toBe(false);
-      expect(isSolidComponentFile('packages/ui-save-manager/.output/server/Thing.tsx')).toBe(false);
+      // Act
+      const isInstalledDependency = isSolidComponentFile('packages/ui-save-manager/node_modules/solid/Thing.tsx');
+      const isBuildOutput = isSolidComponentFile('packages/ui-save-manager/.output/server/Thing.tsx');
+
+      // Assert
+      expect(isInstalledDependency).toBe(false);
+      expect(isBuildOutput).toBe(false);
     });
   });
 });
