@@ -188,6 +188,24 @@ describe('Merge CLI', () => {
     });
   });
 
+  describe('When a save file name carries the JSON extension in upper case', () => {
+    it('should count it among the two saves to merge', async () => {
+      // Arrange
+      const upperCaseExtensionSaveFileName = 'Standard-2.JSON';
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, upperCaseExtensionSaveFileName]);
+      readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(writeTextFile).toHaveBeenCalledTimes(1);
+      const writtenPath = writeTextFile.mock.calls[0][0];
+      expect(writtenPath).toBe(MERGED_SAVE_OUTPUT_PATH);
+    });
+  });
+
   describe('When the merge completes successfully', () => {
     it('should exit with code 0', async () => {
       // Arrange

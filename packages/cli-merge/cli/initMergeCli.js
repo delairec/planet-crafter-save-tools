@@ -1,4 +1,5 @@
 import {MergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesController';
+import {hasJsonExtension} from 'shared-save-processing/jsonExtension.js';
 import {parseMergeCliArguments} from './parseMergeCliArguments.js';
 import {
   renderDone,
@@ -32,7 +33,7 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
   async function findMergeableFolders(folders) {
     const mergeableFolders = [];
     for (const folder of folders) {
-      const saveFileNames = (await readDirectory(joinPath(inputDir, folder))).filter(isJson).sort();
+      const saveFileNames = (await readDirectory(joinPath(inputDir, folder))).filter(hasJsonExtension).sort();
 
       if (saveFileNames.length === MERGEABLE_SAVE_FILES_COUNT) {
         const [fileNameA, fileNameB] = saveFileNames;
@@ -91,10 +92,6 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
 
     renderMergeSucceeded(outputPath);
     return true;
-  }
-
-  function isJson(file) {
-    return file.endsWith('.json');
   }
 
   async function main() {

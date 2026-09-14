@@ -13,9 +13,7 @@
   },
   "dependencies": {
     "core-mapping": "*",
-    "shared-platforms": "*"
-  },
-  "devDependencies": {
+    "shared-platforms": "*",
     "shared-save-processing": "*"
   }
 }
