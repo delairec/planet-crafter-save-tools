@@ -232,7 +232,7 @@ TASK T38_ConformiteCoreMapping
 	DESC "les specs du paquet sont livrees ensuite, par T43 puis T44"
 		REF @TASK.T43_SpecsDeDomaineCoreMapping
 		REF @TASK.T44_SpecsApplicationInfrastructurePresentation
-	STATUS specified
+	STATUS implemented
 	WAVE "4"
 	AFTER @TASK.T15_EntitesDuDomaineEnClasses
 	AFTER @TASK.T37_FrontieresCleanArchitectureCoreMapping
