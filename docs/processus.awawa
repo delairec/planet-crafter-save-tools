@@ -492,14 +492,16 @@ DECISION UneRecommandationEstExamineeAvantLaRatificationEstUneRegleGenerale
 	SOURCE "arbitrage utilisateur du 2026-09-12, PR #63"
 
 DECISION LaCommandeDeFusionPousseLeDepotDuCorpusParSonFluxDeTravail
-	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-pr-merged.md, section 4 : «"
+	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-pr-review.md, section 5 : «"
 		+ "Push the repository that holds the corpus, by its own workflow — a branch and a pull"
 		+ "request, never its default branch »"
-	DESC "la ligne « Push the private context repository » est retiree : ou vit le corpus est un"
-		+ "fait du projet, que la commande ne nomme plus"
+	DESC "la ligne « Push the private context repository » est retiree des deux commandes a corpus"
+		+ ": ou vit le corpus est un fait du projet, nomme par son AGENTS.md, qu'aucune commande"
+		+ "generale ne prejuge"
 		REF @DECISION.LeCorpusVitDansLeDepotPublic
-	DESC "la commande est retiree le meme jour : la promotion voyage avec la pull request de tache,"
-		+ "et la regle n'a plus de ligne a corriger"
+	DESC "awawa-pr-merged.md est retiree le 2026-09-13 puis son fichier supprime le 2026-09-14, une"
+		+ "fois la regle rehebergee : une pierre tombale qui heberge une regle est un domicile que"
+		+ "personne ne relit"
 		REF @DECISION.LeCorpusRemplaceLaChecklistDeFusion:v2
 	STATUS specified
 	CLOSES @OPEN_QUESTION.LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
@@ -509,6 +511,9 @@ DECISION LaCommandeDeFusionPousseLeDepotDuCorpusParSonFluxDeTravail
 	REJECTED "garder la ligne et porter un contournement propre au projet dans AGENTS.md : un fait"
 		+ "perime dans une commande generale se relit a chaque fusion de chaque projet"
 	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-14, PR #77 : la regle avait perdu son domicile,"
+		+ "la phrase n'existant plus dans aucune commande, et awawa-pr-review portait encore la"
+		+ "ligne perimee"
 
 DECISION LeRapportDUsageNettoieUneBrancheOrphelineAvantDeCouperLaSienne
 	DESC "la regle est generale et vit dans ~/.claude/commands/awawa-usage-report.md, section 1 :"
