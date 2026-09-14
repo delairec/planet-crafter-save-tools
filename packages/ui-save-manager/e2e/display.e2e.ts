@@ -1,6 +1,6 @@
 import {expect, test} from '@playwright/test';
 
-const validSaveFixturePath = new URL('./fixtures/valid-save.json', import.meta.url).pathname;
+const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 
 test.describe('Save display', () => {
   test.describe('When a valid save file is visualized', () => {
@@ -9,7 +9,7 @@ test.describe('Save display', () => {
       await page.goto('/');
 
       // Act
-      await page.getByLabel('Save file:').setInputFiles(validSaveFixturePath);
+      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
       await page.getByRole('button', {name: 'Visualize'}).click();
 
       // Assert
@@ -29,14 +29,14 @@ test.describe('Save display', () => {
         };
       });
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(validSaveFixturePath);
+      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
 
       // Act
       await page.getByRole('button', {name: 'Visualize'}).click();
 
       // Assert
       await expect(page.getByText('The save file could not be displayed. Please try again.')).toBeVisible();
-      await expect(page.getByLabel('Save file:')).toHaveValue(/valid-save\.json$/);
+      await expect(page.getByLabel('Save file:')).toHaveValue(/baseline_valid\.json$/);
       await expect(page.getByRole('button', {name: 'Visualize'})).toBeEnabled();
     });
   });
@@ -46,7 +46,7 @@ test.describe('Save display', () => {
       // Arrange
       const noFileSelected: string[] = [];
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(validSaveFixturePath);
+      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
 
       // Act
       await page.getByLabel('Save file:').setInputFiles(noFileSelected);
@@ -60,9 +60,9 @@ test.describe('Save display', () => {
     test('should leave no save file to visualize', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(validSaveFixturePath);
-      await page.getByLabel('Save A:').setInputFiles(validSaveFixturePath);
-      await page.getByLabel('Save B:').setInputFiles(validSaveFixturePath);
+      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
+      await page.getByLabel('Save A:').setInputFiles(baselineSaveFixturePath);
+      await page.getByLabel('Save B:').setInputFiles(baselineSaveFixturePath);
 
       // Act
       await page.getByRole('button', {name: 'Merge'}).click();

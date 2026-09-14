@@ -1,17 +1,17 @@
 import {readFile} from 'node:fs/promises';
 import {expect, test, type Download, type Page} from '@playwright/test';
 
-const saveAFixturePath = new URL('./fixtures/valid-save.json', import.meta.url).pathname;
-const saveBFixturePath = new URL('./fixtures/companion-save.json', import.meta.url).pathname;
+const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
+const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
 
 /** The name the merge gives its output, built from the two source file names. */
-const mergedFileName = 'valid-save-companion-save-merged.json';
+const mergedFileName = 'baseline_valid-other-player_valid-merged.json';
 
 /**
  * The save display name the merge writes into the produced file. Neither source carries it, so it
  * tells the merged save apart from the two files that were fed to the merge.
  */
-const mergedSaveDisplayName = '"saveDisplayName":"valid-save-companion-save-merged"';
+const mergedSaveDisplayName = '"saveDisplayName":"baseline_valid-other-player_valid-merged"';
 
 async function mergeTheTwoFixtures(page: Page): Promise<void> {
   await page.goto('/');

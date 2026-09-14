@@ -9,29 +9,36 @@ generator the unit tests already rely on). Pass an override object to build a va
 overrides use come from `packages/shared-save-processing/testing/createSaveRecords.js`. A fixture meant to be valid is
 checked with `bun validate -- --file=<path>`.
 
-## `valid-save.json`
+## Naming
+
+`<content>_<expected>.json`: what the save carries that no other fixture carries, then the verdict the validator
+gives it — `valid` or `invalid`. Words inside a segment are separated by a hyphen, the two segments by an underscore.
+The role a fixture plays in a scenario is not part of its name: the same file is the save under display in one
+scenario and save A of a merge in another, so the role belongs to the variable that binds it and to this file.
+
+## `baseline_valid.json`
 
 `createFakeSaveContent()` called with no override. Regenerate it from the repository root:
 
 ```
 bun -e "
 import {createFakeSaveContent} from './packages/shared-save-processing/testing/createFakeSaveContent.js';
-await Bun.write('packages/ui-save-manager/e2e/fixtures/valid-save.json', createFakeSaveContent());
+await Bun.write('packages/ui-save-manager/e2e/fixtures/baseline_valid.json', createFakeSaveContent());
 "
 ```
 
-## `companion-save.json`
+## `other-player_valid.json`
 
-The second save of a merge: another player, another set of world objects and inventories, another save display name,
-so that the file the merge produces can be told apart from both of its sources. Its player is a host, like the player
-of `valid-save.json` — a save designating no host does not pass validation, and the merge is what demotes the second
-host. Regenerate it from the repository root:
+Another player, another set of world objects and inventories, another save display name, so that the file a merge
+produces can be told apart from both of its sources. Its player is a host, like the player of `baseline_valid.json` —
+a save designating no host does not pass validation, and the merge is what demotes the second host. Regenerate it
+from the repository root:
 
 ```
 bun -e "
 import {createFakeSaveContent} from './packages/shared-save-processing/testing/createFakeSaveContent.js';
 import {createEquipment, createGlobalMetadata, createInventory, createPlayer, createSaveConfiguration, createWorldObject} from './packages/shared-save-processing/testing/createSaveRecords.js';
-await Bun.write('packages/ui-save-manager/e2e/fixtures/companion-save.json', createFakeSaveContent({
+await Bun.write('packages/ui-save-manager/e2e/fixtures/other-player_valid.json', createFakeSaveContent({
   globalMetadata: createGlobalMetadata({terraTokens: 250, allTimeTerraTokens: 310_456, unlockedGroups: 'BootsSpeed2'}),
   players: [createPlayer({id: '76561190000000007', name: 'Sakia', inventoryId: 144, equipmentId: 145})],
   inventories: [
