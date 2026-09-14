@@ -295,7 +295,7 @@ describe('findImportedPackages', () => {
       // Arrange
       const source = [
         'import {yieldToPaint} from \'./yieldToPaint\';',
-        'import {Emoji} from \'../components/Emoji\';',
+        'import {Icon} from \'../components/Icon\';',
         'import {app} from \'~/app\';'
       ].join('\n');
 
