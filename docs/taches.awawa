@@ -181,6 +181,7 @@ TASK T40_ScenariosDeValidationEtDEtatsDeChargement
 		+ "avertissements et les etats de chargement"
 	STATUS implemented
 	WAVE "4"
+	PR "78"
 	AFTER @TASK.T24_HarnaisDeTestsUiParScenarios
 	RATIONALE "porte la ligne d'acceptation qui interdit de rejouer une regle de merge ou de"
 		+ "validation : c'est ce livrable qui ajoute les scenarios ou la tentation existe, les"
