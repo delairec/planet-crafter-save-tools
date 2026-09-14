@@ -534,24 +534,3 @@ OPEN_QUESTION UnCaractereDecoratifCousuDansUneValeurDeViewModelEchappeAuMasquage
 		REJECTED "laisser l'icone dans la valeur : c'est le defaut constate, pas une limitation"
 			+ "acceptee"
 	SOURCE "constat en revue de la PR #71, 2026-09-14, T32"
-
-OPEN_QUESTION LaRegleDuVerbeDActionPourNommerUneFonctionEstGeneraleOuDeProjet
-	DESC "une fonction — declaration ou variable qui en porte une — se nomme d'apres un verbe"
-		+ "d'action ; la regle vient d'etre demandee en revue sur du code de production, ou aucune"
-		+ "instruction generale ne la pose"
-	DESC "a trancher par l'utilisateur : la remonter dans les standards de code generaux, ou la"
-		+ "garder specifique a ce projet"
-	STATUS specified
-	BLOCKS @PACKAGE.ui_save_manager
-	RATIONALE "les instructions de test la portent deja, mais pour les constructeurs de test ; rien"
-		+ "dans les standards de code ne la pose pour le reste, et c'est en revue qu'elle a ete"
-		+ "demandee sur deux fonctions de message"
-	RECOMMENDATION "la remonter dans les standards de code generaux : elle ne doit rien au contexte"
-		+ "de test, et une regle de nommage qui ne vaut que dans les specs se contredit des qu'une"
-		+ "fonction passe d'une spec au code"
-		REJECTED "la garder dans le corpus seul : elle sera redemandee en revue sur le projet"
-			+ "suivant"
-		REJECTED "la laisser dans les instructions de test en elargissant leur portee : une regle"
-			+ "de nommage du code de production lue depuis un fichier de test n'est lue par"
-			+ "personne"
-	SOURCE "revue de la PR #71 par le proprietaire du depot, 2026-09-14, T32"
