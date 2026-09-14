@@ -13,7 +13,9 @@ import {worldObjectLabels} from "./worldObjectLabels";
 import {
   energyLevelsSectionAvailableTitle,
   energyLevelsSectionConsumptionTitle,
+  energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
+  energyLevelsSectionUnnamedPlanetName,
   energyLevelsSectionWorkInProgressLabel
 } from "./messages/energyLevelsSectionMessages.js";
 
@@ -40,20 +42,20 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
 
   private buildPlanet(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsViewModel {
     return {
-      planetId: planet.planetName ?? `Planet ${planet.planetId}`,
+      planetId: planet.planetName ?? energyLevelsSectionUnnamedPlanetName(planet.planetId),
       energyLevels: {
         columns: [
           {
             header: energyLevelsSectionProductionTitle,
-            values: [formatNumber(planet.production) + `${nbsp}kW`]
+            values: [formatNumber(planet.production) + `${nbsp}${energyLevelsSectionKilowattUnit}`]
           },
           {
             header: energyLevelsSectionConsumptionTitle,
-            values: [formatNumber(planet.consumption) + `${nbsp}kW ${energyLevelsSectionWorkInProgressLabel}`]
+            values: [formatNumber(planet.consumption) + `${nbsp}${energyLevelsSectionKilowattUnit} ${energyLevelsSectionWorkInProgressLabel}`]
           },
           {
             header: energyLevelsSectionAvailableTitle,
-            values: [formatNumber(planet.available) + `${nbsp}kW ${energyLevelsSectionWorkInProgressLabel}`]
+            values: [formatNumber(planet.available) + `${nbsp}${energyLevelsSectionKilowattUnit} ${energyLevelsSectionWorkInProgressLabel}`]
           }
         ]
       },
@@ -67,8 +69,8 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     return breakdown.map((entry): EnergyBreakdownRowViewModel => ({
       label: worldObjectLabels[entry.name],
       quantity: formatNumber(entry.quantity),
-      unitLevel: formatNumber(entry.unitLevel) + `${nbsp}kW`,
-      totalLevel: formatNumber(entry.totalLevel) + `${nbsp}kW` + this.buildContributionSuffix(entry.productionRatio)
+      unitLevel: formatNumber(entry.unitLevel) + `${nbsp}${energyLevelsSectionKilowattUnit}`,
+      totalLevel: formatNumber(entry.totalLevel) + `${nbsp}${energyLevelsSectionKilowattUnit}` + this.buildContributionSuffix(entry.productionRatio)
     }));
   }
 
@@ -79,7 +81,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
       boostedMachines: optimizer.boostedMachines
         .map((machine) => `${formatNumber(machine.quantity)} ${worldObjectLabels[machine.name]}`)
         .join(', '),
-      contribution: formatNumber(optimizer.contribution) + `${nbsp}kW` + this.buildContributionSuffix(optimizer.productionRatio)
+      contribution: formatNumber(optimizer.contribution) + `${nbsp}${energyLevelsSectionKilowattUnit}` + this.buildContributionSuffix(optimizer.productionRatio)
     }));
   }
 

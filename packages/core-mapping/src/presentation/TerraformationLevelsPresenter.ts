@@ -11,7 +11,9 @@ import {
   terraformationLevelsSectionOxygenLabel,
   terraformationLevelsSectionPlantsLabel,
   terraformationLevelsSectionPressureLabel,
-  terraformationLevelsSectionPurificationLabel
+  terraformationLevelsSectionPurificationLabel,
+  terraformationLevelsSectionPurificationUnit,
+  terraformationLevelsSectionTerraformationIndexUnit
 } from "./messages/terraformationLevelsSectionMessages.js";
 
 export class TerraformationLevelsPresenter implements TerraformationLevelsPresenterPort {
@@ -89,7 +91,7 @@ export class TerraformationLevelsPresenter implements TerraformationLevelsPresen
             },
             {
               header: terraformationLevelsSectionPurificationLabel,
-              values: [formatNumber(level.unitPurificationLevel, FormatNumberStrategies.SYMBOL) + 'Pu']
+              values: [formatNumber(level.unitPurificationLevel, FormatNumberStrategies.SYMBOL) + terraformationLevelsSectionPurificationUnit]
             }
           ]
         },
@@ -109,7 +111,7 @@ export class TerraformationLevelsPresenter implements TerraformationLevelsPresen
             },
           ]
         },
-        terraformationIndex: formatNumber(level.terraformationIndex, FormatNumberStrategies.SYMBOL) + 'Ti',
+        terraformationIndex: formatNumber(level.terraformationIndex, FormatNumberStrategies.SYMBOL) + terraformationLevelsSectionTerraformationIndexUnit,
         biomass: formatNumber(level.biomass, FormatNumberStrategies.WEIGHT)
       }))
     };
