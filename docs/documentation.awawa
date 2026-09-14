@@ -57,7 +57,7 @@ DECISION UneCleDupliqueeParLaCasseEstTrancheeParLAttestation
 	DESC "application de la regle d'attestation au cas d'une cle dupliquee par la seule casse"
 		REF @DECISION.LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
 	STATUS implemented
-	CLOSES @OPEN_QUESTION.SortDesCleusDupliqueesDeWorldObjectLabels
+	CLOSES @OPEN_QUESTION.SortDesClesDupliqueesDeWorldObjectLabels
 	RATIONALE "mesure sur les quatre saves de reference, refaite le 2026-09-14 : Keycard1 est"
 		+ "attestee 156, 152 et 80 fois dans trois d'entre elles, KeyCard1 dans aucune, KeyCard2"
 		+ "136, 152 et 71 fois dans les memes trois"

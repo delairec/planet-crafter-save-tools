@@ -687,8 +687,8 @@ DECISION UneVarianteDeMessageEstProduiteParUneFonctionPasParDeuxChainesJumelles
 	STATUS implemented
 	RATIONALE "ecrites cote a cote, deux phrases jumelles se modifient l'une sans l'autre et rien"
 		+ "ne le signale"
-	RATIONALE "le depot parametre deja un message par une fonction, playersSectionUnknownItemLabel"
-		+ ": la forme existe et n'a pas a etre inventee"
+	RATIONALE "le depot parametre deja un message par une fonction,"
+		+ "resolvePlayersSectionUnknownItemLabel : la forme existe et n'a pas a etre inventee"
 	REJECTED "une notation de remplacement dans la chaine, {replace} ou equivalent, et sa fonction"
 		+ "de formatage : un moteur de gabarit pour deux messages, quand une fonction rend le meme"
 		+ "service et se fait verifier par le compilateur"
