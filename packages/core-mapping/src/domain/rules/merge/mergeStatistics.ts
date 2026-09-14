@@ -1,6 +1,6 @@
 import {Statistics} from 'shared-save-processing/gameDefinitions';
 
-const DEFAULT_STATISTICS: Statistics = {craftedObjects: 0, totalSaveFileLoad: 0, totalSaveFileTime: 0};
+const NO_STATISTICS_CONTRIBUTION: Statistics = {craftedObjects: 0, totalSaveFileLoad: 0, totalSaveFileTime: 0};
 
 /**
  * @see GR-STAT-1 in docs/game-rules.md
@@ -10,12 +10,12 @@ export function mergeStatistics([statisticsA]: Statistics[], [statisticsB]: Stat
     return undefined;
   }
 
-  const statisticsAOrDefault = statisticsA ?? DEFAULT_STATISTICS;
-  const statisticsBOrDefault = statisticsB ?? DEFAULT_STATISTICS;
+  const statisticsAContribution = statisticsA ?? NO_STATISTICS_CONTRIBUTION;
+  const statisticsBContribution = statisticsB ?? NO_STATISTICS_CONTRIBUTION;
 
   return {
-    craftedObjects: statisticsAOrDefault.craftedObjects + statisticsBOrDefault.craftedObjects,
-    totalSaveFileLoad: statisticsAOrDefault.totalSaveFileLoad + statisticsBOrDefault.totalSaveFileLoad,
-    totalSaveFileTime: statisticsAOrDefault.totalSaveFileTime + statisticsBOrDefault.totalSaveFileTime,
+    craftedObjects: statisticsAContribution.craftedObjects + statisticsBContribution.craftedObjects,
+    totalSaveFileLoad: statisticsAContribution.totalSaveFileLoad + statisticsBContribution.totalSaveFileLoad,
+    totalSaveFileTime: statisticsAContribution.totalSaveFileTime + statisticsBContribution.totalSaveFileTime,
   };
 }
