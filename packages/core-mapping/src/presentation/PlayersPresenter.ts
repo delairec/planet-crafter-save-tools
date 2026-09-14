@@ -7,7 +7,7 @@ import {
   playersSectionInventoryLabel,
   playersSectionNoEquipmentMessage,
   playersSectionNoItemsMessage,
-  playersSectionUnknownItemLabel
+  resolvePlayersSectionUnknownItemLabel
 } from "./messages/playersSectionMessages.js";
 
 export class PlayersPresenter implements PlayersPresenterPort {
@@ -44,7 +44,7 @@ export class PlayersPresenter implements PlayersPresenterPort {
 
 function mapItemNameToItemLabel(itemName: string): string {
   const worldObjectLabel: WorldObjectLabel = worldObjectLabels[itemName];
-  return worldObjectLabel ?? playersSectionUnknownItemLabel(itemName);
+  return worldObjectLabel ?? resolvePlayersSectionUnknownItemLabel(itemName);
 }
 
 function mapListWithEmptyMessage(list: readonly string[], message: string): string[] {

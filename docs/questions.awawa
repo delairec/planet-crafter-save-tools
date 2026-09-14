@@ -170,12 +170,12 @@ OPEN_QUESTION FormeDuContratControleurVersUi
 		+ "controleur de section ne coute rien"
 	SOURCE "fiche T37, decision 6"
 
-OPEN_QUESTION SortDesCleusDupliqueesDeWorldObjectLabels
+OPEN_QUESTION SortDesClesDupliqueesDeWorldObjectLabels
 	DESC "que faire des deux definitions de OutsideLamp1 et de la paire Keycard1 / KeyCard1,"
 		+ "probablement la meme cle"
 	DESC "a trancher, sans alternative examinee : conserver la premiere occurrence et verifier la"
 		+ "casse contre les saves de reference"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T38_ConformiteCoreMapping
 	SOURCE "fiche T38, decision 2"
 
@@ -646,3 +646,100 @@ OPEN_QUESTION LaLectureDUnFichierDuCorpusPourYAjouterUneEntiteEstElleLegitime
 	STATUS specified
 	BLOCKS @DECISION.AgentsMdNommeUneEntiteModeleParType
 	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
+
+OPEN_QUESTION LaCasseDeLExtensionJsonNEstPasLueDeLaMemeFaconPartout
+	DESC "isJson de initMergeCli retient un fichier d'entree par endsWith('.json'), sensible a la"
+		+ "casse, la ou hasJsonExtension et stripJsonExtension de shared-save-processing ne le sont"
+		+ "pas : un fichier Standard-1.JSON n'est pas ramasse par le parcours du dossier alors que"
+		+ "la validation l'accepterait et que la fusion le nommerait correctement"
+	STATUS superseded
+	BLOCKS @PACKAGE.cli_merge
+	RATIONALE "constate en partageant le retrait de l'extension, T38 : la correction sort de"
+		+ "core-mapping et change ce que bun merge ramasse, ce que la tache s'interdit"
+	RECOMMENDATION "faire lire le parcours par hasJsonExtension, seul module a savoir ce qu'est"
+		+ "l'extension json : un dossier de deux saves dont l'une porte .JSON cesse d'etre annonce"
+		+ "comme n'en portant qu'une"
+		REJECTED "garder la sensibilite a la casse et la declarer voulue : elle ne l'est nulle part"
+			+ "ailleurs, et le dossier est alors signale comme ne contenant pas deux saves, un"
+			+ "diagnostic qui ne nomme pas la cause"
+	SOURCE "T38, PR #76, 2026-09-14"
+
+OPEN_QUESTION UnCaractereInvisibleEcritEnClairEstUneRegleGeneraleOuDeProjet
+	DESC "a trancher : general ou specifique au projet ; regle candidate — un caractere invisible"
+		+ "s'ecrit par sa sequence d'echappement, jamais en clair dans une source"
+	DESC "la decision qui a juge le cas marginal s'appuyait sur une occurrence unique, un octet de"
+		+ "controle dans nameMergedFile ; l'espace insecable de formatNumber est la seconde, ecrite"
+		+ "deux fois dans deux orthographes indistinguables, et la marginalite etait le seul appui"
+		+ "de cette decision"
+		REF @DECISION.UnOctetDeControleBrutResteUnCasMarginalSansRegle
+	STATUS specified
+	BLOCKS @DECISION.UnOctetDeControleBrutResteUnCasMarginalSansRegle
+	RATIONALE "l'espace insecable n'est pas un caractere de controle mais partage son mode de"
+		+ "defaillance : invisible dans la source, indistinguable d'un espace ordinaire,"
+		+ "remplacable sans bruit et sans diff lisible"
+	RECOMMENDATION "promouvoir la regle en STD, formulee sur le caractere invisible et non sur"
+		+ "l'octet de controle : c'est le mode de defaillance commun, et il s'est produit deux fois"
+		+ "en trois jours"
+		REJECTED "garder le cas marginal : la marginalite tenait a une occurrence unique, il y en a"
+			+ "deux"
+		REJECTED "une garde de depot sur les caracteres invisibles : la regle n'est pas encore"
+			+ "tranchee, et CFG-5 met la garde apres l'arbitrage, pas avant"
+	SOURCE "revue de la PR #76, fil 4005182730, 2026-09-14"
+
+OPEN_QUESTION LeLienEntreEpaveProceduraleEtPortailEstInconnu
+	DESC "a trancher : les objets ProceduralWreck et ProceduralInstanceGenerator sont-ils engendres"
+		+ "par PortalGenerator1, le generateur de portail"
+	DESC "ce que la reponse change : ProceduralInstanceGenerator n'a pas de libelle et rend sa"
+		+ "propre cle ; le lien etabli le nommerait dans la table"
+		REF @DECISION.LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
+	STATUS specified
+	BLOCKS @PACKAGE.core_mapping
+	RATIONALE "interrogation laissee en commentaire dans worldObjectLabels par une session"
+		+ "anterieure, conservee la et doublee ici"
+		REF @DECISION.UneInterrogationEnCommentaireNommeLaQuestionOuverteQuiLaPorte
+	SOURCE "arbitrage de l'utilisateur du 2026-09-14, revue de la PR #76, fil 4005208926"
+
+OPEN_QUESTION UnChiffreInscritDansLeCorpusPorteLaPorteeDeSaMesure
+	DESC "a trancher : un chiffre ecrit dans un RATIONALE porte la portee de sa mesure et la"
+		+ "commande qui l'a produit, sinon un lecteur qui le rejoue trouve autre chose"
+	DESC "deux chiffres du corpus sont a reporter avec leur portee : Keycard1 attestee 156, 152 et"
+		+ "80 fois compte les occurrences de la chaine dans trois saves, 29, 13 et 9 comme cle"
+		+ "entre guillemets ; les 340 sources sans tabulation sont les fichiers ts, js et tsx de"
+		+ "packages, 358 avec scripts"
+		REF @DECISION.UneCleDupliqueeParLaCasseEstTrancheeParLAttestation
+	STATUS specified
+	BLOCKS @DECISION.UneCleDupliqueeParLaCasseEstTrancheeParLAttestation
+	RATIONALE "le chiffre sans portee est un point recurrent des rapports d'usage, vu trois fois :"
+		+ "le compte de CI a la PR #72, le rejeu de garde et le grep a la PR #71, ces deux-ci a la"
+		+ "PR #76 ; la remediation proposee a la PR #71 n'a jamais eu de domicile"
+	RECOMMENDATION "recrire les deux RATIONALE avec la portee, et ecrire desormais tout chiffre"
+		+ "d'un RATIONALE avec la commande qui l'a produit"
+		REJECTED "laisser les chiffres tels quels : ils ne sont pas faux comme comptes de chaines,"
+			+ "mais un lecteur qui rejoue avec une cle entre guillemets conclut a une erreur de"
+			+ "mesure et rouvre l'arbitrage"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-76.md, PR #76, partie A"
+		+ "remediation 4"
+
+OPEN_QUESTION UneDecisionNommeCeQuElleGouverneParUnChampAppliesTo
+	DESC "a trancher : le schema declare sur DECISION un champ APPLIES_TO reference avec CONVERSE"
+		+ "GOVERNED_BY, pointant le PACKAGE ou la TASK que la decision contraint, pour que context"
+		+ "et lint --closure listent en pied de page les decisions qui contraignent X"
+	DESC "86 des 122 decisions n'ont aucune arete entrante ; deux des quatre decisions de la PR #76"
+		+ "sont a zero ; la session pilote a trouve les decisions contraignant un worktree par"
+		+ "status DECISION suivi d'un grep de texte"
+	STATUS specified
+	BLOCKS @TASK.T43_SpecsDeDomaineCoreMapping
+	RATIONALE "point signale par cinq rapports d'usage de suite depuis la revue de la PR #62 et"
+		+ "jamais enregistre dans le corpus ; la remediation est un changement de schema, a"
+		+ "examiner dans la revue de la configuration awawa que le proprietaire annonce, avec un"
+		+ "retrofit des decisions vivantes"
+	RECOMMENDATION "declarer le champ et la converse, puis renseigner APPLIES_TO sur les decisions"
+		+ "specified et implemented qui contraignent un paquet ou une tache, en commencant par"
+		+ "celles que context @TASK.T43 devrait rendre"
+		REJECTED "compter sur les REF nichees sous DESC et RATIONALE : 56 REF pour 122 decisions"
+			+ "apres cinq rapports, et une REF part de la decision vers ce qu'elle cite, jamais"
+			+ "vers ce qu'elle gouverne"
+		REJECTED "ne rien changer et chercher par grep : c'est ce que la session pilote a fait le"
+			+ "2026-09-14, une recherche de texte la ou un pied de page devrait repondre"
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-76.md, PR #76, partie A"
+		+ "remediation 5"

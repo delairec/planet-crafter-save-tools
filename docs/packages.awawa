@@ -610,6 +610,32 @@ DECISION UnPresenterRecoitUnValueObjectJamaisUneEntite
 	SOURCE "arbitrage du proprietaire du depot en revue de la PR #72, 2026-09-13, lecture"
 		+ "restreinte, travail fait dans la PR et non dans T38"
 
+DECISION UnPortLecteurSeNommePourCeQuIlLitEtNonPourUnAnalyseur
+	DESC "SaveSectionsReaderPort.getGlobalMetadata rendait un GlobalProgressionValueObject : la"
+		+ "methode se nomme getGlobalProgression, pour ce qu'elle rend"
+	DESC "un parametre ou une variable tenant un SaveSectionsReaderPort se nomme"
+		+ "saveSectionsReader, et le double de test FakeSaveParserService devient"
+		+ "FakeSaveSectionsReaderService"
+	STATUS implemented
+	RATIONALE "les six methodes du port rendent une entite ou un value object depuis T15 : celle-ci"
+		+ "n'est plus l'exception que la revue du 2026-09-07 avait relevee, il ne restait que"
+		+ "l'ecart entre le nom de la methode et ce qu'elle rend"
+		REF @DECISION.UnPresenterRecoitUnValueObjectJamaisUneEntite
+	RATIONALE "cinq cas d'utilisation appelaient analyseur le port qui lit : un analyseur est"
+		+ "SaveSectionsParserPort, qui prend le texte d'une save et rend des sections, et les deux"
+		+ "ports coexistent dans le meme repertoire"
+	REJECTED "faire rendre au port les metadonnees brutes et monter le value object dans le cas"
+		+ "d'utilisation : les cinq autres methodes rendent un type du domaine, et celle-ci"
+		+ "deviendrait la seule a rendre un enregistrement du format de save"
+	REJECTED "laisser le nom de methode et ne renommer que les parametres : l'ecart releve par la"
+		+ "revue est celui du nom, le corriger a moitie le laisse entier"
+	SPEC "le port lecteur nomme ses methodes pour ce qu'elles rendent, et ses porteurs pour ce"
+		+ "qu'il est"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsReaderPort.ts"
+		IMPL "packages/core-mapping/src/application/LoadGlobalProgressionSection.ts"
+		IMPL "packages/core-mapping/src/testing/FakeSaveSectionsReaderService.ts"
+	SOURCE "T38, PR #76, 2026-09-14, lecture d'une ligne SPEC de la revue du 2026-09-07"
+
 DECISION LaFormeDUneColonneEstDeriveeDuViewModelQuiLaProduit
 	DESC "la forme d'une colonne de tableau n'est declaree qu'une fois, dans le ViewModel de table"
 		+ "de core-mapping ; l'UI la derive de ce ViewModel au lieu de la redeclarer"
@@ -661,8 +687,8 @@ DECISION UneVarianteDeMessageEstProduiteParUneFonctionPasParDeuxChainesJumelles
 	STATUS implemented
 	RATIONALE "ecrites cote a cote, deux phrases jumelles se modifient l'une sans l'autre et rien"
 		+ "ne le signale"
-	RATIONALE "le depot parametre deja un message par une fonction, playersSectionUnknownItemLabel"
-		+ ": la forme existe et n'a pas a etre inventee"
+	RATIONALE "le depot parametre deja un message par une fonction,"
+		+ "resolvePlayersSectionUnknownItemLabel : la forme existe et n'a pas a etre inventee"
 	REJECTED "une notation de remplacement dans la chaine, {replace} ou equivalent, et sa fonction"
 		+ "de formatage : un moteur de gabarit pour deux messages, quand une fonction rend le meme"
 		+ "service et se fait verifier par le compilateur"

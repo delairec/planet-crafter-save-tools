@@ -1,4 +1,4 @@
-import {hasJsonExtension} from "shared-save-processing/hasJsonExtension.js";
+import {hasJsonExtension} from "shared-save-processing/jsonExtension.js";
 import {validateSaveContent} from "./validateSaveContent.js";
 import {SaveValidatorPort} from "../application/ports/SaveValidatorPort";
 import {SaveValidationResult} from "../application/ports/SaveValidationResult";

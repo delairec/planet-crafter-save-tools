@@ -5,6 +5,7 @@ import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {
   globalProgressionSectionAllTimeTerraTokensLabel,
+  globalProgressionSectionTerraTokenUnit,
   globalProgressionSectionTotalCraftedObjectsLabel
 } from "./messages/globalProgressionSectionMessages.js";
 
@@ -45,7 +46,7 @@ function createViewModel(globalProgression: GlobalProgressionValueObject, totalC
       columns: [
         {
           header: globalProgressionSectionAllTimeTerraTokensLabel,
-          values: [`${formatNumber(globalProgression.allTimeTerraTokens)} =tt=`]
+          values: [`${formatNumber(globalProgression.allTimeTerraTokens)} ${globalProgressionSectionTerraTokenUnit}`]
         },
         {
           header: globalProgressionSectionTotalCraftedObjectsLabel,

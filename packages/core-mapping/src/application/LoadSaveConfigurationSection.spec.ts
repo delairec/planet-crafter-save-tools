@@ -1,6 +1,6 @@
 import {describe, expect, it, mock} from "bun:test";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
-import {FakeSaveParserService} from "../testing/FakeSaveParserService";
+import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
 import {SaveConfigurationPresenterPort} from "./ports/SaveConfigurationPresenterPort";
 import {LoadSaveConfigurationSection} from "./LoadSaveConfigurationSection";
 
@@ -12,9 +12,9 @@ describe('LoadSaveConfigurationSection', () => {
   describe('When the save carries a configuration section', () => {
     it('should present the save configuration from the parsed save', async () => {
       // Arrange
-      const saveParser: SaveSectionsReaderPort = new FakeSaveParserService();
+      const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
       const presenter = createPresenter();
-      const useCase = new LoadSaveConfigurationSection(saveParser, presenter);
+      const useCase = new LoadSaveConfigurationSection(saveSectionsReader, presenter);
 
       // Act
       await useCase.execute();
@@ -38,9 +38,9 @@ describe('LoadSaveConfigurationSection', () => {
   describe('When the save carries no configuration section', () => {
     it('should present the section as missing', async () => {
       // Arrange
-      const saveParser: SaveSectionsReaderPort = Object.assign(new FakeSaveParserService(), {getSaveConfiguration: () => undefined});
+      const saveSectionsReader: SaveSectionsReaderPort = Object.assign(new FakeSaveSectionsReaderService(), {getSaveConfiguration: () => undefined});
       const presenter = createPresenter();
-      const useCase = new LoadSaveConfigurationSection(saveParser, presenter);
+      const useCase = new LoadSaveConfigurationSection(saveSectionsReader, presenter);
 
       // Act
       await useCase.execute();

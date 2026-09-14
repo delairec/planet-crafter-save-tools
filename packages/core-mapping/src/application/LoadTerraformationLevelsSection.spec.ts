@@ -1,14 +1,14 @@
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveParserService} from "../testing/FakeSaveParserService";
+import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {LoadTerraformationLevelsSection} from './LoadTerraformationLevelsSection';
 
 describe('LoadTerraformationLevelsSection', () => {
   it('should present all terraformation levels from the parsed save', async () => {
     // Arrange
-    const saveParser: SaveSectionsReaderPort = new FakeSaveParserService();
+    const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
     const presenter = {displayTerraformationLevels: mock()};
-    const useCase = new LoadTerraformationLevelsSection(saveParser, presenter);
+    const useCase = new LoadTerraformationLevelsSection(saveSectionsReader, presenter);
 
     // Act
     await useCase.execute();

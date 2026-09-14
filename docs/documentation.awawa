@@ -48,6 +48,33 @@ DECISION LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
 		IMPL "docs/energy-levels.md"
 	SOURCE "decision du 2026-09-09, revue de la PR #43"
 
+DECISION UneCleDupliqueeParLaCasseEstTrancheeParLAttestation
+	DESC "des deux cles Keycard1 et KeyCard1 de otherWorldObjectLabels, toutes deux etiquetees"
+		+ "Access card, seule Keycard1 est conservee ; KeyCard1 quitte la table des libelles et"
+		+ "l'union worldObjectNames"
+	DESC "KeyCard2 garde sa casse : le jeu melange lui-meme la casse entre l'objet 1 et l'objet 2,"
+		+ "et c'est cette forme-la qui est attestee"
+	DESC "application de la regle d'attestation au cas d'une cle dupliquee par la seule casse"
+		REF @DECISION.LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.SortDesClesDupliqueesDeWorldObjectLabels
+	RATIONALE "mesure sur les quatre saves de reference, refaite le 2026-09-14 : Keycard1 est"
+		+ "attestee 156, 152 et 80 fois dans trois d'entre elles, KeyCard1 dans aucune, KeyCard2"
+		+ "136, 152 et 71 fois dans les memes trois"
+	RATIONALE "les deux cles sont distinctes pour TypeScript, donc le type-check ne dit rien d'un"
+		+ "doublon dont les deux membres portent le meme libelle"
+	RATIONALE "le volet OutsideLamp1 de la question est sans objet : il n'en reste qu'une"
+		+ "definition dans chacun des deux fichiers"
+	REJECTED "garder les deux cles : l'union resterait permissive a une orthographe qu'aucune save"
+		+ "n'atteste"
+	REJECTED "ne retirer que le libelle : le domaine accepterait alors un nom sans libelle de"
+		+ "presentation, ce que la contrainte croisee des deux tables interdit"
+	SPEC "Keycard1 est la seule des deux cles a subsister, dans la table des libelles comme dans"
+		+ "l'union des noms"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts"
+	SOURCE "arbitrage utilisateur du 2026-09-14, T38, PR #76"
+
 DECISION LeCorpusEstLeSeulDomicileEtHistoryEstSupprime
 	DESC "history.md est supprime : ce qui contraint encore le travail est devenu des entites de ce"
 		+ "corpus, le reste avait deja un domicile ailleurs et a ete retire"

@@ -1,3 +1,5 @@
+import {stripJsonExtension} from 'shared-save-processing/jsonExtension.js';
+
 export interface SourceFileNames {
   readonly fileNameA: string;
   readonly fileNameB: string;
@@ -12,10 +14,6 @@ export function nameMergedFile({fileNameA, fileNameB}: SourceFileNames): MergedF
   const stem = `${sanitizeFileName(stripJsonExtension(fileNameA))}-${sanitizeFileName(stripJsonExtension(fileNameB))}-merged`;
 
   return {fileName: `${stem}.json`, stem};
-}
-
-function stripJsonExtension(fileName: string): string {
-  return fileName.replace(/\.json$/i, '');
 }
 
 function sanitizeFileName(fileName: string): string {

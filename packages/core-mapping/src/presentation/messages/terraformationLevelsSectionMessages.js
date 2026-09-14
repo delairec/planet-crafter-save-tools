@@ -7,3 +7,5 @@ export const terraformationLevelsSectionPlantsLabel = 'Plants';
 export const terraformationLevelsSectionInsectsLabel = 'Insects';
 export const terraformationLevelsSectionAnimalsLabel = 'Animals';
 
+export const terraformationLevelsSectionPurificationUnit = 'Pu';
+export const terraformationLevelsSectionTerraformationIndexUnit = 'Ti';

@@ -7,7 +7,7 @@ import {validateUniqueHost} from '../domain/rules/validateUniqueHost.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
 
 /**
- * Validates a merged Planet Crafter save string: JSON schema compliance for each section, plus
+ * Validates a Planet Crafter save string: JSON schema compliance for each section, plus
  * domain-specific rules. Legacy saves (still containing the Terrain Layers section, removed by a
  * later game update) are transparently adapted to the current format and reported through
  * `warnings` instead of an error.
@@ -16,11 +16,11 @@ import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
  * validator tolerating the format differently from the reader used by loading and merging is what
  * once let a lost section pass for a valid save.
  *
- * @param {string} mergedSave
+ * @param {string} saveContent
  * @returns {{isValid: boolean, errors: import('../application/ports/ValidationIssue').ValidationIssue[], warnings: import('shared-save-processing/gameDefinitions').SaveWarningCode[]}}
  */
-export function validateSaveContent(mergedSave) {
-  const sectionCountErrors = verifySectionCount(mergedSave.split('@'));
+export function validateSaveContent(saveContent) {
+  const sectionCountErrors = verifySectionCount(saveContent.split('@'));
   if (sectionCountErrors.length > 0) {
     return {
       isValid: false,
@@ -29,14 +29,14 @@ export function validateSaveContent(mergedSave) {
     };
   }
 
-  const {sections, errors: parseErrors, warnings} = parseSaveSections(mergedSave);
+  const {sections, errors: parseErrors, warnings} = parseSaveSections(saveContent);
   const worldObjectIssues = validateWorldObjectsSection(sections[WORLD_OBJECTS_SECTION_INDEX]);
 
   const errors = parseErrors.map(toInvalidJsonIssue);
 
   errors.push(...validateSchemas(sections));
   errors.push(...worldObjectIssues);
-  errors.push(...validateFloatSerialization(mergedSave));
+  errors.push(...validateFloatSerialization(saveContent));
 
   const uniqueHostViolation = validateUniqueHost(sections[PLAYERS_SECTION_INDEX]);
   if (uniqueHostViolation !== null) {

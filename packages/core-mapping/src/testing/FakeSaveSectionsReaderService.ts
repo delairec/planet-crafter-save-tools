@@ -12,7 +12,7 @@ import {
 import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 
-export class FakeSaveParserService implements SaveSectionsReaderPort {
+export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
   getEnergyLevelsRawData(): EnergyLevelsRawDataValueObject {
     const producer = new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator6' as const, position: [0, 0, 0], planetId: 1});
     const consumer = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
@@ -48,7 +48,7 @@ export class FakeSaveParserService implements SaveSectionsReaderPort {
     });
   }
 
-  getGlobalMetadata(): GlobalProgressionValueObject {
+  getGlobalProgression(): GlobalProgressionValueObject {
     return createGlobalProgressionValueObject({allTimeTerraTokens: 1_234_567});
   }
 

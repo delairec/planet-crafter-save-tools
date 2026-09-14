@@ -1,5 +1,5 @@
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveParserService} from "../testing/FakeSaveParserService";
+import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {LoadGlobalProgressionSection} from "./LoadGlobalProgressionSection";
 import {GlobalProgressionPresenterPort} from "./ports/GlobalProgressionPresenterPort";
@@ -12,9 +12,9 @@ describe('LoadGlobalProgressionSection', () => {
   describe('When the save carries a statistics section', () => {
     it('should present global progression and statistics from the parsed save', async () => {
       // Arrange
-      const saveParser: SaveSectionsReaderPort = new FakeSaveParserService();
+      const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
       const presenter = createPresenter();
-      const useCase = new LoadGlobalProgressionSection(saveParser, presenter);
+      const useCase = new LoadGlobalProgressionSection(saveSectionsReader, presenter);
 
       // Act
       await useCase.execute();
@@ -28,9 +28,9 @@ describe('LoadGlobalProgressionSection', () => {
   describe('When the save carries no statistics section', () => {
     it('should present the global progression alone', async () => {
       // Arrange
-      const saveParser: SaveSectionsReaderPort = Object.assign(new FakeSaveParserService(), {getStatistics: () => undefined});
+      const saveSectionsReader: SaveSectionsReaderPort = Object.assign(new FakeSaveSectionsReaderService(), {getStatistics: () => undefined});
       const presenter = createPresenter();
-      const useCase = new LoadGlobalProgressionSection(saveParser, presenter);
+      const useCase = new LoadGlobalProgressionSection(saveSectionsReader, presenter);
 
       // Act
       await useCase.execute();

@@ -6,7 +6,7 @@ export const OPTIMIZER_CONFIG_BY_NAME: Partial<Record<WorldObjectName, { radius:
   Optimizer2: {radius: 250, maxMachines: 8}
 };
 
-export const ENERGY_FUSE_NAME: WorldObjectName = 'FuseEnergy1' as WorldObjectName;
+export const ENERGY_FUSE_NAME: WorldObjectName = 'FuseEnergy1';
 
 // Rule EN-FUSE-2/3 (per Fuse wiki page): each Energy Fuse replaces the producer's 100% base value
 // with a 150% multiplier; multiple fuses (from one or more Optimizers) stack additively by raw

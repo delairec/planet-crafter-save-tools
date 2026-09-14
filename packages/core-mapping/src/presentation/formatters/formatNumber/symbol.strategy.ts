@@ -1,16 +1,10 @@
 import {formatDecimalNumberWithSuffix} from "./formatDecimalNumberWithSuffix";
-
-interface Threshold {
-  value: number | bigint;
-  suffix: string;
-  big?: boolean;
-  multiply?: number;
-}
+import {Threshold} from "./threshold.strategy";
 
 const thresholds: Threshold[] = [
-  {value: 1_000_000_000_000_000_000_000_000n, suffix: "Y", big: true},
-  {value: 1_000_000_000_000_000_000_000n, suffix: "Z", big: true},
-  {value: 1_000_000_000_000_000_000n, suffix: "E", big: true},
+  {value: 1_000_000_000_000_000_000_000_000n, suffix: "Y"},
+  {value: 1_000_000_000_000_000_000_000n, suffix: "Z"},
+  {value: 1_000_000_000_000_000_000n, suffix: "E"},
   {value: 1_000_000_000_000_000, suffix: "P"},
   {value: 1_000_000_000_000, suffix: "T"},
   {value: 1_000_000_000, suffix: "G"},
@@ -41,7 +35,7 @@ export function formatNumberByUnitThresholds(numberOrBigint: number | bigint) {
         return formatDecimalNumberWithSuffix(result, threshold.suffix);
       }
 
-      const result = num / threshold.value;
+      const result = num / Number(threshold.value);
       return formatDecimalNumberWithSuffix(result, threshold.suffix);
     }
   }

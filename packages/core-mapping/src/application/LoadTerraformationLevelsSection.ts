@@ -3,12 +3,12 @@ import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 
 export class LoadTerraformationLevelsSection {
   constructor(
-    private saveParser: SaveSectionsReaderPort,
+    private saveSectionsReader: SaveSectionsReaderPort,
     private presenter: TerraformationLevelsPresenterPort
   ) {}
 
   async execute(): Promise<void> {
-    const levelsWithSummary = this.saveParser.getTerraformationLevels().map((level) => level.summarize());
+    const levelsWithSummary = this.saveSectionsReader.getTerraformationLevels().map((level) => level.summarize());
 
     this.presenter.displayTerraformationLevels(levelsWithSummary);
   }

@@ -399,7 +399,6 @@ const WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL = [
   'GoldenEffigie7',
   'PinChip1',
   'PinChip2',
-  'KeyCard1',
   'SolarQuartz',
   'MagnetarQuartz',
   'BalzarQuartz',
