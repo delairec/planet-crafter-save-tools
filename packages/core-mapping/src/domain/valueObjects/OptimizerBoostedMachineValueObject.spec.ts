@@ -18,7 +18,10 @@ describe('OptimizerBoostedMachineValueObject', () => {
     // Arrange
     const input = {name: 'Drill0' as const, quantity: NaN};
 
-    // Act & Assert
-    expect(() => createOptimizerBoostedMachineValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildOptimizerBoostedMachine = () => createOptimizerBoostedMachineValueObject(input);
+
+    // Assert
+    expect(buildOptimizerBoostedMachine).toThrow(InvalidSaveDataError);
   });
 });

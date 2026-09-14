@@ -35,7 +35,10 @@ describe('PlanetEnergyLevelsValueObject', () => {
       optimizers: []
     };
 
-    // Act & Assert
-    expect(() => createPlanetEnergyLevelsValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildPlanetEnergyLevels = () => createPlanetEnergyLevelsValueObject(input);
+
+    // Assert
+    expect(buildPlanetEnergyLevels).toThrow(InvalidSaveDataError);
   });
 });

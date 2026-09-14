@@ -268,26 +268,28 @@ describe('PlanetEnergyGrid', () => {
       expect(levels.optimizers[0]?.contribution).toBe(0.6);
     });
 
-    it('should report zero contribution and no boosted machine when the optimizer reaches no producer', () => {
-      // Arrange
-      const optimizer = placedWorldObject('opt-1', 'Optimizer1', [0, 0, 0], PLANET_ID, 99);
-      const grid = gridOf(
-        [optimizer],
-        [optimizer, energyFuse('fuse-1')],
-        [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})]
-      );
+    describe('When the optimizer reaches no producer', () => {
+      it('should report zero contribution and no boosted machine', () => {
+        // Arrange
+        const optimizer = placedWorldObject('opt-1', 'Optimizer1', [0, 0, 0], PLANET_ID, 99);
+        const grid = gridOf(
+          [optimizer],
+          [optimizer, energyFuse('fuse-1')],
+          [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})]
+        );
 
-      // Act
-      const levels = grid.levels();
+        // Act
+        const levels = grid.levels();
 
-      // Assert
-      expect(levels.optimizers).toEqual([{
-        name: 'Optimizer1',
-        fuseCount: 1,
-        boostedMachines: [],
-        contribution: 0,
-        productionRatio: undefined
-      }]);
+        // Assert
+        expect(levels.optimizers).toEqual([{
+          name: 'Optimizer1',
+          fuseCount: 1,
+          boostedMachines: [],
+          contribution: 0,
+          productionRatio: undefined
+        }]);
+      });
     });
 
     it('should split the total boost of a producer between its optimizers, proportionally to their fuse count', () => {
@@ -308,7 +310,10 @@ describe('PlanetEnergyGrid', () => {
       const levels = grid.levels();
 
       // Assert
-      expect(levels.optimizers.map((optimizer) => optimizer.contribution)).toEqual([1.4, 2.8]);
+      expect(levels.optimizers).toMatchObject([
+        {name: 'Optimizer1', fuseCount: 1, boostedMachines: [{name: 'EnergyGenerator1', quantity: 1}], contribution: 1.4},
+        {name: 'Optimizer1', fuseCount: 2, boostedMachines: [{name: 'EnergyGenerator1', quantity: 1}], contribution: 2.8}
+      ]);
     });
 
     it('should ignore an optimizer holding no energy fuse', () => {
@@ -386,21 +391,23 @@ describe('PlanetEnergyGrid', () => {
       }]);
     });
 
-    it('should leave the production shares undefined when the planet produces no energy', () => {
-      // Arrange
-      const optimizer = placedWorldObject('opt-1', 'Optimizer1', [0, 0, 0], PLANET_ID, 99);
-      const grid = gridOf(
-        [optimizer],
-        [optimizer, energyFuse('fuse-1')],
-        [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})]
-      );
+    describe('When the planet produces no energy', () => {
+      it('should leave the production shares undefined', () => {
+        // Arrange
+        const optimizer = placedWorldObject('opt-1', 'Optimizer1', [0, 0, 0], PLANET_ID, 99);
+        const grid = gridOf(
+          [optimizer],
+          [optimizer, energyFuse('fuse-1')],
+          [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})]
+        );
 
-      // Act
-      const levels = grid.levels();
+        // Act
+        const levels = grid.levels();
 
-      // Assert
-      expect(levels.production).toBe(0);
-      expect(levels.optimizers[0]?.productionRatio).toBeUndefined();
+        // Assert
+        expect(levels.production).toBe(0);
+        expect(levels.optimizers[0]?.productionRatio).toBeUndefined();
+      });
     });
   });
 

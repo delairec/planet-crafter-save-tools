@@ -18,7 +18,10 @@ describe('GlobalProgressionValueObject', () => {
     // Arrange
     const input = {allTimeTerraTokens: NaN};
 
-    // Act & Assert
-    expect(() => createGlobalProgressionValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildGlobalProgression = () => createGlobalProgressionValueObject(input);
+
+    // Assert
+    expect(buildGlobalProgression).toThrow(InvalidSaveDataError);
   });
 });

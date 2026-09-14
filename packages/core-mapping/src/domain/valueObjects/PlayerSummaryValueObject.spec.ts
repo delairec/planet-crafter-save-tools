@@ -18,15 +18,21 @@ describe('PlayerSummaryValueObject', () => {
     // Arrange
     const input = {name: '', inventory: [], equipment: []};
 
-    // Act & Assert
-    expect(() => createPlayerSummaryValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildPlayerSummary = () => createPlayerSummaryValueObject(input);
+
+    // Assert
+    expect(buildPlayerSummary).toThrow(InvalidSaveDataError);
   });
 
   it('should reject a belonging that is not a name', () => {
     // Arrange
     const input = {name: 'Nikowa', inventory: [''], equipment: []};
 
-    // Act & Assert
-    expect(() => createPlayerSummaryValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildPlayerSummary = () => createPlayerSummaryValueObject(input);
+
+    // Assert
+    expect(buildPlayerSummary).toThrow(InvalidSaveDataError);
   });
 });

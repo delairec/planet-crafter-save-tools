@@ -38,7 +38,10 @@ describe('SaveConfigurationValueObject', () => {
       }
     };
 
-    // Act & Assert
-    expect(() => createSaveConfigurationValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildSaveConfiguration = () => createSaveConfigurationValueObject(input);
+
+    // Assert
+    expect(buildSaveConfiguration).toThrow(InvalidSaveDataError);
   });
 });

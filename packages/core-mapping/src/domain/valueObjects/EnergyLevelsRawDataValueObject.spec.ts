@@ -22,8 +22,11 @@ describe('PlanetWorldObjectsValueObject', () => {
     // Arrange
     const input = {planetId: NaN, placedWorldObjects: []};
 
-    // Act & Assert
-    expect(() => createPlanetWorldObjectsValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildPlanetWorldObjects = () => createPlanetWorldObjectsValueObject(input);
+
+    // Assert
+    expect(buildPlanetWorldObjects).toThrow(InvalidSaveDataError);
   });
 });
 
@@ -48,7 +51,10 @@ describe('EnergyLevelsRawDataValueObject', () => {
       planets: undefined
     };
 
-    // Act & Assert
-    expect(() => createEnergyLevelsRawDataValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildEnergyLevelsRawData = () => createEnergyLevelsRawDataValueObject(input);
+
+    // Assert
+    expect(buildEnergyLevelsRawData).toThrow(InvalidSaveDataError);
   });
 });

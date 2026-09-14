@@ -18,7 +18,10 @@ describe('EnergyBreakdownEntryValueObject', () => {
     // Arrange
     const input = {name: 'Drill0' as const, quantity: 2, unitLevel: 10, totalLevel: NaN};
 
-    // Act & Assert
-    expect(() => createEnergyBreakdownEntryValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildEnergyBreakdownEntry = () => createEnergyBreakdownEntryValueObject(input);
+
+    // Assert
+    expect(buildEnergyBreakdownEntry).toThrow(InvalidSaveDataError);
   });
 });

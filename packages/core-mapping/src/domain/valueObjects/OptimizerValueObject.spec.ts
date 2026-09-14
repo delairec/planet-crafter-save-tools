@@ -18,7 +18,10 @@ describe('OptimizerValueObject', () => {
     // Arrange
     const input = {name: 'Optimizer1' as const, fuseCount: 2, boostedMachines: [], contribution: NaN};
 
-    // Act & Assert
-    expect(() => createOptimizerValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildOptimizer = () => createOptimizerValueObject(input);
+
+    // Assert
+    expect(buildOptimizer).toThrow(InvalidSaveDataError);
   });
 });

@@ -40,7 +40,10 @@ describe('TerraformationLevelSummaryValueObject', () => {
       biomass: NaN
     };
 
-    // Act & Assert
-    expect(() => createTerraformationLevelSummaryValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildTerraformationLevelSummary = () => createTerraformationLevelSummaryValueObject(input);
+
+    // Assert
+    expect(buildTerraformationLevelSummary).toThrow(InvalidSaveDataError);
   });
 });

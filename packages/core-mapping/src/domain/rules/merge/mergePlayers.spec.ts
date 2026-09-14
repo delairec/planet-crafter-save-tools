@@ -1,65 +1,117 @@
 import {describe, expect, it} from 'bun:test';
+import {Player} from 'shared-save-processing/gameDefinitions';
 import {mergePlayers} from './mergePlayers';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {EntriesByOrigin} from './EntriesByOrigin';
 
 describe('Merge players', () => {
-  const basePlayer = createPlayer();
-
-  const playerFromSaveA = {...basePlayer};
-  const playerFromSaveB = {...basePlayer, id: '76561190000000030', name: 'Chileny', host: false};
-
   describe('When players are unique', () => {
     it('should keep the players of each save under their own origin', () => {
+      // Arrange
+      const playerFromSaveA = createPlayer();
+      const playerFromSaveB = createPlayer({id: '76561190000000030', name: 'Chileny', host: false});
+
       // Act
       const result = mergePlayers([playerFromSaveA], [playerFromSaveB]);
 
       // Assert
-      expect(result).toEqual({fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]});
+      expect<EntriesByOrigin<Player>>(result).toEqual({
+        fromSaveA: [{
+          id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }],
+        fromSaveB: [{
+          id: '76561190000000030', name: 'Chileny', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: false, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }]
+      });
     });
   });
 
   describe('When the same player appears in both saves with a different id', () => {
     it('should deduplicate by name and take the player from save A', () => {
       // Arrange
-      const playerInSaveA = {...playerFromSaveA, id: '11111', playerGaugeOxygen: 150.0};
-      const playerInSaveB = {...playerFromSaveA, id: '22222', playerGaugeOxygen: 280.0};
+      const playerInSaveA = createPlayer({id: '76561190000000002', playerGaugeOxygen: 150.0});
+      const playerInSaveB = createPlayer({id: '76561190000000003', playerGaugeOxygen: 280.0});
 
       // Act
       const result = mergePlayers([playerInSaveA], [playerInSaveB]);
 
       // Assert
-      expect(result).toEqual({fromSaveA: [{...playerInSaveA, host: true}], fromSaveB: []});
+      expect<EntriesByOrigin<Player>>(result).toEqual({
+        fromSaveA: [{
+          id: '76561190000000002', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 150.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }],
+        fromSaveB: []
+      });
     });
   });
 
   describe('When a player appears in both saves with the same id', () => {
     it('should take the player from save A', () => {
       // Arrange
-      const playerInSaveA = {...playerFromSaveA, playerGaugeOxygen: 150.0};
-      const playerInSaveB = {...playerFromSaveA, playerGaugeOxygen: 280.0, inventoryId: 99, equipmentId: 99};
+      const playerInSaveA = createPlayer({playerGaugeOxygen: 150.0});
+      const playerInSaveB = createPlayer({playerGaugeOxygen: 280.0, inventoryId: 99, equipmentId: 99});
 
       // Act
       const result = mergePlayers([playerInSaveA], [playerInSaveB]);
 
       // Assert
-      expect(result).toEqual({fromSaveA: [{...playerInSaveA, host: true}], fromSaveB: []});
+      expect<EntriesByOrigin<Player>>(result).toEqual({
+        fromSaveA: [{
+          id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 150.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }],
+        fromSaveB: []
+      });
     });
   });
 
   describe('When merging host status', () => {
     it('should keep save A host status and set all others to false', () => {
       // Arrange
-      const hostInSaveA = {...playerFromSaveA, host: true};
-      const guestInSaveA = {...playerFromSaveB, host: false};
-      const hostInSaveB = {...playerFromSaveB, name: 'Anya', host: true};
+      const hostInSaveA = createPlayer({host: true});
+      const guestInSaveA = createPlayer({id: '76561190000000030', name: 'Chileny', host: false});
+      const hostInSaveB = createPlayer({id: '76561190000000030', name: 'Anya', host: true});
 
       // Act
       const result = mergePlayers([hostInSaveA, guestInSaveA], [hostInSaveB]);
 
       // Assert
-      expect(result).toEqual({
-        fromSaveA: [{...hostInSaveA, host: true}, {...guestInSaveA, host: false}],
-        fromSaveB: [{...hostInSaveB, host: false}]
+      expect<EntriesByOrigin<Player>>(result).toEqual({
+        fromSaveA: [{
+          id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }, {
+          id: '76561190000000030', name: 'Chileny', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: false, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }],
+        fromSaveB: [{
+          id: '76561190000000030', name: 'Anya', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: false, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }]
       });
     });
   });
@@ -68,16 +120,28 @@ describe('Merge players', () => {
     it('should mark only the save A host', () => {
       // Arrange
       const steamIdentifierSharedByBothPlayers = '76561190000000030';
-      const hostInSaveA = {...playerFromSaveA, id: steamIdentifierSharedByBothPlayers, host: true};
-      const hostInSaveB = {...playerFromSaveB, id: steamIdentifierSharedByBothPlayers, name: 'Anya', host: true};
+      const hostInSaveA = createPlayer({id: steamIdentifierSharedByBothPlayers, host: true});
+      const hostInSaveB = createPlayer({id: steamIdentifierSharedByBothPlayers, name: 'Anya', host: true});
 
       // Act
       const result = mergePlayers([hostInSaveA], [hostInSaveB]);
 
       // Assert
-      expect(result).toEqual({
-        fromSaveA: [{...hostInSaveA, host: true}],
-        fromSaveB: [{...hostInSaveB, host: false}]
+      expect<EntriesByOrigin<Player>>(result).toEqual({
+        fromSaveA: [{
+          id: '76561190000000030', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }],
+        fromSaveB: [{
+          id: '76561190000000030', name: 'Anya', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: false, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }]
       });
     });
   });
@@ -85,17 +149,29 @@ describe('Merge players', () => {
   describe('When two save A players share an identifier', () => {
     it('should mark only the player flagged as host in save A', () => {
       // Arrange
-      const steamIdentifierSharedByBothPlayers = '76561190000000000';
-      const hostInSaveA = {...playerFromSaveA, id: steamIdentifierSharedByBothPlayers, host: true};
-      const guestInSaveA = {...playerFromSaveA, id: steamIdentifierSharedByBothPlayers, name: 'Chileny', host: false};
+      const steamIdentifierSharedByBothPlayers = '76561190000000007';
+      const hostInSaveA = createPlayer({id: steamIdentifierSharedByBothPlayers, host: true});
+      const guestInSaveA = createPlayer({id: steamIdentifierSharedByBothPlayers, name: 'Chileny', host: false});
       const noPlayersFromSaveB: never[] = [];
 
       // Act
       const result = mergePlayers([hostInSaveA, guestInSaveA], noPlayersFromSaveB);
 
       // Assert
-      expect(result).toEqual({
-        fromSaveA: [{...hostInSaveA, host: true}, {...guestInSaveA, host: false}],
+      expect<EntriesByOrigin<Player>>(result).toEqual({
+        fromSaveA: [{
+          id: '76561190000000007', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }, {
+          id: '76561190000000007', name: 'Chileny', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: false, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }],
         fromSaveB: []
       });
     });
@@ -105,15 +181,21 @@ describe('Merge players', () => {
     it('should keep the save B host', () => {
       // Arrange
       const noPlayersFromSaveA: never[] = [];
-      const hostInSaveB = {...playerFromSaveB, name: 'Anya', host: true};
+      const hostInSaveB = createPlayer({id: '76561190000000030', name: 'Anya', host: true});
 
       // Act
       const result = mergePlayers(noPlayersFromSaveA, [hostInSaveB]);
 
       // Assert
-      expect(result).toEqual({
+      expect<EntriesByOrigin<Player>>(result).toEqual({
         fromSaveA: [],
-        fromSaveB: [{...hostInSaveB, host: true}]
+        fromSaveB: [{
+          id: '76561190000000030', name: 'Anya', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }]
       });
     });
   });
@@ -121,16 +203,28 @@ describe('Merge players', () => {
   describe('When merging planetId', () => {
     it('should preserve each player own planetId', () => {
       // Arrange
-      const hostInSaveA = {...playerFromSaveA, host: true, planetId: 'Toxicity'};
-      const playerInSaveB = {...playerFromSaveB, host: false, planetId: 'Prime'};
+      const hostInSaveA = createPlayer({host: true, planetId: 'Toxicity'});
+      const playerInSaveB = createPlayer({id: '76561190000000030', name: 'Chileny', host: false, planetId: 'Prime'});
 
       // Act
       const result = mergePlayers([hostInSaveA], [playerInSaveB]);
 
       // Assert
-      expect(result).toEqual({
-        fromSaveA: [{...hostInSaveA, planetId: 'Toxicity'}],
-        fromSaveB: [{...playerInSaveB, planetId: 'Prime'}]
+      expect<EntriesByOrigin<Player>>(result).toEqual({
+        fromSaveA: [{
+          id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }],
+        fromSaveB: [{
+          id: '76561190000000030', name: 'Chileny', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: false, planetId: 'Prime',
+          cameraView: 0, totalCraftedObjects: 1820, totalTerraTokenEarned: 9000
+        }]
       });
     });
   });
@@ -138,14 +232,28 @@ describe('Merge players', () => {
   describe('When a player is missing cameraView, totalCraftedObjects or totalTerraTokenEarned', () => {
     it('should default the missing fields to 0', () => {
       // Arrange
-      const {cameraView: _cameraView, totalCraftedObjects: _totalCraftedObjects, totalTerraTokenEarned: _totalTerraTokenEarned, ...legacyPlayer} = playerFromSaveA;
+      const {
+        cameraView: _cameraView,
+        totalCraftedObjects: _totalCraftedObjects,
+        totalTerraTokenEarned: _totalTerraTokenEarned,
+        ...legacyPlayer
+      } = createPlayer();
       const noPlayersFromSaveB: never[] = [];
 
       // Act
       const result = mergePlayers([legacyPlayer], noPlayersFromSaveB);
 
       // Assert
-      expect(result.fromSaveA).toEqual([{...legacyPlayer, cameraView: 0, totalCraftedObjects: 0, totalTerraTokenEarned: 0, host: true}]);
+      expect<EntriesByOrigin<Player>>(result).toEqual({
+        fromSaveA: [{
+          id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
+          playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
+          playerGaugeOxygen: 280.0, playerGaugeThirst: 96.3858642578125, playerGaugeHealth: 72.67363739013672,
+          playerGaugeToxic: 0.0, host: true, planetId: 'Toxicity',
+          cameraView: 0, totalCraftedObjects: 0, totalTerraTokenEarned: 0
+        }],
+        fromSaveB: []
+      });
     });
   });
 });
