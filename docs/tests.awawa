@@ -360,7 +360,7 @@ OPEN_QUESTION LaRegleDuBlocActEnUneLigneEstElleGenerale
 		REF @DECISION.LeBlocActDUnTestTientEnUneLigne
 	DESC "elle n'est appliquee aujourd'hui qu'aux scenarios de bout en bout : les specs unitaires"
 		+ "du depot n'ont pas ete auditees contre elle"
-	STATUS specified
+	STATUS superseded
 	RATIONALE "TEST-1 decrit les trois blocs sans rien dire de leur taille : la regle s'y insere"
 		+ "sans en contredire une autre"
 	RECOMMENDATION "la porter en TEST-1 des instructions generales : elle ne nomme ni outil ni"
@@ -369,3 +369,30 @@ OPEN_QUESTION LaRegleDuBlocActEnUneLigneEstElleGenerale
 		REJECTED "la garder propre au projet : elle serait alors reenoncee depot par depot, et le"
 			+ "gabarit general continuerait de laisser passer un Act de trois lignes"
 	SOURCE "revue de la PR #75, 2026-09-14, T24"
+
+DECISION LaRegleDuBlocActEnUneLigneEstGeneraleEtVaDansTest1
+	DESC "la regle du bloc Act en une ligne est generale et vit desormais en TEST-1 de"
+		+ "~/.ai/instructions/testing/index.md"
+		REF @DECISION.LeBlocActDUnTestTientEnUneLigne
+	DESC "elle y est un point de TEST-1 et non un bloc TEST-12 : aucun identifiant n'est cree ni"
+		+ "renumerote"
+	DESC "le nommage de la fonction extraite n'est pas reenonce : le point cite STD-8, qui le"
+		+ "gouverne deja"
+	STATUS specified
+	CLOSES @OPEN_QUESTION.LaRegleDuBlocActEnUneLigneEstElleGenerale
+	RATIONALE "la regle ne nomme ni outil, ni package, ni depot : rien n'avait a rester ici, a la"
+		+ "difference de la base des taches, restee dans le corpus quand la regle du corps de pull"
+		+ "request est partie dans les instructions generales"
+		REF @DECISION.LaRegleDuCorpsDePrEstGeneraleEtVaDansCommandsMd
+	RATIONALE "la taille de l'Act est une propriete de la partie Act du triptyque : un bloc separe"
+		+ "ferait citer deux identifiants pour une seule regle de structure"
+	RATIONALE "l'entite qui enonce la regle reste implemented et ancree sur les scenarios ; celle"
+		+ "qui la promeut reste specified, sa realisation vivant hors de l'espace de travail et"
+		+ "n'etant donc ancrable par aucun IMPL"
+	REJECTED "la garder propre au projet : elle serait reenoncee depot par depot, et le gabarit"
+		+ "general continuerait de laisser passer un Act de trois lignes"
+	REJECTED "un bloc TEST-12 : la regle n'est pas un sujet neuf mais une contrainte sur l'Act du"
+		+ "triptyque que TEST-1 decrit deja"
+	REJECTED "porter le CLOSES sur la decision qui enonce la regle : elle est implemented et ses"
+		+ "SPEC s'ancrent dans ce depot, quand la promotion se realise dans un autre"
+	SOURCE "arbitrage utilisateur du 2026-09-14, revue de la PR #75 ; promue par delairec/.ai#18"
