@@ -7,8 +7,8 @@ export const fileSafetyDisclaimerMessage = 'Your original files are never modifi
 export const securityDisclaimerMessage = 'Always exercise caution when downloading files from untrusted or unfamiliar websites. Client-side processing does not make a downloaded file safe.';
 
 /** @param {string} action */
-const disclaimersLabel = (action) => `Click here to ${action} privacy, security and file safety disclaimers`;
-export const showDisclaimersLabel = disclaimersLabel('show');
-export const hideDisclaimersLabel = disclaimersLabel('hide');
+const resolveDisclaimersLabel = (action) => `Click here to ${action} privacy, security and file safety disclaimers`;
+export const showDisclaimersLabel = resolveDisclaimersLabel('show');
+export const hideDisclaimersLabel = resolveDisclaimersLabel('hide');
 
 export const disclaimerBulletEmoji = '🥔';
