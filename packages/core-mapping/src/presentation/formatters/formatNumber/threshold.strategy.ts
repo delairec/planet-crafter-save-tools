@@ -1,16 +1,18 @@
 import {formatDecimalNumberWithSuffix} from "./formatDecimalNumberWithSuffix";
 
 export interface Threshold {
-  value: number;
+  value: number | bigint;
   suffix: string;
+  multiply?: number;
 }
 
 export function formatNumberByThresholds(value: number | bigint, thresholds: Threshold[]): string {
   const num = Number(value);
 
   for (const threshold of thresholds) {
-    if (num >= threshold.value) {
-      const result = num / threshold.value;
+    const thresholdValue = Number(threshold.value);
+    if (num >= thresholdValue) {
+      const result = num / thresholdValue;
       return formatDecimalNumberWithSuffix(result, threshold.suffix);
     }
   }

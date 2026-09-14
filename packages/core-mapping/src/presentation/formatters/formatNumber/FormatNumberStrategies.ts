@@ -6,7 +6,7 @@ import {formatNumberByKelvinThresholds} from "./kelvin.strategy";
 import {formatNumberByPascalThresholds} from "./pascal.strategy";
 import {formatNumberByWeightThresholds} from "./weight.strategy";
 
-export const FormatNumberStrategies: Record<string, (value:number|bigint) => string> = {
+export const FormatNumberStrategies = {
   SYMBOL: formatNumberByUnitThresholds,
   THOUSANDS_SEPARATOR: formatDecimalNumber,
   PERCENTAGE: formatPercentageNumber,
@@ -14,5 +14,7 @@ export const FormatNumberStrategies: Record<string, (value:number|bigint) => str
   KELVIN: formatNumberByKelvinThresholds,
   PASCAL: formatNumberByPascalThresholds,
   WEIGHT: formatNumberByWeightThresholds,
-};
-export type FormatNumberStrategy = typeof FormatNumberStrategies[keyof typeof FormatNumberStrategies];
+} satisfies Record<string, (value: number | bigint) => string>;
+
+export type FormatNumberStrategyName = keyof typeof FormatNumberStrategies;
+export type FormatNumberStrategy = typeof FormatNumberStrategies[FormatNumberStrategyName];

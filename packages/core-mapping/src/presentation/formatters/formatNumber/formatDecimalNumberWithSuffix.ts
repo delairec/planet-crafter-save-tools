@@ -1,7 +1,6 @@
 import {formatDecimalNumber} from "./thousandsSeparator.strategy";
-
-const nbsp = ' ';
+import {NON_BREAKING_SPACE} from "./nonBreakingSpace";
 
 export function formatDecimalNumberWithSuffix(value: number, suffix: string): string {
-  return `${formatDecimalNumber(value)}${nbsp}${suffix}`;
+  return `${formatDecimalNumber(value)}${NON_BREAKING_SPACE}${suffix}`;
 }

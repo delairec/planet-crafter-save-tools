@@ -8,6 +8,7 @@ import {EnergyBreakdownRowViewModel} from "./viewModels/EnergyBreakdownRowViewMo
 import {OptimizerViewModel} from "./viewModels/OptimizerViewModel";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
+import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
 import {worldObjectLabels} from "./worldObjectLabels";
 import {
@@ -18,8 +19,6 @@ import {
   energyLevelsSectionUnnamedPlanetName,
   energyLevelsSectionWorkInProgressLabel
 } from "./messages/energyLevelsSectionMessages.js";
-
-const nbsp = '\u00A0';
 
 export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
   private _viewModel: EnergyLevelsViewModel;
@@ -47,15 +46,15 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
         columns: [
           {
             header: energyLevelsSectionProductionTitle,
-            values: [formatNumber(planet.production) + `${nbsp}${energyLevelsSectionKilowattUnit}`]
+            values: [formatNumber(planet.production) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`]
           },
           {
             header: energyLevelsSectionConsumptionTitle,
-            values: [formatNumber(planet.consumption) + `${nbsp}${energyLevelsSectionKilowattUnit} ${energyLevelsSectionWorkInProgressLabel}`]
+            values: [formatNumber(planet.consumption) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit} ${energyLevelsSectionWorkInProgressLabel}`]
           },
           {
             header: energyLevelsSectionAvailableTitle,
-            values: [formatNumber(planet.available) + `${nbsp}${energyLevelsSectionKilowattUnit} ${energyLevelsSectionWorkInProgressLabel}`]
+            values: [formatNumber(planet.available) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit} ${energyLevelsSectionWorkInProgressLabel}`]
           }
         ]
       },
@@ -69,8 +68,8 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     return breakdown.map((entry): EnergyBreakdownRowViewModel => ({
       label: worldObjectLabels[entry.name],
       quantity: formatNumber(entry.quantity),
-      unitLevel: formatNumber(entry.unitLevel) + `${nbsp}${energyLevelsSectionKilowattUnit}`,
-      totalLevel: formatNumber(entry.totalLevel) + `${nbsp}${energyLevelsSectionKilowattUnit}` + this.buildContributionSuffix(entry.productionRatio)
+      unitLevel: formatNumber(entry.unitLevel) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`,
+      totalLevel: formatNumber(entry.totalLevel) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}` + this.buildContributionSuffix(entry.productionRatio)
     }));
   }
 
@@ -81,7 +80,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
       boostedMachines: optimizer.boostedMachines
         .map((machine) => `${formatNumber(machine.quantity)} ${worldObjectLabels[machine.name]}`)
         .join(', '),
-      contribution: formatNumber(optimizer.contribution) + `${nbsp}${energyLevelsSectionKilowattUnit}` + this.buildContributionSuffix(optimizer.productionRatio)
+      contribution: formatNumber(optimizer.contribution) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}` + this.buildContributionSuffix(optimizer.productionRatio)
     }));
   }
 
