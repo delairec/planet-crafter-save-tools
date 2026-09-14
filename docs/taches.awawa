@@ -159,6 +159,7 @@ TASK T24_HarnaisDeTestsUiParScenarios
 		+ "et casser un locator"
 	STATUS implemented
 	WAVE "4"
+	PR "75"
 	AFTER @TASK.T32_ConformiteUiSaveManager
 	RATIONALE "T23 a pose le runner, la configuration, le serveur, la convention de nommage, la"
 		+ "premiere fixture et le workflow CI ; T24 n'ajoute que des scenarios et l'outillage de"
