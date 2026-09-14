@@ -1,7 +1,3 @@
-// TODO: check duplicate entries in real life files
-// TODO: check for missing consumers and consumption values
-// TODO: better sorting of items in this file
-
 import {WorldObjectName} from "../domain/worldObjectNames";
 
 const powerProducersWorldObjectLabels = {
@@ -585,7 +581,6 @@ const otherWorldObjectLabels = {
   HologramGenerator: 'Hologram projector',
   InteriorStairs1: 'Interior stairs',
   KeyCard2: 'Access card 2',
-  KeyCard1: 'Access card',
   Library1: 'Library',
   LightBoxMedium: 'Light Box',
   PlanetaryDeliveryDepot1: 'Planetary Delivery Depot',
@@ -663,7 +658,6 @@ const otherWorldObjectLabels = {
   WardenAustel: 'Warden\'s altar',
   StarformContainer: 'Starform Crate',
   DebrisContainer1: 'Container from space',
-  // is procedural wreck related to portal generator?
   ProceduralWreckContainer1: 'Storage crate T1',
   ProceduralWreckContainer2: 'Storage crate T2',
   ProceduralInstanceGenerator: 'ProceduralInstanceGenerator',

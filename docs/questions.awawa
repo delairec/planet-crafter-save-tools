@@ -175,7 +175,7 @@ OPEN_QUESTION SortDesCleusDupliqueesDeWorldObjectLabels
 		+ "probablement la meme cle"
 	DESC "a trancher, sans alternative examinee : conserver la premiere occurrence et verifier la"
 		+ "casse contre les saves de reference"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T38_ConformiteCoreMapping
 	SOURCE "fiche T38, decision 2"
 
