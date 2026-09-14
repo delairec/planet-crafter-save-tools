@@ -5,19 +5,10 @@ const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.me
 
 declare global {
   interface Window {
-    /** Lets every read held by `holdEveryFileRead` complete. */
     releaseTheHeldFileReads(): void;
   }
 }
 
-/**
- * Holds every read of a chosen file until the page is told to let it through, so that the busy
- * state covering that work can be observed while the work is still running. Without the hold, the
- * scenario would race the reading of a fixture of a few kilobytes.
- *
- * The hold covers the whole read surface of a blob rather than the single method the production
- * code happens to call today.
- */
 async function holdEveryFileRead(page: Page): Promise<void> {
   await page.addInitScript(() => {
     const readTextOfBlob = Blob.prototype.text;

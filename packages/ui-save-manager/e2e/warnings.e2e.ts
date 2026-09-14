@@ -3,17 +3,8 @@ import {expect, test, type Page} from '@playwright/test';
 const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
 const currentFormatSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 
-/**
- * A fragment of the sentence the reader is given for the warning `legacy-format_valid.json`
- * raises. No code carries these words, so asserting them is what tells a sentence from a code
- * without restating the whole message core-mapping writes.
- */
 const legacyFormatWarningFragment = 'created by an older version of the game';
-
-/** The code the warning travels as inside the application, which the screen must never print. */
 const legacyFormatWarningCode = 'legacy-save-format';
-
-/** The messages of a list stay collapsed until the reader asks for them. */
 const revealMessagesLabel = 'Show details';
 
 async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string): Promise<void> {

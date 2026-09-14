@@ -3,14 +3,7 @@ import {expect, test, type Page} from '@playwright/test';
 const invalidSaveFixturePath = new URL('./fixtures/negative-gauge_invalid.json', import.meta.url).pathname;
 const validSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 
-/**
- * Where in the save the error of `negative-gauge_invalid.json` sits, as the screen prints it under
- * the message. A scenario asserts the located frame the screen shows, never which rule decided the
- * save was invalid: that ground is covered in core-mapping.
- */
 const errorLocationInTheSave = 'at Players (section 2), entry 0';
-
-/** The messages of a list stay collapsed until the reader asks for them. */
 const revealMessagesLabel = 'Show details';
 
 async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string): Promise<void> {
