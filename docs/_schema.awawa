@@ -65,6 +65,15 @@ SCHEMA DECISION
 	FIELD CLOSES @OPEN_QUESTION
 		REPEATABLE
 		CONVERSE CLOSED_BY
+	FIELD APPLIES_TO_PACKAGE @PACKAGE
+		REPEATABLE
+		DESC "le paquet dont cette decision contraint le code ; l'arete inverse est calculee"
+		CONVERSE GOVERNED_BY
+	FIELD APPLIES_TO_TASK @TASK
+		REPEATABLE
+		DESC "la tache dont cette decision contraint ce qu'elle doit livrer ; l'arete inverse est"
+			+ "calculee"
+		CONVERSE GOVERNED_BY
 
 SCHEMA OPEN_QUESTION
 	DESC "un point non tranche, ou une limitation dont personne n'a encore decide du sort"

@@ -33,6 +33,7 @@ DECISION LesErreursTardivesDeLaSectionTroisRestentUneFragiliteLatente
 		+ "generateur avant de lire les erreurs d'analyse"
 	DESC "le jour ou cette garde saute, le defaut apparait sans qu'aucun test ne tombe"
 	CLOSES @OPEN_QUESTION.ErreursTardivesDeLaSectionTroisPerdues
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	STATUS specified
 	RATIONALE "parseSaveSections rend un tableau errors partage et mutable ; les dix sections"
 		+ "ordinaires sont materialisees tout de suite, la section 3 est rendue comme fabrique de"
@@ -114,6 +115,7 @@ DECISION LesOnzeMachinesRestentSansNiveauDEnergieConnu
 		+ "HologramGenerator, Server1, PlanetViewer1, FishDisplayer1, CookingStation1,"
 		+ "FrogDisplayer1, et les presentoirs et mobilier associes"
 	CLOSES @OPEN_QUESTION.OnzeMachinesPlaceesHorsDesTablesDEnergie
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	STATUS specified
 	RATIONALE "le wiki est la seule source de valeurs et il est muet sur ces machines ; une valeur"
 		+ "non imprimee n'est pas zero (decision du 2026-09-07)"
@@ -167,6 +169,7 @@ DECISION LaGarantieDUnicitePorteSurCeQueLaFusionIntroduit
 	DESC "la garantie tenable, et tenue depuis T16, est plus etroite : la fusion n'introduit aucun"
 		+ "recouvrement qui ne soit deja present dans les saves d'entree"
 	CLOSES @OPEN_QUESTION.RecouvrementDIdentifiantsDansLesSavesDEntree
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	STATUS implemented
 	RATIONALE "mesure du 2026-09-07 sur les dossiers de reference : Standard-3 721 valeurs portees"
 		+ "a la fois par un inventaire et un world object, Standard-4 549, Standard-1-unlocked-ivy"

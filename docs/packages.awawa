@@ -85,6 +85,7 @@ DECISION LesInvariantsDuDomaineSontComplets
 	DESC "champs en lecture seule et fabriques validantes sur chaque entite et chaque value object,"
 		+ "pas seulement sur les critiques"
 	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "une conformite partielle demande de se souvenir, a chaque ajout, de quel objet etait"
 		+ "juge critique ; la regle complete ne demande rien"
 	REJECTED "n'appliquer les invariants qu'aux entites jugees critiques"
@@ -152,6 +153,8 @@ DECISION LesReglesDeFusionRecoiventUnModeleDeFusion
 	STATUS implemented
 	SUPERSEDES @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 	CLOSES @OPEN_QUESTION.UnEncodageDeChampReleveDuFormatOuNon
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	RATIONALE "la v2 gardait le rejet d'un modele de fusion tout en creant un demi-modele : trois"
 		+ "types Decoded* derives des DTO wire par Omit, et un tuple de onze cases recopiant la"
 		+ "disposition du fichier, case reservee comprise, indexe par une constante de"
@@ -180,6 +183,8 @@ DECISION LesAbreviationsWireRestentDansSharedSaveProcessing
 	DESC "la tolerance s'appuie sur la description du package, pas sur un commentaire d'en-tete par"
 		+ "fichier"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "un commentaire par fichier ne dit rien que l'interface ne dise, et il nomme une"
 		+ "section par son index — un numero qu'aucun test ne tient et qui devient faux le jour ou"
 		+ "un index bouge"
@@ -200,6 +205,9 @@ DECISION CreateSaveRecordsEstLaSourceUniqueDesBuilders
 	DESC "un module ne reexporte pas ce qu'il importe d'un autre pour le confort d'un appelant"
 		+ "historique, et ce repertoire n'a pas de barrel"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "trois frontieres que la regle ne franchit pas : une valeur attendue reste litterale,"
 		+ "les types du domaine ne sont pas des enregistrements de save, et la spec du serialiseur"
 		+ "garde ses litteraux parce que chaque attendu y est le JSON exact de son jeu de champs"
@@ -218,6 +226,8 @@ DECISION UnIndiceDeSectionNeSEcritJamaisEnDur
 		+ "lus depuis leur module"
 	DESC "cela vise aussi la destructuration a trous, qui cache l'indice qu'elle compte"
 	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "arbitrage de l'utilisateur, pose deux fois sur la meme pull request"
 	RATIONALE "restent des nombres les comptes de parties : ce sont des attendus, pas des acces"
 	REJECTED "tolerer un indice litteral dans une spec"
@@ -295,6 +305,8 @@ DECISION LesControleursDeSectionRecoiventLeTexteValide
 		REF @DECISION.UneFusionProduitUneSaveOrdinaire
 	STATUS implemented
 	CLOSES @OPEN_QUESTION.FormeDuContratControleurVersUi
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "les lignes illisibles sont ecartees sans perte : le chargement, seul presenter de"
 		+ "ces erreurs, les a deja rendues, et une seconde analyse du meme texte est deterministe"
 	RATIONALE "cout mesure le 2026-09-13 sous Bun sur input/Test/Standard-3.json, 2,02 Mo : 11,5 ms"
@@ -357,6 +369,7 @@ DECISION LeComportementMigreSurLEntiteEtLaRegleLInterroge
 		+ "biomasse ; le cas d'utilisation appelle level.summarize() et ne compose plus rien"
 	DESC "TerraformationLevelSummaryValueObject declare ses dix champs au lieu d'etendre l'entite"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "contains est le comportement que la tache fait migrer sur InventoryEntity ; garder"
 		+ "le parcours d'origine aurait laisse le getter worldObjectIds porter la regle et contains"
 		+ "sans appelant"
@@ -421,6 +434,7 @@ DECISION UneEntiteRendUneCopieDeSonTableauInterne
 		+ "methode de l'entite, qui reconstruit l'etat au lieu de laisser muter le tableau rendu"
 	STATUS implemented
 	CLOSES @OPEN_QUESTION.UneEntiteRendSonTableauInterneSansLeCopier
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "le type readonly seul se defait par une assertion, et l'invariant que le"
 		+ "constructeur a valide tombe sans que rien ne le signale ; la copie est la seule garde"
 		+ "que le compilateur ne peut pas contourner"
@@ -445,6 +459,7 @@ DECISION UnObjetPlaceEstUnObjetDuMonde
 	DESC "une spec qui a besoin de la liste de toute la save y met directement les entites"
 		+ "construites ; createWholeSaveWorldObjects est supprime"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SUPERSEDES @DECISION.LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
 	RATIONALE "la raison qui imposait deux classes distinctes etait l'ordre des commits de T15 : au"
 		+ "commit qui transformait WorldObjectEntity, PlacedWorldObjectEntity etait encore une"
@@ -475,6 +490,7 @@ DECISION LesReglesDEnergieInterrogentLObjetPlaceEtNonLesTables
 	DESC "energyOptimizerConfig passe de domain/rules a domain : c'est une configuration lue par"
 		+ "les entites, pas une regle"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "ce qui se deduit du seul nom d'un objet du monde est l'etat de cet objet : une regle"
 		+ "qui indexe une table par entite.name est de l'envie de fonctionnalite, et la conversion"
 		+ "en classes de T15 est ce qui rend la correction possible"
@@ -518,6 +534,7 @@ DECISION LaGrilleEnergetiqueDUnePlaneteEstUnAgregat
 	STATUS implemented
 	SUPERSEDES @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
 	CLOSES @OPEN_QUESTION.LeCasDUtilisationDeSectionEnergieRestitueSesValueObjectsChampParChamp
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "les cinq regles d'energie prenaient toutes le meme triplet allWorldObjects,"
 		+ "positionedWorldObjectsOnPlanet, inventories : un triplet qui traverse cinq signatures"
 		+ "intact est un objet qui n'a pas ete nomme"
@@ -573,6 +590,7 @@ DECISION UnPresenterRecoitUnValueObjectJamaisUneEntite
 		+ "nom check:presentation"
 	STATUS implemented
 	CLOSES @OPEN_QUESTION.UnPresenterPortRecoitUneEntiteOuUnValueObject
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "une entite porte du comportement : un presenter qui en tient decide quand un calcul"
 		+ "du domaine s'execute. TerraformationLevelEntity.summarize en est l'exemple vivant, et"
 		+ "PlayerEntity est une classe depuis T15, donc la porte etait ouverte au premier"
@@ -617,6 +635,7 @@ DECISION UnPortLecteurSeNommePourCeQuIlLitEtNonPourUnAnalyseur
 		+ "saveSectionsReader, et le double de test FakeSaveParserService devient"
 		+ "FakeSaveSectionsReaderService"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "les six methodes du port rendent une entite ou un value object depuis T15 : celle-ci"
 		+ "n'est plus l'exception que la revue du 2026-09-07 avait relevee, il ne restait que"
 		+ "l'ecart entre le nom de la methode et ce qu'elle rend"
@@ -640,6 +659,8 @@ DECISION LaFormeDUneColonneEstDeriveeDuViewModelQuiLaProduit
 	DESC "la forme d'une colonne de tableau n'est declaree qu'une fois, dans le ViewModel de table"
 		+ "de core-mapping ; l'UI la derive de ce ViewModel au lieu de la redeclarer"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "l'UI portait un type Column structurellement identique a ColumnViewModel : deux"
 		+ "formes que rien ne relie, dont l'une pouvait deriver sans que l'autre s'en apercoive, la"
 		+ "compatibilite structurelle de TypeScript les acceptant l'une pour l'autre"
@@ -659,6 +680,7 @@ DECISION LesPropsSolidSeLisentParLObjetPropsJamaisDestructurees
 	DESC "la regle vise la signature d'un composant, pas le parametre d'un rappel — destructurer"
 		+ "l'item d'un For est sans effet sur la reactivite"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "mesure du 2026-09-14 avec le solid-js 1.9.14 du depot : un composant appele avec"
 		+ "l'objet de props a getters que le compilateur emet rend « save A » puis encore « save A"
 		+ "» une fois que le parent passe « save B », la ou le meme composant lisant props.title"
@@ -685,6 +707,7 @@ DECISION UneVarianteDeMessageEstProduiteParUneFonctionPasParDeuxChainesJumelles
 	DESC "les constantes exportees restent des chaines completes : l'appelant choisit une"
 		+ "constante, il n'assemble pas de phrase"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "ecrites cote a cote, deux phrases jumelles se modifient l'une sans l'autre et rien"
 		+ "ne le signale"
 	RATIONALE "le depot parametre deja un message par une fonction,"
@@ -706,6 +729,7 @@ DECISION UnCaractereDecoratifEstRenduParLeComposantIcon
 	DESC "le vocabulaire du depot est l'icone, quelle que soit la forme du caractere : le mot Emoji"
 		+ "ne parait plus ni dans un nom de composant, ni dans un nom de message"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "colle au libelle, la fleche de « ← Back home » entre dans le nom accessible du lien"
 		+ "et s'y fait annoncer avant le texte, sans rien lui apprendre"
 	RATIONALE "le mecanisme existait deja dans l'UI et ne servait qu'a un caractere decoratif sur"
@@ -736,6 +760,7 @@ DECISION UneGardeDeDepotTientLesDeuxIdiomesSolidQuiSeLisentLigneALigne
 		+ "hors du repertoire des messages, demandent de lire le JSX et restent a la relecture"
 	STATUS implemented
 	CLOSES @OPEN_QUESTION.RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "rejouee sur l'arbre de base entier, celui du commit 02e835c d'ou part la branche, la"
 		+ "garde rend vingt lignes : sept signatures destructurees — les cinq composants de"
 		+ "section, FieldsGroupGrid et FieldsGroup — et les treize assertions non nulles de"

@@ -19,6 +19,7 @@ DECISION PasDEtageDeTestsComposantsPourLUi
 	DESC "ui-save-manager n'a pas d'etage de tests composants ; le niveau bout en bout couvre les"
 		+ "flux et remplace la verification manuelle"
 	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "l'etage composants aurait double la couverture de ce que les scenarios de bout en"
 		+ "bout font deja sur trois moteurs reels"
 	RATIONALE "consequence a connaitre : un comportement d'UI livre avant que le harnais existe a"
@@ -37,6 +38,10 @@ DECISION LesScenariosDUiSontDesSpecsPlaywrightSurTroisMoteurs
 	DESC "un double de lecture porte sur toute la surface de lecture d'un blob, pas sur la seule"
 		+ "methode que la production appelle aujourd'hui"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
+	APPLIES_TO_TASK @TASK.T41_FixturesDeScenariosGenereesEtGardees
+	APPLIES_TO_TASK @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
 	RATIONALE "la CI ne declenche la suite que sur les pull requests visant la branche par defaut,"
 		+ "plus a la demande : les PR de taches ne la declenchent pas et le job ne doit pas devenir"
 		+ "un controle requis"
@@ -61,6 +66,8 @@ DECISION UnChangementDUiDansUneTacheDeTestDoitValoirParLuiMeme
 		+ "aucune regle de test n'oblige donc a modifier l'interface pour rendre un champ"
 		+ "atteignable"
 	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
 	RATIONALE "la revue a d'abord refuse le changement puis l'a maintenu une fois le motif propre"
 		+ "enonce — un gain d'accessibilite —, le commit ayant ete annule puis retabli"
 	REJECTED "modifier l'interface pour la seule commodite d'un locator"
@@ -72,6 +79,8 @@ DECISION UneSpecDeControleurCouvreLeCablagePasLesBranches
 	DESC "les cas plus fins restent dans les specs d'application, d'infrastructure et de"
 		+ "presentation"
 	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "rejouer les branches au niveau du controleur duplique une couverture deja acquise et"
 		+ "fait payer deux fois chaque changement de regle"
 	REJECTED "couvrir les branches metier depuis les specs de controleur"
@@ -83,6 +92,8 @@ DECISION UneSpecAsserteUnChampDiscriminantQuandLAttenduNEstPasLitteral
 		+ "une correspondance partielle quand il ne peut pas l'etre"
 	DESC "deux tests que la reecriture des assertions rend identiques sont fusionnes en un seul"
 	STATUS specified
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "comparer une sortie complete de plusieurs milliers de caracteres rejouerait au"
 		+ "niveau du CLI les regles deja couvertes dans core-mapping"
 	RATIONALE "certaines sections d'une save valide ne s'ecrivent pas en litteral — l'une est une"
@@ -95,6 +106,8 @@ DECISION UnTestNeTireJamaisSonEnsembleDEntreeDeLObjetTeste
 	DESC "un test dont l'ensemble d'entree derive de l'objet teste ne couvre pas la regle"
 		+ "d'exhaustivite correspondante, et son titre ne doit pas la revendiquer"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
 	RATIONALE "une iteration sur les cles de la table perd un cas quand on retire une entree, en"
 		+ "silence : elle ne peut pas mettre en defaut la regle qui contraint cette table"
 	RATIONALE "meme defaut constate ailleurs : une constante videe faisait executer zero cas sans"
@@ -109,6 +122,7 @@ DECISION UneEntreeIllegaleTesteeSEcritTsExpectError
 		+ "portant un commentaire qui nomme l'invalidite, posee sur le champ fautif et non sur la"
 		+ "ligne d'appel"
 	STATUS implemented
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "la directive echoue le jour ou la fabrique cesse de rejeter la donnee, ce qu'un"
 		+ "transtypage ne fait pas : un test d'entree illegale bati sur un cast est incapable"
 		+ "d'echouer"
@@ -127,6 +141,8 @@ DECISION LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
 	DESC "limite acceptee et fixee par un test : la lecture est ligne a ligne, donc une assertion"
 		+ "etalee sur plusieurs lignes echappe a la garde"
 	STATUS implemented
+	APPLIES_TO_TASK @TASK.T41_FixturesDeScenariosGenereesEtGardees
+	APPLIES_TO_TASK @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
 	RATIONALE "deux gardes fusionnees donneraient un script a deux raisons de changer : l'une lit"
 		+ "des assertions, l'autre des fixtures"
 	RATIONALE "la garde ne lit que l'expression assertee de plus haut niveau : sans cela une"
@@ -149,6 +165,9 @@ DECISION UneSignatureDeProductionNeSeDeformePasPourUnTest
 	DESC "une signature de production ne se deforme pas pour rendre une branche atteignable : une"
 		+ "branche non couverte est preferable a une couture de test dans le code de production"
 	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "arbitrage de l'utilisateur en revue : le controleur avait ete injecte avec une"
 		+ "valeur par defaut, seul moyen d'atteindre en spec une branche dont le seul declencheur"
 		+ "est un invariant rompu, inatteignable depuis deux saves que la validation a acceptees"
@@ -165,6 +184,8 @@ DECISION LesDoublesDUneSpecPartagentUneSeuleFabrique
 	DESC "un double porte son poids ou il est retire : la verification est une mutation qui le"
 		+ "force a tout accepter et compte les tests qui tombent"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "cinq doubles de la meme spec inventaient chacun leur facon de reconnaitre une save"
 		+ "et ne s'accordaient meme pas sur ce qui l'identifie ; laisser le double frere hors"
 		+ "perimetre est ce qui faisait paraitre arbitraire celui qui restait"
@@ -180,6 +201,7 @@ DECISION UneFonctionAuxParametresIndistinctsPrendUnObjetNomme
 	DESC "laisser une methode sur deux en positionnel rend le port moins lisible que le probleme"
 		+ "corrige : les methodes voisines suivent"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "les noms vivent alors dans la signature, donc tous les appelants se lisent pareil et"
 		+ "un appelant de plus ne peut pas se tromper d'ordre"
 	REJECTED "nommer les valeurs en variables au point d'appel : les noms restent locaux et le"
@@ -236,6 +258,7 @@ DECISION AucuneSaveNEstCommiteeDansLeDepotPublic
 	DESC "un dossier temporaire par test, cree avant et supprime apres — jamais un registre partage"
 		+ "que l'on vide"
 	STATUS implemented
+	APPLIES_TO_TASK @TASK.T41_FixturesDeScenariosGenereesEtGardees
 	RATIONALE "un registre partage laisse un espion pose sur l'objet global pour la suite du"
 		+ "processus de test si personne ne le restaure, ce qui s'est produit"
 	REJECTED "commiter une save de reference dans le depot public"
@@ -267,6 +290,8 @@ DECISION UnScenarioLitLeFichierTelechargeParLApiDeFichiersDeNode
 		+ "cote de ceux du runner ; celui du repertoire des sources ne declare toujours que les"
 		+ "bibliotheques du navigateur"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
 	RATIONALE "un fichier de scenario s'execute dans le runner et non dans le navigateur : lui"
 		+ "refuser l'API de Node aurait laisse la verification du contenu au seul nom du lien, ce"
 		+ "que la fiche interdit explicitement"
@@ -317,6 +342,9 @@ DECISION UneFixtureDeScenarioEstNommeeParSonContenuEtSonVerdict
 	DESC "le role d'une fixture dans un scenario n'est pas dans son nom : il vit dans la variable"
 		+ "qui la lie et dans le README du repertoire de fixtures"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
+	APPLIES_TO_TASK @TASK.T41_FixturesDeScenariosGenereesEtGardees
 	RATIONALE "le segment de role ne tient pas : baseline_valid.json est a la fois la save affichee"
 		+ "des scenarios d'affichage et la save A du scenario de fusion, si bien qu'un segment de"
 		+ "role mentirait ou imposerait un doublon"

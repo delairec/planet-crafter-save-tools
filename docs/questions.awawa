@@ -727,7 +727,7 @@ OPEN_QUESTION UneDecisionNommeCeQuElleGouverneParUnChampAppliesTo
 	DESC "86 des 122 decisions n'ont aucune arete entrante ; deux des quatre decisions de la PR #76"
 		+ "sont a zero ; la session pilote a trouve les decisions contraignant un worktree par"
 		+ "status DECISION suivi d'un grep de texte"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T43_SpecsDeDomaineCoreMapping
 	RATIONALE "point signale par cinq rapports d'usage de suite depuis la revue de la PR #62 et"
 		+ "jamais enregistre dans le corpus ; la remediation est un changement de schema, a"

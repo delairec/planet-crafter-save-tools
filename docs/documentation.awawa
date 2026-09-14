@@ -30,6 +30,7 @@ DECISION LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
 	DESC "les noms typent les libelles dans les deux sens : un libelle sans nom et un nom sans"
 		+ "libelle sont deux erreurs de type"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "la regle d'identification a evite trois erreurs de donnees, chacune attribuant a une"
 		+ "machine la valeur d'une autre"
 	RATIONALE "la source est le fichier de libelles d'un mod communautaire : ses libelles sont donc"
@@ -58,6 +59,7 @@ DECISION UneCleDupliqueeParLaCasseEstTrancheeParLAttestation
 		REF @DECISION.LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
 	STATUS implemented
 	CLOSES @OPEN_QUESTION.SortDesClesDupliqueesDeWorldObjectLabels
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "mesure sur les quatre saves de reference, refaite le 2026-09-14 : Keycard1 est"
 		+ "attestee 156, 152 et 80 fois dans trois d'entre elles, KeyCard1 dans aucune, KeyCard2"
 		+ "136, 152 et 71 fois dans les memes trois"

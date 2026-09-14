@@ -45,6 +45,9 @@ awawa lint --strict .               # doit sortir en 0
 - **Une mention dans une phrase n'est indexée par rien.** Nicher `REF @TYPE.Nom` sous le champ de prose qui la nomme.
 - **Une relation pointe vers ce dont elle parle** : `BLOCKS` sur la question, `CLOSES` sur la décision. L'arête
   inverse est calculée — `refs`, et les lignes `BLOCKED_BY` / `referenced by` de `context` — jamais écrite.
+- **Une décision nouvelle qui contraint un paquet ou une tâche renseigne `APPLIES_TO_PACKAGE` ou `APPLIES_TO_TASK`**,
+  faute de quoi la cible ne la voit pas : c'est la ligne `GOVERNED_BY` du pied de page de `context` et de
+  `lint --closure` (@DECISION.UneDecisionNommeLePaquetOuLaTacheQuElleContraint).
 - **Un défaut constaté est une `OPEN_QUESTION`**, son sort une `DECISION` qui la ferme
   (@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues). Une limitation acceptée est un point *fermé* : la question
   passe `superseded` et **c'est la décision qui porte symptôme, cause et garde**, parce que `superseded` vaut
