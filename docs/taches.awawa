@@ -179,8 +179,9 @@ TASK T24_HarnaisDeTestsUiParScenarios
 TASK T40_ScenariosDeValidationEtDEtatsDeChargement
 	DESC "deuxieme livrable du harnais : les scenarios couvrant les erreurs de validation, les"
 		+ "avertissements et les etats de chargement"
-	STATUS specified
+	STATUS implemented
 	WAVE "4"
+	PR "78"
 	AFTER @TASK.T24_HarnaisDeTestsUiParScenarios
 	RATIONALE "porte la ligne d'acceptation qui interdit de rejouer une regle de merge ou de"
 		+ "validation : c'est ce livrable qui ajoute les scenarios ou la tentation existe, les"
@@ -190,6 +191,17 @@ TASK T40_ScenariosDeValidationEtDEtatsDeChargement
 	SPEC "aucun scenario ne rejoue une regle de merge ou de validation deja couverte dans"
 		+ "core-mapping : la revue le verifie fiche en main"
 		IMPL "packages/core-mapping/src/domain/rules"
+	SPEC "une erreur de validation est couverte dans le flux d'affichage et dans le flux de fusion,"
+		+ "et le scenario asserte la localisation que l'ecran imprime sous le message"
+		IMPL "packages/ui-save-manager/e2e/validation-errors.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/fixtures/negative-gauge_invalid.json"
+	SPEC "un avertissement est couvert dans les deux memes flux, et le scenario attend la phrase en"
+		+ "clair affichee ainsi que l'absence du code que l'avertissement porte dans l'application"
+		IMPL "packages/ui-save-manager/e2e/warnings.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json"
+	SPEC "chaque flux a ses scenarios d'etat de chargement : l'indicateur d'activite affiche et le"
+		+ "bouton hors d'atteinte pendant le travail, leur retrait une fois le travail termine"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
 
 TASK T41_FixturesDeScenariosGenereesEtGardees
 	DESC "troisieme livrable du harnais : les fixtures de scenarios sont generees par une commande,"

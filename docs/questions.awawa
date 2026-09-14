@@ -743,3 +743,43 @@ OPEN_QUESTION UneDecisionNommeCeQuElleGouverneParUnChampAppliesTo
 			+ "2026-09-14, une recherche de texte la ou un pied de page devrait repondre"
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-76.md, PR #76, partie A"
 		+ "remediation 5"
+
+OPEN_QUESTION UneQuestionNouvelleSEcritDansLeFichierDesQuestionsEtAgentsMdLeDit
+	DESC "a trancher : deux questions nouvelles en deux PR (#75, #78) ont ete ecrites dans"
+		+ "docs/tests.awawa, contre la seconde DESC de la decision de decoupage, et la revue de #78"
+		+ "a du supprimer puis reecrire la paire"
+		REF @DECISION.LeCorpusEstDecoupeParDomaine
+	DESC "propose : AGENTS.md nomme le fichier d'une question nouvelle et celui d'une limitation"
+		+ "acceptee, dans la phrase qui dit qu'un defaut constate est une OPEN_QUESTION"
+	BLOCKS @DECISION.LeCorpusEstDecoupeParDomaine
+	RECOMMENDATION "ecrire dans AGENTS.md : une question nouvelle s'ajoute a docs/questions.awawa,"
+		+ "une paire question superseded plus decision de limitation acceptee vit dans"
+		+ "docs/limitations.awawa ; 48 questions sur 57 sont deja dans le premier, 8 dans le second"
+		REJECTED "laisser la revue deplacer : sur #78 c'est un sed -i de 21 lignes puis un nouvel"
+			+ "ajout, sur #75 la question est restee dans tests.awawa"
+		REJECTED "une regle de schema : le schema ne contraint pas le fichier d'une entite, et"
+			+ "l'outil charge toute la marche sans distinguer"
+	STATUS specified
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-78.md, PR #78, partie A"
+		+ "remediation 1"
+
+OPEN_QUESTION UneTacheLanceeSansSpecParLivrableEcritSesCriteresApresLeCode
+	DESC "a trancher : T40 a ete lancee avec une seule SPEC, une interdiction, son livrable vivant"
+		+ "dans DESC et RATIONALE ; l'agent a ecrit ses trois lignes d'acceptation apres le code"
+		+ "(2a4115f a 16:27:34Z, code a 16:25:50Z) et la revue a verifie des lignes que"
+		+ "l'implementeur avait ecrites pour lui-meme"
+	DESC "propose : avant le lancement, la session pilote verifie qu'une tache porte une SPEC"
+		+ "falsifiable par livrable que sa DESC nomme, et ecrit les manquantes dans le commit de"
+		+ "lancement"
+	BLOCKS @TASK.T41_FixturesDeScenariosGenereesEtGardees
+	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	RECOMMENDATION "la commande de lancement de vague compte les SPEC de chaque tache retenue"
+		+ "contre les livrables de sa DESC et arbitre les manquantes avec l'utilisateur avant le"
+		+ "premier agent ; T41 et T42 portent 2 SPEC chacune"
+		REJECTED "laisser l'implementeur ecrire ses criteres apres coup : la revue verifie alors"
+			+ "une promotion contre des lignes ecrites par la meme session, ce que #78 montre"
+		REJECTED "transformer chaque DESC en SPEC mecaniquement : une DESC nomme un livrable, une"
+			+ "SPEC une obligation falsifiable, et une DESC recopiee ne peut pas echouer"
+	STATUS specified
+	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-78.md, PR #78, partie A"
+		+ "remediation 2"
