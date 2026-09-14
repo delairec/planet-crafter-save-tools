@@ -658,6 +658,8 @@ const otherWorldObjectLabels = {
   WardenAustel: 'Warden\'s altar',
   StarformContainer: 'Starform Crate',
   DebrisContainer1: 'Container from space',
+  // Is procedural wreck related to portal generator?
+  // @OPEN_QUESTION.LeLienEntreEpaveProceduraleEtPortailEstInconnu
   ProceduralWreckContainer1: 'Storage crate T1',
   ProceduralWreckContainer2: 'Storage crate T2',
   ProceduralInstanceGenerator: 'ProceduralInstanceGenerator',
