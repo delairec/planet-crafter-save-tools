@@ -287,3 +287,22 @@ DECISION UnScenarioLitLeFichierTelechargeParLApiDeFichiersDeNode
 	SPEC "le projet de type-check du repertoire de bout en bout declare les types de Node"
 		IMPL "packages/ui-save-manager/e2e/tsconfig.json"
 	SOURCE "T24, 2026-09-14"
+
+OPEN_QUESTION OuVontLesArtefactsDExecutionDeLaSuiteDeScenarios
+	DESC "a trancher : une execution de la suite qui echoue laisse deux repertoires non versionnes"
+		+ "et non ignores dans le package, que le prochain ajout global commiterait"
+	DESC "deux issues : les ignorer par une regle, ou pointer la sortie du runner vers un"
+		+ "repertoire deja ignore"
+	STATUS specified
+	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	RATIONALE "hors perimetre du premier livrable, qui n'ajoute que des scenarios ; la question"
+		+ "releve de l'outillage de la suite, dont T42 porte la garde et la mesure"
+	RATIONALE "une regle d'ignorance se trompe de forme facilement dans ce depot, ou une barre"
+		+ "finale de trop laisse passer un lien symbolique : le choix merite d'etre pose plutot que"
+		+ "repare en une ligne"
+		REF @DECISION.LaRegleDuContextePrivePerdSaBarreFinale
+	RECOMMENDATION "pointer la sortie du runner vers un repertoire deja ignore, plutot qu'ajouter"
+		+ "deux regles d'ignorance"
+		REJECTED "deux regles d'ignorance de plus dans le package : elles nomment des repertoires"
+			+ "que la configuration du runner peut deplacer a tout moment"
+	SOURCE "constate le 2026-09-14, T24, PR #75"
