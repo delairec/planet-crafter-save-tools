@@ -3,13 +3,13 @@ import {GlobalProgressionPresenterPort} from "./ports/GlobalProgressionPresenter
 
 export class LoadGlobalProgressionSection {
   constructor(
-    private readonly saveParser: SaveSectionsReaderPort,
+    private readonly saveSectionsReader: SaveSectionsReaderPort,
     private readonly presenter: GlobalProgressionPresenterPort,
   ) {}
 
   async execute(): Promise<void> {
-    const globalProgression = this.saveParser.getGlobalMetadata();
-    const statistics = this.saveParser.getStatistics();
+    const globalProgression = this.saveSectionsReader.getGlobalProgression();
+    const statistics = this.saveSectionsReader.getStatistics();
 
     if (!statistics) {
       this.presenter.displayGlobalProgressionWithoutStatistics(globalProgression);

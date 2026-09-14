@@ -1,14 +1,14 @@
 import {describe, expect, it, mock} from 'bun:test';
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
-import {FakeSaveParserService} from "../testing/FakeSaveParserService";
+import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
 import {LoadEnergyLevelsSection} from "./LoadEnergyLevelsSection";
 
 describe('LoadEnergyLevelsSection', () => {
   it('should present computed energy levels from parsed save', async () => {
     // Arrange
-    const saveParser: SaveSectionsReaderPort = new FakeSaveParserService();
+    const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
     const presenter = {displayEnergyLevels: mock()};
-    const useCase = new LoadEnergyLevelsSection(saveParser, presenter);
+    const useCase = new LoadEnergyLevelsSection(saveSectionsReader, presenter);
 
     // Act
     await useCase.execute();

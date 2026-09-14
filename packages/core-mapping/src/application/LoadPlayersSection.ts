@@ -4,12 +4,12 @@ import {createPlayerSummaryValueObject} from '../domain/valueObjects/PlayerSumma
 
 export class LoadPlayersSection {
   constructor(
-    private readonly saveParser: SaveSectionsReaderPort,
+    private readonly saveSectionsReader: SaveSectionsReaderPort,
     private readonly presenter: PlayersPresenterPort,
   ) {}
 
   async execute(): Promise<void> {
-    const players = this.saveParser.getPlayers().map((player) => createPlayerSummaryValueObject({
+    const players = this.saveSectionsReader.getPlayers().map((player) => createPlayerSummaryValueObject({
       name: player.name,
       inventory: player.inventory,
       equipment: player.equipment

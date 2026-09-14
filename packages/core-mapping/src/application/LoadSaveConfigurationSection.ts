@@ -4,12 +4,12 @@ import {SaveConfigurationPresenterPort} from "./ports/SaveConfigurationPresenter
 
 export class LoadSaveConfigurationSection {
   constructor(
-    private readonly saveParser: SaveSectionsReaderPort,
+    private readonly saveSectionsReader: SaveSectionsReaderPort,
     private readonly presenter: SaveConfigurationPresenterPort
   ) {}
 
   async execute(): Promise<void> {
-    const saveConfiguration = this.saveParser.getSaveConfiguration();
+    const saveConfiguration = this.saveSectionsReader.getSaveConfiguration();
 
     if (!saveConfiguration) {
       this.presenter.displayMissingSaveConfigurationSection();

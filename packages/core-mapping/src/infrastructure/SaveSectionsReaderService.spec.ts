@@ -61,7 +61,7 @@ describe('SaveSectionsReaderService', () => {
     const service = new SaveSectionsReaderService(createSectionsWithTwoPlayers());
 
     // Act
-    const metadata = service.getGlobalMetadata();
+    const metadata = service.getGlobalProgression();
 
     // Assert
     expect(metadata).toEqual<GlobalProgressionValueObject>({
@@ -75,7 +75,7 @@ describe('SaveSectionsReaderService', () => {
       const service = new SaveSectionsReaderService(createSaveSections({globalMetadata: []}));
 
       // Act
-      const metadata = service.getGlobalMetadata();
+      const metadata = service.getGlobalProgression();
 
       // Assert
       expect(metadata).toEqual<GlobalProgressionValueObject>({

@@ -8,7 +8,7 @@ import {EnergyLevelsRawDataValueObject} from "../../domain/valueObjects/EnergyLe
 export interface SaveSectionsReaderPort {
   getPlayers(): PlayerEntity[];
 
-  getGlobalMetadata(): GlobalProgressionValueObject;
+  getGlobalProgression(): GlobalProgressionValueObject;
 
   getTerraformationLevels(): TerraformationLevelEntity[];
 

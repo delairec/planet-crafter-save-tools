@@ -30,7 +30,7 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   constructor(private readonly sections: SaveSections) {
   }
 
-  getGlobalMetadata(): GlobalProgressionValueObject {
+  getGlobalProgression(): GlobalProgressionValueObject {
     const metadata = this.sections.globalMetadata[0];
 
     if (!metadata) {

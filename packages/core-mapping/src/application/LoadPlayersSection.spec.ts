@@ -1,5 +1,5 @@
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveParserService} from "../testing/FakeSaveParserService";
+import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {PlayersPresenterPort} from "./ports/PlayersPresenterPort";
 import {LoadPlayersSection} from './LoadPlayersSection';
@@ -8,9 +8,9 @@ import {createPlayerSummaryValueObject} from '../domain/valueObjects/PlayerSumma
 describe('LoadPlayersSection', () => {
   it('should present all players from the parsed save', async () => {
     // Arrange
-    const saveParser: SaveSectionsReaderPort = new FakeSaveParserService();
+    const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
     const presenter: PlayersPresenterPort = {displayPlayers: mock()};
-    const useCase = new LoadPlayersSection(saveParser, presenter);
+    const useCase = new LoadPlayersSection(saveSectionsReader, presenter);
 
     // Act
     await useCase.execute();
