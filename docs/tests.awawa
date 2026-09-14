@@ -414,3 +414,62 @@ DECISION UnEtatDeChargementSObserveEnRetenantLaLectureDuFichier
 		+ "d'un blob et la relachent explicitement"
 		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
 	SOURCE "T40, 2026-09-14"
+
+DECISION UnAttenduPartielLaisseAuTestVoisinLeChampQuIlCouvre
+	DESC "une assertion applique le matcher a la valeur elle-meme : la collection entiere, jamais"
+		+ "la liste de l'un de ses champs"
+	DESC "quand un champ de cette valeur est le sujet d'un autre test du meme fichier, l'attendu"
+		+ "est une correspondance partielle qui le lui laisse, plutot qu'un litteral qui l'epingle"
+		+ "deux fois"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
+	RATIONALE "une reprojection fait imprimer a l'echec la projection au lieu de la valeur, et"
+		+ "c'est ce qu'il faut lire pour diagnostiquer"
+	RATIONALE "la part de production d'un optimiseur a son propre test ; l'ecrire aussi dans"
+		+ "l'attendu du test de repartition du boost ferait tomber deux tests pour une regle"
+		+ "changee, et y porterait un flottant periodique que rien n'y explique"
+	REJECTED "reprojeter la collection par une projection de champ avant de comparer"
+	REJECTED "epingler la part de production dans le litteral du test de repartition du boost"
+	SPEC "la spec de la grille energetique asserte la collection des optimiseurs sans reprojection,"
+		+ "et laisse la part de production au test qui la couvre"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts"
+	SOURCE "T43, reaudit du releve du 2026-09-07"
+
+DECISION UneSpecDeFabriqueAsserteContreSonEntreeQuandLIdentiteEstLeComportement
+	DESC "une spec de fabrique dont le comportement est de rendre ce qu'on lui a donne compare son"
+		+ "resultat a son entree : ce lien d'identite est le comportement teste, pas un attendu"
+		+ "calcule"
+	DESC "des que la fabrique transforme, complete ou trie, l'attendu redevient litteral"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
+	RATIONALE "les douze specs de value objects du domaine tiennent cette forme ; les reecrire en"
+		+ "litteraux aurait recopie l'entree a cote d'elle sans rendre un seul test capable"
+		+ "d'echouer sur un cas de plus"
+	RATIONALE "la frontiere est la transformation : mergePlayers pose un role d'hote et comble"
+		+ "trois champs absents, donc son attendu ne peut pas etre son entree"
+	REJECTED "reecrire en litteral l'attendu des douze specs de value objects du domaine"
+	REJECTED "laisser le point non enregistre, que la revue suivante reposerait"
+	SPEC "les specs de value objects du domaine gardent leur comparaison a l'entree, et leurs tests"
+		+ "de rejet separent action et assertion"
+		IMPL "packages/core-mapping/src/domain/valueObjects"
+	SOURCE "T43, reaudit du releve du 2026-09-07"
+
+DECISION LePremierDescribeNommeLaRegleQueLaSpecCouvre
+	DESC "le premier describe d'une spec nomme en langage metier la regle que le fichier couvre,"
+		+ "meme quand la spec l'exerce par l'appelant de cette regle"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
+	RATIONALE "determineSaveOrder.spec.ts s'annoncait par le nom de sa fonction prefixe d'un diese"
+		+ "; n'en retirer que le prefixe technique laissait un titre deja porte par"
+		+ "mergeSaveSections.spec.ts, et deux fichiers sous un meme nom"
+	REJECTED "garder le nom de fonction prefixe d'un diese"
+	REJECTED "ne retirer que le prefixe technique, ce qui donnait a deux fichiers le meme premier"
+		+ "describe"
+	SPEC "le premier describe de la spec de l'ordre des saves nomme cette regle"
+		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts"
+	SOURCE "T43, reaudit du releve du 2026-09-07"

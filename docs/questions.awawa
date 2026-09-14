@@ -783,3 +783,25 @@ OPEN_QUESTION UneTacheLanceeSansSpecParLivrableEcritSesCriteresApresLeCode
 	STATUS specified
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-78.md, PR #78, partie A"
 		+ "remediation 2"
+
+OPEN_QUESTION LesAttendusDeDeuxSpecsDeFusionRestentEtalesDepuisUneFixture
+	DESC "a trancher : determineSaveOrder.spec.ts et mergeSaveConfigurations.spec.ts construisent"
+		+ "encore leur attendu en etalant la fixture de configuration de save, forme que T43 a"
+		+ "retiree de mergePlayers.spec.ts"
+	DESC "un attendu etale depuis l'entree fait passer un test qui recopie son entree : il ne peut"
+		+ "pas mettre en defaut la regle qui recopie la mauvaise configuration"
+	STATUS specified
+	BLOCKS @PACKAGE.core_mapping
+	RATIONALE "la ligne SPEC de T43 qui porte cette regle n'ancrait que mergePlayers ; le reaudit"
+		+ "du 2026-09-14 en a trouve deux autres porteuses, hors de ce que la fiche nommait, et T43"
+		+ "s'est tenue a son perimetre"
+	RECOMMENDATION "asserter le champ discriminant de la configuration retenue — l'identifiant de"
+		+ "planete, et la graine du monde quand les deux saves sont sur Prime — plutot que la"
+		+ "section entiere : l'ordre des saves est la seule regle que determineSaveOrder.spec.ts"
+		+ "couvre"
+		REF @DECISION.UneSpecAsserteUnChampDiscriminantQuandLAttenduNEstPasLitteral
+		REJECTED "ecrire en litteral les vingt-quatre champs de la configuration de save, cinq fois"
+			+ ": la spec de l'ordre des saves rejouerait la couverture de mergeSaveConfigurations"
+		REJECTED "laisser l'etalement en place : le test recopie son entree et ne peut pas echouer"
+			+ "sur la configuration retenue"
+	SOURCE "reaudit de T43 du 2026-09-14"
