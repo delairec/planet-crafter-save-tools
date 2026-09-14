@@ -57,3 +57,33 @@ await Bun.write('packages/ui-save-manager/e2e/fixtures/other-player_valid.json',
 }));
 "
 ```
+
+## `negative-gauge_invalid.json`
+
+`baseline_valid.json` with one gauge of its player below zero, which the players section schema
+forbids. The save is otherwise intact, so the validation it fails yields a single error, located on
+the record that carries the gauge — which is what makes it the fixture of the scenarios asserting
+that an error says where in the save it was found. Regenerate it from the repository root:
+
+```
+bun -e "
+import {createFakeSaveContent} from './packages/shared-save-processing/testing/createFakeSaveContent.js';
+import {createPlayer} from './packages/shared-save-processing/testing/createSaveRecords.js';
+await Bun.write('packages/ui-save-manager/e2e/fixtures/negative-gauge_invalid.json', createFakeSaveContent({
+  players: [createPlayer({playerGaugeToxic: -1})]
+}));
+"
+```
+
+## `legacy-format_valid.json`
+
+The content of `baseline_valid.json` in the legacy save format, the one still carrying the Terrain
+Layers section a later game update removed. Loading it adapts the save and raises a warning, so the
+file is valid and warned about at once. Regenerate it from the repository root:
+
+```
+bun -e "
+import {createLegacyFakeSaveContent} from './packages/shared-save-processing/testing/createFakeSaveContent.js';
+await Bun.write('packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json', createLegacyFakeSaveContent());
+"
+```
