@@ -21,7 +21,15 @@ async function mergeTheTwoFixtures(page: Page): Promise<void> {
   await expect(page.getByText('Merge successful!')).toBeVisible();
 }
 
-async function readDownloadedFile(download: Download): Promise<string> {
+async function downloadTheProducedFile(page: Page): Promise<Download> {
+  const downloadStarted = page.waitForEvent('download');
+  await page.getByRole('link', {name: 'Download'}).click();
+
+  return downloadStarted;
+}
+
+async function readTheDownloadedFile(page: Page): Promise<string> {
+  const download = await downloadTheProducedFile(page);
   const downloadedFilePath = await download.path();
 
   return readFile(downloadedFilePath, 'utf8');
@@ -35,9 +43,7 @@ test.describe('Save merge', () => {
       await expect(page.getByText(`Created file: ${mergedFileName}`)).toBeVisible();
 
       // Act
-      const downloadStarted = page.waitForEvent('download');
-      await page.getByRole('link', {name: 'Download'}).click();
-      const download = await downloadStarted;
+      const download = await downloadTheProducedFile(page);
 
       // Assert
       expect(download.suggestedFilename()).toBe(mergedFileName);
@@ -50,9 +56,7 @@ test.describe('Save merge', () => {
       await mergeTheTwoFixtures(page);
 
       // Act
-      const downloadStarted = page.waitForEvent('download');
-      await page.getByRole('link', {name: 'Download'}).click();
-      const downloadedContent = await readDownloadedFile(await downloadStarted);
+      const downloadedContent = await readTheDownloadedFile(page);
 
       // Assert
       expect(downloadedContent).toContain(mergedSaveDisplayName);

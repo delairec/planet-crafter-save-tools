@@ -331,3 +331,41 @@ DECISION UneFixtureDeScenarioEstNommeeParSonContenuEtSonVerdict
 		IMPL "packages/ui-save-manager/e2e/fixtures/README.md::## Naming"
 		IMPL "packages/ui-save-manager/e2e/fixtures"
 	SOURCE "revue de la PR #75, arbitrage utilisateur du 2026-09-14, T24"
+
+DECISION LeBlocActDUnTestTientEnUneLigne
+	DESC "le bloc Act d'un test tient en une ligne : l'action evaluee, extraite dans une fonction"
+		+ "nommee quand elle demande plusieurs gestes"
+	DESC "un Act de plusieurs lignes est l'exception et signale le plus souvent qu'un geste releve"
+		+ "de l'Arrange, ou que deux comportements sont evalues ensemble"
+	STATUS implemented
+	RATIONALE "les deux scenarios de fusion ouvraient leur Act sur trois lignes — poser l'attente"
+		+ "du telechargement, cliquer, recuperer l'evenement — dont deux sont de la preparation ;"
+		+ "extraites en downloadTheProducedFile et readTheDownloadedFile, elles nomment l'action et"
+		+ "laissent une ligne"
+	RATIONALE "le premier scenario d'affichage choisissait son fichier dans l'Act alors que les"
+		+ "trois autres du meme fichier le choisissent dans l'Arrange : la regle a rendu le fichier"
+		+ "coherent avec lui-meme"
+	REJECTED "laisser le montage du telechargement dans l'Act : trois lignes dont deux sont de la"
+		+ "preparation, et rien ne nomme l'action evaluee"
+	REJECTED "une seule fonction rendant le contenu telecharge : le premier scenario asserte sur le"
+		+ "telechargement lui-meme et non sur son contenu"
+	SPEC "chaque bloc Act des scenarios de bout en bout tient en une ligne"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts"
+	SOURCE "revue de la PR #75, arbitrage utilisateur du 2026-09-14, T24"
+
+OPEN_QUESTION LaRegleDuBlocActEnUneLigneEstElleGenerale
+	DESC "a trancher : la regle du bloc Act en une ligne va-t-elle en TEST-1 des instructions"
+		+ "generales, dans instructions/testing/index.md, ou reste-t-elle propre a ce projet"
+		REF @DECISION.LeBlocActDUnTestTientEnUneLigne
+	DESC "elle n'est appliquee aujourd'hui qu'aux scenarios de bout en bout : les specs unitaires"
+		+ "du depot n'ont pas ete auditees contre elle"
+	STATUS specified
+	RATIONALE "TEST-1 decrit les trois blocs sans rien dire de leur taille : la regle s'y insere"
+		+ "sans en contredire une autre"
+	RECOMMENDATION "la porter en TEST-1 des instructions generales : elle ne nomme ni outil ni"
+		+ "package de ce depot, et la revue qui l'a produite ne portait sur rien de specifique a"
+		+ "celui-ci"
+		REJECTED "la garder propre au projet : elle serait alors reenoncee depot par depot, et le"
+			+ "gabarit general continuerait de laisser passer un Act de trois lignes"
+	SOURCE "revue de la PR #75, 2026-09-14, T24"

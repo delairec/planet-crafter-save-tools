@@ -7,9 +7,9 @@ test.describe('Save display', () => {
     test('should display the save configuration of that file', async ({page}) => {
       // Arrange
       await page.goto('/');
+      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
       await page.getByRole('button', {name: 'Visualize'}).click();
 
       // Assert
