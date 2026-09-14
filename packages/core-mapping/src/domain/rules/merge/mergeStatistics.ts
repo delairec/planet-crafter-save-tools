@@ -10,12 +10,12 @@ export function mergeStatistics([statisticsA]: Statistics[], [statisticsB]: Stat
     return undefined;
   }
 
-  const validatedStatisticsA = statisticsA ?? DEFAULT_STATISTICS;
-  const validatedStatisticsB = statisticsB ?? DEFAULT_STATISTICS;
+  const statisticsAOrDefault = statisticsA ?? DEFAULT_STATISTICS;
+  const statisticsBOrDefault = statisticsB ?? DEFAULT_STATISTICS;
 
   return {
-    craftedObjects: validatedStatisticsA.craftedObjects + validatedStatisticsB.craftedObjects,
-    totalSaveFileLoad: validatedStatisticsA.totalSaveFileLoad + validatedStatisticsB.totalSaveFileLoad,
-    totalSaveFileTime: validatedStatisticsA.totalSaveFileTime + validatedStatisticsB.totalSaveFileTime,
+    craftedObjects: statisticsAOrDefault.craftedObjects + statisticsBOrDefault.craftedObjects,
+    totalSaveFileLoad: statisticsAOrDefault.totalSaveFileLoad + statisticsBOrDefault.totalSaveFileLoad,
+    totalSaveFileTime: statisticsAOrDefault.totalSaveFileTime + statisticsBOrDefault.totalSaveFileTime,
   };
 }
