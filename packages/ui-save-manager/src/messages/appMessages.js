@@ -11,4 +11,4 @@ const resolveDisclaimersLabel = (action) => `Click here to ${action} privacy, se
 export const showDisclaimersLabel = resolveDisclaimersLabel('show');
 export const hideDisclaimersLabel = resolveDisclaimersLabel('hide');
 
-export const disclaimerBulletEmoji = '🥔';
+export const disclaimerBulletIcon = '🥔';

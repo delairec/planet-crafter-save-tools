@@ -1,5 +1,5 @@
 import {
-  disclaimerBulletEmoji,
+  disclaimerBulletIcon,
   fileSafetyDisclaimerLabel,
   fileSafetyDisclaimerMessage,
   hideDisclaimersLabel,
@@ -10,7 +10,7 @@ import {
   showDisclaimersLabel
 } from "~/messages/appMessages";
 import {createSignal} from "solid-js";
-import Emoji from "~/components/Emoji";
+import Icon from "~/components/Icon";
 
 export default function HomeDisclaimer() {
 
@@ -22,14 +22,14 @@ export default function HomeDisclaimer() {
         {isOpen() ? hideDisclaimersLabel : showDisclaimersLabel}
       </summary>
       <p>
-        <strong><Emoji content={disclaimerBulletEmoji}/> {privacyDisclaimerLabel}</strong>: {privacyDisclaimerMessage}
+        <strong><Icon content={disclaimerBulletIcon}/> {privacyDisclaimerLabel}</strong>: {privacyDisclaimerMessage}
       </p>
       <p>
-        <strong><Emoji content={disclaimerBulletEmoji}/> {securityDisclaimerLabel}</strong>: {securityDisclaimerMessage}
+        <strong><Icon content={disclaimerBulletIcon}/> {securityDisclaimerLabel}</strong>: {securityDisclaimerMessage}
       </p>
       <p>
-        <strong><Emoji
-          content={disclaimerBulletEmoji}/> {fileSafetyDisclaimerLabel}</strong>: {fileSafetyDisclaimerMessage}
+        <strong><Icon
+          content={disclaimerBulletIcon}/> {fileSafetyDisclaimerLabel}</strong>: {fileSafetyDisclaimerMessage}
       </p>
     </details>)
 }
