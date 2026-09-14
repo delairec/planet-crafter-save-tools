@@ -24,6 +24,8 @@ DECISION UneIdentiteDeJoueurEstPorteeParLEntree
 	DESC "consequence assumee : deux entrees joueur peuvent porter le meme compte Steam, cas que la"
 		+ "deduplication par nom laisse passer par construction"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
 	RATIONALE "l'identifiant n'est unique ni entre deux saves ni, formellement, a l'interieur d'une"
 		+ "seule"
 	RATIONALE "calculer le role apres la renumerotation ferait dependre la justesse d'une regle de"
@@ -53,6 +55,7 @@ DECISION UneFusionQuiProduitUnFichierResteUnSucces
 	DESC "dans le CLI, le marqueur d'echec sur une ligne ne vaut pas code de retour non nul : il"
 		+ "marque une save invalide"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "refuser d'ecrire couplerait la disponibilite de la fusion a la severite du"
 		+ "validateur"
 	RATIONALE "les avertissements de la revalidation ne sont pas remontes : annoncer que la save a"
@@ -74,6 +77,7 @@ DECISION AucunCanalDAvertissementDeFusionSansProducteur
 	DESC "forme arretee pour le jour ou une regle en produira : une liste unique portant sur la"
 		+ "sortie, du nom du champ de l'objet de sortie du port jusqu'au ViewModel"
 	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "les deux candidats n'en sont pas : une section vide est legitime dans une save"
 		+ "valide, et la collision d'identifiants est un defaut corrige, pas une fonctionnalite a"
 		+ "documenter"
@@ -168,6 +172,8 @@ DECISION UneFusionProduitUneSaveOrdinaire
 	DESC "l'issue de fusion inutilisable garde son declencheur : une ligne illisible rapportee par"
 		+ "l'analyseur, qui parcourt la section des objets du monde a la lecture"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	SUPERSEDES @DECISION.LeCasDUtilisationDeFusionInvoqueLesReglesDuDomaine
 	RATIONALE "revue de la PR #62 : un service de serialisation propre aux resultats de fusion n'a"
 		+ "pas de raison d'etre, et un second port de lecture non plus quand le chargement en a"

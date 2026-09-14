@@ -12,6 +12,7 @@ DECISION LOrigineDUneErreurDecideDuCheminQuElleEmprunte
 	DESC "le rattrapage est type sur l'erreur de domaine, jamais sur unknown : tout le reste"
 		+ "continue de remonter en exception"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "une erreur d'analyse rencontree par le fusionneur porte sur les deux fichiers"
 		+ "d'entree, que la validation vient d'accepter une ligne plus haut : c'est un invariant"
 		+ "rompu, et aucune issue de presenter n'est ajoutee pour elle"
@@ -33,6 +34,7 @@ DECISION UnInvariantRompuEchoueParUnTypeNomme
 	DESC "portee : cette couche. Les autres packages gardent leur erreur nue tant qu'ils n'ont ni"
 		+ "repertoire d'erreurs ni second cas a aligner"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "les invariants d'une meme couche doivent se rattraper et se distinguer d'un bug de"
 		+ "programmation de la meme facon ; la spec verifie le type puis le message"
 	RATIONALE "le repli silencieux qui ecartait une section mal formee par sa forme est ce qui"
@@ -50,6 +52,7 @@ DECISION LaValidationEstLaSourceUniqueDesAvertissements
 		+ "fusion en ligne de commande, validation en ligne de commande — et les avertissements"
 		+ "remontent sur toutes les issues, saves invalides et fusions reussies comprises"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "deux producteurs d'avertissements, c'est deux listes a reconcilier par consommateur"
 		+ "et un flux qui en oublie une"
 	REJECTED "faire porter les avertissements par le port d'analyse"
@@ -64,6 +67,7 @@ DECISION LeTexteUtilisateurVitDansLaPresentationDeCoreMapping
 		+ "; une issue qui porte deja ses messages n'en recoit pas une de plus"
 	DESC "un code inconnu tombe sur un message generique, et le code lui-meme n'est jamais affiche"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "traduire dans l'UI dupliquerait la table pour le CLI et mettrait de la connaissance"
 		+ "du domaine dans un mecanisme de livraison"
 	RATIONALE "un libelle fixe de plus dans le ViewModel, quand l'issue porte deja ses messages,"
@@ -87,6 +91,7 @@ DECISION UneLocalisationEstUnLibelleMetierSuiviDeLIndex
 	DESC "un avertissement et une erreur portent le meme ViewModel : seul le champ qui les porte"
 		+ "dit laquelle des deux severites c'est"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "garder les index bruts dans le ViewModel obligerait le CLI et l'UI a appeler"
 		+ "eux-memes le formateur, donc a l'exporter de core-mapping, ce que la regle d'exports"
 		+ "interdit"
@@ -109,6 +114,7 @@ DECISION LesDeuxListesDeMessagesGardentLeMemeRendu
 	DESC "le mot qui introduit l'origine est destine a l'utilisateur, donc il vit dans les messages"
 		+ "de l'UI ; la mise en page est en CSS, et core-mapping ne sait rien du rendu"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "repliable et monospace n'est pas une option offerte au consommateur : c'est le rendu"
 		+ "unique des deux listes, et les parametres qui l'avaient ouvert ont ete retires"
 	RATIONALE "la premiere forme — localisation avant le message, en texte estompe hors du bloc de"
@@ -128,6 +134,7 @@ DECISION UnSeulIdiomeDErreurDUiDansLePackage
 	DESC "les deux mecanismes coexistent sans se recouvrir : l'issue de presenter dit ce que"
 		+ "l'operation a decide, le signal d'UI dit que l'appel n'a pas abouti"
 	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "arbitrage de l'utilisateur : placer l'avis dans la zone de visualisation le faisait"
 		+ "tomber a environ 670 px sous le bouton qui l'avait produit, donc hors ecran sur une"
 		+ "fenetre courte, et pretait a confusion avec un resultat d'analyse"
@@ -147,6 +154,7 @@ DECISION UneRegleDeDomaineIgnoreLeVocabulaireDeValidation
 		+ "l'infrastructure"
 	STATUS implemented
 	CLOSES @OPEN_QUESTION.FormeDesErreursDeRegleDomaine
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "exactement un hote est une invariante metier : la regle reste au domaine, seul son"
 		+ "vocabulaire d'erreur en sort"
 	REJECTED "un type de violation generique du domaine portant un discriminant de regle : il"
