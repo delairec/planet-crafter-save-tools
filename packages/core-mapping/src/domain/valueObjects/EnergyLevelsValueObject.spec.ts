@@ -21,7 +21,10 @@ describe('EnergyLevelsValueObject', () => {
       planets: undefined
     };
 
-    // Act & Assert
-    expect(() => createEnergyLevelsValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildEnergyLevels = () => createEnergyLevelsValueObject(input);
+
+    // Assert
+    expect(buildEnergyLevels).toThrow(InvalidSaveDataError);
   });
 });

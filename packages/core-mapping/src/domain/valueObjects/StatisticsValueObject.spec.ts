@@ -18,7 +18,10 @@ describe('StatisticsValueObject', () => {
     // Arrange
     const input = {totalCraftedObjects: NaN};
 
-    // Act & Assert
-    expect(() => createStatisticsValueObject(input)).toThrow(InvalidSaveDataError);
+    // Act
+    const buildStatistics = () => createStatisticsValueObject(input);
+
+    // Assert
+    expect(buildStatistics).toThrow(InvalidSaveDataError);
   });
 });
