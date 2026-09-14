@@ -46,6 +46,9 @@ describe('computeEnergyBreakdown', () => {
     const result = computeEnergyBreakdown(worldObjects, levelsByWorldObjectName);
 
     // Assert
-    expect(result.map(entry => entry.name)).toEqual(['EnergyGenerator2', 'EnergyGenerator1']);
+    expect(result).toEqual([
+      {name: 'EnergyGenerator2', quantity: 1, unitLevel: 50, totalLevel: 50},
+      {name: 'EnergyGenerator1', quantity: 1, unitLevel: 5, totalLevel: 5}
+    ]);
   });
 });

@@ -310,7 +310,10 @@ describe('PlanetEnergyGrid', () => {
       const levels = grid.levels();
 
       // Assert
-      expect(levels.optimizers.map((optimizer) => optimizer.contribution)).toEqual([1.4, 2.8]);
+      expect(levels.optimizers).toMatchObject([
+        {name: 'Optimizer1', fuseCount: 1, boostedMachines: [{name: 'EnergyGenerator1', quantity: 1}], contribution: 1.4},
+        {name: 'Optimizer1', fuseCount: 2, boostedMachines: [{name: 'EnergyGenerator1', quantity: 1}], contribution: 2.8}
+      ]);
     });
 
     it('should ignore an optimizer holding no energy fuse', () => {

@@ -156,14 +156,21 @@ describe('PlacedWorldObjectEntity', () => {
 
     it('should keep the closest producers up to its machine capacity', () => {
       // Arrange
-      const producers = [60, 10, 50, 20, 40, 30].map((distance) => producerAt(`prod-${distance}`, distance));
+      const producerAtTen = producerAt('prod-10', 10);
+      const producerAtTwenty = producerAt('prod-20', 20);
+      const producerAtThirty = producerAt('prod-30', 30);
+      const producerAtForty = producerAt('prod-40', 40);
+      const producerAtFifty = producerAt('prod-50', 50);
+      const producerAtSixty = producerAt('prod-60', 60);
 
       // Act
-      const boostedProducers = optimizer.boostedProducersAmong(producers);
+      const boostedProducers = optimizer.boostedProducersAmong([
+        producerAtSixty, producerAtTen, producerAtFifty, producerAtTwenty, producerAtForty, producerAtThirty
+      ]);
 
       // Assert
-      expect(boostedProducers.map((producer) => producer.id)).toEqual([
-        'prod-10', 'prod-20', 'prod-30', 'prod-40', 'prod-50'
+      expect(boostedProducers).toEqual([
+        producerAtTen, producerAtTwenty, producerAtThirty, producerAtForty, producerAtFifty
       ]);
     });
 
