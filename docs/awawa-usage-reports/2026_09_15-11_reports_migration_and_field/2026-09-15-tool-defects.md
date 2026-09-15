@@ -7,13 +7,13 @@ not spend a pass rediscovering them. awawa 2.7.0, corpus of planet-crafter-save-
 -->
 
 **Verdict**: two defects, both in how the tool gives access to what it already holds, neither of them recorded in the
-ten reports of this folder nor in `docs/limitations.awawa`. One of them feeds the pain point flagged most often here —
+ten reports of this folder nor in `../../limitations.awawa`. One of them feeds the pain point flagged most often here —
 the agent reading corpus files instead of asking the tool — because for that one entity there is nothing else to do.
 
-| # | Defect | Command run | What came back | Cost |
-|---|---|---|---|---|
+| # | Defect                                          | Command run                                                            | What came back                                                                                                                                                                                           | Cost                                                                                                                                                                                                                                              |
+|---|-------------------------------------------------|------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 | `@SCHEMA.*` is listed but unreachable by `show` | `awawa status SCHEMA .` then `awawa show SCHEMA .`, `awawa show '*' .` | `status` prints `@SCHEMA.* … ./docs/_schema.awawa:18`; `show SCHEMA` answers `@SCHEMA.SCHEMA is not defined in the workspace`; `show '*'` answers `` `*` is not a target; expected @TYPE.Name or TYPE `` | The entity that declares `STATUS`, `DESC`, `RATIONALE` and `SPEC` for every type is readable only by opening `_schema.awawa` — the one move this corpus's discipline forbids, and the recurring point flagged 8 times as of `2026-09-15-pr-83.md` |
-| 2 | `new` accepts a name already taken, in silence | `awawa new DECISION LeCorpsDeLaPrDecritLaTeteDeBranche .` | The skeleton, with no warning, although the entity exists at `docs/processus.awawa:316` | The collision is free to report at the moment `new` runs, since the workspace is already parsed; it surfaces later as a lint finding, after the entity has been written |
+| 2 | `new` accepts a name already taken, in silence  | `awawa new DECISION LeCorpsDeLaPrDecritLaTeteDeBranche .`              | The skeleton, with no warning, although the entity exists at `docs/processus.awawa:316`                                                                                                                  | The collision is free to report at the moment `new` runs, since the workspace is already parsed; it surfaces later as a lint finding, after the entity has been written                                                                           |
 
 ## Details
 
@@ -36,12 +36,12 @@ the agent reading corpus files instead of asking the tool — because for that o
 
 ## Checked and already recorded, so not repeated here
 
-| Candidate | Where it is already recorded |
-|---|---|
+| Candidate                                               | Where it is already recorded                                                                     |
+|---------------------------------------------------------|--------------------------------------------------------------------------------------------------|
 | The `BLOCKED_BY` footer ignores the referrers' `STATUS` | `@DECISION.LePiedDePageBlockedBySeCroiseAvecStatus`, flagged 8 times up to `2026-09-15-pr-83.md` |
-| Referrers named, not expanded, in a context package | `@DECISION.LesReferentsDUnContexteSeLisentParShow`, flagged 8 times |
-| `awawa diff` runs against a copy | `@DECISION.AwawaDiffSeLanceContreUneCopie` |
-| Directory anchors on which `L016` cannot fire | Flagged 3 times up to `2026-09-15-pr-83.md` |
+| Referrers named, not expanded, in a context package     | `@DECISION.LesReferentsDUnContexteSeLisentParShow`, flagged 8 times                              |
+| `awawa diff` runs against a copy                        | `@DECISION.AwawaDiffSeLanceContreUneCopie`                                                       |
+| Directory anchors on which `L016` cannot fire           | Flagged 3 times up to `2026-09-15-pr-83.md`                                                      |
 
 ## What was not checked
 
