@@ -3,8 +3,8 @@
 > ❗Docs written by AI from save file analysis (proofread, but still can include mistakes)
 
 ---
-**JSON Schemas** : each section has a validation schema in [`docs/schemas/`](./schemas/).
-The root schema [`save-file.schema.json`](./schemas/save-file.schema.json) validates a fully parsed save (array of 11 sections).
+**JSON Schemas** : each section has a validation schema in [`packages/shared-save-processing/schemas/`](../packages/shared-save-processing/schemas/), and validation applies every one of the ten, entry by entry. The world objects section is no exception, although it reaches validation as a generator: its entries meet their schema one at a time as the section is walked, so a save of any size only ever holds one world object in memory.
+The root schema [`save-file.schema.json`](../packages/shared-save-processing/schemas/save-file.schema.json) validates a fully parsed save (array of 11 sections, indexes 0 to 10).
 
 ## General structure
 
@@ -20,13 +20,29 @@ The file ends with `@`.
 > shifting World Events to index 10), which a game update removed. Legacy saves in that older format are only
 > supported at the user-input boundary (loading a save file): they are automatically adapted to the current
 > 11-section format described below, discarding the Terrain Layers data, and a warning is reported to the user.
-> See `packages/util-parsing/normalizeSaveSections.js`.
+> Validation detects the adaptation and is the single source of that warning, on every outcome and in every flow
+> (displaying a save, merging saves, `bun validate`, `bun merge`). The warning travels as the code defined in
+> `packages/shared-save-processing/normalizeRawSections.js` and is turned into the sentence shown to the user by
+> `packages/core-mapping/src/presentation/formatSaveWarning.ts`.
 
 ```
 entry1|
 entry2|
 entry3
 ```
+
+A section is read line by line, and a line that is not valid JSON is **reported and located**, never ignored:
+`packages/shared-save-processing/parseSaveSections.js` is the single reader of this format and reports
+`{detail, section, entryIndex}` for every line it could not read, keeping the readable entries around it.
+Validation turns those reports into located errors (`bun validate` exits 1 and names the section and the entry
+position), and merging refuses to write a save whose input carries one. Blank sections stay silent: each section is
+trimmed first, which covers the reserved part the terminating `@` produces and the line break the game writes before
+the first entry of a section.
+
+The save a merge produces is held to the same rules as the saves the tool accepts: it is read back and validated
+before the result reaches the user, so a defect the merge introduced is named instead of being handed over in
+silence. It is named as a defect of the produced save, never of one of the input files, and it does not withhold the
+file: a merge that produced a save stays a success.
 
 ---
 
@@ -67,24 +83,27 @@ erDiagram
         string  rot            "optional — quaternion"
         int     planet         FK "numeric planet id"
         string  count          "optional — quantity (e.g. ores)"
-        float   grwth          "optional — growth (plants)"
-        float   pnls           "optional — power output (solar panels)"
+        int     grwth          "optional — growth (plants)"
+        string  pnls           "optional — power output (solar panels)"
         string  color          "optional — RGBA color"
         int     trtInd         "optional — terraformation index"
         int     liId           "optional — linked list id"
+        int     liPlanet       "optional — planet of the linked inventory"
         string  text           "optional — displayed text"
         string  liGrps         "optional — list groups"
         int     linkedWo       "optional — linked WorldObject id"
         string  siIds          "optional — sub-inventory ids"
-        float   trtVal         "optional — terraformation value"
+        string  woIds          FK "optional — comma-separated WorldObject ids"
+        int     trtVal         "optional — terraformation value"
         float   hunger         "optional — hunger (animals)"
-        string  set            "optional — configuration set"
+        int     set            "optional — configuration set"
     }
 
     PLAYER ||--o{ INVENTORY : "inventoryId → id"
     PLAYER ||--o{ INVENTORY : "equipmentId → id"
     INVENTORY ||--o{ WORLD_OBJECT : "woIds → id"
     WORLD_OBJECT ||--o| WORLD_OBJECT : "linkedWo → id"
+    WORLD_OBJECT ||--o{ WORLD_OBJECT : "woIds → id"
 ```
 
 ---
@@ -144,34 +163,53 @@ erDiagram
 | `totalCraftedObjects` | `int`  | Total objects crafted by the player                    |
 | `totalTerraTokenEarned` | `int` | Total terra tokens earned by the player                |
 
+**`id` is an int64 in the file and a decimal string in the tool.** A Steam64 sits some 8.5 times beyond the largest
+integer a double represents exactly, where consecutive doubles are 16 apart: reading the literal as a number rounds
+it, and writing it back yields the shortest decimal reading to the same double, so the save would name no existing
+Steam account. The section 2 schema therefore declares `id` as `{"type": "string", "pattern": "^-?[0-9]+$"}`, the
+parser hands back the exact source text and the serializer writes it unquoted — the file format is unchanged. See
+`GR-ID-7` in [`game-rules.md`](./game-rules.md). No other field of the reference saves exceeds that range.
+
 ---
 
 ### #3 — World Objects
 
 **Cardinality:** N entries (buildings, resources, plants…). Domain key: `id`.
 
-All properties except `id` and `gId` are optional depending on object type.
+All properties except `id` and `gId` are optional depending on object type. `id` and `gId` are the only two
+carried by every entry of the ten reference saves (190338 world objects); the next most frequent, `pos` and
+`planet`, are on 14.31% of them.
 
 | Property   | Type     | Description                                                                                 |
 |------------|----------|---------------------------------------------------------------------------------------------|
 | `id`       | `int`    | Unique object ID                                                                            |
 | `gId`      | `string` | Game ID — object type (e.g. `"WindTurbineT1"`)                                              |
-| `pos`      | `string` | 3D position `"x,y,z"`                                                                       |
+| `pos`      | `string` | 3D position `"x,y,z"` — an object that holds one also names its `planet`                     |
 | `rot`      | `string` | Quaternion rotation `"x,y,z,w"`                                                             |
-| `planet`   | `int`    | Planet numeric ID (e.g. `110910045` for Toxicity)                                           |
+| `planet`   | `int`    | Planet numeric ID, of either sign (e.g. `-1140328421` for Prime, `110910045` for Toxicity)  |
 | `count`    | `string` | Amount or cumulative state (e.g. ores in a vein `"0,125"`)                                  |
 | `grwth`    | `int`    | Growth progression (plants)                                                                 |
 | `pnls`     | `string` | Produced power (solar panels, generators)                                                   |
 | `color`    | `string` | RGBA color of object                                                                        |
 | `trtInd`   | `int`    | Associated terraformation stage index                                                       |
 | `liId`     | `int`    | Linked list id (logistics / drones)                                                         |
+| `liPlanet` | `int`    | Planet numeric ID of the linked inventory `liId`, not the planet the object stands on       |
 | `text`     | `string` | Displayed text (signs, panels)                                                              |
 | `liGrps`   | `string` | Comma separated list of associated object types (item generation, blueprint)                |
 | `linkedWo` | `int`    | → `WorldObject.id` — associated world object (e.g. toxic water generator ↔ associated lake) |
 | `siIds`    | `string` | Comma separated list of generated items (e.g. beans generated by a farm)                    |
-| `trtVal`   | `int`    | Terraformation contribution value                                                           |
-| `hunger`   | `float`  | Animal hunger                                                                               |
+| `woIds`    | `string` | → `WorldObject.id` — comma separated ids of the world objects held (see `GR-ID-3`)          |
+| `trtVal`   | `int`    | Terraformation contribution value — an object that holds one also names its `trtInd`        |
+| `hunger`   | `float`  | Animal hunger, from `-100` to `100`                                                         |
 | `set`      | `int`    | Equipment set identifier                                                                    |
+
+**What the reference saves say about the rarest three:** `liPlanet` appears 21 times, every time on an
+`InterplanetaryExchangePlatform1` and every time naming a planet other than the object's own — an exchange
+platform points at an inventory sitting on another planet. `hunger` appears 345 times, on entries of `gId`
+`DNASequence` only, between `-100` and `94.22`; the bounds the schema states are the symmetric scale the game
+is assumed to work on (an animal yields a DNA sequence while its hunger is positive) rather than a documented
+range, and the first legitimate save they reject lifts them. `woIds` is on no world object of the ten saves,
+but the merge remaps it (`GR-ID-3`), so the schema declares it rather than reject a save the merge handles.
 
 **Planet numeric IDs:** `planet` (here) as well as `WorldEvent.planet` (see below) reference a planet using a
 numeric ID rather than the textual `planetId` used elsewhere (`TerraformationLevel.planetId`,
@@ -332,6 +370,6 @@ was at index 11.
 | `colorBaseLerp`   | `int`    | Base color intensity (≥ 0)                    |
 | `colorCustomLerp` | `int`    | Custom color intensity (≥ 0)                  |
 
-This section no longer exists in the current save format. When a legacy save is loaded, its Terrain Layers data is
-discarded and the user is warned that their save was adapted from an old format.
+This section no longer exists in the current save format. When a legacy save is loaded or merged, its Terrain Layers
+data is discarded and the user is warned that their save was adapted from an old format.
 

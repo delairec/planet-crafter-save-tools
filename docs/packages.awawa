@@ -1,0 +1,806 @@
+// Les sept packages, leurs frontieres et leurs exports. La matrice de dependances par prefixe
+// n'est pas recopiee ici : elle a un seul domicile, `bun run check:dependencies` et le README
+// public. Ce que le corpus ajoute est l'ancre : un package dissous ou renomme fait tomber L016
+// ici (@DECISION.LesPackagesDissousNeSontPasRecrees).
+SHAPE package_name
+	DESC "le nom reel du package, souligne la ou le manifeste porte un tiret"
+	MATCH "(core|util|cli|ui|shared)(_[a-z0-9]+)+(:v[0-9]+)?"
+
+SCHEMA PACKAGE
+	DESC "un package du monorepo ; le prefixe du nom fixe ses dependances autorisees"
+	NAME package_name
+	FIELD PREFIX core|util|cli|ui|shared
+		REQUIRED
+
+PACKAGE shared_save_processing
+	DESC "format wire des saves : types, analyse, serialisation, schemas JSON, fixtures de test"
+	PREFIX shared
+	STATUS implemented
+	SPEC "expose l'analyse et la serialisation des sections de save, sans dependance hors util-*"
+		IMPL "packages/shared-save-processing/package.json::shared-save-processing"
+
+PACKAGE shared_platforms
+	DESC "adaptateurs fs/process pour Bun et Node, sans effet de bord a l'import"
+	PREFIX shared
+	STATUS implemented
+	SPEC "les deux adaptateurs honorent le meme contrat, verifie par une spec commune"
+		IMPL "packages/shared-platforms/package.json::shared-platforms"
+
+PACKAGE util_types
+	DESC "le seul type de contrat RuntimePlatform, consomme type-only par shared-platforms"
+	PREFIX util
+	STATUS implemented
+	SPEC "ne depend de rien"
+		IMPL "packages/util-types/package.json::util-types"
+
+PACKAGE core_mapping
+	DESC "domaine, application, infrastructure et presentation du mapping de saves"
+	DESC "seuls les controleurs et les ViewModels sont exportes"
+	PREFIX core
+	STATUS implemented
+	SPEC "seuls les controleurs et les ViewModels sont exportes : aucun module d'infrastructure"
+		+ "n'est atteignable de l'exterieur du package"
+		IMPL "packages/core-mapping/package.json::core-mapping"
+	SPEC "les Responses des use cases se declarent dans application/responses, une interface par"
+		+ "fichier"
+		IMPL "packages/core-mapping/src/application/responses"
+	RATIONALE "le port est la frontiere, pas la charge utile qui la traverse ; application/requests"
+		+ "tenait deja l'autre moitie de la regle"
+	SOURCE "T28, PR #59"
+
+PACKAGE cli_merge
+	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
+	PREFIX cli
+	STATUS implemented
+	SPEC "ne porte aucune regle de fusion"
+		IMPL "packages/cli-merge/package.json::cli-merge"
+
+PACKAGE cli_validate
+	DESC "CLI mince : analyse d'arguments, controleur core-mapping, rendu"
+	PREFIX cli
+	STATUS implemented
+	SPEC "ne porte aucune regle de validation"
+		IMPL "packages/cli-validate/package.json::cli-validate"
+
+PACKAGE ui_save_manager
+	DESC "UI SolidStart consommant directement les controleurs de core-mapping"
+	PREFIX ui
+	STATUS implemented
+	SPEC "hors perimetre qualite fallow pour l'instant"
+		IMPL "fallow.toml"
+	SOURCE "decision du 2026-09-03, question Q5"
+
+DECISION LesPackagesDissousNeSontPasRecrees
+	DESC "util-parsing, util-messages et shared-mapping ont ete dissous dans shared-save-processing"
+		+ "et core-mapping ; util-platforms a ete renomme shared-platforms"
+	DESC "pas de nouveau package util-* non plus, sauf helper reellement generique ; les helpers de"
+		+ "format de fichier vont dans shared-save-processing"
+	STATUS specified
+	RATIONALE "YAGNI : un package par famille de helpers multiplie les frontieres sans separer de"
+		+ "responsabilites"
+	REJECTED "recreer un package util-* pour un helper de format de fichier"
+	SOURCE "AGENTS.md prive, section Organisation des packages"
+
+DECISION LesInvariantsDuDomaineSontComplets
+	DESC "champs en lecture seule et fabriques validantes sur chaque entite et chaque value object,"
+		+ "pas seulement sur les critiques"
+	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "une conformite partielle demande de se souvenir, a chaque ajout, de quel objet etait"
+		+ "juge critique ; la regle complete ne demande rien"
+	REJECTED "n'appliquer les invariants qu'aux entites jugees critiques"
+	SOURCE "decision du 2026-09-03, question Q3 du chantier de conformite"
+
+DECISION LesReglesDeFusionRecoiventDesDtoWireTypes
+	DESC "les regles de fusion recoivent et retournent des enregistrements du format wire types,"
+		+ "avec l'origine save A ou save B explicite, jamais des chaines"
+	DESC "la serialisation se fait une fois, en infrastructure, et le nommage du fichier produit y"
+		+ "reste"
+	DESC "pas de modele de domaine dedie a la fusion"
+	STATUS superseded
+	RATIONALE "YAGNI : un modele de domaine du merge ajouterait une traduction aller-retour pour"
+		+ "des regles qui operent sur la forme du fichier"
+	REJECTED "faire circuler des chaines entre les regles de fusion"
+	REJECTED "un modele de domaine dedie a la fusion"
+	SPEC "les regles de fusion vivent dans un seul repertoire du domaine et n'y serialisent rien"
+		IMPL "packages/core-mapping/src/domain/rules/merge"
+	SOURCE "decision du 2026-09-04, planification de T11"
+
+DECISION LesReglesDeFusionRecoiventDesDtoWireTypes:v2
+	DESC "les DTO wire restent l'entree et la sortie des regles de fusion, a l'exception des"
+		+ "encodages de champ"
+	DESC "l'infrastructure decode les listes d'identifiants avant le domaine et les re-encode en"
+		+ "sortie"
+	DESC "le separateur de liste d'identifiants n'est declare qu'une fois, dans ce mapping"
+		+ "d'infrastructure"
+	DESC "champs concernes : Inventory.woIds, WorldObject.siIds, WorldObject.woIds"
+	DESC "le rejet d'un modele de domaine dedie a la fusion tient toujours : trois champs decodes"
+		+ "ne sont pas un modele"
+	STATUS superseded
+	SUPERSEDES @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes
+	CLOSES @OPEN_QUESTION.OuDecoderLEncodageDesListesDIdentifiants
+	RATIONALE "trois sites faisaient trois split de la virgule aux semantiques differentes, deux"
+		+ "dans le domaine et un en infrastructure : la duplication n'etait que le symptome, la"
+		+ "violation etait l'analyse d'un encodage dans le domaine"
+	RATIONALE "point de vigilance mesure : le remappage rendait l'identifiant d'origine verbatim"
+		+ "quand il n'etait pas remappe, alors que decoder puis re-encoder normalise toute ecriture"
+		+ "non canonique. Le releve du 2026-09-12 sur les deux dossiers d'entree de reference ne"
+		+ "compte aucun jeton non canonique ni aucun jeton vide sur 6607 champs de liste, et le"
+		+ "controle de sortie de reference est le filet"
+	REJECTED "un codec dans shared-save-processing appele par les trois sites : le domaine"
+		+ "continuerait d'analyser l'encodage"
+	REJECTED "une simple declaration unique du separateur : elle traiterait la duplication sans"
+		+ "traiter la violation"
+	SPEC "aucune regle de fusion du domaine n'analyse ni ne reserialise une liste d'identifiants"
+		IMPL "packages/core-mapping/src/domain/rules/merge"
+	SPEC "le separateur de liste d'identifiants est declare dans un seul module d'infrastructure"
+		IMPL "packages/core-mapping/src/infrastructure"
+	SOURCE "decision du 2026-09-12, arbitrage utilisateur au lancement de T37 partie A, PR #62"
+
+DECISION LesReglesDeFusionRecoiventUnModeleDeFusion
+	DESC "les regles de fusion recoivent un modele de fusion du domaine : un enregistrement a"
+		+ "sections nommees, dont les inventaires et les objets du monde portent leurs listes"
+		+ "d'identifiants en nombres"
+	DESC "les autres sections restent les DTO wire, documentes comme entree du domaine"
+	DESC "aucun type du domaine ne se nomme d'apres une operation d'infrastructure, et le domaine"
+		+ "ne connait ni la disposition en tuple du fichier ni ses index de section"
+	DESC "l'infrastructure fait le mapping dans les deux sens ; la lecture et l'ecriture d'une"
+		+ "liste d'identifiants vivent dans shared-save-processing, a cote du DTO qui declare le"
+		+ "champ, et seuls les mappers d'infrastructure les appellent"
+	DESC "ce modele est depuis la revue de la PR #62 le modele de save du domaine, dans domain/save"
+		+ ": les regles de fusion le recoivent et le rendent"
+		REF @DECISION.UneFusionProduitUneSaveOrdinaire
+	STATUS implemented
+	SUPERSEDES @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
+	CLOSES @OPEN_QUESTION.UnEncodageDeChampReleveDuFormatOuNon
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	RATIONALE "la v2 gardait le rejet d'un modele de fusion tout en creant un demi-modele : trois"
+		+ "types Decoded* derives des DTO wire par Omit, et un tuple de onze cases recopiant la"
+		+ "disposition du fichier, case reservee comprise, indexe par une constante de"
+		+ "shared-save-processing depuis le domaine. Ni la v1 a la lettre, ni un modele"
+	RATIONALE "un encodage de champ releve du format : le domaine recoit le champ sous sa forme"
+		+ "metier, et c'est le paquet qui declare le DTO qui sait ce que la chaine contient"
+	RATIONALE "le rejet par la v2 d'une lecture dans shared-save-processing ne tenait que si le"
+		+ "domaine l'appelait ; avec le modele, seule l'infrastructure l'appelle"
+	REJECTED "revenir a la v1 a la lettre, la virgule faisant partie du format documente : le"
+		+ "domaine analyserait un encodage de persistance"
+	REJECTED "garder les types Decoded* et le tuple en les renommant : le nom n'etait que le"
+		+ "symptome, la disposition du fichier dans le domaine etait la violation"
+	REJECTED "un module codec en infrastructure de core-mapping : deux mappers d'infrastructure en"
+		+ "avaient besoin, et la connaissance du champ appartient au paquet qui le declare"
+	SPEC "aucune regle de fusion du domaine n'importe un index de section ni le type de tuple"
+		+ "analyse"
+		IMPL "packages/core-mapping/src/domain/rules/merge"
+	SPEC "la lecture et l'ecriture d'une liste d'identifiants sont declarees dans"
+		+ "shared-save-processing et appelees depuis l'infrastructure seule"
+		IMPL "packages/shared-save-processing/idList.js"
+	SOURCE "decision du 2026-09-12, revue d'architecture de la PR #62 par l'utilisateur"
+
+DECISION LesAbreviationsWireRestentDansSharedSaveProcessing
+	DESC "les abreviations du format wire ne sont tolerees que dans les enregistrements de"
+		+ "shared-save-processing, et sont traduites en langage metier a la frontiere du domaine"
+	DESC "la tolerance s'appuie sur la description du package, pas sur un commentaire d'en-tete par"
+		+ "fichier"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "un commentaire par fichier ne dit rien que l'interface ne dise, et il nomme une"
+		+ "section par son index — un numero qu'aucun test ne tient et qui devient faux le jour ou"
+		+ "un index bouge"
+	REJECTED "tolerer les abreviations wire au-dela de ce package"
+	REJECTED "un commentaire d'en-tete par fichier de DTO"
+	SPEC "la description du package porte la tolerance"
+		IMPL "packages/shared-save-processing/package.json::shared-save-processing"
+	SOURCE "decision du 2026-09-03, question Q8 ; commentaires retires en revue de T36, PR #55"
+
+DECISION CreateSaveRecordsEstLaSourceUniqueDesBuilders
+	DESC "un seul module porte les constructeurs d'enregistrements de save ; les deux rendus —"
+		+ "chaine de save et sections deja analysees — en sont des consommateurs, jamais des"
+		+ "sources"
+	DESC "tout enregistrement du format wire declare dans la phase de preparation d'une spec passe"
+		+ "par son constructeur"
+	DESC "les constructeurs vivent dans le repertoire de test de shared-save-processing, y compris"
+		+ "quand seul un package core les consomme : ils decrivent le format wire, pas le domaine"
+	DESC "un module ne reexporte pas ce qu'il importe d'un autre pour le confort d'un appelant"
+		+ "historique, et ce repertoire n'a pas de barrel"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_TASK @TASK.T43_SpecsDeDomaineCoreMapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
+	RATIONALE "trois frontieres que la regle ne franchit pas : une valeur attendue reste litterale,"
+		+ "les types du domaine ne sont pas des enregistrements de save, et la spec du serialiseur"
+		+ "garde ses litteraux parce que chaque attendu y est le JSON exact de son jeu de champs"
+	RATIONALE "une generation depuis les schemas JSON produirait une donnee que personne ne lit :"
+		+ "un attendu litteral se lit, une valeur generee non. Cout assume, un constructeur par"
+		+ "type"
+	REJECTED "generer les fixtures depuis les schemas JSON"
+	REJECTED "un barrel sur le repertoire de test : il recreerait exactement le couplage retire"
+	REJECTED "convertir aussi les valeurs attendues, ce qui les rendrait recalculees"
+	SPEC "les constructeurs sont declares une fois et importes finement"
+		IMPL "packages/shared-save-processing/testing/createSaveRecords.js"
+	SOURCE "decision du 2026-09-08, T21, PR #35 ; regle du balayage etendue en revue de T19, PR #46"
+
+DECISION UnIndiceDeSectionNeSEcritJamaisEnDur
+	DESC "un indice de section ne s'ecrit jamais en dur, pas meme dans une spec : les indices sont"
+		+ "lus depuis leur module"
+	DESC "cela vise aussi la destructuration a trous, qui cache l'indice qu'elle compte"
+	DESC "le chiffre d'un message attendu reste litteral : c'est ce que la regle doit produire, pas"
+		+ "un acces au format"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
+	RATIONALE "arbitrage de l'utilisateur, pose deux fois sur la meme pull request"
+	RATIONALE "restent des nombres les comptes de parties : ce sont des attendus, pas des acces"
+	RATIONALE "T44 : la meme frontiere separe les deux moities d'un test de localisation. L'entree"
+		+ "section: 2 est un acces et se lit dans le module ; l'attendu Players (section 2), entry"
+		+ "3 est la phrase que le formateur doit rendre, et la lire depuis le module ferait"
+		+ "calculer a l'attendu ce qu'il est cense epingler"
+	REJECTED "tolerer un indice litteral dans une spec"
+	REJECTED "composer le message attendu depuis le module d'indices, ce qui le rendrait recalcule"
+	SPEC "les indices de section, y compris ceux du format herite et la partie reservee, sont"
+		+ "declares une fois"
+		IMPL "packages/shared-save-processing/sectionIndexes.js"
+	SPEC "aucune spec de core-mapping n'ecrit un indice de section en dur"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/MergeResultPresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/SaveFileValidationPresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/formatValidationError.spec.ts"
+	SOURCE "decision du 2026-09-09, revue de T19 et de T26"
+	SOURCE "T44, frontiere de l'attendu tranchee a l'implementation, PR #82"
+
+DECISION UnImportDeTypeJsdocQuiTraverseUnPackageSEcritTypedef
+	DESC "un import de type JSDoc qui traverse une frontiere de package s'ecrit en typedef portant"
+		+ "l'import, la balise import restant admise a l'interieur d'un package"
+	STATUS implemented
+	RATIONALE "l'outil d'audit qualite suit les imports de type ecrits sous forme d'appel dans les"
+		+ "annotations, et la balise import de TypeScript 5.5 lui est invisible : la dependance"
+		+ "declaree remonte alors comme inutilisee"
+	RATIONALE "l'entree d'exclusion de dependances de l'outil n'est pas une reponse a un faux"
+		+ "positif localise : elle desactive a la fois la detection des dependances inutilisees et"
+		+ "celle des non declarees, pour tout le depot et sans echeance"
+	REJECTED "exclure le package de l'audit de dependances"
+	REJECTED "laisser la balise import traverser une frontiere de package"
+	SPEC "le seul cas du depot porte la forme et le commentaire qui empeche de la normaliser"
+		IMPL "packages/shared-platforms/platform.js"
+	SOURCE "decision du 2026-09-08, T17, PR #44"
+
+DECISION UnArgumentInconnuEstUneErreurDUsage
+	DESC "les deux CLI nomment sur la sortie d'erreur chaque argument prefixe d'un tiret qui ne"
+		+ "designe aucun de leurs drapeaux, impriment une ligne d'usage et sortent en erreur avant"
+		+ "de lire quoi que ce soit"
+	DESC "limite assumee : seuls les arguments commencant par un tiret sont examines, le vecteur"
+		+ "d'arguments rendu par la plateforme portant aussi l'interpreteur et le script"
+	DESC "la banniere d'usage nomme la commande documentee, dans sa forme Bun, sous les deux"
+		+ "runtimes"
+	STATUS implemented
+	RATIONALE "un drapeau mal orthographie silencieusement ignore fait travailler l'outil sur les"
+		+ "repertoires par defaut, et le resultat est indiscernable d'un succes"
+	RATIONALE "Bun est l'outil principal et maintenu ; les commandes Node n'existent que pour une"
+		+ "compatibilite assumee cote utilisateur, donc la banniere n'a pas a etre consciente du"
+		+ "runtime"
+	REJECTED "avertir sans changer le code de retour"
+	REJECTED "decouper le vecteur d'arguments pour attraper les positionnels, ce qui deplacerait le"
+		+ "contrat de la plateforme"
+	REJECTED "faire dependre la banniere du runtime"
+	SPEC "l'analyse des drapeaux et la detection des arguments inconnus sont partagees par les deux"
+		+ "CLI, sans creer de package"
+		IMPL "packages/shared-platforms/cliArguments.js"
+	SOURCE "decision du 2026-09-10, T34, PR #60 ; banniere arbitree en revue"
+
+DECISION UnPackageEstNommeCommeSonManifeste
+	DESC "l'entite PACKAGE porte le nom reel du package, le tiret du manifeste ecrit en souligne :"
+		+ "core-mapping devient core_mapping"
+	DESC "le shape de nom impose le prefixe de couche, comme le champ PREFIX"
+	STATUS implemented
+	RATIONALE "le nom en PascalCase obligeait a traduire mentalement entre l'identite du corpus et"
+		+ "le repertoire, le manifeste, les imports et les commandes --filter, qui portent tous la"
+		+ "forme a tiret"
+	REJECTED "ecrire le tiret dans l'identite : le tiret n'appartient pas a la grammaire des noms"
+	REJECTED "garder le PascalCase et porter le nom reel dans un champ : status et refs impriment"
+		+ "l'identite, pas un champ"
+	SPEC "le nom de tout package est accepte par le shape package_name"
+		IMPL "docs/packages.awawa::SHAPE package_name"
+	SOURCE "decision du 2026-09-12, apres le renommage des taches"
+
+DECISION LesControleursDeSectionRecoiventLeTexteValide
+	DESC "les cinq controleurs de section recoivent le texte de save deja valide, pas une"
+		+ "SaveSections ; le composition root expose une fabrique qui construit un"
+		+ "SaveSectionsReaderPort depuis ce texte, en l'analysant avec l'analyseur existant et en"
+		+ "ecartant les lignes illisibles"
+	DESC "le ViewModel de chargement perd son champ sections ; l'UI garde le texte valide dans un"
+		+ "signal pose quand le statut de chargement est valid, et en nourrit les cinq ressources"
+		+ "de section"
+	DESC "les controleurs de section s'alignent ainsi sur le controleur de fusion, qui prend deja"
+		+ "du texte ; l'UI ne connait plus aucune representation des sections"
+	DESC "cette decision remplace, pour le ViewModel de chargement et les controleurs de section,"
+		+ "ce que la decision sur la save ordinaire disait de la SaveSections qu'ils portaient"
+		REF @DECISION.UneFusionProduitUneSaveOrdinaire
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.FormeDuContratControleurVersUi
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "les lignes illisibles sont ecartees sans perte : le chargement, seul presenter de"
+		+ "ces erreurs, les a deja rendues, et une seconde analyse du meme texte est deterministe"
+	RATIONALE "cout mesure le 2026-09-13 sous Bun sur input/Test/Standard-3.json, 2,02 Mo : 11,5 ms"
+		+ "par analyse en moyenne sur 20 passes, soit environ 60 ms pour les cinq sections d'un"
+		+ "chargement. La mesure de 2 ms citee par la question datait d'avant la materialisation de"
+		+ "la section des objets du monde par l'analyseur ; chaque section porte son propre etat de"
+		+ "chargement, le surcout reste invisible"
+	REJECTED "un identifiant opaque de la save chargee porte par le ViewModel, avec un registre"
+		+ "dans core-mapping gardant les sections analysees : de l'etat dans un package sans etat,"
+		+ "et le controleur de fusion resterait sur un autre contrat"
+	SPEC "aucun controleur de section n'importe SaveSectionsReaderService ni ne recoit une"
+		+ "SaveSections : chacun prend le texte de save et obtient son lecteur du composition root"
+		IMPL "packages/core-mapping/src/controllers"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts"
+	SPEC "le ViewModel de chargement ne porte plus de sections"
+		IMPL "packages/core-mapping/src/presentation/viewModels/LoadSaveFileViewModel.ts"
+	SPEC "l'UI garde le texte valide dans un signal et en nourrit les ressources de section"
+		IMPL "packages/ui-save-manager/src/lib/useLoadSaveFile.ts"
+		IMPL "packages/ui-save-manager/src/lib/useSectionViewModels.ts"
+	SOURCE "decision du 2026-09-13, arbitrage utilisateur au lancement de T37 partie B, PR #65"
+
+DECISION LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
+	DESC "PlacedWorldObjectEntity n'herite pas de WorldObjectEntity : les deux entites sont des"
+		+ "classes independantes, et un objet place n'est pas assignable a un objet du monde"
+	DESC "une spec qui a besoin de la liste de toute la save la construit par"
+		+ "createWholeSaveWorldObjects, qui prend l'identite de chaque objet, place ou non, et en"
+		+ "fait un WorldObjectEntity"
+	STATUS superseded
+	RATIONALE "des qu'une entite porte un champ private, TypeScript la compare nominalement : un"
+		+ "PlacedWorldObjectEntity cesse d'etre assignable a un WorldObjectEntity, ce que le"
+		+ "sous-typage structurel autorisait tant que les deux etaient des interfaces. Les specs"
+		+ "d'energie passaient leurs objets places dans allWorldObjects, et ne compilent plus"
+	RATIONALE "T15 convertit une entite par commit, dans l'ordre WorldObject puis PlacedWorldObject"
+		+ ": au commit qui transforme WorldObjectEntity, PlacedWorldObjectEntity est encore une"
+		+ "interface, donc l'heritage n'est pas disponible et les specs doivent deja construire la"
+		+ "vue explicitement. L'heritage introduit deux commits plus tard ne supprimerait plus rien"
+	RATIONALE "les deux entites disent deux choses : WorldObjectEntity porte l'identite d'un objet"
+		+ "du monde, resolue depuis le contenu d'un inventaire ; PlacedWorldObjectEntity porte en"
+		+ "plus une position et une planete. La liste de toute la save est une projection, pas la"
+		+ "meme collection"
+	REJECTED "class PlacedWorldObjectEntity extends WorldObjectEntity : le sous-typage nominal"
+		+ "rendrait les specs inchangees, mais il n'est pas disponible au commit qui en aurait"
+		+ "besoin, et il fait heriter la position d'un contrat qui ne la connait pas"
+	REJECTED "declarer les parametres des regles d'energie sur une interface structurelle plutot"
+		+ "que sur l'entite : les regles cesseraient de recevoir des entites validees, ce que la"
+		+ "tache demande a l'inverse"
+	SPEC "createWholeSaveWorldObjects construit la liste de toute la save depuis l'identite des"
+		+ "objets, places ou non"
+		IMPL "packages/core-mapping/src/testing/createWholeSaveWorldObjects.ts"
+	SOURCE "decision du 2026-09-13, T15, PR #72, conversion des entites du domaine en classes"
+
+DECISION LeComportementMigreSurLEntiteEtLaRegleLInterroge
+	DESC "le comptage des fusibles d'un optimiseur filtre les objets du monde de toute la save par"
+		+ "leur nom et par inventory.contains, au lieu de parcourir la liste d'identifiants de"
+		+ "l'inventaire dans une table d'objets indexee par identifiant"
+	DESC "la geometrie des objets places vit sur PlacedWorldObjectEntity : isWithinRadius pour la"
+		+ "portee d'un optimiseur, distanceTo pour l'ordre des producteurs les plus proches ;"
+		+ "domain/rules/distanceBetween.ts est supprime"
+	DESC "summarize rend le TerraformationLevelSummaryValueObject entier, pas un couple index et"
+		+ "biomasse ; le cas d'utilisation appelle level.summarize() et ne compose plus rien"
+	DESC "TerraformationLevelSummaryValueObject declare ses dix champs au lieu d'etendre l'entite"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "contains est le comportement que la tache fait migrer sur InventoryEntity ; garder"
+		+ "le parcours d'origine aurait laisse le getter worldObjectIds porter la regle et contains"
+		+ "sans appelant"
+	RATIONALE "les deux formes comptent la meme chose tant que les identifiants d'objets du monde"
+		+ "sont uniques dans une save : la forme d'origine dedupliquait deja par une Map indexee"
+		+ "par identifiant, donc elle faisait la meme hypothese sans la dire. Un identifiant"
+		+ "duplique compterait desormais une fois par objet du monde et non une fois par entree"
+		+ "d'inventaire ; aucune save lue ne presente ce cas"
+	RATIONALE "distanceTo accompagne isWithinRadius parce que la selection des producteurs boostes"
+		+ "trie par distance avant de couper a la capacite de l'optimiseur : le predicat seul ne"
+		+ "rend pas l'ordre, et laisser la distance en regle aurait garde distanceBetween dans"
+		+ "domain/rules, ce que la tache refuse"
+	RATIONALE "une interface qui etend une classe herite de ses champs prives et de ses methodes :"
+		+ "le value object aurait porte summarize, et seule une instance de l'entite aurait pu le"
+		+ "satisfaire. Declarer les dix champs supprime aussi l'etalement de l'entite dans la"
+		+ "fabrique du value object"
+	RATIONALE "summarize rendant le value object entier supprime les deux derniers etalements"
+		+ "d'entite : celui de la fabrique et celui du cas d'utilisation. Un summarize rendant un"
+		+ "couple les aurait laisses tous les deux"
+	REJECTED "un contains prenant un WorldObjectEntity plutot qu'un identifiant : l'inventaire"
+		+ "dependrait d'une autre entite pour une question d'appartenance, et un objet place ne lui"
+		+ "serait pas passable depuis que les classes sont nominales"
+		REF @DECISION.LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
+	SPEC "le comptage des fusibles n'indexe plus les objets du monde et demande a l'inventaire s'il"
+		+ "contient l'objet"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts"
+		IMPL "packages/core-mapping/src/domain/entities/InventoryEntity.ts"
+	SPEC "aucune fonction de distance ne subsiste dans domain/rules : l'optimiseur est interroge"
+		IMPL "packages/core-mapping/src/domain/entities/PlacedWorldObjectEntity.ts"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts"
+	SPEC "computeTerraformationSummary est supprime et le cas d'utilisation demande son resume a"
+		+ "l'entite"
+		IMPL "packages/core-mapping/src/domain/entities/TerraformationLevelEntity.ts"
+		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts"
+	SOURCE "decision du 2026-09-13, T15, PR #72, migration des comportements sur les entites"
+
+DECISION LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
+	DESC "LoadEnergyLevelsSection construit EnergyLevelsValueObject et"
+		+ "PlanetEnergyLevelsValueObject par leurs fabriques, champ par champ, au lieu d'etaler le"
+		+ "resultat de la regle dans un litteral"
+	DESC "computePlanetEnergyLevels garde sa signature et rend toujours les niveaux sans planetId ;"
+		+ "il n'etale plus les value objects qu'il enrichit d'une part de production"
+	STATUS superseded
+	RATIONALE "un etalement contourne la fabrique : le value object sort non valide, et un champ"
+		+ "ajoute a l'interface passe sans que rien ne le reclame au site de construction"
+	REJECTED "faire prendre a computePlanetEnergyLevels le PlanetWorldObjectsValueObject entier et"
+		+ "rendre le PlanetEnergyLevelsValueObject complet : la regle cesserait d'etre une regle de"
+		+ "calcul de niveaux pour devenir l'assemblage d'une vue, et les ancres IMPL de la tache"
+		+ "designent les cas d'utilisation, pas la regle"
+	SPEC "les deux cas d'utilisation de section construisent leurs value objects par fabrique"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
+		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts"
+	SPEC "aucun etalement de value object ne subsiste dans computePlanetEnergyLevels"
+		IMPL "packages/core-mapping/src/domain/rules/computePlanetEnergyLevels.ts"
+	SOURCE "decision du 2026-09-13, T15, PR #72, construction explicite des value objects"
+
+DECISION UneEntiteRendUneCopieDeSonTableauInterne
+	DESC "InventoryEntity.worldObjectIds, PlayerEntity.inventory, PlayerEntity.equipment et"
+		+ "PlacedWorldObjectEntity.position rendent une copie du tableau valide, jamais le tableau"
+		+ "lui-meme"
+	DESC "une entite du domaine n'expose aucun mutateur : toute mutation future passe par une"
+		+ "methode de l'entite, qui reconstruit l'etat au lieu de laisser muter le tableau rendu"
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.UneEntiteRendSonTableauInterneSansLeCopier
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "le type readonly seul se defait par une assertion, et l'invariant que le"
+		+ "constructeur a valide tombe sans que rien ne le signale ; la copie est la seule garde"
+		+ "que le compilateur ne peut pas contourner"
+	RATIONALE "le cout redoute par la recommandation de la question n'existe pas : le chemin chaud"
+		+ "est InventoryEntity.contains, qui lit le champ prive et ne passe pas par l'accesseur."
+		+ "Les seuls appelants des accesseurs sont le lecteur de sections, deux fois par joueur, et"
+		+ "le presenter des joueurs, une fois par joueur"
+	REJECTED "rendre le tableau tel quel, protege par le type readonly seul : c'est l'option"
+		+ "retenue faute d'arbitrage par la question, refusee en revue le 2026-09-13"
+	REJECTED "figer le tableau par Object.freeze dans le constructeur : la mutation echouerait"
+		+ "silencieusement hors mode strict, et l'erreur resterait illisible"
+	SPEC "les quatre accesseurs de tableau rendent une copie : muter le tableau rendu ne change ni"
+		+ "ce que l'entite expose ensuite, ni ce que contains repond"
+		IMPL "packages/core-mapping/src/domain/entities/InventoryEntity.ts"
+		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts"
+		IMPL "packages/core-mapping/src/domain/entities/PlacedWorldObjectEntity.ts"
+	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+DECISION UnObjetPlaceEstUnObjetDuMonde
+	DESC "PlacedWorldObjectEntity etend WorldObjectEntity : un objet place est un objet du monde"
+		+ "qui porte en plus une position, une planete et un inventaire"
+	DESC "une spec qui a besoin de la liste de toute la save y met directement les entites"
+		+ "construites ; createWholeSaveWorldObjects est supprime"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	SUPERSEDES @DECISION.LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
+	RATIONALE "la raison qui imposait deux classes distinctes etait l'ordre des commits de T15 : au"
+		+ "commit qui transformait WorldObjectEntity, PlacedWorldObjectEntity etait encore une"
+		+ "interface. Les cinq entites sont converties, la contrainte a disparu, et ce qu'elle a"
+		+ "laisse est un helper de test qui n'existait que pour rendre les deux vues compatibles"
+	RATIONALE "la substitution de Liskov tient : tout appelant attendant l'identite d'un objet du"
+		+ "monde accepte un objet place, et aucune signature n'a a connaitre la position"
+	RATIONALE "l'heritage ne change rien a la production : le lecteur de sections construit deja la"
+		+ "liste de toute la save et les objets places par deux passes separees, les objets non"
+		+ "places restant des WorldObjectEntity"
+	REJECTED "garder les deux classes independantes et le helper de test : le helper construisait"
+		+ "une seconde entite a partir de l'identite d'une premiere, du travail que seule"
+		+ "l'incompatibilite nominale rendait necessaire"
+	SPEC "un PlacedWorldObjectEntity est une instance de WorldObjectEntity"
+		IMPL "packages/core-mapping/src/domain/entities/PlacedWorldObjectEntity.ts"
+	SPEC "aucun helper de conversion d'objet place vers objet du monde ne subsiste dans src/testing"
+		IMPL "packages/core-mapping/src/testing"
+	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+DECISION LesReglesDEnergieInterrogentLObjetPlaceEtNonLesTables
+	DESC "PlacedWorldObjectEntity porte energyProductionLevel, energyConsumptionLevel, isOptimizer"
+		+ "et boostedProducersAmong ; WorldObjectEntity porte isEnergyFuse"
+	DESC "aucune regle d'energie n'indexe plus energyProductionLevelsByWorldObjectName,"
+		+ "energyConsumptionLevelsByWorldObjectName ni OPTIMIZER_CONFIG_BY_NAME par le nom d'une"
+		+ "entite, sauf computeEnergyBreakdown qui recoit sa table en parametre"
+	DESC "distanceTo et isWithinRadius deviennent prives : l'optimiseur expose le comportement"
+		+ "entier, choisir les producteurs qu'il booste, et non deux primitives geometriques"
+	DESC "energyOptimizerConfig passe de domain/rules a domain : c'est une configuration lue par"
+		+ "les entites, pas une regle"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "ce qui se deduit du seul nom d'un objet du monde est l'etat de cet objet : une regle"
+		+ "qui indexe une table par entite.name est de l'envie de fonctionnalite, et la conversion"
+		+ "en classes de T15 est ce qui rend la correction possible"
+		REF @DECISION.LeComportementMigreSurLEntiteEtLaRegleLInterroge
+	RATIONALE "computeEnergyBreakdown ne migre pas : il est parametre par la table qu'on lui passe"
+		+ "et sert deux fois, production et consommation ; le rendre dependant de l'entite"
+		+ "obligerait ses specs a citer les valeurs reelles du jeu au lieu d'une table de test"
+	RATIONALE "regrouper le rayon, la portee et la capacite dans boostedProducersAmong laisse"
+		+ "computeOptimizerBoosts sur ce qu'il est seul a pouvoir faire : joindre les inventaires"
+		+ "aux optimiseurs pour compter les fusibles"
+	REJECTED "supprimer chaque regle et appeler la methode de l'entite au site d'appel : une somme"
+		+ "ou une jointure sur une collection n'appartient a aucune entite prise seule, et"
+		+ "computeEnergyConsumptionLevel, computeEnergyProductionLevel et computeOptimizerBoosts"
+		+ "restent exactement cela une fois le comportement par objet migre"
+	REJECTED "faire migrer validateUniqueHost et resolvePlanetName : la premiere prend le Player"
+		+ "brut de shared-save-processing et non PlayerEntity, la seconde ne porte sur aucune"
+		+ "entite"
+	SPEC "un objet place dit son niveau de production, son niveau de consommation et s'il est un"
+		+ "optimiseur ; un optimiseur choisit lui-meme les producteurs qu'il booste"
+		IMPL "packages/core-mapping/src/domain/entities/PlacedWorldObjectEntity.ts"
+	SPEC "un objet du monde dit s'il est un fusible d'energie"
+		IMPL "packages/core-mapping/src/domain/entities/WorldObjectEntity.ts"
+	SPEC "le choix des producteurs boostes n'importe plus aucune table de configuration d'energie"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts"
+	SOURCE "revue de la PR #72 par le proprietaire du depot, 2026-09-13, T15"
+
+DECISION LaGrilleEnergetiqueDUnePlaneteEstUnAgregat
+	DESC "PlanetEnergyGrid, dans domain, est la grille energetique d'une planete : construite avec"
+		+ "le PlanetWorldObjectsValueObject de la planete, les objets du monde de toute la save et"
+		+ "les inventaires, elle rend par levels() le PlanetEnergyLevelsValueObject complet, monte"
+		+ "par sa fabrique et portant planetId"
+	DESC "computeEnergyProductionLevel, computeEnergyConsumptionLevel, computeOptimizers,"
+		+ "computeOptimizerBoosts, computeEnergyFuseCountsByProducerId et computePlanetEnergyLevels"
+		+ "deviennent des methodes privees de la grille ; leurs fichiers et leurs specs sont"
+		+ "supprimes, les cas qu'elles epinglaient reancres sur levels()"
+	DESC "les boosts d'optimiseur et les comptes de fusibles sont calcules une fois dans le"
+		+ "constructeur et relus par chaque accesseur"
+	DESC "LoadEnergyLevelsSection construit une grille par planete et collecte ses niveaux ; le"
+		+ "type Omit<PlanetEnergyLevelsValueObject, 'planetId'> et la recopie champ par champ"
+		+ "disparaissent"
+	STATUS implemented
+	SUPERSEDES @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
+	CLOSES @OPEN_QUESTION.LeCasDUtilisationDeSectionEnergieRestitueSesValueObjectsChampParChamp
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "les cinq regles d'energie prenaient toutes le meme triplet allWorldObjects,"
+		+ "positionedWorldObjectsOnPlanet, inventories : un triplet qui traverse cinq signatures"
+		+ "intact est un objet qui n'a pas ete nomme"
+	RATIONALE "le cout n'etait pas que de style : computeOptimizerBoosts tournait trois fois par"
+		+ "planete, une fois par computeEnergyProductionLevel via"
+		+ "computeEnergyFuseCountsByProducerId, une fois par computeOptimizers via la meme, une"
+		+ "fois depuis computeOptimizers directement. Chaque tour refaisait le balayage des"
+		+ "fusibles, optimiseurs fois objets du monde, et la selection des producteurs boostes"
+	RATIONALE "ce n'est pas l'option refusee par la decision sur les regles d'energie : ce que"
+		+ "cette derniere refuse, c'est de faire d'une somme ou d'une jointure sur une collection"
+		+ "une methode d'une entite prise seule. Le motif est juste, et c'est precisement pourquoi"
+		+ "l'objet a creer est un agregat, la grille de la planete, et non une methode de plus sur"
+		+ "PlacedWorldObjectEntity"
+		REF @DECISION.LesReglesDEnergieInterrogentLObjetPlaceEtNonLesTables
+	RATIONALE "les deux motifs de refus de la decision remplacee tombent : la regle ne rend plus un"
+		+ "litteral que la fabrique ne valide pas, et les ancres SPEC designent la grille et non le"
+		+ "cas d'utilisation, donc aucun assemblage de vue n'est demande a une regle de calcul"
+		REF @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
+	RATIONALE "computeEnergyBreakdown reste une regle parametree par sa table : la decision sur les"
+		+ "regles d'energie a tranche ce point et n'est pas rouverte"
+		REF @DECISION.LesReglesDEnergieInterrogentLObjetPlaceEtNonLesTables
+	RATIONALE "T15 dit « les cinq entites du domaine deviennent des classes » et la grille est un"
+		+ "sixieme objet du domaine : l'extension de la tache est decidee par le proprietaire du"
+		+ "depot dans la PR #72, elle n'est pas une derive de perimetre constatee apres coup"
+	RATIONALE "les vingt-deux cas des six specs supprimees sont reancres sur levels() sans"
+		+ "affaiblissement : EN-BASE, EN-OPT-1 a 3, EN-FUSE-2 et 3 et le partage proportionnel du"
+		+ "boost d'un producteur entre ses optimiseurs restent epingles, et le rayon, la planete et"
+		+ "la capacite le sont sur boostedProducersAmong"
+	REJECTED "faire prendre a computePlanetEnergyLevels le PlanetWorldObjectsValueObject et lui"
+		+ "faire rendre le value object complet : le litteral non valide disparaissait, mais le"
+		+ "triplet continuait de traverser cinq signatures et le triple calcul restait"
+	REJECTED "faire assembler le value object par la presentation : le PresenterPort cesserait de"
+		+ "recevoir une valeur du domaine"
+	SPEC "PlanetEnergyGrid rend le PlanetEnergyLevelsValueObject complet par sa fabrique"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts"
+	SPEC "aucune des six regles d'energie devenues methodes de la grille ne subsiste dans"
+		+ "domain/rules"
+		IMPL "packages/core-mapping/src/domain/rules"
+	SPEC "LoadEnergyLevelsSection construit une grille par planete et ne recopie aucun champ"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
+	SOURCE "arbitrage du proprietaire du depot en revue de la PR #72, 2026-09-13, extension"
+		+ "deliberee de T15"
+
+DECISION UnPresenterRecoitUnValueObjectJamaisUneEntite
+	DESC "une entite du domaine n'atteint pas presentation : un PresenterPort declare un value"
+		+ "object, et le cas d'utilisation fait la projection"
+	DESC "PlayersPresenterPort porte PlayerSummaryValueObject, monte par sa fabrique depuis"
+		+ "l'entite dans LoadPlayersSection ; PlayersPresenter et son spec ne connaissent plus"
+		+ "PlayerEntity"
+	DESC "l'infrastructure garde le droit de construire des entites et SaveSectionsReaderPort"
+		+ "continue d'en porter : seule la frontiere de presentation est fermee"
+	DESC "scripts/check-presentation-entities.ts tient la regle, chaine dans check:guards sous le"
+		+ "nom check:presentation"
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.UnPresenterPortRecoitUneEntiteOuUnValueObject
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "une entite porte du comportement : un presenter qui en tient decide quand un calcul"
+		+ "du domaine s'execute. TerraformationLevelEntity.summarize en est l'exemple vivant, et"
+		+ "PlayerEntity est une classe depuis T15, donc la porte etait ouverte au premier"
+		+ "comportement qu'on lui ajouterait"
+	RATIONALE "la forme d'une entite suit le format de save et les invariants du domaine, pas ce"
+		+ "qui est affiche : un champ renomme pour une raison de domaine cassait le presenter sans"
+		+ "que rien de visible n'ait change"
+	RATIONALE "depuis que les accesseurs copient, PlayersPresenter payait deux allocations par"
+		+ "joueur en lisant inventory et equipment ; un value object est deja plat"
+		REF @DECISION.UneEntiteRendUneCopieDeSonTableauInterne
+	RATIONALE "la regle est une convention que rien ne cassait en rouge : check:dependencies"
+		+ "raisonne sur les prefixes de packages, pas sur les repertoires internes. Le depot tient"
+		+ "ce genre de regle par un script de scripts/, et le quatrieme suit la forme des trois"
+		+ "autres"
+	RATIONALE "le prix est durable : chaque section future qui affiche une entite paie un value"
+		+ "object et une etape de projection. Ici trois champs deja tous des chaines"
+	REJECTED "la lecture stricte, « une entite ne voyage pas hors de domain et application » : elle"
+		+ "aurait pris SaveSectionsReaderService, son spec et FakeSaveParserService, et force la"
+		+ "validation hors du constructeur ou T15 vient de la mettre. Son vrai gain est la question"
+		+ "« ou une save est-elle validee », qui merite une tache posee ainsi et non un argument de"
+		+ "couches"
+	REJECTED "une methode de projection sur PlayerEntity par symetrie avec level.summarize() : la"
+		+ "symetrie est trompeuse, summarize calcule biomasse et indice quand une projection de"
+		+ "joueur ne calcule rien. summarize reste reserve aux entites qui calculent, et la"
+		+ "fabrique est appelee depuis le cas d'utilisation"
+		REF @DECISION.LeComportementMigreSurLEntiteEtLaRegleLInterroge
+	SPEC "aucun PresenterPort ne declare une entite du domaine"
+		IMPL "packages/core-mapping/src/application/ports/PlayersPresenterPort.ts"
+	SPEC "aucun fichier de presentation n'importe domain/entities, et un garde le verifie"
+		IMPL "packages/core-mapping/src/presentation/PlayersPresenter.ts"
+		IMPL "scripts/check-presentation-entities.ts"
+	SPEC "LoadPlayersSection monte PlayerSummaryValueObject par sa fabrique depuis l'entite"
+		IMPL "packages/core-mapping/src/application/LoadPlayersSection.ts"
+		IMPL "packages/core-mapping/src/domain/valueObjects/PlayerSummaryValueObject.ts"
+	SOURCE "arbitrage du proprietaire du depot en revue de la PR #72, 2026-09-13, lecture"
+		+ "restreinte, travail fait dans la PR et non dans T38"
+
+DECISION UnPortLecteurSeNommePourCeQuIlLitEtNonPourUnAnalyseur
+	DESC "SaveSectionsReaderPort.getGlobalMetadata rendait un GlobalProgressionValueObject : la"
+		+ "methode se nomme getGlobalProgression, pour ce qu'elle rend"
+	DESC "un parametre ou une variable tenant un SaveSectionsReaderPort se nomme"
+		+ "saveSectionsReader, et le double de test FakeSaveParserService devient"
+		+ "FakeSaveSectionsReaderService"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "les six methodes du port rendent une entite ou un value object depuis T15 : celle-ci"
+		+ "n'est plus l'exception que la revue du 2026-09-07 avait relevee, il ne restait que"
+		+ "l'ecart entre le nom de la methode et ce qu'elle rend"
+		REF @DECISION.UnPresenterRecoitUnValueObjectJamaisUneEntite
+	RATIONALE "cinq cas d'utilisation appelaient analyseur le port qui lit : un analyseur est"
+		+ "SaveSectionsParserPort, qui prend le texte d'une save et rend des sections, et les deux"
+		+ "ports coexistent dans le meme repertoire"
+	REJECTED "faire rendre au port les metadonnees brutes et monter le value object dans le cas"
+		+ "d'utilisation : les cinq autres methodes rendent un type du domaine, et celle-ci"
+		+ "deviendrait la seule a rendre un enregistrement du format de save"
+	REJECTED "laisser le nom de methode et ne renommer que les parametres : l'ecart releve par la"
+		+ "revue est celui du nom, le corriger a moitie le laisse entier"
+	SPEC "le port lecteur nomme ses methodes pour ce qu'elles rendent, et ses porteurs pour ce"
+		+ "qu'il est"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsReaderPort.ts"
+		IMPL "packages/core-mapping/src/application/LoadGlobalProgressionSection.ts"
+		IMPL "packages/core-mapping/src/testing/FakeSaveSectionsReaderService.ts"
+	SOURCE "T38, PR #76, 2026-09-14, lecture d'une ligne SPEC de la revue du 2026-09-07"
+
+DECISION LaFormeDUneColonneEstDeriveeDuViewModelQuiLaProduit
+	DESC "la forme d'une colonne de tableau n'est declaree qu'une fois, dans le ViewModel de table"
+		+ "de core-mapping ; l'UI la derive de ce ViewModel au lieu de la redeclarer"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "l'UI portait un type Column structurellement identique a ColumnViewModel : deux"
+		+ "formes que rien ne relie, dont l'une pouvait deriver sans que l'autre s'en apercoive, la"
+		+ "compatibilite structurelle de TypeScript les acceptant l'une pour l'autre"
+	REJECTED "exporter ColumnViewModel depuis core-mapping et l'importer dans l'UI : la correction"
+		+ "quitterait le package que la fiche ancre pour un package qu'une autre branche de la meme"
+		+ "vague reecrit, pour une ligne que la derivation obtient sans y toucher"
+	REJECTED "garder les deux formes et se fier a la compatibilite structurelle"
+	SPEC "une seule definition de la forme d'une colonne dans le depot, l'UI la derivant du"
+		+ "ViewModel de table"
+		IMPL "packages/core-mapping/src/presentation/viewModels/TableViewModel.ts::ColumnViewModel"
+		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::ColumnViewModel"
+	SOURCE "decision du 2026-09-13, T32, PR #71"
+
+DECISION LesPropsSolidSeLisentParLObjetPropsJamaisDestructurees
+	DESC "un composant Solid lit ses props par l'objet props ; destructurer en signature est"
+		+ "refuse, y compris quand la prop parait fixe"
+	DESC "la regle vise la signature d'un composant, pas le parametre d'un rappel — destructurer"
+		+ "l'item d'un For est sans effet sur la reactivite"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "mesure du 2026-09-14 avec le solid-js 1.9.14 du depot : un composant appele avec"
+		+ "l'objet de props a getters que le compilateur emet rend « save A » puis encore « save A"
+		+ "» une fois que le parent passe « save B », la ou le meme composant lisant props.title"
+		+ "rend « save A » puis « save B » ; la fonction composant n'est appelee qu'une fois, la"
+		+ "destructuration lit donc tous les getters une fois pour toutes"
+	RATIONALE "rien dans la signature ne distingue une prop qui ne changera jamais d'une prop qui"
+		+ "changera : c'est le parent qui en decide, plus tard, sans toucher au composant — la"
+		+ "regle est donc absolue ou elle ne tient pas"
+	RATIONALE "la perte de reactivite est invisible pour la build, pour le type-check et pour les"
+		+ "scenarios ; les huit sites corriges par T32 etaient tous masques par un"
+		+ "demontage-remontage de l'appelant, ce qui rend le defaut latent et non absent"
+	REJECTED "destructurer quand la prop parait fixe : la signature ne dit pas ce que le parent"
+		+ "fera l'appel suivant"
+	REJECTED "obtenir des locaux par splitProps ou mergeProps : ces primitives rendent des objets"
+		+ "de props, pas des valeurs"
+	SPEC "aucun composant de l'UI ne destructure ses props en signature"
+		IMPL "packages/ui-save-manager/src/components"
+		IMPL "packages/ui-save-manager/src/entry-server.tsx"
+	SOURCE "arbitrage en revue de la PR #71, 2026-09-14, T32"
+
+DECISION UneVarianteDeMessageEstProduiteParUneFonctionPasParDeuxChainesJumelles
+	DESC "deux libelles qui ne different que par un mot sont produits par une fonction de message"
+		+ "prenant ce mot ; la phrase n'est ecrite qu'une fois"
+	DESC "les constantes exportees restent des chaines completes : l'appelant choisit une"
+		+ "constante, il n'assemble pas de phrase"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "ecrites cote a cote, deux phrases jumelles se modifient l'une sans l'autre et rien"
+		+ "ne le signale"
+	RATIONALE "le depot parametre deja un message par une fonction,"
+		+ "resolvePlayersSectionUnknownItemLabel : la forme existe et n'a pas a etre inventee"
+	REJECTED "une notation de remplacement dans la chaine, {replace} ou equivalent, et sa fonction"
+		+ "de formatage : un moteur de gabarit pour deux messages, quand une fonction rend le meme"
+		+ "service et se fait verifier par le compilateur"
+	REJECTED "assembler la phrase dans le JSX autour d'un ternaire : la phrase utilisateur quitte"
+		+ "le repertoire des messages"
+	SPEC "la phrase commune a deux variantes d'un libelle n'est ecrite qu'une fois dans le"
+		+ "repertoire des messages"
+		IMPL "packages/ui-save-manager/src/messages/appMessages.js"
+		IMPL "packages/ui-save-manager/src/messages/validationMessages.js"
+	SOURCE "arbitrage en revue de la PR #71, 2026-09-14, T32"
+
+DECISION UnCaractereDecoratifEstRenduParLeComposantIcon
+	DESC "un caractere purement decoratif est rendu par le composant Icon, qui le masque aux"
+		+ "lecteurs d'ecran, et ne reste pas colle au libelle dans la chaine du message"
+	DESC "le vocabulaire du depot est l'icone, quelle que soit la forme du caractere : le mot Emoji"
+		+ "ne parait plus ni dans un nom de composant, ni dans un nom de message"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "colle au libelle, la fleche de « ← Back home » entre dans le nom accessible du lien"
+		+ "et s'y fait annoncer avant le texte, sans rien lui apprendre"
+	RATIONALE "le mecanisme existait deja dans l'UI et ne servait qu'a un caractere decoratif sur"
+		+ "trois"
+	RATIONALE "emoji nomme une famille de caracteres, pas le role rendu : la fleche de retour n'en"
+		+ "est pas un et passe par le meme composant, donc le nom qui couvre les deux est l'icone"
+	REJECTED "un aria-label sur le lien : il duplique le libelle, donc il derive"
+	REJECTED "garder le mot Emoji pour le composant et parler d'icone dans les messages : deux mots"
+		+ "pour un role, et le choix se repose a chaque nouveau caractere"
+	SPEC "le nom accessible du lien de retour de la page 404 est le libelle seul, la fleche etant"
+		+ "rendue par le composant Icon"
+		IMPL "packages/ui-save-manager/src/routes/[...404].tsx"
+		IMPL "packages/ui-save-manager/src/components/Icon.tsx"
+	SPEC "aucun nom de composant ni de message du depot ne porte le mot Emoji"
+		IMPL "packages/ui-save-manager/src/messages/appMessages.js"
+		IMPL "packages/ui-save-manager/src/components/HomeDisclaimer.tsx"
+	SOURCE "revue de la PR #71 par le proprietaire du depot, 2026-09-14, T32 ; vocabulaire corrige"
+		+ "au tour de revue suivant, la decision etant reecrite sur place avant d'avoir quitte la"
+		+ "branche"
+
+DECISION UneGardeDeDepotTientLesDeuxIdiomesSolidQuiSeLisentLigneALigne
+	DESC "une cinquieme garde, check:idioms, refuse une prop destructuree en signature de composant"
+		+ "et une assertion non nulle sur un appel d'accesseur, dans les fichiers tsx des packages"
+	DESC "limite acceptee et fixee par un test : une fleche anonyme destructurant les props d'un"
+		+ "emplacement de composant — la coquille de document de entry-server — ne se distingue pas"
+		+ "d'un rappel a la lecture ligne a ligne et echappe a la garde"
+	DESC "les deux autres criteres d'idiome de T32, un map rendant du JSX et une chaine utilisateur"
+		+ "hors du repertoire des messages, demandent de lire le JSX et restent a la relecture"
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "rejouee sur l'arbre de base entier, celui du commit 02e835c d'ou part la branche, la"
+		+ "garde rend vingt lignes : sept signatures destructurees — les cinq composants de"
+		+ "section, FieldsGroupGrid et FieldsGroup — et les treize assertions non nulles de"
+		+ "MergeResultSection, soit exactement ce que T32 a corrige"
+	RATIONALE "sur ce meme arbre de base, elle ne rend rien pour la coquille de document de"
+		+ "entry-server, que T32 a pourtant corrigee : c'est la limite, mesuree sur le meme"
+		+ "perimetre que le chiffre et non supposee"
+	RATIONALE "elle suit la forme des quatre gardes existantes : pas de lecture de l'historique"
+		+ "git, reponse en une fraction de seconde, lancable seule et groupee, parcours et rapport"
+		+ "pris au module commun"
+		REF @DECISION.LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
+	RATIONALE "le motif vise est mesure, pas stylistique, et c'est ce qui justifie une garde plutot"
+		+ "qu'une habitude de relecture"
+		REF @DECISION.LesPropsSolidSeLisentParLObjetPropsJamaisDestructurees
+	REJECTED "un linter configure a la place d'un script dedie : deja ecarte pour les quatre gardes"
+		+ "existantes, et la raison n'a pas change"
+	REJECTED "couvrir les quatre criteres : les deux autres demandent de lire le JSX, pas des"
+		+ "lignes"
+	REJECTED "porter la garde sur tout le depot et non sur les fichiers tsx : un objet de"
+		+ "parametres destructure est la forme que STD-6 recommande partout ailleurs"
+	SPEC "la garde refuse les deux motifs, et sa limite est fixee par un test qui la nomme"
+		IMPL "scripts/check-solid-idioms.ts"
+		IMPL "scripts/check-solid-idioms.spec.ts"
+	SPEC "la garde est lancable seule et groupee derriere la commande des gardes"
+		IMPL "package.json"
+	SPEC "la garde et sa spec sont declarees en points d'entree de l'audit qualite"
+		IMPL "fallow.toml"
+	SOURCE "arbitrage en revue de la PR #71, 2026-09-14, T32"

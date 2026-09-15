@@ -1,12 +1,16 @@
 import {Accessor, createEffect, createSignal, onCleanup, Show} from 'solid-js';
-import {MergeResultViewModel} from '../../../util-mapping/presentation/viewModels/MergeResultViewModel';
+import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeResultViewModel';
 import {
   mergeResultSectionDownloadLinkLabel,
   mergeResultSectionFileCreatedMessage,
+  mergeResultSectionMergedSaveInvalidMessage,
+  mergeResultSectionMergeFailedTitle,
   mergeResultSectionSaveAInvalidMessage,
+  mergeResultSectionSaveAWarningsTitle,
   mergeResultSectionSaveBInvalidMessage,
+  mergeResultSectionSaveBWarningsTitle,
   mergeResultSectionSuccessMessage
-} from '../../../util-messages/mergeResultSectionMessages';
+} from '~/messages/mergeResultSectionMessages';
 import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
 
 interface MergeResultSectionProps {
@@ -36,26 +40,48 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
 
   return (
     <Show when={props.result()}>
-      <Show when={props.result()!.status === 'success'}>
-        <p class="text-color-success">{mergeResultSectionSuccessMessage}</p>
-        <p>{mergeResultSectionFileCreatedMessage} <code>{props.result()!.fileName}</code> <a class="button-link"
-                                                                                             href={downloadUrl() ?? undefined}
-                                                                                             download={props.result()!.fileName}>{mergeResultSectionDownloadLinkLabel}</a>
-        </p>
-      </Show>
+      {(result) => (
+        <>
+          <Show when={result().saveAWarnings.length > 0}>
+            <ValidationMessagesList title={mergeResultSectionSaveAWarningsTitle} severity="warning"
+                                    messages={result().saveAWarnings}/>
+          </Show>
+          <Show when={result().saveBWarnings.length > 0}>
+            <ValidationMessagesList title={mergeResultSectionSaveBWarningsTitle} severity="warning"
+                                    messages={result().saveBWarnings}/>
+          </Show>
 
-      <Show when={props.result()!.status === 'validationError'}>
-        <div>
-          <Show when={props.result()!.saveAErrorMessages.length > 0}>
-            <ValidationMessagesList title={mergeResultSectionSaveAInvalidMessage} severity="danger"
-                                    messages={props.result()!.saveAErrorMessages}/>
+          <Show when={result().status === 'success'}>
+            <p class="text-color-success">{mergeResultSectionSuccessMessage}</p>
+            <p>{mergeResultSectionFileCreatedMessage} <code>{result().fileName}</code> <a class="button-link"
+                                                                                          href={downloadUrl() ?? undefined}
+                                                                                          download={result().fileName}>{mergeResultSectionDownloadLinkLabel}</a>
+            </p>
+            <Show when={result().mergeErrors.length > 0}>
+              <ValidationMessagesList title={mergeResultSectionMergedSaveInvalidMessage} severity="danger"
+                                      messages={result().mergeErrors}/>
+            </Show>
           </Show>
-          <Show when={props.result()!.saveBErrorMessages.length > 0}>
-            <ValidationMessagesList title={mergeResultSectionSaveBInvalidMessage} severity="danger"
-                                    messages={props.result()!.saveBErrorMessages}/>
+
+          <Show when={result().status === 'mergeFailed'}>
+            <p class="text-color-danger">{mergeResultSectionMergeFailedTitle}</p>
+            <p>{result().mergeFailureMessage}</p>
           </Show>
-        </div>
-      </Show>
+
+          <Show when={result().status === 'validationError'}>
+            <div>
+              <Show when={result().saveAErrors.length > 0}>
+                <ValidationMessagesList title={mergeResultSectionSaveAInvalidMessage} severity="danger"
+                                        messages={result().saveAErrors}/>
+              </Show>
+              <Show when={result().saveBErrors.length > 0}>
+                <ValidationMessagesList title={mergeResultSectionSaveBInvalidMessage} severity="danger"
+                                        messages={result().saveBErrors}/>
+              </Show>
+            </div>
+          </Show>
+        </>
+      )}
     </Show>
   );
 }

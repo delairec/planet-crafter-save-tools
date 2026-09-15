@@ -1,55 +1,18 @@
-import {readTextFile, exitProcess, isEntryPoint, getCliArguments} from '../../util-platforms/platform.js';
-import {validateMergedSave} from '../validate.js';
+import {getCliArguments} from 'shared-platforms/platform.common.js';
+import {extractPlatformParameter} from 'shared-platforms/extractPlatformParameter.js';
+import {createPlatform} from 'shared-platforms/platform.js';
+import {initValidateCli} from './initValidateCli.js';
+import {renderUnexpectedError} from './renderValidateCliOutput.js';
 
-const USAGE_MESSAGE = `Usage: bun src/validate-cli.js <path-to-save-file>`;
+const UNEXPECTED_ERROR_EXIT_CODE = 1;
 
-const CLI = initValidateCli({readTextFile, exitProcess, isEntryPoint, getCliArguments});
+const cliArguments = getCliArguments();
+const platform = createPlatform(extractPlatformParameter(cliArguments));
+const {main} = initValidateCli(platform, cliArguments);
 
-
-if (CLI.isEntryPoint(import.meta)) {
-  const outputArguments = CLI.getCliArguments().find(arg => arg.startsWith('--file='));
-  const filePath = outputArguments && outputArguments.split('=')[1];
-
-  if(filePath === undefined) {
-    console.error(USAGE_MESSAGE);
-    CLI.exitProcess(1);
-  }
-
-  CLI.main(filePath).catch(err => {
-    console.error('Error:', err);
-    CLI.exitProcess(1);
+if (platform.isEntryPoint(import.meta)) {
+  main().catch(error => {
+    renderUnexpectedError(error);
+    platform.exitProcess(UNEXPECTED_ERROR_EXIT_CODE);
   });
-}
-
-export function initValidateCli({readTextFile, exitProcess, isEntryPoint, getCliArguments}) {
-  async function main(filePath) {
-    if (!filePath) {
-      console.error(USAGE_MESSAGE);
-      exitProcess(1);
-      return;
-    }
-
-    const save = await readTextFile(filePath);
-    const {isValid, errors, warnings} = validateMergedSave(save);
-
-    for (const warning of warnings ?? []) {
-      console.warn(`⚠ ${warning}`);
-    }
-
-    if (isValid) {
-      console.log(`✓ ${filePath} is valid`);
-    } else {
-      console.error(`✖ ${filePath} has ${errors.length} error(s):\n`);
-      for (const error of errors) {
-        const location = [
-          error.section !== undefined ? `section ${error.section}` : null,
-          error.entryIndex !== undefined ? `entry ${error.entryIndex}` : null
-        ].filter(Boolean).join(', ');
-        console.error(`  [${location || error.rule || 'structure'}] ${error.message}`);
-      }
-      exitProcess(1);
-    }
-  }
-
-  return {isEntryPoint, main, exitProcess, getCliArguments};
 }
