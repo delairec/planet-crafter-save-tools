@@ -818,4 +818,4 @@ OPEN_QUESTION LeLibelleAmbiguEstRecopieDansLaGardeEtNeSuitPasLesModulesDeMessage
 		REJECTED "laisser la constante seule : c'est l'etat livre, et il ne signale rien le jour de"
 			+ "la derive"
 		REF @DECISION.LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
-	SOURCE "T42, 2026-09-15"
+	SOURCE "T42, 2026-09-15, PR #83"

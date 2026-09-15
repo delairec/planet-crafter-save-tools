@@ -232,6 +232,7 @@ TASK T42_GardeDesLocatorsEtMesureDeLaSuite
 		+ "ou une capture de reference dans un scenario, et la duree de la suite est mesuree"
 	STATUS implemented
 	WAVE "4"
+	PR "83"
 	AFTER @TASK.T41_FixturesDeScenariosGenereesEtGardees
 	RATIONALE "aucune garde du depot ne lit les fichiers de scenario : leur parcours ne ramasse que"
 		+ "les fichiers de spec, si bien que l'hygiene des locators n'est verifiee qu'a l'oeil"

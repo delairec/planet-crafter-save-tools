@@ -652,4 +652,4 @@ DECISION UneGardeDeDepotRefuseLesLocatorsQueLEcranNeMontrePas
 		IMPL "package.json"
 	SPEC "la garde et sa spec sont declarees en points d'entree de l'audit qualite"
 		IMPL "fallow.toml"
-	SOURCE "T42, 2026-09-15"
+	SOURCE "T42, 2026-09-15, PR #83"
