@@ -14,10 +14,10 @@ export function maskStringLiterals(line: string): string {
 }
 
 /**
- * @param {string} filePath a spec file path relative to the repository root
- * @returns whether that spec is one of ours, wherever it lives in the repository
+ * @param {string} filePath a source file path relative to the repository root
+ * @returns whether that file is one of ours, wherever it lives in the repository
  */
-export function isOwnSpecFile(filePath: string): boolean {
+export function isOwnSourceFile(filePath: string): boolean {
   return !GENERATED_DIRECTORY.test(filePath);
 }
 
@@ -27,7 +27,7 @@ export function isOwnSpecFile(filePath: string): boolean {
  */
 export async function* readOwnSourceFiles(pattern: string): AsyncGenerator<{filePath: string, source: string}> {
   for await (const filePath of new Glob(pattern).scan({cwd: process.cwd()})) {
-    if (!isOwnSpecFile(filePath)) {
+    if (!isOwnSourceFile(filePath)) {
       continue;
     }
     yield {filePath, source: await Bun.file(filePath).text()};
