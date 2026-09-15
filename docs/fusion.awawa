@@ -241,3 +241,37 @@ DECISION LeParcoursDesDossiersDEntreeLitLExtensionJsonParLeModulePartage
 	SPEC "cli-merge declare shared-save-processing en dependance de production"
 		IMPL "packages/cli-merge/package.json::cli-merge"
 	SOURCE "arbitrage de l'utilisateur du 2026-09-14, revue de la PR #76, fil 4004743738"
+
+DECISION UneSectionMetadataVideNeReleveDUnRepliDansLaRegleDeFusion
+	DESC "une section 0 vide est un defaut du fichier d'entree : son refus revient a la validation,"
+		+ "pas a un repli de mergeGlobalMetadata"
+	DESC "atteinte malgre tout par la fusion, elle echoue par une erreur nommee, jamais par un"
+		+ "TypeError nu"
+	STATUS specified
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "mesure du 2026-09-15 en revue de la PR #15 : au HEAD de la branche,"
+		+ "mergeGlobalMetadata([], []) leve TypeError, et bun merge sur un dossier de deux saves a"
+		+ "section 0 vide affiche « Error: undefined is not an object » puis sort en 1 sans ecrire"
+		+ "de fichier"
+		REF @OPEN_QUESTION.DeuxSectionsMetadataVidesFontPlanterLaFusion
+	RATIONALE "mesure du 2026-09-15 sur origin/master : le verdict ERROR_INVALID_INPUT_FORMAT n'y"
+		+ "refusait pas la fusion, il etait la valeur de retour de mergeSaves et donc le contenu"
+		+ "ecrit de la section 0 du fichier produit, code de retour 0 ; merge.spec.js l'asserte"
+		+ "verbatim"
+	RATIONALE "sur ce cas la branche n'est donc pas une regression de master : elle remplace une"
+		+ "save corrompue ecrite en silence par un echec bruyant sans ecriture ; ce qui reste a"
+		+ "corriger est la forme de l'echec, pas son issue"
+	RATIONALE "la decision qui gouverne le chemin d'une erreur porte deja le remede : une erreur"
+		+ "sur un fichier d'entree releve de la validation, la meme erreur atteinte plus loin est"
+		+ "un invariant rompu qui echoue bruyamment"
+		REF @DECISION.LOrigineDUneErreurDecideDuCheminQuElleEmprunte
+	REJECTED "restaurer le verdict ERROR_INVALID_INPUT_FORMAT d'avant le refactor : il n'a jamais"
+		+ "refuse la fusion, il ecrivait une save dont la section 0 porte ce texte, code de retour"
+		+ "0"
+	REJECTED "replier openedInstanceSource sur DEFAULT_METADATA : la fusion produirait une save a"
+		+ "partir de deux entrees invalides, graine d'instance a zero, alors que ce que"
+		+ "l'utilisateur doit voir d'une save corrompue est le refus de la validation"
+	SPEC "la validation refuse une save dont la section 0 ne porte aucune entree, avant toute"
+		+ "fusion"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts"
+	SOURCE "revue de la PR #15, fil 3978907815 ; mesures du 2026-09-15"
