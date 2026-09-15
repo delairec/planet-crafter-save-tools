@@ -43,20 +43,20 @@ describe('ValidateSaveFile', () => {
   });
 
   describe('When validation reports that the save had to be adapted', () => {
-    it('should present the warnings of a valid save file', () => {
+    it('should present the warnings of a valid save file', async () => {
       // Arrange
       const validator: SaveValidatorPort = {validate: mock(() => ({isValid: true, errors: [], warnings: ['legacy-save-format' as const]}))};
       const presenter: SaveFileValidationPresenterPort = {presentValidSaveFile: mock(), presentInvalidSaveFile: mock()};
       const useCase = new ValidateSaveFile(validator, presenter);
 
       // Act
-      useCase.execute({fileName: 'Save-A.json', content: 'content'});
+      await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
       expect(presenter.presentValidSaveFile).toHaveBeenCalledWith(['legacy-save-format']);
     });
 
-    it('should present the warnings of an invalid save file too', () => {
+    it('should present the warnings of an invalid save file too', async () => {
       // Arrange
       const errors = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}];
       const validator: SaveValidatorPort = {validate: mock(() => ({isValid: false, errors, warnings: ['legacy-save-format' as const]}))};
@@ -64,7 +64,7 @@ describe('ValidateSaveFile', () => {
       const useCase = new ValidateSaveFile(validator, presenter);
 
       // Act
-      useCase.execute({fileName: 'Save-A.json', content: 'content'});
+      await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
       expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith(errors, ['legacy-save-format']);
