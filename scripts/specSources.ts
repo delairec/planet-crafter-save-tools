@@ -22,15 +22,23 @@ export function isOwnSpecFile(filePath: string): boolean {
 }
 
 /**
- * @returns the path and the content of every spec file of the repository, generated ones excluded
+ * @param {string} pattern a glob matched against the repository, from its root
+ * @returns the path and the content of every file it matches, generated ones excluded
  */
-export async function* readOwnSpecFiles(): AsyncGenerator<{filePath: string, source: string}> {
-  for await (const filePath of new Glob(SPEC_FILES_PATTERN).scan({cwd: process.cwd()})) {
+export async function* readOwnSourceFiles(pattern: string): AsyncGenerator<{filePath: string, source: string}> {
+  for await (const filePath of new Glob(pattern).scan({cwd: process.cwd()})) {
     if (!isOwnSpecFile(filePath)) {
       continue;
     }
     yield {filePath, source: await Bun.file(filePath).text()};
   }
+}
+
+/**
+ * @returns the path and the content of every spec file of the repository, generated ones excluded
+ */
+export function readOwnSpecFiles(): AsyncGenerator<{filePath: string, source: string}> {
+  return readOwnSourceFiles(SPEC_FILES_PATTERN);
 }
 
 export interface ViolationReport {
