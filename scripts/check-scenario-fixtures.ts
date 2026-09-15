@@ -2,7 +2,7 @@ import {SCENARIO_FIXTURES, SCENARIO_FIXTURES_DIRECTORY, resolveScenarioFixturePa
 import {readOwnSourceFiles, reportViolations} from './specSources.ts';
 
 const SCENARIO_FILES_PATTERN = '**/*.e2e.{ts,tsx}';
-const INPUT_DIRECTORY_PATH = /(?<![\w.\-/])(?:\.{1,2}\/)*input\//;
+const INPUT_DIRECTORY_PATH = /(?<![\w.\-])(?:\.{1,2}\/)*input\//;
 
 const DIVERGED_FIXTURE_REASON = 'regenerating it does not reproduce the versioned file: run bun run generate:scenario-fixtures and commit what it writes';
 const MISSING_FIXTURE_REASON = 'the generator declares it and the repository does not carry it: run bun run generate:scenario-fixtures and commit what it writes';

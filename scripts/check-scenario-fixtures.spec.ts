@@ -111,6 +111,19 @@ describe('findInputDirectoryReferences', () => {
     });
   });
 
+  describe('When a scenario names the input directory behind a path separator', () => {
+    it('should report the line, a separator opening a fresh path segment', () => {
+      // Arrange
+      const source = 'const savePath = `${process.cwd()}/input/Test/save.json`;';
+
+      // Act
+      const references = findInputDirectoryReferences(source);
+
+      // Assert
+      expect(references.map(reference => reference.line)).toEqual([1]);
+    });
+  });
+
   describe('When a scenario reads its own fixtures directory', () => {
     it('should report nothing', () => {
       // Arrange
