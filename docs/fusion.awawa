@@ -248,6 +248,7 @@ DECISION UneSectionMetadataVideNeReleveDUnRepliDansLaRegleDeFusion
 	DESC "atteinte malgre tout par la fusion, elle echoue par une erreur nommee, jamais par un"
 		+ "TypeError nu"
 	STATUS specified
+	CLOSES @OPEN_QUESTION.DeuxSectionsMetadataVidesFontPlanterLaFusion
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "mesure du 2026-09-15 en revue de la PR #15 : au HEAD de la branche,"
 		+ "mergeGlobalMetadata([], []) leve TypeError, et bun merge sur un dossier de deux saves a"

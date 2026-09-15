@@ -556,10 +556,7 @@ OPEN_QUESTION LeTexteDuCorpusSEcritEnChainesDUneLigneQueFmtReplie
 OPEN_QUESTION DeuxSectionsMetadataVidesFontPlanterLaFusion
 	DESC "deux saves dont la section 0 est vide font lever un TypeError a mergeGlobalMetadata au"
 		+ "lieu de rendre un verdict"
-	DESC "a trancher : repli sur DEFAULT_METADATA comme les deux autres valeurs, ou verdict"
-		+ "ERROR_INVALID_INPUT_FORMAT comme avant le refactor"
-	STATUS specified
-	BLOCKS @PACKAGE.core_mapping
+	STATUS superseded
 	RATIONALE "mesure au HEAD de la base : mergeGlobalMetadata([], []) leve TypeError: undefined is"
 		+ "not an object (evaluating 'openedInstanceSource.openedInstanceSeed') ; ligne 17,"
 		+ "openedInstanceSource = metadataA ?? metadataB n'a pas le repli sur DEFAULT_METADATA que"
@@ -582,8 +579,6 @@ OPEN_QUESTION DeuxSectionsMetadataVidesFontPlanterLaFusion
 		REF @TASK.T38_ConformiteCoreMapping
 	RATIONALE "les deux remedes ne rendent pas la meme chose a l'utilisateur : le repli ecrit une"
 		+ "save fusionnee dont la graine d'instance vaut zero, le verdict refuse la fusion"
-	SPEC "le correctif, quel qu'il soit, porte en test le cas des deux sections vides"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts"
 	SOURCE "constate en revue de la PR #15, fil 3978907815 sur mergeGlobalMetadata.ts:17"
 
 OPEN_QUESTION LaQuestionDesArtefactsDeLaSuiteReposeSurUneObservationNonFaite

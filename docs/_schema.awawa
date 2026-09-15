@@ -54,6 +54,14 @@ SCHEMA *
 		GATE suppressed
 		INCOMING CLOSED_BY|SUPERSEDED_BY
 
+FIELDSET Blocage
+	DESC "le blocage, declare une fois pour les types qui peuvent bloquer : la question non"
+		+ "tranchee et la tache non livree"
+	FIELD BLOCKS reference
+		REPEATABLE
+		DESC "ce que ce point empeche ou fragilise ; l'arete inverse est calculee"
+		CONVERSE BLOCKED_BY
+
 SCHEMA DECISION
 	DESC "un arbitrage, et ce qu'il a ecarte"
 	FIELD REJECTED string
@@ -78,10 +86,7 @@ SCHEMA DECISION
 SCHEMA OPEN_QUESTION
 	DESC "un point non tranche, ou une limitation dont personne n'a encore decide du sort"
 	DESC "ferme par une DECISION qui pointe ici, et passe superseded alors, jamais supprime"
-	FIELD BLOCKS reference
-		REPEATABLE
-		DESC "ce que ce point empeche ou fragilise ; l'arete inverse est calculee"
-		CONVERSE BLOCKED_BY
+	INCLUDE @FIELDSET.Blocage
 	FIELD RECOMMENDATION string
 		DESC "l'option proposee, une fois qu'elle a affronte son alternative"
 		FIELD REF reference
