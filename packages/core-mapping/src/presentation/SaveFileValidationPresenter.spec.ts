@@ -2,6 +2,7 @@ import {describe, expect, it} from 'bun:test';
 import {SaveFileValidationPresenter} from './SaveFileValidationPresenter';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
 import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {GLOBAL_METADATA_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {SaveFileValidationViewModel, SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noWarnings: SaveWarningCode[] = [];
@@ -56,7 +57,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {', section: 0, entryIndex: 3}], noWarnings);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {', section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 3}], noWarnings);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Global metadata (section 0), entry 3'}]);

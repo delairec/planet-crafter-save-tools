@@ -2,6 +2,7 @@ import {describe, expect, it} from 'bun:test';
 import {MergeResultPresenter} from './MergeResultPresenter';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
 import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
@@ -71,7 +72,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: 2}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: PLAYERS_SECTION_INDEX}],
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -98,7 +99,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 3, entryIndex: 12}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 12}],
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -160,8 +161,8 @@ describe('MergeResultPresenter', () => {
 
       // Act
       presenter.presentSaveFilesInvalid({
-        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: { broken', section: 2, entryIndex: 1}],
-        saveBErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: 4, entryIndex: 0}],
+        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: { broken', section: PLAYERS_SECTION_INDEX, entryIndex: 1}],
+        saveBErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: INVENTORIES_SECTION_INDEX, entryIndex: 0}],
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });

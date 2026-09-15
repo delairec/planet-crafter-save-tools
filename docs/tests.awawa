@@ -78,13 +78,26 @@ DECISION UneSpecDeControleurCouvreLeCablagePasLesBranches
 		+ "chemin de cablage passant par la presentation d'erreur"
 	DESC "les cas plus fins restent dans les specs d'application, d'infrastructure et de"
 		+ "presentation"
-	STATUS specified
+	DESC "des deux echecs possibles, le cas garde est celui qui traverse tout le cablage ; un echec"
+		+ "qui court-circuite avant le cas d'utilisation ne teste pas le cablage qu'il precede"
+	STATUS implemented
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "rejouer les branches au niveau du controleur duplique une couverture deja acquise et"
 		+ "fait payer deux fois chaque changement de regle"
+	RATIONALE "T44 : les deux echecs de LoadAndValidateSaveFileController etaient l'extension"
+		+ "invalide et le contenu invalide. Le premier est refuse par le validateur avant que le"
+		+ "cas d'utilisation appelle l'analyseur : il laisse non teste tout ce qui suit. Le second"
+		+ "parcourt validateur, cas d'utilisation et presentation d'erreur, donc c'est lui qui"
+		+ "tombe le jour ou un maillon se debranche"
 	REJECTED "couvrir les branches metier depuis les specs de controleur"
+	REJECTED "garder l'echec le plus court, qui epargne l'analyse de la save"
+	SPEC "les trois specs de controleur de flux tiennent un nominal et un echec, et les cinq specs"
+		+ "de controleur de section leur unique nominal, ces controleurs n'ayant pas de chemin"
+		+ "d'echec a cabler"
+		IMPL "packages/core-mapping/src/controllers"
 	SOURCE "decision du 2026-09-05, revue de T9"
+	SOURCE "T44, choix de l'echec garde tranche a l'implementation, PR #82"
 
 DECISION UneSpecAsserteUnChampDiscriminantQuandLAttenduNEstPasLitteral
 	DESC "une spec de CLI asserte un champ discriminant de la sortie, pas la sortie entiere"
