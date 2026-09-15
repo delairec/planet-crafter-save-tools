@@ -8,12 +8,16 @@ Reports dated before this template do not follow it: they are sources for the re
 examples of the shape. Keep every heading, in this order. Delete the comments. Entities are cited by name and never
 restated: this file is about the method and the instrument, not a second home for project facts.
 Every judgment carries a number or a name. A claim that could not be checked is reported as unchecked.
+The header carries the model **and** the effort level of every run named, this report's own included: the two
+together are what a figure of this file is comparable against. The effort of an agent launched by a command is
+read from that agent's definition; the effort of an interactive session is recorded nowhere the report can reach,
+and is then `unchecked` rather than guessed.
 -->
 
 | Field                                          | Value                                                                                                                                |
 |------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| **Author of this report**                      | `<model name and version>`                                                                                                           |
-| **Model that drove the sessions under review** | `<model name and version, from the \`Co-Authored-By` trailers of the PR's commits>`<br>`<one line per model when several took part>` |
+| **Author of this report**                      | `<model name and version>`, effort `<level>`                                                                                         |
+| **Models that drove the sessions under review** | `<model name and version, from the \`Co-Authored-By` trailers of the PR's commits>`, effort `<level>`<br>`<one line per model and effort when several took part>` |
 | **Sessions measured**                          | `session_<id>` (piloting)<br>`session_<id>` (agent)                                                                                  |
 | **Delivered**                                  | `<one line on what the PR changed>`                                                                                                  |
 
