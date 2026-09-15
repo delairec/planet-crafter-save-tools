@@ -807,7 +807,7 @@ OPEN_QUESTION LeLibelleAmbiguEstRecopieDansLaGardeEtNeSuitPasLesModulesDeMessage
 	DESC "hors perimetre de T42 : la garde livree refuse bien le libelle d'aujourd'hui, c'est sa"
 		+ "fidelite dans le temps qui n'est tenue par rien"
 	BLOCKS @DECISION.LEtatDAttenteDHydratationResteSansScenarioEtSeGardeParLeRole
-	STATUS specified
+	STATUS superseded
 	RECOMMENDATION "epingler la constante de la garde dans sa spec, contre les deux modules de"
 		+ "messages importes : un ecart fait alors echouer bun test au lieu de desarmer la garde en"
 		+ "silence"

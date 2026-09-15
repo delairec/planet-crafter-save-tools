@@ -1,10 +1,23 @@
 import {describe, expect, it} from 'bun:test';
-import {findScenarioLocatorViolations, isScenarioFile} from './check-scenario-locators.ts';
+import {displayRouteLoadingLabel} from '../packages/ui-save-manager/src/messages/displayRouteMessages.js';
+import {spinnerLoadingLabel} from '../packages/ui-save-manager/src/messages/spinnerMessages.js';
+import {AMBIGUOUS_BUSY_LABEL, findScenarioLocatorViolations, isScenarioFile} from './check-scenario-locators.ts';
 
 const TEST_IDENTIFIER_REASON = 'a scenario designates an element by what the screen shows, never by a test identifier';
 const CSS_SELECTOR_REASON = 'a scenario designates an element by its role, its label or its text, never by a CSS selector';
 const REFERENCE_SCREENSHOT_REASON = 'a scenario asserts what the screen shows in words, never against a reference screenshot';
 const AMBIGUOUS_BUSY_LABEL_REASON = 'the busy indicator is designated by its status role, the hydration fallback carrying the same label';
+
+describe('AMBIGUOUS_BUSY_LABEL', () => {
+
+  describe('When the message modules the guard copies are read', () => {
+    it('should hold the very label both of them export, a rewording of either failing here rather than disarming the guard', () => {
+      // Assert
+      expect(AMBIGUOUS_BUSY_LABEL).toBe(displayRouteLoadingLabel);
+      expect(AMBIGUOUS_BUSY_LABEL).toBe(spinnerLoadingLabel);
+    });
+  });
+});
 
 describe('isScenarioFile', () => {
 

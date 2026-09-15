@@ -9,7 +9,7 @@ const TEST_IDENTIFIER_ATTRIBUTE = 'data-testid';
 const SELECTOR_QUERY = /\.locator\s*\(|\bquerySelector(?:All)?\s*\(|\bwaitForSelector\s*\(/;
 const SELECTOR_TAKING_PAGE_ACTION = /\bpage\s*\.\s*(?:\$\$?(?:eval)?|click|dblclick|fill|focus|hover|type|press|check|uncheck|selectOption|setInputFiles|textContent|innerText|innerHTML|getAttribute|isVisible|isHidden|isEnabled|isDisabled|isChecked|isEditable|tap|dispatchEvent)\s*\(/;
 const REFERENCE_SCREENSHOT = /\btoHaveScreenshot\s*\(|\btoMatchSnapshot\s*\(|\.screenshot\s*\(/;
-const AMBIGUOUS_BUSY_LABEL = 'Loading...';
+export const AMBIGUOUS_BUSY_LABEL = 'Loading...';
 const QUOTES = ['\'', '"', '`'];
 
 const TEST_IDENTIFIER_REASON = 'a scenario designates an element by what the screen shows, never by a test identifier';
