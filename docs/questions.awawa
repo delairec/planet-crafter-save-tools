@@ -783,3 +783,18 @@ OPEN_QUESTION UneTacheLanceeSansSpecParLivrableEcritSesCriteresApresLeCode
 	STATUS superseded
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-78.md, PR #78, partie A"
 		+ "remediation 2"
+
+OPEN_QUESTION LeFiltreDuParcoursPartagePorteEncoreLeNomDesSpecs
+	DESC "a trancher : isOwnSpecFile filtre desormais les fichiers de scenario autant que les"
+		+ "specs, et son nom ne dit plus ce qu'il fait ; faut-il le renommer isOwnSourceFile"
+	DESC "option defendable retenue : garder le nom, un renommage dans specSources.ts entrant en"
+		+ "collision avec la garde des locators ecrite en parallele sur une autre branche"
+		REF @DECISION.LeGenerateurDeFixturesDeScenariosEstLaSourceEtLaGardeLeRejoue
+	STATUS specified
+	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	RATIONALE "readOwnSourceFiles prend le motif en parametre et sert deja les scenarios ; le seul"
+		+ "nom reste a l'echelle des specs, et la garde des locators heritera du meme decalage"
+	RECOMMENDATION "renommer en isOwnSourceFile une fois les deux gardes de la vague fusionnees, en"
+		+ "un commit qui ne touche que specSources.ts et sa spec"
+		REJECTED "renommer dans cette PR : deux branches de la vague ecrivent dans specSources.ts"
+	SOURCE "T41, PR #81"
