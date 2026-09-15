@@ -790,7 +790,7 @@ OPEN_QUESTION LeFiltreDuParcoursPartagePorteEncoreLeNomDesSpecs
 	DESC "option defendable retenue : garder le nom, un renommage dans specSources.ts entrant en"
 		+ "collision avec la garde des locators ecrite en parallele sur une autre branche"
 		REF @DECISION.LeGenerateurDeFixturesDeScenariosEstLaSourceEtLaGardeLeRejoue
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
 	RATIONALE "readOwnSourceFiles prend le motif en parametre et sert deja les scenarios ; le seul"
 		+ "nom reste a l'echelle des specs, et la garde des locators heritera du meme decalage"

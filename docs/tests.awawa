@@ -559,3 +559,30 @@ DECISION LeGenerateurDeFixturesDeScenariosEstLaSourceEtLaGardeLeRejoue
 		IMPL "package.json::check:scenario-fixtures"
 		IMPL "fallow.toml"
 	SOURCE "T41, PR #81"
+
+DECISION LeFiltreDuParcoursPartagePorteLeNomDeCeQuIlFiltre
+	DESC "le filtre du parcours partage s'appelle isOwnSourceFile : il ecarte les repertoires"
+		+ "generes de tout fichier parcouru, spec ou scenario"
+	DESC "readOwnSpecFiles et SPEC_FILES_PATTERN gardent le mot spec, eux seuls ne servant que les"
+		+ "specs"
+	DESC "T42 est empilee sur cette branche : elle absorbe le renommage a son rebasage et ecrit ses"
+		+ "gardes avec le nouveau nom"
+	STATUS implemented
+	APPLIES_TO_TASK @TASK.T41_FixturesDeScenariosGenereesEtGardees
+	APPLIES_TO_TASK @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	CLOSES @OPEN_QUESTION.LeFiltreDuParcoursPartagePorteEncoreLeNomDesSpecs
+	RATIONALE "arbitrage de la revue de la PR #81 : le renommage se fait dans la PR qui a cree le"
+		+ "decalage, et non dans un commit differe apres la fusion de la vague"
+	RATIONALE "differer laissait un nom faux dans la base pendant toute la vague, contre un conflit"
+		+ "de rebasage d'une ligne sur T42, qui est empilee sur cette branche et sera rebasee de"
+		+ "toute facon"
+	REJECTED "garder isOwnSpecFile et renommer apres la fusion de la vague : le cout evite est un"
+		+ "conflit trivial, paye par un nom faux dans la base et par une tache differee que"
+		+ "personne ne reclame"
+	REJECTED "renommer aussi readOwnSpecFiles et son motif : leur perimetre est bien celui des"
+		+ "specs, leur nom est exact"
+	SPEC "le filtre partage porte un nom qui ne restreint pas aux specs, et sa spec le nomme de"
+		+ "meme"
+		IMPL "scripts/specSources.ts::isOwnSourceFile"
+		IMPL "scripts/specSources.spec.ts"
+	SOURCE "revue de T41, PR #81"
