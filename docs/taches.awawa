@@ -208,6 +208,7 @@ TASK T41_FixturesDeScenariosGenereesEtGardees
 		+ "et une garde refuse tout ecart avec les fichiers versionnes"
 	STATUS implemented
 	WAVE "4"
+	PR "81"
 	AFTER @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
 	RATIONALE "la recette de regeneration vit aujourd'hui dans un fichier de documentation, que"
 		+ "rien n'execute : une fixture peut diverger de son generateur sans qu'aucune commande le"

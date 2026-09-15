@@ -558,4 +558,4 @@ DECISION LeGenerateurDeFixturesDeScenariosEstLaSourceEtLaGardeLeRejoue
 	SPEC "la garde est groupee derriere check:guards et declaree en point d'entree de l'audit"
 		IMPL "package.json::check:scenario-fixtures"
 		IMPL "fallow.toml"
-	SOURCE "T41, PR #TBD"
+	SOURCE "T41, PR #81"
