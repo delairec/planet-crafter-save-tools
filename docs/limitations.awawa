@@ -273,5 +273,6 @@ DECISION LEtatDAttenteDHydratationResteSansScenarioEtSeGardeParLeRole
 	SPEC "les scenarios d'etat de chargement designent l'indicateur d'activite par son role et"
 		+ "jamais par son libelle"
 		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
+		IMPL "scripts/check-scenario-locators.ts"
 	SOURCE "constate le 2026-09-14, T40, PR #78"
 	SOURCE "arbitrage utilisateur du 2026-09-14, revue de la PR #78"

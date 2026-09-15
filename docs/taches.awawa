@@ -230,8 +230,9 @@ TASK T41_FixturesDeScenariosGenereesEtGardees
 TASK T42_GardeDesLocatorsEtMesureDeLaSuite
 	DESC "quatrieme livrable du harnais : une garde refuse un identifiant de test, un selecteur CSS"
 		+ "ou une capture de reference dans un scenario, et la duree de la suite est mesuree"
-	STATUS specified
+	STATUS implemented
 	WAVE "4"
+	PR "83"
 	AFTER @TASK.T41_FixturesDeScenariosGenereesEtGardees
 	RATIONALE "aucune garde du depot ne lit les fichiers de scenario : leur parcours ne ramasse que"
 		+ "les fichiers de spec, si bien que l'hygiene des locators n'est verifiee qu'a l'oeil"
@@ -240,7 +241,8 @@ TASK T42_GardeDesLocatorsEtMesureDeLaSuite
 		+ "complete"
 	SPEC "une garde lit les fichiers de scenario et refuse un identifiant de test, un selecteur CSS"
 		+ "ou une capture de reference ; une violation introduite volontairement la fait echouer"
-		IMPL "scripts"
+		IMPL "scripts/check-scenario-locators.ts"
+		IMPL "scripts/check-scenario-locators.spec.ts"
 		IMPL "package.json::check:guards"
 	SPEC "aucun identifiant de test ni selecteur CSS ajoute, aucune capture de reference"
 		IMPL "packages/ui-save-manager"
