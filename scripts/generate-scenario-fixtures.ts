@@ -11,7 +11,6 @@ import {
 export const SCENARIO_FIXTURES_DIRECTORY = 'packages/ui-save-manager/e2e/fixtures';
 
 export interface ScenarioFixture {
-  /** the file name the naming convention gives it: content, then the verdict the validator gives it */
   fileName: string;
   generateContent: () => string;
 }

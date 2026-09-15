@@ -19,9 +19,9 @@ export interface InputDirectoryReference {
 }
 
 /**
- * @param fixture the content the generator writes today, against the file the repository carries,
- * `null` standing for a fixture the repository does not carry at all
- * @returns what the rule asks for on that fixture, or null when the two contents match byte for byte
+ * @param fixture what the generator writes today against what the repository carries, a null
+ * versioned content standing for a fixture the repository does not carry
+ * @returns what the rule asks for on that fixture, or null when the two match byte for byte
  */
 export function findFixtureDivergence({fileName, regeneratedContent, versionedContent}: {
   fileName: string;
