@@ -750,3 +750,34 @@ DECISION UneDecisionNommeLePaquetOuLaTacheQuElleContraint
 	SPEC "AGENTS.md cite cette entite au lieu de reformuler la regle"
 		IMPL "AGENTS.md::APPLIES_TO_PACKAGE"
 	SOURCE "arbitrage de l'utilisateur du 2026-09-14, PR #77"
+
+DECISION LesSpecDUneTacheSontEcritesAvantSonLancement
+	DESC "une tache ne part pas tant que chaque livrable nomme par sa DESC ne porte pas une SPEC"
+		+ "falsifiable ; les manquantes sont arbitrees avec l'utilisateur et ecrites dans le commit"
+		+ "de lancement, jamais par l'agent qui les implementera"
+	DESC "applique a la vague 4 : T41 et T44 portaient deja leur compte, T42 recoit ici la SPEC de"
+		+ "sa garde, le livrable que sa DESC nomme et qu'aucune de ses deux lignes n'exigeait"
+		REF @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	DESC "la regle generale qui vaudrait pour tout projet a corpus ne vit pas ici : cette entite ne"
+		+ "porte que son application a ce depot"
+	STATUS implemented
+	CLOSES @OPEN_QUESTION.UneTacheLanceeSansSpecParLivrableEcritSesCriteresApresLeCode
+	APPLIES_TO_TASK @TASK.T41_FixturesDeScenariosGenereesEtGardees
+	APPLIES_TO_TASK @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
+	RATIONALE "sur T40, l'agent a ecrit ses trois lignes d'acceptation apres son code et la revue a"
+		+ "verifie des lignes que l'implementeur s'etait donnees : une acceptation ecrite apres"
+		+ "coup ne peut plus echouer, elle decrit ce qui a ete fait"
+	RATIONALE "examen du 2026-09-15 sur les trois taches retenues : la SPEC 1 de T42 portait une"
+		+ "obligation sur les scenarios, pas sur la garde, si bien que T42 se livrait en n'ajoutant"
+		+ "rien. scripts/specSources.ts:3 le confirme, son motif ne ramasse que les fichiers de"
+		+ "spec et jamais un fichier de scenario"
+	REJECTED "laisser l'implementeur ecrire ses criteres apres coup : c'est le defaut mesure"
+	REJECTED "transformer chaque DESC en SPEC mecaniquement : une DESC nomme un livrable, une SPEC"
+		+ "une obligation falsifiable, et une DESC recopiee ne peut pas echouer"
+	SPEC "chaque livrable nomme par la DESC de T41, T42 et T44 est couvert par une SPEC de la meme"
+		+ "entite"
+		IMPL "docs/taches.awawa::TASK T41_FixturesDeScenariosGenereesEtGardees"
+		IMPL "docs/taches.awawa::TASK T42_GardeDesLocatorsEtMesureDeLaSuite"
+		IMPL "docs/taches.awawa::TASK T44_SpecsApplicationInfrastructurePresentation"
+	SOURCE "arbitrage utilisateur du 2026-09-15, commit de lancement de la vague 4"

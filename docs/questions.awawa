@@ -605,7 +605,7 @@ OPEN_QUESTION LaQuestionDesArtefactsDeLaSuiteReposeSurUneObservationNonFaite
 		REJECTED "la supprimer de la branche avant la fusion comme les trois entites retirees en"
 			+ "revue : la trace que la revue a laisse passer un fait non verifie disparaitrait avec"
 			+ "elle"
-	STATUS specified
+	STATUS superseded
 	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
 	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
 
@@ -780,6 +780,6 @@ OPEN_QUESTION UneTacheLanceeSansSpecParLivrableEcritSesCriteresApresLeCode
 			+ "une promotion contre des lignes ecrites par la meme session, ce que #78 montre"
 		REJECTED "transformer chaque DESC en SPEC mecaniquement : une DESC nomme un livrable, une"
 			+ "SPEC une obligation falsifiable, et une DESC recopiee ne peut pas echouer"
-	STATUS specified
+	STATUS superseded
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-78.md, PR #78, partie A"
 		+ "remediation 2"

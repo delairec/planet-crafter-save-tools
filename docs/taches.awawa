@@ -233,6 +233,10 @@ TASK T42_GardeDesLocatorsEtMesureDeLaSuite
 		REF @DECISION.LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
 	RATIONALE "la mesure de la duree arrive en dernier parce qu'elle ne vaut que sur la suite"
 		+ "complete"
+	SPEC "une garde lit les fichiers de scenario et refuse un identifiant de test, un selecteur CSS"
+		+ "ou une capture de reference ; une violation introduite volontairement la fait echouer"
+		IMPL "scripts"
+		IMPL "package.json::check:guards"
 	SPEC "aucun identifiant de test ni selecteur CSS ajoute, aucune capture de reference"
 		IMPL "packages/ui-save-manager"
 	SPEC "la duree totale de la suite est mesuree et consignee dans la PR du quatrieme livrable"
