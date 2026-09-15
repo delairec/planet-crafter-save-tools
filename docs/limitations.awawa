@@ -191,7 +191,7 @@ DECISION LePiedDePageBlockedBySeCroiseAvecStatus
 	DESC "garde : avant de dire qu'une entite est bloquee, croiser les noms du pied de page avec"
 		+ "awawa status OPEN_QUESTION --where STATUS!=superseded . ; seuls ceux qui y figurent"
 		+ "bloquent"
-	STATUS specified
+	STATUS superseded
 	CLOSES @OPEN_QUESTION.LePiedDePageBlockedByIgnoreLeStatutDesReferents
 	RATIONALE "symptome reproduit le 2026-09-13 : lint --closure sur T32 imprime BLOCKED_BY (rest,"
 		+ "5), les cinq superseded ; context sur T37 en imprime six, cinq superseded. Cause : le"
@@ -205,6 +205,41 @@ DECISION LePiedDePageBlockedBySeCroiseAvecStatus
 	REJECTED "une entite par pull request comme seul remede : elle reduit le nombre de bloqueurs"
 		+ "fermes par entite, elle ne change pas ce que le pied de page compte"
 	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+
+DECISION LePiedDePageBlockedBySeCroiseAvecStatus:v2
+	DESC "limitation acceptee, awawa 2.7.0 : le pied de page BLOCKED_BY de context et de lint"
+		+ "--closure compte les referents superseded avec les vivants"
+	DESC "garde, moitie question : croiser les noms du pied de page avec awawa status OPEN_QUESTION"
+		+ "--where STATUS!=superseded . ; seules les questions qui y figurent bloquent"
+	DESC "garde, moitie tache : croiser les memes noms avec awawa status TASK --where"
+		+ "STATUS!=implemented . ; seules les taches qui y figurent bloquent"
+		REF @DECISION.UneQuestionTrancheeSeFermeEtLaTacheReprendLeBlocage
+	STATUS specified
+	SUPERSEDES @DECISION.LePiedDePageBlockedBySeCroiseAvecStatus
+	CLOSES @OPEN_QUESTION.LePiedDePageBlockedByIgnoreLeStatutDesReferents
+	RATIONALE "ce qui change : depuis le FIELDSET Blocage, une TASK bloque un paquet comme une"
+		+ "question, et la garde de la version precedente ne nommait qu'OPEN_QUESTION parce que"
+		+ "seule une question pouvait bloquer quand elle a ete ecrite ; un lecteur qui l'appliquait"
+		+ "telle quelle laissait dans le pied de page une tache implemented sans la croiser"
+		REF @DECISION.UneQuestionTrancheeSeFermeEtLaTacheReprendLeBlocage
+	RATIONALE "symptome reproduit le 2026-09-13 : lint --closure sur T32 imprime BLOCKED_BY (rest,"
+		+ "5), les cinq superseded ; context sur T37 en imprime six, cinq superseded. Cause : le"
+		+ "pied de page compte les aretes entrantes sans lire le STATUS du referent, et la"
+		+ "suppression par GATE ne porte que sur les diagnostics"
+	RATIONALE "la limitation n'est pas rouverte : awawa 2.7.0 compte toujours les referents"
+		+ "supprimes, la question reste superseded et c'est cette :v2 qui la ferme. Les trois"
+		+ "gestes de la reouverture — decision superseded, successeure :v2, question a specified —"
+		+ "ne valent que le jour ou l'outil separera les referents vivants des supprimes"
+		REF @DECISION.UneDecisionRetireeNommeSaSuccesseure
+	REJECTED "laisser la question ouverte jusqu'au changement de l'outil : elle reviendrait dans"
+		+ "chaque rapport d'usage sans qu'aucune action de ce depot puisse la fermer"
+	REJECTED "une entite par pull request comme seul remede : elle reduit le nombre de bloqueurs"
+		+ "fermes par entite, elle ne change pas ce que le pied de page compte"
+	REJECTED "laisser la moitie tache de la garde dans la decision qui a etendu BLOCKS aux taches :"
+		+ "une garde en deux domiciles se lit a moitie, et c'est la moitie non lue qui laisse"
+		+ "passer le bloqueur mort"
+	SOURCE "PR #68 fusionnee, arbitrage utilisateur du 2026-09-13, PR #69"
+	SOURCE "arbitrage utilisateur du 2026-09-16, revue de la PR #15"
 
 DECISION AwawaDiffSeLanceContreUneCopie
 	DESC "limitation acceptee, awawa 2.7.0 : awawa diff ne prend que deux chemins, jamais une"

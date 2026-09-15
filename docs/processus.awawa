@@ -812,10 +812,9 @@ DECISION UneQuestionTrancheeSeFermeEtLaTacheReprendLeBlocage
 	DESC "une question tranchee passe superseded des que la DECISION la ferme, meme si le code"
 		+ "n'est pas corrige ; ce qui reste a faire est une TASK qui porte le BLOCKS et la SPEC du"
 		+ "correctif"
-	DESC "le pied de page BLOCKED_BY compte desormais aussi les TASK livrees : croiser ses noms"
-		+ "avec awawa status TASK --where STATUS!=implemented ., comme la garde deja posee le"
-		+ "prescrit pour les questions"
-		REF @DECISION.LePiedDePageBlockedBySeCroiseAvecStatus
+	DESC "le pied de page BLOCKED_BY compte desormais aussi les TASK livrees ; la garde qui croise"
+		+ "ses noms avec les STATUS vivants vit dans la decision qui la porte"
+		REF @DECISION.LePiedDePageBlockedBySeCroiseAvecStatus:v2
 	STATUS implemented
 	RATIONALE "OPEN_QUESTION n'avait que deux valeurs vivantes : specified, non tranchee et"
 		+ "bloquante, et superseded, GATE suppressed donc absente de tout paquet de recuperation ;"
