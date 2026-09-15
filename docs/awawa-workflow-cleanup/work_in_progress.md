@@ -11,17 +11,25 @@ tracks what is done, what is next, and what is still open.
 | four absorbed superseded decisions removed | `595421e` | `@DECISION.UneDecisionSupersedeeEstRetireeQuandSaSuccesseureLaContientToute` |
 | `OPEN_QUESTION` ladder `open\|closed`, 61 entities retyped (21/40) | `485b030` | `@DECISION.UneQuestionOuverteDeclareSonEchelleDeStatut` |
 | schema prose turned English, data prose stays French | `485b030` | `@DECISION.LeSchemaEstRedigeEnAnglaisEtLesDonneesEnFrancais` |
+| types named by what they govern, `CONVENTION` dropped | pending | `@DECISION.LesTypesDuDecoupageSeNommentParCeQuIlsGouvernent` |
+| retyping mechanism, script committed with its spec | `15aa17e` | `@DECISION.UnRetypagePasseParUnScriptDuDepotEtNonParFmtRename` |
 
 Per-type shadowing of the wildcard enum is proven on real data, not a throwaway copy — the
-mechanism every new ladder in `findings.md` §3 rests on.
+mechanism every new ladder in `findings.md` §3 rests on. The retyping mechanism is proven the same
+way: `scripts/retype-entity.ts` retyped `@DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes` on a
+throwaway copy of the corpus, leaving its `:v2` successor's four sites to their own type.
 
 ## Next
 
-1. Name the types against real entities — `CORPUS_RULE` / `PRACTICE` / `CONVENTION` are three words
-   a reader must tell apart at a glance (`findings.md` §7.1).
-2. Find out whether retyping 137 entities has tool support: `fmt --rename` renames an entity, not
-   its type. Otherwise a scripted text pass validated by `lint --strict` and `diff` (§7.3).
-3. Then one type at a time, smallest first, each with its own `SCHEMA`, ladder and `GATE` per value.
+One type at a time, smallest first, each with its own `SCHEMA`, ladder and `GATE` per value, and
+each in its domain file rather than in `_schema.awawa` (`findings.md` §7.2). Per type: declare the
+`SCHEMA`, retype with `bun scripts/retype-entity.ts <FROM> <TO> <Name>`, then read what `lint`
+reports — it names every field the arrival type does not declare yet — and close the list before
+moving to the next type.
+
+The order the volumes give: `CONFIDENTIALITY` folds into `PRACTICE` and `OUTILLAGE` is not created
+(§3), so what remains is `FACT` (6), `EXTERNAL_RULE` (4, and §5 asks each to be examined alone),
+`LIMITATION` (12), `PRACTICE` (15), `CORPUS_RULE` (17), and `DECISION` narrowed by subtraction.
 
 ## Open
 
