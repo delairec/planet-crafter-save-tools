@@ -764,6 +764,7 @@ DECISION LesSpecDUneTacheSontEcritesAvantSonLancement
 	CLOSES @OPEN_QUESTION.UneTacheLanceeSansSpecParLivrableEcritSesCriteresApresLeCode
 	APPLIES_TO_TASK @TASK.T41_FixturesDeScenariosGenereesEtGardees
 	APPLIES_TO_TASK @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "sur T40, l'agent a ecrit ses trois lignes d'acceptation apres son code et la revue a"
 		+ "verifie des lignes que l'implementeur s'etait donnees : une acceptation ecrite apres"
 		+ "coup ne peut plus echouer, elle decrit ce qui a ete fait"
@@ -776,5 +777,7 @@ DECISION LesSpecDUneTacheSontEcritesAvantSonLancement
 		+ "une obligation falsifiable, et une DESC recopiee ne peut pas echouer"
 	SPEC "chaque livrable nomme par la DESC de T41, T42 et T44 est couvert par une SPEC de la meme"
 		+ "entite"
+		IMPL "docs/taches.awawa::TASK T41_FixturesDeScenariosGenereesEtGardees"
 		IMPL "docs/taches.awawa::TASK T42_GardeDesLocatorsEtMesureDeLaSuite"
+		IMPL "docs/taches.awawa::TASK T44_SpecsApplicationInfrastructurePresentation"
 	SOURCE "arbitrage utilisateur du 2026-09-15, commit de lancement de la vague 4"
