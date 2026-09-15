@@ -206,7 +206,7 @@ TASK T40_ScenariosDeValidationEtDEtatsDeChargement
 TASK T41_FixturesDeScenariosGenereesEtGardees
 	DESC "troisieme livrable du harnais : les fixtures de scenarios sont generees par une commande,"
 		+ "et une garde refuse tout ecart avec les fichiers versionnes"
-	STATUS specified
+	STATUS implemented
 	WAVE "4"
 	AFTER @TASK.T40_ScenariosDeValidationEtDEtatsDeChargement
 	RATIONALE "la recette de regeneration vit aujourd'hui dans un fichier de documentation, que"
@@ -217,10 +217,14 @@ TASK T41_FixturesDeScenariosGenereesEtGardees
 		+ "une reference au repertoire d'entree"
 	SPEC "regenerer les fixtures ne produit aucun ecart avec les fichiers versionnes, et un ecart"
 		+ "introduit volontairement fait echouer le controle"
-		IMPL "packages/ui-save-manager"
+		IMPL "scripts/generate-scenario-fixtures.ts"
+		IMPL "scripts/check-scenario-fixtures.ts"
+		IMPL "scripts/check-scenario-fixtures.spec.ts"
+		IMPL "packages/ui-save-manager/e2e/fixtures"
 	SPEC "la suite ne depend d'aucun fichier du repertoire d'entree et passe sur une machine sans"
 		+ "acces au depot prive"
-		IMPL "packages/ui-save-manager"
+		IMPL "scripts/check-scenario-fixtures.ts::findInputDirectoryReferences"
+		IMPL "packages/ui-save-manager/e2e"
 
 TASK T42_GardeDesLocatorsEtMesureDeLaSuite
 	DESC "quatrieme livrable du harnais : une garde refuse un identifiant de test, un selecteur CSS"
