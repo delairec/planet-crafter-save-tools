@@ -225,16 +225,31 @@ DECISION UnIndiceDeSectionNeSEcritJamaisEnDur
 	DESC "un indice de section ne s'ecrit jamais en dur, pas meme dans une spec : les indices sont"
 		+ "lus depuis leur module"
 	DESC "cela vise aussi la destructuration a trous, qui cache l'indice qu'elle compte"
-	STATUS specified
+	DESC "le chiffre d'un message attendu reste litteral : c'est ce que la regle doit produire, pas"
+		+ "un acces au format"
+	STATUS implemented
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.T44_SpecsApplicationInfrastructurePresentation
 	RATIONALE "arbitrage de l'utilisateur, pose deux fois sur la meme pull request"
 	RATIONALE "restent des nombres les comptes de parties : ce sont des attendus, pas des acces"
+	RATIONALE "T44 : la meme frontiere separe les deux moities d'un test de localisation. L'entree"
+		+ "section: 2 est un acces et se lit dans le module ; l'attendu Players (section 2), entry"
+		+ "3 est la phrase que le formateur doit rendre, et la lire depuis le module ferait"
+		+ "calculer a l'attendu ce qu'il est cense epingler"
 	REJECTED "tolerer un indice litteral dans une spec"
+	REJECTED "composer le message attendu depuis le module d'indices, ce qui le rendrait recalcule"
 	SPEC "les indices de section, y compris ceux du format herite et la partie reservee, sont"
 		+ "declares une fois"
 		IMPL "packages/shared-save-processing/sectionIndexes.js"
+	SPEC "aucune spec de core-mapping n'ecrit un indice de section en dur"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/MergeResultPresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/SaveFileValidationPresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/formatValidationError.spec.ts"
 	SOURCE "decision du 2026-09-09, revue de T19 et de T26"
+	SOURCE "T44, frontiere de l'attendu tranchee a l'implementation, PR #PR_PLACEHOLDER"
 
 DECISION UnImportDeTypeJsdocQuiTraverseUnPackageSEcritTypedef
 	DESC "un import de type JSDoc qui traverse une frontiere de package s'ecrit en typedef portant"
