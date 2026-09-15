@@ -1,11 +1,11 @@
 // Les points non tranches, tous domaines confondus. Une limitation acceptee est un point *ferme* :
-// sa question passe superseded et la DECISION qui la ferme porte la matiere — elle vit dans
+// sa question passe closed et la DECISION qui la ferme porte la matiere — elle vit dans
 // limitations.awawa (@DECISION.UneLimitationAccepteeGardeSaMatiereDansLaDecision).
 OPEN_QUESTION NomDeDossierAvecArobaseCorromptLaSaveFusionnee
 	DESC "un nom de dossier contenant @ fait ecrire par bun merge une save que bun validate refuse"
 	DESC "correction a instruire : assainir le nom affiche a la frontiere qui le recoit, ou refuser"
 		+ "un nom que le format ne peut pas porter"
-	STATUS specified
+	STATUS open
 	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "@ est le separateur de sections du format ; mergeSaveConfigurations recopie tel quel"
 		+ "le saveDisplayName que les deux appelants prennent du nom de dossier ou de la saisie."
@@ -30,7 +30,7 @@ OPEN_QUESTION WoIdsNEstAttesteeParAucuneSave
 		+ "le contenu passe par l'inventaire lie"
 	DESC "si la seconde se confirme, le type, le remappage de references et la ligne correspondante"
 		+ "de la regle d'identifiants tombent ensemble, pas le schema seul"
-	STATUS specified
+	STATUS open
 	BLOCKS @PACKAGE.shared_save_processing
 	RATIONALE "elle reste declaree par precaution : sous un schema ferme aux proprietes"
 		+ "supplementaires, la taire ferait refuser une save que la reecriture de references"
@@ -42,7 +42,7 @@ OPEN_QUESTION LesBornesDeHungerSontPoseesSurUneHypothese
 		+ "sur une source"
 	DESC "le premier contre-exemple rencontre les leve ; l'utilisateur a assume le risque, on"
 		+ "avisera si une save est un jour refusee"
-	STATUS specified
+	STATUS open
 	BLOCKS @PACKAGE.shared_save_processing
 	RATIONALE "champ observe sur les seules entrees d'un identifiant de groupe, 345 occurrences sur"
 		+ "190338, plage relevee de -100 a 94,22. L'echelle symetrique se justifie par le fait"
@@ -57,7 +57,7 @@ OPEN_QUESTION LesLibellesDeSectionDivergentDeLaDocumentation
 	DESC "les libelles courts employes dans la localisation d'une erreur ne sont pas alignes sur le"
 		+ "sommaire du document des regles de jeu"
 	DESC "a trancher : la documentation doit-elle devenir la reference unique des noms de section"
-	STATUS specified
+	STATUS open
 	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "les libelles courts sont plus lisibles dans un prefixe d'erreur ; la divergence a"
 		+ "ete signalee comme reversible en revue"
@@ -68,7 +68,7 @@ OPEN_QUESTION LesReglesDeCirculationDesObjetsNeSontPasAcquises
 		+ "instructions generales, pas encore fusionnees"
 	DESC "tant que la pull request n'est pas fusionnee, aucune session ne lit ces regles, et la"
 		+ "tache est a reprendre si elle est fermee au lieu d'etre fusionnee"
-	STATUS specified
+	STATUS open
 	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "le trou est mesure : le mot Response n'apparaissait qu'une fois dans tout le dossier"
 		+ "d'architecture, dans une liste de noms de methode interdits. Aucune regle ne disait que"
@@ -83,7 +83,7 @@ OPEN_QUESTION LesAlertesDependabotSontDesactivees
 		+ "securite"
 	DESC "l'autre issue est de planifier le job d'audit a date fixe, ce que le depot ne fait pas :"
 		+ "il ne le lance que sur une pull request et sur la branche par defaut"
-	STATUS specified
+	STATUS open
 	RATIONALE "les avis de vulnerabilite n'apparaissent aujourd'hui que dans le job d'audit, a"
 		+ "l'occasion d'une pull request, jamais a date fixe"
 	SOURCE "constate le 2026-09-10, verification de DEP1 apres la fusion de la PR #53"
@@ -94,7 +94,7 @@ OPEN_QUESTION LAuditDeSecuriteEstRougeSurDesAvisTransitifs
 	DESC "ils sont aujourd'hui ignores nommement dans le script d'audit : le job est vert, les avis"
 		+ "ne sont pas resolus"
 	DESC "a trancher : attendre la montee amont, ou forcer une resolution depuis la racine"
-	STATUS specified
+	STATUS open
 	RATIONALE "le rouge prexiste aux pull requests qui le rencontrent et ne vient pas d'elles :"
 		+ "constate a l'identique sur une pull request ne touchant qu'un fichier d'exclusion"
 	RATIONALE "c'est exactement le terrain que le suivi de dependances doit remonter a date fixe"
@@ -106,7 +106,7 @@ OPEN_QUESTION LaPolitiqueDeContenuAutoriseLeScriptEnLigne
 		+ "la page s'execute malgre elle"
 	DESC "a trancher : hachage ou nonce sur le script d'hydratation, ou constat que le cadre ne le"
 		+ "permet pas"
-	STATUS specified
+	STATUS open
 	RATIONALE "la politique a ete posee compatible avec le build de production, sans que le retrait"
 		+ "de l'inline soit tente ni mesure"
 	RATIONALE "la case du plan restait cochee : la politique existe, et c'est sa force qui n'etait"
@@ -118,7 +118,7 @@ OPEN_QUESTION FormeDesErreursDeRegleDomaine
 	DESC "a trancher, sans alternative examinee : un type du domaine, que l'infrastructure traduit"
 		+ "en issue de validation avec son code ; les codes restent en application, sans celui que"
 		+ "le domaine decide"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	SOURCE "fiche T37, decision 1"
 
@@ -128,7 +128,7 @@ OPEN_QUESTION OuVerifierLaSerialisationDesFlottants
 		+ "celle du texte"
 		REJECTED "une regle de domaine recevant des entrees analysees et verifiant l'integrite du"
 			+ "nombre : elle ne verifie rien, la propriete n'est pas observable apres analyse JSON"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	SOURCE "fiche T37, decision 2"
 
@@ -139,7 +139,7 @@ OPEN_QUESTION OuDecoderLEncodageDesListesDIdentifiants
 		+ "declaration du separateur"
 		REJECTED "elargir la decision de T11 sur les DTO wire aux encodages de champ, pour garder"
 			+ "l'analyse dans le domaine : T11 n'a tranche que l'entree et la sortie"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T11 a tranche que les DTO wire restent l'entree et la sortie du domaine ; elle n'a"
 		+ "pas tranche l'analyse d'un encodage de champ dans le domaine. L'alternative est"
@@ -151,7 +151,7 @@ OPEN_QUESTION SortDeMergedSaveValueObject
 	DESC "a trancher, sans alternative examinee : supprime ; le port de fusion retourne les"
 		+ "sections fusionnees et la serialisation comme le nommage du fichier restent en"
 		+ "infrastructure"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T27 a deja note que son invariant est vide : la seule erreur de domaine atteignable"
 		+ "sur le chemin de fusion est un test de chaine vide sur un blob"
@@ -163,7 +163,7 @@ OPEN_QUESTION FormeDuContratControleurVersUi
 		+ "composition root fabrique lecteur et analyseur"
 		REJECTED "un identifiant opaque de save chargee porte par le ViewModel : de l'etat dans un"
 			+ "package sans etat, et le controleur de fusion resterait sur un autre contrat"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	BLOCKS @TASK.T32_ConformiteUiSaveManager
 	RATIONALE "mesure prealable de T13 : l'analyse coute 2 ms sur 2 Mo, donc la refaire par"
@@ -175,7 +175,7 @@ OPEN_QUESTION SortDesClesDupliqueesDeWorldObjectLabels
 		+ "probablement la meme cle"
 	DESC "a trancher, sans alternative examinee : conserver la premiere occurrence et verifier la"
 		+ "casse contre les saves de reference"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T38_ConformiteCoreMapping
 	SOURCE "fiche T38, decision 2"
 
@@ -185,7 +185,7 @@ OPEN_QUESTION LaRegleDuCorpsDePrVautElleAuDelaDeCeDepot
 		REF @DECISION.LeCorpsDeLaPrDecritLaTeteDeBranche
 	DESC "destination proposee si elle est generale : la section git de"
 		+ "~/.ai/instructions/commands.md"
-	STATUS superseded
+	STATUS closed
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
 	SOURCE "constate le 2026-09-12, revue de DEP2, PR #61"
@@ -200,7 +200,7 @@ OPEN_QUESTION UnEncodageDeChampReleveDuFormatOuNon
 		REF @DECISION.LesReglesDeFusionRecoiventDesDtoWireTypes:v2
 	DESC "destination proposee si elle est generale : ~/.ai/instructions/architecture/domain.md,"
 		+ "plutot que de rester propre au projet"
-	STATUS superseded
+	STATUS closed
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
 	SOURCE "constate le 2026-09-12, T37 partie A, PR #62"
@@ -210,7 +210,7 @@ OPEN_QUESTION UneSaveSansJoueurMeriteUnAvertissement
 		+ "unique sans un mot ; faut-il en avertir l'utilisateur"
 	DESC "hors perimetre de T37, comportement inchange : un avertissement de plus est un changement"
 		+ "visible"
-	STATUS specified
+	STATUS open
 	SOURCE "constate le 2026-09-12, revue de la PR #62 par l'utilisateur,"
 		+ "validateUniqueHost.spec.ts"
 
@@ -220,7 +220,7 @@ OPEN_QUESTION UnOctetDeControleBrutRendUneSourceBinairePourGit
 		+ "recopie l'a changee sans bruit en un intervalle espace-barre qui avalait le tiret"
 	DESC "regle candidate pour ~/.ai/instructions/standards/coding.md : un caractere de controle"
 		+ "s'ecrit par sa sequence d'echappement, jamais en octet brut dans une source"
-	STATUS superseded
+	STATUS closed
 	RATIONALE "general ou specifique au projet est l'arbitrage de l'utilisateur, pose a la fusion"
 		+ "par /awawa-pr-merged ; l'entite est ce qui porte la question jusque la"
 	SOURCE "constate le 2026-09-12, revue de la PR #62, deplacement de buildMergedFileName vers"
@@ -240,7 +240,7 @@ OPEN_QUESTION UneRecommandationEstExamineeAvantDEtreProposeeALaRatification
 	DESC "destination proposee si elle est generale : la section Always de ~/.ai/AGENTS.md, que"
 		+ "~/.claude/CLAUDE.md lie, a cote de la regle qui veut qu'une decision prise avec"
 		+ "l'utilisateur soit enregistree"
-	STATUS superseded
+	STATUS closed
 	RATIONALE "les deux defauts n'ont ete trouves que parce que l'utilisateur a refuse la"
 		+ "ratification en bloc et demande un examen question par question ; la procedure ne les"
 		+ "avait pas arretes"
@@ -260,7 +260,7 @@ OPEN_QUESTION UnRemplacementPartielDUneDecisionImplementeeNEstPasMarque
 		+ "REF sortant de la nouvelle decision le signale, et lint --strict sort en 0"
 		REF @DECISION.UneFusionProduitUneSaveOrdinaire
 		REF @DECISION.LesControleursDeSectionRecoiventLeTexteValide
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.UneFusionProduitUneSaveOrdinaire
 	BLOCKS @DECISION.LesControleursDeSectionRecoiventLeTexteValide
 	RATIONALE "SUPERSEDES ne porte que sur une entite entiere ; un context qui atteint l'ancienne"
@@ -272,7 +272,7 @@ OPEN_QUESTION LaRevueSansRetourLanceQuandMemeUnAgent
 	DESC "/awawa-pr-review fait un seul appel gh dans la session pilote — revues, fils,"
 		+ "commentaires — et ne lance aucun agent quand les trois sont a zero ; le commentaire de"
 		+ "disponibilite dit alors « aucun retour de revue » et non « revue traitee »"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.LeCorpusRemplaceLaChecklistDeFusion
 	RATIONALE "sur la PR #65 : 0 revue, 0 fil, 0 commentaire, revue CI sans rien a poster ; l'agent"
 		+ "de revue a couru 2 min 33 s, 26 appels Bash et 2,78 M jetons lus du cache pour"
@@ -286,7 +286,7 @@ OPEN_QUESTION UneTacheLivreeEnPlusieursPrEstUneEntiteParPr
 		+ "contredit ce DESC et demande de le reviser"
 	DESC "proposee pour la troisieme fois : par les deux rapports de la PR #62, puis par celui de"
 		+ "la PR #65"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T37_FrontieresCleanArchitectureCoreMapping
 	RATIONALE "T37 en une entite : lint --closure imprime BLOCKED_BY (root, 5) dont les cinq sont"
 		+ "superseded, et le prompt de lancement de la partie B a du lister a la main les deux"
@@ -299,7 +299,7 @@ OPEN_QUESTION LaRecommandationDUneQuestionEstUnChampAvecSonRejet
 		+ "destination proposee : » de questions.awawa sont convertis une fois"
 	DESC "proposee pour la troisieme fois : par les deux rapports de la PR #62, puis par celui de"
 		+ "la PR #65"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @SCHEMA.OPEN_QUESTION
 	RATIONALE "une recommandation qui n'a jamais affronte son alternative est indistinguable d'une"
 		+ "qui l'a fait ; sur la PR #62 deux recommandations sur cinq etaient defectueuses, et la"
@@ -309,7 +309,7 @@ OPEN_QUESTION LaRecommandationDUneQuestionEstUnChampAvecSonRejet
 OPEN_QUESTION UneAncreDeRepertoireSousSpecEstInterdite
 	DESC "le schema interdit une ancre IMPL de repertoire sous SPEC : une obligation s'ancre sur un"
 		+ "fichier ou un symbole"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.LesControleursDeSectionRecoiventLeTexteValide
 	RATIONALE "44 des 180 ancres IMPL du corpus pointent un repertoire, sur lesquelles L016 ne peut"
 		+ "jamais se declencher ; la decision de la PR #65 en ajoute une,"
@@ -319,7 +319,7 @@ OPEN_QUESTION UneAncreDeRepertoireSousSpecEstInterdite
 OPEN_QUESTION LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
 	DESC "la ligne « Push the private context repository » de ~/.claude/commands/awawa-pr-merged.md"
 		+ "est supprimee ou reecrite en « push the promotion pull request »"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.LeCorpusVitDansLeDepotPublic
 	RATIONALE "la promotion de la PR #65 est passee par la PR #66 du depot public ; l'agent de"
 		+ "cloture a du constater que « le depot prive n'a pas ete touche » ; cout nul cette fois,"
@@ -329,7 +329,7 @@ OPEN_QUESTION LaCommandeDeFusionOrdonneEncoreUnPushDuDepotPrive
 OPEN_QUESTION LeRelancementDUnRapportDUsageButeSurSaBranche
 	DESC "/awawa-usage-report supprime une branche docs/usage-report-pr-N existante sans commit"
 		+ "au-dessus de la base avant de couper la sienne, ou suffixe le nom"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante
 	RATIONALE "le premier rapporteur de la PR #65 est mort sur une limite de session apres 3 min 02"
 		+ "s, laissant docs/usage-report-pr-65 extraite et vide dans son worktree ; le relancement"
@@ -339,7 +339,7 @@ OPEN_QUESTION LeRelancementDUnRapportDUsageButeSurSaBranche
 OPEN_QUESTION UnModeleDEntiteEviteLaLectureDesFichiersDuCorpus
 	DESC "un docs/_example.awawa, ou une entite modele par type, donne a un agent la forme"
 		+ "d'ecriture sans qu'il lise les fichiers du corpus"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.LeCorpusEstDecoupeParDomaine
 	RATIONALE "l'agent de la PR #65 a lu quatre plages sed de packages, questions, fusion et"
 		+ "limitations puis head -12 des douze fichiers, apres un context et un new ; l'agent de la"
@@ -350,7 +350,7 @@ OPEN_QUESTION LePiedDePageBlockedByIgnoreLeStatutDesReferents
 	DESC "le pied de page de context et de lint --closure separe les referents vivants des"
 		+ "referents suppressed — BLOCKED_BY (root, 0 live, 5 suppressed) — ou omet ces derniers"
 	DESC "defaut de l'outil awawa 2.7.0, vu par les rapports des PR #62 et #65"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T32_ConformiteUiSaveManager
 	RATIONALE "lint --closure sur T37 imprime BLOCKED_BY (root, 5), les cinq superseded ; sur T32,"
 		+ "BLOCKED_BY (root, 1) nomme une question superseded, alors que la session pilote a dit a"
@@ -360,7 +360,7 @@ OPEN_QUESTION LePiedDePageBlockedByIgnoreLeStatutDesReferents
 OPEN_QUESTION AwawaDiffNeCompareQueDeuxRepertoires
 	DESC "awawa diff accepte une revision git pour l'ancien cote — diff --git REV [PATH] — au lieu"
 		+ "de deux chemins"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.LeCorpusRemplaceLaChecklistDeFusion
 	RATIONALE "l'agent de cloture de la PR #65 a copie docs/ avant d'editer pour pouvoir lancer"
 		+ "awawa diff apres"
@@ -370,7 +370,7 @@ OPEN_QUESTION LesReferentsDUnContexteSontNommesSansEtreDeveloppes
 	DESC "context --with-referrers developpe les entites que le pied de page nomme, au lieu de les"
 		+ "lister"
 	DESC "defaut de l'outil awawa 2.7.0, vu par les rapports des PR #62 et #65"
-	STATUS superseded
+	STATUS closed
 	RATIONALE "l'agent de la PR #65 a enchaine six awawa show apres son unique awawa context pour"
 		+ "lire la question bloquante et les decisions voisines ; l'agent de la PR #62 en avait"
 		+ "enchaine cinq"
@@ -383,7 +383,7 @@ OPEN_QUESTION UneEntiteRendSonTableauInterneSansLeCopier
 		+ "l'entite"
 	DESC "option retenue faute d'arbitrage : rendre le tableau tel quel, protege par le type"
 		+ "readonly seul, comme avant la conversion en classes"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.LesDeuxVuesDUnObjetDuMondeRestentDesClassesDistinctes
 	RECOMMENDATION "garder le tableau readonly sans copie : la copie defensive coute une allocation"
 		+ "a chaque lecture, et computeOptimizerBoosts lit contains une fois par objet du monde et"
@@ -403,7 +403,7 @@ OPEN_QUESTION LeCasDUtilisationDeSectionEnergieRestitueSesValueObjectsChampParCh
 		+ "fabrique ne valide jamais"
 	DESC "revue demandee en revue de la PR #72 sur la decision qui a fixe cette forme"
 		REF @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
-	STATUS superseded
+	STATUS closed
 	BLOCKS @DECISION.LeCasDUtilisationDeSectionAssembleSesValueObjectsChampParChamp
 	RATIONALE "verifie le 2026-09-13 dans le code : la regle assemble deja des value objects du"
 		+ "domaine, EnergyBreakdownEntryValueObject et OptimizerValueObject, par leurs fabriques ;"
@@ -428,7 +428,7 @@ OPEN_QUESTION UnPresenterPortRecoitUneEntiteOuUnValueObject
 	DESC "constate en repondant a la question du proprietaire sur le map de"
 		+ "LoadTerraformationLevelsSection : la reponse ne tient que si la convention est la meme"
 		+ "pour toutes les sections"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T38_ConformiteCoreMapping
 	RECOMMENDATION "aligner sur le value object : une entite qui traverse le port laisse la"
 		+ "presentation appeler ses methodes de domaine, et le presenter des joueurs lit deja"
@@ -445,7 +445,7 @@ OPEN_QUESTION UnAccesseurDeTableauRendUneCopieEstUneRegleGeneraleOuDeProjet
 	DESC "elle ne dit rien du domaine des saves : elle vaut pour toute classe a invariant, donc STD"
 		+ "est sa place naturelle ; c'est l'arbitrage de l'utilisateur"
 		REF @DECISION.UneEntiteRendUneCopieDeSonTableauInterne
-	STATUS specified
+	STATUS open
 	RECOMMENDATION "la porter en STD : le projet n'y ajoute aucune condition, et la laisser ici la"
 		+ "rend invisible aux autres depots"
 		REJECTED "la laisser dans le corpus seul : la prochaine classe a invariant ecrite ailleurs"
@@ -458,7 +458,7 @@ OPEN_QUESTION LaVentilationParMachineIgnoreLeBoostDesOptimiseurs
 		+ "est inferieure a production des qu'un fusible est en jeu"
 	DESC "portee par un commentaire du code jusqu'a la PR #72, ou le passage a PlanetEnergyGrid l'a"
 		+ "supprime ; sans entite elle n'atteignait plus aucune session"
-	STATUS specified
+	STATUS open
 	BLOCKS @DECISION.LaGrilleEnergetiqueDUnePlaneteEstUnAgregat
 	RATIONALE "les parts productionRatio des entrees ne somment donc pas a 1 quand un optimiseur"
 		+ "booste une machine ventilee : c'est la contrepartie du choix de ne compter le boost"
@@ -472,7 +472,7 @@ OPEN_QUESTION UneEntiteNAtteintPasLaPresentationEstUneRegleGeneraleOuDeProjet
 	DESC "elle ne dit rien du domaine des saves : elle contraint tout package core-, donc ARCH-CA"
 		+ "est sa place naturelle ; c'est l'arbitrage de l'utilisateur"
 		REF @DECISION.UnPresenterRecoitUnValueObjectJamaisUneEntite
-	STATUS specified
+	STATUS open
 	RECOMMENDATION "la porter en ARCH-CA : le projet n'y ajoute aucune condition, et la laisser ici"
 		+ "la rend invisible aux autres depots qui montent la meme frontiere"
 		REJECTED "la laisser dans le corpus seul : le prochain package core- ecrit ailleurs refera"
@@ -487,7 +487,7 @@ OPEN_QUESTION RienNeGardeLesIdiomesSolidDeLUiContreUneRegression
 	DESC "symptome a craindre : une prop destructuree reintroduite passe la build, le type-check et"
 		+ "les scenarios, la perte de reactivite restant masquee tant que les blocs concernes sont"
 		+ "demontes et remontes a chaque resultat"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @PACKAGE.ui_save_manager
 	RATIONALE "T32 a corrige sept composants destructures, un map rendant du JSX et treize"
 		+ "assertions non nulles ; rien dans le depot n'empeche le prochain composant de les"
@@ -518,7 +518,7 @@ OPEN_QUESTION UnCaractereDecoratifCousuDansUneValeurDeViewModelEchappeAuMasquage
 		+ "en texte : le composant Icon ne peut pas l'atteindre"
 	DESC "symptome : le lecteur d'ecran annonce le nom du caractere dans chaque cellule de"
 		+ "consommation et de disponible, et dans le titre de la grille de consommation"
-	STATUS specified
+	STATUS open
 	BLOCKS @PACKAGE.ui_save_manager
 	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "la decision qui regle la fleche de la page 404 ne regle pas ce cas : elle suppose"
@@ -539,7 +539,7 @@ OPEN_QUESTION LeTexteDuCorpusSEcritEnChainesDUneLigneQueFmtReplie
 	DESC "un ajout au corpus par heredoc avec des lignes de continuation + ecrites a la main a"
 		+ "coute 36 L014 et un git checkout du fichier dans la PR #71, 54 L014 dans la PR #72 ;"
 		+ "quatre ajouts en chaines d'une seule ligne, repliees par fmt, ont coute 0"
-	STATUS specified
+	STATUS open
 	BLOCKS @DECISION.LeCorpusEstDecoupeParDomaine
 	RATIONALE "la remediation 5 du rapport de la PR #72 disait la meme chose et vivait dans le"
 		+ "rapport seul ; l'agent suivant ne l'a pas lue"
@@ -558,7 +558,7 @@ OPEN_QUESTION DeuxSectionsMetadataVidesFontPlanterLaFusion
 		+ "lieu de rendre un verdict"
 	DESC "a trancher : repli sur DEFAULT_METADATA comme les deux autres valeurs, ou verdict"
 		+ "ERROR_INVALID_INPUT_FORMAT comme avant le refactor"
-	STATUS specified
+	STATUS open
 	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "mesure au HEAD de la base : mergeGlobalMetadata([], []) leve TypeError: undefined is"
 		+ "not an object (evaluating 'openedInstanceSource.openedInstanceSeed') ; ligne 17,"
@@ -605,7 +605,7 @@ OPEN_QUESTION LaQuestionDesArtefactsDeLaSuiteReposeSurUneObservationNonFaite
 		REJECTED "la supprimer de la branche avant la fusion comme les trois entites retirees en"
 			+ "revue : la trace que la revue a laisse passer un fait non verifie disparaitrait avec"
 			+ "elle"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
 	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
 
@@ -624,7 +624,7 @@ OPEN_QUESTION AgentsMdDitCeQuUneReglePromueLaisseDansLeCorpus
 			+ "decision seulement par un context qui l'atteint"
 		REJECTED "reenoncer la regle dans AGENTS.md : c'est la copie derivee que la decision"
 			+ "interdit"
-	STATUS specified
+	STATUS open
 	BLOCKS @DECISION.UneVueQueLeCorpusRendDejaNEstPasRecopieeDedans
 	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
 
@@ -643,7 +643,7 @@ OPEN_QUESTION LaLectureDUnFichierDuCorpusPourYAjouterUneEntiteEstElleLegitime
 			+ "la fin du fichier et awawa n'ecrit jamais"
 		REJECTED "continuer a compter sans trancher : cinq rapports et deux remediations n'ont rien"
 			+ "change"
-	STATUS specified
+	STATUS open
 	BLOCKS @DECISION.AgentsMdNommeUneEntiteModeleParType
 	SOURCE "rapport docs/awawa-usage-reports/2026-09-14-pr-75.md, PR #75"
 
@@ -652,7 +652,7 @@ OPEN_QUESTION LaCasseDeLExtensionJsonNEstPasLueDeLaMemeFaconPartout
 		+ "casse, la ou hasJsonExtension et stripJsonExtension de shared-save-processing ne le sont"
 		+ "pas : un fichier Standard-1.JSON n'est pas ramasse par le parcours du dossier alors que"
 		+ "la validation l'accepterait et que la fusion le nommerait correctement"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @PACKAGE.cli_merge
 	RATIONALE "constate en partageant le retrait de l'extension, T38 : la correction sort de"
 		+ "core-mapping et change ce que bun merge ramasse, ce que la tache s'interdit"
@@ -672,7 +672,7 @@ OPEN_QUESTION UnCaractereInvisibleEcritEnClairEstUneRegleGeneraleOuDeProjet
 		+ "deux fois dans deux orthographes indistinguables, et la marginalite etait le seul appui"
 		+ "de cette decision"
 		REF @DECISION.UnOctetDeControleBrutResteUnCasMarginalSansRegle
-	STATUS specified
+	STATUS open
 	BLOCKS @DECISION.UnOctetDeControleBrutResteUnCasMarginalSansRegle
 	RATIONALE "l'espace insecable n'est pas un caractere de controle mais partage son mode de"
 		+ "defaillance : invisible dans la source, indistinguable d'un espace ordinaire,"
@@ -692,7 +692,7 @@ OPEN_QUESTION LeLienEntreEpaveProceduraleEtPortailEstInconnu
 	DESC "ce que la reponse change : ProceduralInstanceGenerator n'a pas de libelle et rend sa"
 		+ "propre cle ; le lien etabli le nommerait dans la table"
 		REF @DECISION.LesNomsDObjetsSontAttestesParUneSourceOuParUneSave
-	STATUS specified
+	STATUS open
 	BLOCKS @PACKAGE.core_mapping
 	RATIONALE "interrogation laissee en commentaire dans worldObjectLabels par une session"
 		+ "anterieure, conservee la et doublee ici"
@@ -707,7 +707,7 @@ OPEN_QUESTION UnChiffreInscritDansLeCorpusPorteLaPorteeDeSaMesure
 		+ "entre guillemets ; les 340 sources sans tabulation sont les fichiers ts, js et tsx de"
 		+ "packages, 358 avec scripts"
 		REF @DECISION.UneCleDupliqueeParLaCasseEstTrancheeParLAttestation
-	STATUS specified
+	STATUS open
 	BLOCKS @DECISION.UneCleDupliqueeParLaCasseEstTrancheeParLAttestation
 	RATIONALE "le chiffre sans portee est un point recurrent des rapports d'usage, vu trois fois :"
 		+ "le compte de CI a la PR #72, le rejeu de garde et le grep a la PR #71, ces deux-ci a la"
@@ -727,7 +727,7 @@ OPEN_QUESTION UneDecisionNommeCeQuElleGouverneParUnChampAppliesTo
 	DESC "86 des 122 decisions n'ont aucune arete entrante ; deux des quatre decisions de la PR #76"
 		+ "sont a zero ; la session pilote a trouve les decisions contraignant un worktree par"
 		+ "status DECISION suivi d'un grep de texte"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T43_SpecsDeDomaineCoreMapping
 	RATIONALE "point signale par cinq rapports d'usage de suite depuis la revue de la PR #62 et"
 		+ "jamais enregistre dans le corpus ; la remediation est un changement de schema, a"
@@ -753,13 +753,13 @@ OPEN_QUESTION UneQuestionNouvelleSEcritDansLeFichierDesQuestionsEtAgentsMdLeDit
 		+ "acceptee, dans la phrase qui dit qu'un defaut constate est une OPEN_QUESTION"
 	BLOCKS @DECISION.LeCorpusEstDecoupeParDomaine
 	RECOMMENDATION "ecrire dans AGENTS.md : une question nouvelle s'ajoute a docs/questions.awawa,"
-		+ "une paire question superseded plus decision de limitation acceptee vit dans"
+		+ "une paire question closed plus decision de limitation acceptee vit dans"
 		+ "docs/limitations.awawa ; 48 questions sur 57 sont deja dans le premier, 8 dans le second"
 		REJECTED "laisser la revue deplacer : sur #78 c'est un sed -i de 21 lignes puis un nouvel"
 			+ "ajout, sur #75 la question est restee dans tests.awawa"
 		REJECTED "une regle de schema : le schema ne contraint pas le fichier d'une entite, et"
 			+ "l'outil charge toute la marche sans distinguer"
-	STATUS specified
+	STATUS open
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-78.md, PR #78, partie A"
 		+ "remediation 1"
 
@@ -780,7 +780,7 @@ OPEN_QUESTION UneTacheLanceeSansSpecParLivrableEcritSesCriteresApresLeCode
 			+ "une promotion contre des lignes ecrites par la meme session, ce que #78 montre"
 		REJECTED "transformer chaque DESC en SPEC mecaniquement : une DESC nomme un livrable, une"
 			+ "SPEC une obligation falsifiable, et une DESC recopiee ne peut pas echouer"
-	STATUS superseded
+	STATUS closed
 	SOURCE "rapport d'usage docs/awawa-usage-reports/2026-09-14-pr-78.md, PR #78, partie A"
 		+ "remediation 2"
 
@@ -790,7 +790,7 @@ OPEN_QUESTION LeFiltreDuParcoursPartagePorteEncoreLeNomDesSpecs
 	DESC "option defendable retenue : garder le nom, un renommage dans specSources.ts entrant en"
 		+ "collision avec la garde des locators ecrite en parallele sur une autre branche"
 		REF @DECISION.LeGenerateurDeFixturesDeScenariosEstLaSourceEtLaGardeLeRejoue
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
 	RATIONALE "readOwnSourceFiles prend le motif en parametre et sert deja les scenarios ; le seul"
 		+ "nom reste a l'echelle des specs, et la garde des locators heritera du meme decalage"
@@ -807,7 +807,7 @@ OPEN_QUESTION LeLibelleAmbiguEstRecopieDansLaGardeEtNeSuitPasLesModulesDeMessage
 	DESC "hors perimetre de T42 : la garde livree refuse bien le libelle d'aujourd'hui, c'est sa"
 		+ "fidelite dans le temps qui n'est tenue par rien"
 	BLOCKS @DECISION.LEtatDAttenteDHydratationResteSansScenarioEtSeGardeParLeRole
-	STATUS superseded
+	STATUS closed
 	RECOMMENDATION "epingler la constante de la garde dans sa spec, contre les deux modules de"
 		+ "messages importes : un ecart fait alors echouer bun test au lieu de desarmer la garde en"
 		+ "silence"

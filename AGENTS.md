@@ -19,7 +19,7 @@ sur tout l'espace de travail, et un fichier isolé rapporte comme cassées des r
 
 ```
 awawa status .                      # où en est le projet : entités par type et par STATUS
-awawa status OPEN_QUESTION --where STATUS!=superseded .   # ce qui n'est pas tranché
+awawa status OPEN_QUESTION --where STATUS==open .   # ce qui n'est pas tranché
 awawa context @PACKAGE.core_mapping --skip reasoning .     # le paquet de contexte avant d'implémenter
 awawa lint --strict .               # doit sortir en 0
 ```
@@ -50,13 +50,14 @@ awawa lint --strict .               # doit sortir en 0
   `lint --closure` (@DECISION.UneDecisionNommeLePaquetOuLaTacheQuElleContraint).
 - **Un défaut constaté est une `OPEN_QUESTION`**, son sort une `DECISION` qui la ferme
   (@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues). Une limitation acceptée est un point *fermé* : la question
-  passe `superseded` et **c'est la décision qui porte symptôme, cause et garde**, parce que `superseded` vaut
+  passe `closed` et **c'est la décision qui porte symptôme, cause et garde**, parce que `closed` vaut
   `GATE suppressed` et disparaît des paquets de récupération
   (@DECISION.UneLimitationAccepteeGardeSaMatiereDansLaDecision).
 - **Rouvrir une limitation acceptée** : la décision passe `superseded`, une successeure `:v2` la `SUPERSEDES` et dit
-  ce qui a changé, la question repasse `specified`. Le schéma exige qu'une entité `superseded` soit atteinte par
-  `CLOSED_BY` ou `SUPERSEDED_BY` — une décision retirée qui ne nomme pas ce qui la remplace tombe en `L026`. Remettre
-  la question à `specified` sans toucher à la décision passe `lint --strict` sans un mot : c'est mesuré, et c'est la
+  ce qui a changé, la question repasse `open`. Le schéma exige qu'une entité `superseded` soit atteinte par
+  `CLOSED_BY` ou `SUPERSEDED_BY`, et une question `closed` par `CLOSED_BY` — une décision retirée qui ne nomme pas ce
+  qui la remplace tombe en `L026`. Remettre
+  la question à `open` sans toucher à la décision passe `lint --strict` sans un mot : c'est mesuré, et c'est la
   moitié qui reste une discipline (@DECISION.UneDecisionRetireeNommeSaSuccesseure).
 - **Une entité remplacée n'est jamais supprimée** : elle passe `superseded`, et sa successeure écrit `SUPERSEDES`.
 - **Tout se fait dans la PR de tâche, rien après la fusion** : promotions et arbitrages écrits par l'agent de
@@ -236,7 +237,7 @@ dans l'arbre de la branche, vrai dans la base quand la fusion le porte, jamais v
 et le rapport d'usage ; la fusion porte le tout dans la base d'un coup.
 
 - **L'agent de tâche écrit les promotions et les arbitrages dans la PR** : la tâche passe `implemented`, les
-  décisions qu'elle livre passent `implemented`, les questions qu'elle tranche passent `superseded` par le `CLOSES`
+  décisions qu'elle livre passent `implemented`, les questions qu'elle tranche passent `closed` par le `CLOSES`
   d'une décision — chaque `SPEC` promue avec son `IMPL` résolu dans le diff. Une règle apprise en revue qui pourrait
   aller dans `~/.ai` s'écrit en `OPEN_QUESTION` ; général ou spécifique au projet est ton arbitrage, posé à la revue.
 - **`/awawa-pr-review <N>`** : traiter la revue, enregistrer dans le corpus chaque décision qu'elle produit *avant*

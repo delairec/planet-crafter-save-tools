@@ -1,27 +1,29 @@
-// Corpus de specification de planet-crafter-save-tools.
+// Specification corpus of planet-crafter-save-tools.
 //
-// Il vit dans docs/ ; la racine de workspace reste la racine du depot public, c'est de la
-// que les ancres IMPL resolvent et c'est elle que prend le dernier argument de chaque commande.
-// Voir @DECISION.LeCorpusVitDansLeDepotPublic et @DECISION.LeCorpusEstDecoupeParDomaine.
+// It lives in docs/ ; the workspace root stays the root of the public repository, which is where
+// IMPL anchors resolve from and what the last argument of every command takes.
+// See @DECISION.LeCorpusVitDansLeDepotPublic and @DECISION.LeCorpusEstDecoupeParDomaine.
 //
-// Langue : francais, par exception a la regle anglaise du depot public
-// (@DECISION.LaSpecificationResteEnFrancaisMemePubliee).
+// Language: the schema — declared vocabulary and the prose documenting it — is English; the prose
+// of data entities stays French, by exception to the English rule of the public repository
+// (@DECISION.LeSchemaEstRedigeEnAnglaisEtLesDonneesEnFrancais,
+// @DECISION.LaSpecificationResteEnFrancaisMemePubliee).
 //
-// Ce fichier porte le schema transverse ; chaque domaine porte le sien a cote de ses donnees.
+// This file carries the cross-cutting schema; each domain carries its own beside its data.
 PROJECT PlanetCrafterSaveTools
 	DESC "outils de fusion et de validation de sauvegardes du jeu The Planet Crafter"
 	DESC "monorepo Bun, packages prefixes par leur couche, UI SolidStart"
 
 SCHEMA PROJECT
-	DESC "configuration de niveau projet, exactement une par corpus"
+	DESC "project-level configuration, exactly one per corpus"
 
 SCHEMA *
-	DESC "champs licites sur toute entite de ce corpus"
+	DESC "fields legal on every entity of this corpus"
 	FIELD DESC string
 		REPEATABLE
 		FIELD REF reference
 			REPEATABLE
-			DESC "l'entite que cette phrase nomme, pour qu'elle soit indexee"
+			DESC "the entity this sentence names, so that it is indexed"
 	FIELD RATIONALE string
 		REPEATABLE
 		CATEGORY reasoning
@@ -35,12 +37,12 @@ SCHEMA *
 		DEFAULT draft
 	FIELD SOURCE string
 		REPEATABLE
-		DESC "ou cela a ete decide ou lu : date, numero de PR, revue"
+		DESC "where this was decided or read: date, PR number, review"
 	FIELD IMPL anchor
 		REPEATABLE
-		DESC "ou cela est realise, pour une entite qui ne porte pas de SPEC"
+		DESC "where this is realised, for an entity that carries no SPEC"
 	FIELD SUPERSEDES reference
-		DESC "l'entite que celle-ci remplace ; les rapports impriment SUPERSEDED_BY sur l'ancienne"
+		DESC "the entity this one replaces; reports print SUPERSEDED_BY on the old one"
 		CONVERSE SUPERSEDED_BY
 	WHEN STATUS specified
 		GATE error
@@ -55,11 +57,11 @@ SCHEMA *
 		INCOMING CLOSED_BY|SUPERSEDED_BY
 
 SCHEMA DECISION
-	DESC "un arbitrage, et ce qu'il a ecarte"
+	DESC "a ruling, and what it ruled out"
 	FIELD REJECTED string
 		REQUIRED
 		REPEATABLE
-		DESC "ce qui a ete envisage et ecarte"
+		DESC "what was considered and ruled out"
 		FIELD REF reference
 			REPEATABLE
 	FIELD CLOSES @OPEN_QUESTION
@@ -67,28 +69,34 @@ SCHEMA DECISION
 		CONVERSE CLOSED_BY
 	FIELD APPLIES_TO_PACKAGE @PACKAGE
 		REPEATABLE
-		DESC "le paquet dont cette decision contraint le code ; l'arete inverse est calculee"
+		DESC "the package whose code this decision constrains; the reverse edge is computed"
 		CONVERSE GOVERNED_BY
 	FIELD APPLIES_TO_TASK @TASK
 		REPEATABLE
-		DESC "la tache dont cette decision contraint ce qu'elle doit livrer ; l'arete inverse est"
-			+ "calculee"
+		DESC "the task whose deliverable this decision constrains; the reverse edge is computed"
 		CONVERSE GOVERNED_BY
 
 SCHEMA OPEN_QUESTION
-	DESC "un point non tranche, ou une limitation dont personne n'a encore decide du sort"
-	DESC "ferme par une DECISION qui pointe ici, et passe superseded alors, jamais supprime"
+	DESC "a point not yet settled, or a limitation whose fate nobody has decided"
+	DESC "closed by a DECISION pointing here, which moves it to closed, never deleted"
+	FIELD STATUS open|closed
+		DEFAULT open
+		DESC "open until a decision closes it; this type has no ladder to climb, so it declares its"
+			+ "own two values instead of the four of SCHEMA *"
 	FIELD BLOCKS reference
 		REPEATABLE
-		DESC "ce que ce point empeche ou fragilise ; l'arete inverse est calculee"
+		DESC "what this point prevents or weakens; the reverse edge is computed"
 		CONVERSE BLOCKED_BY
 	FIELD RECOMMENDATION string
-		DESC "l'option proposee, une fois qu'elle a affronte son alternative"
+		DESC "the proposed option, once it has faced its alternative"
 		FIELD REF reference
 			REPEATABLE
 		FIELD REJECTED string
 			REQUIRED
 			REPEATABLE
-			DESC "l'alternative examinee et ecartee, et pourquoi"
-	WHEN STATUS superseded
+			DESC "the alternative examined and ruled out, and why"
+	WHEN STATUS open
+		GATE error
+	WHEN STATUS closed
+		GATE suppressed
 		INCOMING CLOSED_BY

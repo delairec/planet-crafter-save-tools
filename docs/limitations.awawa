@@ -1,9 +1,9 @@
-// Les limitations acceptees. La question est fermee — superseded, donc hors des paquets de
+// Les limitations acceptees. La question est fermee — closed, donc hors des paquets de
 // recuperation — et la decision qui la ferme porte la matiere que la fiche gardait.
 OPEN_QUESTION LaRegleGitignoreDuContextePriveNeCouvrePasUnLien
 	DESC "la regle /.do-not-commit/ du .gitignore public ne vise qu'un repertoire : un lien"
 		+ "symbolique du meme nom y echappe et se fait indexer par git add -A"
-	STATUS superseded
+	STATUS closed
 	SOURCE "constate le 2026-09-11, montage du corpus awawa"
 
 DECISION LaRegleDuContextePrivePerdSaBarreFinale
@@ -26,7 +26,7 @@ DECISION LaRegleDuContextePrivePerdSaBarreFinale
 OPEN_QUESTION ErreursTardivesDeLaSectionTroisPerdues
 	DESC "une erreur d'analyse decouverte apres coup dans la section des objets du monde n'atteint"
 		+ "jamais l'ecran"
-	STATUS superseded
+	STATUS closed
 
 DECISION LesErreursTardivesDeLaSectionTroisRestentUneFragiliteLatente
 	DESC "fragilite laissee telle quelle : aujourd'hui le chemin est mort, la validation draine le"
@@ -60,7 +60,7 @@ DECISION LesErreursTardivesDeLaSectionTroisRestentUneFragiliteLatente
 OPEN_QUESTION PreloadDIsolationIgnoreHorsRacineDePackage
 	DESC "bun test lance d'un dossier plus profond qu'une racine de package n'applique pas"
 		+ "l'isolation des tests"
-	STATUS superseded
+	STATUS closed
 
 DECISION LePreloadHorsRacineDePackageSeContourneParBunOptions
 	DESC "limitation acceptee : Bun resout bunfig.toml depuis le repertoire courant seulement, sans"
@@ -82,7 +82,7 @@ DECISION LePreloadHorsRacineDePackageSeContourneParBunOptions
 
 OPEN_QUESTION StandardDeuxMergedNEstPasUneSortieDeLOutil
 	DESC "la save de reference Standard-2-merged.json peut-elle servir de reference de sortie"
-	STATUS superseded
+	STATUS closed
 
 DECISION StandardDeuxMergedNeSertJamaisDeReferenceDeSortie
 	DESC "non : le fichier a ete retouche, aucune version de l'outil ne l'a ecrit"
@@ -104,7 +104,7 @@ DECISION StandardDeuxMergedNeSertJamaisDeReferenceDeSortie
 OPEN_QUESTION OnzeMachinesPlaceesHorsDesTablesDEnergie
 	DESC "quelle valeur d'energie donner aux onze gId places dont le wiki n'imprime aucun champ"
 		+ "energy"
-	STATUS superseded
+	STATUS closed
 
 DECISION LesOnzeMachinesRestentSansNiveauDEnergieConnu
 	DESC "limitation acceptee sans tache : la lever demande une source de donnees du jeu, que le"
@@ -137,7 +137,7 @@ DECISION LesOnzeMachinesRestentSansNiveauDEnergieConnu
 
 OPEN_QUESTION MarqueDOrdreDesOctetsNonPreservee
 	DESC "faut-il preserver la marque d'ordre des octets d'une save qui en porte une"
-	STATUS superseded
+	STATUS closed
 
 DECISION LaMarqueDOrdreDesOctetsNEstPasPreservee
 	DESC "non : les deux adaptateurs retirent la marque a la lecture et n'en ecrivent aucune"
@@ -161,7 +161,7 @@ DECISION LaMarqueDOrdreDesOctetsNEstPasPreservee
 OPEN_QUESTION RecouvrementDIdentifiantsDansLesSavesDEntree
 	DESC "la fusion peut-elle garantir que chaque identifiant de l'union inventaires + world"
 		+ "objects est unique"
-	STATUS superseded
+	STATUS closed
 
 DECISION LaGarantieDUnicitePorteSurCeQueLaFusionIntroduit
 	DESC "non : les saves d'entree portent deja le recouvrement, sorti du jeu, et aucune fusion ne"
@@ -238,7 +238,7 @@ DECISION LesReferentsDUnContexteSeLisentParShow
 OPEN_QUESTION LEtatDAttenteDHydratationNEstCouvertParAucunScenario
 	DESC "le troisieme etat de chargement de la page — le repli affiche tant que l'UI n'est pas"
 		+ "montee — n'a pas de scenario"
-	STATUS superseded
+	STATUS closed
 	SOURCE "constate le 2026-09-14, T40, PR #78"
 
 DECISION LEtatDAttenteDHydratationResteSansScenarioEtSeGardeParLeRole

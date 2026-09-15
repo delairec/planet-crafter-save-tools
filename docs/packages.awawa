@@ -3,11 +3,11 @@
 // public. Ce que le corpus ajoute est l'ancre : un package dissous ou renomme fait tomber L016
 // ici (@DECISION.LesPackagesDissousNeSontPasRecrees).
 SHAPE package_name
-	DESC "le nom reel du package, souligne la ou le manifeste porte un tiret"
+	DESC "the real package name, underscored where the manifest carries a dash"
 	MATCH "(core|util|cli|ui|shared)(_[a-z0-9]+)+(:v[0-9]+)?"
 
 SCHEMA PACKAGE
-	DESC "un package du monorepo ; le prefixe du nom fixe ses dependances autorisees"
+	DESC "a package of the monorepo; the name prefix fixes its allowed dependencies"
 	NAME package_name
 	FIELD PREFIX core|util|cli|ui|shared
 		REQUIRED

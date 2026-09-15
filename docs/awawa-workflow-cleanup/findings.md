@@ -13,6 +13,17 @@ Four superseded decisions absorbed by their successor were removed, the criterio
 `@DECISION.UneDecisionSupersedeeEstRetireeQuandSaSuccesseureLaContientToute`. Six superseded
 decisions remain: each holds a rejected alternative or a design state its successor does not restate.
 
+`OPEN_QUESTION` carries its own ladder — §7.5's step, done first as it proposed:
+`FIELD STATUS open|closed`, `GATE error` on `open`, `GATE suppressed` + `INCOMING CLOSED_BY` on
+`closed`, and the 61 entities retyped (21 `open`, 40 `closed`), recorded as
+`@DECISION.UneQuestionOuverteDeclareSonEchelleDeStatut`. The per-type shadowing of the wildcard's
+enum is now proven on real data, not on a throwaway copy: `lint --strict` exits 0.
+
+The schema is English — declared vocabulary was already so; its prose now follows, and every type,
+field and value the split creates is born English. Data prose stays French, recorded as
+`@DECISION.LeSchemaEstRedigeEnAnglaisEtLesDonneesEnFrancais`, which narrows
+`@DECISION.LaSpecificationResteEnFrancaisMemePubliee` without reopening it.
+
 Not done, and blocked on a recorded ruling: removing the ten `implemented` `TASK` entities.
 `@DECISION.UneTacheFusionneeResteDansLeCorpus` rejects it by name, because the 82 incoming
 `BEFORE` / `BLOCKED_BY` / `GOVERNED_BY` edges would break.

@@ -334,7 +334,7 @@ OPEN_QUESTION OuVontLesArtefactsDExecutionDeLaSuiteDeScenarios
 		+ "et non ignores dans le package, que le prochain ajout global commiterait"
 	DESC "deux issues : les ignorer par une regle, ou pointer la sortie du runner vers un"
 		+ "repertoire deja ignore"
-	STATUS superseded
+	STATUS closed
 	BLOCKS @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
 	RATIONALE "hors perimetre du premier livrable, qui n'ajoute que des scenarios ; la question"
 		+ "releve de l'outillage de la suite, dont T42 porte la garde et la mesure"
