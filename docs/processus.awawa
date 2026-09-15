@@ -380,6 +380,30 @@ DECISION UneDecisionRetireeNommeSaSuccesseure
 		IMPL "docs/_schema.awawa::INCOMING CLOSED_BY|SUPERSEDED_BY"
 	SOURCE "decision du 2026-09-11"
 
+DECISION UneEntiteIntroduiteParLaPrCouranteEstReecrite
+	DESC "une entite creee par la PR courante se reecrit sur place ; superseded et une successeure"
+		+ ":v2 sont reserves a ce que la base porte deja"
+	DESC "tant qu'elle n'a pas atteint la base, l'entite n'a existe que dans la branche : la"
+		+ "reecrire ne retire rien a personne et ne laisse aucune entite morte a lire"
+	DESC "une entite deja citee dans un fil de revue est reecrite comme les autres, et la reponse"
+		+ "au fil nomme la reecriture"
+	STATUS specified
+	RATIONALE "arbitrage de l'utilisateur du 2026-09-14 : reecrire plutot que superseder, pour ne"
+		+ "pas ajouter de bruit ; une decision introduite par la PR est un brouillon tant qu'elle"
+		+ "n'est pas sur la branche de travail"
+	RATIONALE "mesure sur les rapports d'usage : une entite ecrite puis reecrite ou retiree dans la"
+		+ "meme PR est signalee cinq fois, de 2026-09-14-pr-71.md a 2026-09-15-pr-79.md, sans"
+		+ "qu'aucune entite ne dise laquelle des deux formes prendre"
+	RATIONALE "le meme cas a ete tranche une fois a la main, dans un REJECTED de la decision qui"
+		+ "supprimait une entite de la PR #75, et ce jugement n'a jamais quitte cette entite-la"
+		REF @DECISION.UneVueQueLeCorpusRendDejaNEstPasRecopieeDedans
+	REJECTED "passer par superseded a l'interieur de la PR qui a cree l'entite : le schema reclame"
+		+ "alors une successeure qui ne remplace rien, et status compte deux entites la ou la base"
+		+ "n'en verra qu'une"
+	REJECTED "laisser le choix au jugement de chaque session : c'est ce qui a produit les deux"
+		+ "traitements mesures, la suppression et la succession, sur le meme cas"
+	SOURCE "arbitrage de l'utilisateur du 2026-09-14"
+
 DECISION LeCorpusRemplaceLesFichesDeKnownIssues
 	DESC "known-issues/ est supprime : ses sept fiches sont devenues des entites de ce corpus"
 	DESC "un defaut constate s'enregistre desormais en OPEN_QUESTION, et son sort en DECISION qui"
