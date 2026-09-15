@@ -688,3 +688,36 @@ DECISION LeLibelleAmbiguEstEpingleDansLaSpecDeLaGardePasDeduitParElle
 		IMPL "scripts/check-scenario-locators.ts::AMBIGUOUS_BUSY_LABEL"
 		IMPL "scripts/check-scenario-locators.spec.ts"
 	SOURCE "revue de T42, PR #83"
+
+DECISION LesRaccourcisRefusesParLaGardeSontRelevesSurLApiDePlaywright
+	DESC "la liste des raccourcis que la garde des locators refuse est relevee sur les types de"
+		+ "playwright-core installes, jamais ecrite de memoire : toute methode de Page dont le"
+		+ "premier argument est un selecteur y figure"
+	DESC "frameLocator est range dans le motif sans receveur, aupres de .locator( : son argument"
+		+ "est un selecteur brut quel que soit le receveur, Page, Locator ou FrameLocator"
+	DESC "page.frame reste hors de la garde : son argument nomme une frame par son name ou son url,"
+		+ "pas un element de la page"
+	STATUS implemented
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.T42_GardeDesLocatorsEtMesureDeLaSuite
+	RATIONALE "revue de la PR #83 : dragAndDrop, setChecked, inputValue et frameLocator manquaient"
+		+ "a la garde livree. Releve sur playwright-core 1.63.0, Page compte trente methodes dont"
+		+ "le premier argument est un selecteur, et ces quatre etaient les seules absentes"
+	RATIONALE "frameLocator echappait aussi au motif sans receveur : .locator( exige un point et un"
+		+ "l minuscule, que frameLocator n'a ni l'un ni l'autre"
+		REF @DECISION.UneGardeDeDepotRefuseLesLocatorsQueLEcranNeMontrePas
+	RATIONALE "limite reconduite et non elargie : Frame porte la meme API que Page, si bien que"
+		+ "page.frame('nom').click('.x') sort de la garde. C'est la regle du receveur immediat,"
+		+ "deja decidee, et la lever refuserait les gestes memes des scenarios livres"
+	REJECTED "ajouter frameLocator a la liste des raccourcis de page : il ne serait alors refuse"
+		+ "que sur page, alors qu'un locator qui le recoit prend le meme selecteur brut"
+	REJECTED "refuser page.frame au motif qu'il prend une chaine : son argument est un nom ou une"
+		+ "url de frame, et la garde deviendrait fausse"
+	REJECTED "reecrire la liste a la main a chaque montee de version : elle se releve sur les types"
+		+ "installes, une methode de Page dont le premier argument est un selecteur etant le seul"
+		+ "critere"
+	SPEC "la garde refuse tout raccourci dont page est le receveur immediat et dont le premier"
+		+ "argument est un selecteur, et le frameLocator quel que soit son receveur"
+		IMPL "scripts/check-scenario-locators.ts"
+		IMPL "scripts/check-scenario-locators.spec.ts"
+	SOURCE "revue de T42, PR #83"

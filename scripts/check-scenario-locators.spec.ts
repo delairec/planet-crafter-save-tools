@@ -119,9 +119,49 @@ describe('findScenarioLocatorViolations', () => {
       ]);
     });
 
+    it('should report the page actions whose first argument is a raw selector', () => {
+      // Arrange
+      const source = [
+        "await page.dragAndDrop('.merge-result', '.trash');",
+        "await page.setChecked('#keep-duplicates', true);",
+        "const value = await page.inputValue('#save-a');"
+      ].join('\n');
+
+      // Act
+      const violations = findScenarioLocatorViolations(source);
+
+      // Assert
+      expect(violations).toEqual([
+        {line: 1, reason: CSS_SELECTOR_REASON},
+        {line: 2, reason: CSS_SELECTOR_REASON},
+        {line: 3, reason: CSS_SELECTOR_REASON}
+      ]);
+    });
+
+    it('should report the frame locator whatever receives it, its argument being a raw selector in every case', () => {
+      // Arrange
+      const source = [
+        "await page.frameLocator('#preview').getByRole('button').click();",
+        "await page.getByRole('region').frameLocator('iframe.preview').getByRole('button').click();"
+      ].join('\n');
+
+      // Act
+      const violations = findScenarioLocatorViolations(source);
+
+      // Assert
+      expect(violations).toEqual([
+        {line: 1, reason: CSS_SELECTOR_REASON},
+        {line: 2, reason: CSS_SELECTOR_REASON}
+      ]);
+    });
+
     it('should leave a locator method alone when the page itself is the receiver of a legitimate call', () => {
       // Arrange
-      const source = "await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);";
+      const source = [
+        "await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);",
+        "await page.getByRole('checkbox').setChecked(true);",
+        "const value = await page.getByLabel('Save A:').inputValue();"
+      ].join('\n');
 
       // Act
       const violations = findScenarioLocatorViolations(source);
