@@ -249,7 +249,7 @@ DECISION UnIndiceDeSectionNeSEcritJamaisEnDur
 		IMPL "packages/core-mapping/src/presentation/SaveFileValidationPresenter.spec.ts"
 		IMPL "packages/core-mapping/src/presentation/formatValidationError.spec.ts"
 	SOURCE "decision du 2026-09-09, revue de T19 et de T26"
-	SOURCE "T44, frontiere de l'attendu tranchee a l'implementation, PR #PR_PLACEHOLDER"
+	SOURCE "T44, frontiere de l'attendu tranchee a l'implementation, PR #82"
 
 DECISION UnImportDeTypeJsdocQuiTraverseUnPackageSEcritTypedef
 	DESC "un import de type JSDoc qui traverse une frontiere de package s'ecrit en typedef portant"

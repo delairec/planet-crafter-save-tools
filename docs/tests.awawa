@@ -97,7 +97,7 @@ DECISION UneSpecDeControleurCouvreLeCablagePasLesBranches
 		+ "d'echec a cabler"
 		IMPL "packages/core-mapping/src/controllers"
 	SOURCE "decision du 2026-09-05, revue de T9"
-	SOURCE "T44, choix de l'echec garde tranche a l'implementation, PR #PR_PLACEHOLDER"
+	SOURCE "T44, choix de l'echec garde tranche a l'implementation, PR #82"
 
 DECISION UneSpecAsserteUnChampDiscriminantQuandLAttenduNEstPasLitteral
 	DESC "une spec de CLI asserte un champ discriminant de la sortie, pas la sortie entiere"

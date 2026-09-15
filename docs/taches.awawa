@@ -377,7 +377,7 @@ TASK T44_SpecsApplicationInfrastructurePresentation
 		+ "core-mapping"
 	STATUS implemented
 	WAVE "4"
-	PR "PR_PLACEHOLDER"
+	PR "82"
 	AFTER @TASK.T43_SpecsDeDomaineCoreMapping
 	RATIONALE "troisieme des trois pull requests de T38 ; elle porte l'acceptation d'ensemble, qui"
 		+ "ne peut etre vraie qu'une fois les specs de domaine livrees"
@@ -427,7 +427,7 @@ TASK T44_SpecsApplicationInfrastructurePresentation
 		IMPL "packages/core-mapping"
 	SOURCE "revue de code complete du 2026-09-07"
 	SOURCE "arbitrage utilisateur du 2026-09-14 : trois pull requests, donc trois entites, PR #76"
-	SOURCE "T44, reaudit du releve du 2026-09-07, PR #PR_PLACEHOLDER"
+	SOURCE "T44, reaudit du releve du 2026-09-07, PR #82"
 
 DECISION UneTachePorteSonEtiquetteEtUnNomLisible
 	DESC "le nom d'une tache est son etiquette, un souligne, puis ce qu'elle couvre :"
