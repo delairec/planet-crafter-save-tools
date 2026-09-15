@@ -16,6 +16,8 @@ entry = [
     "scripts/check-scenario-fixtures.ts",
     "scripts/check-scenario-fixtures.spec.ts",
     "scripts/generate-scenario-fixtures.ts",
+    "scripts/check-scenario-locators.ts",
+    "scripts/check-scenario-locators.spec.ts",
     "packages/ui-save-manager/src/entry-client.tsx",
     "packages/ui-save-manager/src/entry-server.tsx",
     "packages/**/*.spec.js",

@@ -798,3 +798,24 @@ OPEN_QUESTION LeFiltreDuParcoursPartagePorteEncoreLeNomDesSpecs
 		+ "un commit qui ne touche que specSources.ts et sa spec"
 		REJECTED "renommer dans cette PR : deux branches de la vague ecrivent dans specSources.ts"
 	SOURCE "T41, PR #81"
+
+OPEN_QUESTION LeLibelleAmbiguEstRecopieDansLaGardeEtNeSuitPasLesModulesDeMessages
+	DESC "a trancher : la garde des locators porte le libelle ambigu en constante, troisieme copie"
+		+ "apres displayRouteLoadingLabel et spinnerLoadingLabel ; le jour ou l'un des deux modules"
+		+ "change de libelle, le quatrieme motif cesse de garder et la garde reste verte"
+		REF @DECISION.UneGardeDeDepotRefuseLesLocatorsQueLEcranNeMontrePas
+	DESC "hors perimetre de T42 : la garde livree refuse bien le libelle d'aujourd'hui, c'est sa"
+		+ "fidelite dans le temps qui n'est tenue par rien"
+	BLOCKS @DECISION.LEtatDAttenteDHydratationResteSansScenarioEtSeGardeParLeRole
+	STATUS specified
+	RECOMMENDATION "epingler la constante de la garde dans sa spec, contre les deux modules de"
+		+ "messages importes : un ecart fait alors echouer bun test au lieu de desarmer la garde en"
+		+ "silence"
+		REJECTED "deduire le libelle des modules de messages dans la garde elle-meme, en retenant"
+			+ "toute valeur exportee par plus d'un module : examine contre la decision de famille,"
+			+ "qui refuse a une garde une seconde raison de changer — la garde lirait alors les"
+			+ "messages en plus des scenarios"
+		REJECTED "laisser la constante seule : c'est l'etat livre, et il ne signale rien le jour de"
+			+ "la derive"
+		REF @DECISION.LesGardesDuDepotSontDesScriptsGroupesEtLeurLimiteEstConnue
+	SOURCE "T42, 2026-09-15"

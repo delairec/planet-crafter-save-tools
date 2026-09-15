@@ -119,7 +119,7 @@ Depuis la racine du dépôt (workspace Bun) :
   request et les rend dans le résumé du run. Ne pas rebrancher `audit:quality` tel quel dans un job : ses scripts
   fallow passent `--base master`, et un `actions/checkout` ne laisse que des références de suivi — mesuré,
   `--base master` y sort en 2, `--base origin/master` en 0.
-- `bun run check:guards` — les trois gardes du dépôt : `check:assertions`, `check:fixtures`, `check:dependencies`.
+- `bun run check:guards` — les gardes du dépôt, enchaînées ; leur liste est celle des scripts `check:*` du `package.json`.
   Aucune ne lit l'historique git, elles répondent en une fraction de seconde : c'est la moitié d'`audit:quality` à
   lancer en cours d'écriture.
 - `bun run check:dependencies` — vérifie la matrice de dépendances par préfixe (manifestes et imports, imports
