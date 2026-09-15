@@ -330,7 +330,7 @@ OPEN_QUESTION LeRelancementDUnRapportDUsageButeSurSaBranche
 	DESC "/awawa-usage-report supprime une branche docs/usage-report-pr-N existante sans commit"
 		+ "au-dessus de la base avant de couper la sienne, ou suffixe le nom"
 	STATUS superseded
-	BLOCKS @DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante
+	BLOCKS @DECISION.UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante
 	RATIONALE "le premier rapporteur de la PR #65 est mort sur une limite de session apres 3 min 02"
 		+ "s, laissant docs/usage-report-pr-65 extraite et vide dans son worktree ; le relancement"
 		+ "a du prendre un autre nom"

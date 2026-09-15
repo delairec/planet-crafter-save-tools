@@ -232,7 +232,7 @@ vérifier que `gh pr view <N> --json mergeable` rend `MERGEABLE` avant de consid
 **Il n'y a plus de commentaire « À faire à la fusion », ni de promotion ni de rapport après la fusion.** Le corpus
 vit dans la branche : un `STATUS implemented` écrit dans la PR de tâche a la sémantique du code qu'elle livre — vrai
 dans l'arbre de la branche, vrai dans la base quand la fusion le porte, jamais vrai si la PR meurt
-(@DECISION.LeCorpusRemplaceLaChecklistDeFusion:v2). Une PR par tâche porte le code, les promotions, les arbitrages
+(@DECISION.LeCorpusRemplaceLaChecklistDeFusion). Une PR par tâche porte le code, les promotions, les arbitrages
 et le rapport d'usage ; la fusion porte le tout dans la base d'un coup.
 
 - **L'agent de tâche écrit les promotions et les arbitrages dans la PR** : la tâche passe `implemented`, les

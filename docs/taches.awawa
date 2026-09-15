@@ -459,39 +459,13 @@ DECISION UneTachePorteSonEtiquetteEtUnNomLisible
 	SOURCE "decision du 2026-09-12, apres le decoupage du corpus par domaine"
 
 DECISION UneTacheFusionneeResteDansLeCorpus
-	DESC "une tache fusionnee passe implemented et reste une entite ; sa fiche markdown n'est plus"
-		+ "supprimee, parce qu'il n'y a plus de fiche"
-	DESC "les taches fusionnees avant le 2026-09-11 ne sont pas retro-creees : le graphe ne porte"
-		+ "que ce qui reste a ordonner, et leur ordre n'a plus d'effet sur rien"
-	STATUS superseded
-	RATIONALE "une tache ouverte nomme ses prerequis par AFTER ; si l'entite du prerequis"
-		+ "disparaissait a sa fusion, la reference pendrait chez toutes celles qui l'attendaient."
-		+ "Le corpus impose donc de la garder, et status --where STATUS!=implemented rend les"
-		+ "ouvertes"
-	RATIONALE "la raison d'etre de la suppression a la fusion — une PR fermee au lieu d'etre"
-		+ "fusionnee laissait la fiche silencieusement absente — disparait : c'est le STATUS qui"
-		+ "porte l'etat, plus la presence d'un fichier"
-	REJECTED "supprimer l'entite a la fusion, comme la fiche l'etait : chaque suppression casserait"
-		+ "les references des taches restantes"
-	REJECTED "marquer la tache fusionnee superseded : le schema exige alors une arete entrante"
-		+ "CLOSED_BY ou SUPERSEDED_BY, qu'une tache achevee n'a pas — elle n'a pas ete remplacee,"
-		+ "elle a ete faite"
-	REJECTED "retro-creer les taches deja fusionnees pour completer le graphe : leur ordre n'a plus"
-		+ "d'effet sur rien"
-	SPEC "le plan d'ordonnancement se lit par le corpus, plans/ ne portant plus que les vagues et"
-		+ "la prose de cadrage"
-		IMPL "docs/taches.awawa"
-	SOURCE "decision du 2026-09-11, migration de tasks/"
-
-DECISION UneTacheFusionneeResteDansLeCorpus:v2
 	DESC "une tache passe implemented dans sa propre pull request, avec ses SPEC ancres, et reste"
 		+ "une entite apres la fusion ; sa fiche markdown n'est plus supprimee, parce qu'il n'y a"
 		+ "plus de fiche"
-		REF @DECISION.LeCorpusRemplaceLaChecklistDeFusion:v2
+		REF @DECISION.LeCorpusRemplaceLaChecklistDeFusion
 	DESC "les taches fusionnees avant le 2026-09-11 ne sont pas retro-creees : le graphe ne porte"
 		+ "que ce qui reste a ordonner, et leur ordre n'a plus d'effet sur rien"
 	STATUS implemented
-	SUPERSEDES @DECISION.UneTacheFusionneeResteDansLeCorpus
 	RATIONALE "ce qui change : le moment ou implemented s'ecrit, la branche et non la base ; le"
 		+ "reste tient"
 	RATIONALE "une tache ouverte nomme ses prerequis par AFTER ; si l'entite du prerequis"

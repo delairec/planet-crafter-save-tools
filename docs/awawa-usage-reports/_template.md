@@ -3,7 +3,7 @@
 <!--
 Template for a usage report, one file per merged pull request, named `<merge date>-pr-<N>.md`.
 Written by /awawa-usage-report through the awawa-usage-reporter agent, never by a session that took
-part in the work (@DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante).
+part in the work (@DECISION.UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante).
 Reports dated before this template do not follow it: they are sources for the recurring points, not
 examples of the shape. Keep every heading, in this order. Delete the comments. Entities are cited by name and never
 restated: this file is about the method and the instrument, not a second home for project facts.
