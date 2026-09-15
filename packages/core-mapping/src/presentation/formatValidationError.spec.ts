@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {formatValidationError} from './formatValidationError';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
+import {GLOBAL_METADATA_SECTION_INDEX, PLAYERS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 describe('formatValidationError', () => {
@@ -11,7 +12,7 @@ describe('formatValidationError', () => {
       const error = formatValidationError({
         code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
         detail: 'must have required property gId',
-        section: 2,
+        section: PLAYERS_SECTION_INDEX,
         entryIndex: 3
       });
 
@@ -39,7 +40,7 @@ describe('formatValidationError', () => {
       const error = formatValidationError({
         code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE,
         detail: 'Unexpected number of sections.',
-        section: 0
+        section: GLOBAL_METADATA_SECTION_INDEX
       });
 
       // Assert

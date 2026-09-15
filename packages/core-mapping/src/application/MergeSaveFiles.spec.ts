@@ -9,6 +9,7 @@ import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
 import {SaveValidationResult} from './ports/SaveValidationResult';
 import {SaveParseError, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {INVENTORIES_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createPlayer, createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
 import {createSaveSections} from '../testing/createSaveSections';
 
@@ -261,7 +262,7 @@ describe('MergeSaveFiles', () => {
   });
 
   describe('When a save reaches the merge with a line that cannot be read', () => {
-    const unreadableLine: SaveParseError = {section: 4, entryIndex: 0, detail: 'Invalid JSON: {not valid json'};
+    const unreadableLine: SaveParseError = {section: INVENTORIES_SECTION_INDEX, entryIndex: 0, detail: 'Invalid JSON: {not valid json'};
     const parseSaveAWithAnUnreadableLine = parserAnswering({contentA: {sections: createSaveSections(), errors: [unreadableLine]}});
 
     it('should present the merged save as unusable instead of a success', async () => {
