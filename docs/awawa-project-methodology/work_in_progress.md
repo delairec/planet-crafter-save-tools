@@ -1,5 +1,9 @@
 # FICHIER DE TRAVAIL
 
+> **Frozen on 2026-09-17, at the start of the migration: this file is no longer edited.** This notice is its last
+> edit. The migration follows the « Migration outline » below; what it rules from here lives in the corpus and in the
+> migration pull request.
+
 Ce fichier sert de base pour la construction d'un nouveau corpus. On élabore d'abord un "squelette", sans rien écrire en
 dehors de ce fichier (work_in_progress.md).
 Une fois qu'on a établi la structure de corpus cible, on commencera la migration. Les nouveaux fichiers awawa seront

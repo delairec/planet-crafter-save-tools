@@ -1,0 +1,285 @@
+SCHEMA *
+	DESC "fields legal on every entity of this corpus"
+	NAME pascal
+	FIELD DESC string
+		DESC "what no other field of the entity holds; written only when nothing else carries it"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the prose names, so that it is indexed"
+	FIELD RATIONALE string
+		CATEGORY reasoning
+		DESC "why the entity is as it is"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the prose names, so that it is indexed"
+	FIELD SOURCE string
+		REPEATABLE
+		CATEGORY provenance
+		DESC "where the entity came from, in prose; no source type fits: declare it in the same"
+			+ "pull request"
+		FIELD REF reference
+			REQUIRED
+			REPEATABLE
+			DESC "the PULL_REQUEST, USAGE_REPORT, URL or PROJECT the prose names"
+	FIELD STATUS active|archived
+		DEFAULT active
+		DESC "written only to archive an entity that stopped binding"
+	WHEN STATUS active
+		GATE error
+	WHEN STATUS archived
+		GATE suppressed
+		FIELD ARCHIVED_ON date
+			REQUIRED
+			DESC "the day the entity was archived; starts the delay before deletion"
+		FIELD PURGE true|false
+			DEFAULT true
+			DESC "whether the cleanup pass deletes the entity once the delay has run; false keeps"
+				+ "it"
+
+SHAPE pascal
+	DESC "an identifier in PascalCase"
+	MATCH "[A-Z][A-Za-z0-9]*"
+
+SHAPE task_id
+	DESC "the Conventional Commits type of the task, upper case, then its number in the global"
+		+ "sequence"
+	MATCH "(BUILD|CHORE|CI|DOCS|FEAT|FIX|PERF|REFACTOR|REVERT|STYLE|TEST)[0-9]+"
+
+SHAPE package_name
+	DESC "the manifest name of the package, underscore where the manifest has a hyphen"
+	MATCH "(core|util|cli|ui|shared)(_[a-z0-9]+)+"
+
+SHAPE date
+	DESC "a calendar day, YYYY-MM-DD"
+	MATCH "\d{4}-\d{2}-\d{2}"
+
+SHAPE repo
+	DESC "a repository on the forge, owner/name"
+	MATCH "[A-Za-z0-9.-]+/[A-Za-z0-9.-]+"
+
+SHAPE url
+	DESC "an absolute http or https address"
+	MATCH "https?://[^\s\"]+"
+
+SHAPE project_name
+	DESC "the short name of a project, upper case"
+	MATCH "[A-Z]+"
+
+SHAPE pr_id
+	DESC "the project name then the pull request number"
+	MATCH "[A-Z]+[0-9]+"
+
+SHAPE file_name
+	DESC "awawa_usage_report_ then the subject of the report"
+	MATCH "awawa_usage_report_[A-Za-z0-9]+(_[A-Za-z0-9]+)*"
+
+FIELDSET Ruling
+	DESC "the fields shared by the ruling types"
+	FIELD REJECTED string
+		REQUIRED
+		REPEATABLE
+		CATEGORY reasoning
+		DESC "an alternative considered and refused, including the previous form of this ruling"
+			+ "when replaced"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the prose names, so that it is indexed"
+	FIELD UNTIL @TASK|string
+		CONVERSE RETIRES
+		DESC "what retires the ruling: the task whose merge retires it, or the observable condition"
+
+SCHEMA DECISION
+	DESC "a ruling the project follows that holds somewhere in the repository"
+	INCLUDE @FIELDSET.Ruling
+	FIELD SPEC string
+		REQUIRED
+		REPEATABLE
+		DESC "one falsifiable obligation"
+		FIELD IMPL anchor
+			REQUIRED
+			REPEATABLE
+			DESC "where the obligation holds: code, config, schema, hook, instructions"
+		FIELD ENFORCED_BY anchor
+			REPEATABLE
+			DESC "the guard, test or workflow that fails when the obligation is broken"
+	FIELD APPLIES_TO_PACKAGE @PACKAGE
+		REPEATABLE
+		CONVERSE GOVERNED_BY
+		DESC "the package the ruling is limited to; absent: every package"
+	FIELD APPLIES_TO_TASK @TASK
+		REPEATABLE
+		CONVERSE GOVERNED_BY
+		DESC "the task that builds it; purged with the task"
+	FIELD RESTS_ON @FACT
+		REPEATABLE
+		CONVERSE GROUNDS
+		DESC "a fact the ruling depends on"
+
+SCHEMA PROCESS
+	DESC "a ruling on how the work is led, with nothing in the repository to anchor"
+	INCLUDE @FIELDSET.Ruling
+	FIELD SPEC string
+		REQUIRED
+		REPEATABLE
+		DESC "one falsifiable obligation"
+		FIELD ENFORCED_BY anchor
+			REPEATABLE
+			DESC "the hook or workflow that fails when the obligation is broken"
+
+SCHEMA LIMITATION
+	DESC "a known defect of this project left in place; a defect of an external tool is not"
+		+ "recorded"
+	FIELD SYMPTOM string
+		REQUIRED
+		DESC "what a user or a developer observes"
+	FIELD WORKAROUND string
+		REPEATABLE
+		DESC "what to do while the defect stands"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the prose names, so that it is indexed"
+	FIELD UNTIL @TASK|string
+		REQUIRED
+		CONVERSE RETIRES
+		DESC "the task that fixes it, or the observable condition that makes the fix due"
+	FIELD SEEN_IN anchor
+		REPEATABLE
+		DESC "the code where the defect sits, or the test that pins the current behaviour"
+	FIELD APPLIES_TO_PACKAGE @PACKAGE
+		REPEATABLE
+		CONVERSE LIMITED_BY
+		DESC "the package that carries the defect"
+
+SCHEMA FACT
+	DESC "what the save file or the game is; arbitrates nothing of ours; temporary type"
+	FIELD DESC string
+		REQUIRED
+		DESC "the statement, one per fact"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the statement names, so that it is indexed"
+	FIELD BASIS attested|hypothesis
+		DEFAULT attested
+		DESC "whether the statement is proven or assumed"
+	FIELD ATTESTED_BY anchor
+		REPEATABLE
+		DESC "the fixture, test, schema or save sample that proves it"
+	WHEN BASIS attested
+		FIELD ATTESTED_BY
+			REQUIRED
+			REPEATABLE
+	WHEN BASIS hypothesis
+		FIELD UNTIL @TASK|string
+			REQUIRED
+			CONVERSE RETIRES
+			DESC "the counter-example that refutes it, or the task that settles it"
+
+SCHEMA OPEN_QUESTION
+	DESC "a project-level point left undecided on which a task waits; archived by the pull request"
+		+ "that rules it"
+	FIELD DESC string
+		REQUIRED
+		DESC "the question, one statement"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the question names, so that it is indexed"
+	FIELD BLOCKS @TASK
+		REQUIRED
+		REPEATABLE
+		CONVERSE BLOCKED_BY
+		DESC "the task that cannot proceed until the question is ruled"
+
+SCHEMA TASK
+	DESC "a unit of work delivered by one pull request"
+	NAME task_id
+	FIELD TITLE string
+		REQUIRED
+		DESC "what the task delivers, in one line"
+	FIELD STATUS draft|todo|implemented|archived
+		REQUIRED
+		DESC "draft: not ratified by the user; todo: ratified; implemented: merged; archived by the"
+			+ "cleanup pass"
+	FIELD SPEC string
+		REQUIRED
+		REPEATABLE
+		DESC "one acceptance criterion, observable once delivered; says nothing of how"
+		FIELD IMPL anchor
+			REPEATABLE
+			DESC "the test or the code where the criterion is proven; written at delivery"
+	FIELD AFTER @TASK
+		REPEATABLE
+		CONVERSE BEFORE
+		DESC "the task that must merge before this one"
+	FIELD WAVE uint
+		DESC "the wave of the plan the task belongs to"
+	FIELD DELIVERED_BY @PULL_REQUEST
+		CONVERSE DELIVERS
+		DESC "the pull request that delivers it"
+	FIELD PURGE true|false
+		DEFAULT true
+		DESC "whether the cleanup pass deletes the task once archived and the delay has run; false"
+			+ "keeps it"
+	WHEN STATUS draft
+		GATE error
+	WHEN STATUS todo
+		GATE error
+	WHEN STATUS implemented
+		GATE error
+		FIELD SPEC
+			REQUIRED
+			REPEATABLE
+			FIELD IMPL
+				REQUIRED
+				REPEATABLE
+		FIELD DELIVERED_BY
+			REQUIRED
+
+SCHEMA PACKAGE
+	DESC "a package of the monorepo"
+	NAME package_name
+	FIELD DESC string
+		REQUIRED
+		DESC "what the package does, in one line"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the line names, so that it is indexed"
+	FIELD MANIFEST anchor
+		REQUIRED
+		DESC "the package manifest, path and name literal"
+
+SCHEMA PROJECT
+	DESC "a repository the corpus cites, as the home of a pull request or of a file"
+	NAME project_name
+	FIELD GIT_REPOSITORY repo
+		REQUIRED
+		DESC "the repository on the forge"
+
+SCHEMA PULL_REQUEST
+	DESC "a pull request cited as the origin of an entity or as what delivers a task; deleted by"
+		+ "the cleanup pass once nothing cites it"
+	NAME pr_id
+	FIELD PROJECT @PROJECT
+		REQUIRED
+		CONVERSE PULL_REQUESTS
+		DESC "the repository the pull request belongs to"
+	FIELD NUMBER uint
+		REQUIRED
+		DESC "the pull request number in that repository"
+
+SCHEMA USAGE_REPORT
+	DESC "a usage report of the awawa tool cited as the origin of an entity; deleted by the cleanup"
+		+ "pass once nothing cites it"
+	NAME file_name
+	FIELD FILE anchor
+		REQUIRED
+		DESC "the report file and its template tag"
+	FIELD EVALUATES @PULL_REQUEST
+		REPEATABLE
+		CONVERSE EVALUATED_BY
+		DESC "the pull request the report measures"
+
+SCHEMA URL
+	DESC "an external page cited as a source"
+	FIELD LOCATION url
+		REQUIRED
+		DESC "the address of the page"
