@@ -20,4 +20,4 @@ https://raw.githubusercontent.com/delairec/planet-crafter-save-tools/master/docs
 Every file here is linked from the page by its name. None is deleted, renamed
 or moved unless the page is republished without that link in the same unit of
 work, and an export the page regenerates is copied here at the same
-republication (@DECISION.LesFichiersDArtifactAssetsSuiventLArtefact).
+republication (@DECISION.ArtifactAssetsFollowThePublishedPage).

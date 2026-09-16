@@ -1,0 +1,176 @@
+LIMITATION LateWorldObjectParseErrorsWouldNeverReachTheScreen
+	SYMPTOM "Nothing today: the path is dead, but the day validation stops draining the world"
+		+ "objects section before reading the parse errors, a save whose unreadable lines sit only"
+		+ "in that section is shown without those errors, and no test fails"
+	UNTIL "an optimization stops draining the world objects section, a caller uses the parser"
+		+ "without the validator, the section is displayed progressively, or the two lines of"
+		+ "validateSaveContent swap"
+	WORKAROUND "The cheapest move, the day it comes, is a spec pinning the guard: validation"
+		+ "refuses a save whose only unreadable line is in the world objects section"
+	SEEN_IN "packages/core-mapping/src/infrastructure/validateSaveContent.js::const"
+		+ "worldObjectIssues = validateWorldObjectsSection(sections[WORLD_OBJECTS_SECTION_INDEX]);"
+	SEEN_IN "packages/shared-save-processing/parseSaveSections.js::return () =>"
+		+ "createSectionEntriesGenerator(section, sectionIndex, errors);"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "parseSaveSections returns a shared, mutable errors array; the ten ordinary sections"
+		+ "are materialized at once, while the world objects section is returned as a generator"
+		+ "factory not yet iterated, since a reference save carries up to 28425 objects there and"
+		+ "only one is kept in memory. Its errors are pushed only on iteration, yet the use case"
+		+ "hands the array to the presenter at once and the presenter freezes it with a map: the"
+		+ "ViewModel is a snapshot taken before anyone read that section. It has no effect today"
+		+ "because validateSaveContent drains the generator before reading parseErrors; the order"
+		+ "of those two lines is load-bearing and nothing says so in place. Fixing ahead is refused"
+		+ "while the path is dead, and making the ViewModel stop being a snapshot, with errors read"
+		+ "on demand or the section parsed eagerly, is ruled out by its size"
+	SOURCE "Private context file known-issues/erreurs-tardives-des-objets-du-monde-perdues.md, at"
+		+ "tag pcst/before-awawa"
+		REF @PROJECT.DNC
+	SOURCE "Found on 2026-09-11 in the review of pull request 58"
+		REF @PULL_REQUEST.PCST58
+
+LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	SYMPTOM "Eleven placed machines have no known energy level, among them TradePlatform1 (29"
+		+ "placed), LightBoxMedium (28), ButterflyDisplayer1 (18), Megadome1 (7),"
+		+ "HologramGenerator, Server1, PlanetViewer1, FishDisplayer1, CookingStation1,"
+		+ "FrogDisplayer1 and the related displays and furniture; the displayed consumption of a"
+		+ "game placing Megadome1 or LightBoxMedium, the two that probably consume, is"
+		+ "underestimated"
+	UNTIL "a game data source giving the energy values of these machines is available"
+	SEEN_IN "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
+	SEEN_IN "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::GeneticManipulator1"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "The wiki is the only source of values and it is silent on these machines, and no"
+		+ "task can lift the limitation without a game data source the project does not have. Pull"
+		+ "request 43 closed most of the gap: 23 candidates priced or excluded with a reason, six"
+		+ "*T* variants removed, fourteen placed gId added under an attestation rule, Incubator2"
+		+ "and InsideLamp2 sourced. GeneticManipulator1 carries a suspect value too: its 117.5 kW"
+		+ "predate the wiki cross-check of that pull request, no page attests them, and the gId"
+		+ "changed name on that occasion"
+	SOURCE "Private context file known-issues/tables-d-energie-incompletes.md, at tag"
+		+ "pcst/before-awawa"
+		REF @PROJECT.DNC
+	SOURCE "Found on 2026-09-06, reduced at the merge of pull request 43"
+		REF @PULL_REQUEST.PCST43
+
+LIMITATION TheHydrationFallbackHasNoScenario
+	SYMPTOM "Of the three loading states of the page, the hydration fallback alone has no"
+		+ "end-to-end scenario"
+	UNTIL "a scenario can hold the hydration without depending on the chunking of the production"
+		+ "build nor on a test hook added to the page"
+	SEEN_IN "packages/ui-save-manager/src/routes/index.tsx::onMount(() => setIsReady(true));"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "The two other states are observed by holding the file read"
+		+ "(@DECISION.ALoadingStateIsObservedByHoldingTheFileRead); here there is nothing to hold,"
+		+ "since routes/index.tsx raises isReady in onMount, so the window is the hydration itself"
+		+ "and closes at mount. Slowing the loading of the hydration module by request interception"
+		+ "would make the scenario bear on the chunking of the production build, whose names are"
+		+ "hashed and which is nobody's contract, and assert only the mount schedule of the"
+		+ "framework. Adding to production a way to delay hydration is a test hook in the page,"
+		+ "already refused for the two other states"
+		REF @DECISION.ALoadingStateIsObservedByHoldingTheFileRead
+	SOURCE "Found on 2026-09-14 and ruled by the user in the review of pull request 78"
+		REF @PULL_REQUEST.PCST78
+
+LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
+	SYMPTOM "A folder name containing @ makes bun merge write a save that bun validate rejects; the"
+		+ "file is still written, the exit code stays 0 and the errors are printed on stderr"
+	UNTIL "the merge sanitizes the display name at the boundary that receives it, or refuses a name"
+		+ "the save format cannot carry"
+	SEEN_IN "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts::return"
+		+ "{...saveConfiguration, saveDisplayName};"
+	SEEN_IN "packages/cli-merge/cli/initMergeCli.spec.js::When the merged save does not pass"
+		+ "validation"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "@ is the section separator of the format, and mergeSaveConfigurations copies as is"
+		+ "the saveDisplayName both callers take from the folder name or from the user input."
+		+ "buildMergedFileName sanitizes the file name, but nothing sanitizes the display name of"
+		+ "section 8: one more @ takes the split from 11 to 12 parts, verifySectionCount accepts 12"
+		+ "as a legitimate older format, and section 8 is read truncated. The pinning test is the"
+		+ "only live reproduction of an invalid merged output: sanitizing the @ fails its header"
+		+ "assertion and that one alone, the three other cases of the block holding with or without"
+		+ "the defect, so a fix must rewrite that end-to-end spec and find it another producer of"
+		+ "invalid output"
+	SOURCE "Private context file"
+		+ "known-issues/merge/nom-de-dossier-qui-corrompt-la-save-produite.md, at tag"
+		+ "pcst/before-awawa"
+		REF @PROJECT.DNC
+	SOURCE "Found on 2026-09-10 while making the merge CLI report an invalid merged save"
+		REF @PULL_REQUEST.PCST61
+	SOURCE "Pinning test verified in the review of pull request 59"
+		REF @PULL_REQUEST.PCST59
+
+LIMITATION SectionLabelsDivergeFromTheGameRulesDocument
+	SYMPTOM "The short section labels used in the location of an error do not match the section"
+		+ "titles of the game rules document"
+	UNTIL "the game rules document is made the single reference for section names"
+	SEEN_IN "packages/core-mapping/src/presentation/messages/saveSectionLabels.js::'Mailbox"
+		+ "messages'"
+	SEEN_IN "docs/game-rules.md::Section 6 — Messages / mailbox"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "Short labels read better in an error prefix, and the divergence was flagged as"
+		+ "reversible in review"
+	SOURCE "Found on 2026-09-08 in the review of pull request 37"
+		REF @PULL_REQUEST.PCST37
+
+LIMITATION TheSecurityAuditIgnoresTwoTransitiveAdvisories
+	SYMPTOM "Two high-severity advisories carried by transitive dependencies, which the repository"
+		+ "does not declare itself, are ignored by name in the audit script: the audit job is green"
+		+ "while the advisories stay unresolved"
+	UNTIL "the upstream dependencies upgrade past both advisories, or a resolution is forced from"
+		+ "the root manifest"
+	SEEN_IN "package.json::--ignore=GHSA-3v7f-55p6-f55p --ignore=GHSA-c2c7-rcm5-vvqj"
+	RATIONALE "The failure predates the pull requests that meet it and does not come from them: it"
+		+ "was seen identically on a pull request touching only an ignore file. It is exactly what"
+		+ "dependency tracking should report on a schedule rather than on the day of a merge"
+	SOURCE "Found on 2026-09-10 in pull request 53"
+		REF @PULL_REQUEST.PCST53
+
+LIMITATION TheContentSecurityPolicyAllowsInlineScript
+	SYMPTOM "The content security policy allows inline script and style: a script injected into the"
+		+ "page runs despite it"
+	UNTIL "the hydration script carries a hash or a nonce, or the framework is shown not to allow"
+		+ "one"
+	SEEN_IN "packages/ui-save-manager/public/_headers::script-src 'self' 'unsafe-inline'"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "The policy was set to be compatible with the production build, without removing"
+		+ "inline being tried or measured; the security plan checked the policy off because it"
+		+ "exists, while its strength was written nowhere"
+	SOURCE "Reread on 2026-09-12 while migrating plans/plan-secu.md, phase 2"
+		REF @PULL_REQUEST.PCST61
+
+LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
+	SYMPTOM "The production breakdown by machine uses base levels only, without the boost of"
+		+ "optimizers and fuses: once a fuse is in play the totalLevel of the entries sums below"
+		+ "production, and their productionRatio shares do not sum to 1"
+	UNTIL "the breakdown accounts for the optimizer boost without counting it twice"
+	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private"
+		+ "productionBreakdown(production: number)"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "It is the counterpart of counting the boost once, in the contribution of the"
+		+ "optimizer, so as not to count it twice in the planet energy grid. A code comment carried"
+		+ "it until the move to PlanetEnergyGrid removed it"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
+	SOURCE "Found on 2026-09-13 while moving the energy rules into PlanetEnergyGrid"
+		REF @PULL_REQUEST.PCST72
+
+LIMITATION ADecorativeIconInAViewModelValueIsReadAloud
+	SYMPTOM "A screen reader announces the name of the construction icon in every consumption and"
+		+ "available cell, and in the title of the consumption grid"
+	UNTIL "the icon is taken out of the work-in-progress label in both message modules"
+	SEEN_IN "packages/core-mapping/src/presentation/messages/energyLevelsSectionMessages.js::export"
+		+ "const energyLevelsSectionWorkInProgressLabel"
+	SEEN_IN "packages/ui-save-manager/src/messages/energyLevelsSectionMessages.js::export const"
+		+ "energyLevelsSectionWorkInProgressLabel"
+	SEEN_IN "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::${energyLevelsSectionKilowattUnit}"
+		+ "${energyLevelsSectionWorkInProgressLabel}"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "energyLevelsSectionWorkInProgressLabel carries the icon in the string itself and"
+		+ "EnergyLevelsPresenter sews it into ViewModel values the UI renders as text, out of reach"
+		+ "of the Icon component. The ruling on decorative characters does not cover this case: it"
+		+ "assumes the character is a JSX node, which a ViewModel value is not. The label is"
+		+ "declared twice, in the messages of core-mapping and in those of the UI, so both change"
+		+ "together"
+		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
+	SOURCE "Found on 2026-09-14 in the review of pull request 71"
+		REF @PULL_REQUEST.PCST71

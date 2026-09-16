@@ -1,0 +1,185 @@
+PROCESS StandardTwoMergedIsNeverAnOutputReference
+	SPEC "Every comparison of merge output is made against a reference output captured by the tool"
+		+ "itself, never against the Standard-2 merged save of the input folder"
+	REJECTED "Fixing the file to make it a reference: it would no longer have a known provenance"
+	RATIONALE "The file was retouched and no version of the tool wrote it. Three of its four player"
+		+ "identifiers are the rounded forms of real identifiers, but its host carries an"
+		+ "identifier no number can produce through JSON serialization: at that magnitude only"
+		+ "multiples of 16 are representable, and the two neighbouring doubles print as …60 and"
+		+ "…70, while stringifyEntry has relied on that serialization since the first commit. The"
+		+ "file also carries a byte order mark the tool never writes"
+	SOURCE "Private context file known-issues/save-de-reference-standard-2-merged-retouchee.md, at"
+		+ "tag pcst/before-awawa"
+		REF @PROJECT.DNC
+	SOURCE "Found on 2026-09-07"
+		REF @PULL_REQUEST.PCST61
+
+PROCESS AwawaAdoptionIsRevertibleByTagNotBranch
+	SPEC "The state before awawa is marked by a tag in each of the three repositories:"
+		+ "pcst/before-awawa in delairec/.do-not-commit, before-awawa in delairec/.ai, before-awawa"
+		+ "on the task base of the public repository, the parent of the DEP2 merge"
+	SPEC "No experimental branch exists: the three repositories keep their ordinary cycle, the"
+		+ "private clone on planet-crafter-save-tools, the instructions by pull request on main,"
+		+ "the public repository on its task base"
+	REJECTED "Keeping a pcst/awawa branch and teaching install.sh an overridable branch: tooling"
+		+ "added for a temporary effort"
+	REJECTED "Naming the tag before-awawa in delairec/.do-not-commit, which carries several"
+		+ "projects: the pcst/ prefix disambiguates it"
+	RATIONALE "private:sync moves the private clone back to the branch named after the project,"
+		+ "silently undoing an experimental branch there, whereas a tag depends on no current"
+		+ "branch; the fallback needs no living branch, only a named point of return"
+	SOURCE "decision of 2026-09-11, awawa installation session"
+		REF @PULL_REQUEST.PCST61
+
+PROCESS ATaskBranchIsRebasedNeverMerged
+	SPEC "A task branch is updated by rebasing it on its base, never by merging the base into it"
+	SPEC "Before working on an already pushed branch, and above all before handling a review, the"
+		+ "base is checked to be an ancestor of HEAD; otherwise the branch is rebased and pushed"
+		+ "with --force-with-lease before the first comment is read"
+	REJECTED "Merging the base into the task branch"
+	RATIONALE "The repository is a git machete stack, whose first traverse undoes a merge commit"
+		+ "inside the stack; the base moves while a review is awaited, and reading the comments on"
+		+ "a lagging branch means working on a state that no longer exists"
+	SOURCE "private AGENTS.md, section Branches, at tag pcst/before-awawa"
+		REF @PROJECT.DNC
+
+PROCESS EveryWorktreeInstallsItsDependencies
+	SPEC "bun install --frozen-lockfile runs in the worktree before the first test"
+	SPEC "The branch of a new worktree is checked to start from the base in force"
+	SPEC "input/ is linked from the main checkout when a task needs the reference saves, and the"
+		+ "link is never staged"
+	REJECTED "Relying on the node_modules of the main checkout"
+	RATIONALE "Without its own install, Bun resolves the workspace packages through the"
+		+ "node_modules of the main checkout: the tests run on the sources of another branch and"
+		+ "pass silently, the costliest trap because it gives a verdict, and the wrong one; input/"
+		+ "is not versioned, and a gitignore rule written for a directory lets the link escape and"
+		+ "be staged by a global add"
+	SOURCE "private AGENTS.md, section on working in a linked worktree, at tag pcst/before-awawa"
+		REF @PROJECT.DNC
+
+PROCESS AFixtureMayRestOnAKnownDefect
+	SPEC "A fixture may rest on a known defect, provided the LIMITATION of that defect names the"
+		+ "spec to rewrite once it is fixed"
+	SPEC "The coupling is documented on the side of the defect, never on the side of the test"
+	REJECTED "Fabricating an input that never occurs to avoid depending on a defect"
+	REJECTED "Documenting the coupling on the side of the test"
+	RATIONALE "Some behaviours have no natural producer, since checking that an invalid output is"
+		+ "reported needs an input that produces one, and the only honest arrangement is then a"
+		+ "real defect rather than a fabricated input never met; the limitation is what is read"
+		+ "when the defect is fixed, and it carries the proof that the spec fails once the defect"
+		+ "is gone and what to do then: find another producer, not merely turn the assertion green"
+		+ "again"
+	SOURCE "private AGENTS.md, at tag pcst/before-awawa"
+		REF @PROJECT.DNC
+	SOURCE "example in force since PR #59"
+		REF @PULL_REQUEST.PCST59
+
+PROCESS EverythingLandsInTheTaskPullRequest
+	SPEC "A task pull request carries no To do at merge comment: what that checklist inventoried"
+		+ "enters the corpus when the decision is taken, not at the merge"
+	SPEC "The corpus changes a task delivers are made in the task pull request itself, before it is"
+		+ "opened, and the review checks them against the diff as it checks the code"
+	SPEC "Nothing is recorded after the merge: whether a rule belongs to the general instructions"
+		+ "or to the project is settled during the review, through /awawa-pr-review, before the"
+		+ "pull request is flagged ready"
+	SPEC "The usage report is committed on the task branch once the review is addressed, and after"
+		+ "the merge only the worktrees are cleaned"
+	REJECTED "Recording after the merge in a follow-up pull request: one more pull request per"
+		+ "round, with nothing to record from the second one on"
+	REJECTED "A single /awawa-pr-review command covering both moments"
+	REJECTED "Keeping the checklist emptied of what the corpus carries: what is left is not worth"
+		+ "the discipline it costs"
+	REJECTED "Keeping a pull request comment for the residue meant for ~/.ai alone: an entity"
+		+ "carries it better, typed, queryable and visible at every status"
+	REJECTED "Fixing /pr-merge-followup and /pr-review-followup in place: they serve the projects"
+		+ "without a corpus and keep their form"
+	RATIONALE "The checklist existed because an inventory disappears with the session of the task"
+		+ "agent; the corpus is that inventory and does not disappear, and since it lives in the"
+		+ "branch, a change made there travels with the pull request; every post-merge pass opened"
+		+ "one more pull request, as PR #65 led to PR #66 and PR #68 to PR #69"
+		REF @DECISION.TheCorpusLivesInThePublicRepository
+		REF @DECISION.AUsageReportIsCommittedInTheTaskPullRequest
+	SOURCE "decision of 2026-09-11, awawa installation session"
+		REF @PULL_REQUEST.PCST70
+	SOURCE "user ruling of 2026-09-13 on PR #69, delivered by PR #70"
+		REF @PULL_REQUEST.PCST69
+		REF @PULL_REQUEST.PCST70
+
+PROCESS AnImplAnchorNamesAFileOrASymbol
+	SPEC "An IMPL anchor under a SPEC names a file or a symbol, and a directory only for an"
+		+ "obligation that covers a whole layer, which the SPEC then says"
+	REJECTED "A shape on anchors: the binary only knows the anchor term, and a shape refuses"
+		+ "references and does not apply to that term"
+	REJECTED "Rewriting the existing directory anchors at once: most carry layer obligations,"
+		+ "written as such"
+	RATIONALE "A discipline, not a schema rule: an anchor is path[:line][::literal] with no shape"
+		+ "applying to it, and L016 resolves a directory, so a directory anchor never fails;"
+		+ "enforcing it awaits an option of the tool, and an obligation of absence has no literal"
+		+ "to anchor anyway"
+	SOURCE "PR #68 merged, user ruling of 2026-09-13 on PR #69"
+		REF @PULL_REQUEST.PCST68
+		REF @PULL_REQUEST.PCST69
+
+PROCESS TheCorpusHoldsNoViewItAlreadyRenders
+	SPEC "Nothing the corpus already renders is written in it: no dependency graph in a comment,"
+		+ "the AFTER edges carrying it"
+	SPEC "A task split is not recorded as a decision: the TASK entities it produces carry it, and"
+		+ "why a SPEC line lands on a given deliverable is written in the RATIONALE of that"
+		+ "deliverable"
+	REJECTED "Keeping an ASCII graph of the task dependencies: no command reads it, and status,"
+		+ "refs and context render the same edges"
+	REJECTED "A DECISION per task split: it copies the DESC of the entities produced and restates"
+		+ "alternatives the general rule already rejects"
+	RATIONALE "The ASCII graph heading the task file was edited by hand at every split since it was"
+		+ "written: derived information the tool manual forbids keeping elsewhere, wrong at the"
+		+ "next commit and read by no command; the split decision of the UI test harness held,"
+		+ "beyond the descriptions of its tasks, only alternatives the general rule had already"
+		+ "rejected, and its removal lost no sentence"
+	SOURCE "review of PR #75, user ruling of 2026-09-14"
+		REF @PULL_REQUEST.PCST75
+
+PROCESS ATestTaskChangesTheUiOnlyForItsOwnSake
+	REJECTED "Changing the interface for the sole convenience of a locator"
+	SPEC "An unrequested interface change is acceptable in a test task only if it is worth having"
+		+ "on its own, outside the test"
+	RATIONALE "A file input without a label stays reachable by its role and accessible name, so no"
+		+ "test rule requires changing the interface to make a field reachable; the change under"
+		+ "review was kept only once its own reason, an accessibility gain, was stated"
+	SOURCE "Review of T23"
+		REF @PULL_REQUEST.PCST38
+
+PROCESS AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
+	SPEC "An entity that stops binding is archived in the pull request that ends it: STATUS"
+		+ "archived and ARCHIVED_ON that day, never deleted there"
+	SPEC "A ruling replaced on the same subject is rewritten in place under its name, the previous"
+		+ "form becoming a REJECTED line when it teaches something"
+	REJECTED "Keeping history in the corpus with superseded entities, SUPERSEDES and CLOSES edges"
+		+ "and :v2 successors: every context loaded the dead entities, and the edges had to be"
+		+ "maintained by hand"
+	REJECTED "Deleting an entity the day it stops binding: the references to it break in the same"
+		+ "pull request, and nothing lists what was removed"
+	RATIONALE "Measured before the migration of 2026-09-17: 47 STATUS superseded, 26 SUPERSEDES, 34"
+		+ "CLOSES and 44 :v2 written by hand, and 41 closed questions and 12 superseded decisions"
+		+ "loaded by context; an archived entity is suppressed by the schema gate, named in the"
+		+ "context footer and deleted by the cleanup pass once its delay has run"
+
+PROCESS WhatShouldNeverHaveBeenRecordedIsDeletedAtOnce
+	SPEC "An entity that should never have been recorded is deleted by hand at once, with every"
+		+ "reference line to it, instead of being archived"
+	REJECTED "Archiving it like an entity that once bound: it would stay in the corpus for the"
+		+ "whole delay, and its archive would say it once held"
+	RATIONALE "Archiving is for what stopped binding; an entity under the recording threshold never"
+		+ "bound anything"
+		REF @PROCESS.ADecisionIsRecordedOnlyIfAPullRequestCouldReverseIt
+
+PROCESS ADecisionIsRecordedOnlyIfAPullRequestCouldReverseIt
+	SPEC "A DECISION or a PROCESS is recorded only if a future pull request could do the reverse by"
+		+ "mistake"
+	SPEC "A rule that is general to every project is recorded in the general instructions, never in"
+		+ "this corpus"
+	REJECTED "Recording every ruling a review or a session produces: the sessions of 2026-09-11 to"
+		+ "2026-09-16 ran awawa new DECISION 13 times and awawa new OPEN_QUESTION 11 times for 10"
+		+ "tasks, and the user judged there were too many decisions they would not have recorded"
+	RATIONALE "The threshold of an OPEN_QUESTION is held by the schema, BLOCKS @TASK being"
+		+ "required; the threshold of a ruling cannot be, so it is a conduct rule read by the"
+		+ "review"

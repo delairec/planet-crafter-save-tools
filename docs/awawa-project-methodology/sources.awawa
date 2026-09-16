@@ -1,0 +1,245 @@
+PROJECT PCST
+	GIT_REPOSITORY "delairec/planet-crafter-save-tools"
+	DESC "this repository"
+
+PROJECT AI
+	GIT_REPOSITORY "delairec/.ai"
+	DESC "the agent-agnostic instructions"
+
+PROJECT DNC
+	GIT_REPOSITORY "delairec/.do-not-commit"
+	DESC "the private context: reference saves and plans"
+
+PULL_REQUEST PCST15
+	PROJECT @PROJECT.PCST
+	NUMBER 15
+	DESC "Refactor/review clean archi violations in core mapping package"
+
+PULL_REQUEST PCST33
+	PROJECT @PROJECT.PCST
+	NUMBER 33
+	DESC "fix: make the Node CLI commands runnable again"
+
+PULL_REQUEST PCST34
+	PROJECT @PROJECT.PCST
+	NUMBER 34
+	DESC "fix: run the Node CLI commands on the sources through module customization hooks"
+
+PULL_REQUEST PCST35
+	PROJECT @PROJECT.PCST
+	NUMBER 35
+	DESC "refactor(shared-save-processing): T21 — drop the record builder re-export and document"
+		+ "the save fixture modules"
+
+PULL_REQUEST PCST36
+	PROJECT @PROJECT.PCST
+	NUMBER 36
+	DESC "fix(shared-save-processing): T33 — serialize floats without a textual marker"
+
+PULL_REQUEST PCST37
+	PROJECT @PROJECT.PCST
+	NUMBER 37
+	DESC "feat: t20 tell where each validation error was found"
+
+PULL_REQUEST PCST38
+	PROJECT @PROJECT.PCST
+	NUMBER 38
+	DESC "test(ui): t23 set up scenario-based UI tests with Playwright"
+
+PULL_REQUEST PCST39
+	PROJECT @PROJECT.PCST
+	NUMBER 39
+	DESC "fix(core-mapping): t29 the merged save designates a single host"
+
+PULL_REQUEST PCST40
+	PROJECT @PROJECT.PCST
+	NUMBER 40
+	DESC "test: T12 clean up test assertions and guard against fabricated booleans"
+
+PULL_REQUEST PCST41
+	PROJECT @PROJECT.PCST
+	NUMBER 41
+	DESC "fix(core-mapping): T16 — id collision between renumbered inventories and world objects"
+
+PULL_REQUEST PCST42
+	PROJECT @PROJECT.PCST
+	NUMBER 42
+	DESC "docs: T35 — align the public documentation and the CI with the code"
+
+PULL_REQUEST PCST43
+	PROJECT @PROJECT.PCST
+	NUMBER 43
+	DESC "T25 — Real coverage for Rule EN-BASE-2: honest energy tests and 27 wiki-sourced consumers"
+
+PULL_REQUEST PCST44
+	PROJECT @PROJECT.PCST
+	NUMBER 44
+	DESC "chore: T17 enforce the package dependency matrix and type-check every package"
+
+PULL_REQUEST PCST45
+	PROJECT @PROJECT.PCST
+	NUMBER 45
+	DESC "test(cli): T22 — an execution guard for the published node commands"
+
+PULL_REQUEST PCST46
+	PROJECT @PROJECT.PCST
+	NUMBER 46
+	DESC "T19 — typed test fixtures without the boilerplate"
+
+PULL_REQUEST PCST47
+	PROJECT @PROJECT.PCST
+	NUMBER 47
+	DESC "fix(core-mapping): T26 — an unreadable save section raises an error, never an empty array"
+
+PULL_REQUEST PCST48
+	PROJECT @PROJECT.PCST
+	NUMBER 48
+	DESC "T39 — the world objects section is validated by a schema that fits the saves"
+
+PULL_REQUEST PCST49
+	PROJECT @PROJECT.PCST
+	NUMBER 49
+	DESC "fix(shared-save-processing): T30 — the merge preserves every player Steam identifier"
+
+PULL_REQUEST PCST53
+	PROJECT @PROJECT.PCST
+	NUMBER 53
+	DESC "chore(ci): DEP1 — weekly Dependabot updates for the actions and the Bun dependencies"
+
+PULL_REQUEST PCST54
+	PROJECT @PROJECT.PCST
+	NUMBER 54
+	DESC "T27 — a merge error reaches the user"
+
+PULL_REQUEST PCST55
+	PROJECT @PROJECT.PCST
+	NUMBER 55
+	DESC "T36 — shared-save-processing, shared-platforms and util-types brought into line"
+
+PULL_REQUEST PCST57
+	PROJECT @PROJECT.PCST
+	NUMBER 57
+	DESC "chore(deps): bump the bun-dependencies group with 6 updates"
+
+PULL_REQUEST PCST58
+	PROJECT @PROJECT.PCST
+	NUMBER 58
+	DESC "T31 — a rejected display call reaches the user"
+
+PULL_REQUEST PCST59
+	PROJECT @PROJECT.PCST
+	NUMBER 59
+	DESC "T28 — the merged save is validated before it is handed over"
+
+PULL_REQUEST PCST60
+	PROJECT @PROJECT.PCST
+	NUMBER 60
+	DESC "T34 — the two CLI packages brought into line"
+
+PULL_REQUEST PCST61
+	PROJECT @PROJECT.PCST
+	NUMBER 61
+	DESC "DEP2 — the specification is read from an awawa corpus"
+
+PULL_REQUEST PCST62
+	PROJECT @PROJECT.PCST
+	NUMBER 62
+	DESC "T37 (part A) — core-mapping domain boundaries"
+
+PULL_REQUEST PCST63
+	PROJECT @PROJECT.PCST
+	NUMBER 63
+	DESC "Corpus — the T37 launch: one open question, one usage report"
+
+PULL_REQUEST PCST65
+	PROJECT @PROJECT.PCST
+	NUMBER 65
+	DESC "T37 (part B) — the section controllers take the validated text"
+
+PULL_REQUEST PCST68
+	PROJECT @PROJECT.PCST
+	NUMBER 68
+	DESC "docs: eleven open questions carry the remediations of the PR #65 usage report"
+
+PULL_REQUEST PCST69
+	PROJECT @PROJECT.PCST
+	NUMBER 69
+	DESC "docs: PR #68 merged — eleven questions closed by the ratified decisions"
+
+PULL_REQUEST PCST70
+	PROJECT @PROJECT.PCST
+	NUMBER 70
+	DESC "docs: one PR per task — promotions, rulings and usage report before the merge"
+
+PULL_REQUEST PCST71
+	PROJECT @PROJECT.PCST
+	NUMBER 71
+	DESC "T32: ui-save-manager conformance — Solid idioms, messages, one column shape"
+
+PULL_REQUEST PCST72
+	PROJECT @PROJECT.PCST
+	NUMBER 72
+	DESC "T15: the five domain entities of core-mapping become classes"
+
+PULL_REQUEST PCST75
+	PROJECT @PROJECT.PCST
+	NUMBER 75
+	DESC "test(ui): T24 — the merge flow end to end, with the downloaded file verified"
+
+PULL_REQUEST PCST76
+	PROJECT @PROJECT.PCST
+	NUMBER 76
+	DESC "T38: core-mapping production code brought in line with the coding standards"
+
+PULL_REQUEST PCST78
+	PROJECT @PROJECT.PCST
+	NUMBER 78
+	DESC "test(ui): T40 — validation errors, warnings and loading states, end to end"
+
+PULL_REQUEST PCST79
+	PROJECT @PROJECT.PCST
+	NUMBER 79
+	DESC "test(core-mapping): T43 — the domain specs brought in line with TEST"
+
+PULL_REQUEST PCST80
+	PROJECT @PROJECT.PCST
+	NUMBER 80
+	DESC "docs(corpus): the wave 4 launch — T42 gains its guard SPEC, three questions closed"
+
+PULL_REQUEST PCST81
+	PROJECT @PROJECT.PCST
+	NUMBER 81
+	DESC "feat(scripts): T41 — scenario fixtures generated by a command and guarded"
+
+PULL_REQUEST PCST82
+	PROJECT @PROJECT.PCST
+	NUMBER 82
+	DESC "test(core-mapping): T44 — the application, infrastructure and presentation specs brought"
+		+ "in line with TEST"
+
+PULL_REQUEST PCST83
+	PROJECT @PROJECT.PCST
+	NUMBER 83
+	DESC "feat(scripts): T42 — a guard refuses the locators the screen does not show, and the suite"
+		+ "is measured"
+
+PULL_REQUEST PCST89
+	PROJECT @PROJECT.PCST
+	NUMBER 89
+	DESC "chore(deps): bump the bun-dependencies group across 1 directory with 6 updates"
+
+PULL_REQUEST PCST90
+	PROJECT @PROJECT.PCST
+	NUMBER 90
+	DESC "fix(ci): DEP3 — declare Bun for Dependabot and read its version from the manifest"
+
+PULL_REQUEST PCST93
+	PROJECT @PROJECT.PCST
+	NUMBER 93
+	DESC "docs(awawa-usage-reports): serve the eleven-report archive to the feedback page"
+
+PULL_REQUEST PCST94
+	PROJECT @PROJECT.PCST
+	NUMBER 94
+	DESC "docs(awawa-usage-reports): keep the feedback page's exports in artifact-assets and rule"
+		+ "their removal"

@@ -1,0 +1,27 @@
+PACKAGE shared_save_processing
+	DESC "save wire format: types, parsing, serialization, JSON schemas, test fixtures"
+	MANIFEST "packages/shared-save-processing/package.json::shared-save-processing"
+
+PACKAGE shared_platforms
+	DESC "fs and process adapters for Bun and Node, with no side effect on import"
+	MANIFEST "packages/shared-platforms/package.json::shared-platforms"
+
+PACKAGE util_types
+	DESC "the single RuntimePlatform contract type, consumed type-only by shared-platforms"
+	MANIFEST "packages/util-types/package.json::util-types"
+
+PACKAGE core_mapping
+	DESC "domain, application, infrastructure and presentation of save mapping"
+	MANIFEST "packages/core-mapping/package.json::core-mapping"
+
+PACKAGE cli_merge
+	DESC "thin CLI: argument parsing, core-mapping controller, rendering"
+	MANIFEST "packages/cli-merge/package.json::cli-merge"
+
+PACKAGE cli_validate
+	DESC "thin CLI: argument parsing, core-mapping controller, rendering"
+	MANIFEST "packages/cli-validate/package.json::cli-validate"
+
+PACKAGE ui_save_manager
+	DESC "SolidStart UI consuming the core-mapping controllers directly"
+	MANIFEST "packages/ui-save-manager/package.json::ui-save-manager"

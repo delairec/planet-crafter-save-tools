@@ -1,0 +1,453 @@
+TASK CHORE46
+	TITLE "the repository security alerts are enabled"
+	STATUS draft
+	SPEC "The security alerts are enabled in the repository security settings, a gesture left to"
+		+ "the user outside the repository, and the API no longer refuses them"
+	RATIONALE "The repository security alerts are disabled: the API refuses them, and without them"
+		+ "dependency tracking only yields version updates. Vulnerability advisories today appear"
+		+ "only in the audit job, on a pull request, never on a schedule. The other way out is to"
+		+ "schedule the audit job, which the repository does not do: it runs only on a pull request"
+		+ "and on the default branch"
+	SOURCE "Observed while checking the weekly Dependabot updates after their merge"
+		REF @PULL_REQUEST.PCST53
+
+TASK REFACTOR37
+	TITLE "Clean Architecture of core-mapping: the remaining boundaries, in two pull requests,"
+		+ "behaviour unchanged"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "The domain no longer depends on the application: validateUniqueHost and"
+		+ "validateFloatSerialization stop importing VALIDATION_ISSUE_CODES and ValidationIssue"
+		IMPL "packages/core-mapping/src/domain/rules/validateUniqueHost.ts"
+		IMPL "packages/core-mapping/src/infrastructure/validateFloatSerialization.ts"
+	SPEC "The .0 suffix is no longer checked by a regular expression on the JSON text inside the"
+		+ "domain"
+		IMPL "packages/core-mapping/src/infrastructure/validateFloatSerialization.ts"
+	SPEC "The comma-separated identifier list encoding is no longer parsed nor reserialized inside"
+		+ "the domain, and its separator is declared once"
+		IMPL "packages/shared-save-processing/idList.js"
+		IMPL "packages/core-mapping/src/domain/save/SaveSections.ts"
+	SPEC "MergedSaveValueObject no longer models a file artefact inside the domain"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsSerializerPort.ts"
+	SPEC "No presenter decides which outcome occurred: the missing section case is chosen by the"
+		+ "use case, and the ports lose their union with undefined"
+		IMPL "packages/core-mapping/src/presentation/SaveConfigurationPresenter.ts"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.ts"
+	SPEC "The section controllers no longer instantiate SaveSectionsReaderService: the composition"
+		+ "root exposes a factory"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts"
+	SPEC "The ViewModel no longer exposes ParsedSections to the UI"
+		IMPL "packages/core-mapping/src/presentation/viewModels/LoadSaveFileViewModel.ts"
+	SPEC "The sections[3] ?? [] fallback assigned to a field typed as a generator factory is"
+		+ "removed or typed"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts"
+	SPEC "Acceptance: no application import in domain, no infrastructure import in controllers"
+		+ "outside composition and specs, no ViewModel importing ParsedSections"
+		IMPL "packages/core-mapping/src/domain"
+		IMPL "packages/core-mapping/src/controllers"
+	SPEC "Acceptance: merge output identical to the reference on both input folders, identical"
+		+ "validation verdicts, tests and type-check green"
+		IMPL "packages/core-mapping/package.json::core-mapping"
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST65
+	RATIONALE "The complete code review of 2026-09-07 found two dependency rule violations,"
+		+ "critical in the sense of architecture/review.md, and four responsibility violations,"
+		+ "none covered by an existing task. The work is split in two pull requests: part A carries"
+		+ "the domain boundaries, one commit per boundary, part B the controller-to-UI contract. It"
+		+ "comes after the tasks that rewrite validateSaveContent.js, MergeSaveFiles.ts and the"
+		+ "merge ports and presenters, which part A also touches: taking it first would have forced"
+		+ "three pull requests to rebase onto a move of types. The sections[3] ?? [] fallback is"
+		+ "accepted by tsc because the left operand is not nullable; were the fallback taken,"
+		+ "calling the factory would throw a TypeError, so the line is either dead or wrong"
+		REF @PULL_REQUEST.PCST62
+		REF @PULL_REQUEST.PCST65
+	SOURCE "Part A of the task, the core-mapping domain boundaries"
+		REF @PULL_REQUEST.PCST62
+
+TASK REFACTOR15
+	TITLE "the five core-mapping domain entities become classes, the eleven value objects staying"
+		+ "readonly records"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "The five entities are classes with private readonly fields, get accessors and validation"
+		+ "in the constructor throwing InvalidSaveDataError"
+		IMPL "packages/core-mapping/src/domain/entities"
+	SPEC "Three behaviours move onto the entities: summarize on TerraformationLevelEntity,"
+		+ "isWithinRadius on PlacedWorldObjectEntity, contains on InventoryEntity"
+		IMPL "packages/core-mapping/src/domain/entities"
+	SPEC "Both section use cases build their value objects through a factory, not through a literal"
+		+ "and a spread"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
+		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts"
+	SPEC "Acceptance: no createXxxEntity factory remains, no native private field in"
+		+ "domain/entities, no spread of an entity or value object in domain/rules and application"
+		IMPL "packages/core-mapping/src/domain/entities"
+	SPEC "Acceptance: computeTerraformationSummary and its spec are removed, distanceBetween is"
+		+ "absent from domain/rules or private"
+		IMPL "packages/core-mapping/src/domain/rules"
+	AFTER @TASK.REFACTOR37
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST72
+	RATIONALE "REFACTOR37 leaves in place the entities this task converts and its part A moves"
+		+ "domain types, so this task runs last among the domain tasks. Value objects stay readonly"
+		+ "records with a createXxx factory: they are computation results or configuration readings"
+		+ "with no behaviour of their own. Fields are TypeScript private readonly rather than"
+		+ "native private fields: with native fields an instance has no enumerable own property,"
+		+ "and toEqual between two instances of different values would pass, while the repository"
+		+ "never uses toStrictEqual; checked on Bun. A spread loses the prototype, so the four"
+		+ "sites spreading an entity are rewritten as explicit construction"
+		REF @TASK.REFACTOR37
+
+TASK REFACTOR32
+	TITLE "ui-save-manager conformance: Solid idioms, messages, duplication, with no visible"
+		+ "behaviour change"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "The validation message list is rendered by the Solid list primitive, not by a map in the"
+		+ "JSX"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx"
+	SPEC "No component destructures its props in its signature"
+		IMPL "packages/ui-save-manager/src/components"
+		IMPL "packages/ui-save-manager/src/entry-server.tsx"
+	SPEC "Acceptance: no map rendering JSX, no prop destructured in a signature, no non-null"
+		+ "assertion under a conditional display in src"
+		IMPL "packages/ui-save-manager/src"
+	SPEC "Acceptance: no user-facing string outside the messages directory, technical attributes"
+		+ "aside"
+		IMPL "packages/ui-save-manager/src/messages"
+	SPEC "Acceptance: a single definition of ColumnViewModel in the repository"
+		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::ColumnViewModel"
+	SPEC "Acceptance: the UI build, the type-check and the UI scenarios are green"
+		IMPL "packages/ui-save-manager/package.json::ui-save-manager"
+	AFTER @TASK.REFACTOR37
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST71
+	RATIONALE "Conformance work under STD-3 and ARCH-4, found by the complete code review of"
+		+ "2026-09-07. It comes after the tasks that rewrite routes/index.tsx, useLoadSaveFile.ts,"
+		+ "MergeSection.tsx and ValidationMessagesList.tsx, and after part B of REFACTOR37, which"
+		+ "changes the controller-to-UI contract this task starts from; preferably after the"
+		+ "type-check covers tsx files, so that tsc verifies the fixes. A list rendered by a map is"
+		+ "rendered once and no longer updates, hidden today because the callers unmount and"
+		+ "remount the block; destructured props lose reactivity on every prop change. The audit"
+		+ "found the dependency matrix respected, no network call, the object URL revoked on every"
+		+ "result and on unmount, and the downloaded file name normalized in the core-mapping"
+		+ "infrastructure"
+		REF @TASK.REFACTOR37
+
+TASK TEST24
+	TITLE "first delivery of the scenario-based UI test harness: the merge flow covered end to end,"
+		+ "from choosing the two saves to the downloaded file"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "Both critical flows are covered end to end: displaying a save, merging two saves and"
+		+ "retrieving the produced file"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
+	SPEC "The content of the downloaded file is verified, not only the presence of the link"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
+	AFTER @TASK.REFACTOR32
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST75
+	RATIONALE "Last UI task to merge: every UI task before it may move a label and break a locator."
+		+ "The runner, configuration, server, naming convention, first fixture and CI workflow were"
+		+ "already in place, so this task only adds scenarios and the fixture tooling that feeds"
+		+ "them. The original seven acceptance lines are spread over this task, TEST40, FEAT41 and"
+		+ "FEAT42; this one keeps the two about the merge flow. Before it, the merge flow was"
+		+ "covered only by the scenario checking that a merge clears the file chosen for display,"
+		+ "without ever touching the download link"
+		REF @TASK.TEST40
+		REF @TASK.FEAT41
+		REF @TASK.FEAT42
+
+TASK TEST40
+	TITLE "second delivery of the harness: scenarios covering validation errors, warnings and"
+		+ "loading states"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "No scenario replays a merge or validation rule already covered in core-mapping: the"
+		+ "review checks it against the task"
+		IMPL "packages/core-mapping/src/domain/rules"
+	SPEC "A validation error is covered in the display flow and in the merge flow, and the scenario"
+		+ "asserts the location the screen prints under the message"
+		IMPL "packages/ui-save-manager/e2e/validation-errors.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/fixtures/negative-gauge_invalid.json"
+	SPEC "A warning is covered in the same two flows, and the scenario expects the plain sentence"
+		+ "displayed and the absence of the code the warning carries in the application"
+		IMPL "packages/ui-save-manager/e2e/warnings.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json"
+	SPEC "Each flow has its loading state scenarios: the activity indicator shown and the button"
+		+ "out of reach during the work, both removed once the work is done"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
+	AFTER @TASK.TEST24
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST78
+	RATIONALE "This task carries the acceptance line forbidding the replay of a merge or validation"
+		+ "rule because it adds the scenarios where the temptation exists: invalid fixtures have to"
+		+ "show a message without reasserting the rule that produces it"
+
+TASK FEAT41
+	TITLE "third delivery of the harness: scenario fixtures are generated by a command, and a guard"
+		+ "refuses any drift from the versioned files"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "Regenerating the fixtures produces no drift from the versioned files, and a deliberately"
+		+ "introduced drift fails the check"
+		IMPL "scripts/generate-scenario-fixtures.ts"
+		IMPL "scripts/check-scenario-fixtures.ts"
+		IMPL "scripts/check-scenario-fixtures.spec.ts"
+		IMPL "packages/ui-save-manager/e2e/fixtures"
+	SPEC "The suite depends on no file of the input directory and passes on a machine without"
+		+ "access to the private repository"
+		IMPL "scripts/check-scenario-fixtures.ts::findInputDirectoryReferences"
+		IMPL "packages/ui-save-manager/e2e"
+	AFTER @TASK.TEST40
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST81
+	RATIONALE "The regeneration recipe lived in a documentation file that nothing runs, so a"
+		+ "fixture could drift from its generator without any command saying so. Independence from"
+		+ "the input directory belongs here because this delivery makes it executable: the guard"
+		+ "that regenerates the fixtures is also the one that can refuse a reference to the input"
+		+ "directory"
+
+TASK FEAT42
+	TITLE "fourth delivery of the harness: a guard refuses a test id, a CSS selector or a reference"
+		+ "screenshot in a scenario, and the suite duration is measured"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "A guard reads the scenario files and refuses a test id, a CSS selector or a reference"
+		+ "screenshot; a deliberately introduced violation fails it"
+		IMPL "scripts/check-scenario-locators.ts"
+		IMPL "scripts/check-scenario-locators.spec.ts"
+		IMPL "package.json::check:guards"
+	SPEC "No test id or CSS selector added, no reference screenshot"
+		IMPL "packages/ui-save-manager"
+	SPEC "The total duration of the suite is measured and recorded in the pull request of the"
+		+ "fourth delivery"
+		IMPL "packages/ui-save-manager"
+	AFTER @TASK.FEAT41
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST83
+	RATIONALE "No repository guard read the scenario files, their walk collecting only spec files,"
+		+ "so locator hygiene was checked by eye only. Measuring the duration comes last because it"
+		+ "is only meaningful on the complete suite"
+		REF @DECISION.RepositoryGuardsAreGroupedScripts
+
+TASK REFACTOR38
+	TITLE "core-mapping production code brought in line with the coding standards: every STD"
+		+ "violation not covered by an existing task"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "Production, domain: no abbreviation outside DTOs in resolvePlanetName, no useless cast of"
+		+ "ENERGY_FUSE_NAME"
+		IMPL "packages/core-mapping/src/domain/rules/resolvePlanetName.ts"
+		IMPL "packages/core-mapping/src/domain/energyOptimizerConfig.ts"
+	SPEC "Production, merge: the default values of mergeGlobalMetadata and mergeStatistics are no"
+		+ "longer named validated nor after the operator that produces them, and the indentation of"
+		+ "mergeGlobalMetadata returns to the package's"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeStatistics.ts"
+	SPEC "Presentation: the three task markers leave worldObjectLabels.ts, the question about"
+		+ "procedural wrecks stays there naming the open question that carries it, and the Keycard1"
+		+ "/ KeyCard1 duplicate key is settled"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts"
+	SPEC "Presentation: the hard-coded user text of the three presenters moves to the package"
+		+ "messages directory, units and default planet name included, and the two parameterized"
+		+ "messages are named by an action verb"
+		IMPL "packages/core-mapping/src/presentation/messages/energyLevelsSectionMessages.js"
+		IMPL "packages/core-mapping/src/presentation/messages/playersSectionMessages.js"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts"
+		IMPL "packages/core-mapping/src/presentation/TerraformationLevelsPresenter.ts"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.ts"
+	SPEC "Presentation: the non-breaking space is declared once and by its escape sequence, the two"
+		+ "Threshold interfaces of the same name are unified and the strategy table is typed by key"
+		IMPL "packages/core-mapping/src/presentation/formatters/formatNumber"
+	SPEC "Application: stripping the json extension is shared instead of duplicated"
+		IMPL "packages/core-mapping/src/application/nameMergedFile.ts"
+		IMPL "packages/shared-save-processing/jsonExtension.js"
+	SPEC "Infrastructure: the abbreviations and the note restating what the method does leave"
+		+ "SaveSectionsReaderService"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts"
+	SPEC "Infrastructure: the parameter every save goes through is no longer called mergedSave"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js"
+	SPEC "Application: the reader port no longer returns a progression value object under a"
+		+ "metadata name, and the use cases stop calling the parameter of a reader port a parser"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsReaderPort.ts"
+		IMPL "packages/core-mapping/src/application/LoadGlobalProgressionSection.ts"
+	SPEC "Acceptance: merge output identical to the reference on both input folders, identical"
+		+ "validation verdicts, tests, type-check and guards green"
+		IMPL "packages/core-mapping"
+	AFTER @TASK.REFACTOR15
+	AFTER @TASK.REFACTOR37
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST76
+	RATIONALE "No behaviour change except the case of the json extension, taken in review: the user"
+		+ "widened the pull request beyond core-mapping to take that case in cli-merge, which the"
+		+ "task had excluded. Last of the core-mapping production tasks, because the earlier ones"
+		+ "rewrite most of the listed files and taking it first would fix lines they delete. The"
+		+ "package specs are delivered afterwards, by TEST43 then TEST44. Several findings of the"
+		+ "2026-09-07 review had already disappeared under REFACTOR15 and REFACTOR37; the"
+		+ "acceptance lines are those that remained true. The finding said indentation returns to"
+		+ "tabs, but no source of the repository is tab-indented: the package unit is two spaces"
+		+ "and mergeGlobalMetadata used four, and that gap is what the acceptance line carries"
+		REF @DECISION.InputFolderScanRecognizesSavesWithHasJsonExtension
+		REF @TASK.TEST43
+		REF @TASK.TEST44
+		REF @TASK.REFACTOR15
+		REF @TASK.REFACTOR37
+	SOURCE "Complete code review of 2026-09-07"
+		REF @PULL_REQUEST.PCST61
+	SOURCE "User ruling of 2026-09-14: three pull requests, hence three tasks"
+		REF @PULL_REQUEST.PCST76
+
+TASK TEST43
+	TITLE "core-mapping domain specs brought in line with TEST-1: entities, value objects and merge"
+		+ "rules"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "Specs: twenty-one tests in sixteen files separate their act and assert phases, which"
+		+ "TEST-1 requires always present"
+		IMPL "packages/core-mapping/src/domain/entities"
+		IMPL "packages/core-mapping/src/domain/valueObjects"
+	SPEC "Specs: no test title contains when, the three files indented otherwise return to the"
+		+ "package indentation, and the first describe of determineSaveOrder loses its technical"
+		+ "prefix"
+		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveSections.spec.ts"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts"
+		IMPL "packages/core-mapping/src/domain/entities/WorldObjectEntity.spec.ts"
+		IMPL "packages/core-mapping/src/domain/entities/PlacedWorldObjectEntity.spec.ts"
+	SPEC "Specs: reprojected assertions assert the value, and expected values are literal, neither"
+		+ "computed nor spread from a fixture"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts"
+		IMPL "packages/core-mapping/src/domain/rules/computeEnergyBreakdown.spec.ts"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts"
+		IMPL "packages/core-mapping/src/domain/entities/PlacedWorldObjectEntity.spec.ts"
+	SPEC "Specs: the save order spec asserts the discriminating field of the main save, the full"
+		+ "configuration literal staying with the spec that merges it"
+		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts"
+	AFTER @TASK.REFACTOR38
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST79
+	RATIONALE "Second of the three pull requests of REFACTOR38; the findings come from the"
+		+ "2026-09-07 review and were re-audited at start, REFACTOR15 having rewritten the entity"
+		+ "specs and added rejection tests. The spread expected value was carried by three merge"
+		+ "specs, not only the one first anchored, so determineSaveOrder and"
+		+ "mergeSaveConfigurations are delivered here. The full save configuration literal belongs"
+		+ "to the spec that merges it: writing it in the order spec too would fail two specs for"
+		+ "one changed rule, so a partial expected value leaves the field it covers to the"
+		+ "neighbouring test. The test promoting a save without configuration could not fail, the"
+		+ "configuration merge falling back to save B in both orders; it now reads the open"
+		+ "instance seed, which only the main save provides"
+		REF @TASK.REFACTOR38
+		REF @TASK.REFACTOR15
+	SOURCE "Complete code review of 2026-09-07"
+		REF @PULL_REQUEST.PCST76
+	SOURCE "User ruling of 2026-09-14: three pull requests, hence three tasks"
+		REF @PULL_REQUEST.PCST76
+	SOURCE "User ruling of 2026-09-14: the last two carrying specs are delivered here, the rule"
+		+ "moving to the general instructions"
+		REF @PULL_REQUEST.PCST79
+
+TASK TEST44
+	TITLE "core-mapping application, infrastructure and presentation specs brought in line with"
+		+ "TEST-1"
+	STATUS implemented
+	SPEC "Specs: use case calls in a non-async test are awaited, even when the body is synchronous"
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.spec.ts"
+	SPEC "Specs: coverage duplicated across levels is removed, controller specs come back to one"
+		+ "nominal case and one failure, and pointless tests are deleted or rewritten"
+		IMPL "packages/core-mapping/src/controllers"
+	SPEC "Specs: no section index is hard-coded, not even in a spec, and casts on already"
+		+ "conforming literals are removed"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/MergeResultPresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/SaveFileValidationPresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/formatValidationError.spec.ts"
+	SPEC "Specs: the two missing presenter cases are added, progression without statistics and a"
+		+ "missing configuration section"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts"
+		IMPL "packages/core-mapping/src/presentation/SaveConfigurationPresenter.spec.ts"
+	SPEC "Acceptance: the quality gate is green with the assertion guard, and no merged act and"
+		+ "assert phase remains in the package"
+		IMPL "packages/core-mapping"
+	AFTER @TASK.TEST43
+	WAVE 4
+	DELIVERED_BY @PULL_REQUEST.PCST82
+	RATIONALE "Third of the three pull requests of REFACTOR38; it carries the overall acceptance,"
+		+ "which can only hold once the domain specs are delivered. MergeSaveFiles.spec.ts no"
+		+ "longer has an unawaited call, having been rewritten around a single factory; the two"
+		+ "remaining calls are those of the ValidateSaveFile warning tests. The four removed tests"
+		+ "replayed the invalid extension and the legacy format warning, held one level lower by"
+		+ "SaveValidatorService, the two validation presenters and the three use case specs, and"
+		+ "end to end by the cli-merge and cli-validate specs. Specs read the section index module;"
+		+ "the hard-coded indices were five, in five files. REFACTOR37 had already added the two"
+		+ "missing presenter tests, so that line was delivered without a diff"
+		REF @TASK.REFACTOR38
+		REF @TASK.REFACTOR37
+		REF @DECISION.TheDoublesOfASpecShareOneFactory
+		REF @DECISION.AControllerSpecCoversWiringNotBranches
+		REF @DECISION.ASectionIndexIsNeverHardCoded
+	SOURCE "Complete code review of 2026-09-07"
+		REF @PULL_REQUEST.PCST76
+	SOURCE "User ruling of 2026-09-14: three pull requests, hence three tasks"
+		REF @PULL_REQUEST.PCST76
+	SOURCE "Re-audit of the 2026-09-07 findings at the start of the task"
+		REF @PULL_REQUEST.PCST82
+
+TASK FIX45
+	TITLE "validation refuses a save whose section 0 carries no entry, before any merge and any"
+		+ "write"
+	STATUS todo
+	SPEC "Validation returns an issue for a save whose section 0 carries no entry, and the merge is"
+		+ "not attempted"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js"
+	SPEC "mergeGlobalMetadata called with two empty sections fails with a named error, never with a"
+		+ "bare TypeError, and the spec covers this case"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts"
+	SPEC "bun merge on a folder of two saves with an empty section 0 shows the validation refusal"
+		+ "in business language and writes no file"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+	AFTER @TASK.TEST44
+	RATIONALE "The fix is a follow-up ruled by the user on 2026-09-16: pull request #15 does not"
+		+ "change the merge behaviour on this case, it replaces a corrupted save written silently"
+		+ "by a loud failure with no write. The path the error takes is already settled: an error"
+		+ "on an input file belongs to validation, the same error reached further is a broken"
+		+ "invariant that fails loudly. The case is reachable end to end: splitSectionLines returns"
+		+ "an empty array for an empty section, verifySectionCount only counts the parts, and"
+		+ "validateSchemas loops over the entries of a section so finds nothing wrong with zero"
+		+ "entries; the minItems that would forbid it lives in save-file.schema.json, which no code"
+		+ "compiles, only the ten per-entry schemas being compiled. The layer of the error type is"
+		+ "left to the task: the named error directory covers only the core-mapping infrastructure,"
+		+ "and mergeGlobalMetadata is a domain rule"
+		REF @PULL_REQUEST.PCST15
+		REF @DECISION.AnEmptyMetadataSectionIsRefusedByValidation
+		REF @DECISION.AnErrorsOriginDecidesItsPath
+		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType
+	SOURCE "Review of pull request #15 and user ruling of 2026-09-16"
+		REF @PULL_REQUEST.PCST15
+
+TASK CHORE3
+	TITLE "the root manifest declares bun again in devDependencies at 1.3.14, without bumping it:"
+		+ "the bump comes back through Dependabot"
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
+	SPEC "package.json declares bun in devDependencies at the same version as the one pinned in"
+		+ "packageManager"
+		IMPL "package.json"
+	SPEC "No workflow hard-codes bun-version; dependencies.yml and ui-tests.yml read"
+		+ "bun-version-file"
+		IMPL ".github/workflows/dependencies.yml"
+		IMPL ".github/workflows/ui-tests.yml"
+	DELIVERED_BY @PULL_REQUEST.PCST90
+	RATIONALE "A structural task, not a bump: bumping Bun by hand in this pull request would lose"
+		+ "the demonstration that the automatic path is restored. No guard accompanies the fix, by"
+		+ "user ruling of 2026-09-16, after the three guard forms considered proved either red on"
+		+ "every Dependabot pull request or blind to the drift they claimed to cover"
+		REF @DECISION.NodeFollowsReleasesWhileBunIsPinnedAndBumped
+	SOURCE "Dependabot updates blocked between pull requests #57 and #89"
+		REF @PULL_REQUEST.PCST57
+		REF @PULL_REQUEST.PCST89
