@@ -53,10 +53,10 @@
     "node:validate": "node --import ./scripts/node/register.js packages/cli-validate/cli/validate-cli.js --platform=node"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.14",
-    "bun": "1.3.14",
+    "@types/bun": "^1.4.2",
+    "bun": "1.4.2",
     "esbuild": "^0.28.2",
-    "fallow": "^3.20.0",
+    "fallow": "^3.25.0",
     "typescript": "^7.0.2"
   },
   "engines": {
