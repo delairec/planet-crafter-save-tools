@@ -7,7 +7,6 @@ entities rather than restating them. It is deleted once the migration is done.
 Measured on the corpus of branch `docs/corpus-cleanup` at 137 `DECISION` and 61 `OPEN_QUESTION`,
 with `awawa 2.7.0`.
 
-
 ## 1. What the corpus measures
 
 | measure                                                   | value                                                             |
@@ -46,7 +45,7 @@ type. The table above is what that costs.
   `WHEN STATUS implemented` demands a `SPEC` and a resolving `IMPL`, and the code gives one.
 - **A decision on how work is led cannot climb it.** `processus` is the only file where `specified`
   wins, 20 against 15, and the fifteen that reached `implemented` did so by anchoring
-  `docs/_schema.awawa` or `AGENTS.md` — the corpus anchoring itself. A ruling on branches, worktrees
+  `../_schema.awawa` or `AGENTS.md` — the corpus anchoring itself. A ruling on branches, worktrees
   or pull requests has nothing in the repository to anchor, so `specified` is its terminal state. A
   ladder that never advances carries no information.
 - **`OPEN_QUESTION` uses two of the four values and neither word means what it says.** `specified`

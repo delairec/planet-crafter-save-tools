@@ -86,4 +86,4 @@ Two choices the view made on its own. They are not requests; they are listed bec
 
 ---
 
-*Written on awawa 2.7.0 against the planet-crafter-save-tools corpus, from the awawa-ui plugin at commit 2841f49, a local repository not published. The timings of defect 01 come from the report recorded on 2026-09-16 in `docs/awawa-usage-reports/intellij-plugin-ui/`; the JSON shapes of defects 02 and 03 and the `statuses` behaviour of defect 04 were re-checked the same day, the last on a throwaway corpus.*
+*Written on awawa 2.7.0 against the planet-crafter-save-tools corpus, from the awawa-ui plugin at commit 2841f49, a local repository not published. The timings of defect 01 come from the report recorded on 2026-09-16 in `../intellij-plugins`; the JSON shapes of defects 02 and 03 and the `statuses` behaviour of defect 04 were re-checked the same day, the last on a throwaway corpus.*
