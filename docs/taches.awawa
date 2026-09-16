@@ -574,3 +574,25 @@ TASK T45_RefusDUneSectionMetadataVideALaValidation
 		+ "langage metier et n'ecrit aucun fichier"
 		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
 	SOURCE "revue de la PR #15, fil 3978907815 ; arbitrage utilisateur du 2026-09-16"
+
+TASK DEP3_BunEstDeclarePourDependabotEtLuDepuisLeManifeste
+	DESC "le manifeste racine redeclare bun en devDependencies a 1.3.14, sans monter : la montee"
+		+ "revient par Dependabot"
+	DESC "dependencies.yml et ui-tests.yml lisent la version de Bun depuis le manifeste au lieu de"
+		+ "la porter en dur"
+	STATUS implemented
+	PR "#90"
+	RATIONALE "tache de structure, pas de montee : monter Bun a la main dans cette pull request"
+		+ "ferait perdre la demonstration que le chemin automatique est retabli"
+		REF @DECISION.NodeSuitSesVersionsBunResteEpingle:v2
+	RATIONALE "aucune garde n'accompagne le correctif : arbitrage de l'utilisateur du 2026-09-16,"
+		+ "apres que les trois formes de garde envisagees se sont revelees soit rouges sur chaque"
+		+ "pull request Dependabot, soit aveugles a la derive qu'elles pretendaient couvrir"
+	SPEC "package.json declare bun en devDependencies a la meme version que celle epinglee dans"
+		+ "packageManager"
+		IMPL "package.json"
+	SPEC "aucun workflow ne porte bun-version en dur ; dependencies.yml et ui-tests.yml lisent"
+		+ "bun-version-file"
+		IMPL ".github/workflows/dependencies.yml"
+		IMPL ".github/workflows/ui-tests.yml"
+	SOURCE "correction du 2026-09-16 ; blocage constate entre les PR #57 et #89"
