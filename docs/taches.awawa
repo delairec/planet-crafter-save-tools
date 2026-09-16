@@ -581,6 +581,7 @@ TASK DEP3_BunEstDeclarePourDependabotEtLuDepuisLeManifeste
 	DESC "dependencies.yml et ui-tests.yml lisent la version de Bun depuis le manifeste au lieu de"
 		+ "la porter en dur"
 	STATUS implemented
+	PR "#90"
 	RATIONALE "tache de structure, pas de montee : monter Bun a la main dans cette pull request"
 		+ "ferait perdre la demonstration que le chemin automatique est retabli"
 		REF @DECISION.NodeSuitSesVersionsBunResteEpingle:v2
