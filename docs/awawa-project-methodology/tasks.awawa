@@ -483,3 +483,37 @@ TASK DOCS48
 		+ "all of it, whether its task touches the corpus or not"
 	SOURCE "Review of the corpus migration"
 		REF @PULL_REQUEST.PCST95
+
+TASK CHORE49
+	TITLE "package.json carries one Bun version in packageManager and devDependencies.bun"
+	STATUS draft
+	SPEC "packageManager and devDependencies.bun in the root package.json name the same Bun release"
+	RATIONALE "pull request #91 bumped devDependencies.bun to 1.4.2 while packageManager stayed at"
+		+ "bun@1.3.14, so the third SPEC of the decision is false and lint cannot see it, both"
+		+ "anchors resolving"
+		REF @DECISION.NodeFollowsReleasesWhileBunIsPinnedAndBumped
+	SOURCE "Usage report of the corpus migration, part A remediation 2"
+		REF @USAGE_REPORT.PR95
+
+TASK DOCS50
+	TITLE "the five points the corpus migration left in its pull request body are ruled in the"
+		+ "corpus"
+	STATUS draft
+	SPEC "the decision BothMessageListsShareOneRendering and ValidationMessagesList.tsx agree on"
+		+ "whether severity is a parameter of the component"
+	SPEC "the decision NoSaveIsCommittedToThePublicRepository says whether the generated fixtures"
+		+ "of packages/ui-save-manager/e2e/fixtures/ are saves it forbids"
+	SPEC "the decision MockIsolationIsAGlobalPreload names the packages that carry the preload,"
+		+ "ui-save-manager running no bun test"
+	SPEC "SCHEMA PROCESS carries APPLIES_TO_PACKAGE and APPLIES_TO_TASK, or the loss of the two"
+		+ "edges of the process ATestTaskChangesTheUiOnlyForItsOwnSake is recorded as accepted"
+	SPEC "the language of AGENTS.md is ruled by a decision, or the absence of such a decision is"
+		+ "recorded as accepted"
+	RATIONALE "each point is a ruling of the owner, by rewriting the decision in place or by"
+		+ "changing the code; left in the pull request body, none of them reaches a session"
+		REF @DECISION.BothMessageListsShareOneRendering
+		REF @DECISION.NoSaveIsCommittedToThePublicRepository
+		REF @DECISION.MockIsolationIsAGlobalPreload
+		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
+	SOURCE "Usage report of the corpus migration, part A remediation 1"
+		REF @USAGE_REPORT.PR95

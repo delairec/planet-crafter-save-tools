@@ -248,3 +248,8 @@ PULL_REQUEST PCST95
 	PROJECT @PROJECT.PCST
 	NUMBER 95
 	DESC "docs(awawa): migrate project methodology corpus to the target schema"
+
+USAGE_REPORT PR95
+	FILE "docs/awawa-usage-reports/pull-requests/2026-09-17-pr-95.md::<!-- awawa-usage-report -->"
+	EVALUATES @PULL_REQUEST.PCST95
+	DESC "usage report of the corpus migration, committed on its branch before the merge"
