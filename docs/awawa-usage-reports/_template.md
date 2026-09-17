@@ -60,11 +60,22 @@ section, heading included, exactly as any unused part of the template is deleted
 
 ### Remediations, by return
 
-| # | Change | What it fixes |
-|---|--------|---------------|
-| 1 |        |               |
+| # | Change | What it fixes | Recorded as |
+|---|--------|---------------|-------------|
+| 1 |        |               |             |
 
-<!-- A remediation that is a ruling is a proposal to the user; the report never writes a DECISION. -->
+<!-- A remediation that is a ruling is a proposal to the user; the report never writes a DECISION.
+"Recorded as": the corpus entity this report opened for a project remediation, the live entity that already
+carries it, or "~/.ai pull request" for a general rule, which opens no entity. -->
+
+### Entities proposed to the owner
+
+| Entity | Type | What it records | Ruling expected |
+|--------|------|-----------------|-----------------|
+|        |      |                 |                 |
+
+<!-- One row per entity this report opened: a draft TASK to ratify, an OPEN_QUESTION to answer, a LIMITATION
+or a FACT to accept. The same table goes into the pull request comment. Delete the section when none was opened. -->
 
 ## Part B — The tool
 
