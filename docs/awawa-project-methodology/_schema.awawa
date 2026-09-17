@@ -159,7 +159,7 @@ SCHEMA FACT
 			REPEATABLE
 			DESC "an entity the statement names, so that it is indexed"
 	FIELD BASIS attested|hypothesis
-		DEFAULT attested
+		DEFAULT hypothesis
 		DESC "whether the statement is proven or assumed"
 	FIELD ATTESTED_BY anchor
 		REPEATABLE

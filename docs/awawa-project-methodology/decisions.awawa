@@ -2199,3 +2199,15 @@ DECISION RefusedShortcutsAreReadFromThePlaywrightApi
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
 	SOURCE "Review of T42"
 		REF @PULL_REQUEST.PCST83
+
+DECISION AFactIsAHypothesisUntilItIsAttested
+	SPEC "FACT.BASIS defaults to hypothesis: a fact that writes no BASIS must name its UNTIL, and a"
+		+ "proven fact writes BASIS attested with its ATTESTED_BY"
+		IMPL "docs/awawa-project-methodology/_schema.awawa::DEFAULT hypothesis"
+		IMPL "docs/awawa-project-methodology/facts.awawa::BASIS attested"
+	REJECTED "DEFAULT attested, ratified in the migration work file on 2026-09-16 (point 22): the"
+		+ "omission then claimed a proof nobody wrote"
+	RATIONALE "a statement is taken as proven only when its author says so; forgetting BASIS lands"
+		+ "on the unproven case, which lint makes name what retires it"
+	SOURCE "Review of the corpus migration"
+		REF @PULL_REQUEST.PCST95
