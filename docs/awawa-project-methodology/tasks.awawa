@@ -472,3 +472,14 @@ TASK FEAT47
 	RATIONALE "Without the pass the archive mechanism turns into the history it replaces; the"
 		+ "design was probed on throwaway corpora before the migration, the pass reading only"
 		+ "status, show and refs in JSON"
+
+TASK DOCS48
+	TITLE "the corpus section of AGENTS.md is split into files it links to, read only when needed"
+	STATUS draft
+	SPEC "AGENTS.md keeps, about the corpus, only what a session needs before its first command,"
+		+ "and links to the rest"
+	SPEC "each part taken out is a file of its own, named by the link that says when to read it"
+	RATIONALE "the section grew with the migration, and every session that loads AGENTS.md loads"
+		+ "all of it, whether its task touches the corpus or not"
+	SOURCE "Review of the corpus migration"
+		REF @PULL_REQUEST.PCST95

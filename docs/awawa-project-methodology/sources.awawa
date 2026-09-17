@@ -243,3 +243,8 @@ PULL_REQUEST PCST94
 	NUMBER 94
 	DESC "docs(awawa-usage-reports): keep the feedback page's exports in artifact-assets and rule"
 		+ "their removal"
+
+PULL_REQUEST PCST95
+	PROJECT @PROJECT.PCST
+	NUMBER 95
+	DESC "docs(awawa): migrate project methodology corpus to the target schema"
