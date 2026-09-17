@@ -206,10 +206,6 @@ SCHEMA TASK
 		FIELD IMPL anchor
 			REPEATABLE
 			DESC "the test or the code where the criterion is proven; written at delivery"
-	FIELD APPLIES_TO_PROJECT @PROJECT
-		REPEATABLE
-		CONVERSE GOVERNED_BY
-		DESC "the project the task applies to; absent: none or to be discovered"
 	FIELD AFTER @TASK
 		REPEATABLE
 		CONVERSE BEFORE
