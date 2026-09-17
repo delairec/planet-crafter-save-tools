@@ -20,7 +20,7 @@ SCHEMA *
 		FIELD REF reference
 			REQUIRED
 			REPEATABLE
-			DESC "the PULL_REQUEST, USAGE_REPORT, URL or PROJECT the prose names"
+			DESC "the PULL_REQUEST, USAGE_REPORT, URL, PROJECT or GAME_RELEASE the prose names"
 	FIELD STATUS active|archived
 		DEFAULT active
 		DESC "written only to archive an entity that stopped binding"
@@ -73,6 +73,14 @@ SHAPE file_name
 	DESC "the subject of the report, words joined by underscores"
 	MATCH "[A-Za-z0-9]+(_[A-Za-z0-9]+)*"
 
+SHAPE version_segment
+	DESC "one dot-separated segment of a released game version, digits only"
+	MATCH "[0-9]+"
+
+SHAPE json_key
+	DESC "a property name of a JSON row, camelCase"
+	MATCH "[a-z][A-Za-z0-9]*"
+
 FIELDSET Ruling
 	DESC "the fields shared by the ruling types"
 	FIELD REJECTED string
@@ -114,6 +122,10 @@ SCHEMA DECISION
 		REPEATABLE
 		CONVERSE GROUNDS
 		DESC "a fact the ruling depends on"
+	FIELD ASSUMES @HYPOTHESIS
+		REPEATABLE
+		CONVERSE GROUNDS
+		DESC "a hypothesis the ruling rests on"
 
 SCHEMA PROCESS
 	DESC "a ruling on how the work is led, with nothing in the repository to anchor"
@@ -278,8 +290,124 @@ SCHEMA USAGE_REPORT
 		CONVERSE EVALUATED_BY
 		DESC "the pull request the report measures"
 
+SCHEMA GAME_RELEASE
+	DESC "a released version of the game, cited as the source of what was observed in it"
+	NAME version_segment
+
 SCHEMA URL
 	DESC "an external page cited as a source"
 	FIELD LOCATION url
 		REQUIRED
 		DESC "the address of the page"
+
+FIELDSET Era
+	DESC "the era of the save format the statement holds for"
+	FIELD HOLDS_FOR current|legacy|both
+		REQUIRED
+		DESC "the era the statement holds for: the format the game writes today, the one it wrote"
+			+ "before the Terrain Layers section was removed, or both"
+
+SCHEMA SECTION
+	DESC "a part of the save the game writes at a fixed index"
+	INCLUDE @FIELDSET.Era
+	FIELD LABEL string
+		REQUIRED
+		DESC "the name the project calls the section by; the single reference for that name"
+	FIELD ATTESTED_BY anchor
+		REQUIRED
+		REPEATABLE
+		CATEGORY attestation
+		DESC "the committed fixture, JSON Schema, test or document that proves the index"
+	WHEN HOLDS_FOR current
+		INCOMING CONSTRAINED_BY
+		FIELD INDEX uint
+			REQUIRED
+			DESC "the position of the section in the current format"
+	WHEN HOLDS_FOR legacy
+		FIELD LEGACY_INDEX uint
+			REQUIRED
+			DESC "the position of the section in the legacy format"
+	WHEN HOLDS_FOR both
+		INCOMING CONSTRAINED_BY
+		FIELD INDEX uint
+			REQUIRED
+			DESC "the position of the section in the current format"
+		FIELD LEGACY_INDEX uint
+			REQUIRED
+			DESC "the position of the section in the legacy format"
+
+SCHEMA RULE
+	DESC "a statement about the save or the game that a real save, or a game source, can"
+		+ "contradict; a ruling of ours that could have been made otherwise is a DECISION"
+	INCLUDE @FIELDSET.Era
+	FIELD DOMAIN format|game|merge
+		REQUIRED
+		REPEATABLE
+		DESC "what the statement is about: the bytes of the save, the game itself, or how two saves"
+			+ "are merged; repeated when one statement holds in several domains"
+	FIELD SPEC string
+		REQUIRED
+		REPEATABLE
+		DESC "one falsifiable obligation"
+		FIELD ATTESTED_BY anchor
+			REQUIRED
+			REPEATABLE
+			CATEGORY attestation
+			DESC "the save, fixture, test or game source that proves the obligation"
+	FIELD APPLIES_TO_SECTION @SECTION
+		REPEATABLE
+		CONVERSE CONSTRAINED_BY
+		DESC "the section the statement constrains"
+	FIELD VALUES_FROM @DATATABLE
+		REPEATABLE
+		CONVERSE SUPPLIES
+		DESC "the table holding the values the statement has authority over"
+	FIELD ASSUMES @HYPOTHESIS
+		REPEATABLE
+		CONVERSE GROUNDS
+		DESC "a hypothesis the statement rests on"
+	WHEN DOMAIN merge
+		FIELD CONFLICT string
+			REQUIRED
+			DESC "what the two saves disagree on"
+		FIELD RESOLUTION string
+			REQUIRED
+			DESC "which of the two the merge keeps, and why"
+		FIELD APPLIES_TO_SECTION
+			REQUIRED
+			REPEATABLE
+
+SCHEMA COMMAND
+	DESC "a command a user invokes whose output is observable"
+	FIELD INVOCATION string
+		REQUIRED
+		DESC "the command as a user types it"
+	FIELD IMPL anchor
+		REQUIRED
+		DESC "the entry point the invocation reaches"
+	FIELD APPLIES @RULE
+		REPEATABLE
+		CONVERSE APPLIED_BY
+		DESC "a rule the command applies"
+
+SCHEMA HYPOTHESIS
+	DESC "a statement about the save or the game assumed true and proven by nothing"
+	FIELD UNTIL @TASK|string
+		REQUIRED
+		CONVERSE RETIRES
+		DESC "the counter-example that refutes it, or the task that settles it"
+	FIELD OBSERVED_IN anchor
+		REPEATABLE
+		DESC "where the statement was observed without being proven"
+
+SCHEMA DATATABLE
+	DESC "a file of product values no rule summarises; the rows are data, never entities"
+	FIELD TABLE anchor
+		REQUIRED
+		DESC "the file holding the rows"
+	FIELD KEY json_key
+		REQUIRED
+		DESC "the name of the field identifying a row"
+	FIELD JSON_SCHEMA anchor
+		REQUIRED
+		DESC "the JSON Schema the rows of the table validate against"

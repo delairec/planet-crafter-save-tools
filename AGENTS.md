@@ -3,20 +3,54 @@
 Contexte projet pour les agents IA travaillant dans ce dépôt, en complément des instructions générales `~/.ai`.
 
 **Ce fichier n'est plus le domicile des décisions.** Depuis le 2026-09-11, la spécification, les arbitrages et les
-questions ouvertes vivent dans le corpus awawa de `docs/awawa-project-methodology/` et se lisent avec l'outil. Ce qui reste ici est ce qu'il
+questions ouvertes vivent dans le corpus awawa de `docs/` et se lisent avec l'outil. Ce qui reste ici est ce qu'il
 faut savoir *avant* d'avoir lancé la moindre commande : où est le corpus, comment le lire, les commandes du dépôt,
 et les règles qu'on ne peut pas se permettre de découvrir par une requête.
 
 ## Corpus de spécification (awawa)
 
-La spécification du projet est le corpus awawa de `docs/awawa-project-methodology/`, rédigé en anglais, noms
-d'entités compris : `_schema.awawa` déclare tous les types, puis un fichier par type (`decisions.awawa`,
+La spécification du projet est le corpus awawa de `docs/`, rédigé en anglais, noms
+d'entités compris : `docs/_schema.awawa` déclare tous les types pour l'ensemble du workspace, puis un fichier
+par type dans l'aire qui le porte — `docs/awawa-project-methodology/` pour la méthodologie (`decisions.awawa`,
 `processes.awawa`, `limitations.awawa`, `facts.awawa`, `tasks.awawa`, `packages.awawa`, `open_questions.awawa` quand
-une question existe) et `sources.awawa` pour les sources. Une entité nouvelle s'ajoute **à la fin** du fichier de son
+une question existe) et `sources.awawa` pour les sources ; `docs/awawa-project-specification/` pour la
+spécification produit (`sections.awawa`, `rules.awawa`, `commands.awawa`, `hypotheses.awawa`,
+`datatables.awawa`). Une entité nouvelle s'ajoute **à la fin** du fichier de son
 type (@DECISION.TheCorpusLivesInThePublicRepository). **La racine de workspace est la racine du dépôt** — c'est de là
 que les ancres résolvent, `..` y est refusé, et c'est elle que prend le dernier argument de chaque commande. Ne jamais
 passer un fichier seul : chaque commande agit sur tout l'espace de travail, et un fichier isolé rapporte comme cassées
 des références qui tiennent.
+
+**Chaque aire a son pivot** : `TASK` pour la méthodologie, `RULE` pour la spécification produit. Une question sur le
+produit part d'une `RULE` — son `context` tire la `SECTION`, la `DATATABLE` et l'`HYPOTHESIS` qu'elle nomme, et son
+pied de page nomme la `COMMAND` qui l'applique. Aucun des cinq types de spécification ne porte d'état « implemented » :
+une règle est vraie ou fausse, pas livrée, et ce qui n'est pas encore construit est un `TASK`
+(@DECISION.TheSpecificationAreaPivotsOnTheRule).
+
+**Une ancre nomme un fichier suivi par git.** `L016` ne teste que l'existence du chemin sur le disque et ne consulte
+jamais git : une ancre vers `input/`, `output/` ou `.do-not-commit/` est propre chez son auteur et casse en clone
+neuf. Les témoins commités sont les fixtures de `packages/ui-save-manager/e2e/fixtures/`, les JSON Schemas de
+`packages/shared-save-processing/schemas/`, les tests et les documents de `docs/`
+(@DECISION.AnAnchorNamesAFileTrackedByGit).
+
+**Un champ légal dans un seul état n'est déclaré que là.** Un champ conditionné par la valeur d'un autre champ se
+déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `INDEX` sous `WHEN HOLDS_FOR current` et
+`WHEN HOLDS_FOR both`, `CONFLICT` et `RESOLUTION` sous `WHEN DOMAIN merge`. Déclaré au niveau du type puis rendu
+requis dans le bloc, il resterait légal partout, la monotonie de `WHEN` ne pouvant rien interdire ; répété dans
+chaque bloc qui l'admet, il est refusé ailleurs par `L003`
+(@DECISION.AFieldLegalInOneStateIsDeclaredInThatStateAlone).
+
+**Une observation dans le jeu cite sa version**, une page lue dehors cite son adresse. Le jeu est une entité
+`GAME_RELEASE` nommée par sa version telle que le jeu l'imprime — `@GAME_RELEASE.2.102` —, une page externe une
+entité `URL` dont `LOCATION` est l'adresse exacte lue, figée sur un commit quand l'hôte le permet. La date de la
+lecture reste dans la prose de la `SOURCE` : une même page se lit plusieurs jours
+(@DECISION.AGameReleaseIsCitedAsASource, @DECISION.AnExternalPageIsCitedAtTheAddressRead).
+
+**L'ère n'est pas l'archive** : une `SECTION` que le jeu n'écrit plus reste active avec `HOLDS_FOR legacy` — les
+sauvegardes anciennes se lisent encore ; `STATUS archived` ne s'écrit que le jour où le projet cesse de supporter ce
+que l'entité décrit. Archiver éteint toute validation de l'entité et retire son corps des paquets `context` qui la
+citent : une entité s'archive propre, et rien d'actif ne doit plus pointer vers elle
+(@DECISION.TheEraIsNotTheArchive).
 
 **Lancer `awawa` depuis un worktree du dépôt public**, avec `.` pour racine.
 
@@ -58,7 +92,8 @@ awawa lint --strict .                                   # doit sortir en 0
   `UNTIL`) ; un défaut d'un outil externe ne s'enregistre pas, seul le contournement du projet devient une `DECISION`
   avec `UNTIL`. Ce que la save ou le jeu est, sans arbitrage, est un `FACT` (type temporaire).
 - **Toute `SOURCE` nomme une entité source** (`REF` requis) : `@PULL_REQUEST.PCST<n>`, `@PROJECT.DNC` pour un fichier
-  du dépôt privé, `@USAGE_REPORT`, `@URL`. Une provenance d'un genre nouveau fait déclarer son type dans la même PR.
+  du dépôt privé, `@USAGE_REPORT`, `@URL`, `@GAME_RELEASE` pour ce qui a été observé dans le jeu. Une provenance d'un
+  genre nouveau fait déclarer son type dans la même PR.
 - **Pas d'historique dans le corpus** : une entité qui cesse de lier est archivée dans la PR qui y met fin
   (`STATUS archived`, `ARCHIVED_ON`), une règle remplacée sur le même sujet est réécrite en place sous son nom — la forme
   précédente devient un `REJECTED` si elle enseigne quelque chose. Une entité qui n'aurait jamais dû être écrite est
@@ -70,7 +105,7 @@ awawa lint --strict .                                   # doit sortir en 0
 
 ## Emplacement
 
-Ce fichier est versionné à la racine du dépôt public, le corpus dans `docs/awawa-project-methodology/`. Le dépôt
+Ce fichier est versionné à la racine du dépôt public, le corpus dans `docs/`. Le dépôt
 satellite privé `delairec/.do-not-commit`, branche `planet-crafter-save-tools`, reste cloné dans `.do-not-commit/`
 (git-ignoré ici) et ne porte plus que ce qui ne peut pas être public
 (@DECISION.ThePrivateContextHoldsOnlySavesAndPlans).
