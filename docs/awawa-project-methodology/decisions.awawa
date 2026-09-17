@@ -1535,9 +1535,10 @@ DECISION NameMergedFileEscapesControlCharacters
 		REF @PULL_REQUEST.PCST62
 
 DECISION AUsageReportIsCommittedInTheTaskPullRequest
-	SPEC "A task pull request gets one usage report file in docs/awawa-usage-reports/, following"
-		+ "the template, committed on its branch before the merge once the review is addressed and"
-		+ "the pull request flagged ready; a follow-up pull request gets none"
+	SPEC "A task pull request gets one usage report file in"
+		+ "docs/awawa-usage-reports/pull-requests/, following the template, committed on its branch"
+		+ "before the merge once the review is addressed and the pull request flagged ready; a"
+		+ "follow-up pull request gets none"
 		IMPL "docs/awawa-usage-reports/_template.md"
 	SPEC "The report is written by an independent agent through /awawa-usage-report: a fresh"
 		+ "session with no memory of the work judged, never a fork, never the agent that"
@@ -1547,8 +1548,8 @@ DECISION AUsageReportIsCommittedInTheTaskPullRequest
 		+ "measured"
 		IMPL "docs/awawa-usage-reports/_template.md::Author of this report"
 		IMPL "docs/awawa-usage-reports/_template.md::Sessions measured"
-	SPEC "The file is named docs/awawa-usage-reports/<date>-pr-<N>.md, the date being that of the"
-		+ "report"
+	SPEC "The file is named docs/awawa-usage-reports/pull-requests/<date>-pr-<N>.md, the date being"
+		+ "that of the report"
 		IMPL "docs/awawa-usage-reports/_template.md::-pr-<N>.md"
 	SPEC "The template is the only home of the report shape: our verdict and the tool's, each by"
 		+ "what went well, what went wrong and the remediations, then the recurring points with"

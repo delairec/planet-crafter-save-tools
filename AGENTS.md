@@ -239,7 +239,7 @@ Une PR par tâche porte le code, les changements du corpus, les arbitrages et le
   écrit, rebaser sur la base, faire tourner les contrôles et `awawa lint --strict .`, signaler la PR prête.
 - **`/awawa-usage-report <N>`, une fois la revue traitée et la PR signalée prête** : faire commiter sur la branche
   de la PR, par un agent indépendant — session neuve, sans mémoire du travail jugé, jamais un fork —, le rapport de
-  `docs/awawa-usage-reports/<date>-pr-<N>.md` mesurant ce que le corpus a coûté et rendu sur l'arbitrage,
+  `docs/awawa-usage-reports/pull-requests/<date>-pr-<N>.md` mesurant ce que le corpus a coûté et rendu sur l'arbitrage,
   l'implémentation et la revue, points récurrents compris. Seule une PR qu'une `TASK` nomme dans `DELIVERED_BY` en
   reçoit un (@DECISION.AUsageReportIsCommittedInTheTaskPullRequest).
 - **Après ta fusion : `/worktree-clean`**, et rien d'autre.
