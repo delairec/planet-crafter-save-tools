@@ -244,9 +244,6 @@ Une PR par tâche porte le code, les changements du corpus, les arbitrages et le
   reçoit un (@DECISION.AUsageReportIsCommittedInTheTaskPullRequest).
 - **Après ta fusion : `/worktree-clean`**, et rien d'autre.
 
-Les commandes `/pr-review-followup` et `/pr-merge-followup` restent pour les projets sans corpus ; elles décrivent
-des fiches sur disque que ce projet n'a plus.
-
 ## Le corps d'une PR décrit la tête de branche
 
 **Le corps d'une pull request décrit la tête de branche, pas l'intention d'ouverture** : tout commit qui change la
