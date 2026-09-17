@@ -1,0 +1,91 @@
+FACT ASaveHasElevenSectionsTheLastReservedAndEmpty
+	BASIS attested
+	DESC "a save has 11 sections indexed 0 to 10, the last one being the reserved, empty part the"
+		+ "terminating separator produces"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Array of 11"
+		+ "sections (indexes 0 to 10)"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 10 —"
+		+ "Reserved"
+	SOURCE "Extracted from the ruling on section counters, names settled in the review of pull"
+		+ "request 47"
+		REF @PULL_REQUEST.PCST47
+
+FACT ASectionLineIsOneJsonEntry
+	BASIS attested
+	DESC "each line of a section is one JSON entry, lines being separated by a pipe"
+	ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::{\"id\":44,\"woIds\":\"79111656,58524136\",\"size\":20}|"
+	ATTESTED_BY "packages/shared-save-processing/parseSaveSections.js::return JSON.parse(line);"
+	SOURCE "Extracted from the ruling on the single save parser, pull request 47"
+		REF @PULL_REQUEST.PCST47
+
+FACT ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
+	BASIS attested
+	DESC "the player identifier exceeds the exact integer range of a double, and it is the only"
+		+ "such field in the six reference saves"
+	ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::When a save holding an"
+		+ "int64 player identifier is read back"
+	ATTESTED_BY "packages/shared-save-processing/int64Identifiers.js::RAW_INTEGER_FIELDS"
+	SOURCE "Extracted from the ruling on int64 identifiers, delivered by pull request 49"
+		REF @PULL_REQUEST.PCST49
+
+FACT FloatFieldsCarryADotZeroSuffixInFlatRecords
+	BASIS attested
+	DESC "the float fields of a save carry a .0 suffix when their value is whole, and the records"
+		+ "of the format are flat"
+	ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::\"playerGaugeToxic\":0.0"
+	ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::should preserve decimal"
+		+ "notation for known float fields in world objects"
+	SOURCE "Extracted from the ruling on float suffix emission, pull request 36"
+		REF @PULL_REQUEST.PCST36
+
+FACT APlayerIdentifierIsASteamAccountReusedAcrossGames
+	DESC "a player identifier is a Steam account identifier, which the game reuses from one game to"
+		+ "the next and which is unique neither across two saves nor, formally, within one"
+	BASIS hypothesis
+	UNTIL "a save whose player identifier names no Steam account, or two saves of the same account"
+		+ "carrying different identifiers"
+	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07, pull request 39"
+		REF @PULL_REQUEST.PCST39
+
+FACT AWorldObjectMayCarryALinkedObjectList
+	DESC "a world object may carry woIds, the list of the world objects it holds"
+	BASIS hypothesis
+	UNTIL "a source shows that the contents of a world object are only ever reached through its"
+		+ "linked inventory"
+	RATIONALE "The property appears on none of the 190338 world object entries surveyed: either it"
+		+ "exists and the sample does not meet it, or it does not exist and the contents go through"
+		+ "the linked inventory. It stays declared as a precaution: under a schema closed to"
+		+ "additional properties, omitting it would reject a save that the reference rewrite claims"
+		+ "to handle. If refuted, the type, the reference remapping and the matching line of the"
+		+ "identifier rule go together, not the schema alone"
+	SOURCE "Found on 2026-09-10, left open in the review of pull request 48"
+		REF @PULL_REQUEST.PCST48
+
+FACT AnAnimalHungerLevelLiesBetweenMinus100And100
+	DESC "the hunger level of an animal lies between -100 and 100"
+	BASIS hypothesis
+	ATTESTED_BY "packages/shared-save-processing/schemas/section3-world-objects.schema.json::ranging"
+		+ "from -100 to 94.22"
+	UNTIL "a legitimate save is rejected by the hunger bounds"
+	RATIONALE "The field was observed on the entries of a single group identifier only, 345"
+		+ "occurrences over 190338, ranging from -100 to 94.22. The symmetric scale rests on an"
+		+ "animal yielding a DNA sequence when its level is positive, which is consistent with a"
+		+ "ceiling without proving it. It is exactly the risk the schema rule names, a bound set on"
+		+ "the sample alone rejecting a legitimate save; the user accepted that risk"
+		REF @DECISION.ASchemaRuleHoldsByMeaningBeforeMeasurement
+	SOURCE "Found on 2026-09-10 in pull request 48"
+		REF @PULL_REQUEST.PCST48
+
+FACT ProceduralWrecksAreSpawnedByThePortalGenerator
+	DESC "the ProceduralWreck objects and ProceduralInstanceGenerator are spawned by"
+		+ "PortalGenerator1, the portal generator"
+	BASIS hypothesis
+	UNTIL "a save or a game source shows procedural wrecks spawned without PortalGenerator1"
+	RATIONALE "ProceduralInstanceGenerator has no label and renders its own key; once the link is"
+		+ "established the label table would name it, names being attested by a source or a save."
+		+ "The question was left as a code comment in worldObjectLabels, kept there and pointing at"
+		+ "this entity"
+		REF @DECISION.WorldObjectNamesAreAttestedBySourceOrSave
+		REF @DECISION.ACodeCommentQuestionNamesItsCorpusEntity
+	SOURCE "User ruling of 2026-09-14 in the review of pull request 76"
+		REF @PULL_REQUEST.PCST76

@@ -9,37 +9,12 @@ What migrating a seven-package monorepo to an awawa corpus taught us over two da
 - **148** — IMPL anchors
 - **7** — remediation tasks
 
-## 1. Two structural asks
+## 1. The two asks, answered by migration 2
 
-### An onboarding questionnaire, run by the agent before any schema exists
+This report first asked for two things: an onboarding questionnaire run by the agent before any schema exists, and an explicit choice between specifying the product and specifying the process. Four days later, the second migration of the same project answered both with a method rather than a questionnaire, packaged as a starter you can take as it is.
 
-A user who installs awawa does not know the tool yet. Today the agent reads the manual and invents a schema; the user discovers its consequences weeks later, when the ladder does not fit a type or a whole area of the project turns out to have no entity. The agent should ask a handful of plain questions and derive the schema from the answers. A proposed set, with no tool vocabulary in it:
-
-> 1. In one sentence, what does this project do, and for whom?
->
-> 2. Who will read the corpus: you, AI agents, a team? In which language?
->
-> 3. What do you write down today, and where? Decisions, open questions, tasks, known issues, product rules, none of these?
->
-> 4. Which things in your project would you want to list and cross-reference? Features, screens, rules, file formats, components, packages, data sources?
->
-> 5. Should the corpus describe **what the software does**, or only **how you work on it**? Both?
->
-> 6. When is something "done" for you: written, agreed, merged, deployed, verified?
->
-> 7. What must never be deleted, only marked as replaced?
->
-> 8. Which links to code or documents should the tool check for you?
->
-> 9. Where does the project's existing knowledge live that should be migrated: files, a wiki, an AGENTS.md, issues?
-
-From the answers the agent proposes the types, one ladder per type in the user's own words, the anchor fields and the file layout, then prints `awawa new` skeletons for confirmation before writing anything. This can ship as a command in the skills, or as a mandatory section of `agent-protocol.md`.
-
-### Make the scope of a migration explicit: product versus process
-
-The corpus that came out of this migration has four types, `DECISION`, `OPEN_QUESTION`, `TASK` and `PACKAGE`, all about how the work is done. The product itself — the save file format, the merge rules, the validation rules, the UI flows — has no entity type. It lives inside decisions and in a markdown document that the decisions anchor. Nothing in the tool or its documentation prompts the question of whether the software should be specified too, so a migration can end with only one half of a corpus and nobody noticing.
-
-Question 5 above catches it at onboarding. For the documentation: state plainly that a corpus has two halves, the product (what it does) and the process (how it is worked on), and that a migration that takes only one is half a migration.
+- **Product or process** is part of the starter's entry point: before the first schema line, the agent asks whether a corpus exists and what it will specify — a methodology, a product, a game or system design, a tool's behaviour, or something else.
+- **The questionnaire** became ten principles applied by two flows, from scratch and migration, one step per session: each step ends with the prompt of the next, and the agent measures, probes and has the user confirm before the schema moves.
 
 ## 2. Migration context
 
@@ -87,8 +62,8 @@ Ordered by what they unblock for a new project. The "where" column says whether 
 
 | Remediation | Where | Friction addressed | Effort |
 |---|---|---|---|
-| Onboarding questionnaire → draft schema → user confirms | skills + protocol | The schema is derived from the user's answers, not invented from the manual. Section 1. | medium |
-| "Product and process" named as the two halves of a corpus | doc + starter | A migration cannot silently take only one half. Section 1. | low |
+| Onboarding questionnaire → draft schema → user confirms | skills + protocol | The schema is derived from the user's answers, not invented from the manual. Answered by the starter of migration 2. | medium |
+| "Product and process" named as the two halves of a corpus | doc + starter | A migration cannot silently take only one half. Answered by the starter's entry point, migration 2. | low |
 | A multi-file "software project" starter | starter | `_schema.awawa` holding `SCHEMA *`, one file per domain, product types beside process types, per-type ladder from day one, a `SHAPE date`, `RULED` and change-reference fields, `REF` nested under every prose field. A project starts from the shape that holds, not the one it will have to redo. | low |
 | Document the per-type ladder, with an example | doc + skills | "`STATUS` goes to `SCHEMA *`" becomes "`STATUS` is declared where the ladder makes sense: per type, or in a `FIELDSET`; the `WHEN STATUS` blocks of `SCHEMA *` fire on any entity that writes the value". The `awawa-schema` skill shows a question on `draft / open / closed`. | low |
 | A hint on a wall of L016 | binary | When most anchors fail and the root passed is not a repository root, one line: "*148 anchors miss under docs/; the workspace root is probably a parent — try `awawa lint .`*". | low |
@@ -107,7 +82,7 @@ Ordered by what they unblock for a new project. The "where" column says whether 
 
 What an agent or a human discovering an awawa project should do, in order, and what neither `--help` nor the `AGENTS.md` block says in full today. Proposed for `agent-protocol.md` and for the starter.
 
-1. **No schema yet?** Run the questionnaire of section 1 and confirm the draft schema with the user before writing a single entity.
+1. **No schema yet?** Follow the starter of the Migration 2 report, one step per session, and have the user confirm each schema move before writing a single entity.
 2. **Find the root.** `git rev-parse --show-toplevel` must be the root the commands take; anchors resolve from there. A corpus under `docs/` is still run with `.`.
 3. **Check the version.** `awawa --version`, against the one the project pins. A binary of another version has other rules.
 4. **`awawa status .`** before anything else. The unresolved-reference count and the diagnostics line say whether the state is healthy; a wall of L016 says the root is wrong.
@@ -123,7 +98,7 @@ What an agent or a human discovering an awawa project should do, in order, and w
 
 Four questions came back at every schema decision taken here. They deserve an answer in the design, not only in one corpus.
 
-- **Who decides the schema, and when?** Left to the agent, the schema mirrors the manual's example and the migration mirrors whatever files existed. Left to a questionnaire, it mirrors the project. The second is the one that survives its first month.
+- **Who decides the schema, and when?** Left to the agent, the schema mirrors the manual's example and the migration mirrors whatever files existed. Left to the user's answers, it mirrors the project. The second is the one that survives its first month.
 - **Where does discipline end and the schema begin?** The `DESC` fragment, the prefix ↔ field correspondence, the reopened question: three rules the corpus cannot express. Either the language gains `MAXLEN`, `NAME` under `WHEN` and `TARGET STATUS`, or the manual lists explicitly what will remain a discipline, so people stop looking for it.
 - **Is a ladder per type the norm or the exception?** Everything in the documentation pushes toward `SCHEMA *`, and experience says the opposite as soon as a type is not a thing one implements. The starter should settle it in favour of the per-type ladder.
 - **What is the anchor's contract?** "Resolves" is not "verifies". A project that reads `implemented` as proof is mistaken, and nothing in the tool warns it. A rule on directories and one sentence in the manual, "`implemented` means anchored, not verified", shrink the misunderstanding.

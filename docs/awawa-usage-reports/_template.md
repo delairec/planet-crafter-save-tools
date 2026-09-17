@@ -1,11 +1,14 @@
+<!-- awawa-usage-report -->
+
 # <YYYY-MM-DD> — PR #<N> <pull request title>
 
 <!--
-Template for a usage report, one file per merged pull request, named `<merge date>-pr-<N>.md`.
+Template for a usage report, one file per task pull request, named
+`docs/awawa-usage-reports/pull-requests/<date>-pr-<N>.md`, the date being that of the report.
 Written by /awawa-usage-report through the awawa-usage-reporter agent, never by a session that took
-part in the work (@DECISION.UnRapportDUsageEstEcritApresChaqueFusionParUneSessionIndependante).
-Reports dated before this template do not follow it: they are sources for the recurring points, not
-examples of the shape. Keep every heading, in this order. Delete the comments. Entities are cited by name and never
+part in the work (@DECISION.AUsageReportIsCommittedInTheTaskPullRequest).
+Keep every heading, in this order. Delete the comments, except the tag on the first line:
+the USAGE_REPORT entity that cites the report anchors its FILE to it. Entities are cited by name and never
 restated: this file is about the method and the instrument, not a second home for project facts.
 Every judgment carries a number or a name. A claim that could not be checked is reported as unchecked.
 The header carries the model **and** the effort level of every run named, this report's own included: the two
@@ -57,11 +60,22 @@ section, heading included, exactly as any unused part of the template is deleted
 
 ### Remediations, by return
 
-| # | Change | What it fixes |
-|---|--------|---------------|
-| 1 |        |               |
+| # | Change | What it fixes | Recorded as |
+|---|--------|---------------|-------------|
+| 1 |        |               |             |
 
-<!-- A remediation that is a ruling is a proposal to the user; the report never writes a DECISION. -->
+<!-- A remediation that is a ruling is a proposal to the user; the report never writes a DECISION.
+"Recorded as": the corpus entity this report opened for a project remediation, the live entity that already
+carries it, or "~/.ai pull request" for a general rule, which opens no entity. -->
+
+### Entities proposed to the owner
+
+| Entity | Type | What it records | Ruling expected |
+|--------|------|-----------------|-----------------|
+|        |      |                 |                 |
+
+<!-- One row per entity this report opened: a draft TASK to ratify, an OPEN_QUESTION to answer, a LIMITATION
+or a FACT to accept. The same table goes into the pull request comment. Delete the section when none was opened. -->
 
 ## Part B — The tool
 

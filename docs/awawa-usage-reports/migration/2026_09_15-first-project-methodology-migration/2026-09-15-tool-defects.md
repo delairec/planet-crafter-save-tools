@@ -7,7 +7,8 @@ not spend a pass rediscovering them. awawa 2.7.0, corpus of planet-crafter-save-
 -->
 
 **Verdict**: two defects, both in how the tool gives access to what it already holds, neither of them recorded in the
-ten reports of this folder nor in `../../limitations.awawa`. One of them feeds the pain point flagged most often here —
+ten reports of this folder nor in `../../../limitations.awawa`. One of them feeds the pain point flagged most often
+here —
 the agent reading corpus files instead of asking the tool — because for that one entity there is nothing else to do.
 
 | # | Defect                                          | Command run                                                            | What came back                                                                                                                                                                                           | Cost                                                                                                                                                                                                                                              |

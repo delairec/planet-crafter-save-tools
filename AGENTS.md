@@ -3,25 +3,29 @@
 Contexte projet pour les agents IA travaillant dans ce dépôt, en complément des instructions générales `~/.ai`.
 
 **Ce fichier n'est plus le domicile des décisions.** Depuis le 2026-09-11, la spécification, les arbitrages et les
-questions ouvertes vivent dans le corpus awawa de `docs/` et se lisent avec l'outil. Ce qui reste ici est ce qu'il
+questions ouvertes vivent dans le corpus awawa de `docs/awawa-project-methodology/` et se lisent avec l'outil. Ce qui reste ici est ce qu'il
 faut savoir *avant* d'avoir lancé la moindre commande : où est le corpus, comment le lire, les commandes du dépôt,
 et les règles qu'on ne peut pas se permettre de découvrir par une requête.
 
 ## Corpus de spécification (awawa)
 
-La spécification du projet est le corpus awawa de `docs/` : un fichier `.awawa` par domaine, plus
-`docs/_schema.awawa` pour le schéma transverse (@DECISION.LeCorpusEstDecoupeParDomaine). **La racine de workspace
-est la racine du dépôt** — c'est de là que les ancres `IMPL` résolvent, et c'est elle que prend le dernier argument
-de chaque commande (@DECISION.LeCorpusVitDansLeDepotPublic). Ne jamais passer un fichier seul : chaque commande agit
-sur tout l'espace de travail, et un fichier isolé rapporte comme cassées des références qui tiennent.
+La spécification du projet est le corpus awawa de `docs/awawa-project-methodology/`, rédigé en anglais, noms
+d'entités compris : `_schema.awawa` déclare tous les types, puis un fichier par type (`decisions.awawa`,
+`processes.awawa`, `limitations.awawa`, `facts.awawa`, `tasks.awawa`, `packages.awawa`, `open_questions.awawa` quand
+une question existe) et `sources.awawa` pour les sources. Une entité nouvelle s'ajoute **à la fin** du fichier de son
+type (@DECISION.TheCorpusLivesInThePublicRepository). **La racine de workspace est la racine du dépôt** — c'est de là
+que les ancres résolvent, `..` y est refusé, et c'est elle que prend le dernier argument de chaque commande. Ne jamais
+passer un fichier seul : chaque commande agit sur tout l'espace de travail, et un fichier isolé rapporte comme cassées
+des références qui tiennent.
 
 **Lancer `awawa` depuis un worktree du dépôt public**, avec `.` pour racine.
 
 ```
-awawa status .                      # où en est le projet : entités par type et par STATUS
-awawa status OPEN_QUESTION --where STATUS!=superseded .   # ce qui n'est pas tranché
-awawa context @PACKAGE.core_mapping --skip reasoning .     # le paquet de contexte avant d'implémenter
-awawa lint --strict .               # doit sortir en 0
+awawa status .                                          # où en est le projet : entités par type et par STATUS
+awawa status TASK --where STATUS==todo .                # ce qui reste à faire
+awawa status DECISION --where STATUS!=archived .        # les décisions en vigueur
+awawa context @PACKAGE.core_mapping --skip reasoning --skip provenance .   # le paquet de contexte avant d'implémenter
+awawa lint --strict .                                   # doit sortir en 0
 ```
 
 - **Début de session** : `awawa status .`. Ne jamais tenir ailleurs une liste que `status` sait rendre — une liste
@@ -32,10 +36,10 @@ awawa lint --strict .               # doit sortir en 0
 - **Éditer le corpus comme du texte**, puis `awawa fmt .` et `awawa lint --strict .`. `awawa new TYPE Nom .` imprime
   un squelette conforme au schéma : l'utiliser plutôt que réciter le schéma.
 - **Avant `awawa new`, lire une entité modèle du type avec `awawa show`** plutôt que les fichiers du corpus :
-  `@DECISION.UneDecisionRetireeNommeSaSuccesseure` (décision), `@DECISION.UneFusionProduitUneSaveOrdinaire`
-  (décision avec `SUPERSEDES` et `SPEC`), `@OPEN_QUESTION.UneSaveSansJoueurMeriteUnAvertissement` (question),
-  `@TASK.T37_FrontieresCleanArchitectureCoreMapping` (tâche). Pas de fichier d'exemple : la marche le chargerait
-  et `status` le compterait (@DECISION.AgentsMdNommeUneEntiteModeleParType).
+  `@DECISION.AMergeProducesAnOrdinarySave` (décision), `@PROCESS.ATaskBranchIsRebasedNeverMerged` (règle de
+  conduite), `@LIMITATION.AnAtSignInAFolderNameCorruptsTheMergedSave` (limitation),
+  `@FACT.ASaveHasElevenSectionsTheLastReservedAndEmpty` (fait sur le jeu), `@TASK.FIX45` (tâche). Pas de fichier d'exemple : la
+  marche le chargerait et `status` le compterait (@DECISION.AgentsMdNamesOneModelEntityPerType).
 - **Les commentaires `//` ne sont lus par aucune commande.** Un fait écrit là n'atteint pas la session suivante ; ce
   qu'un outil doit savoir est un champ.
 - `DESC` est une instruction, pas de la documentation : fragment en minuscules, sans point final, un fait par `DESC`.
@@ -43,22 +47,22 @@ awawa lint --strict .               # doit sortir en 0
   `CATEGORY reasoning` et se laisse donc écarter par `--skip` ; l'obligation va dans `SPEC`, une ligne falsifiable
   par obligation, son `IMPL` niché dessous.
 - **Une mention dans une phrase n'est indexée par rien.** Nicher `REF @TYPE.Nom` sous le champ de prose qui la nomme.
-- **Une relation pointe vers ce dont elle parle** : `BLOCKS` sur la question, `CLOSES` sur la décision. L'arête
-  inverse est calculée — `refs`, et les lignes `BLOCKED_BY` / `referenced by` de `context` — jamais écrite.
-- **Une décision nouvelle qui contraint un paquet ou une tâche renseigne `APPLIES_TO_PACKAGE` ou `APPLIES_TO_TASK`**,
-  faute de quoi la cible ne la voit pas : c'est la ligne `GOVERNED_BY` du pied de page de `context` et de
-  `lint --closure` (@DECISION.UneDecisionNommeLePaquetOuLaTacheQuElleContraint).
-- **Un défaut constaté est une `OPEN_QUESTION`**, son sort une `DECISION` qui la ferme
-  (@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues). Une limitation acceptée est un point *fermé* : la question
-  passe `superseded` et **c'est la décision qui porte symptôme, cause et garde**, parce que `superseded` vaut
-  `GATE suppressed` et disparaît des paquets de récupération
-  (@DECISION.UneLimitationAccepteeGardeSaMatiereDansLaDecision).
-- **Rouvrir une limitation acceptée** : la décision passe `superseded`, une successeure `:v2` la `SUPERSEDES` et dit
-  ce qui a changé, la question repasse `specified`. Le schéma exige qu'une entité `superseded` soit atteinte par
-  `CLOSED_BY` ou `SUPERSEDED_BY` — une décision retirée qui ne nomme pas ce qui la remplace tombe en `L026`. Remettre
-  la question à `specified` sans toucher à la décision passe `lint --strict` sans un mot : c'est mesuré, et c'est la
-  moitié qui reste une discipline (@DECISION.UneDecisionRetireeNommeSaSuccesseure).
-- **Une entité remplacée n'est jamais supprimée** : elle passe `superseded`, et sa successeure écrit `SUPERSEDES`.
+- **Une relation pointe vers ce dont elle parle** : `BLOCKS` sur la question, `UNTIL` sur ce qu'une tâche retire,
+  `APPLIES_TO_PACKAGE` / `APPLIES_TO_TASK` sur la décision. L'arête inverse est calculée — `refs`, et les lignes
+  `BLOCKED_BY`, `RETIRES`, `GOVERNED_BY` / `referenced by` de `context` — jamais écrite.
+- **Seuil d'enregistrement** : une `DECISION` ou un `PROCESS` ne s'écrit que si une pull request future pourrait faire
+  l'inverse par erreur ; une `OPEN_QUESTION` que si une tâche l'attend (`BLOCKS @TASK` est requis). Une règle générale
+  vit dans `~/.ai`, jamais ici.
+- **Quel type** : une règle qui tient quelque part dans le dépôt est une `DECISION` (`SPEC` et son `IMPL` requis) ;
+  sans rien à ancrer, c'est un `PROCESS`. Un défaut du projet laissé en place est une `LIMITATION` (`SYMPTOM`,
+  `UNTIL`) ; un défaut d'un outil externe ne s'enregistre pas, seul le contournement du projet devient une `DECISION`
+  avec `UNTIL`. Ce que la save ou le jeu est, sans arbitrage, est un `FACT` (type temporaire).
+- **Toute `SOURCE` nomme une entité source** (`REF` requis) : `@PULL_REQUEST.PCST<n>`, `@PROJECT.DNC` pour un fichier
+  du dépôt privé, `@USAGE_REPORT`, `@URL`. Une provenance d'un genre nouveau fait déclarer son type dans la même PR.
+- **Pas d'historique dans le corpus** : une entité qui cesse de lier est archivée dans la PR qui y met fin
+  (`STATUS archived`, `ARCHIVED_ON`), une règle remplacée sur le même sujet est réécrite en place sous son nom — la forme
+  précédente devient un `REJECTED` si elle enseigne quelque chose. Une entité qui n'aurait jamais dû être écrite est
+  supprimée tout de suite.
 - **Tout se fait dans la PR de tâche, rien après la fusion** : promotions et arbitrages écrits par l'agent de
   tâche, vérifiés par `/awawa-pr-review <N>`, puis le rapport d'usage commité sur la branche par
   `/awawa-usage-report <N>` — voir « Suivi d'une PR : une PR par tâche, rien après la fusion ».
@@ -66,9 +70,10 @@ awawa lint --strict .               # doit sortir en 0
 
 ## Emplacement
 
-Ce fichier est versionné à la racine du dépôt public, le corpus dans `docs/`. Le dépôt satellite privé
-`delairec/.do-not-commit`, branche `planet-crafter-save-tools`, reste cloné dans `.do-not-commit/` (git-ignoré ici)
-et ne porte plus que ce qui ne peut pas être public (@DECISION.LeCorpusVitDansLeDepotPublic).
+Ce fichier est versionné à la racine du dépôt public, le corpus dans `docs/awawa-project-methodology/`. Le dépôt
+satellite privé `delairec/.do-not-commit`, branche `planet-crafter-save-tools`, reste cloné dans `.do-not-commit/`
+(git-ignoré ici) et ne porte plus que ce qui ne peut pas être public
+(@DECISION.ThePrivateContextHoldsOnlySavesAndPlans).
 
 Organisation de `.do-not-commit/planet-crafter-save-tools/` :
 
@@ -80,24 +85,20 @@ Organisation de `.do-not-commit/planet-crafter-save-tools/` :
 - `saves/` — saves de référence privées, fichiers très lourds (jusqu'à 3 Mo, 8 Mo au total) : ne les ouvrir que si
   la tâche l'exige, et jamais en entier. Ne jamais les copier dans l'arbre public.
 
-**Une décision va dans le corpus et nulle part ailleurs**, et avertir quand elle en contredit une enregistrée — ce
-que `awawa status DECISION .` permet de vérifier (@DECISION.LeCorpusEstLeSeulDomicileEtHistoryEstSupprime). Un défaut
-constaté est une `OPEN_QUESTION` (@DECISION.LeCorpusRemplaceLesFichesDeKnownIssues), une tâche une entité `TASK`
-qui reste après sa fusion
-(@DECISION.UneTacheFusionneeResteDansLeCorpus). **Le nom d'une tâche est son étiquette, un souligné, puis ce qu'elle
-couvre** : `awawa new TASK T40_NomLisible .` — le schéma le vérifie, et l'étiquette seule est refusée
-(@DECISION.UneTachePorteSonEtiquetteEtUnNomLisible). La famille d'outillage du dépôt, hors chantier de conformité,
-garde ses numéros `DEP{N}`, sous la même forme.
+**Une décision va dans le corpus et nulle part ailleurs**, et avertir quand elle en contredit une en vigueur — ce
+que `awawa status DECISION --where STATUS!=archived .` permet de vérifier. **Le nom d'une tâche est son type
+Conventional Commits en majuscules suivi de son numéro** : `awawa new TASK FEAT46 .`. La numérotation est une séquence
+unique, tous types confondus (lire le dernier numéro dans `awawa status TASK .`), et le type est celui du titre de la
+pull request qui la livrera ; `TITLE` porte le nom lisible. Une tâche passe `todo` quand tu la ratifies, `draft`
+avant.
 
-**Langue** : le corpus et ce fichier restent en français bien qu'ils soient publics, par exception à la règle
-générale « documentation publique commitée en anglais » ; le reste du dépôt public — `README.md`, les `.md` de
-`docs/`, commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts
-(@DECISION.LaSpecificationResteEnFrancaisMemePubliee).
+**Langue** : le corpus est en anglais, noms d'entités compris. Ce fichier reste en français ; le reste du dépôt
+public — `README.md`, les `.md` de `docs/`, commentaires de code — est en anglais, et les messages de commit le sont
+dans tous les dépôts.
 
 **Rafraîchir le clone privé avant de lire une save ou un plan.** `.do-not-commit/` est un clone figé au dernier
 `bun install`, et chaque worktree lié porte le sien : `bun run private:sync` (fetch plus fast-forward sur la branche
-du projet). Le corpus, lui, ne demande plus rien — il est dans la branche
-(@DECISION.LeContextePriveSeReduitAuxSavesEtAuxPlans).
+du projet). Le corpus, lui, ne demande plus rien — il est dans la branche.
 
 ## Commandes
 
@@ -143,7 +144,7 @@ que rien ne rappelle et dont l'oubli ne produit aucune erreur, seulement un verd
    `bun merge` sur les saves de référence le lient depuis le dépôt principal
    (`ln -sfn <dépôt principal>/input input`). La règle `input` du `.gitignore` n'a pas de barre finale précisément
    pour attraper ce lien ; même forme et même raison pour `.do-not-commit`
-   (@DECISION.LaRegleDuContextePrivePerdSaBarreFinale).
+   (@DECISION.ThePrivateContextIgnoreRuleHasNoTrailingSlash).
 
 `.do-not-commit/` suit la même logique : chaque worktree porte son propre clone, à rafraîchir par `bun run
 private:sync` — voir « Emplacement ». **Le corpus, lui, est versionné dans la branche** : `awawa` lancé dans un
@@ -156,8 +157,7 @@ dans le clone privé pour y lire une save donne ensuite à chaque agent qu'elle 
 lieu du projet : la garde d'isolation refuse alors tout `git` visant le dépôt public, et l'agent se rabat sur un
 clone à lui — le travail aboutit, hors de l'isolation prévue, et `/worktree-clean` ne voit pas ce clone. Lire le
 clone là où il est (`git -C .do-not-commit <commande>`, chemins absolus pour le reste) ; avant de lancer un agent,
-`git rev-parse --show-toplevel` doit rendre la racine du dépôt public. Constaté le 2026-09-10 sur la vague T39/T30
-(@DECISION.UnWorktreeEstDecoupeDansLeDepotDuRepertoireCourant).
+`git rev-parse --show-toplevel` doit rendre la racine du dépôt public. Constaté le 2026-09-10 sur la vague T39/T30.
 
 Quand plusieurs agents travaillent en parallèle, leur répertoire temporaire est partagé : donner à chacun un
 sous-dossier à son nom, sans quoi ils écrasent mutuellement leurs fichiers de travail.
@@ -174,13 +174,13 @@ Ne pas tenir la liste ici en double.
 
 Note historique : `util-parsing`, `util-messages` et `shared-mapping` ont été dissous, `util-platforms` renommé
 `shared-platforms`. Ne pas les recréer, ni créer un nouveau package `util-*` sauf helper réellement générique
-(@DECISION.LesPackagesDissousNeSontPasRecrees).
+(@DECISION.DissolvedPackagesAreNotRecreated).
 
 ## Anonymisation des noms de joueurs
 
 Cette section reste ici en toutes lettres : c'est la seule règle du projet dont l'oubli publie une donnée
 personnelle, et elle doit être lisible sans avoir rien lancé. Les entités
-@DECISION.AucunNomReelDansUnContenuPublic et @DECISION.LesIdentifiantsSteamSontAnonymisesCommeLesNoms portent le
+@DECISION.NoRealPlayerNameInPublicContent et @DECISION.SteamIdentifiersAreAnonymisedLikeNames portent le
 même contenu dans le corpus.
 
 Les saves privées portent les noms réels des joueurs, qui n'ont pas consenti à leur publication. **Aucun nom réel
@@ -203,25 +203,21 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 
 ## Branches
 
-**Base des tâches, aujourd'hui : `refactor/review-clean-archi-violations-in-core-mapping-package`.** Toute branche de
-tâche en part et sa PR la prend pour base, jamais `master`, qui est en retard sur elle. Cette base est temporaire ;
-une fois le chantier de conformité fusionné, `master` redevient la base et cette ligne est le seul endroit à
-corriger (@DECISION.LaBaseDesTachesEstTemporairementLaBrancheDeConformite).
-
-Le nom de la branche est resté ici et non dans le corpus parce qu'il change à chaque chantier : une entité dont le
-`DESC` se réécrit tous les mois ne gagne rien à être une entité.
+**Base des tâches, aujourd'hui : `master`.** Le chantier de conformité est fusionné (PR #15). Le nom de la base
+reste ici et non dans le corpus parce qu'il change à chaque chantier : une entité dont le `DESC` se réécrit tous les
+mois ne gagne rien à être une entité.
 
 **Les trois dépôts gardent leur cycle ordinaire pendant l'expérimentation awawa.** Le repli tient à un tag, pas à une
 branche : `pcst/before-awawa` dans `.do-not-commit`, `before-awawa` dans `~/.ai`, `before-awawa` sur la base des
 tâches du dépôt public, chacun sur l'état d'avant le corpus
-(@DECISION.LExperimentationAwawaEstReversibleParUnTagPasParUneBranche).
+(@PROCESS.AwawaAdoptionIsRevertibleByTagNotBranch).
 
-**Deux exceptions à cette base, et deux seulement.** `.github/dependabot.yml` (DEP1) et les deux workflows
+**Quand la base n'est pas `master`, deux exceptions.** `.github/dependabot.yml` et les deux workflows
 `claude.yml` / `claude-code-review.yml` se modifient d'abord sur `master`
-(@DECISION.TroisFichiersPartentDeMasterEtNonDeLaBase).
+(@DECISION.ThreeFilesAreChangedOnMasterFirst).
 
 **Une branche de tâche est rebasée sur sa base, jamais fusionnée avec elle** — le dépôt est une pile `git machete`
-(@DECISION.UneBrancheDeTacheEstRebaseeJamaisFusionnee). Concrètement, avant de travailler sur une branche déjà
+(@PROCESS.ATaskBranchIsRebasedNeverMerged). Concrètement, avant de travailler sur une branche déjà
 poussée, et en particulier avant de traiter une revue : `git fetch origin <base>` puis
 `git merge-base --is-ancestor origin/<base> HEAD` ; s'il sort en 1, rebaser sur `origin/<base>` et pousser avec
 `--force-with-lease`, avant de lire le premier commentaire. Garder une réf de secours jusqu'au vert des tests, et
@@ -229,25 +225,23 @@ vérifier que `gh pr view <N> --json mergeable` rend `MERGEABLE` avant de consid
 
 ## Suivi d'une PR : une PR par tâche, rien après la fusion
 
-**Il n'y a plus de commentaire « À faire à la fusion », ni de promotion ni de rapport après la fusion.** Le corpus
-vit dans la branche : un `STATUS implemented` écrit dans la PR de tâche a la sémantique du code qu'elle livre — vrai
-dans l'arbre de la branche, vrai dans la base quand la fusion le porte, jamais vrai si la PR meurt
-(@DECISION.LeCorpusRemplaceLaChecklistDeFusion:v2). Une PR par tâche porte le code, les promotions, les arbitrages
-et le rapport d'usage ; la fusion porte le tout dans la base d'un coup.
+**Il n'y a plus de commentaire « À faire à la fusion », ni de mise à jour du corpus ni de rapport après la
+fusion.** Le corpus vit dans la branche : ce que la PR de tâche y écrit est vrai dans l'arbre de la branche, vrai
+dans la base quand la fusion le porte, jamais vrai si la PR meurt (@PROCESS.EverythingLandsInTheTaskPullRequest).
+Une PR par tâche porte le code, les changements du corpus, les arbitrages et le rapport d'usage.
 
-- **L'agent de tâche écrit les promotions et les arbitrages dans la PR** : la tâche passe `implemented`, les
-  décisions qu'elle livre passent `implemented`, les questions qu'elle tranche passent `superseded` par le `CLOSES`
-  d'une décision — chaque `SPEC` promue avec son `IMPL` résolu dans le diff. Une règle apprise en revue qui pourrait
-  aller dans `~/.ai` s'écrit en `OPEN_QUESTION` ; général ou spécifique au projet est ton arbitrage, posé à la revue.
+- **L'agent de tâche écrit dans la PR ce que la tâche change au corpus** : la tâche passe `implemented` avec
+  `DELIVERED_BY @PULL_REQUEST.PCST<N>` et l'`IMPL` de chaque `SPEC` ; les décisions qu'elle livre sont écrites ou
+  réécrites en place ; ce qui cesse de lier est archivé ; la question qu'elle tranche est archivée. L'archivage des
+  tâches livrées et la purge après 30 jours reviennent à la passe de nettoyage, pas à la PR.
 - **`/awawa-pr-review <N>`** : traiter la revue, enregistrer dans le corpus chaque décision qu'elle produit *avant*
-  de répondre au fil qui l'a produite, vérifier chaque promotion contre le diff — refuser celle dont l'ancre ne
-  résout pas ou dont le diff ne livre pas le `SPEC` —, poser l'arbitrage général ou spécifique des règles en
-  attente, rebaser sur la base, faire tourner les contrôles et `awawa lint --strict .`, signaler la PR prête.
+  de répondre au fil qui l'a produite — sous le seuil d'enregistrement —, vérifier contre le diff chaque `IMPL`
+  écrit, rebaser sur la base, faire tourner les contrôles et `awawa lint --strict .`, signaler la PR prête.
 - **`/awawa-usage-report <N>`, une fois la revue traitée et la PR signalée prête** : faire commiter sur la branche
   de la PR, par un agent indépendant — session neuve, sans mémoire du travail jugé, jamais un fork —, le rapport de
-  `docs/awawa-usage-reports/<date>-pr-<N>.md` mesurant ce que le corpus a coûté et rendu sur l'arbitrage,
-  l'implémentation et la revue, points récurrents compris. Seule une PR qu'une `TASK` nomme dans son champ `PR` en
-  reçoit un (@DECISION.UnRapportDUsageEstCommiteDansLaPrDeTacheParUneSessionIndependante).
+  `docs/awawa-usage-reports/pull-requests/<date>-pr-<N>.md` mesurant ce que le corpus a coûté et rendu sur l'arbitrage,
+  l'implémentation et la revue, points récurrents compris. Seule une PR qu'une `TASK` nomme dans `DELIVERED_BY` en
+  reçoit un (@DECISION.AUsageReportIsCommittedInTheTaskPullRequest).
 - **Après ta fusion : `/worktree-clean`**, et rien d'autre.
 
 Les commandes `/pr-review-followup` et `/pr-merge-followup` restent pour les projets sans corpus ; elles décrivent
@@ -259,8 +253,8 @@ des fiches sur disque que ce projet n'a plus.
 conception l'invalide, qu'une revue soit passée ou non. Dans une pile `git machete`, ce corps est ce que lit la tâche
 empilée pour savoir ce qu'elle rebase, et ce que lit le relecteur suivant pour savoir ce qu'il relit ; aucun outil ne
 signale qu'il décrit une conception abandonnée. Avant de demander une revue et avant de déclarer la PR prête, relire
-le corps contre le journal des commits depuis la base et le réécrire si la conception a bougé
-(@DECISION.LeCorpsDeLaPrDecritLaTeteDeBranche).
+le corps contre le journal des commits depuis la base et le réécrire si la conception a bougé ; la règle est
+générale et vit dans `~/.ai/instructions/commands.md`.
 
 Constaté le 2026-09-11 sur la PR #59 (T28), puis le 2026-09-12 sur la PR #61 (DEP2), où le corps décrivait encore
 un montage par lien symbolique abandonné trois commits plus tôt.
