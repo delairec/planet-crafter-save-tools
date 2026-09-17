@@ -24,7 +24,7 @@ des références qui tiennent.
 awawa status .                                          # où en est le projet : entités par type et par STATUS
 awawa status TASK --where STATUS==todo .                # ce qui reste à faire
 awawa status DECISION --where STATUS!=archived .        # les décisions en vigueur
-awawa context @PACKAGE.core_mapping --skip reasoning --skip provenance .   # le paquet avant d'implémenter
+awawa context @PACKAGE.core_mapping --skip reasoning --skip provenance .   # le paquet de contexte avant d'implémenter
 awawa lint --strict .                                   # doit sortir en 0
 ```
 
@@ -38,7 +38,7 @@ awawa lint --strict .                                   # doit sortir en 0
 - **Avant `awawa new`, lire une entité modèle du type avec `awawa show`** plutôt que les fichiers du corpus :
   `@DECISION.AMergeProducesAnOrdinarySave` (décision), `@PROCESS.ATaskBranchIsRebasedNeverMerged` (règle de
   conduite), `@LIMITATION.AnAtSignInAFolderNameCorruptsTheMergedSave` (limitation),
-  `@FACT.ASaveHasElevenSectionsTheLastReservedAndEmpty` (fait), `@TASK.FIX45` (tâche). Pas de fichier d'exemple : la
+  `@FACT.ASaveHasElevenSectionsTheLastReservedAndEmpty` (fait sur le jeu), `@TASK.FIX45` (tâche). Pas de fichier d'exemple : la
   marche le chargerait et `status` le compterait (@DECISION.AgentsMdNamesOneModelEntityPerType).
 - **Les commentaires `//` ne sont lus par aucune commande.** Un fait écrit là n'atteint pas la session suivante ; ce
   qu'un outil doit savoir est un champ.
