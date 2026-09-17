@@ -1,6 +1,6 @@
 TASK CHORE46
 	TITLE "the repository security alerts are enabled"
-	STATUS draft
+	STATUS todo
 	SPEC "The security alerts are enabled in the repository security settings, a gesture left to"
 		+ "the user outside the repository, and the API no longer refuses them"
 	RATIONALE "The repository security alerts are disabled: the API refuses them, and without them"
@@ -354,7 +354,8 @@ TASK TEST43
 TASK TEST44
 	TITLE "core-mapping application, infrastructure and presentation specs brought in line with"
 		+ "TEST-1"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-17"
 	SPEC "Specs: use case calls in a non-async test are awaited, even when the body is synchronous"
 		IMPL "packages/core-mapping/src/application/ValidateSaveFile.spec.ts"
 	SPEC "Specs: coverage duplicated across levels is removed, controller specs come back to one"
@@ -453,17 +454,17 @@ TASK CHORE3
 		REF @PULL_REQUEST.PCST89
 
 TASK FEAT47
-	TITLE "a cleanup pass archives the delivered tasks and purges what has been archived for 30"
-		+ "days"
-	STATUS draft
+	TITLE "a cleanup pass archives the delivered tasks and purges what has been archived for a"
+		+ "delay to be defined"
+	STATUS todo
 	SPEC "A root package.json script, run by hand, stops and reports when awawa fmt --check or"
 		+ "awawa lint --strict fails on the corpus"
 	SPEC "It archives every implemented task no draft or todo task is AFTER, and every active"
 		+ "entity whose UNTIL names an implemented task, writing STATUS archived and ARCHIVED_ON"
 		+ "that day"
 	SPEC "It purges, entity by entity, every archived entity whose PURGE is true and whose"
-		+ "ARCHIVED_ON is at least 30 days old, with the reference lines to it; a purge that breaks"
-		+ "lint --strict is restored and reported"
+		+ "ARCHIVED_ON is at least n days old (n to be configurable), with the reference lines to"
+		+ "it; a purge that breaks lint --strict is restored and reported"
 	SPEC "It deletes every PULL_REQUEST and USAGE_REPORT nothing references, until none is left,"
 		+ "and never a PROJECT"
 	SPEC "It works on a branch and opens a pull request whose body is its report: what was"
@@ -475,18 +476,20 @@ TASK FEAT47
 
 TASK DOCS48
 	TITLE "the corpus section of AGENTS.md is split into files it links to, read only when needed"
-	STATUS draft
+	STATUS todo
 	SPEC "AGENTS.md keeps, about the corpus, only what a session needs before its first command,"
 		+ "and links to the rest"
 	SPEC "each part taken out is a file of its own, named by the link that says when to read it"
+	SPEC "a new dedicated file is created in global instructions folder: corpus.md"
 	RATIONALE "the section grew with the migration, and every session that loads AGENTS.md loads"
 		+ "all of it, whether its task touches the corpus or not"
 	SOURCE "Review of the corpus migration"
 		REF @PULL_REQUEST.PCST95
+	APPLIES_TO_PROJECT @PROJECT.AI
 
 TASK CHORE49
 	TITLE "package.json carries one Bun version in packageManager and devDependencies.bun"
-	STATUS draft
+	STATUS todo
 	SPEC "packageManager and devDependencies.bun in the root package.json name the same Bun release"
 	RATIONALE "pull request #91 bumped devDependencies.bun to 1.4.2 while packageManager stayed at"
 		+ "bun@1.3.14, so the third SPEC of the decision is false and lint cannot see it, both"
@@ -499,6 +502,7 @@ TASK DOCS50
 	TITLE "the five points the corpus migration left in its pull request body are ruled in the"
 		+ "corpus"
 	STATUS draft
+	DESC "to be refined with the user in a session: give context and use tables if it helps clarity"
 	SPEC "the decision BothMessageListsShareOneRendering and ValidationMessagesList.tsx agree on"
 		+ "whether severity is a parameter of the component"
 	SPEC "the decision NoSaveIsCommittedToThePublicRepository says whether the generated fixtures"
