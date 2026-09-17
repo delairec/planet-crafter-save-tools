@@ -1,3 +1,5 @@
+<!-- awawa-usage-report -->
+
 # <YYYY-MM-DD> — PR #<N> <pull request title>
 
 <!--
@@ -5,7 +7,8 @@ Template for a usage report, one file per merged pull request, named `<merge dat
 Written by /awawa-usage-report through the awawa-usage-reporter agent, never by a session that took
 part in the work (@DECISION.AUsageReportIsCommittedInTheTaskPullRequest).
 Reports dated before this template do not follow it: they are sources for the recurring points, not
-examples of the shape. Keep every heading, in this order. Delete the comments. Entities are cited by name and never
+examples of the shape. Keep every heading, in this order. Delete the comments, except the tag on the first line:
+the USAGE_REPORT entity that cites the report anchors its FILE to it. Entities are cited by name and never
 restated: this file is about the method and the instrument, not a second home for project facts.
 Every judgment carries a number or a name. A claim that could not be checked is reported as unchecked.
 The header carries the model **and** the effort level of every run named, this report's own included: the two

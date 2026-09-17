@@ -70,8 +70,8 @@ SHAPE pr_id
 	MATCH "[A-Z]+[0-9]+"
 
 SHAPE file_name
-	DESC "awawa_usage_report_ then the subject of the report"
-	MATCH "awawa_usage_report_[A-Za-z0-9]+(_[A-Za-z0-9]+)*"
+	DESC "the subject of the report, words joined by underscores"
+	MATCH "[A-Za-z0-9]+(_[A-Za-z0-9]+)*"
 
 FIELDSET Ruling
 	DESC "the fields shared by the ruling types"
@@ -267,12 +267,12 @@ SCHEMA PULL_REQUEST
 		DESC "the pull request number in that repository"
 
 SCHEMA USAGE_REPORT
-	DESC "a usage report of the awawa tool cited as the origin of an entity; deleted by the cleanup"
-		+ "pass once nothing cites it"
+	DESC "a usage report cited as the origin of an entity; deleted by the cleanup pass once nothing"
+		+ "cites it"
 	NAME file_name
 	FIELD FILE anchor
 		REQUIRED
-		DESC "the report file and its template tag"
+		DESC "the report file and the tag its template puts on the first line"
 	FIELD EVALUATES @PULL_REQUEST
 		REPEATABLE
 		CONVERSE EVALUATED_BY
