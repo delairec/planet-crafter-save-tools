@@ -1,7 +1,7 @@
 > Notes:
 > * This starter has not yet been tested in a real project.
 > * It is a draft, and the principles and steps may change after experience.
-> * P4 principle goes against the manual recommendation ("never suppressed") on purpose (reason is explained in the
+> * P4 principle goes against the manual recommendation ("never deleted") on purpose (reason is explained in the
     dedicated section).
 
 # Awawa Corpus Starter
@@ -17,7 +17,7 @@ adapted to what it found. Written against `awawa 2.7.0`; the defects cited may b
 
 ---
 
-## Entry Point: Three Questions Before Anything Else
+## Entry Point: Four Questions Before Anything Else
 
 ### Question 1 — Does an awawa corpus already exist?
 
@@ -55,7 +55,7 @@ it as this unit. It also decides whether a change is a source type (Principle 6)
 If yes, the session records them in a separate file outside the project,
 and the user may report them to the awawa maintainers. If no, the session ignores them and continues.
 
-Record the three answers to questions 1 to 3 at the top of the first session's result; every later prompt carries them.
+Record the four answers at the top of the first session's result; every later prompt carries them.
 
 ---
 
@@ -210,7 +210,7 @@ P10 is not a step: it runs inside every step that writes a schema line.
 ## Flow S: From Scratch
 
 No corpus exists. Each principle is designed, probed (P10), then written. Nothing can be measured until entities exist,
-so the measures of P1 and P2 are taken on the first entities, in S8.
+so the measures of P1 and P2 are taken on the first entities, in S7.
 
 | Step | Principles | Result                                                   |
 |------|------------|----------------------------------------------------------|
@@ -226,7 +226,8 @@ so the measures of P1 and P2 are taken on the first entities, in S8.
 ### S1: Inventory the Knowledge
 
 ```
-S1 — Inventory. Answers to the entry questions: [corpus: none] [object: …] [unit of change: …].
+S1 — Inventory. Answers to the entry questions: [corpus: none] [object: …] [unit of change: …]
+[tool defects: recorded|ignored].
 - List where the project's knowledge lives today: README, architecture decision records,
   agent instructions (AGENTS.md or equivalent), issue tracker, wiki, code comments, the user.
 - For each place, list the kinds of fact it holds (a ruling, a task, an open question,
@@ -368,7 +369,8 @@ the measure shows a gap. Each step is one change, reviewed on its own, and its e
 ### M1: Take the Baseline
 
 ```
-M1 — Baseline. Answers to the entry questions: [corpus: path] [object: …] [unit of change: …].
+M1 — Baseline. Answers to the entry questions: [corpus: path] [object: …] [unit of change: …]
+[tool defects: recorded|ignored].
 - Copy the corpus to a snapshot directory outside the project; every later step diffs
   against a snapshot.
 - Run awawa status: entity counts by type and STATUS, reference health.
@@ -493,7 +495,7 @@ Same prompt as [S8](#s8-decide-the-cleanup-pass-p9), on the migrated corpus.
 1. **Lint clean**: `awawa fmt --check` and `awawa lint --strict` on the corpus, zero findings.
 2. **Probed**: every schema line added in the step has its probe result in the step's response.
 3. **Threshold held**: no entity written in the step would be refused by its type's threshold.
-4. **Nothing about the tool**: no entity about awawa itself; tool defects go to its maintainers.
+4. **Nothing about the tool**: no entity about awawa itself; tool defects stay outside the project (Question 4).
 5. **Schema changes are traced**: a schema line changed outside the step that owns it is a new step, not a silent edit.
 6. **Migration only**: `awawa diff` against the step's snapshot accounts for every entity change.
 
@@ -517,7 +519,8 @@ Same prompt as [S8](#s8-decide-the-cleanup-pass-p9), on the migrated corpus.
 
 ## Out of Scope
 
-- **Tool defects and proposals**: noted during probes, reported to the awawa maintainers, never recorded in the corpus.
+- **Tool defects and proposals**: noted during probes if the user accepted it (Question 4), kept outside the project for
+  the awawa maintainers, never recorded in the corpus.
 - **Out-of-corpus levers**: session instructions beyond the reading loop, response length, prompt design — the
   project's agent instructions and skills govern them.
 - **Several corpora**: a second corpus (e.g. a product specification beside a methodology) runs its own flow; each
