@@ -378,9 +378,10 @@ P4's two conditions: it lints before it archives, and it archives or deletes onl
 corpus. It disposes of entities only: the documents the corpus replaced are the business of S8.
 
 **What the tool checks**: The script reads `status --json` and `show --json`, then `fmt` and `lint --strict` confirm
-the result. `status TYPE --where ARCHIVED_ON==<date>` selects on a field declared inside a `WHEN` block as on any
-other; `--where` knows equality and inequality only, so a retention delay is computed by the script from
-`show --json`.
+the result. `status TYPE --where ARCHIVED_ON==<date>` selects on a field declared inside a `WHEN` block once one
+entity of the type writes it; on a type where none does — no archived entity yet — the command exits 2, « not a field
+of TYPE in this workspace », so a script looping over the types reads that exit as « nothing to select ». `--where`
+knows equality and inequality only, so a retention delay is computed by the script from `show --json`.
 
 ### P10: Probe Every Schema Line Before Writing It in the Project
 
@@ -405,7 +406,7 @@ other; `--where` knows equality and inequality only, so a retention delay is com
 costs a migration. Examples on 2.7.0: an empty required string passing `--strict`, a reference written as a
 `DEFAULT` counting among the incoming edges of its target, a field meant for one state staying legal in all of them
 because it was declared at type level. The same holds for what a document asserts about the tool, this one
-included: version 1 stated three behaviours that a probe refuted.
+included: version 1 stated three behaviours that a probe refuted or narrowed.
 
 **What the tool checks**: Each probe documents it. A tool defect found goes to the defects file if Question 5 was
 accepted, never into the project's corpus.
@@ -916,9 +917,9 @@ above. Re-probe on your version before relying on it.
 | Behaviour                                                                                                         | Governs      |
 |-------------------------------------------------------------------------------------------------------------------|--------------|
 | An empty required string `""` passes `--strict`                                                                   | P7           |
-| A `WHEN` block keyed on a reference (`WHEN VIA @TYPE.X`) fires on entities writing that reference, and on no other | P7           |
+| A `WHEN` block keyed on a reference (`WHEN VIA @TYPE.X`) fires on entities writing that reference, and on those omitting the field when its `DEFAULT` is that reference | P7           |
 | A reference written as a `DEFAULT` or as a `WHEN` value is a reference site of the `SCHEMA` entry: it counts in the target's incoming edges (`referenced by @SCHEMA.X`); the entity omitting the field gets no edge | P4, P10 |
-| `--where` selects on a field declared only inside a `WHEN` block, the wildcard's included                          | P9           |
+| `--where` selects on a field declared only inside a `WHEN` block, the wildcard's included, once one entity of the type writes it; before that it exits 2, « not a field of TYPE in this workspace » | P9           |
 | `--where STATUS!=archived` keeps the entities whose `STATUS` is unwritten                                         | P4           |
 | A rung with no `GATE` warns; `--strict` promotes the warning to an error                                          | P3           |
 | `GATE suppressed` silences every check on the entity except the fields of the archive block itself                | P4           |
@@ -951,10 +952,10 @@ above. Re-probe on your version before relying on it.
 - **P6 gives the date a field** and says what a `SOURCE` never carries.
 - **P7 applies from the first declaration**, and an anchor names a tracked file.
 - **P10 probes a copy of the corpus, with a violating entity per declaration, and records three outcomes.**
-- **Three tool behaviours stated by version 1 are withdrawn**, each refuted by a probe on 2.7.0: a `WHEN` block
-  keyed on a reference field does fire; `--where` does select a field declared only inside a `WHEN` block; a
-  `DEFAULT` on a reference creates no edge from the entity that omits the field — it makes the `SCHEMA` entry a
-  referrer of the target. The table of tool behaviours holds only what was re-probed for this version.
+- **Three tool behaviours stated by version 1 are withdrawn**, two refuted and one narrowed by a probe on 2.7.0: a
+  `WHEN` block keyed on a reference field does fire; `--where` does select a field declared only inside a `WHEN`
+  block, but only once one entity of the type writes it, and exits 2 before that; a `DEFAULT` on a reference creates
+  no edge from the entity that omits the field — it makes the `SCHEMA` entry a referrer of the target. The table of tool behaviours holds only what was re-probed for this version.
 - **Schema reviews at fixed moments** (W9): a read-back in the gate of every step that touches the schema, a review
   before the first entity (S9, M10), an audit against the entities written (S10, M10), and a review offered to the
   user at every confirmation — no longer left to the user's initiative.
