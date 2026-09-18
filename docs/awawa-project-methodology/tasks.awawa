@@ -476,13 +476,13 @@ TASK FEAT47
 
 TASK DOCS48
 	TITLE "the corpus section of AGENTS.md is split into files it links to, read only when needed"
-	DESC "does not concern this project; to be carried out outside the procedure"
-	STATUS archived
-	ARCHIVED_ON "2026-09-17"
+	DESC "the target is this project's AGENTS.md, not the one of the .ai repository"
+	STATUS todo
 	SPEC "AGENTS.md keeps, about the corpus, only what a session needs before its first command,"
 		+ "and links to the rest"
 	SPEC "each part taken out is a file of its own, named by the link that says when to read it"
-	SPEC "a new dedicated file is created in global instructions folder: corpus.md"
+	SPEC "the awawa command replacing each shell read of a corpus file is listed in the global"
+		+ "instructions, corpus.md, and AGENTS.md points at that list"
 	RATIONALE "the section grew with the migration, and every session that loads AGENTS.md loads"
 		+ "all of it, whether its task touches the corpus or not"
 	SOURCE "Review of the corpus migration"
