@@ -602,9 +602,17 @@ DECISION AnEmptyMetadataSectionIsRefusedByValidation
 	SPEC "Validation refuses a save whose section 0 carries no entry, before any merge"
 		IMPL "packages/shared-save-processing/schemas/save-file.schema.json::Section 0 — Player"
 			+ "progression"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js::saveFileSchema.items[GLOBAL_METADATA_SECTION_INDEX].minItems"
+		ENFORCED_BY "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::When the"
+			+ "section carries no entry"
+		ENFORCED_BY "packages/cli-merge/cli/initMergeCli.spec.js::When both saves of a folder carry"
+			+ "no global metadata"
 	SPEC "Reached by the merge anyway, an empty section 0 fails with a named error, never with a"
 		+ "bare TypeError"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts::openedInstanceSource"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts::throw new"
+			+ "NoGlobalMetadataToMergeError()"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::When"
+			+ "neither save has global metadata"
 	REJECTED "Restoring the ERROR_INVALID_INPUT_FORMAT verdict from before the refactor: it never"
 		+ "refused the merge, it wrote a save whose section 0 carries that text, with exit code 0"
 	REJECTED "Falling back from openedInstanceSource to DEFAULT_METADATA: the merge would produce a"
@@ -2521,3 +2529,31 @@ DECISION TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange
 		+ "and a merge document"
 	SOURCE "User ruling of 2026-09-18 on the audit of the 21 rules"
 		REF @PROJECT.PCST
+
+DECISION ABrokenInvariantOfADomainRuleFailsWithADomainErrorType
+	SPEC "A core-mapping domain rule reached with data validation should have refused fails with a"
+		+ "named error type of domain/errors, never with a bare TypeError nor a bare Error"
+		IMPL "packages/core-mapping/src/domain/errors/NoGlobalMetadataToMergeError.ts::extends"
+			+ "Error"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::toThrow(NoGlobalMetadataToMergeError)"
+	SPEC "Nothing catches it: it propagates as an exception and no presenter outcome is added for"
+		+ "it"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts"
+	REJECTED "Declaring it in infrastructure/errors beside UnexpectedSaveSectionError: the domain"
+		+ "never depends on infrastructure, and a rule meeting an invalid state is a domain error"
+		+ "wherever it is detected (ARCH-CA-INF-6)"
+	REJECTED "Throwing InvalidSaveDataError: it is the assertion error of one entity field; each"
+		+ "invariant is told apart by its type"
+	REJECTED "Catching it in MergeSaveFiles to present a merge outcome: an error on an input file"
+		+ "belongs to validation, and reached in the merge it is a broken invariant"
+		REF @DECISION.AnErrorsOriginDecidesItsPath
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FIX45
+	RATIONALE "The named error directory of the infrastructure covers its own layer only; the empty"
+		+ "global metadata section is met by mergeGlobalMetadata, a domain rule, so its type lives"
+		+ "in the domain errors directory that already holds InvalidSaveDataError. The extension of"
+		+ "the infrastructure ruling to the domain layer keeps the same test: the spec checks the"
+		+ "type, then the message"
+		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType
+	SOURCE "Ruling taken while delivering the task in pull request #102, 2026-09-18"
+		REF @PULL_REQUEST.PCST102

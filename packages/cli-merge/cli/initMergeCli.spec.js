@@ -2,7 +2,9 @@ import {beforeEach, describe, expect, it, mock, spyOn} from 'bun:test';
 import {initMergeCli} from './initMergeCli.js';
 import {
   FAKE_SAVE_STRING_A,
+  FAKE_SAVE_STRING_A_WITHOUT_GLOBAL_METADATA,
   FAKE_SAVE_STRING_B,
+  FAKE_SAVE_STRING_B_WITHOUT_GLOBAL_METADATA,
   FAKE_SAVE_STRING_WITH_INVALID_ENTRY,
   LEGACY_FAKE_SAVE_STRING_A
 } from '../testing/fakeSaveStrings.js';
@@ -426,6 +428,34 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When both saves of a folder carry no global metadata', () => {
+    beforeEach(() => {
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      serveSaves({
+        [SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A_WITHOUT_GLOBAL_METADATA,
+        [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B_WITHOUT_GLOBAL_METADATA
+      });
+    });
+
+    it('should show the validation refusal of each save, naming the global metadata section', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  [save A] [Global metadata (section 0)] Expected at least 1 entry but found 0');
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  [save B] [Global metadata (section 0)] Expected at least 1 entry but found 0');
+    });
+
+    it('should write no merged file', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(writeTextFile).not.toHaveBeenCalled();
     });
   });
 
