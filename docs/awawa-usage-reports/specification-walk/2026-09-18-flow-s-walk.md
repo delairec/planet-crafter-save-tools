@@ -840,9 +840,20 @@ not this report and not the corpus.
 
 ## Still to do
 
-Nothing of the flow: S8 ran on 2026-09-18 and closed it, and **S7b ran the same day, after S8** — its section is at
-the end of this file. It audited thirty-seven `GR-*`, not the thirty every step had carried, reclassified five and
-found three defects.
+Nothing of the flow: S8 ran on 2026-09-18 and closed it, **S7b ran the same day, after S8**, and **S7c after S7b** —
+their sections are at the end of this file. S7b audited thirty-seven `GR-*`, not the thirty every step had carried,
+reclassified five and found three defects. S7c audited the domain of the 21 `RULE` and found **no gap**: `DOMAIN
+game` stays at 0 of 21, the corpus having been extracted from a format document and a merge document, and the
+criterion that decides the axis is now `@DECISION.TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange`. It then
+removed the walk's own step ranks from the corpus, 58 fields in 56 entities.
+
+**What S7c leaves for `@TASK.CHORE52` to answer, before that task is ratified**: the five tables are seven, the 11 to
+13 game `RULE` of `energy-levels.md` must be written in the same task or its `SPEC` 4 cannot be satisfied, deleting
+the document's tables without them loses eight prose statements, and the provenance of a row has no field. The
+detail is in S7c, « What `@TASK.CHORE52` must therefore plan ». A second open point was found there: `save-format.md`
+reads the `-1` of `unitPurificationLevel` as « not the Toxicity planet » and
+`@RULE.APurificationLevelOfMinusOneMeansNotUnlocked` as « purification not unlocked »; the two are not equivalent and
+only the second is attested.
 
 One question is open, and it is S7b's own: **`SCHEMA RULE`'s `DESC` admits no `DOMAIN merge` statement.** Read
 literally, the fourteen merge rules are `DECISION`. S7b did not act on it — S2 and S4 are closed and the
@@ -1232,6 +1243,9 @@ the one defect this walk would fix first.
 | Q3 of the reading loop, never measured                                       | It reads a `DATATABLE` that does not exist yet; P2 measured four of the five questions                               |
 | `DATATABLE`, `GAME_RELEASE`, `URL` at 0 entities                             | Intended: the first two wait for CHORE52, a source entity is written by the first entity that cites it               |
 | The pull request that carries the walk                                       | Branch `docs/awawa-project-specification`, uncommitted at the writing of this bilan                                  |
+| **What `-1` means on `unitPurificationLevel`** — « not the Toxicity planet » (`save-format.md`) or « purification not unlocked » (the rule) | Found by S7c, section « Where `DOMAIN game` actually lives », row 14. Only the second reading is attested; the first is in a document CHORE52 will empty |
+| **`@TASK.CHORE52` under-specifies its own scope**: five tables that are seven, and no rule with authority over the values it moves | S7c, section « What `@TASK.CHORE52` must therefore plan ». The task is `draft`; the four findings are to be answered at its refinement |
+| **`DOMAIN game` at 0 of 21**, confirmed rather than lifted | S7c. It becomes 11 to 13 with CHORE52, and nothing before then |
 
 ### The starter's readiness criteria, answered
 
@@ -1503,3 +1517,295 @@ the statement comes from. Only the step rank is the starter's.
 
 S7b added six of the fifty-six and is therefore part of what it reports: four `SOURCE` corrections and the two
 `REJECTED` of the new decisions name S7 and S7b.
+
+## S7c — Audit of the domains, and the starter cleanup (2026-09-18), run after S7b
+
+### Reading ledger (defect 23's first half)
+
+| Source | Revision | Read |
+|--------|----------|------|
+| `work_in_progress-domain-audit.md` | untracked, as written at S7b's close | whole — taken as the reading base, nothing it measured was re-measured |
+| `docs/awawa-project-specification/rules.awawa` | `2ec53f8` | 417 lines, the 21 `RULE` |
+| `awawa show RULE .`, `grep -n 'WHEN DOMAIN' docs/_schema.awawa` | `2ec53f8` | the declaration, and the one `WHEN` block it carries |
+| `docs/energy-levels.md` | `2ec53f8` | 324 lines, §1 to §6 — not §3.2 and §4 alone |
+| `docs/save-format.md` | `2ec53f8` | 377 lines |
+| `@TASK.CHORE52`, `@DECISION.AValueTableIsRecordedOnceItsFileExists`, `SCHEMA DATATABLE`, `@COMMAND.MergeSaves` | `2ec53f8` | `awawa show` |
+| Citation sites of the two candidate rules | `2ec53f8` | `awawa refs`, `grep -rn` over `README.md`, `docs/`, `packages/` |
+
+Not re-read, carried by the temporary file: the lint state, the 56 starter sites by file, the 24 `@see` comments,
+`game-rules.md`.
+
+### The criterion, ruled by the owner
+
+**A `RULE` carries `DOMAIN game` only when a change to its statement would change how the game plays; a statement
+that can change with no consequence in play is `format`.** Recorded as
+`@DECISION.TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange`, with the two readings it rejects.
+
+The step proposed a different criterion — `format` being what a JSON Schema of
+`packages/shared-save-processing/schemas/` can refuse — and the owner refused it on both candidates. The two
+readings diverge on exactly the rules the audit had flagged, which is why the criterion is now an entity: it had
+been derived three times in three steps before it was stated once.
+
+### The 21 `RULE`, one row each
+
+| `RULE` | `DOMAIN` today | `DOMAIN` ruled | What decided |
+|--------|----------------|----------------|--------------|
+| `ASaveHasElevenSectionsTheLastReservedAndEmpty` | format | format | the play is untouched by how the file is cut |
+| `ASectionLineIsOneJsonEntry` | format | format | idem |
+| `ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange` | format | format | a property of the value written; the game-side claim is already `@HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames` |
+| `FloatFieldsCarryADotZeroSuffixInFlatRecords` | format | format | the suffix has no consequence in play |
+| `TheSaveOnPrimeBecomesSaveA` | merge | merge | arbitration between two saves |
+| `GlobalMetadataIsSummedAndUnioned` | merge | merge | arbitration |
+| `TerraformationLevelsTakeTheHigherValue` | merge | merge | arbitration |
+| `PlayersAreDeduplicatedByName` | merge | merge | arbitration |
+| `WorldObjectsAreDeduplicatedByPlanetAndPosition` | merge | merge | arbitration; the game fact it rests on — an object with no `pos` is not placed in the world — is stated nowhere |
+| `InventoriesAreKeptUnlessTheirOwnerIsEjected` | merge | merge | arbitration |
+| `StatisticsAreSummed` | merge | merge | arbitration |
+| `MailboxMessagesAreDeduplicatedByStringId` | merge | merge | arbitration |
+| `StoryEventsAreUnioned` | merge | merge | arbitration |
+| `SaveConfigurationComesFromSaveA` | merge | merge | arbitration |
+| `WorldEventsAreDeduplicatedByPlanetSeedAndPosition` | merge | merge | arbitration |
+| `IdentifiersAreSharedByInventoriesAndWorldObjects` | format + merge | format + merge | `SPEC` 1 is a numbering space in the file, `SPEC` 2 what the merge does not introduce — both, justly |
+| `APlayerIdentifierIsCarriedAsExactDecimalText` | format + merge | format + merge | `SPEC` 1 the exact decimal writing, `SPEC` 2 the merge never regenerating it — both, justly |
+| `DuplicateIdentifiersAreRemappedOnTheSaveBSide` | merge | merge | arbitration |
+| `APlanetNumericIdIsStableAcrossSaves` | format | **format** | proposed as `game` and refused: the five identifiers could all change and no game would play differently |
+| `APurificationLevelOfMinusOneMeansNotUnlocked` | format | **format** | proposed as `format + game` and refused: the sentinel could be `-2` with no consequence in play. The unlock it encodes is a game state; the rule is about the encoding |
+| `APlayerEntryMayOmitTheFieldsAddedByALaterUpdate` | format | format | what `"required"` of the section schema does not demand; no play depends on it |
+
+**Gaps: 0 of 21. `DOMAIN game` stays at 0 of 21, and the audit confirms the zero instead of lifting it.** Two rules
+carry two domains, and both are justified. The reason for the zero is not an omission: the 21 rules were extracted
+from `docs/game-rules.md` — a merge specification despite its title — and from `docs/save-format.md`, a format
+specification. **No document the corpus has read so far states a rule of the game.**
+
+### Where `DOMAIN game` actually lives: the two documents S1 kept
+
+One row per statement of the two living documents. No entity was written for them:
+`@DECISION.AValueTableIsRecordedOnceItsFileExists` defers the tables to `@TASK.CHORE52` and reopening it is not this
+step's subject.
+
+#### `docs/save-format.md`
+
+| # | Statement | Domain | Home |
+|---|-----------|--------|------|
+| 1 | 11 sections separated by `@`, lines separated by `\|\n` | format | `@RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty`, `@RULE.ASectionLineIsOneJsonEntry` |
+| 2 | Legacy 12-section format, Terrain Layers discarded with a warning | format, `HOLDS_FOR legacy` | **no home**; the adaptation policy is a `DECISION` |
+| 3 | An unreadable line is located, a merged save is revalidated | ours | `DECISION` territory |
+| 4 | The ERD and the ten field tables | format | **no home**; rows are data |
+| 5 | `hunger` from −100 to 100 | game | `@HYPOTHESIS.AnAnimalHungerLevelLiesBetweenMinus100And100` — the document itself calls the bounds assumed: **not to promote** |
+| 6 | `hunger` on `DNASequence` only, 345 times, −100 to 94.22 | format (measured on saves) | **no home** |
+| 7 | `liPlanet` 21 times, always an exchange platform, always another planet | game | `@HYPOTHESIS.ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform` |
+| 8 | `woIds` on no world object of the ten saves, declared for the merge | format | **no home** |
+| 9 | `id` and `gId` on 100 % of 190 338 objects, `pos`/`planet` on 14.31 % | format | **no home** |
+| 10 | An object carrying `pos` names `planet`; one carrying `trtVal` names `trtInd` | format, refusable by `dependentRequired` | **no home** |
+| 11 | The numeric planet id is stable across saves | format (ruled) | `@RULE.APlanetNumericIdIsStableAcrossSaves` |
+| 12 | The numeric id → name table, 5 rows | values | `DATATABLE` — **waits for CHORE52** |
+| 13 | No known hash reproduces those ids | `RATIONALE` | carried by rule 11 |
+| 14 | `unitPurificationLevel` « −1 if not the Toxicity planet » | game | **contradicts** `@RULE.APurificationLevelOfMinusOneMeansNotUnlocked` (« −1 while purification is not unlocked »). Two readings of one sentinel, neither settled |
+| 15 | `id` int64, why the exact decimal text | format | two rules carry it |
+
+#### `docs/energy-levels.md`
+
+| # | Statement | Domain | Home |
+|---|-----------|--------|------|
+| 16 | EN-BASE-1: balance = Σ production − Σ consumption over positioned objects, validated against the HUD | **game** | **no home** |
+| 17 | An object with no `pos` is not placed or active in the world | **game** | **no home** — it is what `WorldObjectsAreDeduplicatedByPlanetAndPosition` `SPEC` 1 rests on |
+| 18 | Base kW tables per `gId`, production **and** consumption | **game** (values) | `DATATABLE` — **waits for CHORE52**, which names production only |
+| 19 | EN-BASE-2: exhaustiveness of our consumption table | ours — the document states no test can prove it | `DECISION` |
+| 20 | Source registry: 22 rows, wiki page, game v2.102 | provenance | **waits for CHORE52**; no field of `DATATABLE` holds it |
+| 21 | An absent infobox value is undocumented, not zero | ours | `DECISION` |
+| 22 | Drones draw no power of their own (wiki-attested) | **game** | **no home** |
+| 23 | The wreck fusion reactor is inert scenery | **game** | **no home** |
+| 24 | §2 `gId` → label → role table | values | `DATATABLE` — **waits for CHORE52** |
+| 25 | An Optimizer itself draws 50 / 150 kW | **game** | a row of the consumption table |
+| 26 | Every production value is boostable by the Energy Fuse | **game** | **no home** |
+| 27 | §3.1 a Fuse acts only once placed inside an Optimizer | **game** | **no home** |
+| 28 | EN-OPT-1: slots, max machines, radius per tier | **game** (values) | `DATATABLE` — **waits for CHORE52** |
+| 29 | EN-OPT-2: the N closest eligible machines within the radius | **game** | **no home** |
+| 30 | EN-OPT-3: Optimizers do not compete, their bonuses stack | **game** | **no home** |
+| 31 | EN-FUSE-1: an Optimizer counts only if it holds a `FuseEnergy1` | **game**, worded procedurally | same fact as 27 |
+| 32 | EN-FUSE-2: one fuse is ×1.5, replacing the base | **game** | **no home** |
+| 33 | EN-FUSE-3: additive stacking, `multiplier = totalFuses × 1.5`, checked against the HUD (12 762.75 kW, 8 910 kW) | **game** | **no home** |
+| 34 | EN-FUSE-4: only producers are boosted | **game** | **no home** |
+| 35 | §4 steps 1 to 7 | implementation | `IMPL` of the rules above, not a `RULE` |
+| 36 | EN-PLANET-1: each planet has its own grid | **game** | **no home** |
+| 37 | EN-PLANET-2: label resolution and its substring fallback | ours | `DECISION`, resting on rule 11 |
+| 38 | 3D and horizontal distance indistinguishable on the validated save | — | **`HYPOTHESIS`**: two readings the evidence does not separate |
+| 39 | A `FuseEnergy1` outside an Optimizer inventory has no effect | **game** | same family as 27 |
+| 40 | §5 the UI Optimizer cards, contribution computed in isolation | ours | `DECISION` |
+| 41 | §6 the attestation rule for `gId` names | ours | `DECISION` |
+| 42 | §6 the `gId` list and its three-group partition | values | `DATATABLE` — **absent from CHORE52's five** |
+| 43 | §6 the label wording kept more precise than the label file, two identities corrected | ours | `DECISION` |
+| 44 | `GeneticManipulator1` = Tree seed sequencer, 117.5 kW unconfirmed | unattested game value | a flagged row, or a `HYPOTHESIS` |
+
+**How many `DOMAIN game` the project will have**: 0 today, **11 to 13** once the tables are written — the range is
+the folding of rows 26/34 and 27/31/39 into one entity or three. `game` would then be the second domain of the
+corpus, behind `merge` (14) and ahead of `format` (7).
+
+### What `@TASK.CHORE52` must therefore plan
+
+| Finding | Consequence for the task |
+|---------|--------------------------|
+| Its five tables are **seven** | energy consumption is an export distinct from production, and `SPEC` 1 names only « the energy production levels »; the `gId` list and its three-group partition in `worldObjectNames.ts` is a table of its own |
+| Its `SPEC` 4 requires that « every rule with authority over those values names its table through `VALUES_FROM` » | **no rule has authority over the energy values today**: the 11 to 13 game `RULE` of rows 16 to 39 must be written in the same task, or the `SPEC` is unsatisfiable as written |
+| Its `SPEC` 5 deletes the value tables of `energy-levels.md` | §3.1, §3.2 and §4 are **normative prose, not tables**: deleting the tables without writing the game rules loses rows 26, 27, 29, 30, 32, 33, 34 and 36 |
+| The provenance of row 20 has no field | `DATATABLE` carries `TABLE`, `KEY`, `JSON_SCHEMA` only: either a column of the JSON rows, or the `URL` and `GAME_RELEASE` types, declared and at **0 entities** — `v2.102` is exactly a `GAME_RELEASE` |
+
+### Schema consequences, stated before the first write
+
+| Point | Verdict |
+|-------|---------|
+| L003 — `CONFLICT`/`RESOLUTION` undeclared if `merge` leaves a `DOMAIN` | did not fire: no rule carries or loses `merge` |
+| L026 — a `SECTION` left with no citant | did not fire: no rule deleted |
+| `WHEN DOMAIN game` / `WHEN DOMAIN format` | do not exist — `grep -n 'WHEN DOMAIN' docs/_schema.awawa` returns line 345 and `merge` alone. Neither domain gates any field |
+
+### P10 probes
+
+**None, and that is the answer, not an omission.** The step changed field values and one `DECISION`; it touched no
+declaration of the schema — no `FIELD`, no `WHEN`, no `SHAPE`, no `NAME`. One probe was run all the same, on the
+formatter rather than on the schema, because the cleanup depended on it: a `SOURCE` written as one long line with no
+continuation marker, appended to a copy of the workspace under the scratchpad, is **re-wrapped by `awawa fmt`** at
+the canonical width. That is what made the cleanup a text substitution on joined prose rather than 58 hand-wrapped
+edits.
+
+### Out-of-corpus surfaces
+
+Nothing to repoint: no entity was renamed and no domain changed. Measured rather than assumed —
+`@RULE.APlanetNumericIdIsStableAcrossSaves` has `incoming (0)`, is absent from the 14 lines of `README.md:385-398`,
+absent from the `APPLIES` of `@COMMAND.MergeSaves`, and cited by no `@see` under `packages/`;
+`@RULE.APurificationLevelOfMinusOneMeansNotUnlocked` is cited twice, by `@COMMAND.MergeSaves APPLIES` and by
+`mergeTerraformationLevels.ts:6`, neither depending on a domain.
+
+### The starter cleanup (defect 29)
+
+**58 fields rewritten across 56 entities** — 55 `SOURCE`, 2 `REJECTED`, 1 `UNTIL` — the whole product specification
+area (40 of 40) and 16 entities of the methodology area. Every step rank removed; `grep -rn 'specification
+walk\|step S[0-9]\|from FACT'` over both areas and the schema returns nothing.
+
+What survived, checked in the diff: every date, every source document, every `GR-*` identifier, every pull request
+number, and every nested `REF` — including the six S7b added to satisfy L025. Three wordings were rebuilt rather
+than truncated: « …pull request 47; retyped from `FACT` in step S7 … » became « …pull request 47, recorded on
+2026-09-18 », « where step S7 put it » became « where it was first written », and « a fact about the save that S7
+left inside » became « a fact about the save left inside ».
+
+**11 `SOURCE` are now a bare date and a `REF`** — `SOURCE "2026-09-18"` with `REF @PROJECT.PCST` — because for those
+eleven the walk was the only source. That is the instruction applied literally, and it is recorded as starter defect
+32: the remedy is a field for the date, not the step rank coming back.
+
+**S7c rewrote six sites S7b itself had written**, and says so here as S7b said it of its own six.
+
+### Gate
+
+`awawa fmt && awawa lint --strict --summary .` at the repository root: **0 error, 0 warning, 12 files, 275
+entities**. `bun run check:guards`: seven guards, all clean. `bun test` was not run and is not owed: no code comment
+moved, no entity was renamed.
+
+### Files
+
+| File | Change | Reread to confirm |
+|------|--------|-------------------|
+| `docs/awawa-project-specification/rules.awawa` | 21 `SOURCE` cleaned; **no `DOMAIN` changed** | **yes** — the audit's product is that nothing changed |
+| `docs/awawa-project-specification/sections.awawa` | 12 `SOURCE` cleaned | no |
+| `docs/awawa-project-specification/hypotheses.awawa` | 5 `SOURCE` cleaned | no |
+| `docs/awawa-project-specification/commands.awawa` | 2 `SOURCE` cleaned | no |
+| `docs/awawa-project-methodology/decisions.awawa` | 12 `SOURCE` and 2 `REJECTED` cleaned; **1 `DECISION` added** | **yes** — the criterion the owner ruled |
+| `docs/awawa-project-methodology/tasks.awawa` | 2 `SOURCE` cleaned | no |
+| `docs/awawa-project-methodology/limitations.awawa` | 1 `UNTIL` cleaned | no |
+| `docs/awawa-project-methodology/processes.awawa` | 1 `SOURCE` cleaned | no |
+| `docs/awawa-usage-reports/specification-walk/2026-09-18-flow-s-walk.md` | this section, « Still to do », the bilan | no |
+| `docs/awawa-usage-reports/specification-walk/2026-09-17-starter-defects.md` | defects 30 to 32 | **yes** |
+| `docs/_schema.awawa` | the `DESC` of `FIELD DOMAIN` rewritten to the ruled criterion (R10) | **yes** — one line |
+
+Deleted: `docs/awawa-usage-reports/specification-walk/work_in_progress-domain-audit.md`, untracked, its purpose
+spent. Created: none.
+
+### Rulings of 2026-09-18, S7c
+
+27. **A `RULE` is `game` only when a change to its statement would change the play.** The encoding of a game state is
+    `format`: the `-1` purification sentinel could be `-2`, the five numeric planet ids could all differ, and no game
+    would play differently. Recorded as
+    `@DECISION.TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange`.
+28. **An observation in game is not an attestation**: it can be contradicted by another observation, so it yields a
+    `HYPOTHESIS`. The five current `HYPOTHESIS` are well typed on that count and none is promoted.
+29. **A `DESC` that states a criterion is corrected in the step that rules the criterion.** The `DESC` of `FIELD
+    DOMAIN` said what a statement was *about*; it now says what decides its domain. A declaration read on every
+    `show` of the type outlives the conversation that ruled it, and is the only place the criterion is retrieved
+    from without being looked for.
+30. **A value of a declared enum that no entity carries is a fact to print, not a gap to fill.** `DOMAIN game` at 0
+    of 21 is the true state of a corpus extracted from a format document and a merge document; the audit's product is
+    the confirmation, and the measure that was missing is starter defect 30.
+
+### The cost of the step
+
+| Step | Turns | Weighted | Output | Context at the last turn | What it produced |
+|------|-------|----------|--------|--------------------------|------------------|
+| S7c | 37 | **4.83 M** | 59.8 k | 192 k | 21 rules audited, 0 gap, 44 statements classified, 58 fields cleaned, 1 `DECISION`, 3 defects, 1 schema review |
+
+Measured on this session's transcript at the step's close, deduplicated by message id, as the other steps were. It
+is the **third cheapest step of the walk** — 4.83 M against S7b's 3.17 M, S4's 4.45 M and up to S8's 9.40 M — and it
+carried two units of work rather than one, the audit and the cleanup. The reading base of the temporary file removed
+the re-reading S7b had to pay: the two documents S1 kept, 701 lines, were read in one turn each, and the
+classification of their 44 statements cost no further read. What it did pay for is the writing: **7 turns and
+1.26 M between the audit's delivery and this line**, the cleanup, the defects and the review, which is the same
+proportion S7b measured — recording a step costs about as much as performing it.
+
+## Review of the schema (S7c, after S7b) — 2026-09-18
+
+The permanent step, run on `docs/_schema.awawa` as the reviews R1 to R8 were, against what S7c measured rather than
+against the entry answers a second time.
+
+### Verdict
+
+**One structural finding, one cheap correction proposed, one defect restated, two declarations read and left as
+is.** The finding is not about the rules the corpus holds: it is about the eleven to thirteen it is about to write.
+
+### R9 — `ATTESTED_BY` is an `anchor`, and no game rule can satisfy it
+
+`SCHEMA RULE` declares `FIELD SPEC` → `FIELD ATTESTED_BY anchor REQUIRED REPEATABLE`, and
+`@DECISION.AnAnchorNamesAFileTrackedByGit` rules that an anchor names a file git tracks. **The proofs of a game rule
+are none of those**: EN-FUSE-3 is proven by the in-game HUD of a private save — and
+`@DECISION.NoSaveIsCommittedToThePublicRepository` keeps that save out of the repository — EN-OPT-1 by a wiki page,
+the machine costs by a wiki page read against game v2.102.
+
+So a `RULE DOMAIN game` written today is either unwritable, or attested by a file of our own code, which proves our
+implementation and not the game. The type has held `DOMAIN game` since S4 and the contradiction never showed,
+because the value carried no entity — starter defect 30 is what hid it.
+
+`@SCHEMA.URL` and `@SCHEMA.GAME_RELEASE` are declared, at 0 entities, and are exactly the two shapes a game
+attestation needs. What is missing is the field that lets a `SPEC` point at them. A slot cannot hold two reference
+types (L020) and cannot mix `anchor` with a reference, so the correction is a sibling field rather than a widening
+of `ATTESTED_BY` — declared under a `WHEN DOMAIN game` block, which is monotonic and therefore legal. **Not written
+here**: it is a schema declaration, the tables it serves do not exist yet, and its natural home is the refinement of
+`@TASK.CHORE52`, which is where the game rules will be written. Recorded so that refinement does not rediscover it.
+
+`SCHEMA HYPOTHESIS` carries the same limit on `FIELD OBSERVED_IN anchor`, for the same reason and with the same
+remedy.
+
+### R10 — `FIELD DOMAIN`'s `DESC` states the reading the owner rejected
+
+The `DESC` reads « what the statement is about: the bytes of the save, **the game itself**, or how two saves are
+merged ». The criterion ruled at S7c is not what the statement is *about* but whether a change to it would change
+the play — the two readings diverge on exactly the two rules the audit proposed and the owner refused. That `DESC`
+is printed on every `show RULE` and every `--with-schema` package, so it is the most retrieved sentence of the axis
+and it is the one that misleads.
+
+**Ratified and written in the same turn**, one line, no entity touched: « what the statement decides: how the save is
+written, how the game plays, or how two saves are reconciled; `game` only when a change to the statement would
+change the play; repeated when one statement holds in several domains ». It is the only change S7c makes to
+`docs/_schema.awawa`, and the only one the four earlier reviews could not have made: the contradiction was invisible
+while `DOMAIN game` carried no entity and no criterion.
+
+### R11 — defect 28, restated with the measurement S7c adds
+
+`SCHEMA RULE`'s `DESC` still admits no `DOMAIN merge` statement, and the ruling is the owner's. S7c adds one figure
+to it: with `game` at 0 and `merge` at 14 of 21, **the `DESC` excludes two thirds of the type's own instances**, and
+will exclude fewer only once the game rules are written.
+
+### Read and left as is
+
+- **`SCHEMA DATATABLE` has no field for provenance.** The source registry of `docs/energy-levels.md` — 22 rows, a
+  wiki page each, game v2.102 — has nowhere to go among `TABLE`, `KEY` and `JSON_SCHEMA`. That is ruled, not
+  missing: `@DECISION.AnExternalPageIsCitedAtTheAddressRead` says a per-row wiki page stays a column of the JSON
+  table, which is what keeps the energy rows out of the corpus.
+- **`FIELD VALUES_FROM @DATATABLE` is optional, and no `WHEN` makes it required.** `@TASK.CHORE52`'s `SPEC` 4 asks
+  that every rule with authority over a table name it; nothing in the schema can check that, and nothing should try
+  before a `DATATABLE` exists. The obligation stays the task's, verified by hand at its delivery.

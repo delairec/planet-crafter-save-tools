@@ -9,7 +9,7 @@ RULE ASaveHasElevenSectionsTheLastReservedAndEmpty
 			+ "Reserved"
 	APPLIES_TO_SECTION @SECTION.Reserved
 	SOURCE "Extracted from the ruling on section counters, names settled in the review of pull"
-		+ "request 47; retyped from FACT in step S7 of the specification walk, 2026-09-18"
+		+ "request 47, recorded on 2026-09-18"
 		REF @PULL_REQUEST.PCST47
 
 RULE ASectionLineIsOneJsonEntry
@@ -18,8 +18,8 @@ RULE ASectionLineIsOneJsonEntry
 	SPEC "each line of a section is one JSON entry, lines being separated by a pipe"
 		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::{\"id\":44,\"woIds\":\"79111656,58524136\",\"size\":20}|"
 		ATTESTED_BY "packages/shared-save-processing/parseSaveSections.js::return JSON.parse(line);"
-	SOURCE "Extracted from the ruling on the single save parser, pull request 47; retyped from FACT"
-		+ "in step S7 of the specification walk, 2026-09-18"
+	SOURCE "Extracted from the ruling on the single save parser, pull request 47, recorded on"
+		+ "2026-09-18"
 		REF @PULL_REQUEST.PCST47
 
 RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
@@ -31,8 +31,8 @@ RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 			+ "int64 player identifier is read back"
 		ATTESTED_BY "packages/shared-save-processing/int64Identifiers.js::RAW_INTEGER_FIELDS"
 	APPLIES_TO_SECTION @SECTION.Players
-	SOURCE "Extracted from the ruling on int64 identifiers, delivered by pull request 49; retyped"
-		+ "from FACT in step S7 of the specification walk, 2026-09-18"
+	SOURCE "Extracted from the ruling on int64 identifiers, delivered by pull request 49, recorded"
+		+ "on 2026-09-18"
 		REF @PULL_REQUEST.PCST49
 
 RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
@@ -47,8 +47,8 @@ RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 	APPLIES_TO_SECTION @SECTION.Players
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
-	SOURCE "Extracted from the ruling on float suffix emission, pull request 36; retyped from FACT"
-		+ "in step S7 of the specification walk, 2026-09-18"
+	SOURCE "Extracted from the ruling on float suffix emission, pull request 36, recorded on"
+		+ "2026-09-18"
 		REF @PULL_REQUEST.PCST36
 
 RULE TheSaveOnPrimeBecomesSaveA
@@ -64,8 +64,7 @@ RULE TheSaveOnPrimeBecomesSaveA
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts::should"
 			+ "return saves in the original order"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-ORDER-1)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ORDER-1)"
 		REF @PROJECT.PCST
 
 RULE GlobalMetadataIsSummedAndUnioned
@@ -91,8 +90,7 @@ RULE GlobalMetadataIsSummedAndUnioned
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
 			+ "keep the remaining instance time from save A"
 	APPLIES_TO_SECTION @SECTION.GlobalMetadata
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-META-1 to GR-META-4)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-META-1 to GR-META-4)"
 		REF @PROJECT.PCST
 
 RULE TerraformationLevelsTakeTheHigherValue
@@ -115,8 +113,7 @@ RULE TerraformationLevelsTakeTheHigherValue
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeTerraformationLevels.spec.ts::should"
 			+ "take the non-negative value of the other save"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-TERRA-1 to GR-TERRA-3)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-TERRA-1 to GR-TERRA-3)"
 		REF @PROJECT.PCST
 
 RULE PlayersAreDeduplicatedByName
@@ -142,9 +139,9 @@ RULE PlayersAreDeduplicatedByName
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should keep"
 			+ "the players of each save under their own origin"
 	APPLIES_TO_SECTION @SECTION.Players
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-PLAYER-1 to GR-PLAYER-3); GR-PLAYER-4 split off in step S7b, its format half"
-		+ "becoming @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate and its defaulting half"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-PLAYER-1 to GR-PLAYER-3);"
+		+ "GR-PLAYER-4 split off, its format half becoming"
+		+ "@RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate and its defaulting half"
 		+ "@DECISION.MissingPlayerFieldsAreWrittenAsZero"
 		REF @PROJECT.PCST
 		REF @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
@@ -171,9 +168,8 @@ RULE WorldObjectsAreDeduplicatedByPlanetAndPosition
 			+ "collect the world object ids held in the ejected player inventory and equipment from"
 			+ "save B"
 	APPLIES_TO_SECTION @SECTION.WorldObjects
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-WO-1 to GR-WO-3); GR-WO-4 named the id conflict step and became no SPEC, ruled in"
-		+ "step S7b"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-WO-1 to GR-WO-3); GR-WO-4 named the"
+		+ "id conflict step and became no SPEC"
 		REF @PROJECT.PCST
 
 RULE InventoriesAreKeptUnlessTheirOwnerIsEjected
@@ -197,8 +193,7 @@ RULE InventoriesAreKeptUnlessTheirOwnerIsEjected
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeInventories.spec.ts::should"
 			+ "keep both inventories as the duplicate id will be resolved later"
 	APPLIES_TO_SECTION @SECTION.Inventories
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-INV-1 to GR-INV-3)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-INV-1 to GR-INV-3)"
 		REF @PROJECT.PCST
 
 RULE StatisticsAreSummed
@@ -211,8 +206,7 @@ RULE StatisticsAreSummed
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeStatistics.spec.ts::should"
 			+ "merge statistics by summing values"
 	APPLIES_TO_SECTION @SECTION.Statistics
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-STAT-1)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-STAT-1)"
 		REF @PROJECT.PCST
 
 RULE MailboxMessagesAreDeduplicatedByStringId
@@ -232,8 +226,7 @@ RULE MailboxMessagesAreDeduplicatedByStringId
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeMailboxes.spec.ts::should"
 			+ "combine mailboxes from both saves"
 	APPLIES_TO_SECTION @SECTION.MailboxMessages
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-MSG-1 to GR-MSG-3)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-MSG-1 to GR-MSG-3)"
 		REF @PROJECT.PCST
 
 RULE StoryEventsAreUnioned
@@ -249,8 +242,7 @@ RULE StoryEventsAreUnioned
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeStoryEvents.spec.ts::should"
 			+ "concat story events from both saves"
 	APPLIES_TO_SECTION @SECTION.StoryEvents
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-STORY-1 and GR-STORY-2)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-STORY-1 and GR-STORY-2)"
 		REF @PROJECT.PCST
 
 RULE SaveConfigurationComesFromSaveA
@@ -263,9 +255,8 @@ RULE SaveConfigurationComesFromSaveA
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
 			+ "use the saveDisplayName parameter and take save configuration from save A"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-CFG-1 and GR-CFG-3); GR-CFG-2 moved to"
-		+ "@DECISION.TheMergedSaveDisplayNameComesFromTheCaller in step S7b"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-CFG-1 and GR-CFG-3); GR-CFG-2 moved"
+		+ "to @DECISION.TheMergedSaveDisplayNameComesFromTheCaller"
 		REF @PROJECT.PCST
 		REF @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
 
@@ -283,8 +274,7 @@ RULE WorldEventsAreDeduplicatedByPlanetSeedAndPosition
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldEvents.spec.ts::should"
 			+ "concat world events from both saves"
 	APPLIES_TO_SECTION @SECTION.WorldEvents
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-EVT-1 and GR-EVT-2)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-EVT-1 and GR-EVT-2)"
 		REF @PROJECT.PCST
 
 RULE IdentifiersAreSharedByInventoriesAndWorldObjects
@@ -304,8 +294,7 @@ RULE IdentifiersAreSharedByInventoriesAndWorldObjects
 			+ "renumber the save B entries and keep every entry of both saves"
 	APPLIES_TO_SECTION @SECTION.Inventories
 	APPLIES_TO_SECTION @SECTION.WorldObjects
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-ID-1)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-1)"
 		REF @PROJECT.PCST
 
 RULE APlayerIdentifierIsCarriedAsExactDecimalText
@@ -328,8 +317,7 @@ RULE APlayerIdentifierIsCarriedAsExactDecimalText
 			+ "only the save A host"
 	APPLIES_TO_SECTION @SECTION.Players
 	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-ID-6 and GR-ID-7)"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-6 and GR-ID-7)"
 		REF @PROJECT.PCST
 
 RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
@@ -361,9 +349,9 @@ RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 	APPLIES_TO_SECTION @SECTION.Inventories
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	ASSUMES @HYPOTHESIS.AWorldObjectMayCarryALinkedObjectList
-	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
-		+ "(GR-ID-2, GR-ID-3 and GR-ID-5); GR-ID-4 placed the step in the pipeline and was already"
-		+ "@DECISION.AMergeProducesAnOrdinarySave, so it was deleted in step S7b"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-2, GR-ID-3 and GR-ID-5); GR-ID-4"
+		+ "placed the step in the pipeline and was already @DECISION.AMergeProducesAnOrdinarySave,"
+		+ "so it was deleted"
 		REF @PROJECT.PCST
 		REF @DECISION.AMergeProducesAnOrdinarySave
 
@@ -381,8 +369,7 @@ RULE APlanetNumericIdIsStableAcrossSaves
 		+ "the correspondence is a maintained lookup rather than a computation; the table itself"
 		+ "moves to a DATATABLE with CHORE52 and the rule will then name it through VALUES_FROM"
 		REF @TASK.CHORE52
-	SOURCE "Extracted from docs/save-format.md, Planet numeric IDs, on 2026-09-18, step S7 of the"
-		+ "specification walk"
+	SOURCE "Extracted from docs/save-format.md, Planet numeric IDs, on 2026-09-18"
 		REF @PROJECT.PCST
 
 RULE APurificationLevelOfMinusOneMeansNotUnlocked
@@ -395,9 +382,8 @@ RULE APurificationLevelOfMinusOneMeansNotUnlocked
 		ATTESTED_BY "packages/shared-save-processing/schemas/section1-terraformation-levels.schema.json::\"minimum\":"
 			+ "-1"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
-	SOURCE "Extracted from docs/game-rules.md in step S7b of the specification walk, 2026-09-18:"
-		+ "the first sentence of GR-TERRA-3, a fact about the save that S7 left inside"
-		+ "@RULE.TerraformationLevelsTakeTheHigherValue"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-TERRA-3, a"
+		+ "fact about the save left inside @RULE.TerraformationLevelsTakeTheHigherValue"
 		REF @PROJECT.PCST
 		REF @RULE.TerraformationLevelsTakeTheHigherValue
 
@@ -410,8 +396,7 @@ RULE APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
 			+ "[\"id\", \"name\""
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::LegacyCompatiblePlayer"
 	APPLIES_TO_SECTION @SECTION.Players
-	SOURCE "Extracted from docs/game-rules.md in step S7b of the specification walk, 2026-09-18:"
-		+ "the first sentence of GR-PLAYER-4, a fact about the save that S7 left inside"
-		+ "@RULE.PlayersAreDeduplicatedByName"
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-PLAYER-4, a"
+		+ "fact about the save left inside @RULE.PlayersAreDeduplicatedByName"
 		REF @PROJECT.PCST
 		REF @RULE.PlayersAreDeduplicatedByName

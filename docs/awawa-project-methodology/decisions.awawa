@@ -2230,7 +2230,7 @@ DECISION TheSchemaGovernsEveryAreaFromTheDocsRoot
 		+ "chosen for the reader; a declaration that governs two areas is placed above both. The"
 		+ "move was priced before it was made: one IMPL anchor and three path mentions in"
 		+ "AGENTS.md, references being by identity"
-	SOURCE "S4 of the specification walk, 2026-09-17"
+	SOURCE "2026-09-17"
 		REF @PROJECT.PCST
 
 DECISION TheSpecificationAreaPivotsOnTheRule
@@ -2257,7 +2257,7 @@ DECISION TheSpecificationAreaPivotsOnTheRule
 		+ "package, 5 entities and 31 lines, but only reaches what a command applies, and most"
 		+ "questions are not about a command"
 		REF @DECISION.TheSchemaGovernsEveryAreaFromTheDocsRoot
-	SOURCE "S5 of the specification walk, 2026-09-18"
+	SOURCE "2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION TheEraIsNotTheArchive
@@ -2284,7 +2284,7 @@ DECISION TheEraIsNotTheArchive
 		+ "quiet one. It also costs the readers: context on an active entity prints // suppressed"
 		+ "in place of the archived entity it points at, so archiving a still-cited entity silently"
 		+ "shrinks every package that cites it"
-	SOURCE "S5 of the specification walk, 2026-09-18"
+	SOURCE "2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION AnAnchorNamesAFileTrackedByGit
@@ -2311,7 +2311,7 @@ DECISION AnAnchorNamesAFileTrackedByGit
 		+ "witness is one of the eight save files that are not committed"
 		REF @DECISION.NoSaveIsCommittedToThePublicRepository
 		REF @DECISION.ThePrivateContextHoldsOnlySavesAndPlans
-	SOURCE "Review of the target schema, S5 to S6 boundary of the specification walk, 2026-09-18"
+	SOURCE "Review of the target schema, 2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION AGameReleaseIsCitedAsASource
@@ -2336,7 +2336,7 @@ DECISION AGameReleaseIsCitedAsASource
 		+ "made against that build. The type carries no field: its identity is the version, and"
 		+ "NAME version_segment checks it"
 		REF @DECISION.AnExternalPageIsCitedAtTheAddressRead
-	SOURCE "S6 of the specification walk, 2026-09-18"
+	SOURCE "2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION AnExternalPageIsCitedAtTheAddressRead
@@ -2362,7 +2362,7 @@ DECISION AnExternalPageIsCitedAtTheAddressRead
 		+ "validates LOCATION, and a per-row wiki page stays a column of the JSON table, which is"
 		+ "what keeps the 105 energy rows out of the corpus"
 		REF @DECISION.AGameReleaseIsCitedAsASource
-	SOURCE "S6 of the specification walk, 2026-09-18"
+	SOURCE "2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION AFieldLegalInOneStateIsDeclaredInThatStateAlone
@@ -2382,7 +2382,7 @@ DECISION AFieldLegalInOneStateIsDeclaredInThatStateAlone
 		+ "INDEX in WHEN HOLDS_FOR current and WHEN HOLDS_FOR both raises no L013. It is the shape"
 		+ "SCHEMA * already gives ARCHIVED_ON and PURGE, legal only under WHEN STATUS archived"
 		REF @DECISION.TheEraIsNotTheArchive
-	SOURCE "S6 of the specification walk, 2026-09-18"
+	SOURCE "2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION ASectionIsWrittenWithTheRuleThatCitesIt
@@ -2404,7 +2404,7 @@ DECISION ASectionIsWrittenWithTheRuleThatCitesIt
 	RATIONALE "The obligation is not a style preference: it is what makes the specification"
 		+ "complete by construction, since a section with no rule is the shape a forgotten"
 		+ "obligation takes"
-	SOURCE "Step S7 of the specification walk, 2026-09-18"
+	SOURCE "2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION AValueTableIsRecordedOnceItsFileExists
@@ -2423,7 +2423,7 @@ DECISION AValueTableIsRecordedOnceItsFileExists
 		+ "entity wait for the artefact, and the wait is carried by a task rather than by a"
 		+ "placeholder anchor"
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
-	SOURCE "Step S7 of the specification walk, 2026-09-18"
+	SOURCE "2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION ADocumentIsDeletedOnlyWhenEveryCitationIsRepointed
@@ -2449,13 +2449,13 @@ DECISION ADocumentIsDeletedOnlyWhenEveryCitationIsRepointed
 		+ "comments in twenty-one files, the thirteen README lines and the two links from"
 		+ "docs/save-format.md and docs/energy-levels.md — forty-five citation sites of which the"
 		+ "tool saw six"
-	SOURCE "Step S8 of the specification walk, 2026-09-18"
+	SOURCE "2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION TheMergedSaveDisplayNameComesFromTheCaller
-	REJECTED "Keeping it as a SPEC of @RULE.SaveConfigurationComesFromSaveA, where step S7 put it:"
-		+ "neither save's saveDisplayName is read, so the obligation settles no disagreement"
-		+ "between the two saves and no save can contradict it"
+	REJECTED "Keeping it as a SPEC of @RULE.SaveConfigurationComesFromSaveA, where it was first"
+		+ "written: neither save's saveDisplayName is read, so the obligation settles no"
+		+ "disagreement between the two saves and no save can contradict it"
 		REF @RULE.SaveConfigurationComesFromSaveA
 	REJECTED "Carrying save A's saveDisplayName into the merged save: the name would designate a"
 		+ "folder the merge did not produce"
@@ -2469,14 +2469,13 @@ DECISION TheMergedSaveDisplayNameComesFromTheCaller
 	RATIONALE "The two inputs are not consulted at all: the display name is an argument of the"
 		+ "merge, so the obligation belongs to what the caller owes the merge and not to how two"
 		+ "saves are reconciled. Sanitizing it is still owed, and stays where it was recorded"
-	SOURCE "Reclassified from GR-CFG-2 of docs/game-rules.md in step S7b of the specification walk,"
-		+ "2026-09-18"
+	SOURCE "Reclassified from GR-CFG-2 of docs/game-rules.md on 2026-09-18"
 		REF @PROJECT.PCST
 
 DECISION MissingPlayerFieldsAreWrittenAsZero
-	REJECTED "Keeping it as a SPEC of @RULE.PlayersAreDeduplicatedByName, where step S7 put it: the"
-		+ "defaulting applies to one entry whatever the other save holds, so it settles no"
-		+ "disagreement between the two saves"
+	REJECTED "Keeping it as a SPEC of @RULE.PlayersAreDeduplicatedByName, where it was first"
+		+ "written: the defaulting applies to one entry whatever the other save holds, so it"
+		+ "settles no disagreement between the two saves"
 		REF @RULE.PlayersAreDeduplicatedByName
 	REJECTED "Writing the merged entry without the fields the source entry omits, as the game does:"
 		+ "the merged save would then be written in a shape older than the one the game writes"
@@ -2490,6 +2489,29 @@ DECISION MissingPlayerFieldsAreWrittenAsZero
 	RATIONALE "The save may omit the three fields and the merge must still write one shape; zero is"
 		+ "the value the game itself starts them at, so the merged entry reads as an entry of a"
 		+ "save that never earned any"
-	SOURCE "Reclassified from GR-PLAYER-4 of docs/game-rules.md in step S7b of the specification"
-		+ "walk, 2026-09-18"
+	SOURCE "Reclassified from GR-PLAYER-4 of docs/game-rules.md on 2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange
+	REJECTED "Reading DOMAIN game as any statement about the simulated world, whatever the save"
+		+ "does with it: the encoding of a game state would then be a game rule, and"
+		+ "@RULE.APlanetNumericIdIsStableAcrossSaves and"
+		+ "@RULE.APurificationLevelOfMinusOneMeansNotUnlocked would have been retyped, though a"
+		+ "change to either leaves the play untouched"
+		REF @RULE.APlanetNumericIdIsStableAcrossSaves
+		REF @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+	REJECTED "Reading DOMAIN format as what a JSON Schema of"
+		+ "packages/shared-save-processing/schemas/ can refuse: it leaves a statement no"
+		+ "single-save schema can check, such as an identifier being stable across saves, with no"
+		+ "domain at all"
+	SPEC "a RULE carries DOMAIN game only when a change to its statement would change how the game"
+		+ "plays, and DOMAIN format when the statement can change with no consequence in play"
+		IMPL "docs/_schema.awawa::FIELD DOMAIN format|game|merge"
+	RATIONALE "The axis was derived three times before being settled: the 21 rules were typed once"
+		+ "against no stated criterion, the verdict table that followed answered whether a"
+		+ "statement was a merge rule, and the audit of the domains proposed a third reading. The"
+		+ "criterion is recorded so the fourth derivation does not happen; applied to the 21 rules"
+		+ "it confirms DOMAIN game at zero, the corpus having been extracted from a format document"
+		+ "and a merge document"
+	SOURCE "User ruling of 2026-09-18 on the audit of the 21 rules"
 		REF @PROJECT.PCST

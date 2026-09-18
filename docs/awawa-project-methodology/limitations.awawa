@@ -103,7 +103,6 @@ LIMITATION SectionLabelsDivergeFromTheFormatDocument
 	SYMPTOM "The short section labels used in the location of an error do not match the section"
 		+ "headings of the save format document"
 	UNTIL "every section name shown to a user is read from SECTION.LABEL, the single reference"
-		+ "ruled in the specification walk"
 	SEEN_IN "packages/core-mapping/src/presentation/messages/saveSectionLabels.js::'Mailbox"
 		+ "messages'"
 	SEEN_IN "docs/save-format.md::#0 — Player Progression (tokens & unlocked groups)"

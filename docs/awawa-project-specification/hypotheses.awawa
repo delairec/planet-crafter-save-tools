@@ -3,8 +3,8 @@ HYPOTHESIS APlayerIdentifierIsASteamAccountReusedAcrossGames
 		+ "the next and which is unique neither across two saves nor, formally, within one"
 	UNTIL "a save whose player identifier names no Steam account, or two saves of the same account"
 		+ "carrying different identifiers"
-	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07, pull request 39;"
-		+ "retyped from FACT in step S7 of the specification walk, 2026-09-18"
+	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07, pull request 39,"
+		+ "recorded on 2026-09-18"
 		REF @PULL_REQUEST.PCST39
 
 HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
@@ -17,8 +17,7 @@ HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 		+ "additional properties, omitting it would reject a save that the reference rewrite claims"
 		+ "to handle. If refuted, the type, the reference remapping and the matching line of the"
 		+ "identifier rule go together, not the schema alone"
-	SOURCE "Found on 2026-09-10, left open in the review of pull request 48; retyped from FACT in"
-		+ "step S7 of the specification walk, 2026-09-18"
+	SOURCE "Found on 2026-09-10, left open in the review of pull request 48, recorded on 2026-09-18"
 		REF @PULL_REQUEST.PCST48
 
 HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
@@ -32,8 +31,7 @@ HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 		+ "ceiling without proving it. It is exactly the risk the schema rule names, a bound set on"
 		+ "the sample alone rejecting a legitimate save; the user accepted that risk"
 		REF @DECISION.ASchemaRuleHoldsByMeaningBeforeMeasurement
-	SOURCE "Found on 2026-09-10 in pull request 48; retyped from FACT in step S7 of the"
-		+ "specification walk, 2026-09-18"
+	SOURCE "Found on 2026-09-10 in pull request 48, recorded on 2026-09-18"
 		REF @PULL_REQUEST.PCST48
 
 HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
@@ -46,8 +44,7 @@ HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 		+ "this entity"
 		REF @DECISION.WorldObjectNamesAreAttestedBySourceOrSave
 		REF @DECISION.ACodeCommentQuestionNamesItsCorpusEntity
-	SOURCE "User ruling of 2026-09-14 in the review of pull request 76; retyped from FACT in step"
-		+ "S7 of the specification walk, 2026-09-18"
+	SOURCE "User ruling of 2026-09-14 in the review of pull request 76, recorded on 2026-09-18"
 		REF @PULL_REQUEST.PCST76
 
 HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
@@ -61,5 +58,5 @@ HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 		+ "on an InterplanetaryExchangePlatform1 and every time naming another planet; 21"
 		+ "occurrences of one object type prove a habit, not a rule of the game"
 	SOURCE "Extracted from docs/save-format.md, what the reference saves say about the rarest"
-		+ "three, on 2026-09-18, step S7 of the specification walk"
+		+ "three, on 2026-09-18"
 		REF @PROJECT.PCST

@@ -537,7 +537,7 @@ TASK CHORE51
 		+ "is clean for its author and an error in a fresh clone; the rule is written"
 		+ "(@DECISION.AnAnchorNamesAFileTrackedByGit) and enforced by nothing"
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
-	SOURCE "Review of the target schema, S5 to S6 boundary of the specification walk, 2026-09-18"
+	SOURCE "Review of the target schema, 2026-09-18"
 		REF @PROJECT.PCST
 
 TASK CHORE52
@@ -562,6 +562,5 @@ TASK CHORE52
 		+ "The step that writes the first entities therefore writes no DATATABLE and this task"
 		+ "carries the whole move"
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
-	SOURCE "Step S7 of the specification walk, 2026-09-18: ordering ruled before the first entity"
-		+ "was written"
+	SOURCE "2026-09-18: ordering ruled before the first entity was written"
 		REF @PROJECT.PCST

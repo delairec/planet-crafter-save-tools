@@ -319,8 +319,9 @@ SCHEMA RULE
 	FIELD DOMAIN format|game|merge
 		REQUIRED
 		REPEATABLE
-		DESC "what the statement is about: the bytes of the save, the game itself, or how two saves"
-			+ "are merged; repeated when one statement holds in several domains"
+		DESC "what the statement decides: how the save is written, how the game plays, or how two"
+			+ "saves are reconciled; game only when a change to the statement would change the"
+			+ "play; repeated when one statement holds in several domains"
 	FIELD SPEC string
 		REQUIRED
 		REPEATABLE
