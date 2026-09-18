@@ -543,7 +543,7 @@ TASK CHORE51
 TASK CHORE52
 	TITLE "the product value tables become JSON files with a JSON Schema each, and five DATATABLE"
 		+ "entities name them"
-	STATUS draft
+	STATUS todo
 	SPEC "the energy production levels, the world object labels, the optimizer configuration, the"
 		+ "planet names by numeric id and the legacy save properties each live in one JSON file, a"
 		+ "row per line, under the package that owns them"
