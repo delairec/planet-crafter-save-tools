@@ -41,8 +41,8 @@ les cinq entités (@DECISION.AValueTableIsRecordedOnceItsFileExists).
 **Une ancre nomme un fichier suivi par git.** `L016` ne teste que l'existence du chemin sur le disque et ne consulte
 jamais git : une ancre vers `input/`, `output/` ou `.do-not-commit/` est propre chez son auteur et casse en clone
 neuf. Les témoins commités sont les fixtures de `packages/ui-save-manager/e2e/fixtures/`, les JSON Schemas de
-`packages/shared-save-processing/schemas/`, les tests et les documents de `docs/`
-(@DECISION.AnAnchorNamesAFileTrackedByGit).
+`packages/shared-save-processing/schemas/`, les tests et les documents de `docs/`. `bun run check:anchors` refuse
+une ancre vers un chemin que git ne suit pas (@DECISION.AnAnchorNamesAFileTrackedByGit).
 
 **Un document de `docs/` n'est supprimé qu'une fois toutes ses citations repointées.** Un document n'est gardé que
 tant qu'il porte un fait qu'aucune autre maison ne tient ; mais avant de le supprimer, compter ses citations dans les
