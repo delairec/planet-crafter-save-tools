@@ -2418,6 +2418,8 @@ DECISION ASectionIsWrittenWithTheRuleThatCitesIt
 		REF @PROJECT.PCST
 
 DECISION AValueTableIsRecordedOnceItsFileExists
+	STATUS archived
+	ARCHIVED_ON 2026-09-18
 	SPEC "a DATATABLE is written only when the JSON file and the JSON Schema its TABLE and"
 		+ "JSON_SCHEMA name are tracked by git"
 		IMPL "docs/_schema.awawa::FIELD JSON_SCHEMA anchor"
@@ -2557,4 +2559,4 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "the import stays relative; the legacy terrain layer properties are read by no module and"
 		+ "sit in shared-save-processing, which owns the wire format"
 	SOURCE "ruled while delivering CHORE52, 2026-09-18"
-		REF @PROJECT.PCST
+		REF @PULL_REQUEST.PCST103
