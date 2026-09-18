@@ -490,7 +490,8 @@ TASK DOCS48
 
 TASK CHORE49
 	TITLE "package.json carries one Bun version in packageManager and devDependencies.bun"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-18"
 	SPEC "packageManager and devDependencies.bun in the root package.json name the same Bun release"
 		IMPL "package.json::\"packageManager\""
 	DELIVERED_BY 100
