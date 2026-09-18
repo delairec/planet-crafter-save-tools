@@ -2555,5 +2555,5 @@ DECISION ABrokenInvariantOfADomainRuleFailsWithADomainErrorType
 		+ "the infrastructure ruling to the domain layer keeps the same test: the spec checks the"
 		+ "type, then the message"
 		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType
-	SOURCE "Ruling taken while delivering the task, 2026-09-18"
-		REF @PROJECT.PCST
+	SOURCE "Ruling taken while delivering the task in pull request #102, 2026-09-18"
+		REF @PULL_REQUEST.PCST102
