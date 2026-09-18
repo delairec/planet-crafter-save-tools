@@ -539,3 +539,29 @@ TASK CHORE51
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
 	SOURCE "Review of the target schema, S5 to S6 boundary of the specification walk, 2026-09-18"
 		REF @PROJECT.PCST
+
+TASK CHORE52
+	TITLE "the product value tables become JSON files with a JSON Schema each, and five DATATABLE"
+		+ "entities name them"
+	STATUS draft
+	SPEC "the energy production levels, the world object labels, the optimizer configuration, the"
+		+ "planet names by numeric id and the legacy save properties each live in one JSON file, a"
+		+ "row per line, under the package that owns them"
+	SPEC "each of the five files has a JSON Schema beside it, and bun run validate:tables exits"
+		+ "non-zero when a row does not meet it"
+	SPEC "each TypeScript module that carried one of those tables imports the JSON file instead of"
+		+ "restating its rows, and the tests that read the table pass unchanged"
+	SPEC "five DATATABLE entities carry TABLE, KEY and JSON_SCHEMA, and every rule with authority"
+		+ "over those values names its table through VALUES_FROM"
+	SPEC "the value tables of docs/energy-levels.md and the appendix of docs/save-format.md are"
+		+ "deleted, no row surviving in markdown"
+	RATIONALE "A DATATABLE requires TABLE and JSON_SCHEMA, two anchors on files git tracks; the"
+		+ "tables are TypeScript modules today and neither file exists. Writing the five entities"
+		+ "before the task would leave the corpus pointing at nothing, and creating the JSON files"
+		+ "without rewiring the modules would give each value two homes until the rewiring lands."
+		+ "The step that writes the first entities therefore writes no DATATABLE and this task"
+		+ "carries the whole move"
+		REF @DECISION.AnAnchorNamesAFileTrackedByGit
+	SOURCE "Step S7 of the specification walk, 2026-09-18: ordering ruled before the first entity"
+		+ "was written"
+		REF @PROJECT.PCST

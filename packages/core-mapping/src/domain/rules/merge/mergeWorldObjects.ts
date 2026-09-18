@@ -2,7 +2,7 @@ import {EntriesByOrigin} from './EntriesByOrigin';
 import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 /**
- * @see GR-WO-1, GR-WO-2, GR-WO-3, GR-WO-4 in docs/game-rules.md
+ * @see @RULE.WorldObjectsAreDeduplicatedByPlanetAndPosition
  */
 export function mergeWorldObjects(worldObjectsA: readonly WorldObjectEntry[], worldObjectsB: readonly WorldObjectEntry[], orphanWorldObjectIds: Set<number>): EntriesByOrigin<WorldObjectEntry> {
   const fromSaveA: WorldObjectEntry[] = [];

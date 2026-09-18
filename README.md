@@ -371,23 +371,28 @@ numeric planet id (e.g. `110910045` for Toxicity).
 
 ### Merge Logic
 
-> 📖 **[`docs/game-rules.md`](./docs/game-rules.md) is the single source of truth for every merge decision.**
-> Each rule is numbered (`GR-*`), states the section it governs and names the module that implements it. This README
-> deliberately does not restate the rules: a second copy would drift from the implementation.
+> 📖 **[`docs/awawa-project-specification/rules.awawa`](./docs/awawa-project-specification/rules.awawa) is the single
+> source of truth for every merge decision.** Each entity states the conflict it settles (`CONFLICT`), how it settles
+> it (`RESOLUTION`), one falsifiable obligation per `SPEC`, and the test that proves each one (`ATTESTED_BY`). The
+> file is plain text and reads as it is; `awawa show @RULE.<Name> docs/` prints one entity, `awawa context
+> @SECTION.<Name> docs/` every rule that constrains one section. This README deliberately does not restate the
+> rules: a second copy would drift from the implementation.
 
 The original saves are never modified; the merged result is written to a separate output folder.
 
-| Topic                              | Rules                                                                                             |
-|------------------------------------|---------------------------------------------------------------------------------------------------|
-| Which save is A, which is B        | [Save order](./docs/game-rules.md#2-save-order) — `GR-ORDER-*`                                     |
-| Global metadata                    | [Section 0](./docs/game-rules.md#3-section-0--global-metadata) — `GR-META-*`                       |
-| Terraformation levels              | [Section 1](./docs/game-rules.md#4-section-1--terraformation-levels) — `GR-TERRA-*`                |
-| Players                            | [Section 2](./docs/game-rules.md#5-section-2--players) — `GR-PLAYER-*`                             |
-| World objects                      | [Section 3](./docs/game-rules.md#6-section-3--world-objects) — `GR-WO-*`                           |
-| Inventories & equipment            | [Section 4](./docs/game-rules.md#7-section-4--inventories--equipment) — `GR-INV-*`                 |
-| Statistics                         | [Section 5](./docs/game-rules.md#8-section-5--statistics) — `GR-STAT-*`                            |
-| Messages / mailbox                 | [Section 6](./docs/game-rules.md#9-section-6--messages--mailbox) — `GR-MSG-*`                      |
-| Story events                       | [Section 7](./docs/game-rules.md#10-section-7--story-events) — `GR-STORY-*`                        |
-| Save configuration                 | [Section 8](./docs/game-rules.md#11-section-8--save-configuration) — `GR-CFG-*`                    |
-| World events                       | [Section 9](./docs/game-rules.md#12-section-9--world-events) — `GR-EVT-*`                          |
-| Duplicated ids across saves        | [Id conflict resolution](./docs/game-rules.md#13-id-conflict-resolution) — `GR-ID-*`               |
+| Topic                       | Rule                                                 |
+|-----------------------------|------------------------------------------------------|
+| Which save is A, which is B | `@RULE.TheSaveOnPrimeBecomesSaveA`                   |
+| Global metadata             | `@RULE.GlobalMetadataIsSummedAndUnioned`             |
+| Terraformation levels       | `@RULE.TerraformationLevelsTakeTheHigherValue`       |
+| Players                     | `@RULE.PlayersAreDeduplicatedByName`                 |
+| World objects               | `@RULE.WorldObjectsAreDeduplicatedByPlanetAndPosition` |
+| Inventories & equipment     | `@RULE.InventoriesAreKeptUnlessTheirOwnerIsEjected`  |
+| Statistics                  | `@RULE.StatisticsAreSummed`                          |
+| Messages / mailbox          | `@RULE.MailboxMessagesAreDeduplicatedByStringId`     |
+| Story events                | `@RULE.StoryEventsAreUnioned`                        |
+| Save configuration          | `@RULE.SaveConfigurationComesFromSaveA`              |
+| World events                | `@RULE.WorldEventsAreDeduplicatedByPlanetSeedAndPosition` |
+| Shared id numbering space   | `@RULE.IdentifiersAreSharedByInventoriesAndWorldObjects` |
+| Duplicated ids across saves | `@RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide` |
+| Player identifiers          | `@RULE.APlayerIdentifierIsCarriedAsExactDecimalText` |

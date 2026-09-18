@@ -118,10 +118,10 @@ SCHEMA DECISION
 		REPEATABLE
 		CONVERSE GOVERNED_BY
 		DESC "the task that builds it; purged with the task"
-	FIELD RESTS_ON @FACT
+	FIELD RESTS_ON @RULE
 		REPEATABLE
 		CONVERSE GROUNDS
-		DESC "a fact the ruling depends on"
+		DESC "a rule of the save or the game the ruling depends on"
 	FIELD ASSUMES @HYPOTHESIS
 		REPEATABLE
 		CONVERSE GROUNDS
@@ -161,30 +161,6 @@ SCHEMA LIMITATION
 		REPEATABLE
 		CONVERSE LIMITED_BY
 		DESC "the package that carries the defect"
-
-SCHEMA FACT
-	DESC "what the save file or the game is; arbitrates nothing of ours; temporary type"
-	FIELD DESC string
-		REQUIRED
-		DESC "the statement, one per fact"
-		FIELD REF reference
-			REPEATABLE
-			DESC "an entity the statement names, so that it is indexed"
-	FIELD BASIS attested|hypothesis
-		DEFAULT hypothesis
-		DESC "whether the statement is proven or assumed"
-	FIELD ATTESTED_BY anchor
-		REPEATABLE
-		DESC "the fixture, test, schema or save sample that proves it"
-	WHEN BASIS attested
-		FIELD ATTESTED_BY
-			REQUIRED
-			REPEATABLE
-	WHEN BASIS hypothesis
-		FIELD UNTIL @TASK|string
-			REQUIRED
-			CONVERSE RETIRES
-			DESC "the counter-example that refutes it, or the task that settles it"
 
 SCHEMA OPEN_QUESTION
 	DESC "a project-level point left undecided on which a task waits; archived by the pull request"

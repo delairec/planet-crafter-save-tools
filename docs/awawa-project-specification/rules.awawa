@@ -1,0 +1,417 @@
+RULE ASaveHasElevenSectionsTheLastReservedAndEmpty
+	HOLDS_FOR current
+	DOMAIN format
+	SPEC "a save splits into 11 parts, indexed 0 to 10, the last being the reserved empty part the"
+		+ "terminating separator produces"
+		ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Array of 11"
+			+ "sections (indexes 0 to 10)"
+		ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 10 —"
+			+ "Reserved"
+	APPLIES_TO_SECTION @SECTION.Reserved
+	SOURCE "Extracted from the ruling on section counters, names settled in the review of pull"
+		+ "request 47; retyped from FACT in step S7 of the specification walk, 2026-09-18"
+		REF @PULL_REQUEST.PCST47
+
+RULE ASectionLineIsOneJsonEntry
+	HOLDS_FOR both
+	DOMAIN format
+	SPEC "each line of a section is one JSON entry, lines being separated by a pipe"
+		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::{\"id\":44,\"woIds\":\"79111656,58524136\",\"size\":20}|"
+		ATTESTED_BY "packages/shared-save-processing/parseSaveSections.js::return JSON.parse(line);"
+	SOURCE "Extracted from the ruling on the single save parser, pull request 47; retyped from FACT"
+		+ "in step S7 of the specification walk, 2026-09-18"
+		REF @PULL_REQUEST.PCST47
+
+RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
+	HOLDS_FOR both
+	DOMAIN format
+	SPEC "the player identifier exceeds the exact integer range of a double, and it is the only"
+		+ "such field in the six reference saves"
+		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::When a save holding an"
+			+ "int64 player identifier is read back"
+		ATTESTED_BY "packages/shared-save-processing/int64Identifiers.js::RAW_INTEGER_FIELDS"
+	APPLIES_TO_SECTION @SECTION.Players
+	SOURCE "Extracted from the ruling on int64 identifiers, delivered by pull request 49; retyped"
+		+ "from FACT in step S7 of the specification walk, 2026-09-18"
+		REF @PULL_REQUEST.PCST49
+
+RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
+	HOLDS_FOR both
+	DOMAIN format
+	SPEC "the float fields of a save carry a .0 suffix when their value is whole, and the records"
+		+ "of the format are flat"
+		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::\"playerGaugeToxic\":0.0"
+		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::should preserve decimal"
+			+ "notation for known float fields in world objects"
+	APPLIES_TO_SECTION @SECTION.TerraformationLevels
+	APPLIES_TO_SECTION @SECTION.Players
+	APPLIES_TO_SECTION @SECTION.WorldObjects
+	APPLIES_TO_SECTION @SECTION.SaveConfiguration
+	SOURCE "Extracted from the ruling on float suffix emission, pull request 36; retyped from FACT"
+		+ "in step S7 of the specification walk, 2026-09-18"
+		REF @PULL_REQUEST.PCST36
+
+RULE TheSaveOnPrimeBecomesSaveA
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "which of the two saves takes the role A, whose entries win every section conflict"
+	RESOLUTION "the save whose configuration names Prime, when exactly one does; otherwise the"
+		+ "order the caller supplied, alphabetical in the command"
+	SPEC "when exactly one save has a save configuration naming Prime, that save is save A"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts::should"
+			+ "return the Prime save as save A"
+	SPEC "when neither save or both name Prime, the order supplied by the caller is kept"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts::should"
+			+ "return saves in the original order"
+	APPLIES_TO_SECTION @SECTION.SaveConfiguration
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-ORDER-1)"
+		REF @PROJECT.PCST
+
+RULE GlobalMetadataIsSummedAndUnioned
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the merged save holds one metadata entry while each input carries its own counters,"
+		+ "unlocked groups and open instance fields"
+	RESOLUTION "the open instance fields alone are arbitrated, save A winning them; the counters"
+		+ "are summed and the unlocked groups unioned, neither being a choice between the two saves"
+	SPEC "terraTokens is the sum of both saves"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "sum terra tokens"
+	SPEC "allTimeTerraTokens is the sum of both saves"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "sum all-time terra tokens"
+	SPEC "unlockedGroups is the union of both saves, deduplicated by string value and with no"
+		+ "ordering guarantee"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "merge unlocked groups without duplicates"
+	SPEC "openedInstanceSeed and openedInstanceTimeLeft are taken from save A"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "keep the instance seed from save A"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "keep the remaining instance time from save A"
+	APPLIES_TO_SECTION @SECTION.GlobalMetadata
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-META-1 to GR-META-4)"
+		REF @PROJECT.PCST
+
+RULE TerraformationLevelsTakeTheHigherValue
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the same planet carries different terraformation levels in the two saves"
+	RESOLUTION "one entry per planet, every numeric field taking the higher of the two, the"
+		+ "purification sentinel apart"
+	SPEC "each planetId present in either save yields exactly one entry in the output"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeTerraformationLevels.spec.ts::should"
+			+ "simply concat terraformation levels"
+	SPEC "when the same planetId exists in both saves, every numeric field takes the higher of the"
+		+ "two values"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeTerraformationLevels.spec.ts::should"
+			+ "merge terraformation levels by taking max values"
+	SPEC "unitPurificationLevel keeps its -1 sentinel only when both saves carry it, and otherwise"
+		+ "takes the non-negative value"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeTerraformationLevels.spec.ts::should"
+			+ "keep -1"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeTerraformationLevels.spec.ts::should"
+			+ "take the non-negative value of the other save"
+	APPLIES_TO_SECTION @SECTION.TerraformationLevels
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-TERRA-1 to GR-TERRA-3)"
+		REF @PROJECT.PCST
+
+RULE PlayersAreDeduplicatedByName
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the same player name appears in both saves, and each save flags a host"
+	RESOLUTION "the whole save A entry is kept, its host flag alone stays true, and a save B name"
+		+ "absent from save A is appended"
+	SPEC "players are deduplicated by name, the whole save A entry being kept and the save B one"
+		+ "discarded with its inventory and equipment"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should"
+			+ "deduplicate by name and take the player from save A"
+	SPEC "at most one player of the output has host true: the save A entry flagged as host,"
+		+ "identified by its position and never by its id"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should keep"
+			+ "save A host status and set all others to false"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should mark"
+			+ "only the player flagged as host in save A"
+	SPEC "when save A holds no player entry, the first save B host is retained"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should keep"
+			+ "the save B host"
+	SPEC "a player of save B whose name is absent from save A is appended to the merged list"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should keep"
+			+ "the players of each save under their own origin"
+	APPLIES_TO_SECTION @SECTION.Players
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-PLAYER-1 to GR-PLAYER-3); GR-PLAYER-4 split off in step S7b, its format half"
+		+ "becoming @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate and its defaulting half"
+		+ "@DECISION.MissingPlayerFieldsAreWrittenAsZero"
+		REF @PROJECT.PCST
+		REF @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+		REF @DECISION.MissingPlayerFieldsAreWrittenAsZero
+
+RULE WorldObjectsAreDeduplicatedByPlanetAndPosition
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "two world objects of the two saves stand at the same position on the same planet"
+	RESOLUTION "save A's object is kept; an object with no position is never deduplicated, and the"
+		+ "objects of an ejected player are removed first"
+	SPEC "a world object with no pos is always kept, having no positional identity"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldObjects.spec.ts::should"
+			+ "keep both world objects as they are distinct objects"
+	SPEC "when two objects share the same planet and pos, save A's object is kept and save B's"
+		+ "discarded"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldObjects.spec.ts::should"
+			+ "deduplicate by pos and keep only the one from save A"
+	SPEC "the world objects held by the inventories of a player ejected from save B are removed"
+		+ "before the merge"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldObjects.spec.ts::should"
+			+ "drop the world objects that were in the orphan inventories"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/collectEjectedPlayerInventoryIds.spec.ts::should"
+			+ "collect the world object ids held in the ejected player inventory and equipment from"
+			+ "save B"
+	APPLIES_TO_SECTION @SECTION.WorldObjects
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-WO-1 to GR-WO-3); GR-WO-4 named the id conflict step and became no SPEC, ruled in"
+		+ "step S7b"
+		REF @PROJECT.PCST
+
+RULE InventoriesAreKeptUnlessTheirOwnerIsEjected
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "an inventory of save B belongs to a player the deduplication ejected, and inventory"
+		+ "ids collide across the two saves"
+	RESOLUTION "every inventory is kept but those of an ejected player; a colliding id is not"
+		+ "treated as the same object and is remapped by the id conflict step"
+	SPEC "every inventory of save A is kept"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeInventories.spec.ts::should"
+			+ "keep the inventories of each save under their own origin"
+	SPEC "every inventory of save B is kept except those whose id is the inventoryId or equipmentId"
+		+ "of an ejected player"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeInventories.spec.ts::should"
+			+ "drop the orphan inventories of the ejected player"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/collectEjectedPlayerInventoryIds.spec.ts::should"
+			+ "collect the inventory and equipment ids of the ejected player from save B"
+	SPEC "two inventories sharing an id across the two saves are not the same logical object and"
+		+ "both are kept"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeInventories.spec.ts::should"
+			+ "keep both inventories as the duplicate id will be resolved later"
+	APPLIES_TO_SECTION @SECTION.Inventories
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-INV-1 to GR-INV-3)"
+		REF @PROJECT.PCST
+
+RULE StatisticsAreSummed
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the merged save holds one statistics entry while each input carries its own counters"
+	RESOLUTION "every numeric field is summed; no value of either save is chosen over the other,"
+		+ "the merged counters standing for the play of both"
+	SPEC "craftedObjects, totalSaveFileLoad and totalSaveFileTime are the sums of both saves"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeStatistics.spec.ts::should"
+			+ "merge statistics by summing values"
+	APPLIES_TO_SECTION @SECTION.Statistics
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-STAT-1)"
+		REF @PROJECT.PCST
+
+RULE MailboxMessagesAreDeduplicatedByStringId
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the same message id appears in both saves, read in one and unread in the other"
+	RESOLUTION "the fields of save A are kept and isRead is the boolean or of the two"
+	SPEC "messages are deduplicated by stringId, the merged entry keeping the fields of save A"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeMailboxes.spec.ts::should"
+			+ "deduplicate identical mailboxes"
+	SPEC "isRead is true when either save has it true"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeMailboxes.spec.ts::should"
+			+ "mark the mailbox as read"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeMailboxes.spec.ts::should"
+			+ "keep the mailbox as unread"
+	SPEC "a message of save B whose stringId is absent from save A is appended"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeMailboxes.spec.ts::should"
+			+ "combine mailboxes from both saves"
+	APPLIES_TO_SECTION @SECTION.MailboxMessages
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-MSG-1 to GR-MSG-3)"
+		REF @PROJECT.PCST
+
+RULE StoryEventsAreUnioned
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the same story event id appears in both saves and the merged save must not list it"
+		+ "twice; the two entries cannot disagree, the id being their only field"
+	RESOLUTION "one entry per id is kept, save A's order first"
+	SPEC "story events are deduplicated by stringId and the union of both saves is kept"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeStoryEvents.spec.ts::should"
+			+ "deduplicate story events"
+	SPEC "save A's ordering is preserved and the save B entries absent from save A are appended"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeStoryEvents.spec.ts::should"
+			+ "concat story events from both saves"
+	APPLIES_TO_SECTION @SECTION.StoryEvents
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-STORY-1 and GR-STORY-2)"
+		REF @PROJECT.PCST
+
+RULE SaveConfigurationComesFromSaveA
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the two saves carry different configurations"
+	RESOLUTION "save A's configuration is used as is, save B's discarded, and the display name"
+		+ "overridden by the caller"
+	SPEC "the configuration of save A is used as is and the one of save B is entirely discarded"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
+			+ "use the saveDisplayName parameter and take save configuration from save A"
+	APPLIES_TO_SECTION @SECTION.SaveConfiguration
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-CFG-1 and GR-CFG-3); GR-CFG-2 moved to"
+		+ "@DECISION.TheMergedSaveDisplayNameComesFromTheCaller in step S7b"
+		REF @PROJECT.PCST
+		REF @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
+
+RULE WorldEventsAreDeduplicatedByPlanetSeedAndPosition
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the same planet, seed and pos triplet appears in both saves"
+	RESOLUTION "save A's entry is kept and save B's discarded; a triplet absent from save A is"
+		+ "appended"
+	SPEC "when the same planet, seed and pos triplet exists in both saves, save A's entry is kept"
+		+ "and save B's discarded"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldEvents.spec.ts::should"
+			+ "deduplicate world events and take save A"
+	SPEC "a world event of save B whose triplet is absent from save A is appended"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldEvents.spec.ts::should"
+			+ "concat world events from both saves"
+	APPLIES_TO_SECTION @SECTION.WorldEvents
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-EVT-1 and GR-EVT-2)"
+		REF @PROJECT.PCST
+
+RULE IdentifiersAreSharedByInventoriesAndWorldObjects
+	HOLDS_FOR both
+	DOMAIN format
+	DOMAIN merge
+	CONFLICT "one id is held at once by an inventory and by a world object of the merged save"
+	RESOLUTION "nothing is renumbered: uniqueness across the union is not a property of the merged"
+		+ "save, the game itself writing such ids, and save A's ids are authoritative"
+	SPEC "inventories and world objects draw their id from one numbering space"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/createIdSequence.spec.ts::should"
+			+ "start above that world object id"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/createIdSequence.spec.ts::should"
+			+ "start above that inventory id"
+	SPEC "the merge introduces into that space no duplicate the input saves did not already carry"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.spec.ts::should"
+			+ "renumber the save B entries and keep every entry of both saves"
+	APPLIES_TO_SECTION @SECTION.Inventories
+	APPLIES_TO_SECTION @SECTION.WorldObjects
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-ID-1)"
+		REF @PROJECT.PCST
+
+RULE APlayerIdentifierIsCarriedAsExactDecimalText
+	HOLDS_FOR both
+	DOMAIN format
+	DOMAIN merge
+	CONFLICT "two players of the two saves carry the same Steam account identifier"
+	RESOLUTION "nothing is renumbered: the identifier designates an account, not a save-local"
+		+ "entry, and no entry back-references it"
+	SPEC "a player identifier is carried and written as its exact decimal text, never parsed into a"
+		+ "number"
+		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::When a save holding an"
+			+ "int64 player identifier is read back"
+		ATTESTED_BY "packages/shared-save-processing/int64Identifiers.js::RAW_INTEGER_FIELDS"
+	SPEC "a player identifier is never regenerated, and players neither seed the id sequence nor"
+		+ "draw from it"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.spec.ts::should"
+			+ "leave that identifier untouched"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should mark"
+			+ "only the save A host"
+	APPLIES_TO_SECTION @SECTION.Players
+	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-ID-6 and GR-ID-7)"
+		REF @PROJECT.PCST
+
+RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
+	HOLDS_FOR current
+	DOMAIN merge
+	CONFLICT "the same id designates one logical object in save A and another in save B"
+	RESOLUTION "the save B entry receives a new id from a sequence seeded above every id of the"
+		+ "shared space, and only the save B references are rewritten"
+	SPEC "the later-encountered entry receives a new id from a sequence seeded above the maximum id"
+		+ "of every section sharing the numbering space"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/resolveInventoryIdConflicts.spec.ts::should"
+			+ "give that inventory a new id above every existing inventory id"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.spec.ts::should"
+			+ "renumber the save B inventory above that world object"
+	SPEC "every back-reference to a remapped id is rewritten: inventoryId, equipmentId, liId,"
+		+ "siIds, linkedWo and the two woIds lists"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/rewriteReferences.spec.ts::should"
+			+ "point the save B player at the new inventory id"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/rewriteReferences.spec.ts::should"
+			+ "point the contained world object ids of a save B world object at the new id"
+	SPEC "only a save B entry carries rewritten references; a save A entry keeps the ids it always"
+		+ "used"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/rewriteReferences.spec.ts::should"
+			+ "leave the save A player pointing at the id it always used"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.spec.ts::should"
+			+ "send the save B world object to the renumbered inventory and leave the save A one on"
+			+ "the shared id"
+	APPLIES_TO_SECTION @SECTION.Players
+	APPLIES_TO_SECTION @SECTION.Inventories
+	APPLIES_TO_SECTION @SECTION.WorldObjects
+	ASSUMES @HYPOTHESIS.AWorldObjectMayCarryALinkedObjectList
+	SOURCE "Extracted from docs/game-rules.md on 2026-09-18, step S7 of the specification walk"
+		+ "(GR-ID-2, GR-ID-3 and GR-ID-5); GR-ID-4 placed the step in the pipeline and was already"
+		+ "@DECISION.AMergeProducesAnOrdinarySave, so it was deleted in step S7b"
+		REF @PROJECT.PCST
+		REF @DECISION.AMergeProducesAnOrdinarySave
+
+RULE APlanetNumericIdIsStableAcrossSaves
+	HOLDS_FOR both
+	DOMAIN format
+	SPEC "the numeric planet id a world object and a world event carry is the same value in every"
+		+ "save, being derived neither from the world seed nor from the content of the save"
+		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.ts::This mapping is a"
+			+ "fixed, stable lookup"
+		ATTESTED_BY "packages/shared-save-processing/schemas/section9-world-events.schema.json::planet"
+	APPLIES_TO_SECTION @SECTION.WorldObjects
+	APPLIES_TO_SECTION @SECTION.WorldEvents
+	RATIONALE "No known deterministic hash reproduces the five identifiers from the planet name, so"
+		+ "the correspondence is a maintained lookup rather than a computation; the table itself"
+		+ "moves to a DATATABLE with CHORE52 and the rule will then name it through VALUES_FROM"
+		REF @TASK.CHORE52
+	SOURCE "Extracted from docs/save-format.md, Planet numeric IDs, on 2026-09-18, step S7 of the"
+		+ "specification walk"
+		REF @PROJECT.PCST
+
+RULE APurificationLevelOfMinusOneMeansNotUnlocked
+	HOLDS_FOR both
+	DOMAIN format
+	SPEC "unitPurificationLevel carries -1 while purification is not unlocked, and a non-negative"
+		+ "value once it is"
+		ATTESTED_BY "packages/shared-save-processing/schemas/section1-terraformation-levels.schema.json::-1"
+			+ "is a sentinel value meaning purification is not unlocked yet"
+		ATTESTED_BY "packages/shared-save-processing/schemas/section1-terraformation-levels.schema.json::\"minimum\":"
+			+ "-1"
+	APPLIES_TO_SECTION @SECTION.TerraformationLevels
+	SOURCE "Extracted from docs/game-rules.md in step S7b of the specification walk, 2026-09-18:"
+		+ "the first sentence of GR-TERRA-3, a fact about the save that S7 left inside"
+		+ "@RULE.TerraformationLevelsTakeTheHigherValue"
+		REF @PROJECT.PCST
+		REF @RULE.TerraformationLevelsTakeTheHigherValue
+
+RULE APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+	HOLDS_FOR both
+	DOMAIN format
+	SPEC "a player entry may omit cameraView, totalCraftedObjects and totalTerraTokenEarned, which"
+		+ "the section schema does not require"
+		ATTESTED_BY "packages/shared-save-processing/schemas/section2-players.schema.json::\"required\":"
+			+ "[\"id\", \"name\""
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::LegacyCompatiblePlayer"
+	APPLIES_TO_SECTION @SECTION.Players
+	SOURCE "Extracted from docs/game-rules.md in step S7b of the specification walk, 2026-09-18:"
+		+ "the first sentence of GR-PLAYER-4, a fact about the save that S7 left inside"
+		+ "@RULE.PlayersAreDeduplicatedByName"
+		REF @PROJECT.PCST
+		REF @RULE.PlayersAreDeduplicatedByName

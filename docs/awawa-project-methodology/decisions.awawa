@@ -1,9 +1,10 @@
 DECISION MergeRulesHaveOnePublicHome
-	SPEC "The game rules document is the single public source of the merge rules"
-		IMPL "docs/game-rules.md"
-	SPEC "The README does not restate the merge rules and carries an index pointing to the sections"
-		+ "of the game rules document"
-		IMPL "README.md::is the single source of truth for every merge decision"
+	SPEC "The corpus is the single public source of the merge rules, one RULE DOMAIN merge per"
+		+ "conflict the merge settles"
+		IMPL "docs/awawa-project-specification/rules.awawa"
+	SPEC "The README does not restate the merge rules and carries an index naming the rule entity"
+		+ "that settles each topic"
+		IMPL "README.md::This README deliberately does not restate the"
 	SPEC "The JSON schemas are documented in English, their title and description being public"
 		+ "documentation"
 		IMPL "packages/shared-save-processing/schemas"
@@ -11,6 +12,9 @@ DECISION MergeRulesHaveOnePublicHome
 		+ "code consumes it"
 		IMPL "packages/shared-save-processing/schemas/save-file.schema.json"
 	REJECTED "Correcting the duplication instead of removing it"
+	REJECTED "Keeping docs/game-rules.md as the public home once each of its thirty GR-* rules had"
+		+ "become a SPEC of a RULE entity: the document would have been a second copy of the"
+		+ "corpus, maintained by hand, which is the duplication this ruling exists to end"
 	RATIONALE "The duplication is what had let the README claim a union of players by identifier,"
 		+ "shared planets that were not implemented and statistics reduced to a single field"
 	SOURCE "Pull request #42"
@@ -284,7 +288,7 @@ DECISION SectionCountersAreDeclaredOnceWithNamedIndexes
 		IMPL "packages/shared-save-processing/sectionIndexes.js::SAVE_SPLIT_PARTS_COUNT"
 	REJECTED "Renaming to parts and data sections: section is the word of the public vocabulary"
 	REJECTED "Letting each module count its own way under its own name"
-	RESTS_ON @FACT.ASaveHasElevenSectionsTheLastReservedAndEmpty
+	RESTS_ON @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	RATIONALE "One count everywhere: it is what save-file.schema.json declares, what the user"
 		+ "message Expected 11 sections counts and what the parser returns; three competing"
 		+ "vocabularies had let the README state something other than the code. The legacy format"
@@ -304,7 +308,7 @@ DECISION OneModuleAloneParsesASaveLine
 		IMPL "packages/shared-save-processing/parseSaveSections.js"
 	REJECTED "Keeping a second parser in the validator"
 	REJECTED "A non-lazy variant of the parser: it reopens the door this decision closes"
-	RESTS_ON @FACT.ASectionLineIsOneJsonEntry
+	RESTS_ON @RULE.ASectionLineIsOneJsonEntry
 	RATIONALE "Two implementations tolerating the same format differently are a defect in their own"
 		+ "right, whatever bug they produce: that divergence made the defect of pull request 34"
 		+ "silent, validation declaring the save valid while the merge lost a whole section. The"
@@ -328,13 +332,15 @@ DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 			+ "(primary key, int64)"
 	SPEC "The list of int64 fields, the emission test and the reviver live in a single module"
 		IMPL "packages/shared-save-processing/int64Identifiers.js"
-	SPEC "The rule is stated in the public documentation of the merge rules"
-		IMPL "docs/game-rules.md::GR-ID-7"
+	REJECTED "Restating the rule in a public markdown document: the obligation existed only to keep"
+		+ "that copy in step with the code, and the rule is now a corpus entity this ruling names"
+		+ "through RESTS_ON"
 	REJECTED "Typing the field as BigInt: JSON.stringify throws on it, ajv cannot validate it, and"
 		+ "it announces arithmetic the project never does"
 	REJECTED "Keeping the raw text of the section entries: the merge rebuilds every player entry"
 	REJECTED "Setting a validation rule on integer precision"
-	RESTS_ON @FACT.ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
+	RESTS_ON @RULE.ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
+	RESTS_ON @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
 	RATIONALE "The source text of a JSON literal is read through the third parameter of the reviver"
 		+ "(ES2025), supported on the three engines the UI scenarios target, which all return the"
 		+ "literal intact where the parsed value rounds. The reviver applies to the players section"
@@ -357,7 +363,7 @@ DECISION TheFloatSuffixIsAppliedAtEmission
 	REJECTED "A textual post-processing of the produced string"
 	REJECTED "Narrowing the parameter type instead of keeping the runtime check: the type states"
 		+ "the contract only for type-checked callers"
-	RESTS_ON @FACT.FloatFieldsCarryADotZeroSuffixInFlatRecords
+	RESTS_ON @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
 	RATIONALE "A textual sentinel rewrites any string value carrying its pattern: a sign whose"
 		+ "player text was FLOAT:5 came out as a number. Silence was the real risk: where a reviver"
 		+ "applied the suffix at any depth, field-by-field emission handles the first level only,"
@@ -435,12 +441,10 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 	SPEC "The host role is applied by the position of the entry in save A, never by identifier"
 		+ "equality nor by name"
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::hostPositionInSaveA"
-		IMPL "docs/game-rules.md::GR-PLAYER-2"
 	SPEC "Save B supplies the host only when save A holds no player entry"
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::hostPositionInSaveA ==="
 			+ "NO_HOST_POSITION"
 	SPEC "A player identifier is never regenerated"
-		IMPL "docs/game-rules.md::GR-ID-6"
 		IMPL "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.ts::Players are left"
 			+ "out"
 	SPEC "Deduplication and the host role are decided in a single rule module"
@@ -451,7 +455,8 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 		+ "save A: the value would designate no real account"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.TEST43
-	RESTS_ON @FACT.APlayerIdentifierIsASteamAccountReusedAcrossGames
+	RESTS_ON @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
+	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
 	RATIONALE "The identifier is unique neither across two saves nor, formally, within one;"
 		+ "renumbering changed the account an entry names for nothing, since no entry references it"
 		+ "back. Computing the role after renumbering would make a role rule depend on an"
@@ -699,12 +704,15 @@ DECISION TheByteOrderMarkIsNotPreserved
 		REF @PULL_REQUEST.PCST45
 
 DECISION AMergeIntroducesNoIdOverlapAbsentFromItsInputs
-	SPEC "GR-ID-1 states what the merge does not introduce, never the uniqueness of the union: the"
-		+ "merge introduces no identifier overlap absent from its input saves"
-		IMPL "docs/game-rules.md::GR-ID-1"
+	SPEC "The rule of the shared numbering space states what the merge does not introduce, never"
+		+ "the uniqueness of the union: the merge introduces no identifier overlap absent from its"
+		+ "input saves"
+		IMPL "docs/awawa-project-specification/rules.awawa::the merge introduces into that space no"
+			+ "duplicate the input saves did not already carry"
 	REJECTED "Renumbering entries of save A to make the union unique"
-	REJECTED "Letting GR-ID-1 state the uniqueness of the union, which is false on real saves"
+	REJECTED "Letting the rule state the uniqueness of the union, which is false on real saves"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RESTS_ON @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects
 	RATIONALE "The input saves already carry the overlap, written by the game, and no merge can"
 		+ "remove it. Measured on 2026-09-07 on the reference folders: Standard-3 has 721 values"
 		+ "carried both by an inventory and a world object, Standard-4 549, Standard-1-unlocked-ivy"
@@ -1609,7 +1617,7 @@ DECISION ACodeCommentQuestionNamesItsCorpusEntity
 		+ "since the signpost is only worth an indexed entity at the other end, which only a"
 		+ "project with a corpus offers"
 		REF @TASK.REFACTOR38
-		REF @FACT.ProceduralWrecksAreSpawnedByThePortalGenerator
+		REF @HYPOTHESIS.ProceduralWrecksAreSpawnedByThePortalGenerator
 	SOURCE "user ruling of 2026-09-14, review of PR #76"
 		REF @PULL_REQUEST.PCST76
 
@@ -2375,4 +2383,113 @@ DECISION AFieldLegalInOneStateIsDeclaredInThatStateAlone
 		+ "SCHEMA * already gives ARCHIVED_ON and PURGE, legal only under WHEN STATUS archived"
 		REF @DECISION.TheEraIsNotTheArchive
 	SOURCE "S6 of the specification walk, 2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION ASectionIsWrittenWithTheRuleThatCitesIt
+	SPEC "a SECTION whose era is current or both is added in the same pull request as at least one"
+		+ "RULE naming it under APPLIES_TO_SECTION"
+		IMPL "docs/_schema.awawa::INCOMING CONSTRAINED_BY"
+		ENFORCED_BY "docs/_schema.awawa::INCOMING CONSTRAINED_BY"
+	SPEC "the twelve sections of the save were written paired with their rule, in save index order,"
+		+ "the legacy section last"
+		IMPL "docs/awawa-project-specification/sections.awawa"
+		IMPL "docs/awawa-project-specification/rules.awawa"
+	RESTS_ON @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
+	REJECTED "writing the twelve sections first and their rules afterwards: L026 fires on every"
+		+ "uncited section, so the corpus would not lint between the two writes and no intermediate"
+		+ "commit would be possible"
+	REJECTED "dropping INCOMING CONSTRAINED_BY to make a lone section legal: a section the game"
+		+ "writes today that no rule constrains is a hole in the specification that nothing else"
+		+ "reports"
+	RATIONALE "The obligation is not a style preference: it is what makes the specification"
+		+ "complete by construction, since a section with no rule is the shape a forgotten"
+		+ "obligation takes"
+	SOURCE "Step S7 of the specification walk, 2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION AValueTableIsRecordedOnceItsFileExists
+	SPEC "a DATATABLE is written only when the JSON file and the JSON Schema its TABLE and"
+		+ "JSON_SCHEMA name are tracked by git"
+		IMPL "docs/_schema.awawa::FIELD JSON_SCHEMA anchor"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::the product value tables become JSON"
+			+ "files with a JSON Schema each"
+	REJECTED "creating the JSON files in the step that writes the first entities, the TypeScript"
+		+ "modules keeping their rows: every value would have two homes until the rewiring landed,"
+		+ "which is the duplication the tables are being moved to end"
+	REJECTED "writing the five DATATABLE against the TypeScript modules: TABLE names the file"
+		+ "holding the rows, and a module that restates them is not that file"
+	UNTIL @TASK.CHORE52
+	RATIONALE "The rule generalises beyond the tables: an anchor field that is REQUIRED makes the"
+		+ "entity wait for the artefact, and the wait is carried by a task rather than by a"
+		+ "placeholder anchor"
+		REF @DECISION.AnAnchorNamesAFileTrackedByGit
+	SOURCE "Step S7 of the specification walk, 2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION ADocumentIsDeletedOnlyWhenEveryCitationIsRepointed
+	SPEC "A document of docs/ is deleted only once every statement it carried has another home and"
+		+ "every citation of it, inside the corpus and outside, has been repointed"
+		IMPL "AGENTS.md::Un document de `docs/` n'est supprimé qu'une fois toutes ses citations"
+			+ "repointées"
+	SPEC "The citations outside the corpus are counted before the deletion, the lint resolving the"
+		+ "corpus anchors and nothing else"
+		IMPL "AGENTS.md::grep -rn '<nom du document>' ."
+	SPEC "A code comment cites the corpus entity, never the document"
+		IMPL "AGENTS.md::Un commentaire de code cite alors l'entité, jamais"
+		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.ts"
+	REJECTED "Relying on L016 alone: it resolves the anchors the corpus carries and reads no code"
+		+ "comment, no README link and no other document"
+	REJECTED "Deleting the document first and finding its citations afterwards: a comment naming a"
+		+ "file that no longer exists is read as a place to go, and nothing reports it"
+	REJECTED "Keeping the document as a redirection page: it is a second home again, and the walk"
+		+ "deleted the first one to end exactly that"
+	RATIONALE "Measured on 2026-09-18 at the deletion of docs/game-rules.md, 219 lines whose thirty"
+		+ "GR-* rules had all become a SPEC of one of the fourteen RULE DOMAIN merge: the gate"
+		+ "raised six L016, five IMPL and one SEEN_IN, and said nothing of the twenty-four code"
+		+ "comments in twenty-one files, the thirteen README lines and the two links from"
+		+ "docs/save-format.md and docs/energy-levels.md — forty-five citation sites of which the"
+		+ "tool saw six"
+	SOURCE "Step S8 of the specification walk, 2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION TheMergedSaveDisplayNameComesFromTheCaller
+	REJECTED "Keeping it as a SPEC of @RULE.SaveConfigurationComesFromSaveA, where step S7 put it:"
+		+ "neither save's saveDisplayName is read, so the obligation settles no disagreement"
+		+ "between the two saves and no save can contradict it"
+		REF @RULE.SaveConfigurationComesFromSaveA
+	REJECTED "Carrying save A's saveDisplayName into the merged save: the name would designate a"
+		+ "folder the merge did not produce"
+	SPEC "saveDisplayName is overridden with the value the caller passes to the merge, taken from"
+		+ "the input folder name in the command"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts::{...saveConfiguration,"
+			+ "saveDisplayName}"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
+			+ "use the saveDisplayName parameter and take save configuration from save A"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "The two inputs are not consulted at all: the display name is an argument of the"
+		+ "merge, so the obligation belongs to what the caller owes the merge and not to how two"
+		+ "saves are reconciled. Sanitizing it is still owed, and stays where it was recorded"
+	SOURCE "Reclassified from GR-CFG-2 of docs/game-rules.md in step S7b of the specification walk,"
+		+ "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION MissingPlayerFieldsAreWrittenAsZero
+	REJECTED "Keeping it as a SPEC of @RULE.PlayersAreDeduplicatedByName, where step S7 put it: the"
+		+ "defaulting applies to one entry whatever the other save holds, so it settles no"
+		+ "disagreement between the two saves"
+		REF @RULE.PlayersAreDeduplicatedByName
+	REJECTED "Writing the merged entry without the fields the source entry omits, as the game does:"
+		+ "the merged save would then be written in a shape older than the one the game writes"
+	SPEC "cameraView, totalCraftedObjects and totalTerraTokenEarned are written as 0 when the"
+		+ "source entry omits them"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::cameraView: 0"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should"
+			+ "default the missing fields to 0"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RESTS_ON @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+	RATIONALE "The save may omit the three fields and the merge must still write one shape; zero is"
+		+ "the value the game itself starts them at, so the merged entry reads as an entry of a"
+		+ "save that never earned any"
+	SOURCE "Reclassified from GR-PLAYER-4 of docs/game-rules.md in step S7b of the specification"
+		+ "walk, 2026-09-18"
 		REF @PROJECT.PCST

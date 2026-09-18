@@ -79,7 +79,7 @@
     },
     "woIds": {
       "type": "string",
-      "description": "→ WorldObject.id — CSV ids of the world objects the object holds, remapped by the merge (GR-ID-3 in docs/game-rules.md). Not observed in the ten reference saves, where an object's contents are reached through its inventory instead."
+      "description": "→ WorldObject.id — CSV ids of the world objects the object holds, remapped by the merge (@RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide). Not observed in the ten reference saves, where an object's contents are reached through its inventory instead."
     },
     "trtVal": {
       "type": "integer",

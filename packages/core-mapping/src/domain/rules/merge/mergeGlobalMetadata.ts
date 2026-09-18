@@ -9,7 +9,7 @@ const NO_METADATA_CONTRIBUTION: GlobalMetadata = {
 };
 
 /**
- * @see GR-META-1, GR-META-2, GR-META-3, GR-META-4 in docs/game-rules.md
+ * @see @RULE.GlobalMetadataIsSummedAndUnioned
  */
 export function mergeGlobalMetadata([metadataA]: GlobalMetadata[], [metadataB]: GlobalMetadata[]): GlobalMetadata {
   const metadataAContribution = metadataA ?? NO_METADATA_CONTRIBUTION;

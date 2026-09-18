@@ -16,7 +16,8 @@ const applyHostAndFallbacks = (player: LegacyCompatiblePlayer, host: boolean): P
   ({...NUMBER_FIELD_FALLBACKS, ...player, host});
 
 /**
- * @see GR-PLAYER-1, GR-PLAYER-2, GR-PLAYER-3, GR-PLAYER-4 in docs/game-rules.md
+ * @see @RULE.PlayersAreDeduplicatedByName, @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate,
+ * @DECISION.MissingPlayerFieldsAreWrittenAsZero
  */
 export function mergePlayers(playersA: LegacyCompatiblePlayer[], playersB: LegacyCompatiblePlayer[]): EntriesByOrigin<Player> {
   const playersFromBNotInA = playersB.filter(playerB =>

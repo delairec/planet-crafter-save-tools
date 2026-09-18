@@ -189,3 +189,21 @@ PROCESS ADecisionIsRecordedOnlyIfAPullRequestCouldReverseIt
 	RATIONALE "The threshold of an OPEN_QUESTION is held by the schema, BLOCKS @TASK being"
 		+ "required; the threshold of a ruling cannot be, so it is a conduct rule read by the"
 		+ "review"
+
+PROCESS TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
+	SPEC "No cleanup script is written: an archived entity nothing refers to any more is deleted by"
+		+ "hand in the next pull request that touches its file"
+	SPEC "The script is reconsidered when awawa status shows more than twenty archived entities"
+		+ "with no incoming reference, or when the workspace passes four hundred entities"
+	REJECTED "Writing the script now: of the twelve archived TASK of 2026-09-18, ten still carry"
+		+ "incoming BEFORE or GOVERNED_BY edges, so a first run would delete two entities, CHORE3"
+		+ "and DOCS48"
+	REJECTED "Choosing a retention delay in days: nothing dates a reference, and what guards the"
+		+ "deletion is the incoming count awawa status prints, not the age of the archive"
+	RATIONALE "P9 of the corpus starter asks for a cleanup pass or for a conscious skip with the"
+		+ "size at which to reconsider. Measured on 2026-09-18 on the whole workspace: 268"
+		+ "entities, 12 archived, all of them TASK, and 2 of the 12 with no incoming reference. A"
+		+ "script reading status --json and show --json per entity, then fmt and lint --strict,"
+		+ "would cost more to write and to trust than the two deletions it would perform"
+	SOURCE "Step S8 of the specification walk, 2026-09-18"
+		REF @PROJECT.PCST

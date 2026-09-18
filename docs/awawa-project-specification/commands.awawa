@@ -1,0 +1,42 @@
+COMMAND MergeSaves
+	INVOCATION "bun run merge"
+	DESC "merges the two saves of each folder of the input directory and writes the result to the"
+		+ "output directory"
+	IMPL "packages/cli-merge/cli/merge-cli.js::initMergeCli(platform, cliArguments)"
+	APPLIES @RULE.TheSaveOnPrimeBecomesSaveA
+	APPLIES @RULE.GlobalMetadataIsSummedAndUnioned
+	APPLIES @RULE.TerraformationLevelsTakeTheHigherValue
+	APPLIES @RULE.PlayersAreDeduplicatedByName
+	APPLIES @RULE.WorldObjectsAreDeduplicatedByPlanetAndPosition
+	APPLIES @RULE.InventoriesAreKeptUnlessTheirOwnerIsEjected
+	APPLIES @RULE.StatisticsAreSummed
+	APPLIES @RULE.MailboxMessagesAreDeduplicatedByStringId
+	APPLIES @RULE.StoryEventsAreUnioned
+	APPLIES @RULE.SaveConfigurationComesFromSaveA
+	APPLIES @RULE.WorldEventsAreDeduplicatedByPlanetSeedAndPosition
+	APPLIES @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects
+	APPLIES @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
+	APPLIES @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
+	APPLIES @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
+	APPLIES @RULE.ASectionLineIsOneJsonEntry
+	APPLIES @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
+	APPLIES @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+	APPLIES @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+	RATIONALE "The node: form of the script reaches the same entry point on the other runtime; the"
+		+ "parity of the two runtimes is a ruling of ours, not a second command"
+		REF @DECISION.NodeCommandsRunSourcesThroughModuleHooks
+	SOURCE "Extracted from the published scripts of the root manifest on 2026-09-18, step S7 of the"
+		+ "specification walk"
+		REF @PROJECT.PCST
+
+COMMAND ValidateSave
+	INVOCATION "bun run validate"
+	DESC "reads every save of the input directory and reports, located, what does not meet the"
+		+ "format"
+	IMPL "packages/cli-validate/cli/validate-cli.js::initValidateCli(platform, cliArguments)"
+	APPLIES @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
+	APPLIES @RULE.ASectionLineIsOneJsonEntry
+	APPLIES @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
+	SOURCE "Extracted from the published scripts of the root manifest on 2026-09-18, step S7 of the"
+		+ "specification walk"
+		REF @PROJECT.PCST

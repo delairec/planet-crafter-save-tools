@@ -3,7 +3,7 @@ import {Statistics} from 'shared-save-processing/gameDefinitions';
 const NO_STATISTICS_CONTRIBUTION: Statistics = {craftedObjects: 0, totalSaveFileLoad: 0, totalSaveFileTime: 0};
 
 /**
- * @see GR-STAT-1 in docs/game-rules.md
+ * @see @RULE.StatisticsAreSummed
  */
 export function mergeStatistics([statisticsA]: Statistics[], [statisticsB]: Statistics[]): Statistics | undefined {
   if (!statisticsA && !statisticsB) {

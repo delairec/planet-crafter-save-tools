@@ -12,7 +12,7 @@ et les règles qu'on ne peut pas se permettre de découvrir par une requête.
 La spécification du projet est le corpus awawa de `docs/`, rédigé en anglais, noms
 d'entités compris : `docs/_schema.awawa` déclare tous les types pour l'ensemble du workspace, puis un fichier
 par type dans l'aire qui le porte — `docs/awawa-project-methodology/` pour la méthodologie (`decisions.awawa`,
-`processes.awawa`, `limitations.awawa`, `facts.awawa`, `tasks.awawa`, `packages.awawa`, `open_questions.awawa` quand
+`processes.awawa`, `limitations.awawa`, `tasks.awawa`, `packages.awawa`, `open_questions.awawa` quand
 une question existe) et `sources.awawa` pour les sources ; `docs/awawa-project-specification/` pour la
 spécification produit (`sections.awawa`, `rules.awawa`, `commands.awawa`, `hypotheses.awawa`,
 `datatables.awawa`). Une entité nouvelle s'ajoute **à la fin** du fichier de son
@@ -27,11 +27,41 @@ pied de page nomme la `COMMAND` qui l'applique. Aucun des cinq types de spécifi
 une règle est vraie ou fausse, pas livrée, et ce qui n'est pas encore construit est un `TASK`
 (@DECISION.TheSpecificationAreaPivotsOnTheRule).
 
+**Une section arrive avec la règle qui la cite.** `WHEN HOLDS_FOR current` et `WHEN HOLDS_FOR both` portent
+`INCOMING CONSTRAINED_BY` : une `SECTION` que le jeu écrit aujourd'hui et qu'aucune `RULE` ne nomme sous
+`APPLIES_TO_SECTION` est un `L026`. Les entités s'écrivent donc par paires, section et règle, jamais une section
+seule ; c'est ce qui rend la spécification complète par construction, un trou prenant la forme d'une section sans
+règle (@DECISION.ASectionIsWrittenWithTheRuleThatCitesIt).
+
+**Une table de valeurs n'est enregistrée qu'une fois son fichier créé.** `DATATABLE` exige `TABLE` et `JSON_SCHEMA`,
+deux ancres vers des fichiers suivis par git ; tant que les tables sont des modules TypeScript, aucune `DATATABLE`
+ne s'écrit et `@TASK.CHORE52` porte le déplacement entier — fichiers JSON, JSON Schemas, recâblage des modules et
+les cinq entités (@DECISION.AValueTableIsRecordedOnceItsFileExists).
+
 **Une ancre nomme un fichier suivi par git.** `L016` ne teste que l'existence du chemin sur le disque et ne consulte
 jamais git : une ancre vers `input/`, `output/` ou `.do-not-commit/` est propre chez son auteur et casse en clone
 neuf. Les témoins commités sont les fixtures de `packages/ui-save-manager/e2e/fixtures/`, les JSON Schemas de
 `packages/shared-save-processing/schemas/`, les tests et les documents de `docs/`
 (@DECISION.AnAnchorNamesAFileTrackedByGit).
+
+**Un document de `docs/` n'est supprimé qu'une fois toutes ses citations repointées.** Un document n'est gardé que
+tant qu'il porte un fait qu'aucune autre maison ne tient ; mais avant de le supprimer, compter ses citations dans les
+deux mondes. `awawa lint --strict .` voit les ancres du corpus et rien d'autre ; `grep -rn '<nom du document>' .`
+trouve les commentaires de code, le README et les autres documents, que rien ne signale. Mesuré le 2026-09-18 à la
+suppression de `docs/game-rules.md` : 6 ancres du corpus levées par `L016`, contre 24 commentaires de code, 13 lignes
+du README et 2 liens entre documents qu'aucune commande n'a vus. Un commentaire de code cite alors l'entité, jamais
+le document : `@see @RULE.TheSaveOnPrimeBecomesSaveA`
+(@DECISION.ADocumentIsDeletedOnlyWhenEveryCitationIsRepointed).
+
+**Les règles de fusion vivent dans le corpus, y compris pour le lecteur public.**
+`docs/awawa-project-specification/rules.awawa` est leur maison publique unique : le fichier est du texte simple et se
+lit tel quel, `awawa show @RULE.<Nom> docs/` en imprime une. Le README en tient l'index — une ligne par sujet nommant
+la `RULE` — et ne redit aucune règle (@DECISION.MergeRulesHaveOnePublicHome).
+
+**L'archive se purge à la main.** Aucun script de nettoyage n'est écrit tant que le compte d'entrants publié par
+`awawa status TYPE .` suffit à décider : une entité archivée que plus rien ne cite se supprime dans la prochaine
+pull request qui touche son fichier
+(@PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived).
 
 **Un champ légal dans un seul état n'est déclaré que là.** Un champ conditionné par la valeur d'un autre champ se
 déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `INDEX` sous `WHEN HOLDS_FOR current` et
@@ -72,7 +102,8 @@ awawa lint --strict .                                   # doit sortir en 0
 - **Avant `awawa new`, lire une entité modèle du type avec `awawa show`** plutôt que les fichiers du corpus :
   `@DECISION.AMergeProducesAnOrdinarySave` (décision), `@PROCESS.ATaskBranchIsRebasedNeverMerged` (règle de
   conduite), `@LIMITATION.AnAtSignInAFolderNameCorruptsTheMergedSave` (limitation),
-  `@FACT.ASaveHasElevenSectionsTheLastReservedAndEmpty` (fait sur le jeu), `@TASK.FIX45` (tâche). Pas de fichier d'exemple : la
+  `@TASK.FIX45` (tâche), `@SECTION.Players` (section de la save), `@RULE.PlayersAreDeduplicatedByName` (règle),
+  `@COMMAND.MergeSaves` (commande), `@HYPOTHESIS.AWorldObjectMayCarryALinkedObjectList` (hypothèse). Pas de fichier d'exemple : la
   marche le chargerait et `status` le compterait (@DECISION.AgentsMdNamesOneModelEntityPerType).
 - **Les commentaires `//` ne sont lus par aucune commande.** Un fait écrit là n'atteint pas la session suivante ; ce
   qu'un outil doit savoir est un champ.
@@ -90,7 +121,10 @@ awawa lint --strict .                                   # doit sortir en 0
 - **Quel type** : une règle qui tient quelque part dans le dépôt est une `DECISION` (`SPEC` et son `IMPL` requis) ;
   sans rien à ancrer, c'est un `PROCESS`. Un défaut du projet laissé en place est une `LIMITATION` (`SYMPTOM`,
   `UNTIL`) ; un défaut d'un outil externe ne s'enregistre pas, seul le contournement du projet devient une `DECISION`
-  avec `UNTIL`. Ce que la save ou le jeu est, sans arbitrage, est un `FACT` (type temporaire).
+  avec `UNTIL`. Ce que la save ou le jeu est, sans arbitrage, appartient à l'aire de spécification produit : une
+  `RULE` quand une vraie sauvegarde ou une source du jeu peut la contredire, une `HYPOTHESIS` quand rien ne la prouve
+  et qu'on sait nommer ce qui la réfuterait, une `SECTION` pour une partie de la save écrite à un index fixe, une
+  `COMMAND` pour ce qu'un utilisateur invoque, une `DATATABLE` pour un fichier de valeurs qu'aucune règle ne résume.
 - **Toute `SOURCE` nomme une entité source** (`REF` requis) : `@PULL_REQUEST.PCST<n>`, `@PROJECT.DNC` pour un fichier
   du dépôt privé, `@USAGE_REPORT`, `@URL`, `@GAME_RELEASE` pour ce qui a été observé dans le jeu. Une provenance d'un
   genre nouveau fait déclarer son type dans la même PR.

@@ -7,7 +7,7 @@ import {EntriesByOrigin} from './EntriesByOrigin';
  * The remapping only holds save B entries: save A identifiers are authoritative and never change,
  * so a reference coming from save A never has to be rewritten.
  *
- * @see GR-ID-2, GR-ID-5 in docs/game-rules.md
+ * @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
  */
 export interface ResolvedEntries<TEntry> {
   readonly entries: EntriesByOrigin<TEntry>;

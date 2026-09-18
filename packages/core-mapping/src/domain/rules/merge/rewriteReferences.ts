@@ -15,7 +15,7 @@ export interface IdRemappings {
  * carry still designates the same entry after the merge. That is what makes the rewriting
  * save-origin-aware without having to guess where an entry came from.
  *
- * @see GR-ID-3, GR-ID-5 in docs/game-rules.md
+ * @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
  */
 export function rewritePlayerReferences(players: EntriesByOrigin<Player>, remappings: IdRemappings): EntriesByOrigin<Player> {
   return {
@@ -28,7 +28,7 @@ export function rewritePlayerReferences(players: EntriesByOrigin<Player>, remapp
   };
 }
 
-/** @see GR-ID-3, GR-ID-5 in docs/game-rules.md */
+/** @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide */
 export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<WorldObjectEntry>, remappings: IdRemappings): EntriesByOrigin<WorldObjectEntry> {
   return {
     fromSaveA: worldObjects.fromSaveA,
@@ -49,7 +49,7 @@ export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<World
  * A save A inventory only ever lists save A world objects, whose identifiers are authoritative and
  * never change, so it is left alone.
  *
- * @see GR-ID-3, GR-ID-5 in docs/game-rules.md
+ * @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
  */
 export function rewriteInventoryReferences(inventories: EntriesByOrigin<InventoryEntry>, remappings: IdRemappings): EntriesByOrigin<InventoryEntry> {
   return {

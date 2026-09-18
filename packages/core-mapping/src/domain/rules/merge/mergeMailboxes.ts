@@ -1,7 +1,7 @@
 import {MailboxMessage} from 'shared-save-processing/gameDefinitions';
 
 /**
- * @see GR-MSG-1, GR-MSG-2, GR-MSG-3 in docs/game-rules.md
+ * @see @RULE.MailboxMessagesAreDeduplicatedByStringId
  */
 export function mergeMailboxes(mailboxA: MailboxMessage[], mailboxB: MailboxMessage[]): MailboxMessage[] {
   const messagesFromBNotInA = mailboxB.filter(messageB =>

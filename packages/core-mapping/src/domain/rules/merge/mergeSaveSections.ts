@@ -18,7 +18,7 @@ import {SaveSections} from '../../save/SaveSections';
  * If one save has `planetId === 'Prime'` in its configuration, it is promoted to save A.
  * Every section rule returns structured entries: nothing is serialized here.
  * @param saveDisplayName - Overrides `saveDisplayName` in the merged configuration.
- * @see GR-ORDER-1 in docs/game-rules.md
+ * @see @RULE.TheSaveOnPrimeBecomesSaveA
  */
 export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSections, saveDisplayName: string): MergedSaveSections {
   const [mainSave, secondarySave] = determineSaveOrder(sectionsA, sectionsB);

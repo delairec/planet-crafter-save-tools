@@ -23,7 +23,7 @@ const FIRST_ID = 1;
  * Player identifiers are left out on purpose: they share no numbering space with inventories and
  * world objects, and are never regenerated.
  *
- * @see GR-ID-1, GR-ID-2, GR-ID-6 in docs/game-rules.md
+ * @see @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects, @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide, @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
  */
 export function createIdSequence(inventories: readonly InventoryEntry[], worldObjects: readonly WorldObjectEntry[]): IdSequence {
   let nextId = Math.max(findHighestId(inventories), findHighestId(worldObjects)) + 1;

@@ -99,13 +99,14 @@ LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
 	SOURCE "Pinning test verified in the review of pull request 59"
 		REF @PULL_REQUEST.PCST59
 
-LIMITATION SectionLabelsDivergeFromTheGameRulesDocument
+LIMITATION SectionLabelsDivergeFromTheFormatDocument
 	SYMPTOM "The short section labels used in the location of an error do not match the section"
-		+ "titles of the game rules document"
-	UNTIL "the game rules document is made the single reference for section names"
+		+ "headings of the save format document"
+	UNTIL "every section name shown to a user is read from SECTION.LABEL, the single reference"
+		+ "ruled in the specification walk"
 	SEEN_IN "packages/core-mapping/src/presentation/messages/saveSectionLabels.js::'Mailbox"
 		+ "messages'"
-	SEEN_IN "docs/game-rules.md::Section 6 — Messages / mailbox"
+	SEEN_IN "docs/save-format.md::#0 — Player Progression (tokens & unlocked groups)"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "Short labels read better in an error prefix, and the divergence was flagged as"
 		+ "reversible in review"

@@ -3,7 +3,7 @@ import {TerraformationLevel} from 'shared-save-processing/gameDefinitions';
 const PURIFICATION_SENTINEL = -1;
 
 /**
- * @see GR-TERRA-1, GR-TERRA-2, GR-TERRA-3 in docs/game-rules.md
+ * @see @RULE.TerraformationLevelsTakeTheHigherValue, @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
  */
 export function mergeTerraformationLevels(terraformationLevelsA: TerraformationLevel[], terraformationLevelsB: TerraformationLevel[]): TerraformationLevel[] {
   const planetIds = new Set([...terraformationLevelsA, ...terraformationLevelsB].map(level => level.planetId));
