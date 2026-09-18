@@ -4,6 +4,7 @@ import {isOwnSourceFile, reportViolations} from './specSources.ts';
 
 const CORPUS_FILES_PATTERN = '**/*.awawa';
 const SCHEMA_KEYWORDS = new Set(['SCHEMA', 'FIELDSET', 'SHAPE']);
+const DECLARATION_KEYWORDS = new Set(['SCHEMA', 'FIELDSET']);
 const INCLUDED_FIELDSET = /^@FIELDSET\.(\S+)$/;
 const ANCHOR_TYPE = 'anchor';
 const PATH_SEPARATOR = ' > ';
@@ -33,6 +34,13 @@ interface CorpusLine {
 interface SchemaDeclaration {
   anchorPaths: string[];
   inclusions: {parentPath: string[], fieldset: string}[];
+}
+
+interface DeclarationLine {
+  keyword: string;
+  name: string;
+  type: string | undefined;
+  parentPath: string[];
 }
 
 /**
@@ -96,37 +104,54 @@ function resolveAnchorPaths(key: string, declarations: Map<string, SchemaDeclara
   ];
 }
 
-/**
- * @param {string} corpusSource the text of the corpus files, the schema entries among them
- * @returns for each entity type, the path of every field its schema declares as an anchor
- */
-export function readAnchorFields(corpusSource: string): AnchorFields {
+function openDeclaration(keyword: string, name: string, declarations: Map<string, SchemaDeclaration>): SchemaDeclaration | undefined {
+  if (!DECLARATION_KEYWORDS.has(keyword)) {
+    return undefined;
+  }
+  const declaration: SchemaDeclaration = {anchorPaths: [], inclusions: []};
+  declarations.set(`${keyword} ${name}`, declaration);
+  return declaration;
+}
+
+function isAnchorType(type: string | undefined): boolean {
+  return type !== undefined && type.split('|').includes(ANCHOR_TYPE);
+}
+
+function recordDeclarationLine(declaration: SchemaDeclaration, {keyword, name, type, parentPath}: DeclarationLine): void {
+  if (keyword === 'FIELD' && isAnchorType(type)) {
+    declaration.anchorPaths.push([...parentPath, name].join(PATH_SEPARATOR));
+  }
+  const includedFieldset = keyword === 'INCLUDE' ? INCLUDED_FIELDSET.exec(name) : null;
+  if (includedFieldset !== null) {
+    declaration.inclusions.push({parentPath, fieldset: includedFieldset[1]});
+  }
+}
+
+function readSchemaDeclarations(corpusSource: string): Map<string, SchemaDeclaration> {
   const declarations = new Map<string, SchemaDeclaration>();
   let declaration: SchemaDeclaration | undefined;
   const ancestorFields: (string | undefined)[] = [];
   for (const {depth, keyword, pieces} of readCorpusLines(corpusSource)) {
     const [name, type] = pieces[0].split(/\s+/);
     if (depth === 0) {
-      declaration = keyword === 'SCHEMA' || keyword === 'FIELDSET' ? {anchorPaths: [], inclusions: []} : undefined;
-      if (declaration !== undefined) {
-        declarations.set(`${keyword} ${name}`, declaration);
-      }
+      declaration = openDeclaration(keyword, name, declarations);
       continue;
     }
     ancestorFields[depth] = keyword === 'FIELD' ? name : undefined;
     ancestorFields.length = depth + 1;
-    if (declaration === undefined) {
-      continue;
-    }
-    const parentPath = listEnclosingFields(ancestorFields, depth);
-    if (keyword === 'FIELD' && type !== undefined && type.split('|').includes(ANCHOR_TYPE)) {
-      declaration.anchorPaths.push([...parentPath, name].join(PATH_SEPARATOR));
-    }
-    const includedFieldset = keyword === 'INCLUDE' ? INCLUDED_FIELDSET.exec(name) : null;
-    if (includedFieldset !== null) {
-      declaration.inclusions.push({parentPath, fieldset: includedFieldset[1]});
+    if (declaration !== undefined) {
+      recordDeclarationLine(declaration, {keyword, name, type, parentPath: listEnclosingFields(ancestorFields, depth)});
     }
   }
+  return declarations;
+}
+
+/**
+ * @param {string} corpusSource the text of the corpus files, the schema entries among them
+ * @returns for each entity type, the path of every field its schema declares as an anchor
+ */
+export function readAnchorFields(corpusSource: string): AnchorFields {
+  const declarations = readSchemaDeclarations(corpusSource);
   const anchorFields: AnchorFields = new Map();
   for (const key of declarations.keys()) {
     const [keyword, type] = key.split(' ');
