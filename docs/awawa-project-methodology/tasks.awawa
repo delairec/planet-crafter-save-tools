@@ -49,7 +49,7 @@ TASK REFACTOR37
 		+ "validation verdicts, tests and type-check green"
 		IMPL "packages/core-mapping/package.json::core-mapping"
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST65
+	DELIVERED_BY 65
 	RATIONALE "The complete code review of 2026-09-07 found two dependency rule violations,"
 		+ "critical in the sense of architecture/review.md, and four responsibility violations,"
 		+ "none covered by an existing task. The work is split in two pull requests: part A carries"
@@ -87,7 +87,7 @@ TASK REFACTOR15
 		IMPL "packages/core-mapping/src/domain/rules"
 	AFTER @TASK.REFACTOR37
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST72
+	DELIVERED_BY 72
 	RATIONALE "REFACTOR37 leaves in place the entities this task converts and its part A moves"
 		+ "domain types, so this task runs last among the domain tasks. Value objects stay readonly"
 		+ "records with a createXxx factory: they are computation results or configuration readings"
@@ -121,7 +121,7 @@ TASK REFACTOR32
 		IMPL "packages/ui-save-manager/package.json::ui-save-manager"
 	AFTER @TASK.REFACTOR37
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST71
+	DELIVERED_BY 71
 	RATIONALE "Conformance work under STD-3 and ARCH-4, found by the complete code review of"
 		+ "2026-09-07. It comes after the tasks that rewrite routes/index.tsx, useLoadSaveFile.ts,"
 		+ "MergeSection.tsx and ValidationMessagesList.tsx, and after part B of REFACTOR37, which"
@@ -147,7 +147,7 @@ TASK TEST24
 		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
 	AFTER @TASK.REFACTOR32
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST75
+	DELIVERED_BY 75
 	RATIONALE "Last UI task to merge: every UI task before it may move a label and break a locator."
 		+ "The runner, configuration, server, naming convention, first fixture and CI workflow were"
 		+ "already in place, so this task only adds scenarios and the fixture tooling that feeds"
@@ -180,7 +180,7 @@ TASK TEST40
 		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
 	AFTER @TASK.TEST24
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST78
+	DELIVERED_BY 78
 	RATIONALE "This task carries the acceptance line forbidding the replay of a merge or validation"
 		+ "rule because it adds the scenarios where the temptation exists: invalid fixtures have to"
 		+ "show a message without reasserting the rule that produces it"
@@ -202,7 +202,7 @@ TASK FEAT41
 		IMPL "packages/ui-save-manager/e2e"
 	AFTER @TASK.TEST40
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST81
+	DELIVERED_BY 81
 	RATIONALE "The regeneration recipe lived in a documentation file that nothing runs, so a"
 		+ "fixture could drift from its generator without any command saying so. Independence from"
 		+ "the input directory belongs here because this delivery makes it executable: the guard"
@@ -226,7 +226,7 @@ TASK FEAT42
 		IMPL "packages/ui-save-manager"
 	AFTER @TASK.FEAT41
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST83
+	DELIVERED_BY 83
 	RATIONALE "No repository guard read the scenario files, their walk collecting only spec files,"
 		+ "so locator hygiene was checked by eye only. Measuring the duration comes last because it"
 		+ "is only meaningful on the complete suite"
@@ -280,7 +280,7 @@ TASK REFACTOR38
 	AFTER @TASK.REFACTOR15
 	AFTER @TASK.REFACTOR37
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST76
+	DELIVERED_BY 76
 	RATIONALE "No behaviour change except the case of the json extension, taken in review: the user"
 		+ "widened the pull request beyond core-mapping to take that case in cli-merge, which the"
 		+ "task had excluded. Last of the core-mapping production tasks, because the earlier ones"
@@ -330,7 +330,7 @@ TASK TEST43
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts"
 	AFTER @TASK.REFACTOR38
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST79
+	DELIVERED_BY 79
 	RATIONALE "Second of the three pull requests of REFACTOR38; the findings come from the"
 		+ "2026-09-07 review and were re-audited at start, REFACTOR15 having rewritten the entity"
 		+ "specs and added rejection tests. The spread expected value was carried by three merge"
@@ -377,7 +377,7 @@ TASK TEST44
 		IMPL "packages/core-mapping"
 	AFTER @TASK.TEST43
 	WAVE 4
-	DELIVERED_BY @PULL_REQUEST.PCST82
+	DELIVERED_BY 82
 	RATIONALE "Third of the three pull requests of REFACTOR38; it carries the overall acceptance,"
 		+ "which can only hold once the domain specs are delivered. MergeSaveFiles.spec.ts no"
 		+ "longer has an unawaited call, having been rewritten around a single factory; the two"
@@ -443,7 +443,7 @@ TASK CHORE3
 		+ "bun-version-file"
 		IMPL ".github/workflows/dependencies.yml"
 		IMPL ".github/workflows/ui-tests.yml"
-	DELIVERED_BY @PULL_REQUEST.PCST90
+	DELIVERED_BY 90
 	RATIONALE "A structural task, not a bump: bumping Bun by hand in this pull request would lose"
 		+ "the demonstration that the automatic path is restored. No guard accompanies the fix, by"
 		+ "user ruling of 2026-09-16, after the three guard forms considered proved either red on"

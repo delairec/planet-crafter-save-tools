@@ -300,7 +300,8 @@ dans la base quand la fusion le porte, jamais vrai si la PR meurt (@PROCESS.Ever
 Une PR par tâche porte le code, les changements du corpus, les arbitrages et le rapport d'usage.
 
 - **L'agent de tâche écrit dans la PR ce que la tâche change au corpus** : la tâche passe `implemented` avec
-  `DELIVERED_BY @PULL_REQUEST.PCST<N>` et l'`IMPL` de chaque `SPEC` ; les décisions qu'elle livre sont écrites ou
+  `DELIVERED_BY <N>` — le numéro de la PR, sans entité `PULL_REQUEST` : celle-ci ne s'écrit que pour une PR citée
+  comme source — et l'`IMPL` de chaque `SPEC` ; les décisions qu'elle livre sont écrites ou
   réécrites en place ; ce qui cesse de lier est archivé ; la question qu'elle tranche est archivée. L'archivage des
   tâches livrées et la purge après 30 jours reviennent à la passe de nettoyage, pas à la PR.
 - **`/awawa-pr-review <N>`** : traiter la revue, enregistrer dans le corpus chaque décision qu'elle produit *avant*
