@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "legacyTerrainLayerProperties.schema.json",
+  "title": "Legacy terrain layer properties",
+  "description": "The properties of an entry of the Terrain Layers section a legacy save carries at index 9.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["property", "type", "description"],
+    "additionalProperties": false,
+    "properties": {
+      "property": {"type": "string", "pattern": "^[a-z][A-Za-z0-9]*$"},
+      "type": {"enum": ["string", "int"]},
+      "description": {"type": "string", "minLength": 1}
+    }
+  }
+}

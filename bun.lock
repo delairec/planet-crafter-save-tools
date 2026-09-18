@@ -6,6 +6,7 @@
       "name": "placra-merge-saves",
       "devDependencies": {
         "@types/bun": "^1.4.2",
+        "ajv": "^8.20.0",
         "bun": "1.4.2",
         "esbuild": "^0.28.2",
         "fallow": "^3.25.0",

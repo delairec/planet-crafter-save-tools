@@ -360,15 +360,13 @@ RULE APlanetNumericIdIsStableAcrossSaves
 	DOMAIN format
 	SPEC "the numeric planet id a world object and a world event carry is the same value in every"
 		+ "save, being derived neither from the world seed nor from the content of the save"
-		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.ts::This mapping is a"
-			+ "fixed, stable lookup"
+		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.json::-1140328421"
 		ATTESTED_BY "packages/shared-save-processing/schemas/section9-world-events.schema.json::planet"
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	APPLIES_TO_SECTION @SECTION.WorldEvents
+	VALUES_FROM @DATATABLE.PlanetNamesByNumericId
 	RATIONALE "No known deterministic hash reproduces the five identifiers from the planet name, so"
-		+ "the correspondence is a maintained lookup rather than a computation; the table itself"
-		+ "moves to a DATATABLE with CHORE52 and the rule will then name it through VALUES_FROM"
-		REF @TASK.CHORE52
+		+ "the correspondence is a maintained lookup rather than a computation"
 	SOURCE "Extracted from docs/save-format.md, Planet numeric IDs, on 2026-09-18"
 		REF @PROJECT.PCST
 

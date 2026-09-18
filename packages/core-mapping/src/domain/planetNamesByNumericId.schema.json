@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "planetNamesByNumericId.schema.json",
+  "title": "Planet names by numeric id",
+  "description": "The textual planet id a numeric planet id of a world object or a world event stands for.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["numericId", "planetName"],
+    "additionalProperties": false,
+    "properties": {
+      "numericId": {"type": "integer", "minimum": -2147483648, "maximum": 2147483647},
+      "planetName": {"type": "string", "pattern": "^[A-Z][A-Za-z]*$"}
+    }
+  }
+}

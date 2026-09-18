@@ -15,8 +15,9 @@
 ## 1. Base energy values
 
 Base production and consumption values (kW) per `WorldObject.gId`, **before any Optimizer/Fuse bonus**, are
-defined in
-[`packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts`](../packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts):
+rows of
+[`packages/core-mapping/src/domain/energyLevels.json`](../packages/core-mapping/src/domain/energyLevels.json)
+(`@DATATABLE.EnergyLevels`), which `energyLevelsByWorldObjectName.ts` reads into two lookups:
 
 - `energyProductionLevelsByWorldObjectName` — energy producers (`EnergyGenerator1..6`, `WindTurbine1`).
 - `energyConsumptionLevelsByWorldObjectName` — energy consumers: drills, heaters, extractors, spreaders,
@@ -81,33 +82,8 @@ draw any energy", [Drone Station](https://planet-crafter.fandom.com/wiki/Drone_S
 [fusion reactor](https://planet-crafter.fandom.com/wiki/Fusion_reactor) is inert scenery that "ha[s] run out of
 power since [it] crashed" — not the player-built nuclear fusion generator, which the same page disambiguates.
 
-**Source registry.** The values the 2026-09-07/09 cross-check added to
-`energyConsumptionLevelsByWorldObjectName`, with the machine each `gId` names and the page the value was read
-from (game v2.102). Earlier values are sourced by the wiki pages listed in EN-BASE-2 above.
-
-| `gId` | In-game machine | kW | Source |
-|---|---|---:|---|
-| `FishFarm1`, `FishFarm2` | Fish farm, T2 fish farm | 155.5, 185 | [Fish Farms and Aquariums](https://planet-crafter.fandom.com/wiki/Fish_Farms_and_Aquariums) |
-| `Aquarium1`, `Aquarium2` | T1 / T2 aquarium | 75, 225 | same page |
-| `ButterflyFarm1..3` | Butterfly farm, T2, T3 | 30, 45, 196 | [Butterfly Farms](https://planet-crafter.fandom.com/wiki/Butterfly_Farms) |
-| `Farm1`, `Farm2` | Outdoor farm, T2 outdoor farm | 45.5, 165 | [Outdoor Farm](https://planet-crafter.fandom.com/wiki/Outdoor_Farm) |
-| `AmphibiansFarm1` | Amphibian farm | 155 | [Amphibian Farm](https://planet-crafter.fandom.com/wiki/Amphibian_Farm) |
-| `AnimalShelter1` | Animal shelter | 270 | [Animal Shelter](https://planet-crafter.fandom.com/wiki/Animal_Shelter) |
-| `AnimalFeeder1` | Animal feeder | 95 | [Animal Feeder](https://planet-crafter.fandom.com/wiki/Animal_Feeder) |
-| `Ecosystem1` | Ecosystem | 325 | [Ecosystem](https://planet-crafter.fandom.com/wiki/Ecosystem) |
-| `SilkGenerator` | Silk generator | 38 | [Silk Generator](https://planet-crafter.fandom.com/wiki/Silk_Generator) |
-| `WaterLifeCollector1` | Water life collector | 105.5 | [Water Life Collector](https://planet-crafter.fandom.com/wiki/Water_Life_Collector) |
-| `GeneticSynthetizer1` | Genetic synthesizer | 292 | [Genetic Synthesizer](https://planet-crafter.fandom.com/wiki/Genetic_Synthesizer) |
-| `GeneticExtractor1` | Genetic extractor | 317.5 | [Genetic Extractor](https://planet-crafter.fandom.com/wiki/Genetic_Extractor) |
-| `OreBreaker1..3` | T1/T2/T3 ore crusher — not the ore extractor | 2.6, 21, 125 | [Ore Crushers](https://planet-crafter.fandom.com/wiki/Ore_Crushers) |
-| `HarvestingRobot1` | Harvesting robot | 120 | [Harvesting Robot](https://planet-crafter.fandom.com/wiki/Harvesting_Robot) |
-| `DroneStation1` | Drone station | 850 | [Drone Station](https://planet-crafter.fandom.com/wiki/Drone_Station) |
-| `PortalGenerator1` | Portal generator | 1890 | [Portal Generator](https://planet-crafter.fandom.com/wiki/Portal_Generator) |
-| `InterplanetaryExchangePlatform1` | Interplanetary exchange shuttle | 375 | [Interplanetary Logistics](https://planet-crafter.fandom.com/wiki/Interplanetary_Logistics) |
-| `PlanetaryDeliveryDepot1` | Planetary delivery depot | 450 | same page |
-| `DeparturePlatform`, `DeparturePlatformHumble` | Extraction platform, and the same machine on the second planet | 265, 265 | [Extraction Platform](https://planet-crafter.fandom.com/wiki/Extraction_Platform) |
-| `Incubator2` | T2 incubator | 715 | [Incubator](https://planet-crafter.fandom.com/wiki/Incubator) (`energy=-715.00 kW/s`) |
-| `InsideLamp2` | Intense area lamp | 25 | [Base Building](https://planet-crafter.fandom.com/wiki/Base_Building) (`energy = -25 kW/s`) |
+**Source registry.** Each value the 2026-09-07/09 cross-check added carries, in the `source` field of its row, the
+wiki page it was read from (game v2.102). Earlier values are sourced by the wiki pages listed in EN-BASE-2 above.
 
 **Rule EN-BASE-1:** The base energy balance of a save is
 `sum(production of every positioned world object) - sum(consumption of every positioned world object)`,
@@ -119,20 +95,13 @@ matched only after excluding un-positioned generators.
 
 ---
 
-## 2. World object mapping (`worldObjectLabels.ts`)
+## 2. World object roles
 
-| `gId`             | Label                    | Role                     |
-|--------------------|--------------------------|--------------------------|
-| `EnergyGenerator1`  | Wind turbine (T1)        | Energy producer          |
-| `EnergyGenerator2`  | Solar panel T1           | Energy producer          |
-| `EnergyGenerator3`  | Solar panel T2           | Energy producer          |
-| `EnergyGenerator4`  | Nuclear Reactor T1       | Energy producer          |
-| `EnergyGenerator5`  | Nuclear Reactor T2       | Energy producer          |
-| `EnergyGenerator6`  | Nuclear Fusion generator | Energy producer          |
-| `WindTurbine1`      | Wind turbine T2          | Energy producer          |
-| `Optimizer1`        | Machine optimizer T1     | Fuse holder / booster **and** energy consumer (50 kW) |
-| `Optimizer2`        | Machine Optimizer T2     | Fuse holder / booster **and** energy consumer (150 kW) |
-| `FuseEnergy1`       | Energy Fuse              | Bonus item (goes inside an Optimizer) |
+The producers are the `production` rows of the energy levels table. `Optimizer1` and `Optimizer2` are fuse
+holders and boosters **and** energy consumers; `FuseEnergy1` is the Energy Fuse, a bonus item that goes inside an
+Optimizer. Display labels are the rows of
+[`packages/core-mapping/src/presentation/worldObjectLabels.json`](../packages/core-mapping/src/presentation/worldObjectLabels.json)
+(`@DATATABLE.WorldObjectLabels`), see section 6.
 
 All values in `energyProductionLevelsByWorldObjectName` are, per the wiki, boostable by the Energy Fuse
 (wind turbines, solar panels, nuclear reactors, nuclear fusion generator).
@@ -151,16 +120,14 @@ An **Optimizer** (`Optimizer1` = T1, `Optimizer2` = T2) is a machine world objec
 linked inventory (`WorldObject.liId` → `Inventory.id` → `Inventory.woIds`). A Fuse only has an effect once
 placed inside an Optimizer.
 
-**Rule EN-OPT-1 (capacity):**
-
-| Optimizer | Fuse slots | Max machines affected | Radius (perimeter) |
-|-----------|-----------:|-----------------------:|--------------------:|
-| `Optimizer1` (T1) | 1 | 5 | 120 m |
-| `Optimizer2` (T2) | 3 | 8 | 250 m |
+**Rule EN-OPT-1 (capacity):** the fuse slots, the maximum number of machines affected and the radius of each
+Optimizer tier are the rows of
+[`packages/core-mapping/src/domain/optimizerConfig.json`](../packages/core-mapping/src/domain/optimizerConfig.json)
+(`@DATATABLE.OptimizerConfiguration`).
 
 **Rule EN-OPT-2 (targeting):** An Optimizer boosts the **closest** machines of the type matching its fuse(s),
 within its radius, up to its max-machines capacity. If more eligible machines exist in range than the capacity
-allows, only the N closest (N = 5 or 8) receive the bonus; the rest are unaffected by that Optimizer.
+allows, only the N closest (N = its capacity) receive the bonus; the rest are unaffected by that Optimizer.
 
 **Rule EN-OPT-3 (multiple optimizers):** Multiple Optimizers (even holding the same fuse type) do not compete
 for the same machines — each Optimizer independently selects its closest eligible machines, and their bonuses
@@ -217,8 +184,8 @@ To compute the true available energy level of a save, accounting for Optimizers:
 3. Keep only Optimizers whose inventory contains at least one `FuseEnergy1`; count how many `FuseEnergy1` each
    one holds (`fuseCount`).
 4. For each qualifying Optimizer, find energy-producing machines (`gId` in
-   `energyProductionLevelsByWorldObjectName`) on the **same `planet`**, within its radius (120 m for T1, 250 m
-   for T2) of its `pos`, sorted by distance; keep at most its machine capacity (5 for T1, 8 for T2).
+   `energyProductionLevelsByWorldObjectName`) on the **same `planet`**, within its radius (EN-OPT-1) of its
+   `pos`, sorted by distance; keep at most its machine capacity.
 5. For each affected producer, accumulate `fuseCount` (summed across every Optimizer that reaches it — Rule
    EN-OPT-3) into a per-producer `totalFuses` count.
 6. `multiplier = totalFuses === 0 ? 1 : totalFuses × 1.5`; `boostedProduction = baseProduction × multiplier`
@@ -238,7 +205,7 @@ producers on the same `planet` (Rule EN-OPT-2), so no cross-planet leakage was p
 formalizes that production/consumption/breakdowns are scoped the same way.
 
 **Rule EN-PLANET-2 (planet label resolution):** each planet is labelled using the fixed numeric-id → name
-lookup table documented in [`docs/save-format.md`](./save-format.md#3--world-objects) ("Planet numeric IDs"),
+lookup table of `packages/core-mapping/src/domain/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`),
 looked up by `SaveSectionsReaderService.resolvePlanetLabel`. For planet ids not in that table (e.g. future
 planets, modded content), a fallback heuristic applies: some world object `gId`s embed the planet name in
 plain text (e.g. `Seed7Humble` on planet `Humble`) — if exactly one of the save's known planet names (from
@@ -304,10 +271,9 @@ name to re-add, not a defect.
 energy, consuming energy, and without a known energy level. Totality is by construction rather than asserted, and
 the guard described in section 1 turns any drift between a group and a table red.
 
-**Labels.** `packages/core-mapping/src/presentation/worldObjectLabels.ts` maps every `WorldObjectName` to a
-display label. Its three sub-tables are typed `satisfies Partial<Record<WorldObjectName, string>>` and their union
-is typed `Record<WorldObjectName, string>`, so a label for an unknown name and a name without a label are both
-type errors: the two files can no longer drift apart. The 25 labels added on 2026-09-09 come from the label file
+**Labels.** `packages/core-mapping/src/presentation/worldObjectLabels.json` maps every `WorldObjectName` to a
+display label. `worldObjectLabels.spec.ts` fails on a name without a label and on a label for an unknown name: the
+two files cannot drift apart. The 25 labels added on 2026-09-09 come from the label file
 above.
 
 **Label wording.** 178 of the 614 labels this repository shares with the label file differ in more than word
