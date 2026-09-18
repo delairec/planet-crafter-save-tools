@@ -1624,15 +1624,18 @@ DECISION ACodeCommentQuestionNamesItsCorpusEntity
 DECISION ArtifactAssetsFollowThePublishedPage
 	SPEC "docs/awawa-usage-reports/artifact-assets/ holds the files the public feedback page for"
 		+ "the awawa team links by their raw GitHub URL: the archive of the eleven reports and the"
-		+ "four Markdown exports of the page"
+		+ "Markdown copy of each view of the page, exported by the page or written before it"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-usage-reports.zip"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-migration-feedback.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-migration-2-feedback.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-field-report.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-ide-plugins-report.md"
+		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-migration-3-feedback.md"
+		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-feedback-overview.md"
 	SPEC "The folder also holds each file the page embeds for its download button, linked by the"
-		+ "same raw GitHub URL: the specification starter"
+		+ "same raw GitHub URL: the two versions of the specification starter"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-specification-starter.md"
+		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-specification-starter-v2.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/README.md::The page embeds it for its"
 			+ "download button"
 	SPEC "The folder carries a README naming each file, its role and the page that links it"
@@ -1658,6 +1661,9 @@ DECISION ArtifactAssetsFollowThePublishedPage
 		REF @PULL_REQUEST.PCST94
 	SOURCE "the archive, served to the page by PR #93"
 		REF @PULL_REQUEST.PCST93
+	SOURCE "2026-09-18: the overview and the Migration 3 view are written as Markdown first, the"
+		+ "page being built from them"
+		REF @PROJECT.PCST
 
 DECISION UiSaveManagerHasNoComponentTestLayer
 	REJECTED "A component test layer"
