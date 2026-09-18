@@ -33,10 +33,12 @@ une règle est vraie ou fausse, pas livrée, et ce qui n'est pas encore construi
 seule ; c'est ce qui rend la spécification complète par construction, un trou prenant la forme d'une section sans
 règle (@DECISION.ASectionIsWrittenWithTheRuleThatCitesIt).
 
-**Une table de valeurs n'est enregistrée qu'une fois son fichier créé.** `DATATABLE` exige `TABLE` et `JSON_SCHEMA`,
-deux ancres vers des fichiers suivis par git ; tant que les tables sont des modules TypeScript, aucune `DATATABLE`
-ne s'écrit et `@TASK.CHORE52` porte le déplacement entier — fichiers JSON, JSON Schemas, recâblage des modules et
-les cinq entités (@DECISION.AValueTableIsRecordedOnceItsFileExists).
+**Une table de valeurs est un fichier JSON à côté du module qui la lit.** Un tableau, une ligne par rangée, avec son
+JSON Schema à côté (`<nom>.schema.json`), dans le paquet dont le module l'importe ; aucune rangée ne se recopie dans
+un module TypeScript ni dans un document markdown. `bun run validate:tables` valide chaque table contre son schéma,
+chaque paquet nommant ses propres tables dans son script. La `DATATABLE` qui la nomme porte `TABLE` et `JSON_SCHEMA`,
+deux ancres vers ces fichiers, et une règle qui fait autorité sur ces valeurs la nomme par `VALUES_FROM`
+(@DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt).
 
 **Une ancre nomme un fichier suivi par git.** `L016` ne teste que l'existence du chemin sur le disque et ne consulte
 jamais git : une ancre vers `input/`, `output/` ou `.do-not-commit/` est propre chez son auteur et casse en clone

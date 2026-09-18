@@ -37,7 +37,7 @@ LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
 		+ "underestimated"
 	UNTIL "a game data source giving the energy values of these machines is available"
 	SEEN_IN "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
-	SEEN_IN "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::GeneticManipulator1"
+	SEEN_IN "packages/core-mapping/src/domain/energyLevels.json::GeneticManipulator1"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "The wiki is the only source of values and it is silent on these machines, and no"
 		+ "task can lift the limitation without a game data source the project does not have. Pull"

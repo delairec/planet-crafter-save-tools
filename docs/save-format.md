@@ -216,15 +216,8 @@ but the merge remaps it (`GR-ID-3`), so the schema declares it rather than rejec
 **Planet numeric IDs:** `planet` (here) as well as `WorldEvent.planet` (see below) reference a planet using a
 numeric ID rather than the textual `planetId` used elsewhere (`TerraformationLevel.planetId`,
 `Player.planetId`, `SaveConfiguration.planetId`). This numeric ID is **stable across saves** (not derived from
-the save's world seed or content) — confirmed by cross-referencing several real save files:
-
-| Numeric `planet` ID | Planet name (`planetId`) |
-|--------------------:|--------------------------|
-|       `-1140328421` | `Prime`                  |
-|         `110910045` | `Toxicity`               |
-|       `-1016990411` | `Selenea`                |
-|        `-486276833` | `Humble`                 |
-|       `-1291310150` | `Aqualis`                |
+the save's world seed or content) — confirmed by cross-referencing several real save files. The known ids are the rows of
+`packages/core-mapping/src/domain/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`).
 
 No known deterministic hash function (crc32, fnv1a, djb2, sdbm, Java-style `hashCode`, …) reproduces these IDs
 from the planet name, so this table is currently maintained as a fixed lookup rather than computed.
@@ -363,14 +356,8 @@ Saves created before a game update had **12 sections** (indexes 0 to 11): sectio
 current format, but section 9 was **Terrain Layers**, World Events was at index 10, and the reserved empty section
 was at index 11.
 
-| Property          | Type     | Description                                   |
-|-------------------|----------|-----------------------------------------------|
-| `layerId`         | `string` | Id of the layer (e.g. `"PC-Toxicity-Layer2"`) |
-| `planet`          | `int`    | Planet numeric ID                             |
-| `colorBase`       | `string` | Base color as `"R-G-B-A"`                     |
-| `colorCustom`     | `string` | Custom color as `"R-G-B-A"`                   |
-| `colorBaseLerp`   | `int`    | Base color intensity (≥ 0)                    |
-| `colorCustomLerp` | `int`    | Custom color intensity (≥ 0)                  |
+The properties of a Terrain Layers entry are the rows of
+`packages/shared-save-processing/legacyTerrainLayerProperties.json` (`@DATATABLE.LegacyTerrainLayerProperties`).
 
 This section no longer exists in the current save format. When a legacy save is loaded or merged, its Terrain Layers
 data is discarded and the user is warned that their save was adapted from an old format.
