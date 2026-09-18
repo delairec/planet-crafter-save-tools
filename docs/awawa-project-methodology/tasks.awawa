@@ -490,8 +490,10 @@ TASK DOCS48
 
 TASK CHORE49
 	TITLE "package.json carries one Bun version in packageManager and devDependencies.bun"
-	STATUS todo
+	STATUS implemented
 	SPEC "packageManager and devDependencies.bun in the root package.json name the same Bun release"
+		IMPL "package.json::\"packageManager\""
+	DELIVERED_BY 100
 	RATIONALE "pull request #91 bumped devDependencies.bun to 1.4.2 while packageManager stayed at"
 		+ "bun@1.3.14, so the third SPEC of the decision is false and lint cannot see it, both"
 		+ "anchors resolving"

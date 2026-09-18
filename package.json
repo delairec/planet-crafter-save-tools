@@ -2,7 +2,7 @@
   "name": "planet-crafter-save-tools",
   "version": "1.0.0",
   "description": "A set of tools to manipulate Planet Crafter save files",
-  "packageManager": "bun@1.3.14",
+  "packageManager": "bun@1.4.2",
   "private": true,
   "workspaces": {
     "packages": [
