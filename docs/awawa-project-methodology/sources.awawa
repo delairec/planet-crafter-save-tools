@@ -253,3 +253,14 @@ USAGE_REPORT PR95
 	FILE "docs/awawa-usage-reports/pull-requests/2026-09-17-pr-95.md::<!-- awawa-usage-report -->"
 	EVALUATES @PULL_REQUEST.PCST95
 	DESC "usage report of the corpus migration, committed on its branch before the merge"
+
+PULL_REQUEST PCST100
+	PROJECT @PROJECT.PCST
+	NUMBER 100
+	DESC "chore(deps): align packageManager on the Bun release of devDependencies.bun"
+
+USAGE_REPORT PR100
+	FILE "docs/awawa-usage-reports/pull-requests/2026-09-18-pr-100.md::<!-- awawa-usage-report -->"
+	EVALUATES @PULL_REQUEST.PCST100
+	DESC "usage report of pull request 100, committed in a docs pull request of its own after the"
+		+ "merge"
