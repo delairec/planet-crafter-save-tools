@@ -1,33 +1,40 @@
 # Planet Crafter Save Tools
 
-> ❗ I’m not going to actively maintain this project (or only minimally). If you’d like to add improvements or fix bugs, feel free to fork it
+> ❗ I’m not going to actively maintain this project (or only minimally). If you’d like to add improvements or fix bugs,
+> feel free to fork it
 > 😃
 
 ## Overview
 
 This project provides tools to manipulate **Planet Crafter** save files. Currently, the available tools are:
+
 - **Merge**: combine two save files into one, following specific rules to preserve as much information as possible.
 - **Validate**: check if a save file is correctly formatted according to the game's specifications.
 
 In progress:
-- **Save Manager**: a UI to visualize save files. In the long term, it could also include editing capabilities, but for now it is only a viewer.
+
+- **Save Manager**: a UI to visualize save files. In the long term, it could also include editing capabilities, but for
+  now it is only a viewer.
 
 Planned:
+
 - **Fix corrupted saves**: a tool to attempt to recover data from corrupted save files thanks to analysis.
+
+![welcome-page.png](docs/assets/welcome-page.png)
 
 ## Project Structure
 
 This is a Bun workspace monorepo, organized around Clean Architecture package prefixes:
 
-| Package                  | Role                                                                                                                    |
-|--------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                  |
-| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` arguments.           |
-| `util-types`             | `RuntimePlatform` contract type, consumed (type-only) by `shared-platforms`.                                            |
+| Package                  | Role                                                                                                                     |
+|--------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                   |
+| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` arguments.            |
+| `util-types`             | `RuntimePlatform` contract type, consumed (type-only) by `shared-platforms`.                                             |
 | `core-mapping`           | Domain/application/infrastructure/presentation layers: merge and validation engines, use cases, controllers, presenters. |
-| `cli-merge`              | Thin CLI: parses `--input`/`--output` arguments and delegates to `core-mapping`.                                        |
-| `cli-validate`           | Thin CLI: parses `--file` argument and delegates to `core-mapping`.                                                     |
-| `ui-save-manager`        | SolidStart UI to visualize save files, consuming `core-mapping` controllers.                                            |
+| `cli-merge`              | Thin CLI: parses `--input`/`--output` arguments and delegates to `core-mapping`.                                         |
+| `cli-validate`           | Thin CLI: parses `--file` argument and delegates to `core-mapping`.                                                      |
+| `ui-save-manager`        | SolidStart UI to visualize save files, consuming `core-mapping` controllers.                                             |
 
 The prefix of a package name sets what it is allowed to depend on. A type-only import counts as a dependency.
 
@@ -42,6 +49,7 @@ The prefix of a package name sets what it is allowed to depend on. A type-only i
 `bun run check:dependencies` enforces this matrix.
 
 ## Merge and Validate tools
+
 Merges two **Planet Crafter** save files into a single one, preserving as much information as possible.
 
 ### Prerequisites
@@ -173,7 +181,8 @@ bun run check:guards
 ```
 
 Runs the four guard scripts of this repository — `check:assertions`, `check:fixtures`, `check:dependencies` and
-`check:presentation` — which enforce conventions no off-the-shelf linter knows about. They read no git history and take a fraction of a
+`check:presentation` — which enforce conventions no off-the-shelf linter knows about. They read no git history and take
+a fraction of a
 second, so they are the half of `audit:quality` to run while writing code.
 
 ```
@@ -278,7 +287,8 @@ commands only need Node. A `package-lock.json` is yours to keep: the repository 
 only, and the CI runs under Bun.
 
 Both commands run the same sources as the Bun commands, straight from `packages/`, with no build step: `--import
-./scripts/node/register.js` installs two [module customization hooks](https://nodejs.org/api/module.html#customization-hooks)
+./scripts/node/register.js` installs
+two [module customization hooks](https://nodejs.org/api/module.html#customization-hooks)
 that resolve the extensionless relative imports and hand every `.ts` module to esbuild, which removes the
 TypeScript syntax Node cannot strip on its own (type-only imports, constructor parameter properties).
 
@@ -288,7 +298,6 @@ temporary directory, and assert their output, their exit code and the content of
 `bun test`, so a command that no longer starts under Node — or that loses the content of a save while still
 reporting success — fails the suite instead of reaching a release. Running them needs the Node version
 `engines.node` declares.
-
 
 ### Preparing data
 
@@ -380,19 +389,19 @@ numeric planet id (e.g. `110910045` for Toxicity).
 
 The original saves are never modified; the merged result is written to a separate output folder.
 
-| Topic                       | Rule                                                 |
-|-----------------------------|------------------------------------------------------|
-| Which save is A, which is B | `@RULE.TheSaveOnPrimeBecomesSaveA`                   |
-| Global metadata             | `@RULE.GlobalMetadataIsSummedAndUnioned`             |
-| Terraformation levels       | `@RULE.TerraformationLevelsTakeTheHigherValue`       |
-| Players                     | `@RULE.PlayersAreDeduplicatedByName`                 |
-| World objects               | `@RULE.WorldObjectsAreDeduplicatedByPlanetAndPosition` |
-| Inventories & equipment     | `@RULE.InventoriesAreKeptUnlessTheirOwnerIsEjected`  |
-| Statistics                  | `@RULE.StatisticsAreSummed`                          |
-| Messages / mailbox          | `@RULE.MailboxMessagesAreDeduplicatedByStringId`     |
-| Story events                | `@RULE.StoryEventsAreUnioned`                        |
-| Save configuration          | `@RULE.SaveConfigurationComesFromSaveA`              |
+| Topic                       | Rule                                                      |
+|-----------------------------|-----------------------------------------------------------|
+| Which save is A, which is B | `@RULE.TheSaveOnPrimeBecomesSaveA`                        |
+| Global metadata             | `@RULE.GlobalMetadataIsSummedAndUnioned`                  |
+| Terraformation levels       | `@RULE.TerraformationLevelsTakeTheHigherValue`            |
+| Players                     | `@RULE.PlayersAreDeduplicatedByName`                      |
+| World objects               | `@RULE.WorldObjectsAreDeduplicatedByPlanetAndPosition`    |
+| Inventories & equipment     | `@RULE.InventoriesAreKeptUnlessTheirOwnerIsEjected`       |
+| Statistics                  | `@RULE.StatisticsAreSummed`                               |
+| Messages / mailbox          | `@RULE.MailboxMessagesAreDeduplicatedByStringId`          |
+| Story events                | `@RULE.StoryEventsAreUnioned`                             |
+| Save configuration          | `@RULE.SaveConfigurationComesFromSaveA`                   |
 | World events                | `@RULE.WorldEventsAreDeduplicatedByPlanetSeedAndPosition` |
-| Shared id numbering space   | `@RULE.IdentifiersAreSharedByInventoriesAndWorldObjects` |
-| Duplicated ids across saves | `@RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide` |
-| Player identifiers          | `@RULE.APlayerIdentifierIsCarriedAsExactDecimalText` |
+| Shared id numbering space   | `@RULE.IdentifiersAreSharedByInventoriesAndWorldObjects`  |
+| Duplicated ids across saves | `@RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide`     |
+| Player identifiers          | `@RULE.APlayerIdentifierIsCarriedAsExactDecimalText`      |
