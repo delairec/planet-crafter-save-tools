@@ -200,9 +200,9 @@ SCHEMA TASK
 		DESC "the task that must merge before this one"
 	FIELD WAVE uint
 		DESC "the wave of the plan the task belongs to"
-	FIELD DELIVERED_BY @PULL_REQUEST
-		CONVERSE DELIVERS
-		DESC "the pull request that delivers it"
+	FIELD DELIVERED_BY uint
+		DESC "the number of the pull request that delivers it, in @PROJECT.PCST"
+			REF @PROJECT.PCST
 	FIELD PURGE true|false
 		DEFAULT true
 		DESC "whether the cleanup pass deletes the task once archived and the delay has run; false"
@@ -243,8 +243,9 @@ SCHEMA PROJECT
 		DESC "the repository on the forge"
 
 SCHEMA PULL_REQUEST
-	DESC "a pull request cited as the origin of an entity or as what delivers a task; deleted by"
-		+ "the cleanup pass once nothing cites it"
+	DESC "a pull request an entity cites, as a source or as what a usage report evaluates; one that"
+		+ "only delivers a task is not recorded, DELIVERED_BY carrying its number; deleted by the"
+		+ "cleanup pass once nothing cites it"
 	NAME pr_id
 	FIELD PROJECT @PROJECT
 		REQUIRED
