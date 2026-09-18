@@ -576,3 +576,13 @@ TASK CHORE52
 		REF @PROJECT.PCST
 	SOURCE "2026-09-18: orphan-source criterion added on the owner's ruling"
 		REF @PROJECT.PCST
+
+TASK FIX53
+	TITLE "Ensure text colors are readable in both light and dark themes"
+	STATUS draft
+	DESC "study the addition of a more general accessibility checker"
+	SPEC "all text colors are readable in light theme"
+	SPEC "all text colors are readable in dark theme"
+	SPEC "color accessibility is verified using a color contrast checker"
+	RATIONALE "observed that some text colors are not readable in light theme, need to ensure"
+		+ "accessibility and readability for all users"
