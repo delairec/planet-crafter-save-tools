@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeGlobalMetadata} from './mergeGlobalMetadata';
+import {NoGlobalMetadataToMergeError} from '../../errors/NoGlobalMetadataToMergeError';
 import {createGlobalMetadata} from 'shared-save-processing/testing/createSaveRecords.js';
 
 describe('Merge global metadata', () => {
@@ -96,6 +97,21 @@ describe('Merge global metadata', () => {
         openedInstanceSeed: 0,
         openedInstanceTimeLeft: 2
       });
+    });
+  });
+
+  describe('When neither save has global metadata', () => {
+    it('should fail with the error naming the missing metadata, validation having let both saves through', () => {
+      // Arrange
+      const noMetadataFromSaveA: never[] = [];
+      const noMetadataFromSaveB: never[] = [];
+
+      // Act
+      const mergeBothSavesWithoutMetadata = () => mergeGlobalMetadata(noMetadataFromSaveA, noMetadataFromSaveB);
+
+      // Assert
+      expect(mergeBothSavesWithoutMetadata).toThrow(NoGlobalMetadataToMergeError);
+      expect(mergeBothSavesWithoutMetadata).toThrow('Neither save carries global metadata (section 0): validation should have refused them before the merge.');
     });
   });
 
