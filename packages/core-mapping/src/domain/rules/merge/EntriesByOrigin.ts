@@ -4,7 +4,7 @@
  * Id conflict resolution needs that origin: save A entries keep their identifiers, save B entries
  * are the ones that get renumbered and whose references are rewritten.
  *
- * @see GR-ID-5 in docs/game-rules.md
+ * @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
  */
 export interface EntriesByOrigin<TEntry> {
   readonly fromSaveA: readonly TEntry[];

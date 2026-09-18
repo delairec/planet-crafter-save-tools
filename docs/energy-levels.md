@@ -3,7 +3,8 @@
 > This document establishes the rules used to compute the available energy level (in kW) for a save file:
 > total production, total consumption, and the balance — computed independently **per planet** (Rule
 > EN-PLANET-1), since each planet has its own power grid in-game.
-> It complements [`docs/game-rules.md`](./game-rules.md) and [`docs/save-format.md`](./save-format.md).
+> It complements [`docs/save-format.md`](./save-format.md) and the merge rules of
+> [`docs/awawa-project-specification/rules.awawa`](./awawa-project-specification/rules.awawa).
 >
 > Sources: in-game data cross-checked with the community wiki
 > ([Machine Optimizers](https://planet-crafter.fandom.com/wiki/Machine_Optimizers),

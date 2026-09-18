@@ -1,0 +1,160 @@
+SECTION GlobalMetadata
+	HOLDS_FOR both
+	LABEL "Global metadata"
+	INDEX 0
+	LEGACY_INDEX 0
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::GLOBAL_METADATA_SECTION_INDEX ="
+		+ "0"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 0 — Player"
+		+ "progression"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION TerraformationLevels
+	HOLDS_FOR both
+	LABEL "Terraformation levels"
+	INDEX 1
+	LEGACY_INDEX 1
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::TERRAFORMATION_LEVELS_SECTION_INDEX"
+		+ "= 1"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 1 —"
+		+ "Terraformation levels"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION Players
+	HOLDS_FOR both
+	LABEL "Players"
+	INDEX 2
+	LEGACY_INDEX 2
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::PLAYERS_SECTION_INDEX = 2"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 2 — Players"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION WorldObjects
+	HOLDS_FOR both
+	LABEL "World objects"
+	INDEX 3
+	LEGACY_INDEX 3
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::WORLD_OBJECTS_SECTION_INDEX = 3"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 3 — World"
+		+ "objects"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION Inventories
+	HOLDS_FOR both
+	LABEL "Inventories"
+	INDEX 4
+	LEGACY_INDEX 4
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::INVENTORIES_SECTION_INDEX = 4"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 4 —"
+		+ "Inventories & equipment"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION Statistics
+	HOLDS_FOR both
+	LABEL "Statistics"
+	INDEX 5
+	LEGACY_INDEX 5
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::STATISTICS_SECTION_INDEX = 5"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 5 —"
+		+ "Statistics"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION MailboxMessages
+	HOLDS_FOR both
+	LABEL "Mailbox messages"
+	INDEX 6
+	LEGACY_INDEX 6
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::MAILBOX_MESSAGES_SECTION_INDEX"
+		+ "= 6"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 6 — Read"
+		+ "messages"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION StoryEvents
+	HOLDS_FOR both
+	LABEL "Story events"
+	INDEX 7
+	LEGACY_INDEX 7
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::STORY_EVENTS_SECTION_INDEX = 7"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 7 —"
+		+ "Triggered story events"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION SaveConfiguration
+	HOLDS_FOR both
+	LABEL "Save configuration"
+	INDEX 8
+	LEGACY_INDEX 8
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::SAVE_CONFIGURATION_SECTION_INDEX"
+		+ "= 8"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 8 — Save"
+		+ "configuration"
+	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
+		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION WorldEvents
+	HOLDS_FOR both
+	LABEL "World events"
+	INDEX 9
+	LEGACY_INDEX 10
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::WORLD_EVENTS_SECTION_INDEX = 9"
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_WORLD_EVENTS_SECTION_INDEX"
+		+ "= 10"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 9 — World"
+		+ "events"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION Reserved
+	HOLDS_FOR both
+	LABEL "Reserved"
+	INDEX 10
+	LEGACY_INDEX 11
+	DESC "the empty trailing part the terminating separator produces; the game writes no entry in"
+		+ "it"
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::RESERVED_TRAILING_SECTION_INDEX"
+		+ "= SAVE_SECTIONS_COUNT"
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::const"
+		+ "LEGACY_SAVE_SECTIONS_COUNT = 11"
+	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 10 —"
+		+ "Reserved"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST
+
+SECTION TerrainLayers
+	HOLDS_FOR legacy
+	LABEL "Terrain layers"
+	LEGACY_INDEX 9
+	DESC "the section a game update removed; a legacy save still carries it and loading one"
+		+ "discards it with a warning"
+	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+		+ "= 9"
+	ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json::PC-Toxicity-Layer2"
+	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
+		REF @PROJECT.PCST

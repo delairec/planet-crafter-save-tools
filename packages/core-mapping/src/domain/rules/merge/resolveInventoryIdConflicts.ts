@@ -5,7 +5,7 @@ import {InventoryEntry} from '../../save/InventoryEntry';
 
 /**
  * Gives a new identifier to every save B inventory whose identifier is already used in save A.
- * @see GR-ID-1, GR-ID-2 in docs/game-rules.md
+ * @see @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects, @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
  */
 export function resolveInventoryIdConflicts(inventories: EntriesByOrigin<InventoryEntry>, idSequence: IdSequence): ResolvedEntries<InventoryEntry> {
   const usedIds = new Set(inventories.fromSaveA.map(inventory => inventory.id));

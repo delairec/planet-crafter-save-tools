@@ -7,7 +7,7 @@
  *
  * The criterion is the type of the value, never the section it belongs to: `WorldObject.id` and
  * `Inventory.id` share the field name, are numbers, and stay numbers.
- * @see GR-ID-7 in docs/game-rules.md
+ * @see @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
  */
 export const RAW_INTEGER_FIELDS = Object.freeze(new Set(['id']));
 

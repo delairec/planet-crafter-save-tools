@@ -168,7 +168,9 @@ integer a double represents exactly, where consecutive doubles are 16 apart: rea
 it, and writing it back yields the shortest decimal reading to the same double, so the save would name no existing
 Steam account. The section 2 schema therefore declares `id` as `{"type": "string", "pattern": "^-?[0-9]+$"}`, the
 parser hands back the exact source text and the serializer writes it unquoted — the file format is unchanged. See
-`GR-ID-7` in [`game-rules.md`](./game-rules.md). No other field of the reference saves exceeds that range.
+`@RULE.APlayerIdentifierIsCarriedAsExactDecimalText` in
+[`awawa-project-specification/rules.awawa`](./awawa-project-specification/rules.awawa). No other field of the
+reference saves exceeds that range.
 
 ---
 

@@ -2,7 +2,7 @@ import {EntriesByOrigin} from './EntriesByOrigin';
 import {InventoryEntry} from '../../save/InventoryEntry';
 
 /**
- * @see GR-INV-1, GR-INV-2, GR-INV-3 in docs/game-rules.md
+ * @see @RULE.InventoriesAreKeptUnlessTheirOwnerIsEjected
  */
 export function mergeInventories(inventoriesA: InventoryEntry[], inventoriesB: InventoryEntry[], orphanInventoryIds: Set<number>): EntriesByOrigin<InventoryEntry> {
   return {

@@ -1,9 +1,10 @@
 DECISION MergeRulesHaveOnePublicHome
-	SPEC "The game rules document is the single public source of the merge rules"
-		IMPL "docs/game-rules.md"
-	SPEC "The README does not restate the merge rules and carries an index pointing to the sections"
-		+ "of the game rules document"
-		IMPL "README.md::is the single source of truth for every merge decision"
+	SPEC "The corpus is the single public source of the merge rules, one RULE DOMAIN merge per"
+		+ "conflict the merge settles"
+		IMPL "docs/awawa-project-specification/rules.awawa"
+	SPEC "The README does not restate the merge rules and carries an index naming the rule entity"
+		+ "that settles each topic"
+		IMPL "README.md::This README deliberately does not restate the"
 	SPEC "The JSON schemas are documented in English, their title and description being public"
 		+ "documentation"
 		IMPL "packages/shared-save-processing/schemas"
@@ -11,6 +12,9 @@ DECISION MergeRulesHaveOnePublicHome
 		+ "code consumes it"
 		IMPL "packages/shared-save-processing/schemas/save-file.schema.json"
 	REJECTED "Correcting the duplication instead of removing it"
+	REJECTED "Keeping docs/game-rules.md as the public home once each of its thirty GR-* rules had"
+		+ "become a SPEC of a RULE entity: the document would have been a second copy of the"
+		+ "corpus, maintained by hand, which is the duplication this ruling exists to end"
 	RATIONALE "The duplication is what had let the README claim a union of players by identifier,"
 		+ "shared planets that were not implemented and statistics reduced to a single field"
 	SOURCE "Pull request #42"
@@ -284,7 +288,7 @@ DECISION SectionCountersAreDeclaredOnceWithNamedIndexes
 		IMPL "packages/shared-save-processing/sectionIndexes.js::SAVE_SPLIT_PARTS_COUNT"
 	REJECTED "Renaming to parts and data sections: section is the word of the public vocabulary"
 	REJECTED "Letting each module count its own way under its own name"
-	RESTS_ON @FACT.ASaveHasElevenSectionsTheLastReservedAndEmpty
+	RESTS_ON @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	RATIONALE "One count everywhere: it is what save-file.schema.json declares, what the user"
 		+ "message Expected 11 sections counts and what the parser returns; three competing"
 		+ "vocabularies had let the README state something other than the code. The legacy format"
@@ -304,7 +308,7 @@ DECISION OneModuleAloneParsesASaveLine
 		IMPL "packages/shared-save-processing/parseSaveSections.js"
 	REJECTED "Keeping a second parser in the validator"
 	REJECTED "A non-lazy variant of the parser: it reopens the door this decision closes"
-	RESTS_ON @FACT.ASectionLineIsOneJsonEntry
+	RESTS_ON @RULE.ASectionLineIsOneJsonEntry
 	RATIONALE "Two implementations tolerating the same format differently are a defect in their own"
 		+ "right, whatever bug they produce: that divergence made the defect of pull request 34"
 		+ "silent, validation declaring the save valid while the merge lost a whole section. The"
@@ -328,13 +332,15 @@ DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 			+ "(primary key, int64)"
 	SPEC "The list of int64 fields, the emission test and the reviver live in a single module"
 		IMPL "packages/shared-save-processing/int64Identifiers.js"
-	SPEC "The rule is stated in the public documentation of the merge rules"
-		IMPL "docs/game-rules.md::GR-ID-7"
+	REJECTED "Restating the rule in a public markdown document: the obligation existed only to keep"
+		+ "that copy in step with the code, and the rule is now a corpus entity this ruling names"
+		+ "through RESTS_ON"
 	REJECTED "Typing the field as BigInt: JSON.stringify throws on it, ajv cannot validate it, and"
 		+ "it announces arithmetic the project never does"
 	REJECTED "Keeping the raw text of the section entries: the merge rebuilds every player entry"
 	REJECTED "Setting a validation rule on integer precision"
-	RESTS_ON @FACT.ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
+	RESTS_ON @RULE.ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
+	RESTS_ON @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
 	RATIONALE "The source text of a JSON literal is read through the third parameter of the reviver"
 		+ "(ES2025), supported on the three engines the UI scenarios target, which all return the"
 		+ "literal intact where the parsed value rounds. The reviver applies to the players section"
@@ -357,7 +363,7 @@ DECISION TheFloatSuffixIsAppliedAtEmission
 	REJECTED "A textual post-processing of the produced string"
 	REJECTED "Narrowing the parameter type instead of keeping the runtime check: the type states"
 		+ "the contract only for type-checked callers"
-	RESTS_ON @FACT.FloatFieldsCarryADotZeroSuffixInFlatRecords
+	RESTS_ON @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
 	RATIONALE "A textual sentinel rewrites any string value carrying its pattern: a sign whose"
 		+ "player text was FLOAT:5 came out as a number. Silence was the real risk: where a reviver"
 		+ "applied the suffix at any depth, field-by-field emission handles the first level only,"
@@ -435,12 +441,10 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 	SPEC "The host role is applied by the position of the entry in save A, never by identifier"
 		+ "equality nor by name"
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::hostPositionInSaveA"
-		IMPL "docs/game-rules.md::GR-PLAYER-2"
 	SPEC "Save B supplies the host only when save A holds no player entry"
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::hostPositionInSaveA ==="
 			+ "NO_HOST_POSITION"
 	SPEC "A player identifier is never regenerated"
-		IMPL "docs/game-rules.md::GR-ID-6"
 		IMPL "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.ts::Players are left"
 			+ "out"
 	SPEC "Deduplication and the host role are decided in a single rule module"
@@ -451,7 +455,8 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 		+ "save A: the value would designate no real account"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.TEST43
-	RESTS_ON @FACT.APlayerIdentifierIsASteamAccountReusedAcrossGames
+	RESTS_ON @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
+	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
 	RATIONALE "The identifier is unique neither across two saves nor, formally, within one;"
 		+ "renumbering changed the account an entry names for nothing, since no entry references it"
 		+ "back. Computing the role after renumbering would make a role rule depend on an"
@@ -699,12 +704,15 @@ DECISION TheByteOrderMarkIsNotPreserved
 		REF @PULL_REQUEST.PCST45
 
 DECISION AMergeIntroducesNoIdOverlapAbsentFromItsInputs
-	SPEC "GR-ID-1 states what the merge does not introduce, never the uniqueness of the union: the"
-		+ "merge introduces no identifier overlap absent from its input saves"
-		IMPL "docs/game-rules.md::GR-ID-1"
+	SPEC "The rule of the shared numbering space states what the merge does not introduce, never"
+		+ "the uniqueness of the union: the merge introduces no identifier overlap absent from its"
+		+ "input saves"
+		IMPL "docs/awawa-project-specification/rules.awawa::the merge introduces into that space no"
+			+ "duplicate the input saves did not already carry"
 	REJECTED "Renumbering entries of save A to make the union unique"
-	REJECTED "Letting GR-ID-1 state the uniqueness of the union, which is false on real saves"
+	REJECTED "Letting the rule state the uniqueness of the union, which is false on real saves"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RESTS_ON @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects
 	RATIONALE "The input saves already carry the overlap, written by the game, and no merge can"
 		+ "remove it. Measured on 2026-09-07 on the reference folders: Standard-3 has 721 values"
 		+ "carried both by an inventory and a world object, Standard-4 549, Standard-1-unlocked-ivy"
@@ -1425,7 +1433,7 @@ DECISION AGuardRefusesTheTwoLineReadableSolidIdioms
 
 DECISION TheCorpusLivesInThePublicRepository
 	SPEC "The corpus is a set of files versioned in the public repository, under docs"
-		IMPL "docs/awawa-project-methodology/_schema.awawa"
+		IMPL "docs/_schema.awawa"
 		IMPL "AGENTS.md::La spécification du projet est le corpus awawa"
 	SPEC "The workspace root is the root of the public repository, so awawa always runs from a"
 		+ "worktree of that repository with . as root"
@@ -1609,22 +1617,25 @@ DECISION ACodeCommentQuestionNamesItsCorpusEntity
 		+ "since the signpost is only worth an indexed entity at the other end, which only a"
 		+ "project with a corpus offers"
 		REF @TASK.REFACTOR38
-		REF @FACT.ProceduralWrecksAreSpawnedByThePortalGenerator
+		REF @HYPOTHESIS.ProceduralWrecksAreSpawnedByThePortalGenerator
 	SOURCE "user ruling of 2026-09-14, review of PR #76"
 		REF @PULL_REQUEST.PCST76
 
 DECISION ArtifactAssetsFollowThePublishedPage
 	SPEC "docs/awawa-usage-reports/artifact-assets/ holds the files the public feedback page for"
 		+ "the awawa team links by their raw GitHub URL: the archive of the eleven reports and the"
-		+ "four Markdown exports of the page"
+		+ "Markdown copy of each view of the page, exported by the page or written before it"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-usage-reports.zip"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-migration-feedback.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-migration-2-feedback.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-field-report.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-ide-plugins-report.md"
+		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-migration-3-feedback.md"
+		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-feedback-overview.md"
 	SPEC "The folder also holds each file the page embeds for its download button, linked by the"
-		+ "same raw GitHub URL: the specification starter"
+		+ "same raw GitHub URL: the two versions of the specification starter"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-specification-starter.md"
+		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-specification-starter-v2.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/README.md::The page embeds it for its"
 			+ "download button"
 	SPEC "The folder carries a README naming each file, its role and the page that links it"
@@ -1650,6 +1661,9 @@ DECISION ArtifactAssetsFollowThePublishedPage
 		REF @PULL_REQUEST.PCST94
 	SOURCE "the archive, served to the page by PR #93"
 		REF @PULL_REQUEST.PCST93
+	SOURCE "2026-09-18: the overview and the Migration 3 view are written as Markdown first, the"
+		+ "page being built from them"
+		REF @PROJECT.PCST
 
 DECISION UiSaveManagerHasNoComponentTestLayer
 	REJECTED "A component test layer"
@@ -2206,3 +2220,304 @@ DECISION RefusedShortcutsAreReadFromThePlaywrightApi
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
 	SOURCE "Review of T42"
 		REF @PULL_REQUEST.PCST83
+
+DECISION TheSchemaGovernsEveryAreaFromTheDocsRoot
+	SPEC "Every SCHEMA, FIELDSET and SHAPE declaration of the workspace lives in docs/_schema.awawa"
+		IMPL "docs/_schema.awawa::SCHEMA *"
+		IMPL "AGENTS.md::La spécification du projet est le corpus awawa"
+	SPEC "An area directory under docs holds entity files only, one per type, lower-case plural"
+		IMPL "docs/awawa-project-methodology/decisions.awawa"
+		IMPL "docs/awawa-project-specification/sections.awawa"
+	REJECTED "A _schema.awawa per area: the second one would either duplicate SCHEMA * or declare a"
+		+ "second, which one workspace does not admit"
+	REJECTED "Keeping the schema inside the methodology area: it governs both areas, so it would"
+		+ "sit under the one it is not about"
+	RATIONALE "The tool reads no file name, so the layout costs nothing to the commands and is"
+		+ "chosen for the reader; a declaration that governs two areas is placed above both. The"
+		+ "move was priced before it was made: one IMPL anchor and three path mentions in"
+		+ "AGENTS.md, references being by identity"
+	SOURCE "2026-09-17"
+		REF @PROJECT.PCST
+
+DECISION TheSpecificationAreaPivotsOnTheRule
+	SPEC "A question about the product starts from a RULE: the pivot of the specification area is"
+		+ "RULE, as the pivot of the methodology area is TASK"
+		IMPL "AGENTS.md::Chaque aire a son pivot"
+		IMPL "docs/_schema.awawa::SCHEMA RULE"
+	SPEC "No specification type carries a delivery state: what is not built yet is a TASK, never a"
+		+ "RULE, a SECTION, a COMMAND, a HYPOTHESIS or a DATATABLE"
+		IMPL "docs/_schema.awawa::FIELD STATUS active|archived"
+	REJECTED "SECTION as the pivot: it declares no reference field, so its context package is the"
+		+ "entity alone — 1 entity and 6 lines, against 4 entities and 26 lines for a rule,"
+		+ "measured on the probe area; the two reading questions that start from a section are"
+		+ "served by the CONSTRAINED_BY footer context already prints"
+	REJECTED "A STATUS ladder with an implemented rung on the pivot: a rule is true or false, not"
+		+ "delivered, and COMMAND.IMPL and RULE.SPEC.ATTESTED_BY are REQUIRED anchors that nothing"
+		+ "unbuilt resolves"
+	REJECTED "One pivot for the whole workspace: the two areas answer two questions, and hanging a"
+		+ "specification entity on a TASK is the edge already refused"
+	RATIONALE "The pivot is a convention for readers: the tool knows no pivot, so the choice is"
+		+ "priced on what context returns from each candidate. RULE is where the outgoing edges"
+		+ "leave — APPLIES_TO_SECTION, VALUES_FROM, ASSUMES — and the only incoming one, APPLIED_BY"
+		+ "from COMMAND, is printed in the footer of that same package. COMMAND returns a larger"
+		+ "package, 5 entities and 31 lines, but only reaches what a command applies, and most"
+		+ "questions are not about a command"
+		REF @DECISION.TheSchemaGovernsEveryAreaFromTheDocsRoot
+	SOURCE "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION TheEraIsNotTheArchive
+	SPEC "A SECTION the game stopped writing stays active and carries HOLDS_FOR legacy; STATUS"
+		+ "archived is written only when the project stops supporting what the entity describes"
+		IMPL "docs/_schema.awawa::FIELDSET Era"
+		IMPL "AGENTS.md::L'ère n'est pas l'archive"
+	SPEC "An entity lints clean before it is archived, and nothing active still points at it"
+		IMPL "docs/_schema.awawa::WHEN STATUS archived"
+	SPEC "PURGE keeps its default on a specification entity: the cleanup pass deletes an archived"
+		+ "entity once the delay has run and the incoming count status TYPE prints is zero"
+		IMPL "docs/_schema.awawa::FIELD PURGE true|false"
+	REJECTED "Archiving a section the game removed: its rules still bind the saves written before"
+		+ "the removal, and archiving would remove its body from every context package that cites"
+		+ "it"
+	REJECTED "PURGE false by default on the five specification types: it turns the archive into the"
+		+ "history the corpus refuses to hold"
+	RATIONALE "GATE suppressed prices the archive dearly, measured on the probe area: an archived"
+		+ "SECTION declaring HOLDS_FOR current without INDEX lints clean, an archived RULE with"
+		+ "DOMAIN merge and none of the three fields that case requires lints clean, and an"
+		+ "archived entity's dangling reference and unresolvable anchor raise neither L004 nor L016"
+		+ "— only the fields of the WHEN STATUS archived block itself, ARCHIVED_ON and PURGE, are"
+		+ "still checked. Archiving is therefore an act on an entity already clean, never a way to"
+		+ "quiet one. It also costs the readers: context on an active entity prints // suppressed"
+		+ "in place of the archived entity it points at, so archiving a still-cited entity silently"
+		+ "shrinks every package that cites it"
+	SOURCE "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION AnAnchorNamesAFileTrackedByGit
+	SPEC "Every anchor of the corpus names a file git tracks; a path under input, output or"
+		+ ".do-not-commit is never anchored"
+		IMPL "AGENTS.md::Une ancre nomme un fichier suivi par git"
+		IMPL "docs/_schema.awawa::the committed fixture, JSON Schema, test or document that proves"
+			+ "the index"
+	SPEC "A statement about the save is attested by a committed witness: a fixture of"
+		+ "packages/ui-save-manager/e2e/fixtures, a JSON Schema of"
+		+ "packages/shared-save-processing/schemas, a test, or a document of docs"
+		IMPL "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json"
+		IMPL "packages/shared-save-processing/schemas/save-file.schema.json"
+	REJECTED "Anchoring an attestation on a reference save: the saves are not committed, carry the"
+		+ "real names of the players and weigh eight megabytes, so the anchor resolves for its"
+		+ "author alone"
+	REJECTED "Leaving the rule unwritten and letting the continuous integration find it: the"
+		+ "finding then names a clone, not the line that was written"
+	RATIONALE "L016 resolves an anchor against the workspace root and tests existence on disk"
+		+ "alone, git being never consulted: measured on a probe workspace that is not a git"
+		+ "repository at all and resolves its anchors normally. The corpus carries 487 anchors and"
+		+ "none of them points at an ignored directory today; what creates the risk is"
+		+ "SECTION.ATTESTED_BY, REQUIRED on the twelve sections still to be written, whose natural"
+		+ "witness is one of the eight save files that are not committed"
+		REF @DECISION.NoSaveIsCommittedToThePublicRepository
+		REF @DECISION.ThePrivateContextHoldsOnlySavesAndPlans
+	SOURCE "Review of the target schema, 2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION AGameReleaseIsCitedAsASource
+	SPEC "What was observed in the game is sourced by a GAME_RELEASE entity named by the version"
+		+ "the game prints, 2.102 today"
+		IMPL "docs/_schema.awawa::SCHEMA GAME_RELEASE"
+		IMPL "AGENTS.md::Une observation dans le jeu cite sa version"
+	SPEC "No type of the specification area carries the game version as a field of its own"
+		IMPL "docs/_schema.awawa::SCHEMA RULE"
+		IMPL "docs/_schema.awawa::SCHEMA HYPOTHESIS"
+	REJECTED "A GAME_VERSION field on RULE: the version qualifies the observation, not the"
+		+ "obligation, so it would be written on every rule and mean the version of the last"
+		+ "reading, which is what a SOURCE already says"
+	REJECTED "The version in the SOURCE prose alone: SOURCE.REF is REQUIRED, and an observation"
+		+ "made in the game has no entity to point at, so the line would have to cite the private"
+		+ "context or a wiki page that did not carry it"
+	REJECTED "A PascalCase name such as V2102: the dot is the name segment separator, so NAME"
+		+ "version_segment on the type admits 2.102 as it is written and refuses 2.102b, measured"
+	RATIONALE "S1 lists the game itself among the places the specification is read from, and it is"
+		+ "the one place with no citable entity. The version is the falsifiable part: the 639 keys"
+		+ "of the community label file target 2.102, and the wiki cross-check of 2026-09-09 was"
+		+ "made against that build. The type carries no field: its identity is the version, and"
+		+ "NAME version_segment checks it"
+		REF @DECISION.AnExternalPageIsCitedAtTheAddressRead
+	SOURCE "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION AnExternalPageIsCitedAtTheAddressRead
+	SPEC "A page read outside the repository is cited by a URL entity whose LOCATION is the address"
+		+ "read, pinned on a commit where the host offers one"
+		IMPL "docs/_schema.awawa::SCHEMA URL"
+		IMPL "AGENTS.md::une page lue dehors cite son adresse"
+	SPEC "The day a page was read is written in the prose of the SOURCE that cites it, never on the"
+		+ "URL entity"
+		IMPL "docs/_schema.awawa::FIELD SOURCE string"
+	SPEC "The provenance of one row of a DATATABLE is a column of the table, never an entity"
+		IMPL "docs/_schema.awawa::SCHEMA DATATABLE"
+	REJECTED "A PROJECT entity for the mod repository akarnokd/ThePlanetCrafterMods: PROJECT"
+		+ "records a repository and no commit, the corpus cites no pull request of that repository,"
+		+ "and the 639 keys must be pinned at the commit they were read from"
+	REJECTED "A READ_ON date on URL: the wiki pages of the energy values were read on several days,"
+		+ "so the date belongs to the citation and not to the page"
+	REJECTED "One URL entity for the wiki as a whole, the page named in prose: the address is what"
+		+ "the type exists to carry"
+	RATIONALE "Two of the places S1 inventories are external pages: the community wiki, some thirty"
+		+ "pages of it, and the English label file of the (UI) English Plus Translation mod, whose"
+		+ "permalink pins the commit read. Neither needs a type of its own: SHAPE url already"
+		+ "validates LOCATION, and a per-row wiki page stays a column of the JSON table, which is"
+		+ "what keeps the 105 energy rows out of the corpus"
+		REF @DECISION.AGameReleaseIsCitedAsASource
+	SOURCE "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION AFieldLegalInOneStateIsDeclaredInThatStateAlone
+	SPEC "A field whose legality depends on the value of another field is declared inside the WHEN"
+		+ "block of that value and nowhere else"
+		IMPL "docs/_schema.awawa::WHEN DOMAIN merge"
+		IMPL "AGENTS.md::Un champ légal dans un seul état n'est déclaré que là"
+	SPEC "A field legal in several states is repeated in the block of each of them"
+		IMPL "docs/_schema.awawa::WHEN HOLDS_FOR both"
+	REJECTED "Declaring the field at type level and adding REQUIRED in the WHEN block: the field"
+		+ "then stays legal in every state, WHEN being monotonic, and a legacy section carrying a"
+		+ "current INDEX lints clean"
+	RATIONALE "Measured on the probe workspace: with INDEX and LEGACY_INDEX declared only in the"
+		+ "era blocks, a HOLDS_FOR legacy section carrying INDEX 9 raises L003 field INDEX is not"
+		+ "declared on SECTION, and a DOMAIN format rule carrying CONFLICT and RESOLUTION raises"
+		+ "two more; the same workspace with the S4 declarations lints clean on both. Repeating"
+		+ "INDEX in WHEN HOLDS_FOR current and WHEN HOLDS_FOR both raises no L013. It is the shape"
+		+ "SCHEMA * already gives ARCHIVED_ON and PURGE, legal only under WHEN STATUS archived"
+		REF @DECISION.TheEraIsNotTheArchive
+	SOURCE "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION ASectionIsWrittenWithTheRuleThatCitesIt
+	SPEC "a SECTION whose era is current or both is added in the same pull request as at least one"
+		+ "RULE naming it under APPLIES_TO_SECTION"
+		IMPL "docs/_schema.awawa::INCOMING CONSTRAINED_BY"
+		ENFORCED_BY "docs/_schema.awawa::INCOMING CONSTRAINED_BY"
+	SPEC "the twelve sections of the save were written paired with their rule, in save index order,"
+		+ "the legacy section last"
+		IMPL "docs/awawa-project-specification/sections.awawa"
+		IMPL "docs/awawa-project-specification/rules.awawa"
+	RESTS_ON @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
+	REJECTED "writing the twelve sections first and their rules afterwards: L026 fires on every"
+		+ "uncited section, so the corpus would not lint between the two writes and no intermediate"
+		+ "commit would be possible"
+	REJECTED "dropping INCOMING CONSTRAINED_BY to make a lone section legal: a section the game"
+		+ "writes today that no rule constrains is a hole in the specification that nothing else"
+		+ "reports"
+	RATIONALE "The obligation is not a style preference: it is what makes the specification"
+		+ "complete by construction, since a section with no rule is the shape a forgotten"
+		+ "obligation takes"
+	SOURCE "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION AValueTableIsRecordedOnceItsFileExists
+	SPEC "a DATATABLE is written only when the JSON file and the JSON Schema its TABLE and"
+		+ "JSON_SCHEMA name are tracked by git"
+		IMPL "docs/_schema.awawa::FIELD JSON_SCHEMA anchor"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::the product value tables become JSON"
+			+ "files with a JSON Schema each"
+	REJECTED "creating the JSON files in the step that writes the first entities, the TypeScript"
+		+ "modules keeping their rows: every value would have two homes until the rewiring landed,"
+		+ "which is the duplication the tables are being moved to end"
+	REJECTED "writing the five DATATABLE against the TypeScript modules: TABLE names the file"
+		+ "holding the rows, and a module that restates them is not that file"
+	UNTIL @TASK.CHORE52
+	RATIONALE "The rule generalises beyond the tables: an anchor field that is REQUIRED makes the"
+		+ "entity wait for the artefact, and the wait is carried by a task rather than by a"
+		+ "placeholder anchor"
+		REF @DECISION.AnAnchorNamesAFileTrackedByGit
+	SOURCE "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION ADocumentIsDeletedOnlyWhenEveryCitationIsRepointed
+	SPEC "A document of docs/ is deleted only once every statement it carried has another home and"
+		+ "every citation of it, inside the corpus and outside, has been repointed"
+		IMPL "AGENTS.md::Un document de `docs/` n'est supprimé qu'une fois toutes ses citations"
+			+ "repointées"
+	SPEC "The citations outside the corpus are counted before the deletion, the lint resolving the"
+		+ "corpus anchors and nothing else"
+		IMPL "AGENTS.md::grep -rn '<nom du document>' ."
+	SPEC "A code comment cites the corpus entity, never the document"
+		IMPL "AGENTS.md::Un commentaire de code cite alors l'entité, jamais"
+		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.ts"
+	REJECTED "Relying on L016 alone: it resolves the anchors the corpus carries and reads no code"
+		+ "comment, no README link and no other document"
+	REJECTED "Deleting the document first and finding its citations afterwards: a comment naming a"
+		+ "file that no longer exists is read as a place to go, and nothing reports it"
+	REJECTED "Keeping the document as a redirection page: it is a second home again, and the walk"
+		+ "deleted the first one to end exactly that"
+	RATIONALE "Measured on 2026-09-18 at the deletion of docs/game-rules.md, 219 lines whose thirty"
+		+ "GR-* rules had all become a SPEC of one of the fourteen RULE DOMAIN merge: the gate"
+		+ "raised six L016, five IMPL and one SEEN_IN, and said nothing of the twenty-four code"
+		+ "comments in twenty-one files, the thirteen README lines and the two links from"
+		+ "docs/save-format.md and docs/energy-levels.md — forty-five citation sites of which the"
+		+ "tool saw six"
+	SOURCE "2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION TheMergedSaveDisplayNameComesFromTheCaller
+	REJECTED "Keeping it as a SPEC of @RULE.SaveConfigurationComesFromSaveA, where it was first"
+		+ "written: neither save's saveDisplayName is read, so the obligation settles no"
+		+ "disagreement between the two saves and no save can contradict it"
+		REF @RULE.SaveConfigurationComesFromSaveA
+	REJECTED "Carrying save A's saveDisplayName into the merged save: the name would designate a"
+		+ "folder the merge did not produce"
+	SPEC "saveDisplayName is overridden with the value the caller passes to the merge, taken from"
+		+ "the input folder name in the command"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts::{...saveConfiguration,"
+			+ "saveDisplayName}"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
+			+ "use the saveDisplayName parameter and take save configuration from save A"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "The two inputs are not consulted at all: the display name is an argument of the"
+		+ "merge, so the obligation belongs to what the caller owes the merge and not to how two"
+		+ "saves are reconciled. Sanitizing it is still owed, and stays where it was recorded"
+	SOURCE "Reclassified from GR-CFG-2 of docs/game-rules.md on 2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION MissingPlayerFieldsAreWrittenAsZero
+	REJECTED "Keeping it as a SPEC of @RULE.PlayersAreDeduplicatedByName, where it was first"
+		+ "written: the defaulting applies to one entry whatever the other save holds, so it"
+		+ "settles no disagreement between the two saves"
+		REF @RULE.PlayersAreDeduplicatedByName
+	REJECTED "Writing the merged entry without the fields the source entry omits, as the game does:"
+		+ "the merged save would then be written in a shape older than the one the game writes"
+	SPEC "cameraView, totalCraftedObjects and totalTerraTokenEarned are written as 0 when the"
+		+ "source entry omits them"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::cameraView: 0"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should"
+			+ "default the missing fields to 0"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RESTS_ON @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+	RATIONALE "The save may omit the three fields and the merge must still write one shape; zero is"
+		+ "the value the game itself starts them at, so the merged entry reads as an entry of a"
+		+ "save that never earned any"
+	SOURCE "Reclassified from GR-PLAYER-4 of docs/game-rules.md on 2026-09-18"
+		REF @PROJECT.PCST
+
+DECISION TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange
+	REJECTED "Reading DOMAIN game as any statement about the simulated world, whatever the save"
+		+ "does with it: the encoding of a game state would then be a game rule, and"
+		+ "@RULE.APlanetNumericIdIsStableAcrossSaves and"
+		+ "@RULE.APurificationLevelOfMinusOneMeansNotUnlocked would have been retyped, though a"
+		+ "change to either leaves the play untouched"
+		REF @RULE.APlanetNumericIdIsStableAcrossSaves
+		REF @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+	REJECTED "Reading DOMAIN format as what a JSON Schema of"
+		+ "packages/shared-save-processing/schemas/ can refuse: it leaves a statement no"
+		+ "single-save schema can check, such as an identifier being stable across saves, with no"
+		+ "domain at all"
+	SPEC "a RULE carries DOMAIN game only when a change to its statement would change how the game"
+		+ "plays, and DOMAIN format when the statement can change with no consequence in play"
+		IMPL "docs/_schema.awawa::FIELD DOMAIN format|game|merge"
+	RATIONALE "The axis was derived three times before being settled: the 21 rules were typed once"
+		+ "against no stated criterion, the verdict table that followed answered whether a"
+		+ "statement was a merge rule, and the audit of the domains proposed a third reading. The"
+		+ "criterion is recorded so the fourth derivation does not happen; applied to the 21 rules"
+		+ "it confirms DOMAIN game at zero, the corpus having been extracted from a format document"
+		+ "and a merge document"
+	SOURCE "User ruling of 2026-09-18 on the audit of the 21 rules"
+		REF @PROJECT.PCST

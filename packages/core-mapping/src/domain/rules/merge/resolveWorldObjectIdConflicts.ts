@@ -5,7 +5,7 @@ import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 /**
  * Gives a new identifier to every save B world object whose identifier is already used in save A.
- * @see GR-ID-1, GR-ID-2 in docs/game-rules.md
+ * @see @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects, @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
  */
 export function resolveWorldObjectIdConflicts(worldObjects: EntriesByOrigin<WorldObjectEntry>, idSequence: IdSequence): ResolvedEntries<WorldObjectEntry> {
   const usedIds = new Set(worldObjects.fromSaveA.map(worldObject => worldObject.id));

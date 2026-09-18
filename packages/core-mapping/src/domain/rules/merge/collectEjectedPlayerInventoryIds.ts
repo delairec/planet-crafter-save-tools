@@ -7,7 +7,7 @@ export interface EjectedPlayerInventoryIds {
 }
 
 /**
- * @see GR-PLAYER-1, GR-WO-3, GR-INV-2 in docs/game-rules.md
+ * @see @RULE.PlayersAreDeduplicatedByName, @RULE.WorldObjectsAreDeduplicatedByPlanetAndPosition, @RULE.InventoriesAreKeptUnlessTheirOwnerIsEjected
  */
 export function collectEjectedPlayerInventoryIds(playersA: Player[], playersB: Player[], inventoriesB: InventoryEntry[]): EjectedPlayerInventoryIds {
   const ejectedPlayersFromB = playersB.filter(playerB =>

@@ -17,7 +17,7 @@ import {EntriesByOrigin} from './EntriesByOrigin';
  * The origin of an entry has no consumer past this point, so the result is a save like any other:
  * the entries of save A come first, those of save B follow.
  *
- * @see GR-ID-1, GR-ID-2, GR-ID-3, GR-ID-4, GR-ID-5 in docs/game-rules.md
+ * @see @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects, @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
  */
 export function resolveIdConflicts(mergedSections: MergedSaveSections): SaveSections {
   const idSequence = createIdSequence(
