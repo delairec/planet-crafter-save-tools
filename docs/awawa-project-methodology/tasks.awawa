@@ -402,7 +402,8 @@ TASK TEST44
 TASK FIX45
 	TITLE "validation refuses a save whose section 0 carries no entry, before any merge and any"
 		+ "write"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 102
 	SPEC "Validation returns an issue for a save whose section 0 carries no entry, and the merge is"
 		+ "not attempted"
 		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js"

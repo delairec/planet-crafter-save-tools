@@ -273,3 +273,8 @@ USAGE_REPORT PR100
 
 GAME_RELEASE 2.103
 	DESC "Skeo - Patch #1"
+
+PULL_REQUEST PCST102
+	PROJECT @PROJECT.PCST
+	NUMBER 102
+	DESC "fix(core-mapping): refuse a save whose section 0 carries no entry"
