@@ -527,14 +527,21 @@ TASK DOCS50
 
 TASK CHORE51
 	TITLE "a guard refuses an anchor of the corpus that names a file git does not track"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun run check:anchors reads every anchor of the corpus and exits non-zero when one names"
 		+ "a path git does not track, naming the entity, the field and the path"
+		IMPL "scripts/check-corpus-anchors.ts::names ${path}, a path git does not track"
+		IMPL "package.json::check:anchors"
 	SPEC "the guard covers every field the schema declares as an anchor, read from the schema and"
 		+ "not from a list written in the script"
+		IMPL "scripts/check-corpus-anchors.ts::export function readAnchorFields"
+		IMPL "scripts/check-corpus-anchors.spec.ts::describe('readAnchorFields'"
 	SPEC "check:anchors is called by check:guards, as the seven guards already there are"
+		IMPL "package.json::&& bun run check:anchors"
 	SPEC "a spec file pins the guard on a tracked path, on an untracked one and on a path that does"
 		+ "not exist at all"
+		IMPL "scripts/check-corpus-anchors.spec.ts::describe('findUntrackedCorpusAnchors'"
+	DELIVERED_BY 101
 	RATIONALE "L016 tests existence on disk and never consults git, so an anchor on an ignored path"
 		+ "is clean for its author and an error in a fresh clone; the rule is written"
 		+ "(@DECISION.AnAnchorNamesAFileTrackedByGit) and enforced by nothing"
