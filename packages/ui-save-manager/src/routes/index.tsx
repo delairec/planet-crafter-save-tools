@@ -56,10 +56,13 @@ export default function Home() {
         <HomeDisclaimer/>
 
         <h2>{displayRouteDisplayTitle}</h2>
-        <p><label>{displayRouteFileInputLabel}<input ref={fileInputElement} type="file"
+        <p>
+          <label>{displayRouteFileInputLabel}<input ref={fileInputElement} type="file"
                                                     accept="application/json"
-                                                    onChange={handleFileChange}/></label></p>
-        <button onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
+                                                    onChange={handleFileChange}/></label>
+          <button onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
+        </p>
+
         <Show when={isLoading()}>
           <Spinner/>
         </Show>
