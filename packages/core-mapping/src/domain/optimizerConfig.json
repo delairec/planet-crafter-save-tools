@@ -1,0 +1,4 @@
+[
+  {"worldObjectName": "Optimizer1", "fuseSlots": 1, "maxMachines": 5, "radius": 120},
+  {"worldObjectName": "Optimizer2", "fuseSlots": 3, "maxMachines": 8, "radius": 250}
+]

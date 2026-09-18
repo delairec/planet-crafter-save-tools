@@ -29,11 +29,13 @@ DECISION WorldObjectNamesAreAttestedBySourceOrSave
 		+ "a wiki page title"
 		IMPL "docs/energy-levels.md"
 	SPEC "The repository labels are not replaced by those of that source"
-		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.json"
 	SPEC "The label table and the name list constrain each other: a label without a name and a name"
-		+ "without a label are both type errors"
-		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts::satisfies"
-			+ "Partial<Record<WorldObjectName, string>>"
+		+ "without a label both fail the label spec"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.spec.ts::should find a label"
+			+ "for each of them"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.spec.ts::should label no"
+			+ "name the game is not known to use"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts"
 	SPEC "The provenance of the identifiers is documented outside the code"
 		IMPL "docs/energy-levels.md::labels-engplus.txt"
@@ -54,12 +56,11 @@ DECISION ACaseDuplicatedKeyIsSettledByAttestation
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SPEC "Of the two keys Keycard1 and KeyCard1, both labelled Access card, only Keycard1 remains,"
 		+ "in the label table as in the name union"
-		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts::Keycard1: 'Access card'"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.json::Keycard1"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::'Keycard1'"
 	SPEC "KeyCard2 keeps its case: the game itself mixes the case between item 1 and item 2, and"
 		+ "that form is the attested one"
-		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts::KeyCard2: 'Access card"
-			+ "2'"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.json::KeyCard2"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::'KeyCard2'"
 	REJECTED "Keeping both keys: the union would stay permissive to a spelling no save attests"
 	REJECTED "Removing only the label: the domain would then accept a name without a presentation"
@@ -1602,6 +1603,8 @@ DECISION AgentsMdNamesOneModelEntityPerType
 		REF @PULL_REQUEST.PCST69
 
 DECISION ACodeCommentQuestionNamesItsCorpusEntity
+	STATUS archived
+	ARCHIVED_ON 2026-09-18
 	SPEC "A question left as a comment in a source file is kept and names, on the next line, the"
 		+ "corpus entity that carries it"
 		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts::// Is procedural wreck"
@@ -2520,4 +2523,37 @@ DECISION TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange
 		+ "it confirms DOMAIN game at zero, the corpus having been extracted from a format document"
 		+ "and a merge document"
 	SOURCE "User ruling of 2026-09-18 on the audit of the 21 rules"
+		REF @PROJECT.PCST
+
+DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+	SPEC "a product value table is a JSON array holding one row per line, with its JSON Schema"
+		+ "beside it as <name>.schema.json, in the package whose module reads it"
+		IMPL "packages/core-mapping/src/domain/energyLevels.schema.json"
+		IMPL "packages/shared-save-processing/legacyTerrainLayerProperties.schema.json"
+	SPEC "bun run validate:tables validates every table against its JSON Schema, each package"
+		+ "naming its own tables in its own validate:tables script"
+		IMPL "scripts/validate-tables.ts::findTableViolations"
+		IMPL "packages/core-mapping/package.json::validate:tables"
+		IMPL "packages/shared-save-processing/package.json::validate:tables"
+		ENFORCED_BY "scripts/validate-tables.spec.ts"
+	SPEC "the world object labels cover exactly the known world object names, which a spec asserts"
+		+ "since the JSON import no longer types the keys"
+		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.spec.ts::should label no"
+			+ "name the game is not known to use"
+	REJECTED "one directory of tables at the repository root: each package would read outside its"
+		+ "perimeter, and the root script would name paths inside the packages"
+	REJECTED "keeping the label totality a type error through satisfies over a TypeScript literal:"
+		+ "the literal is the second home of the rows the move removes"
+	REJECTED "keeping the question on ProceduralWreckContainer1 as a comment beside its row: JSON"
+		+ "carries no comment, so the question lives in its HYPOTHESIS alone, which names the label"
+		+ "table"
+		REF @HYPOTHESIS.ProceduralWrecksAreSpawnedByThePortalGenerator
+		REF @DECISION.ACodeCommentQuestionNamesItsCorpusEntity
+	REJECTED "keeping the source registry of the energy values as a markdown table: the page a"
+		+ "value was read from is a column of its row, the source field"
+	APPLIES_TO_TASK @TASK.CHORE52
+	RATIONALE "The module that reads a table owns it, so the JSON file sits beside that module and"
+		+ "the import stays relative; the legacy terrain layer properties are read by no module and"
+		+ "sit in shared-save-processing, which owns the wire format"
+	SOURCE "ruled while delivering CHORE52, 2026-09-18"
 		REF @PROJECT.PCST

@@ -1,10 +1,9 @@
 import {WorldObjectName} from "./worldObjectNames";
+import optimizerConfig from './optimizerConfig.json' with {type: 'json'};
 
-// Rule EN-OPT-1: Optimizer capacity (max boosted machines) and radius (in meters).
-export const OPTIMIZER_CONFIG_BY_NAME: Partial<Record<WorldObjectName, { radius: number; maxMachines: number }>> = {
-  Optimizer1: {radius: 120, maxMachines: 5},
-  Optimizer2: {radius: 250, maxMachines: 8}
-};
+export const OPTIMIZER_CONFIG_BY_NAME: Partial<Record<WorldObjectName, { radius: number; maxMachines: number }>> = Object.fromEntries(
+  optimizerConfig.map((optimizer) => [optimizer.worldObjectName, {radius: optimizer.radius, maxMachines: optimizer.maxMachines}])
+);
 
 export const ENERGY_FUSE_NAME: WorldObjectName = 'FuseEnergy1';
 

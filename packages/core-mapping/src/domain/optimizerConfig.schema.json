@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "optimizerConfig.schema.json",
+  "title": "Optimizer configuration",
+  "description": "Fuse slots, capacity in boosted machines and radius in meters of each machine optimizer tier.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["worldObjectName", "fuseSlots", "maxMachines", "radius"],
+    "additionalProperties": false,
+    "properties": {
+      "worldObjectName": {"type": "string", "pattern": "^Optimizer[0-9]+$"},
+      "fuseSlots": {"type": "integer", "minimum": 1},
+      "maxMachines": {"type": "integer", "minimum": 1},
+      "radius": {"type": "number", "exclusiveMinimum": 0}
+    }
+  }
+}

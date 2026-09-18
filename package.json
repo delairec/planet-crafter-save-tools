@@ -48,12 +48,14 @@
     "clean:merge": "rm -rf output",
     "test:merge": "bun test --filter cli-merge",
     "validate": "bun run --filter cli-validate validate",
+    "validate:tables": "bun run --filter './packages/*' validate:tables",
     "test:validate": "bun test --filter cli-validate",
     "node:merge": "node --import ./scripts/node/register.js packages/cli-merge/cli/merge-cli.js --platform=node",
     "node:validate": "node --import ./scripts/node/register.js packages/cli-validate/cli/validate-cli.js --platform=node"
   },
   "devDependencies": {
     "@types/bun": "^1.4.2",
+    "ajv": "^8.20.0",
     "bun": "1.4.2",
     "esbuild": "^0.28.2",
     "fallow": "^3.25.0",
