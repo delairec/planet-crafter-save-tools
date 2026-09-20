@@ -24,17 +24,17 @@ Planned:
 
 ## Project Structure
 
-This is a Bun workspace monorepo, organized around Clean Architecture package prefixes:
+This is a Bun workspace monorepo, organized around package prefixes:
 
-| Package                  | Role                                                                                                                     |
-|--------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                   |
-| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` arguments.            |
-| `util-types`             | `RuntimePlatform` contract type, consumed (type-only) by `shared-platforms`.                                             |
-| `core-mapping`           | Domain/application/infrastructure/presentation layers: merge and validation engines, use cases, controllers, presenters. |
-| `cli-merge`              | Thin CLI: parses `--input`/`--output` arguments and delegates to `core-mapping`.                                         |
-| `cli-validate`           | Thin CLI: parses `--file` argument and delegates to `core-mapping`.                                                      |
-| `ui-save-manager`        | SolidStart UI to visualize save files, consuming `core-mapping` controllers.                                             |
+| Package                  | Role                                                                                                                                 |
+|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                               |
+| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` arguments.                        |
+| `util-types`             | `RuntimePlatform` contract type, consumed (type-only) by `shared-platforms`.                                                         |
+| `core-mapping`           | Merge and validation engines organized in Clean Architecture layers to be reusable accross multiple different frontends (CLIs, UIs). |
+| `cli-merge`              | Thin CLI: parses `--input`/`--output` arguments and delegates to `core-mapping`.                                                     |
+| `cli-validate`           | Thin CLI: parses `--file` argument and delegates to `core-mapping`.                                                                  |
+| `ui-save-manager`        | SolidStart UI to visualize save files, consuming `core-mapping` controllers.                                                         |
 
 The prefix of a package name sets what it is allowed to depend on. A type-only import counts as a dependency.
 
@@ -50,11 +50,12 @@ The prefix of a package name sets what it is allowed to depend on. A type-only i
 
 ## Merge and Validate tools
 
-Merges two **Planet Crafter** save files into a single one, preserving as much information as possible.
+Merges two save files from **The Planet Crafter** into a single one, preserving as much information as possible.
 
 ### Prerequisites
 
-Using [Bun](https://bun.sh) `v1.3.14` by default.
+* Using [Bun](https://bun.sh) by default.
+* Minimal compatibility with [Node.js](https://nodejs.org) is supported.
 
 ### Installation
 
