@@ -6,10 +6,10 @@
 
 ## Overview
 
-This project provides tools to manipulate **Planet Crafter** save files. Currently, the available tools are:
+This project provides tools to manipulate save files from **The Planet Crafter**. Currently, the available tools are:
 
-- **Merge**: combine two save files into one, following specific rules to preserve as much information as possible.
-- **Validate**: check if a save file is correctly formatted according to the game's specifications.
+- **Merger**: combine two save files into one, following specific rules to preserve as much information as possible.
+- **Validator**: check if a save file is correctly formatted according to the game's specifications.
 
 In progress:
 
