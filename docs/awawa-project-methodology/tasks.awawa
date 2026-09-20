@@ -590,3 +590,12 @@ TASK FIX53
 	SPEC "color accessibility is verified using a color contrast checker"
 	RATIONALE "observed that some text colors are not readable in light theme, need to ensure"
 		+ "accessibility and readability for all users"
+
+TASK CHORE54
+	TITLE "Simplify commands in sub-packages"
+	STATUS draft
+	DESC "Proposition is to expose cli through bin and remove the need to run commands using --cwd"
+	SPEC "investigate different solutions and select the best approach to aim for efficiency and"
+		+ "simplicity"
+	SPEC "the new setup doesn't break existing bun commands"
+	SPEC "the new setup doesn't break existing node commands (compatibility)"
