@@ -669,7 +669,8 @@ TASK CHORE56
 TASK CHORE57
 	TITLE "provenance cites what git and GitHub do not hold, a pull request by its number and no"
 		+ "longer by an entity"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 109
 	SPEC "the schema declares no PULL_REQUEST type, and no entity of the corpus cites one"
 		IMPL "docs/_schema.awawa::SCHEMA USAGE_REPORT"
 		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
