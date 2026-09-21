@@ -408,10 +408,15 @@ TASK CHORE64
 
 TASK FEAT65
 	TITLE "Place the world objects and world events of Skeo on Skeo"
-	STATUS todo
+	STATUS implemented
 	SPEC "a world object or a world event carrying the planet numeric id -440810600 is placed on"
 		+ "Skeo"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
+			+ "resolve the numeric id of Skeo to its planet name (Rule EN-PLANET-3)"
+		IMPL "packages/core-mapping/src/domain/planetNamesByNumericId.spec.ts::should name the"
+			+ "planet Skeo"
 	WAVE 5
+	DELIVERED_BY 112
 	RATIONALE "Skeo, added by game release 2.102, is the planet whose id -440810600 is missing from"
 		+ "the planet table; the stable hash of the planet name gives it, as it gives the five rows"
 		+ "already there. Without the row the planet name is guessed from the group ids of the"
