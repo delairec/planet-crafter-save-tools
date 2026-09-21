@@ -1,7 +1,7 @@
 DATATABLE EnergyLevels
 	TABLE "packages/core-mapping/src/domain/energyLevels.json"
 	KEY worldObjectName
-	JSON_SCHEMA "packages/core-mapping/src/domain/energyLevels.schema.json"
+	JSON_SCHEMA "scripts/validate-tables/schemas/energyLevels.schema.json"
 	DESC "base kW a positioned world object produces or consumes, before any optimizer bonus"
 	SOURCE "moved out of a TypeScript module and docs/energy-levels.md by CHORE52"
 		REF @PULL_REQUEST.PCST103
@@ -9,7 +9,7 @@ DATATABLE EnergyLevels
 DATATABLE WorldObjectLabels
 	TABLE "packages/core-mapping/src/presentation/worldObjectLabels.json"
 	KEY worldObjectName
-	JSON_SCHEMA "packages/core-mapping/src/presentation/worldObjectLabels.schema.json"
+	JSON_SCHEMA "scripts/validate-tables/schemas/worldObjectLabels.schema.json"
 	DESC "the display label of each world object name"
 	SOURCE "moved out of a TypeScript module and docs/energy-levels.md by CHORE52"
 		REF @PULL_REQUEST.PCST103
@@ -17,7 +17,7 @@ DATATABLE WorldObjectLabels
 DATATABLE OptimizerConfiguration
 	TABLE "packages/core-mapping/src/domain/optimizerConfig.json"
 	KEY worldObjectName
-	JSON_SCHEMA "packages/core-mapping/src/domain/optimizerConfig.schema.json"
+	JSON_SCHEMA "scripts/validate-tables/schemas/optimizerConfig.schema.json"
 	DESC "fuse slots, capacity in boosted machines and radius in meters of each optimizer tier"
 	SOURCE "moved out of a TypeScript module and docs/energy-levels.md by CHORE52"
 		REF @PULL_REQUEST.PCST103
@@ -25,7 +25,7 @@ DATATABLE OptimizerConfiguration
 DATATABLE PlanetNamesByNumericId
 	TABLE "packages/core-mapping/src/domain/planetNamesByNumericId.json"
 	KEY numericId
-	JSON_SCHEMA "packages/core-mapping/src/domain/planetNamesByNumericId.schema.json"
+	JSON_SCHEMA "scripts/validate-tables/schemas/planetNamesByNumericId.schema.json"
 	DESC "the textual planet id each numeric planet id stands for"
 	SOURCE "moved out of a TypeScript module and docs/save-format.md by CHORE52"
 		REF @PULL_REQUEST.PCST103
@@ -33,7 +33,7 @@ DATATABLE PlanetNamesByNumericId
 DATATABLE LegacyTerrainLayerProperties
 	TABLE "packages/shared-save-processing/legacyTerrainLayerProperties.json"
 	KEY property
-	JSON_SCHEMA "packages/shared-save-processing/legacyTerrainLayerProperties.schema.json"
+	JSON_SCHEMA "scripts/validate-tables/schemas/legacyTerrainLayerProperties.schema.json"
 	DESC "the properties of an entry of the Terrain Layers section a legacy save carries"
 	SOURCE "moved out of a TypeScript module and docs/save-format.md by CHORE52"
 		REF @PULL_REQUEST.PCST103

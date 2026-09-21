@@ -62,36 +62,39 @@ describe('findTableViolations', () => {
 
 describe('validateTables', () => {
   let directory: string;
+  let schemaDirectory: string;
 
   beforeEach(async () => {
     directory = await fs.mkdtemp(path.join(os.tmpdir(), 'validate-tables-'));
-    await fs.writeFile(path.join(directory, 'planets.schema.json'), JSON.stringify(planetSchema));
+    schemaDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'validate-tables-schemas-'));
+    await fs.writeFile(path.join(schemaDirectory, 'planets.schema.json'), JSON.stringify(planetSchema));
   });
 
   afterEach(async () => {
     await fs.rm(directory, {recursive: true, force: true});
+    await fs.rm(schemaDirectory, {recursive: true, force: true});
   });
 
-  describe('When every row of the table meets the schema beside it', () => {
+  describe('When every row of the table meets the schema of its name in the schema directory', () => {
     it('should exit with zero', async () => {
       // Arrange
       await fs.writeFile(path.join(directory, 'planets.json'), JSON.stringify([{numericId: 1, planetName: 'Prime'}]));
 
       // Act
-      const exitCode = await validateTables([path.join(directory, 'planets')]);
+      const exitCode = await validateTables([path.join(directory, 'planets')], schemaDirectory);
 
       // Assert
       expect(exitCode).toBe(0);
     });
   });
 
-  describe('When a row of the table breaks the schema beside it', () => {
+  describe('When a row of the table breaks the schema of its name in the schema directory', () => {
     it('should exit with a non-zero code', async () => {
       // Arrange
       await fs.writeFile(path.join(directory, 'planets.json'), JSON.stringify([{numericId: 'one', planetName: 'Prime'}]));
 
       // Act
-      const exitCode = await validateTables([path.join(directory, 'planets')]);
+      const exitCode = await validateTables([path.join(directory, 'planets')], schemaDirectory);
 
       // Assert
       expect(exitCode).toBe(1);
