@@ -618,6 +618,10 @@ TASK FEAT55
 	SPEC "Skeo save format is supported"
 	SOURCE "We need to check for @GAME_RELEASE.2.103 from the wiki source"
 		REF @GAME_RELEASE.2.103
+	SOURCE "Earlier game releases recorded alongside this task; cited here by user ruling of"
+		+ "2026-09-21 on pull request #103"
+		REF @GAME_RELEASE.1.618
+		REF @GAME_RELEASE.2.008
 
 TASK CHORE56
 	TITLE "the repository guards are run by an orchestrator rather than a chain of scripts"
