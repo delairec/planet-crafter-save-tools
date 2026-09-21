@@ -161,13 +161,29 @@ TASK CHORE54
 
 TASK FEAT55
 	TITLE "Validate and merge the logisticsPaused a save written by the Skeo update carries"
-	STATUS todo
+	STATUS implemented
 	SPEC "a save whose global metadata carries logisticsPaused passes validation, and a save"
 		+ "without it still does"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::written by the"
+			+ "Skeo update and carries logisticsPaused"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::should report"
+			+ "the save as valid, with no error and no warning"
+		IMPL "packages/shared-save-processing/schemas/section0-player-progression.schema.json::\"logisticsPaused\""
 	SPEC "the merged save carries the logisticsPaused of save A when save A has it, otherwise the"
 		+ "one of save B, and no logisticsPaused when neither save has it"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should keep"
+			+ "the logistics pause state from save A"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should keep"
+			+ "the logistics pause state from save B"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "write the metadata entry with no logisticsPaused key"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts::...(logisticsPaused"
+			+ "=== undefined ? {} : {logisticsPaused})"
 	SPEC "a merge of two saves that carry no logisticsPaused produces the same bytes as before the"
 		+ "task"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "write the metadata entry with no logisticsPaused key"
+	DELIVERED_BY 111
 	WAVE 5
 	RATIONALE "The Skeo update is game release 2.102; release 2.103 is its first patch and changes"
 		+ "no save key. The only key the update adds is logisticsPaused in the global metadata, the"

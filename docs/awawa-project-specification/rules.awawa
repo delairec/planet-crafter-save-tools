@@ -99,6 +99,10 @@ RULE GlobalMetadataIsSummedAndUnioned
 			+ "write the metadata entry with no logisticsPaused key"
 	APPLIES_TO_SECTION @SECTION.GlobalMetadata
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-META-1 to GR-META-4)"
+	SOURCE "logisticsPaused, added by game release 2.102, arbitrated like the open instance fields"
+		+ "on delivery of the task"
+		PR 111
+		REF @GAME_RELEASE.2.102
 
 RULE TerraformationLevelsTakeTheHigherValue
 	HOLDS_FOR current
