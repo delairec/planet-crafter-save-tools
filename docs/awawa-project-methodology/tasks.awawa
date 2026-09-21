@@ -1408,3 +1408,10 @@ TASK FEAT82
 		+ "between objects, an equipment identifier having to name an inventory; that part comes in"
 		+ "a second step and is drafted for memory only, without further research"
 		REF @PROJECT.PCST
+
+TASK CHORE83
+	TITLE "Add a versionning mechanism"
+	STATUS draft
+	DESC "drafted for memory, no research done; what do we want to version? core-mapping + clis +"
+		+ "uis separetly? or the whole package? what is the trigger for a new version?"
+	SPEC "explore the options for a versionning mechanism, and choose one"
