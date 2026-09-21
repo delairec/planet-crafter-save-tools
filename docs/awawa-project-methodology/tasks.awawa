@@ -741,5 +741,6 @@ TASK CHORE61
 		+ "written again by the report because EVALUATES admits nothing else; the orphan-source"
 		+ "gate of pull request 103 blocked its own rebase on two releases master had added"
 		+ "uncited; distinct from CHORE57, which removes the PULL_REQUEST type"
+		REF @TASK.CHORE57
 	SOURCE "Usage report of pull requests 101, 102 and 103, 2026-09-21"
 		REF @USAGE_REPORT.PR101_102_103
