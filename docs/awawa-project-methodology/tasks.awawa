@@ -699,3 +699,15 @@ TASK CHORE59
 		+ "check-solid-idioms, check-presentation-entities, check-package-dependencies and"
 		+ "check-corpus-anchors scan the repository with their own Glob rather than"
 		+ "readOwnSourceFiles, and check-package-dependencies imports nothing from specSources"
+
+TASK REFACTOR62
+	TITLE "shared-save-processing exposes a function selecting one section of a save string"
+	STATUS draft
+	SPEC "A caller reaching one section of a save string calls a shared-save-processing function"
+		+ "given the section index, and never splits the string on the section separator itself"
+	DESC "callers splitting on '@' to reach one section today: cli-merge testing/fakeSaveStrings.js"
+		+ "(twice), cli-validate testing/fakeSaveContentWithInvalidEntry.js, core-mapping"
+		+ "validateSaveContent.spec.js"
+	SOURCE "Review of pull request #102, 2026-09-21, on"
+		+ "packages/cli-merge/testing/fakeSaveStrings.js"
+		REF @PULL_REQUEST.PCST102
