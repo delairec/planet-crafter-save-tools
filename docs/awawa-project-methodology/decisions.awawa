@@ -2299,6 +2299,7 @@ DECISION AnAnchorNamesAFileTrackedByGit
 		IMPL "agents/corpus-ecrire.md::Une ancre nomme un fichier suivi par git"
 		IMPL "docs/_schema.awawa::the committed fixture, JSON Schema, test or document that proves"
 			+ "the index"
+		ENFORCED_BY "scripts/check-corpus-anchors.ts"
 	SPEC "A statement about the save is attested by a committed witness: a fixture of"
 		+ "packages/ui-save-manager/e2e/fixtures, a JSON Schema of"
 		+ "packages/shared-save-processing/schemas, a test, or a document of docs"

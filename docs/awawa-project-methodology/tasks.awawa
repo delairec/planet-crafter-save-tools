@@ -532,14 +532,21 @@ TASK DOCS50
 
 TASK CHORE51
 	TITLE "a guard refuses an anchor of the corpus that names a file git does not track"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun run check:anchors reads every anchor of the corpus and exits non-zero when one names"
 		+ "a path git does not track, naming the entity, the field and the path"
+		IMPL "scripts/check-corpus-anchors.ts::names ${path}, a path git does not track"
+		IMPL "package.json::check:anchors"
 	SPEC "the guard covers every field the schema declares as an anchor, read from the schema and"
 		+ "not from a list written in the script"
+		IMPL "scripts/check-corpus-anchors.ts::export function readAnchorFields"
+		IMPL "scripts/check-corpus-anchors.spec.ts::describe('readAnchorFields'"
 	SPEC "check:anchors is called by check:guards, as the seven guards already there are"
+		IMPL "package.json::&& bun run check:anchors"
 	SPEC "a spec file pins the guard on a tracked path, on an untracked one and on a path that does"
 		+ "not exist at all"
+		IMPL "scripts/check-corpus-anchors.spec.ts::describe('findUntrackedCorpusAnchors'"
+	DELIVERED_BY 101
 	RATIONALE "L016 tests existence on disk and never consults git, so an anchor on an ignored path"
 		+ "is clean for its author and an error in a fresh clone; the rule is written"
 		+ "(@DECISION.AnAnchorNamesAFileTrackedByGit) and enforced by nothing"
@@ -611,3 +618,62 @@ TASK FEAT55
 	SPEC "Skeo save format is supported"
 	SOURCE "We need to check for @GAME_RELEASE.2.103 from the wiki source"
 		REF @GAME_RELEASE.2.103
+
+TASK CHORE56
+	TITLE "the repository guards are run by an orchestrator rather than a chain of scripts"
+	STATUS draft
+	DESC "Raised in the review of pull request 101: check:guards chains eight bun run calls in"
+		+ "package.json and grows by one with each guard; the shape of the orchestrator, one file"
+		+ "or several, is to be decided when the task is refined"
+	SPEC "check:guards runs every guard without its list being restated in package.json"
+	SPEC "each guard stays runnable alone"
+	SPEC "a failing guard does not stop the others, and the run reports every guard that failed"
+
+TASK CHORE57
+	TITLE "PULL_REQUEST is no longer a source type of the corpus"
+	STATUS draft
+	DESC "Raised in the review of pull request 101: a decision does not need a source every time,"
+		+ "and recording one PULL_REQUEST entity per cited pull request duplicates the log of the"
+		+ "repository; the entities of that type are cited today by SOURCE fields of decisions and"
+		+ "processes and by the EVALUATES field of USAGE_REPORT"
+	SPEC "the schema declares no PULL_REQUEST type, and no entity of the corpus cites one"
+	SPEC "what a USAGE_REPORT evaluates is still named once PULL_REQUEST is gone"
+
+TASK CHORE58
+	TITLE "investigate running awawa in CI, and what it would simplify"
+	STATUS draft
+	DESC "Raised in the review of pull request 101: the guards CI job does not install awawa, so"
+		+ "check:anchors parses the corpus text itself; find out whether awawa can run in CI and"
+		+ "what it would simplify or add"
+	SPEC "the task records whether awawa can be installed in a GitHub Actions runner, from which"
+		+ "source and at which cost per run"
+	SPEC "the task records, for each place named in its rationale, the lines awawa in CI would"
+		+ "remove or the check it would add, and whether that gain is worth the installation"
+	SPEC "when the gain is worth it, a todo task carries the change; otherwise the reason is"
+		+ "written in this task"
+	RATIONALE "awawa is today a local x86-64 binary, 2.7.0 in ~/.local/bin, and the repository"
+		+ "names no source to install it from; it could simplify the corpus parser of"
+		+ "scripts/check-corpus-anchors.ts and its spec, which awawa show or status --json would"
+		+ "replace, and the whole guard if lint L016 consulted git instead of the disk; it would"
+		+ "add a CI run of awawa fmt --check and awawa lint --strict, which no job runs today, so"
+		+ "the conformance of the corpus is checked only on the machine of its author"
+
+TASK CHORE59
+	TITLE "investigate whether the repository guards need a shared helper package"
+	STATUS draft
+	DESC "Raised in the review of pull request 101: find out whether other guards share needs with"
+		+ "check:anchors, and centralise their common functions in a helper package if the need is"
+		+ "proven; distinct from CHORE56, which is about how the guards are run, not the code they"
+		+ "share"
+		REF @TASK.CHORE56
+	SPEC "the task lists every function two guards or more implement or could share, with the files"
+		+ "that carry it"
+	SPEC "the task records whether that list justifies a helper package, and under which prefix of"
+		+ "the package matrix, or why scripts/specSources.ts is enough"
+	SPEC "when the need is proven, a todo task carries the move; otherwise the reason is written in"
+		+ "this task"
+	RATIONALE "scripts/specSources.ts already serves seven of the eight guards with"
+		+ "reportViolations, maskStringLiterals, readOwnSourceFiles and isOwnSourceFile;"
+		+ "check-solid-idioms, check-presentation-entities, check-package-dependencies and"
+		+ "check-corpus-anchors scan the repository with their own Glob rather than"
+		+ "readOwnSourceFiles, and check-package-dependencies imports nothing from specSources"
