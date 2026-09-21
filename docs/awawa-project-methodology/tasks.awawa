@@ -34,7 +34,8 @@ TASK FEAT47
 TASK DOCS48
 	TITLE "the corpus section of AGENTS.md is split into files it links to, read only when needed"
 	DESC "the target is this project's AGENTS.md, not the one of the .ai repository"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-22"
 	DELIVERED_BY 105
 	SPEC "AGENTS.md keeps, about the corpus, only what a session needs before its first command,"
 		+ "and links to the rest"
@@ -75,7 +76,9 @@ TASK DOCS50
 
 TASK CHORE51
 	TITLE "a guard refuses an anchor of the corpus that names a file git does not track"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-22"
+	DELIVERED_BY 101
 	SPEC "bun run check:anchors reads every anchor of the corpus and exits non-zero when one names"
 		+ "a path git does not track, naming the entity, the field and the path"
 		IMPL "scripts/check-corpus-anchors.ts::names ${path}, a path git does not track"
@@ -89,7 +92,6 @@ TASK CHORE51
 	SPEC "a spec file pins the guard on a tracked path, on an untracked one and on a path that does"
 		+ "not exist at all"
 		IMPL "scripts/check-corpus-anchors.spec.ts::describe('findUntrackedCorpusAnchors'"
-	DELIVERED_BY 101
 	RATIONALE "L016 tests existence on disk and never consults git, so an anchor on an ignored path"
 		+ "is clean for its author and an error in a fresh clone; the rule is written"
 		+ "(@DECISION.AnAnchorNamesAFileTrackedByGit) and enforced by nothing"
@@ -99,7 +101,8 @@ TASK CHORE51
 TASK CHORE52
 	TITLE "the product value tables become JSON files with a JSON Schema each, and five DATATABLE"
 		+ "entities name them"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-22"
 	DELIVERED_BY 103
 	SPEC "the energy production levels, the world object labels, the optimizer configuration, the"
 		+ "planet names by numeric id and the legacy save properties each live in one JSON file, a"
@@ -215,7 +218,8 @@ TASK CHORE56
 TASK CHORE57
 	TITLE "provenance cites what git and GitHub do not hold, a pull request by its number and no"
 		+ "longer by an entity"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-22"
 	DELIVERED_BY 109
 	SPEC "the schema declares no PULL_REQUEST type, and no entity of the corpus cites one"
 		IMPL "docs/_schema.awawa::SCHEMA USAGE_REPORT"
