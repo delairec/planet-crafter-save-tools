@@ -1610,28 +1610,6 @@ DECISION AgentsMdNamesOneModelEntityPerType
 		PR 68
 		PR 69
 
-DECISION ACodeCommentQuestionNamesItsCorpusEntity
-	STATUS archived
-	ARCHIVED_ON 2026-09-18
-	SPEC "A question left as a comment in a source file is kept and names, on the next line, the"
-		+ "corpus entity that carries it"
-		IMPL "packages/core-mapping/src/presentation/worldObjectLabels.ts::// Is procedural wreck"
-			+ "related to portal generator?"
-	REJECTED "Deleting the comment and keeping only the corpus entity: the reader of the label"
-		+ "table no longer finds the question where it applies"
-	REJECTED "Keeping the comment alone, with no entity: no command reads it and status does not"
-		+ "count it"
-	RATIONALE "The comment is a signpost to the entity, not its home: it is useful where the table"
-		+ "is read, and deleting it removes the question with it, as REFACTOR38 did; no command"
-		+ "reads a comment, so the entity next to it is what reaches the next session, here the"
-		+ "procedural wreck question; this is a project exception to STD-5, not a general rule,"
-		+ "since the signpost is only worth an indexed entity at the other end, which only a"
-		+ "project with a corpus offers"
-		REF @TASK.REFACTOR38
-		REF @HYPOTHESIS.ProceduralWrecksAreSpawnedByThePortalGenerator
-	SOURCE "user ruling of 2026-09-14, review of PR #76"
-		PR 76
-
 DECISION ArtifactAssetsFollowThePublishedPage
 	SPEC "docs/awawa-usage-reports/artifact-assets/ holds the files the public feedback page for"
 		+ "the awawa team links by their raw GitHub URL: the archive of the eleven reports and the"
@@ -2408,25 +2386,6 @@ DECISION ASectionIsWrittenWithTheRuleThatCitesIt
 		+ "complete by construction, since a section with no rule is the shape a forgotten"
 		+ "obligation takes"
 
-DECISION AValueTableIsRecordedOnceItsFileExists
-	STATUS archived
-	ARCHIVED_ON 2026-09-18
-	SPEC "a DATATABLE is written only when the JSON file and the JSON Schema its TABLE and"
-		+ "JSON_SCHEMA name are tracked by git"
-		IMPL "docs/_schema.awawa::FIELD JSON_SCHEMA anchor"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::the product value tables become JSON"
-			+ "files with a JSON Schema each"
-	REJECTED "creating the JSON files in the step that writes the first entities, the TypeScript"
-		+ "modules keeping their rows: every value would have two homes until the rewiring landed,"
-		+ "which is the duplication the tables are being moved to end"
-	REJECTED "writing the five DATATABLE against the TypeScript modules: TABLE names the file"
-		+ "holding the rows, and a module that restates them is not that file"
-	UNTIL @TASK.CHORE52
-	RATIONALE "The rule generalises beyond the tables: an anchor field that is REQUIRED makes the"
-		+ "entity wait for the artefact, and the wait is carried by a task rather than by a"
-		+ "placeholder anchor"
-		REF @DECISION.AnAnchorNamesAFileTrackedByGit
-
 DECISION ADocumentIsDeletedOnlyWhenEveryCitationIsRepointed
 	SPEC "A document of docs/ is deleted only once every statement it carried has another home and"
 		+ "every citation of it, inside the corpus and outside, has been repointed"
@@ -2546,7 +2505,6 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "carries no comment, so the question lives in its HYPOTHESIS alone, which names the label"
 		+ "table"
 		REF @HYPOTHESIS.ProceduralWrecksAreSpawnedByThePortalGenerator
-		REF @DECISION.ACodeCommentQuestionNamesItsCorpusEntity
 	REJECTED "keeping the source registry of the energy values as a markdown table: the page a"
 		+ "value was read from is a column of its row, the source field"
 	APPLIES_TO_TASK @TASK.CHORE52

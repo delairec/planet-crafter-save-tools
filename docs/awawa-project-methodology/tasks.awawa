@@ -429,28 +429,6 @@ TASK FIX45
 	SOURCE "Review of pull request #15 and user ruling of 2026-09-16"
 		PR 15
 
-TASK CHORE3
-	TITLE "the root manifest declares bun again in devDependencies at 1.3.14, without bumping it:"
-		+ "the bump comes back through Dependabot"
-	STATUS archived
-	ARCHIVED_ON "2026-09-17"
-	SPEC "package.json declares bun in devDependencies at the same version as the one pinned in"
-		+ "packageManager"
-		IMPL "package.json"
-	SPEC "No workflow hard-codes bun-version; dependencies.yml and ui-tests.yml read"
-		+ "bun-version-file"
-		IMPL ".github/workflows/dependencies.yml"
-		IMPL ".github/workflows/ui-tests.yml"
-	DELIVERED_BY 90
-	RATIONALE "A structural task, not a bump: bumping Bun by hand in this pull request would lose"
-		+ "the demonstration that the automatic path is restored. No guard accompanies the fix, by"
-		+ "user ruling of 2026-09-16, after the three guard forms considered proved either red on"
-		+ "every Dependabot pull request or blind to the drift they claimed to cover"
-		REF @DECISION.NodeFollowsReleasesWhileBunIsPinnedAndBumped
-	SOURCE "Dependabot updates blocked between pull requests #57 and #89"
-		PR 57
-		PR 89
-
 TASK FEAT47
 	TITLE "a cleanup pass archives the delivered tasks and purges what has been archived for a"
 		+ "delay to be defined"
@@ -488,20 +466,6 @@ TASK DOCS48
 		+ "all of it, whether its task touches the corpus or not"
 	SOURCE "Review of the corpus migration"
 		PR 95
-
-TASK CHORE49
-	TITLE "package.json carries one Bun version in packageManager and devDependencies.bun"
-	STATUS archived
-	ARCHIVED_ON "2026-09-18"
-	SPEC "packageManager and devDependencies.bun in the root package.json name the same Bun release"
-		IMPL "package.json::\"packageManager\""
-	DELIVERED_BY 100
-	RATIONALE "pull request #91 bumped devDependencies.bun to 1.4.2 while packageManager stayed at"
-		+ "bun@1.3.14, so the third SPEC of the decision is false and lint cannot see it, both"
-		+ "anchors resolving"
-		REF @DECISION.NodeFollowsReleasesWhileBunIsPinnedAndBumped
-	SOURCE "Usage report of the corpus migration, part A remediation 2"
-		REF @USAGE_REPORT.PR95
 
 TASK DOCS50
 	TITLE "the five points the corpus migration left in its pull request body are ruled in the"
