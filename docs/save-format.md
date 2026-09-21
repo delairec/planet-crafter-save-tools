@@ -114,13 +114,14 @@ erDiagram
 
 **Cardinality:** 1 unique entry.
 
-| Property                 | Type     | Description                                      |
-|--------------------------|----------|--------------------------------------------------|
-| `terraTokens`            | `int`    | Current terraformation tokens                    |
-| `allTimeTerraTokens`     | `int`    | Total tokens earned since the beginning          |
-| `unlockedGroups`         | `string` | Comma separated list of unlocked research groups |
-| `openedInstanceSeed`     | `int`    | Open dungeon instance seed (0 = none)            |
-| `openedInstanceTimeLeft` | `int`    | Remaining instance time (seconds)                |
+| Property                 | Type     | Description                                                            |
+|--------------------------|----------|------------------------------------------------------------------------|
+| `terraTokens`            | `int`    | Current terraformation tokens                                          |
+| `allTimeTerraTokens`     | `int`    | Total tokens earned since the beginning                                |
+| `unlockedGroups`         | `string` | Comma separated list of unlocked research groups                       |
+| `openedInstanceSeed`     | `int`    | Open dungeon instance seed (0 = none)                                  |
+| `openedInstanceTimeLeft` | `int`    | Remaining instance time (seconds)                                      |
+| `logisticsPaused`        | `bool`   | Drone logistics pause state; optional, written from game release 2.102 |
 
 ---
 

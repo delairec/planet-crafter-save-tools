@@ -26,6 +26,10 @@
     "openedInstanceTimeLeft": {
       "type": "integer",
       "description": "Time left on the opened dungeon instance, in seconds"
+    },
+    "logisticsPaused": {
+      "type": "boolean",
+      "description": "State of the drone logistics pause button (stop and recall all drones); written from game release 2.102 (Skeo update), absent from older saves"
     }
   }
 }

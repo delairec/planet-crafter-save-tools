@@ -71,8 +71,9 @@ RULE GlobalMetadataIsSummedAndUnioned
 	DOMAIN merge
 	CONFLICT "the merged save holds one metadata entry while each input carries its own counters,"
 		+ "unlocked groups and open instance fields"
-	RESOLUTION "the open instance fields alone are arbitrated, save A winning them; the counters"
-		+ "are summed and the unlocked groups unioned, neither being a choice between the two saves"
+	RESOLUTION "the open instance fields and logisticsPaused alone are arbitrated, save A winning"
+		+ "them; the counters are summed and the unlocked groups unioned, neither being a choice"
+		+ "between the two saves"
 	SPEC "terraTokens is the sum of both saves"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
 			+ "sum terra tokens"
@@ -88,6 +89,14 @@ RULE GlobalMetadataIsSummedAndUnioned
 			+ "keep the instance seed from save A"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
 			+ "keep the remaining instance time from save A"
+	SPEC "logisticsPaused is taken from save A when save A carries it, otherwise from save B, and"
+		+ "is absent when neither save carries it"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "keep the logistics pause state from save A"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "keep the logistics pause state from save B"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "write the metadata entry with no logisticsPaused key"
 	APPLIES_TO_SECTION @SECTION.GlobalMetadata
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-META-1 to GR-META-4)"
 
@@ -386,3 +395,22 @@ RULE APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-PLAYER-4, a"
 		+ "fact about the save left inside @RULE.PlayersAreDeduplicatedByName"
 		REF @RULE.PlayersAreDeduplicatedByName
+
+RULE TheGlobalMetadataEntryMayOmitLogisticsPaused
+	HOLDS_FOR both
+	DOMAIN format
+	SPEC "the global metadata entry may carry logisticsPaused, a boolean, and may omit it, the"
+		+ "section schema not requiring it"
+		ATTESTED_BY "packages/shared-save-processing/schemas/section0-player-progression.schema.json::\"logisticsPaused\""
+		ATTESTED_BY "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::written"
+			+ "by the Skeo update and carries logisticsPaused"
+	APPLIES_TO_SECTION @SECTION.GlobalMetadata
+	RATIONALE "Game release 2.102, the Skeo update, adds logisticsPaused, the state of the drone"
+		+ "button stop and recall all drones, written as false on save; a save written before it"
+		+ "has no such key"
+		REF @GAME_RELEASE.2.102
+	SOURCE "The PCEdit save diff between 2.008 and 2.102, read on 2026-09-21, and the sample save"
+		+ "written by 2.103 in the private context, whose metadata entry ends on logisticsPaused"
+		+ "false"
+		REF @URL.PceditSaveDiff
+		REF @PROJECT.DNC
