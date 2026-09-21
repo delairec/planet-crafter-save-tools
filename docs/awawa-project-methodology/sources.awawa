@@ -361,3 +361,14 @@ URL AkarnokdEnglishPlusLabels
 URL AkarnokdSupports2103
 	LOCATION "https://github.com/akarnokd/ThePlanetCrafterMods/commit/16fa2a630497ba0154406822e42919ed9d789039"
 	DESC "community mods raise their supported game version to 2.103, 2026-09-14"
+
+PULL_REQUEST PCST107
+	PROJECT @PROJECT.PCST
+	NUMBER 107
+	DESC "docs(tasks): split FEAT55 into wave 5; ratify FEAT55, FEAT65, TEST67"
+
+USAGE_REPORT PR107
+	FILE "docs/awawa-usage-reports/pull-requests/2026-09-21-pr-107.md::<!-- awawa-usage-report -->"
+	EVALUATES @PULL_REQUEST.PCST107
+	DESC "usage report of pull request 107, the refinement and split of FEAT55, committed on its"
+		+ "branch before the merge"
