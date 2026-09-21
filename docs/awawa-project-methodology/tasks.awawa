@@ -609,5 +609,5 @@ TASK FEAT55
 		+ "save files. Currently the new format is not supported, which causes a validation error"
 		+ "when trying to display"
 	SPEC "Skeo save format is supported"
-	SOURCE ""
+	SOURCE "We need to check for @GAME_RELEASE.2.103 from the wiki source"
 		REF @GAME_RELEASE.2.103

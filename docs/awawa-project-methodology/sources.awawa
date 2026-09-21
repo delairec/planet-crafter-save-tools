@@ -1,3 +1,9 @@
+GAME_RELEASE 1.618
+	DESC "Toxicity - Patch #6"
+
+GAME_RELEASE 2.008
+	DESC "v2 - Patch #3"
+
 PROJECT PCST
 	GIT_REPOSITORY "delairec/planet-crafter-save-tools"
 	DESC "this repository"
@@ -264,3 +270,6 @@ USAGE_REPORT PR100
 	EVALUATES @PULL_REQUEST.PCST100
 	DESC "usage report of pull request 100, committed in a docs pull request of its own after the"
 		+ "merge"
+
+GAME_RELEASE 2.103
+	DESC "Skeo - Patch #1"
