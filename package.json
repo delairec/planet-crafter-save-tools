@@ -27,7 +27,7 @@
     "lint:types": "tsc --noEmit && bun run --filter './packages/*' lint:types",
     "build:ui": "bun run --filter ui-save-manager build",
     "audit:quality": "bun run check:guards && bun run fallow:quality && bun run fallow:health",
-    "check:guards": "bun run check:assertions && bun run check:fixtures && bun run check:dependencies && bun run check:presentation && bun run check:idioms && bun run check:scenario-fixtures && bun run check:locators && bun run check:anchors",
+    "check:guards": "bun run check:assertions && bun run check:fixtures && bun run check:dependencies && bun run check:presentation && bun run check:idioms && bun run check:scenario-fixtures && bun run check:locators && bun run check:anchors && bun run validate:tables",
     "check:assertions": "bun scripts/check-test-assertions.ts",
     "check:fixtures": "bun scripts/check-fixture-typing.ts",
     "check:dependencies": "bun scripts/check-package-dependencies.ts",
@@ -49,12 +49,14 @@
     "clean:merge": "rm -rf output",
     "test:merge": "bun test --filter cli-merge",
     "validate": "bun run --filter cli-validate validate",
+    "validate:tables": "bun run --filter './packages/*' validate:tables",
     "test:validate": "bun test --filter cli-validate",
     "node:merge": "node --import ./scripts/node/register.js packages/cli-merge/cli/merge-cli.js --platform=node",
     "node:validate": "node --import ./scripts/node/register.js packages/cli-validate/cli/validate-cli.js --platform=node"
   },
   "devDependencies": {
     "@types/bun": "^1.4.2",
+    "ajv": "^8.20.0",
     "bun": "1.4.2",
     "esbuild": "^0.28.2",
     "fallow": "^3.25.0",

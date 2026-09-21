@@ -1,0 +1,8 @@
+[
+  {"property": "layerId", "type": "string", "description": "Id of the layer (e.g. \"PC-Toxicity-Layer2\")"},
+  {"property": "planet", "type": "int", "description": "Planet numeric ID"},
+  {"property": "colorBase", "type": "string", "description": "Base color as \"R-G-B-A\""},
+  {"property": "colorCustom", "type": "string", "description": "Custom color as \"R-G-B-A\""},
+  {"property": "colorBaseLerp", "type": "int", "description": "Base color intensity (≥ 0)"},
+  {"property": "colorCustomLerp", "type": "int", "description": "Custom color intensity (≥ 0)"}
+]

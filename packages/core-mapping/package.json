@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "bun test",
-    "lint:types": "tsc --noEmit"
+    "lint:types": "tsc --noEmit",
+    "validate:tables": "bun ../../scripts/validate-tables/validate-tables.ts src/domain/energyLevels src/domain/optimizerConfig src/domain/planetNamesByNumericId src/presentation/worldObjectLabels"
   },
   "exports": {
     "./controllers/*": "./src/controllers/*.ts",

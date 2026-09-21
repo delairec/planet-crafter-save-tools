@@ -1,0 +1,29 @@
+DATATABLE EnergyLevels
+	TABLE "packages/core-mapping/src/domain/energyLevels.json"
+	KEY worldObjectName
+	JSON_SCHEMA "scripts/validate-tables/schemas/energyLevels.schema.json"
+	DESC "base kW a positioned world object produces or consumes, before any optimizer bonus"
+
+DATATABLE WorldObjectLabels
+	TABLE "packages/core-mapping/src/presentation/worldObjectLabels.json"
+	KEY worldObjectName
+	JSON_SCHEMA "scripts/validate-tables/schemas/worldObjectLabels.schema.json"
+	DESC "the display label of each world object name"
+
+DATATABLE OptimizerConfiguration
+	TABLE "packages/core-mapping/src/domain/optimizerConfig.json"
+	KEY worldObjectName
+	JSON_SCHEMA "scripts/validate-tables/schemas/optimizerConfig.schema.json"
+	DESC "fuse slots, capacity in boosted machines and radius in meters of each optimizer tier"
+
+DATATABLE PlanetNamesByNumericId
+	TABLE "packages/core-mapping/src/domain/planetNamesByNumericId.json"
+	KEY numericId
+	JSON_SCHEMA "scripts/validate-tables/schemas/planetNamesByNumericId.schema.json"
+	DESC "the textual planet id each numeric planet id stands for"
+
+DATATABLE LegacyTerrainLayerProperties
+	TABLE "packages/shared-save-processing/legacyTerrainLayerProperties.json"
+	KEY property
+	JSON_SCHEMA "scripts/validate-tables/schemas/legacyTerrainLayerProperties.schema.json"
+	DESC "the properties of an entry of the Terrain Layers section a legacy save carries"

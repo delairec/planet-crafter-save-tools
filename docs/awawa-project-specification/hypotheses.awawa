@@ -39,11 +39,9 @@ HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 		+ "PortalGenerator1, the portal generator"
 	UNTIL "a save or a game source shows procedural wrecks spawned without PortalGenerator1"
 	RATIONALE "ProceduralInstanceGenerator has no label and renders its own key; once the link is"
-		+ "established the label table would name it, names being attested by a source or a save."
-		+ "The question was left as a code comment in worldObjectLabels, kept there and pointing at"
-		+ "this entity"
+		+ "established the label table would name it, names being attested by a source or a save"
 		REF @DECISION.WorldObjectNamesAreAttestedBySourceOrSave
-		REF @DECISION.ACodeCommentQuestionNamesItsCorpusEntity
+		REF @DATATABLE.WorldObjectLabels
 	SOURCE "User ruling of 2026-09-14 in the review of pull request 76, recorded on 2026-09-18"
 		REF @PULL_REQUEST.PCST76
 
