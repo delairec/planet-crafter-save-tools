@@ -849,3 +849,30 @@ TASK FEAT59
 	WAVE 6
 	RATIONALE "Position editing allows players to quickly navigate their world and undo unwanted"
 		+ "location changes"
+
+TASK FIX60
+	TITLE "detect and recover corrupted save files"
+	STATUS draft
+	SPEC "The validation engine detects common corruption patterns: malformed sections, invalid"
+		+ "entry counts, missing critical data, and type mismatches"
+	SPEC "Recovery strategies are implemented for recoverable corruption types: truncation repair,"
+		+ "section restoration, and entry reconstruction"
+	SPEC "Validation reports distinguish between unrecoverable and recoverable corruption states"
+	WAVE 7
+	RATIONALE "Players occasionally encounter corrupted saves from crashes or incomplete writes."
+		+ "Detection and recovery logic must precede recovery UI features to enable automated or"
+		+ "guided recovery workflows"
+
+TASK TEST61
+	TITLE "comprehensive testing of save recovery logic"
+	STATUS draft
+	SPEC "Unit tests cover each corruption pattern detector: malformed sections, entry count"
+		+ "mismatches, missing fields, and type violations"
+	SPEC "Integration tests verify recovery strategies on corrupted saves: truncation repair,"
+		+ "section reconstruction, and entry validation"
+	SPEC "End-to-end scenarios validate that recovered saves load correctly and retain playable"
+		+ "state"
+	AFTER @TASK.FIX60
+	WAVE 7
+	RATIONALE "Recovery logic correctness is critical; comprehensive test coverage ensures all"
+		+ "patterns are handled and recovered saves remain valid and playable"
