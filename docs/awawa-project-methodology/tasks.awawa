@@ -9,7 +9,7 @@ TASK CHORE46
 		+ "schedule the audit job, which the repository does not do: it runs only on a pull request"
 		+ "and on the default branch"
 	SOURCE "Observed while checking the weekly Dependabot updates after their merge"
-		REF @PULL_REQUEST.PCST53
+		PR 53
 
 TASK REFACTOR37
 	TITLE "Clean Architecture of core-mapping: the remaining boundaries, in two pull requests,"
@@ -59,10 +59,8 @@ TASK REFACTOR37
 		+ "three pull requests to rebase onto a move of types. The sections[3] ?? [] fallback is"
 		+ "accepted by tsc because the left operand is not nullable; were the fallback taken,"
 		+ "calling the factory would throw a TypeError, so the line is either dead or wrong"
-		REF @PULL_REQUEST.PCST62
-		REF @PULL_REQUEST.PCST65
 	SOURCE "Part A of the task, the core-mapping domain boundaries"
-		REF @PULL_REQUEST.PCST62
+		PR 62
 
 TASK REFACTOR15
 	TITLE "the five core-mapping domain entities become classes, the eleven value objects staying"
@@ -296,9 +294,9 @@ TASK REFACTOR38
 		REF @TASK.REFACTOR15
 		REF @TASK.REFACTOR37
 	SOURCE "Complete code review of 2026-09-07"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 	SOURCE "User ruling of 2026-09-14: three pull requests, hence three tasks"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 
 TASK TEST43
 	TITLE "core-mapping domain specs brought in line with TEST-1: entities, value objects and merge"
@@ -344,12 +342,12 @@ TASK TEST43
 		REF @TASK.REFACTOR38
 		REF @TASK.REFACTOR15
 	SOURCE "Complete code review of 2026-09-07"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 	SOURCE "User ruling of 2026-09-14: three pull requests, hence three tasks"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 	SOURCE "User ruling of 2026-09-14: the last two carrying specs are delivered here, the rule"
 		+ "moving to the general instructions"
-		REF @PULL_REQUEST.PCST79
+		PR 79
 
 TASK TEST44
 	TITLE "core-mapping application, infrastructure and presentation specs brought in line with"
@@ -393,11 +391,11 @@ TASK TEST44
 		REF @DECISION.AControllerSpecCoversWiringNotBranches
 		REF @DECISION.ASectionIndexIsNeverHardCoded
 	SOURCE "Complete code review of 2026-09-07"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 	SOURCE "User ruling of 2026-09-14: three pull requests, hence three tasks"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 	SOURCE "Re-audit of the 2026-09-07 findings at the start of the task"
-		REF @PULL_REQUEST.PCST82
+		PR 82
 
 TASK FIX45
 	TITLE "validation refuses a save whose section 0 carries no entry, before any merge and any"
@@ -425,12 +423,11 @@ TASK FIX45
 		+ "compiles, only the ten per-entry schemas being compiled. The layer of the error type is"
 		+ "left to the task: the named error directory covers only the core-mapping infrastructure,"
 		+ "and mergeGlobalMetadata is a domain rule"
-		REF @PULL_REQUEST.PCST15
 		REF @DECISION.AnEmptyMetadataSectionIsRefusedByValidation
 		REF @DECISION.AnErrorsOriginDecidesItsPath
 		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType
 	SOURCE "Review of pull request #15 and user ruling of 2026-09-16"
-		REF @PULL_REQUEST.PCST15
+		PR 15
 
 TASK CHORE3
 	TITLE "the root manifest declares bun again in devDependencies at 1.3.14, without bumping it:"
@@ -451,8 +448,8 @@ TASK CHORE3
 		+ "every Dependabot pull request or blind to the drift they claimed to cover"
 		REF @DECISION.NodeFollowsReleasesWhileBunIsPinnedAndBumped
 	SOURCE "Dependabot updates blocked between pull requests #57 and #89"
-		REF @PULL_REQUEST.PCST57
-		REF @PULL_REQUEST.PCST89
+		PR 57
+		PR 89
 
 TASK FEAT47
 	TITLE "a cleanup pass archives the delivered tasks and purges what has been archived for a"
@@ -466,8 +463,7 @@ TASK FEAT47
 	SPEC "It purges, entity by entity, every archived entity whose PURGE is true and whose"
 		+ "ARCHIVED_ON is at least n days old (n to be configurable), with the reference lines to"
 		+ "it; a purge that breaks lint --strict is restored and reported"
-	SPEC "It deletes every PULL_REQUEST and USAGE_REPORT nothing references, until none is left,"
-		+ "and never a PROJECT"
+	SPEC "It deletes every USAGE_REPORT nothing references, until none is left, and never a PROJECT"
 	SPEC "It works on a branch and opens a pull request whose body is its report: what was"
 		+ "archived, purged, deleted and kept with the reason, and every active question whose"
 		+ "BLOCKS names an implemented task; nothing to do opens no pull request"
@@ -491,7 +487,7 @@ TASK DOCS48
 	RATIONALE "the section grew with the migration, and every session that loads AGENTS.md loads"
 		+ "all of it, whether its task touches the corpus or not"
 	SOURCE "Review of the corpus migration"
-		REF @PULL_REQUEST.PCST95
+		PR 95
 
 TASK CHORE49
 	TITLE "package.json carries one Bun version in packageManager and devDependencies.bun"
@@ -553,7 +549,6 @@ TASK CHORE51
 		+ "(@DECISION.AnAnchorNamesAFileTrackedByGit) and enforced by nothing"
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
 	SOURCE "Review of the target schema, 2026-09-18"
-		REF @PROJECT.PCST
 
 TASK CHORE52
 	TITLE "the product value tables become JSON files with a JSON Schema each, and five DATATABLE"
@@ -586,14 +581,6 @@ TASK CHORE52
 		+ "deleted, no row surviving in markdown"
 		IMPL "docs/save-format.md::The properties of a Terrain Layers entry are the rows of"
 		IMPL "docs/energy-levels.md::Optimizer tier are the rows of"
-	SPEC "a URL or a GAME_RELEASE entity that no SOURCE cites is a lint error, and the workspace"
-		+ "lints clean under --strict with that gate in place"
-		IMPL "docs/_schema.awawa::INCOMING SOURCE_OF"
-	DESC "orphan sources: WHEN STATUS active carrying INCOMING, on URL and on GAME_RELEASE, under a"
-		+ "CONVERSE declared on SOURCE.REF; INCOMING at type level is L023; probed on awawa 2.7.0"
-		+ "on a copy of the whole workspace, 2026-09-18: two orphans raise L026, the 275 entities"
-		+ "stay clean, and every footer of a source then reads under that CONVERSE instead of"
-		+ "referenced by"
 	RATIONALE "A DATATABLE requires TABLE and JSON_SCHEMA, two anchors on files git tracks; the"
 		+ "tables are TypeScript modules today and neither file exists. Writing the five entities"
 		+ "before the task would leave the corpus pointing at nothing, and creating the JSON files"
@@ -602,9 +589,7 @@ TASK CHORE52
 		+ "carries the whole move"
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
 	SOURCE "2026-09-18: ordering ruled before the first entity was written"
-		REF @PROJECT.PCST
 	SOURCE "2026-09-18: orphan-source criterion added on the owner's ruling"
-		REF @PROJECT.PCST
 
 TASK FIX53
 	TITLE "Ensure text colors are readable in both light and dark themes"
@@ -684,27 +669,48 @@ TASK CHORE56
 TASK CHORE57
 	TITLE "provenance cites what git and GitHub do not hold, a pull request by its number and no"
 		+ "longer by an entity"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 109
 	SPEC "the schema declares no PULL_REQUEST type, and no entity of the corpus cites one"
+		IMPL "docs/_schema.awawa::SCHEMA USAGE_REPORT"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "APullRequestIsCitedByItsNumberNeverByAnEntity"
 	SPEC "a SOURCE born in a pull request carries its number in a PR uint field nested under"
 		+ "SOURCE, beside the prose saying what was ruled there; a RATIONALE naming a pull request"
 		+ "names it in its prose"
+		IMPL "docs/_schema.awawa::FIELD PR uint"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FIX45"
 	SPEC "SOURCE.REF is optional, and no SOURCE names the PCST project, the repository every entity"
 		+ "belongs to"
+		IMPL "docs/_schema.awawa::FIELD REF reference"
 	SPEC "no SOURCE is left holding a date and nothing else"
+		IMPL "docs/_schema.awawa::FIELD SOURCE string"
 	SPEC "USAGE_REPORT.EVALUATES is a uint holding the number of the pull request the report"
 		+ "measures, and awawa status USAGE_REPORT --where EVALUATES==101 . returns the report of"
 		+ "pull requests 101 to 103"
+		IMPL "docs/_schema.awawa::FIELD EVALUATES uint"
+		IMPL "docs/awawa-project-methodology/sources.awawa::USAGE_REPORT PR101_102_103"
 	SPEC "URL and GAME_RELEASE carry no INCOMING SOURCE_OF requirement"
+		IMPL "docs/_schema.awawa::SCHEMA GAME_RELEASE"
+		IMPL "docs/_schema.awawa::SCHEMA URL"
 	SPEC "a DECISION records that the corpus cites a pull request by its number, only where a"
 		+ "ruling was taken and never as the source of the task it delivers, the PULL_REQUEST"
 		+ "entity among its REJECTED"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "APullRequestIsCitedByItsNumberNeverByAnEntity"
 	SPEC "agents/corpus-ecrire.md and agents/pull-request.md say what that DECISION says, and name"
 		+ "no PULL_REQUEST entity"
+		IMPL "agents/corpus-ecrire.md::née dans une pull request porte son numéro dans son champ"
+		IMPL "agents/pull-request.md::le numéro de la PR, jamais une entité"
 	SPEC "no DECISION or PROCESS argues from SOURCE.REF being required"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::NAME version_segment validates its"
+			+ "shape"
 	SPEC "the AGENTS.md command run before implementing or specifying passes --skip provenance"
+		IMPL "AGENTS.md::--skip reasoning --skip provenance --with-schema"
 	SPEC "no DESC of docs/_schema.awawa and no line of agents/ names a retention delay for the"
 		+ "archive"
+		IMPL "docs/_schema.awawa::the day the entity was archived"
+		IMPL "agents/pull-request.md::revient à la passe de nettoyage, pas à la PR"
 	RATIONALE "The review of pull request 101 raised that one PULL_REQUEST entity per cited pull"
 		+ "request duplicates the repository log; refined with the user on 2026-09-21, the"
 		+ "duplication is the entity, not the citation. Measured on master b2f48f5: the 51 entities"
@@ -732,7 +738,7 @@ TASK CHORE57
 		REF @DECISION.AGameReleaseIsCitedAsASource
 	SOURCE "Review of pull request #101; usage report of pull requests 101 to 103; refined with the"
 		+ "user on 2026-09-21"
-		REF @PULL_REQUEST.PCST101
+		PR 101
 		REF @USAGE_REPORT.PR101_102_103
 
 TASK CHORE58
@@ -784,7 +790,7 @@ TASK REFACTOR62
 		+ "validateSaveContent.spec.js"
 	SOURCE "Review of pull request #102, 2026-09-21, on"
 		+ "packages/cli-merge/testing/fakeSaveStrings.js"
-		REF @PULL_REQUEST.PCST102
+		PR 102
 
 TASK CHORE60
 	TITLE "the per-worktree instructions name the acceptance commands a task branch runs before its"

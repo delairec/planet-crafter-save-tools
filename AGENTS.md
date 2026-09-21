@@ -56,8 +56,8 @@ awawa lint --strict .                                   # doit sortir en 0
 
 - **Début de session** : `awawa status .`. Ne jamais tenir ailleurs une liste que `status` sait rendre — une liste
   hors du corpus est de l'information dérivée, maintenue à la main, et fausse au commit suivant.
-- **Avant d'implémenter ou de spécifier X** : `awawa context @TYPE.X --skip reasoning --with-schema .` et
-  `awawa lint --closure @TYPE.X .`. Lire le paquet **au lieu** des fichiers ; son pied de page compte toute omission,
+- **Avant d'implémenter ou de spécifier X** : `awawa context @TYPE.X --skip reasoning --skip provenance --with-schema .`
+  et `awawa lint --closure @TYPE.X .`. Lire le paquet **au lieu** des fichiers ; son pied de page compte toute omission,
   et la ligne `BLOCKED_BY` dit ce qui bloque X — une arête entrante, qu'aucune traversée ne trouve.
 - **Éditer le corpus comme du texte**, puis `awawa fmt .` et `awawa lint --strict .`. `awawa new TYPE Nom .` imprime
   un squelette conforme au schéma : l'utiliser plutôt que réciter le schéma.

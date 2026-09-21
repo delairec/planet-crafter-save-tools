@@ -12,7 +12,7 @@ PROCESS StandardTwoMergedIsNeverAnOutputReference
 		+ "tag pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Found on 2026-09-07"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 PROCESS AwawaAdoptionIsRevertibleByTagNotBranch
 	SPEC "The state before awawa is marked by a tag in each of the three repositories:"
@@ -29,7 +29,7 @@ PROCESS AwawaAdoptionIsRevertibleByTagNotBranch
 		+ "silently undoing an experimental branch there, whereas a tag depends on no current"
 		+ "branch; the fallback needs no living branch, only a named point of return"
 	SOURCE "decision of 2026-09-11, awawa installation session"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 PROCESS ATaskBranchIsRebasedNeverMerged
 	SPEC "A task branch is updated by rebasing it on its base, never by merging the base into it"
@@ -72,7 +72,7 @@ PROCESS AFixtureMayRestOnAKnownDefect
 	SOURCE "private AGENTS.md, at tag pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "example in force since PR #59"
-		REF @PULL_REQUEST.PCST59
+		PR 59
 
 PROCESS EverythingLandsInTheTaskPullRequest
 	SPEC "A task pull request carries no To do at merge comment: what that checklist inventoried"
@@ -106,10 +106,10 @@ PROCESS EverythingLandsInTheTaskPullRequest
 		REF @DECISION.TheCorpusLivesInThePublicRepository
 		REF @DECISION.AUsageReportIsCommittedInTheTaskPullRequest
 	SOURCE "decision of 2026-09-11, awawa installation session"
-		REF @PULL_REQUEST.PCST70
+		PR 70
 	SOURCE "user ruling of 2026-09-13 on PR #69, delivered by PR #70"
-		REF @PULL_REQUEST.PCST69
-		REF @PULL_REQUEST.PCST70
+		PR 69
+		PR 70
 
 PROCESS AnImplAnchorNamesAFileOrASymbol
 	SPEC "An IMPL anchor under a SPEC names a file or a symbol, and a directory only for an"
@@ -123,8 +123,8 @@ PROCESS AnImplAnchorNamesAFileOrASymbol
 		+ "enforcing it awaits an option of the tool, and an obligation of absence has no literal"
 		+ "to anchor anyway"
 	SOURCE "PR #68 merged, user ruling of 2026-09-13 on PR #69"
-		REF @PULL_REQUEST.PCST68
-		REF @PULL_REQUEST.PCST69
+		PR 68
+		PR 69
 
 PROCESS TheCorpusHoldsNoViewItAlreadyRenders
 	SPEC "Nothing the corpus already renders is written in it: no dependency graph in a comment,"
@@ -142,7 +142,7 @@ PROCESS TheCorpusHoldsNoViewItAlreadyRenders
 		+ "beyond the descriptions of its tasks, only alternatives the general rule had already"
 		+ "rejected, and its removal lost no sentence"
 	SOURCE "review of PR #75, user ruling of 2026-09-14"
-		REF @PULL_REQUEST.PCST75
+		PR 75
 
 PROCESS ATestTaskChangesTheUiOnlyForItsOwnSake
 	REJECTED "Changing the interface for the sole convenience of a locator"
@@ -152,7 +152,7 @@ PROCESS ATestTaskChangesTheUiOnlyForItsOwnSake
 		+ "test rule requires changing the interface to make a field reachable; the change under"
 		+ "review was kept only once its own reason, an accessibility gain, was stated"
 	SOURCE "Review of T23"
-		REF @PULL_REQUEST.PCST38
+		PR 38
 
 PROCESS AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
 	SPEC "An entity that stops binding is archived in the pull request that ends it: STATUS"
@@ -205,5 +205,3 @@ PROCESS TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
 		+ "entities, 12 archived, all of them TASK, and 2 of the 12 with no incoming reference. A"
 		+ "script reading status --json and show --json per entity, then fmt and lint --strict,"
 		+ "would cost more to write and to trust than the two deletions it would perform"
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST

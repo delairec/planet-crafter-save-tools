@@ -5,7 +5,7 @@ HYPOTHESIS APlayerIdentifierIsASteamAccountReusedAcrossGames
 		+ "carrying different identifiers"
 	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07, pull request 39,"
 		+ "recorded on 2026-09-18"
-		REF @PULL_REQUEST.PCST39
+		PR 39
 
 HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 	DESC "a world object may carry woIds, the list of the world objects it holds"
@@ -18,7 +18,7 @@ HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 		+ "to handle. If refuted, the type, the reference remapping and the matching line of the"
 		+ "identifier rule go together, not the schema alone"
 	SOURCE "Found on 2026-09-10, left open in the review of pull request 48, recorded on 2026-09-18"
-		REF @PULL_REQUEST.PCST48
+		PR 48
 
 HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 	DESC "the hunger level of an animal lies between -100 and 100"
@@ -32,7 +32,7 @@ HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 		+ "the sample alone rejecting a legitimate save; the user accepted that risk"
 		REF @DECISION.ASchemaRuleHoldsByMeaningBeforeMeasurement
 	SOURCE "Found on 2026-09-10 in pull request 48, recorded on 2026-09-18"
-		REF @PULL_REQUEST.PCST48
+		PR 48
 
 HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 	DESC "the ProceduralWreck objects and ProceduralInstanceGenerator are spawned by"
@@ -43,7 +43,7 @@ HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 		REF @DECISION.WorldObjectNamesAreAttestedBySourceOrSave
 		REF @DATATABLE.WorldObjectLabels
 	SOURCE "User ruling of 2026-09-14 in the review of pull request 76, recorded on 2026-09-18"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 
 HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 	DESC "liPlanet, the planet of the inventory a world object is linked to, is carried only by an"
@@ -57,7 +57,6 @@ HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 		+ "occurrences of one object type prove a habit, not a rule of the game"
 	SOURCE "Extracted from docs/save-format.md, what the reference saves say about the rarest"
 		+ "three, on 2026-09-18"
-		REF @PROJECT.PCST
 
 HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 	DESC "terraTokens and allTimeTerraTokens stay below 2^53 in a real save, so reading them as a"

@@ -10,7 +10,6 @@ SECTION GlobalMetadata
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION TerraformationLevels
 	HOLDS_FOR both
@@ -24,7 +23,6 @@ SECTION TerraformationLevels
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION Players
 	HOLDS_FOR both
@@ -36,7 +34,6 @@ SECTION Players
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION WorldObjects
 	HOLDS_FOR both
@@ -49,7 +46,6 @@ SECTION WorldObjects
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION Inventories
 	HOLDS_FOR both
@@ -62,7 +58,6 @@ SECTION Inventories
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION Statistics
 	HOLDS_FOR both
@@ -75,7 +70,6 @@ SECTION Statistics
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION MailboxMessages
 	HOLDS_FOR both
@@ -89,7 +83,6 @@ SECTION MailboxMessages
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION StoryEvents
 	HOLDS_FOR both
@@ -102,7 +95,6 @@ SECTION StoryEvents
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION SaveConfiguration
 	HOLDS_FOR both
@@ -116,7 +108,6 @@ SECTION SaveConfiguration
 	ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::rawParts.slice(0,"
 		+ "LEGACY_TERRAIN_LAYERS_SECTION_INDEX)"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION WorldEvents
 	HOLDS_FOR both
@@ -129,7 +120,6 @@ SECTION WorldEvents
 	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 9 — World"
 		+ "events"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION Reserved
 	HOLDS_FOR both
@@ -145,7 +135,6 @@ SECTION Reserved
 	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 10 —"
 		+ "Reserved"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST
 
 SECTION TerrainLayers
 	HOLDS_FOR legacy
@@ -157,4 +146,3 @@ SECTION TerrainLayers
 		+ "= 9"
 	ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json::PC-Toxicity-Layer2"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
-		REF @PROJECT.PCST

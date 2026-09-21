@@ -26,7 +26,7 @@ LIMITATION LateWorldObjectParseErrorsWouldNeverReachTheScreen
 		+ "tag pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Found on 2026-09-11 in the review of pull request 58"
-		REF @PULL_REQUEST.PCST58
+		PR 58
 
 LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
 	SYMPTOM "Eleven placed machines have no known energy level, among them TradePlatform1 (29"
@@ -50,7 +50,7 @@ LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
 		+ "pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Found on 2026-09-06, reduced at the merge of pull request 43"
-		REF @PULL_REQUEST.PCST43
+		PR 43
 
 LIMITATION TheHydrationFallbackHasNoScenario
 	SYMPTOM "Of the three loading states of the page, the hydration fallback alone has no"
@@ -69,7 +69,7 @@ LIMITATION TheHydrationFallbackHasNoScenario
 		+ "already refused for the two other states"
 		REF @DECISION.ALoadingStateIsObservedByHoldingTheFileRead
 	SOURCE "Found on 2026-09-14 and ruled by the user in the review of pull request 78"
-		REF @PULL_REQUEST.PCST78
+		PR 78
 
 LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
 	SYMPTOM "A folder name containing @ makes bun merge write a save that bun validate rejects; the"
@@ -95,9 +95,9 @@ LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
 		+ "pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Found on 2026-09-10 while making the merge CLI report an invalid merged save"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 	SOURCE "Pinning test verified in the review of pull request 59"
-		REF @PULL_REQUEST.PCST59
+		PR 59
 
 LIMITATION SectionLabelsDivergeFromTheFormatDocument
 	SYMPTOM "The short section labels used in the location of an error do not match the section"
@@ -110,7 +110,7 @@ LIMITATION SectionLabelsDivergeFromTheFormatDocument
 	RATIONALE "Short labels read better in an error prefix, and the divergence was flagged as"
 		+ "reversible in review"
 	SOURCE "Found on 2026-09-08 in the review of pull request 37"
-		REF @PULL_REQUEST.PCST37
+		PR 37
 
 LIMITATION TheSecurityAuditIgnoresTwoTransitiveAdvisories
 	SYMPTOM "Two high-severity advisories carried by transitive dependencies, which the repository"
@@ -123,7 +123,7 @@ LIMITATION TheSecurityAuditIgnoresTwoTransitiveAdvisories
 		+ "was seen identically on a pull request touching only an ignore file. It is exactly what"
 		+ "dependency tracking should report on a schedule rather than on the day of a merge"
 	SOURCE "Found on 2026-09-10 in pull request 53"
-		REF @PULL_REQUEST.PCST53
+		PR 53
 
 LIMITATION TheContentSecurityPolicyAllowsInlineScript
 	SYMPTOM "The content security policy allows inline script and style: a script injected into the"
@@ -136,7 +136,7 @@ LIMITATION TheContentSecurityPolicyAllowsInlineScript
 		+ "inline being tried or measured; the security plan checked the policy off because it"
 		+ "exists, while its strength was written nowhere"
 	SOURCE "Reread on 2026-09-12 while migrating plans/plan-secu.md, phase 2"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
 	SYMPTOM "The production breakdown by machine uses base levels only, without the boost of"
@@ -151,7 +151,7 @@ LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
 		+ "it until the move to PlanetEnergyGrid removed it"
 		REF @DECISION.APlanetEnergyGridIsAnAggregate
 	SOURCE "Found on 2026-09-13 while moving the energy rules into PlanetEnergyGrid"
-		REF @PULL_REQUEST.PCST72
+		PR 72
 
 LIMITATION ADecorativeIconInAViewModelValueIsReadAloud
 	SYMPTOM "A screen reader announces the name of the construction icon in every consumption and"
@@ -173,4 +173,4 @@ LIMITATION ADecorativeIconInAViewModelValueIsReadAloud
 		+ "together"
 		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
 	SOURCE "Found on 2026-09-14 in the review of pull request 71"
-		REF @PULL_REQUEST.PCST71
+		PR 71

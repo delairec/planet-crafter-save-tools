@@ -17,11 +17,13 @@ SCHEMA *
 		CATEGORY provenance
 		DESC "where the entity came from, in prose; no source type fits: declare it in the same"
 			+ "pull request"
+		FIELD PR uint
+			REPEATABLE
+			DESC "the number of the pull request the prose says it was ruled or observed in"
 		FIELD REF reference
-			REQUIRED
 			REPEATABLE
 			CONVERSE SOURCE_OF
-			DESC "the PULL_REQUEST, USAGE_REPORT, URL, PROJECT or GAME_RELEASE the prose names"
+			DESC "the USAGE_REPORT, URL, PROJECT or GAME_RELEASE the prose names"
 	FIELD STATUS active|archived
 		DEFAULT active
 		DESC "written only to archive an entity that stopped binding"
@@ -31,11 +33,10 @@ SCHEMA *
 		GATE suppressed
 		FIELD ARCHIVED_ON date
 			REQUIRED
-			DESC "the day the entity was archived; starts the delay before deletion"
+			DESC "the day the entity was archived"
 		FIELD PURGE true|false
 			DEFAULT true
-			DESC "whether the cleanup pass deletes the entity once the delay has run; false keeps"
-				+ "it"
+			DESC "whether the cleanup pass deletes the entity; false keeps it"
 
 SHAPE pascal
 	DESC "an identifier in PascalCase"
@@ -65,10 +66,6 @@ SHAPE url
 SHAPE project_name
 	DESC "the short name of a project, upper case"
 	MATCH "[A-Z]+"
-
-SHAPE pr_id
-	DESC "the project name then the pull request number"
-	MATCH "[A-Z]+[0-9]+"
 
 SHAPE file_name
 	DESC "the subject of the report, words joined by underscores"
@@ -206,8 +203,7 @@ SCHEMA TASK
 			REF @PROJECT.PCST
 	FIELD PURGE true|false
 		DEFAULT true
-		DESC "whether the cleanup pass deletes the task once archived and the delay has run; false"
-			+ "keeps it"
+		DESC "whether the cleanup pass deletes the task once archived; false keeps it"
 	WHEN STATUS draft
 		GATE error
 	WHEN STATUS todo
@@ -243,19 +239,6 @@ SCHEMA PROJECT
 		REQUIRED
 		DESC "the repository on the forge"
 
-SCHEMA PULL_REQUEST
-	DESC "a pull request an entity cites, as a source or as what a usage report evaluates; one that"
-		+ "only delivers a task is not recorded, DELIVERED_BY carrying its number; deleted by the"
-		+ "cleanup pass once nothing cites it"
-	NAME pr_id
-	FIELD PROJECT @PROJECT
-		REQUIRED
-		CONVERSE PULL_REQUESTS
-		DESC "the repository the pull request belongs to"
-	FIELD NUMBER uint
-		REQUIRED
-		DESC "the pull request number in that repository"
-
 SCHEMA USAGE_REPORT
 	DESC "a usage report cited as the origin of an entity; deleted by the cleanup pass once nothing"
 		+ "cites it"
@@ -263,26 +246,19 @@ SCHEMA USAGE_REPORT
 	FIELD FILE anchor
 		REQUIRED
 		DESC "the report file and the tag its template puts on the first line"
-	FIELD EVALUATES @PULL_REQUEST
+	FIELD EVALUATES uint
 		REPEATABLE
-		CONVERSE EVALUATED_BY
-		DESC "the pull request the report measures"
+		DESC "the number of the pull request the report measures"
 
 SCHEMA GAME_RELEASE
 	DESC "a released version of the game, cited as the source of what was observed in it"
 	NAME version_segment
-	WHEN STATUS active
-		GATE error
-		INCOMING SOURCE_OF
 
 SCHEMA URL
 	DESC "an external page cited as a source"
 	FIELD LOCATION url
 		REQUIRED
 		DESC "the address of the page"
-	WHEN STATUS active
-		GATE error
-		INCOMING SOURCE_OF
 
 FIELDSET Era
 	DESC "the era of the save format the statement holds for"
