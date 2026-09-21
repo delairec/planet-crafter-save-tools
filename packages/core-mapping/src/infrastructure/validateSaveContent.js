@@ -1,6 +1,7 @@
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
-import {PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import {GLOBAL_METADATA_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import saveFileSchema from 'shared-save-processing/schemas/save-file.schema.json' with {type: 'json'};
 import {validateSchemas, validateSectionEntry} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {validateUniqueHost} from '../domain/rules/validateUniqueHost.ts';
@@ -34,6 +35,7 @@ export function validateSaveContent(saveContent) {
 
   const errors = parseErrors.map(toInvalidJsonIssue);
 
+  errors.push(...validateGlobalMetadataEntryCount(sections[GLOBAL_METADATA_SECTION_INDEX]));
   errors.push(...validateSchemas(sections));
   errors.push(...worldObjectIssues);
   errors.push(...validateFloatSerialization(saveContent));
@@ -55,6 +57,24 @@ function toUniqueHostIssue({hostCount}) {
     code: VALIDATION_ISSUE_CODES.UNIQUE_HOST,
     detail: `Expected exactly one host player, found ${hostCount}`
   };
+}
+
+/**
+ * @param {unknown[]} globalMetadataSection
+ * @returns {import('../application/ports/ValidationIssue').ValidationIssue[]}
+ */
+function validateGlobalMetadataEntryCount(globalMetadataSection) {
+  const minItems = saveFileSchema.items[GLOBAL_METADATA_SECTION_INDEX].minItems ?? 0;
+
+  if (globalMetadataSection.length >= minItems) {
+    return [];
+  }
+
+  return [{
+    code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE,
+    detail: `Expected at least ${minItems} entry but found ${globalMetadataSection.length}`,
+    section: GLOBAL_METADATA_SECTION_INDEX
+  }];
 }
 
 /**

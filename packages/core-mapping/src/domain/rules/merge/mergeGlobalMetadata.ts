@@ -1,4 +1,5 @@
 import {GlobalMetadata} from 'shared-save-processing/gameDefinitions';
+import {NoGlobalMetadataToMergeError} from '../../errors/NoGlobalMetadataToMergeError';
 
 const NO_METADATA_CONTRIBUTION: GlobalMetadata = {
   terraTokens: 0,
@@ -12,6 +13,10 @@ const NO_METADATA_CONTRIBUTION: GlobalMetadata = {
  * @see @RULE.GlobalMetadataIsSummedAndUnioned
  */
 export function mergeGlobalMetadata([metadataA]: GlobalMetadata[], [metadataB]: GlobalMetadata[]): GlobalMetadata {
+  if (metadataA === undefined && metadataB === undefined) {
+    throw new NoGlobalMetadataToMergeError();
+  }
+
   const metadataAContribution = metadataA ?? NO_METADATA_CONTRIBUTION;
   const metadataBContribution = metadataB ?? NO_METADATA_CONTRIBUTION;
   const openedInstanceSource = metadataA ?? metadataB;

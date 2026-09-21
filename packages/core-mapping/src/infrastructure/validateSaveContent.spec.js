@@ -87,6 +87,23 @@ describe('validateSaveContent', () => {
       });
     });
 
+    describe('When the section carries no entry', () => {
+      it('should reject the save, naming the global metadata section', () => {
+        // Arrange
+        const sections = createFakeSaveContent().split('@');
+        sections[GLOBAL_METADATA_SECTION_INDEX] = '';
+        const saveWithoutGlobalMetadata = sections.join('@');
+
+        // Act
+        const result = validateSaveContent(saveWithoutGlobalMetadata);
+
+        // Assert
+        expect(result.errors).toEqual([
+          {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected at least 1 entry but found 0', section: GLOBAL_METADATA_SECTION_INDEX}
+        ]);
+      });
+    });
+
     describe('When a required field is missing', () => {
       it('should reject the save', () => {
         // Arrange
