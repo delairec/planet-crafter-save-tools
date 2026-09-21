@@ -21,6 +21,7 @@ import {InventoryEntity} from '../domain/entities/InventoryEntity';
 import {PlacedWorldObjectEntity} from '../domain/entities/PlacedWorldObjectEntity';
 
 const PRIME_PLANET_NUMERIC_ID = -1140328421;
+const SKEO_PLANET_NUMERIC_ID = -440810600;
 const UNKNOWN_PLANET_NUMERIC_ID = 1;
 
 const CARRIED_WORLD_OBJECTS: WorldObjectEntry[] = [
@@ -267,6 +268,22 @@ describe('SaveSectionsReaderService', () => {
 
       // Assert
       expect(rawData.planets.map((planet) => planet.planetName)).toEqual(['Prime', undefined]);
+    });
+
+    it('should resolve the numeric id of Skeo to its planet name (Rule EN-PLANET-3)', () => {
+      // Arrange
+      const sections = createSaveSections({
+        worldObjects: [
+          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: SKEO_PLANET_NUMERIC_ID}
+        ]
+      });
+      const service = new SaveSectionsReaderService(sections);
+
+      // Act
+      const rawData = service.getEnergyLevelsRawData();
+
+      // Assert
+      expect(rawData.planets.map((planet) => planet.planetName)).toEqual(['Skeo']);
     });
 
     it('should offer the terraformed planet names as hints when the numeric id is unknown (Rule EN-PLANET-2)', () => {
