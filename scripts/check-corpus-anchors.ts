@@ -2,6 +2,8 @@ import {Glob} from 'bun';
 import {join} from 'node:path';
 import {isOwnSourceFile, reportViolations} from './specSources.ts';
 
+// Parses the corpus text rather than calling the awawa binary: the guards CI job does not install awawa.
+
 const CORPUS_FILES_PATTERN = '**/*.awawa';
 const SCHEMA_KEYWORDS = new Set(['SCHEMA', 'FIELDSET', 'SHAPE']);
 const DECLARATION_KEYWORDS = new Set(['SCHEMA', 'FIELDSET']);

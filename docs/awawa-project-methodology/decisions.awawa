@@ -2522,23 +2522,3 @@ DECISION TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange
 		+ "and a merge document"
 	SOURCE "User ruling of 2026-09-18 on the audit of the 21 rules"
 		REF @PROJECT.PCST
-
-DECISION TheAnchorGuardReadsTheCorpusTextItself
-	SPEC "check:anchors reads the anchor fields of the schema and the anchors of the corpus from"
-		+ "the text of the .awawa files, never by calling the awawa binary"
-		IMPL "scripts/check-corpus-anchors.ts::readAnchorFields"
-	SPEC "an anchor naming a directory holds when git tracks a file under it"
-		IMPL "scripts/check-corpus-anchors.spec.ts::When every anchor names a file or a directory"
-			+ "git tracks"
-	REJECTED "Reading the corpus through awawa show --json: the guards job of the continuous"
-		+ "integration installs Bun and the dependencies, not awawa, and adding a tool to it is the"
-		+ "user's call"
-	REJECTED "Testing existence on disk as L016 does: an ignored file exists for its author and for"
-		+ "nobody else, which is the case the guard is written for"
-	APPLIES_TO_TASK @TASK.CHORE51
-	RATIONALE "The format the guard reads is the canonical form awawa fmt writes: an entity header"
-		+ "at column zero, one field per line indented by tabs, a continuation line opened by a"
-		+ "plus sign; the schema is read from the same text at run time, so an anchor field a later"
-		+ "pull request declares is covered without touching the script"
-	SOURCE "Delivery of CHORE51, 2026-09-18"
-		REF @PULL_REQUEST.PCST101
