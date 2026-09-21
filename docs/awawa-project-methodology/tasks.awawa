@@ -652,14 +652,58 @@ TASK CHORE56
 	SPEC "a failing guard does not stop the others, and the run reports every guard that failed"
 
 TASK CHORE57
-	TITLE "PULL_REQUEST is no longer a source type of the corpus"
-	STATUS draft
-	DESC "Raised in the review of pull request 101: a decision does not need a source every time,"
-		+ "and recording one PULL_REQUEST entity per cited pull request duplicates the log of the"
-		+ "repository; the entities of that type are cited today by SOURCE fields of decisions and"
-		+ "processes and by the EVALUATES field of USAGE_REPORT"
+	TITLE "provenance cites what git and GitHub do not hold, a pull request by its number and no"
+		+ "longer by an entity"
+	STATUS todo
 	SPEC "the schema declares no PULL_REQUEST type, and no entity of the corpus cites one"
-	SPEC "what a USAGE_REPORT evaluates is still named once PULL_REQUEST is gone"
+	SPEC "a SOURCE born in a pull request carries its number in a PR uint field nested under"
+		+ "SOURCE, beside the prose saying what was ruled there; a RATIONALE naming a pull request"
+		+ "names it in its prose"
+	SPEC "SOURCE.REF is optional, and no SOURCE names the PCST project, the repository every entity"
+		+ "belongs to"
+	SPEC "no SOURCE is left holding a date and nothing else"
+	SPEC "USAGE_REPORT.EVALUATES is a uint holding the number of the pull request the report"
+		+ "measures, and awawa status USAGE_REPORT --where EVALUATES==101 . returns the report of"
+		+ "pull requests 101 to 103"
+	SPEC "URL and GAME_RELEASE carry no INCOMING SOURCE_OF requirement"
+	SPEC "a DECISION records that the corpus cites a pull request by its number, only where a"
+		+ "ruling was taken and never as the source of the task it delivers, the PULL_REQUEST"
+		+ "entity among its REJECTED"
+	SPEC "agents/corpus-ecrire.md and agents/pull-request.md say what that DECISION says, and name"
+		+ "no PULL_REQUEST entity"
+	SPEC "no DECISION or PROCESS argues from SOURCE.REF being required"
+	SPEC "the AGENTS.md command run before implementing or specifying passes --skip provenance"
+	SPEC "no DESC of docs/_schema.awawa and no line of agents/ names a retention delay for the"
+		+ "archive"
+	RATIONALE "The review of pull request 101 raised that one PULL_REQUEST entity per cited pull"
+		+ "request duplicates the repository log; refined with the user on 2026-09-21, the"
+		+ "duplication is the entity, not the citation. Measured on master b2f48f5: the 51 entities"
+		+ "hold a NUMBER their name repeats and a DESC copying the pull request title, 47 of them"
+		+ "written at once by the migration of pull request 95; 152 of the 154 SOURCE prose lines"
+		+ "citing them say who ruled, when and what, which git does not hold; and the number is not"
+		+ "derivable from git, the log of master carrying (#n) on 18 commits of 158 and git log -S"
+		+ "returning the migration for a ruling taken in pull request 62. The number therefore"
+		+ "stays, as a scalar beside its prose: nested, it is out of reach of status --where, which"
+		+ "the user accepted, the query who cites pull request n having served only the upkeep of"
+		+ "the entities themselves. Keeping a reduced PULL_REQUEST type for rulings only was"
+		+ "rejected: it keeps the question of whether each pull request is a source, which pull"
+		+ "requests 101 to 103 answered three ways. The REQUIRED REF is what forced 50 SOURCE lines"
+		+ "naming the repository itself, 9 of them a bare date, and the INCOMING SOURCE_OF gate"
+		+ "made pull request 103 cite two releases to pass its own rebase. The review of these"
+		+ "gates, first drafted as a separate task, is merged here because it changes the same"
+		+ "lines of the schema. --skip provenance cuts the context package of FIX45 from 7709 to"
+		+ "3662 bytes. The retention delay named by the DESC of ARCHIVED_ON and PURGE and by"
+		+ "agents/pull-request.md contradicts the process that rejects one. The"
+		+ "awawa-plan-wave-start and awawa-usage-report commands, outside this repository, write"
+		+ "PULL_REQUEST entities and change with this task, in a companion change of their own"
+		REF @USAGE_REPORT.PR101_102_103
+		REF @PROCESS.TheCorpusHoldsNoViewItAlreadyRenders
+		REF @PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
+		REF @DECISION.AGameReleaseIsCitedAsASource
+	SOURCE "Review of pull request #101; usage report of pull requests 101 to 103; refined with the"
+		+ "user on 2026-09-21"
+		REF @PULL_REQUEST.PCST101
+		REF @USAGE_REPORT.PR101_102_103
 
 TASK CHORE58
 	TITLE "investigate running awawa in CI, and what it would simplify"
@@ -726,21 +770,36 @@ TASK CHORE60
 	SOURCE "Usage report of pull requests 101, 102 and 103, 2026-09-21"
 		REF @USAGE_REPORT.PR101_102_103
 
-TASK CHORE61
-	TITLE "the provenance gates of the schema are reviewed against the way the corpus is worked"
+TASK CHORE63
+	TITLE "a reference between draft tasks of two branches is not refused by the corpus gate"
 	STATUS draft
-	SPEC "the task records, for SOURCE.REF being REQUIRED under SCHEMA *, for the INCOMING"
-		+ "SOURCE_OF gate of URL and GAME_RELEASE, and for EVALUATES on USAGE_REPORT being typed on"
-		+ "PULL_REQUEST, whether each constraint is kept, demoted to a warning or removed, with the"
-		+ "case of pull requests 101 to 103 that motivated the line"
-	SPEC "a constraint kept names what a future pull request could break without it; a constraint"
-		+ "demoted or removed is changed in docs/_schema.awawa by the pull request that delivers"
-		+ "this task"
-	DESC "Raised by the usage report of pull requests 101, 102 and 103: three PULL_REQUEST entities"
-		+ "were written at delivery, two deleted and one kept under L004 during review, and two"
-		+ "written again by the report because EVALUATES admits nothing else; the orphan-source"
-		+ "gate of pull request 103 blocked its own rebase on two releases master had added"
-		+ "uncited; distinct from CHORE57, which removes the PULL_REQUEST type"
+	SPEC "awawa lint --strict . exits 0 on a draft TASK citing a task absent from the workspace,"
+		+ "and exits 1 once the citing task is todo"
+	DESC "to be refined with the user: lint --strict promotes warnings to errors, so a GATE warning"
+		+ "on draft alone does not meet the SPEC"
+	RATIONALE "WHEN STATUS draft of TASK is gated error, while awawa treats a draft with dangling"
+		+ "references as normal exploration; the reference from the draft that CHORE57 absorbed to"
+		+ "CHORE57, both on sibling branches, was refused by L004 in the review of pull requests"
+		+ "101 to 103"
 		REF @TASK.CHORE57
-	SOURCE "Usage report of pull requests 101, 102 and 103, 2026-09-21"
+	SOURCE "Usage report of pull requests 101, 102 and 103; ruled with the user on 2026-09-21"
+		REF @USAGE_REPORT.PR101_102_103
+
+TASK CHORE64
+	TITLE "an archived task leaves the corpus once delivered, and appending entities stops"
+		+ "conflicting on rebase"
+	STATUS draft
+	SPEC "an archived TASK whose decisions stay in force carries no incoming APPLIES_TO_TASK that"
+		+ "prevents its deletion"
+	SPEC "two branches each adding an entity to the same corpus file rebase one on the other"
+		+ "without a conflict on that file"
+	DESC "to be refined with the user"
+	RATIONALE "Measured on master b2f48f5: 29 of the 32 APPLIES_TO_TASK edges point at archived"
+		+ "tasks, which keeps 10 of the 12 archived tasks from being purged; appending every new"
+		+ "entity at the end of the file of its type made all writers edit the same tail, with"
+		+ "conflicts resolved by hand or by script on pull requests 76, 79 and 83"
+		REF @PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
+		REF @DECISION.TheCorpusLivesInThePublicRepository
+	SOURCE "Usage reports of pull requests 95 to 103; ruled with the user on 2026-09-21"
+		REF @USAGE_REPORT.PR95
 		REF @USAGE_REPORT.PR101_102_103
