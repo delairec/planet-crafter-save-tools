@@ -651,7 +651,9 @@ TASK FEAT55
 		+ "a label row. The wiki gives the power of Incubator2 and InsideLamp2, already in the"
 		+ "energy table, and no energy for the three other machines, whose predecessors have no"
 		+ "row; a value missing from the wiki is undocumented, never zero, so the user measures it"
-		+ "in game and supplies it"
+		+ "in game and supplies it. The update also deprecates Phytoplankton2 and Phytoplankton3,"
+		+ "which saves written before 2.102 still carry; how such a save is handled is not ruled"
+		REF @OPEN_QUESTION.DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		REF @GAME_RELEASE.2.102
 		REF @GAME_RELEASE.2.103
 		REF @RULE.GlobalMetadataIsSummedAndUnioned
@@ -672,8 +674,8 @@ TASK FEAT55
 		REF @URL.PceditSaveDiff
 		REF @URL.PceditSaveFileUnlocks
 		REF @URL.AkarnokdEnglishPlusLabels
-	SOURCE "Group ids added by the Skeo update and the mods raising their supported version to"
-		+ "2.103, read on 2026-09-21"
+	SOURCE "Group ids added and deprecated by the Skeo update and the mods raising their supported"
+		+ "version to 2.103, read on 2026-09-21"
 		REF @URL.PceditItemCatalog
 		REF @URL.AkarnokdSupports2103
 	SOURCE "Power of the Skeo machines: T2 Incubator -715.00 kW/s, Intense Area Lamp -25 kW/s;"
