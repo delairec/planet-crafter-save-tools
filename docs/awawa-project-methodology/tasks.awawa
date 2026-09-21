@@ -638,3 +638,42 @@ TASK CHORE57
 		+ "processes and by the EVALUATES field of USAGE_REPORT"
 	SPEC "the schema declares no PULL_REQUEST type, and no entity of the corpus cites one"
 	SPEC "what a USAGE_REPORT evaluates is still named once PULL_REQUEST is gone"
+
+TASK CHORE58
+	TITLE "investigate running awawa in CI, and what it would simplify"
+	STATUS draft
+	DESC "Raised in the review of pull request 101: the guards CI job does not install awawa, so"
+		+ "check:anchors parses the corpus text itself; find out whether awawa can run in CI and"
+		+ "what it would simplify or add"
+	SPEC "the task records whether awawa can be installed in a GitHub Actions runner, from which"
+		+ "source and at which cost per run"
+	SPEC "the task records, for each place named in its rationale, the lines awawa in CI would"
+		+ "remove or the check it would add, and whether that gain is worth the installation"
+	SPEC "when the gain is worth it, a todo task carries the change; otherwise the reason is"
+		+ "written in this task"
+	RATIONALE "awawa is today a local x86-64 binary, 2.7.0 in ~/.local/bin, and the repository"
+		+ "names no source to install it from; it could simplify the corpus parser of"
+		+ "scripts/check-corpus-anchors.ts and its spec, which awawa show or status --json would"
+		+ "replace, and the whole guard if lint L016 consulted git instead of the disk; it would"
+		+ "add a CI run of awawa fmt --check and awawa lint --strict, which no job runs today, so"
+		+ "the conformance of the corpus is checked only on the machine of its author"
+
+TASK CHORE59
+	TITLE "investigate whether the repository guards need a shared helper package"
+	STATUS draft
+	DESC "Raised in the review of pull request 101: find out whether other guards share needs with"
+		+ "check:anchors, and centralise their common functions in a helper package if the need is"
+		+ "proven; distinct from CHORE56, which is about how the guards are run, not the code they"
+		+ "share"
+		REF @TASK.CHORE56
+	SPEC "the task lists every function two guards or more implement or could share, with the files"
+		+ "that carry it"
+	SPEC "the task records whether that list justifies a helper package, and under which prefix of"
+		+ "the package matrix, or why scripts/specSources.ts is enough"
+	SPEC "when the need is proven, a todo task carries the move; otherwise the reason is written in"
+		+ "this task"
+	RATIONALE "scripts/specSources.ts already serves seven of the eight guards with"
+		+ "reportViolations, maskStringLiterals, readOwnSourceFiles and isOwnSourceFile;"
+		+ "check-solid-idioms, check-presentation-entities, check-package-dependencies and"
+		+ "check-corpus-anchors scan the repository with their own Glob rather than"
+		+ "readOwnSourceFiles, and check-package-dependencies imports nothing from specSources"
