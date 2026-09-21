@@ -26,7 +26,6 @@ COMMAND MergeSaves
 		+ "parity of the two runtimes is a ruling of ours, not a second command"
 		REF @DECISION.NodeCommandsRunSourcesThroughModuleHooks
 	SOURCE "Extracted from the published scripts of the root manifest on 2026-09-18"
-		REF @PROJECT.PCST
 
 COMMAND ValidateSave
 	INVOCATION "bun run validate"
@@ -37,4 +36,3 @@ COMMAND ValidateSave
 	APPLIES @RULE.ASectionLineIsOneJsonEntry
 	APPLIES @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
 	SOURCE "Extracted from the published scripts of the root manifest on 2026-09-18"
-		REF @PROJECT.PCST

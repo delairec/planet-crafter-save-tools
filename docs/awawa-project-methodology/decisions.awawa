@@ -18,7 +18,7 @@ DECISION MergeRulesHaveOnePublicHome
 	RATIONALE "The duplication is what had let the README claim a union of players by identifier,"
 		+ "shared planets that were not implemented and statistics reduced to a single field"
 	SOURCE "Pull request #42"
-		REF @PULL_REQUEST.PCST42
+		PR 42
 
 DECISION WorldObjectNamesAreAttestedBySourceOrSave
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -50,7 +50,7 @@ DECISION WorldObjectNamesAreAttestedBySourceOrSave
 		+ "constant objects, which disables the excess property check: it held 33 keys typed"
 		+ "nowhere"
 	SOURCE "Decided in the review of pull request #43"
-		REF @PULL_REQUEST.PCST43
+		PR 43
 
 DECISION ACaseDuplicatedKeyIsSettledByAttestation
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -72,7 +72,7 @@ DECISION ACaseDuplicatedKeyIsSettledByAttestation
 		+ "carry the same label"
 		REF @DECISION.WorldObjectNamesAreAttestedBySourceOrSave
 	SOURCE "User ruling, pull request #76"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 
 DECISION AnErrorsOriginDecidesItsPath
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -101,9 +101,9 @@ DECISION AnErrorsOriginDecidesItsPath
 		+ "before any merge and any writing"
 	SOURCE "Decided in the review of pull request #47; its second half delivered by pull requests"
 		+ "#54 and #59"
-		REF @PULL_REQUEST.PCST47
-		REF @PULL_REQUEST.PCST54
-		REF @PULL_REQUEST.PCST59
+		PR 47
+		PR 54
+		PR 59
 
 DECISION ABrokenInvariantFailsWithANamedErrorType
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -128,7 +128,7 @@ DECISION ABrokenInvariantFailsWithANamedErrorType
 		+ "The scope is this layer: the other packages keep their bare Error as long as they have"
 		+ "neither an errors directory nor a second case to align"
 	SOURCE "Decided in the review of pull request #48"
-		REF @PULL_REQUEST.PCST48
+		PR 48
 
 DECISION ValidationIsTheSingleSourceOfWarnings
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -146,7 +146,7 @@ DECISION ValidationIsTheSingleSourceOfWarnings
 	RATIONALE "Two producers of warnings means two lists to reconcile in every consumer, and a flow"
 		+ "that forgets one"
 	SOURCE "Decided on 2026-09-06"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION UserTextLivesInCoreMappingPresentation
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -168,9 +168,9 @@ DECISION UserTextLivesInCoreMappingPresentation
 		+ "already carries its messages, would double the title each delivery mechanism already"
 		+ "writes"
 	SOURCE "Decided on 2026-09-06; completed by pull requests #54 and #59"
-		REF @PULL_REQUEST.PCST61
-		REF @PULL_REQUEST.PCST54
-		REF @PULL_REQUEST.PCST59
+		PR 61
+		PR 54
+		PR 59
 
 DECISION ALocationIsABusinessLabelFollowedByTheIndex
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -202,7 +202,7 @@ DECISION ALocationIsABusinessLabelFollowedByTheIndex
 		+ "forbids. Message and location stay two distinct fields: each delivery mechanism chooses"
 		+ "whether to display the location, and where"
 	SOURCE "Pull request #37"
-		REF @PULL_REQUEST.PCST37
+		PR 37
 
 DECISION BothMessageListsShareOneRendering
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -226,7 +226,7 @@ DECISION BothMessageListsShareOneRendering
 		+ "review on a screenshot: two typefaces on one line. The chosen form also settles the"
 		+ "order, a stack putting the message first"
 	SOURCE "Decided in the review of pull request #37"
-		REF @PULL_REQUEST.PCST37
+		PR 37
 
 DECISION UiSaveManagerHasOneUiErrorIdiom
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -251,7 +251,7 @@ DECISION UiSaveManagerHasOneUiErrorIdiom
 		+ "parse result. The bare catch without logging was an omission, not a ruling: none of the"
 		+ "three places where a justification would have lived mentions one"
 	SOURCE "Pull request #58; placement ruled in review"
-		REF @PULL_REQUEST.PCST58
+		PR 58
 
 DECISION ADomainRuleIgnoresValidationVocabulary
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -278,7 +278,7 @@ DECISION ADomainRuleIgnoresValidationVocabulary
 		+ "error vocabulary leaves it"
 	SOURCE "User ruling at the launch of part A of the core-mapping domain boundaries task, pull"
 		+ "request #62"
-		REF @PULL_REQUEST.PCST62
+		PR 62
 
 DECISION SectionCountersAreDeclaredOnceWithNamedIndexes
 	SPEC "The section and part counters are declared once, and each index carries a name"
@@ -296,7 +296,7 @@ DECISION SectionCountersAreDeclaredOnceWithNamedIndexes
 		+ "counts 11 real sections, a numeric namesake of the 11 parts of the current format, so"
 		+ "the counters carry names that say sections of a save and parts"
 	SOURCE "Decision of 2026-09-07, names settled in the review of pull request 47"
-		REF @PULL_REQUEST.PCST47
+		PR 47
 
 DECISION OneModuleAloneParsesASaveLine
 	SPEC "The parser is the only point of production code where a save line reaches JSON.parse;"
@@ -316,7 +316,7 @@ DECISION OneModuleAloneParsesASaveLine
 		+ "world objects section is returned as a generator factory, one entry at a time instead of"
 		+ "the 28425 objects of a reference save materialized"
 	SOURCE "Decision of 2026-09-09, pull request 47, confirmed in review"
-		REF @PULL_REQUEST.PCST47
+		PR 47
 
 DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 	SPEC "An identifier of the save format beyond the exact integer range of a double is carried by"
@@ -350,7 +350,7 @@ DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 		+ "rule bears on integer precision, a large literal in a save being normal: the guard is a"
 		+ "round-trip test and the type system, which makes a numeric fixture impossible"
 	SOURCE "Decision of 2026-09-07, delivered by pull request 49"
-		REF @PULL_REQUEST.PCST49
+		PR 49
 
 DECISION TheFloatSuffixIsAppliedAtEmission
 	SPEC "The .0 suffix of float fields is applied at emission, in a field-by-field serialization"
@@ -372,7 +372,7 @@ DECISION TheFloatSuffixIsAppliedAtEmission
 		+ "carried by the JSDoc of the error is to fix what passed a nested entry, or to extend the"
 		+ "module to deeper levels, never to loosen the guard"
 	SOURCE "Decision of 2026-09-07, pull request 36, guard added in review"
-		REF @PULL_REQUEST.PCST36
+		PR 36
 
 DECISION ASchemaRuleHoldsByMeaningBeforeMeasurement
 	SPEC "Every bound or schema rule holds by meaning before holding by measurement; only"
@@ -398,7 +398,7 @@ DECISION ASchemaRuleHoldsByMeaningBeforeMeasurement
 		+ "of the ten schemas; switching the ten schemas and the validator would be a task of its"
 		+ "own"
 	SOURCE "Decision of 2026-09-09, applied by pull request 48"
-		REF @PULL_REQUEST.PCST48
+		PR 48
 
 DECISION FloatSerializationIsCheckedInInfrastructure
 	SPEC "No domain rule reads the text of a save"
@@ -419,7 +419,7 @@ DECISION FloatSerializationIsCheckedInInfrastructure
 		REF @DECISION.TheFloatSuffixIsAppliedAtEmission
 	SOURCE "Decision of 2026-09-12, user ruling at the launch of part A of the core-mapping"
 		+ "boundaries task, pull request 62"
-		REF @PULL_REQUEST.PCST62
+		PR 62
 
 DECISION AMergeTakesExactlyTwoSavesPerFolder
 	SPEC "An input subfolder is merged only when it holds exactly two save files; any other count"
@@ -436,7 +436,7 @@ DECISION AMergeTakesExactlyTwoSavesPerFolder
 		+ "CLI made the two entry points of the same tool say two different things; the user ruled"
 		+ "in review to stay at two saves at most per merge"
 	SOURCE "Decision of 2026-09-09, review of pull request 42"
-		REF @PULL_REQUEST.PCST42
+		PR 42
 
 DECISION APlayerIdentityIsCarriedByItsEntry
 	SPEC "The host role is applied by the position of the entry in save A, never by identifier"
@@ -468,9 +468,9 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 		+ "Accepted consequence: two player entries can carry the same Steam account, a case the"
 		+ "deduplication by name lets through by construction"
 	SOURCE "Decision of 2026-09-07, pull request 39"
-		REF @PULL_REQUEST.PCST39
+		PR 39
 	SOURCE "Extended in the review of pull request 41"
-		REF @PULL_REQUEST.PCST41
+		PR 41
 
 DECISION AMergeThatWritesAFileIsASuccess
 	SPEC "The use case validates its two inputs, merges, then validates what it produced, without a"
@@ -502,7 +502,7 @@ DECISION AMergeThatWritesAFileIsASuccess
 		+ "measured cost of the revalidation is +25 % of a merge, the world objects section now"
 		+ "going through ajv"
 	SOURCE "Decision of 2026-09-07, delivered by pull request 59"
-		REF @PULL_REQUEST.PCST59
+		PR 59
 
 DECISION NoMergeWarningChannelWithoutAProducer
 	SPEC "The merge exposes no warning channel on its output while no merge rule produces a warning"
@@ -520,9 +520,9 @@ DECISION NoMergeWarningChannelWithoutAProducer
 		+ "neighbours in the same interface already take that form, without a Messages suffix,"
 		+ "because validation messages travel as a message and location pair, not as a string"
 	SOURCE "Decision of 2026-09-10, pull request 54"
-		REF @PULL_REQUEST.PCST54
+		PR 54
 	SOURCE "Name settled in the review of pull request 59"
-		REF @PULL_REQUEST.PCST59
+		PR 59
 
 DECISION AMergeProducesAnOrdinarySave
 	SPEC "resolveIdConflicts returns a SaveSections, entries of save A before those of save B,"
@@ -576,7 +576,7 @@ DECISION AMergeProducesAnOrdinarySave
 		REF @DECISION.MergeRulesReceiveTheDomainSaveModel
 	SOURCE "Decision of 2026-09-12, review of pull request 62 by the user in two passes: a merge"
 		+ "result is an ordinary save, and the existing parser is reused to read it"
-		REF @PULL_REQUEST.PCST62
+		PR 62
 
 DECISION InputFolderScanRecognizesSavesWithHasJsonExtension
 	SPEC "The scan of an input folder keeps a save file through hasJsonExtension, whatever the case"
@@ -597,7 +597,7 @@ DECISION InputFolderScanRecognizesSavesWithHasJsonExtension
 		+ "the module becomes production code of the package, so the dependency moves to"
 		+ "dependencies, as the cli-* to shared-* matrix allows"
 	SOURCE "User ruling of 2026-09-14, review of pull request 76"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 
 DECISION AnEmptyMetadataSectionIsRefusedByValidation
 	SPEC "Validation refuses a save whose section 0 carries no entry, before any merge"
@@ -633,7 +633,7 @@ DECISION AnEmptyMetadataSectionIsRefusedByValidation
 		+ "fails loudly (@DECISION.AnErrorsOriginDecidesItsPath)"
 		REF @DECISION.AnErrorsOriginDecidesItsPath
 	SOURCE "Review of pull request 15, measures of 2026-09-15"
-		REF @PULL_REQUEST.PCST15
+		PR 15
 
 DECISION ThePrivateContextIgnoreRuleHasNoTrailingSlash
 	SPEC "The public ignore rule targets .do-not-commit without a trailing slash nor a prefix, like"
@@ -648,7 +648,7 @@ DECISION ThePrivateContextIgnoreRuleHasNoTrailingSlash
 		+ "word: no trailing slash when a symbolic link to the directory must be taken, and the"
 		+ "comment that says why is part of the rule"
 	SOURCE "Found on 2026-09-11 while mounting the awawa corpus"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION TestsOutsideAPackageRootLoadThePreloadThroughBunOptions
 	SPEC "Tests run from a directory where Bun finds no bunfig.toml load the preload through"
@@ -668,7 +668,7 @@ DECISION TestsOutsideAPackageRootLoadThePreloadThroughBunOptions
 		+ "at tag pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Decision of 2026-09-05, task review"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION AnUnprintedEnergyValueIsNeitherInferredNorZero
 	SPEC "A machine whose wiki page prints no energy value stays out of the energy tables, in the"
@@ -686,7 +686,7 @@ DECISION AnUnprintedEnergyValueIsNeitherInferredNorZero
 		+ "pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Decision of 2026-09-09; found on 2026-09-06, reduced at the merge of pull request 43"
-		REF @PULL_REQUEST.PCST43
+		PR 43
 
 DECISION TheByteOrderMarkIsNotPreserved
 	SPEC "Both platform adapters strip the byte order mark on reading and write none, honouring the"
@@ -708,9 +708,9 @@ DECISION TheByteOrderMarkIsNotPreserved
 		+ "tag pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Decision of 2026-09-07, pull request 33"
-		REF @PULL_REQUEST.PCST33
+		PR 33
 	SOURCE "Node guard added by pull request 45"
-		REF @PULL_REQUEST.PCST45
+		PR 45
 
 DECISION AMergeIntroducesNoIdOverlapAbsentFromItsInputs
 	SPEC "The rule of the shared numbering space states what the merge does not introduce, never"
@@ -735,9 +735,9 @@ DECISION AMergeIntroducesNoIdOverlapAbsentFromItsInputs
 		+ "at tag pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Decision of 2026-09-09, review of pull request 41"
-		REF @PULL_REQUEST.PCST41
+		PR 41
 	SOURCE "GR-ID-1 reworded by pull request 49"
-		REF @PULL_REQUEST.PCST49
+		PR 49
 
 DECISION LoadingScenariosLocateTheSpinnerByRoleNeverByLabel
 	SPEC "Loading state scenarios designate the busy indicator by its status role and never by its"
@@ -755,7 +755,7 @@ DECISION LoadingScenariosLocateTheSpinnerByRoleNeverByLabel
 		+ "catches one for the other. The locator guard of the task is where a label shared between"
 		+ "two states has to be called ambiguous"
 	SOURCE "Found on 2026-09-14 and ruled by the user in the review of pull request 78"
-		REF @PULL_REQUEST.PCST78
+		PR 78
 
 DECISION NodeCommandsRunSourcesThroughModuleHooks
 	SPEC "Node commands run the repository sources through Node module customization hooks: a"
@@ -774,7 +774,7 @@ DECISION NodeCommandsRunSourcesThroughModuleHooks
 		+ "committing a bundle, or maintaining source rules by hand: 112 non-conforming files,"
 		+ "broken on the day they were recorded, and 344 imports for the compiler option variant"
 	SOURCE "Decision of 2026-09-07, pull request 34"
-		REF @PULL_REQUEST.PCST34
+		PR 34
 
 DECISION NpmIsSupportedForUsersNotForTheProject
 	SPEC "The workspace declares explicit version ranges rather than catalog references, and a"
@@ -789,7 +789,7 @@ DECISION NpmIsSupportedForUsersNotForTheProject
 		+ "user, and the dependency update tool does not resolve a catalog either: a dependency"
 		+ "declared through a catalog is never bumped, with no pull request and no warning"
 	SOURCE "Decision of 2026-09-07, pull request 34; blind spot of catalogs found on 2026-09-10"
-		REF @PULL_REQUEST.PCST34
+		PR 34
 
 DECISION TypeCheckRunsPerPackageWithoutAnOrchestrator
 	SPEC "Each package carries its TypeScript configuration and type-check script, and the root"
@@ -808,7 +808,7 @@ DECISION TypeCheckRunsPerPackageWithoutAnOrchestrator
 		+ "one package carried the same script key, and merging the manifests had kept only one,"
 		+ "silently"
 	SOURCE "Decision of 2026-09-04, delivered by pull request 44"
-		REF @PULL_REQUEST.PCST44
+		PR 44
 
 DECISION TheQualityGateRunsInTwoCiJobs
 	SPEC "CI covers the ground of the quality audit in two jobs, one running the guards, the other"
@@ -828,7 +828,7 @@ DECISION TheQualityGateRunsInTwoCiJobs
 		+ "passes. The action scopes on the base of the pull request, which is more accurate on a"
 		+ "branch stack"
 	SOURCE "Decision of 2026-09-09, pull request 45, second round"
-		REF @PULL_REQUEST.PCST45
+		PR 45
 
 DECISION NodeFollowsReleasesWhileBunIsPinnedAndBumped
 	SPEC "No workflow carries a literal Bun version: all read it from the manifest"
@@ -866,11 +866,11 @@ DECISION NodeFollowsReleasesWhileBunIsPinnedAndBumped
 		+ "request, not a CI gate"
 	SOURCE "Correction of 2026-09-16: the premise that Bun is build and test tooling, corrected by"
 		+ "the user"
-		REF @PULL_REQUEST.PCST90
+		PR 90
 	SOURCE "Blocking measured on pull requests 57 and 89: the first bumped bun, the second bumps"
 		+ "only @types/bun"
-		REF @PULL_REQUEST.PCST57
-		REF @PULL_REQUEST.PCST89
+		PR 57
+		PR 89
 
 DECISION DependabotTracksTwoEcosystemsInWeeklyGroups
 	SPEC "The configuration tracks two ecosystems from the root, the CI actions and the workspace"
@@ -892,7 +892,7 @@ DECISION DependabotTracksTwoEcosystemsInWeeklyGroups
 		+ "time. Verified on the first real run: two pull requests opened within three minutes, and"
 		+ "the actor guard works"
 	SOURCE "Decision of 2026-09-10, pull request 53, verified on a real run"
-		REF @PULL_REQUEST.PCST53
+		PR 53
 
 DECISION SharedSaveProcessingOwnsSectionParsingAndSerialization
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
@@ -901,7 +901,7 @@ DECISION SharedSaveProcessingOwnsSectionParsingAndSerialization
 			+ "serialization and schemas"
 	REJECTED "Parse or serialize save sections in a package other than shared-save-processing"
 	SOURCE "package rule recorded with the package entity"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION BothPlatformAdaptersHonourOneSharedContract
 	APPLIES_TO_PACKAGE @PACKAGE.shared_platforms
@@ -910,7 +910,7 @@ DECISION BothPlatformAdaptersHonourOneSharedContract
 		ENFORCED_BY "packages/shared-platforms/platform.fs.adapters.spec.js::FILE_ACCESS_ADAPTERS"
 	REJECTED "One spec per adapter, each free to pin its own behaviour"
 	SOURCE "package rule recorded with the package entity"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION CoreMappingExportsOnlyControllersAndViewModels
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -920,7 +920,7 @@ DECISION CoreMappingExportsOnlyControllersAndViewModels
 		IMPL "packages/core-mapping/package.json::./presentation/viewModels/*"
 	REJECTED "Export infrastructure modules of core-mapping to its consumers"
 	SOURCE "package rule recorded with the package entity"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION EachUseCaseResponseIsDeclaredInItsOwnFile
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -931,7 +931,7 @@ DECISION EachUseCaseResponseIsDeclaredInItsOwnFile
 	RATIONALE "The port is the boundary, not the payload that crosses it; application/requests"
 		+ "already held the other half of the rule"
 	SOURCE "T28"
-		REF @PULL_REQUEST.PCST59
+		PR 59
 
 DECISION UiSaveManagerStaysOutsideTheFallowPerimeter
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -940,7 +940,7 @@ DECISION UiSaveManagerStaysOutsideTheFallowPerimeter
 		IMPL "fallow.toml::packages/ui-save-manager/**"
 	REJECTED "Run the fallow quality audit on ui-save-manager now"
 	SOURCE "decision of 2026-09-03, question Q5"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION DissolvedPackagesAreNotRecreated
 	DESC "util-parsing, util-messages and shared-mapping were dissolved into shared-save-processing"
@@ -982,7 +982,7 @@ DECISION MergeRulesReceiveTheDomainSaveModel
 		+ "Reading in shared-save-processing was refused only while the domain would call it; with"
 		+ "the model, only the infrastructure does"
 	SOURCE "decision of 2026-09-12, architecture review of the pull request by the user"
-		REF @PULL_REQUEST.PCST62
+		PR 62
 
 DECISION WireAbbreviationsStayInSharedSaveProcessing
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
@@ -997,9 +997,9 @@ DECISION WireAbbreviationsStayInSharedSaveProcessing
 	RATIONALE "A comment per file says nothing the interface does not say, and it names a section"
 		+ "by its index, a number no test holds and which becomes false the day an index moves"
 	SOURCE "decision of 2026-09-03, question Q8"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 	SOURCE "header comments removed in the review of T36"
-		REF @PULL_REQUEST.PCST55
+		PR 55
 
 DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 	DESC "the two renderings, save string and already parsed sections, consume the record builders"
@@ -1024,9 +1024,9 @@ DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 		+ "literal expectation reads, a generated value does not; one builder per type is the"
 		+ "accepted cost"
 	SOURCE "T21"
-		REF @PULL_REQUEST.PCST35
+		PR 35
 	SOURCE "sweep rule extended in the review of T19"
-		REF @PULL_REQUEST.PCST46
+		PR 46
 
 DECISION ASectionIndexIsNeverHardCoded
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
@@ -1050,9 +1050,9 @@ DECISION ASectionIndexIsNeverHardCoded
 		+ "(section 2), entry 3 is the sentence the formatter must render, and reading it from the"
 		+ "module would make the expectation compute what it is meant to pin"
 	SOURCE "decision of 2026-09-09, review of T19 and T26"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 	SOURCE "T44, boundary of the expectation settled at implementation"
-		REF @PULL_REQUEST.PCST82
+		PR 82
 
 DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 	UNTIL "fallow follows the @import tag"
@@ -1069,7 +1069,7 @@ DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 		+ "positive: it disables both unused and undeclared dependency detection, for the whole"
 		+ "repository and with no end date"
 	SOURCE "T17"
-		REF @PULL_REQUEST.PCST44
+		PR 44
 
 DECISION AnUnknownCliFlagIsAUsageError
 	SPEC "Both CLIs name on standard error each dash-prefixed argument that designates none of"
@@ -1090,7 +1090,7 @@ DECISION AnUnknownCliFlagIsAUsageError
 		+ "Node commands exist only for an accepted user-side compatibility, so the banner need not"
 		+ "be runtime-aware"
 	SOURCE "T34, banner settled in review"
-		REF @PULL_REQUEST.PCST60
+		PR 60
 
 DECISION SectionControllersReceiveTheValidatedText
 	DESC "the section controllers thus align on the merge controller, which already takes text, and"
@@ -1117,7 +1117,7 @@ DECISION SectionControllersReceiveTheValidatedText
 		+ "parse on average over 20 runs, about 60 ms for the five sections of a load; each section"
 		+ "carries its own loading state, so the overhead stays invisible"
 	SOURCE "decision of 2026-09-13, user ruling at the launch of T37 part B"
-		REF @PULL_REQUEST.PCST65
+		PR 65
 
 DECISION BehaviourMovesOntoTheEntityAndTheRuleAsksIt
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -1149,7 +1149,7 @@ DECISION BehaviourMovesOntoTheEntityAndTheRuleAsksIt
 		+ "summarize; declaring the ten fields and returning the whole value object removes the"
 		+ "last two entity spreads, in the factory and in the use case"
 	SOURCE "T15, migration of behaviour onto the entities"
-		REF @PULL_REQUEST.PCST72
+		PR 72
 
 DECISION AnEntityReturnsACopyOfItsInternalArray
 	DESC "a domain entity exposes no mutator: any future mutation goes through an entity method"
@@ -1171,7 +1171,7 @@ DECISION AnEntityReturnsACopyOfItsInternalArray
 		+ "the private field, and the only accessor callers are the sections reader, twice per"
 		+ "player, and the players presenter, once per player"
 	SOURCE "review of the pull request by the repository owner, T15"
-		REF @PULL_REQUEST.PCST72
+		PR 72
 
 DECISION APlacedWorldObjectIsAWorldObject
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -1191,7 +1191,7 @@ DECISION APlacedWorldObjectIsAWorldObject
 		+ "the sections reader already builds the whole save list and the placed objects in two"
 		+ "separate passes, unplaced objects staying WorldObjectEntity"
 	SOURCE "review of the pull request by the repository owner, T15"
-		REF @PULL_REQUEST.PCST72
+		PR 72
 
 DECISION EnergyRulesAskThePlacedObjectNotTheTables
 	DESC "energyOptimizerConfig lives in domain, not domain/rules: it is configuration read by the"
@@ -1221,7 +1221,7 @@ DECISION EnergyRulesAskThePlacedObjectNotTheTables
 		+ "the one thing outside the entity"
 		REF @DECISION.BehaviourMovesOntoTheEntityAndTheRuleAsksIt
 	SOURCE "review of the pull request by the repository owner, T15"
-		REF @PULL_REQUEST.PCST72
+		PR 72
 
 DECISION APlanetEnergyGridIsAnAggregate
 	DESC "optimizer boosts and fuse counts are computed once in the constructor and read again by"
@@ -1258,7 +1258,7 @@ DECISION APlanetEnergyGridIsAnAggregate
 		+ "are re-anchored on levels() without weakening"
 		REF @DECISION.EnergyRulesAskThePlacedObjectNotTheTables
 	SOURCE "ruling of the repository owner in review, deliberate extension of T15"
-		REF @PULL_REQUEST.PCST72
+		PR 72
 
 DECISION APresenterReceivesAValueObjectNeverAnEntity
 	DESC "the infrastructure keeps the right to build entities and SaveSectionsReaderPort still"
@@ -1294,7 +1294,7 @@ DECISION APresenterReceivesAValueObjectNeverAnEntity
 		REF @DECISION.AnEntityReturnsACopyOfItsInternalArray
 	SOURCE "ruling of the repository owner in review, restricted reading, work done in the pull"
 		+ "request rather than in T38"
-		REF @PULL_REQUEST.PCST72
+		PR 72
 
 DECISION AReaderPortIsNamedForWhatItReads
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -1316,7 +1316,7 @@ DECISION AReaderPortIsNamedForWhatItReads
 		+ "and returns sections, and both ports live in the same directory"
 		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
 	SOURCE "T38, reading of a SPEC line of the review of 2026-09-07"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 
 DECISION AColumnShapeIsDerivedFromTheTableViewModel
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -1334,7 +1334,7 @@ DECISION AColumnShapeIsDerivedFromTheTableViewModel
 		+ "nothing linked, either of which could drift unnoticed, TypeScript structural"
 		+ "compatibility accepting one for the other"
 	SOURCE "T32"
-		REF @PULL_REQUEST.PCST71
+		PR 71
 
 DECISION SolidPropsAreReadThroughPropsNeverDestructured
 	DESC "the rule targets the signature of a component, not the parameter of a callback:"
@@ -1358,7 +1358,7 @@ DECISION SolidPropsAreReadThroughPropsNeverDestructured
 		+ "type-check and the scenarios; the eight sites fixed by T32 were all masked by an unmount"
 		+ "and remount of the caller, which makes the defect latent, not absent"
 	SOURCE "ruling in review, T32"
-		REF @PULL_REQUEST.PCST71
+		PR 71
 
 DECISION AMessageVariantIsAFunctionNotTwinStrings
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -1378,7 +1378,7 @@ DECISION AMessageVariantIsAFunctionNotTwinStrings
 		+ "nothing signals it; the repository already parameterises a message by a function,"
 		+ "resolvePlayersSectionUnknownItemLabel, so the form exists and need not be invented"
 	SOURCE "ruling in review, T32"
-		REF @PULL_REQUEST.PCST71
+		PR 71
 
 DECISION ADecorativeCharacterIsRenderedByIcon
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -1402,7 +1402,7 @@ DECISION ADecorativeCharacterIsRenderedByIcon
 		+ "component, so the name covering both is icon"
 	SOURCE "review of the pull request by the repository owner, T32, vocabulary corrected at the"
 		+ "next review round"
-		REF @PULL_REQUEST.PCST71
+		PR 71
 
 DECISION AGuardRefusesTheTwoLineReadableSolidIdioms
 	DESC "the two other idiom criteria of T32, a map rendering JSX and a user string outside the"
@@ -1438,7 +1438,7 @@ DECISION AGuardRefusesTheTwoLineReadableSolidIdioms
 		REF @DECISION.RepositoryGuardsAreGroupedScripts
 		REF @DECISION.SolidPropsAreReadThroughPropsNeverDestructured
 	SOURCE "ruling in review, T32"
-		REF @PULL_REQUEST.PCST71
+		PR 71
 
 DECISION TheCorpusLivesInThePublicRepository
 	SPEC "The corpus is a set of files versioned in the public repository, under docs"
@@ -1457,7 +1457,7 @@ DECISION TheCorpusLivesInThePublicRepository
 		+ "governs, hence invisible in review; in the branch, a decision enters the pull request"
 		+ "that implements it and follows the rebases of the stack"
 	SOURCE "decision of 2026-09-12"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION ThreeFilesAreChangedOnMasterFirst
 	SPEC "dependabot.yml and the two claude workflows are changed on master first, and the task"
@@ -1471,7 +1471,7 @@ DECISION ThreeFilesAreChangedOnMasterFirst
 		+ "workflows against their copy on that same branch, and a differing content makes the"
 		+ "action exit with a warning: the job is green and the review silently dead"
 	SOURCE "decision of 2026-09-10"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION NoRealPlayerNameInPublicContent
 	SPEC "No real player name appears in public content: pull request title and body, review"
@@ -1494,7 +1494,7 @@ DECISION NoRealPlayerNameInPublicContent
 		+ "publication; the rule stays written in full in AGENTS.md because forgetting it publishes"
 		+ "personal data, the costliest mistake to reverse"
 	SOURCE "decision of 2026-09-10, PR #49"
-		REF @PULL_REQUEST.PCST49
+		PR 49
 
 DECISION SteamIdentifiersAreAnonymisedLikeNames
 	SPEC "Public content carries a synthetic identifier of the 765611900000000xx family, never the"
@@ -1514,7 +1514,7 @@ DECISION SteamIdentifiersAreAnonymisedLikeNames
 	REJECTED "Taking any synthetic identifier: it would no longer demonstrate the rounding"
 	RATIONALE "An account identifier designates a person as surely as a name"
 	SOURCE "decision of 2026-09-10"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION ThePrivateContextHoldsOnlySavesAndPlans
 	SPEC "The private repository holds only the reference saves, the plans and resources.md: no"
@@ -1535,7 +1535,7 @@ DECISION ThePrivateContextHoldsOnlySavesAndPlans
 	RATIONALE "The specification, the decisions and the task numbers are in the public repository:"
 		+ "what a stale clone made wrong without a sign is no longer read there"
 	SOURCE "decision of 2026-09-12"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION NameMergedFileEscapesControlCharacters
 	SPEC "nameMergedFile.ts writes its control-character class as escape sequences, never as raw"
@@ -1549,7 +1549,7 @@ DECISION NameMergedFileEscapesControlCharacters
 		+ "class happened once, git made it visible through the binary diff, and the review fixed"
 		+ "it in the commit that revealed it"
 	SOURCE "user ruling of 2026-09-12, at the merge of PR #62"
-		REF @PULL_REQUEST.PCST62
+		PR 62
 
 DECISION AUsageReportIsCommittedInTheTaskPullRequest
 	SPEC "A task pull request gets one usage report file in"
@@ -1591,10 +1591,10 @@ DECISION AUsageReportIsCommittedInTheTaskPullRequest
 		+ "found by an independent review"
 		REF @PROCESS.EverythingLandsInTheTaskPullRequest
 	SOURCE "decision of 2026-09-12, review of the first usage report"
-		REF @PULL_REQUEST.PCST63
+		PR 63
 	SOURCE "user ruling of 2026-09-13 on PR #69, delivered by PR #70"
-		REF @PULL_REQUEST.PCST69
-		REF @PULL_REQUEST.PCST70
+		PR 69
+		PR 70
 
 DECISION AgentsMdNamesOneModelEntityPerType
 	SPEC "agents/corpus-ecrire.md names one model entity per type, to read with awawa show before"
@@ -1607,8 +1607,8 @@ DECISION AgentsMdNamesOneModelEntityPerType
 	RATIONALE "awawa new prints only the field types, not a filled example; without a model, the"
 		+ "agent of PR #65 read the corpus files to find the shape"
 	SOURCE "PR #68 merged, user ruling of 2026-09-13 on PR #69"
-		REF @PULL_REQUEST.PCST68
-		REF @PULL_REQUEST.PCST69
+		PR 68
+		PR 69
 
 DECISION ACodeCommentQuestionNamesItsCorpusEntity
 	STATUS archived
@@ -1630,7 +1630,7 @@ DECISION ACodeCommentQuestionNamesItsCorpusEntity
 		REF @TASK.REFACTOR38
 		REF @HYPOTHESIS.ProceduralWrecksAreSpawnedByThePortalGenerator
 	SOURCE "user ruling of 2026-09-14, review of PR #76"
-		REF @PULL_REQUEST.PCST76
+		PR 76
 
 DECISION ArtifactAssetsFollowThePublishedPage
 	SPEC "docs/awawa-usage-reports/artifact-assets/ holds the files the public feedback page for"
@@ -1669,12 +1669,11 @@ DECISION ArtifactAssetsFollowThePublishedPage
 		+ "the only channel for these readers, and a dead link only shows on the button, at the"
 		+ "click"
 	SOURCE "user ruling of 2026-09-16, session of the awawa feedback page"
-		REF @PULL_REQUEST.PCST94
+		PR 94
 	SOURCE "the archive, served to the page by PR #93"
-		REF @PULL_REQUEST.PCST93
+		PR 93
 	SOURCE "2026-09-18: the overview and the Migration 3 view are written as Markdown first, the"
 		+ "page being built from them"
-		REF @PROJECT.PCST
 
 DECISION UiSaveManagerHasNoComponentTestLayer
 	REJECTED "A component test layer"
@@ -1688,7 +1687,7 @@ DECISION UiSaveManagerHasNoComponentTestLayer
 		+ "the harness existed may have stayed untested, and the harness catches it, not an"
 		+ "intermediate layer"
 	SOURCE "Decision of 2026-09-03, question Q6; end-to-end level opened by T23"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 	REJECTED "A natural-language layer above the specs"
@@ -1722,7 +1721,7 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 		+ "without administrator rights, while the engines alone suffice; the preview command"
 		+ "serves the real output of the production server, not the development server"
 	SOURCE "Decided with T23, scenarios extended by T31"
-		REF @PULL_REQUEST.PCST38
+		PR 38
 
 DECISION AControllerSpecCoversWiringNotBranches
 	REJECTED "Covering business branches from controller specs"
@@ -1745,9 +1744,9 @@ DECISION AControllerSpecCoversWiringNotBranches
 		+ "everything after it untested, whereas the invalid content crosses validator, use case"
 		+ "and error presentation, so it is the case that fails the day a link is unplugged"
 	SOURCE "Decision of 2026-09-05, review of T9"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 	SOURCE "T44, choice of the kept failure settled at implementation"
-		REF @PULL_REQUEST.PCST82
+		PR 82
 
 DECISION ATestNeverDerivesItsInputSetFromItsSubject
 	REJECTED "Iterating over the keys of the tested table and claiming exhaustiveness"
@@ -1762,7 +1761,7 @@ DECISION ATestNeverDerivesItsInputSetFromItsSubject
 		+ "removed, so it cannot break the rule that constrains that table; the same defect let an"
 		+ "emptied constant run zero cases without a word, hence the test pinning it to its values"
 	SOURCE "Decided with T25, final form settled in review"
-		REF @PULL_REQUEST.PCST43
+		PR 43
 
 DECISION AnIllegalTestInputIsWrittenWithTsExpectError
 	REJECTED "A cast to the expected type"
@@ -1777,7 +1776,7 @@ DECISION AnIllegalTestInputIsWrittenWithTsExpectError
 	RATIONALE "The directive fails the day the factory stops rejecting the data, which a cast does"
 		+ "not: an illegal input test built on a cast cannot fail"
 	SOURCE "Decided with T19"
-		REF @PULL_REQUEST.PCST46
+		PR 46
 
 DECISION RepositoryGuardsAreGroupedScripts
 	REJECTED "Merging two guards into a single script"
@@ -1806,8 +1805,8 @@ DECISION RepositoryGuardsAreGroupedScripts
 		+ "restricted to packages left out the specs of the root, of the scripts and of the guard"
 		+ "itself"
 	SOURCE "Decided with T12; common module extracted in the review of T19"
-		REF @PULL_REQUEST.PCST40
-		REF @PULL_REQUEST.PCST46
+		PR 40
+		PR 46
 
 DECISION TheDoublesOfASpecShareOneFactory
 	REJECTED "One double per case, each with its own recognition criterion"
@@ -1827,7 +1826,7 @@ DECISION TheDoublesOfASpecShareOneFactory
 		+ "did not even agree on what identifies it; leaving the sibling double out of scope is"
 		+ "what made the remaining one look arbitrary"
 	SOURCE "Third review pass of T28"
-		REF @PULL_REQUEST.PCST59
+		PR 59
 
 DECISION EveryPublishedCommandHasARealProcessTest
 	REJECTED "A dedicated CI job instead of a test"
@@ -1848,7 +1847,7 @@ DECISION EveryPublishedCommandHasARealProcessTest
 		+ "order mark exited with code zero announcing a success; a guard placed in the test runner"
 		+ "covers the workstation and CI at once"
 	SOURCE "Decided with T22"
-		REF @PULL_REQUEST.PCST45
+		PR 45
 
 DECISION MockIsolationIsAGlobalPreload
 	REJECTED "A cleanup block per spec file"
@@ -1866,7 +1865,7 @@ DECISION MockIsolationIsAGlobalPreload
 		+ "package without isolation; the reset primitive announced by the types does not exist at"
 		+ "run time in the version in use"
 	SOURCE "Decision of 2026-09-05, review of T9"
-		REF @PULL_REQUEST.PCST61
+		PR 61
 
 DECISION NoSaveIsCommittedToThePublicRepository
 	REJECTED "Committing a reference save to the public repository"
@@ -1881,7 +1880,7 @@ DECISION NoSaveIsCommittedToThePublicRepository
 	RATIONALE "A shared registry leaves a spy on the global object for the rest of the test process"
 		+ "when nobody restores it, which happened"
 	SOURCE "Decided with T22; temporary directory form settled in the review of T36"
-		REF @PULL_REQUEST.PCST45
+		PR 45
 
 DECISION TheAdapterContractIsTestedOnceAgainstEachAdapter
 	REJECTED "Two independent specs, one per adapter"
@@ -1898,7 +1897,7 @@ DECISION TheAdapterContractIsTestedOnceAgainstEachAdapter
 	RATIONALE "Two independent specs per adapter are exactly what let a read divergence between the"
 		+ "two adapters through"
 	SOURCE "Review of T18"
-		REF @PULL_REQUEST.PCST33
+		PR 33
 
 DECISION AScenarioReadsTheDownloadThroughTheNodeFileApi
 	REJECTED "Settling for the presence of the link and the file name it offers"
@@ -1927,7 +1926,7 @@ DECISION AScenarioReadsTheDownloadThroughTheNodeFileApi
 		+ "writes into the produced save, which neither source carries, the discriminating field"
 		+ "that tells the merged file from its inputs without replaying a merge rule"
 	SOURCE "T24, 2026-09-14"
-		REF @PULL_REQUEST.PCST75
+		PR 75
 
 DECISION AScenarioFixtureIsNamedByContentAndVerdict
 	REJECTED "role_context_expected in three segments: the role varies per scenario, and with two"
@@ -1952,7 +1951,7 @@ DECISION AScenarioFixtureIsNamedByContentAndVerdict
 		+ "input names, so the renaming lengthens the expected constant of the merge scenario,"
 		+ "which thereby names its two sources"
 	SOURCE "Review, user ruling of 2026-09-14, T24"
-		REF @PULL_REQUEST.PCST75
+		PR 75
 
 DECISION AUiScenarioAssertsWhatTheScreenShows
 	REJECTED "Asserting the complete message the rule produces"
@@ -1975,7 +1974,7 @@ DECISION AUiScenarioAssertsWhatTheScreenShows
 		+ "so asserting them on screen covers what only end-to-end covers and nothing the rule"
 		+ "decides"
 	SOURCE "T40, 2026-09-14"
-		REF @PULL_REQUEST.PCST78
+		PR 78
 
 DECISION ALoadingStateIsObservedByHoldingTheFileRead
 	REJECTED "Asserting the indicator without holding the read: the assertion becomes intermittent"
@@ -2003,7 +2002,7 @@ DECISION ALoadingStateIsObservedByHoldingTheFileRead
 		+ "neutralising the release, which makes both end-of-state scenarios fail and proves they"
 		+ "do not assert on a screen already reached"
 	SOURCE "T40, 2026-09-14"
-		REF @PULL_REQUEST.PCST78
+		PR 78
 
 DECISION TheFirstDescribeNamesTheRuleTheSpecCovers
 	REJECTED "Keeping the function name prefixed with a hash"
@@ -2018,7 +2017,7 @@ DECISION TheFirstDescribeNamesTheRuleTheSpecCovers
 		+ "hash; removing only the technical prefix left a title already carried by"
 		+ "mergeSaveSections.spec.ts, and two files under one name"
 	SOURCE "T43, re-audit of the 2026-09-07 survey"
-		REF @PULL_REQUEST.PCST79
+		PR 79
 
 DECISION ScenarioSuiteArtifactsAreAlreadyIgnored
 	REJECTED "Pointing the runner output to an already ignored directory: all three already are,"
@@ -2038,7 +2037,7 @@ DECISION ScenarioSuiteArtifactsAreAlreadyIgnored
 		+ "and check-ignore names the .gitignore rules; blob-report/ is the output a sharded run"
 		+ "merges, and would be the next omission of a survey counting only two directories"
 	SOURCE "User ruling of 2026-09-15, wave 4 launch commit"
-		REF @PULL_REQUEST.PCST80
+		PR 80
 
 DECISION ScenarioFixturesAreGeneratedAndReplayedByAGuard
 	REJECTED "Keeping the recipes in the README and having the guard run its code blocks: the"
@@ -2088,7 +2087,7 @@ DECISION ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		+ "following the shape of the repository guards"
 		REF @DECISION.RepositoryGuardsAreGroupedScripts
 	SOURCE "T41 and its review"
-		REF @PULL_REQUEST.PCST81
+		PR 81
 
 DECISION TheSharedWalkFilterIsNamedAfterWhatItFilters
 	REJECTED "Keeping isOwnSpecFile and renaming after the wave is merged: the cost avoided is a"
@@ -2110,7 +2109,7 @@ DECISION TheSharedWalkFilterIsNamedAfterWhatItFilters
 		+ "deferred after the wave is merged: deferring left a false name in the base for the whole"
 		+ "wave, against a one-line rebase conflict on a stacked branch that is rebased anyway"
 	SOURCE "Review of T41"
-		REF @PULL_REQUEST.PCST81
+		PR 81
 
 DECISION AGuardRefusesLocatorsTheScreenDoesNotShow
 	REJECTED "Writing a second walk in the guard, its first state: the common walk was already"
@@ -2167,7 +2166,7 @@ DECISION AGuardRefusesLocatorsTheScreenDoesNotShow
 		REF @DECISION.LoadingScenariosLocateTheSpinnerByRoleNeverByLabel
 		REF @DECISION.RepositoryGuardsAreGroupedScripts
 	SOURCE "T42, 2026-09-15"
-		REF @PULL_REQUEST.PCST83
+		PR 83
 
 DECISION TheAmbiguousLabelIsPinnedInTheGuardSpec
 	REJECTED "Deriving the label from the message modules inside the guard itself: ruled out for"
@@ -2198,7 +2197,7 @@ DECISION TheAmbiguousLabelIsPinnedInTheGuardSpec
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
 		REF @DECISION.RepositoryGuardsAreGroupedScripts
 	SOURCE "Review of T42"
-		REF @PULL_REQUEST.PCST83
+		PR 83
 
 DECISION RefusedShortcutsAreReadFromThePlaywrightApi
 	REJECTED "Adding frameLocator to the list of page shortcuts: it would then be refused only on"
@@ -2230,7 +2229,7 @@ DECISION RefusedShortcutsAreReadFromThePlaywrightApi
 		+ "scenarios"
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
 	SOURCE "Review of T42"
-		REF @PULL_REQUEST.PCST83
+		PR 83
 
 DECISION TheSchemaGovernsEveryAreaFromTheDocsRoot
 	SPEC "Every SCHEMA, FIELDSET and SHAPE declaration of the workspace lives in docs/_schema.awawa"
@@ -2247,8 +2246,6 @@ DECISION TheSchemaGovernsEveryAreaFromTheDocsRoot
 		+ "chosen for the reader; a declaration that governs two areas is placed above both. The"
 		+ "move was priced before it was made: one IMPL anchor and three path mentions in"
 		+ "AGENTS.md, references being by identity"
-	SOURCE "2026-09-17"
-		REF @PROJECT.PCST
 
 DECISION TheSpecificationAreaPivotsOnTheRule
 	SPEC "A question about the product starts from a RULE: the pivot of the specification area is"
@@ -2274,8 +2271,6 @@ DECISION TheSpecificationAreaPivotsOnTheRule
 		+ "package, 5 entities and 31 lines, but only reaches what a command applies, and most"
 		+ "questions are not about a command"
 		REF @DECISION.TheSchemaGovernsEveryAreaFromTheDocsRoot
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION TheEraIsNotTheArchive
 	SPEC "A SECTION the game stopped writing stays active and carries HOLDS_FOR legacy; STATUS"
@@ -2285,7 +2280,7 @@ DECISION TheEraIsNotTheArchive
 	SPEC "An entity lints clean before it is archived, and nothing active still points at it"
 		IMPL "docs/_schema.awawa::WHEN STATUS archived"
 	SPEC "PURGE keeps its default on a specification entity: the cleanup pass deletes an archived"
-		+ "entity once the delay has run and the incoming count status TYPE prints is zero"
+		+ "entity once the incoming count status TYPE prints is zero"
 		IMPL "docs/_schema.awawa::FIELD PURGE true|false"
 	REJECTED "Archiving a section the game removed: its rules still bind the saves written before"
 		+ "the removal, and archiving would remove its body from every context package that cites"
@@ -2301,8 +2296,6 @@ DECISION TheEraIsNotTheArchive
 		+ "quiet one. It also costs the readers: context on an active entity prints // suppressed"
 		+ "in place of the archived entity it points at, so archiving a still-cited entity silently"
 		+ "shrinks every package that cites it"
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION AnAnchorNamesAFileTrackedByGit
 	SPEC "Every anchor of the corpus names a file git tracks; a path under input, output or"
@@ -2330,7 +2323,6 @@ DECISION AnAnchorNamesAFileTrackedByGit
 		REF @DECISION.NoSaveIsCommittedToThePublicRepository
 		REF @DECISION.ThePrivateContextHoldsOnlySavesAndPlans
 	SOURCE "Review of the target schema, 2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION AGameReleaseIsCitedAsASource
 	SPEC "What was observed in the game is sourced by a GAME_RELEASE entity named by the version"
@@ -2343,9 +2335,8 @@ DECISION AGameReleaseIsCitedAsASource
 	REJECTED "A GAME_VERSION field on RULE: the version qualifies the observation, not the"
 		+ "obligation, so it would be written on every rule and mean the version of the last"
 		+ "reading, which is what a SOURCE already says"
-	REJECTED "The version in the SOURCE prose alone: SOURCE.REF is REQUIRED, and an observation"
-		+ "made in the game has no entity to point at, so the line would have to cite the private"
-		+ "context or a wiki page that did not carry it"
+	REJECTED "The version in the SOURCE prose alone: NAME version_segment validates its shape,"
+		+ "admitting 2.102 and refusing 2.102b, which free-form prose cannot enforce"
 	REJECTED "A PascalCase name such as V2102: the dot is the name segment separator, so NAME"
 		+ "version_segment on the type admits 2.102 as it is written and refuses 2.102b, measured"
 	RATIONALE "S1 lists the game itself among the places the specification is read from, and it is"
@@ -2354,8 +2345,6 @@ DECISION AGameReleaseIsCitedAsASource
 		+ "made against that build. The type carries no field: its identity is the version, and"
 		+ "NAME version_segment checks it"
 		REF @DECISION.AnExternalPageIsCitedAtTheAddressRead
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION AnExternalPageIsCitedAtTheAddressRead
 	SPEC "A page read outside the repository is cited by a URL entity whose LOCATION is the address"
@@ -2380,8 +2369,6 @@ DECISION AnExternalPageIsCitedAtTheAddressRead
 		+ "validates LOCATION, and a per-row wiki page stays a column of the JSON table, which is"
 		+ "what keeps the 105 energy rows out of the corpus"
 		REF @DECISION.AGameReleaseIsCitedAsASource
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION AFieldLegalInOneStateIsDeclaredInThatStateAlone
 	SPEC "A field whose legality depends on the value of another field is declared inside the WHEN"
@@ -2400,8 +2387,6 @@ DECISION AFieldLegalInOneStateIsDeclaredInThatStateAlone
 		+ "INDEX in WHEN HOLDS_FOR current and WHEN HOLDS_FOR both raises no L013. It is the shape"
 		+ "SCHEMA * already gives ARCHIVED_ON and PURGE, legal only under WHEN STATUS archived"
 		REF @DECISION.TheEraIsNotTheArchive
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION ASectionIsWrittenWithTheRuleThatCitesIt
 	SPEC "a SECTION whose era is current or both is added in the same pull request as at least one"
@@ -2422,8 +2407,6 @@ DECISION ASectionIsWrittenWithTheRuleThatCitesIt
 	RATIONALE "The obligation is not a style preference: it is what makes the specification"
 		+ "complete by construction, since a section with no rule is the shape a forgotten"
 		+ "obligation takes"
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION AValueTableIsRecordedOnceItsFileExists
 	STATUS archived
@@ -2443,8 +2426,6 @@ DECISION AValueTableIsRecordedOnceItsFileExists
 		+ "entity wait for the artefact, and the wait is carried by a task rather than by a"
 		+ "placeholder anchor"
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION ADocumentIsDeletedOnlyWhenEveryCitationIsRepointed
 	SPEC "A document of docs/ is deleted only once every statement it carried has another home and"
@@ -2469,8 +2450,6 @@ DECISION ADocumentIsDeletedOnlyWhenEveryCitationIsRepointed
 		+ "comments in twenty-one files, the thirteen README lines and the two links from"
 		+ "docs/save-format.md and docs/energy-levels.md — forty-five citation sites of which the"
 		+ "tool saw six"
-	SOURCE "2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION TheMergedSaveDisplayNameComesFromTheCaller
 	REJECTED "Keeping it as a SPEC of @RULE.SaveConfigurationComesFromSaveA, where it was first"
@@ -2490,7 +2469,6 @@ DECISION TheMergedSaveDisplayNameComesFromTheCaller
 		+ "merge, so the obligation belongs to what the caller owes the merge and not to how two"
 		+ "saves are reconciled. Sanitizing it is still owed, and stays where it was recorded"
 	SOURCE "Reclassified from GR-CFG-2 of docs/game-rules.md on 2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION MissingPlayerFieldsAreWrittenAsZero
 	REJECTED "Keeping it as a SPEC of @RULE.PlayersAreDeduplicatedByName, where it was first"
@@ -2510,7 +2488,6 @@ DECISION MissingPlayerFieldsAreWrittenAsZero
 		+ "the value the game itself starts them at, so the merged entry reads as an entry of a"
 		+ "save that never earned any"
 	SOURCE "Reclassified from GR-PLAYER-4 of docs/game-rules.md on 2026-09-18"
-		REF @PROJECT.PCST
 
 DECISION TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange
 	REJECTED "Reading DOMAIN game as any statement about the simulated world, whatever the save"
@@ -2534,7 +2511,6 @@ DECISION TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange
 		+ "it confirms DOMAIN game at zero, the corpus having been extracted from a format document"
 		+ "and a merge document"
 	SOURCE "User ruling of 2026-09-18 on the audit of the 21 rules"
-		REF @PROJECT.PCST
 
 DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 	SPEC "a product value table is a JSON array holding one row per line, in the package whose"
@@ -2605,4 +2581,43 @@ DECISION ABrokenInvariantOfADomainRuleFailsWithADomainErrorType
 		+ "type, then the message"
 		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType
 	SOURCE "Ruling taken while delivering the task in pull request #102, 2026-09-18"
-		REF @PULL_REQUEST.PCST102
+		PR 102
+
+DECISION APullRequestIsCitedByItsNumberNeverByAnEntity
+	SPEC "A SOURCE born in a pull request carries its number in a PR field nested under SOURCE,"
+		+ "beside the prose; REF stays optional there and never names the project's own repository,"
+		+ "which every entity already belongs to"
+		IMPL "docs/_schema.awawa::FIELD PR uint"
+		IMPL "docs/_schema.awawa::FIELD REF reference"
+	SPEC "USAGE_REPORT.EVALUATES is a uint holding the pull request number the report measures,"
+		+ "queryable by awawa status USAGE_REPORT --where EVALUATES==n"
+		IMPL "docs/_schema.awawa::FIELD EVALUATES uint"
+	SPEC "URL and GAME_RELEASE carry no incoming-citation requirement: an entity of either type"
+		+ "that no SOURCE cites is not a lint error"
+		IMPL "docs/_schema.awawa::SCHEMA GAME_RELEASE"
+		IMPL "docs/_schema.awawa::SCHEMA URL"
+	SPEC "A RATIONALE or a DESC naming a pull request names it in its prose; no entity indexes that"
+		+ "mention"
+		IMPL "agents/corpus-ecrire.md::Une mention dans une phrase n'est indexée par rien"
+	REJECTED "One PULL_REQUEST entity per cited pull request: measured on master b2f48f5, the 51"
+		+ "entities held a NUMBER their name already repeated and a DESC copying the pull request"
+		+ "title, 47 of them written at once by the migration of pull request 95; the entity"
+		+ "duplicated what the repository log already holds, and the REQUIRED REF forced 50 SOURCE"
+		+ "lines naming the repository itself, 9 of them a bare date"
+	REJECTED "A reduced PULL_REQUEST type kept for rulings only: it kept the question of whether"
+		+ "each pull request is a source, which pull requests 101 to 103 answered three different"
+		+ "ways on the same owner instruction"
+	RATIONALE "The number is not derivable from git: the log of master carries (#n) on 18 commits"
+		+ "of 158, and git log -S returns the migration for a ruling taken in pull request 62. What"
+		+ "a SOURCE holds that git and GitHub do not is who ruled, when and what — 152 of the 154"
+		+ "SOURCE prose lines citing a pull request said that already — so the number stays, as a"
+		+ "scalar beside the prose, out of reach of status --where, which the user accepted, the"
+		+ "query who cites pull request n having served only the upkeep of the entities themselves."
+		+ "The INCOMING SOURCE_OF gate priced the same way: it made pull request 103 cite two"
+		+ "releases to pass its own rebase, a cost paid to guard a citation the type no longer"
+		+ "needs"
+		REF @DECISION.AGameReleaseIsCitedAsASource
+	SOURCE "Review of pull request 101; usage report of pull requests 101 to 103; refined with the"
+		+ "user on 2026-09-21"
+		PR 101
+		REF @USAGE_REPORT.PR101_102_103

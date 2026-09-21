@@ -74,9 +74,11 @@ citent : une entité s'archive propre, et rien d'actif ne doit plus pointer vers
   `RULE` quand une vraie sauvegarde ou une source du jeu peut la contredire, une `HYPOTHESIS` quand rien ne la prouve
   et qu'on sait nommer ce qui la réfuterait, une `SECTION` pour une partie de la save écrite à un index fixe, une
   `COMMAND` pour ce qu'un utilisateur invoque, une `DATATABLE` pour un fichier de valeurs qu'aucune règle ne résume.
-- **Toute `SOURCE` nomme une entité source** (`REF` requis) : `@PULL_REQUEST.PCST<n>`, `@PROJECT.DNC` pour un fichier
-  du dépôt privé, `@USAGE_REPORT`, `@URL`, `@GAME_RELEASE` pour ce qui a été observé dans le jeu. Une provenance d'un
-  genre nouveau fait déclarer son type dans la même PR.
+- **Une `SOURCE` née dans une pull request porte son numéro dans son champ `PR`, à côté de la prose** ; `REF` y est
+  optionnel et ne nomme jamais `@PROJECT.PCST`, le dépôt auquel appartient déjà toute entité. Quand la prose nomme une
+  entité, `REF` l'indexe : `@USAGE_REPORT`, `@URL`, `@GAME_RELEASE` pour ce qui a été observé dans le jeu, `@PROJECT.DNC`
+  pour un fichier du dépôt privé. Une provenance d'un genre nouveau fait déclarer son type dans la même PR. Aucune
+  `SOURCE` ne se réduit à une date seule.
 - **Pas d'historique dans le corpus** : une entité qui cesse de lier est archivée dans la PR qui y met fin
   (`STATUS archived`, `ARCHIVED_ON`), une règle remplacée sur le même sujet est réécrite en place sous son nom — la forme
   précédente devient un `REJECTED` si elle enseigne quelque chose. Une entité qui n'aurait jamais dû être écrite est

@@ -10,7 +10,7 @@ RULE ASaveHasElevenSectionsTheLastReservedAndEmpty
 	APPLIES_TO_SECTION @SECTION.Reserved
 	SOURCE "Extracted from the ruling on section counters, names settled in the review of pull"
 		+ "request 47, recorded on 2026-09-18"
-		REF @PULL_REQUEST.PCST47
+		PR 47
 
 RULE ASectionLineIsOneJsonEntry
 	HOLDS_FOR both
@@ -20,7 +20,7 @@ RULE ASectionLineIsOneJsonEntry
 		ATTESTED_BY "packages/shared-save-processing/parseSaveSections.js::return JSON.parse(line);"
 	SOURCE "Extracted from the ruling on the single save parser, pull request 47, recorded on"
 		+ "2026-09-18"
-		REF @PULL_REQUEST.PCST47
+		PR 47
 
 RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 	HOLDS_FOR both
@@ -33,7 +33,7 @@ RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 	APPLIES_TO_SECTION @SECTION.Players
 	SOURCE "Extracted from the ruling on int64 identifiers, delivered by pull request 49, recorded"
 		+ "on 2026-09-18"
-		REF @PULL_REQUEST.PCST49
+		PR 49
 
 RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 	HOLDS_FOR both
@@ -49,7 +49,7 @@ RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
 	SOURCE "Extracted from the ruling on float suffix emission, pull request 36, recorded on"
 		+ "2026-09-18"
-		REF @PULL_REQUEST.PCST36
+		PR 36
 
 RULE TheSaveOnPrimeBecomesSaveA
 	HOLDS_FOR current
@@ -65,7 +65,6 @@ RULE TheSaveOnPrimeBecomesSaveA
 			+ "return saves in the original order"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ORDER-1)"
-		REF @PROJECT.PCST
 
 RULE GlobalMetadataIsSummedAndUnioned
 	HOLDS_FOR current
@@ -91,7 +90,6 @@ RULE GlobalMetadataIsSummedAndUnioned
 			+ "keep the remaining instance time from save A"
 	APPLIES_TO_SECTION @SECTION.GlobalMetadata
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-META-1 to GR-META-4)"
-		REF @PROJECT.PCST
 
 RULE TerraformationLevelsTakeTheHigherValue
 	HOLDS_FOR current
@@ -114,7 +112,6 @@ RULE TerraformationLevelsTakeTheHigherValue
 			+ "take the non-negative value of the other save"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-TERRA-1 to GR-TERRA-3)"
-		REF @PROJECT.PCST
 
 RULE PlayersAreDeduplicatedByName
 	HOLDS_FOR current
@@ -143,7 +140,6 @@ RULE PlayersAreDeduplicatedByName
 		+ "GR-PLAYER-4 split off, its format half becoming"
 		+ "@RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate and its defaulting half"
 		+ "@DECISION.MissingPlayerFieldsAreWrittenAsZero"
-		REF @PROJECT.PCST
 		REF @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
 		REF @DECISION.MissingPlayerFieldsAreWrittenAsZero
 
@@ -170,7 +166,6 @@ RULE WorldObjectsAreDeduplicatedByPlanetAndPosition
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-WO-1 to GR-WO-3); GR-WO-4 named the"
 		+ "id conflict step and became no SPEC"
-		REF @PROJECT.PCST
 
 RULE InventoriesAreKeptUnlessTheirOwnerIsEjected
 	HOLDS_FOR current
@@ -194,7 +189,6 @@ RULE InventoriesAreKeptUnlessTheirOwnerIsEjected
 			+ "keep both inventories as the duplicate id will be resolved later"
 	APPLIES_TO_SECTION @SECTION.Inventories
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-INV-1 to GR-INV-3)"
-		REF @PROJECT.PCST
 
 RULE StatisticsAreSummed
 	HOLDS_FOR current
@@ -207,7 +201,6 @@ RULE StatisticsAreSummed
 			+ "merge statistics by summing values"
 	APPLIES_TO_SECTION @SECTION.Statistics
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-STAT-1)"
-		REF @PROJECT.PCST
 
 RULE MailboxMessagesAreDeduplicatedByStringId
 	HOLDS_FOR current
@@ -227,7 +220,6 @@ RULE MailboxMessagesAreDeduplicatedByStringId
 			+ "combine mailboxes from both saves"
 	APPLIES_TO_SECTION @SECTION.MailboxMessages
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-MSG-1 to GR-MSG-3)"
-		REF @PROJECT.PCST
 
 RULE StoryEventsAreUnioned
 	HOLDS_FOR current
@@ -243,7 +235,6 @@ RULE StoryEventsAreUnioned
 			+ "concat story events from both saves"
 	APPLIES_TO_SECTION @SECTION.StoryEvents
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-STORY-1 and GR-STORY-2)"
-		REF @PROJECT.PCST
 
 RULE SaveConfigurationComesFromSaveA
 	HOLDS_FOR current
@@ -257,7 +248,6 @@ RULE SaveConfigurationComesFromSaveA
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-CFG-1 and GR-CFG-3); GR-CFG-2 moved"
 		+ "to @DECISION.TheMergedSaveDisplayNameComesFromTheCaller"
-		REF @PROJECT.PCST
 		REF @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
 
 RULE WorldEventsAreDeduplicatedByPlanetSeedAndPosition
@@ -275,7 +265,6 @@ RULE WorldEventsAreDeduplicatedByPlanetSeedAndPosition
 			+ "concat world events from both saves"
 	APPLIES_TO_SECTION @SECTION.WorldEvents
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-EVT-1 and GR-EVT-2)"
-		REF @PROJECT.PCST
 
 RULE IdentifiersAreSharedByInventoriesAndWorldObjects
 	HOLDS_FOR both
@@ -295,7 +284,6 @@ RULE IdentifiersAreSharedByInventoriesAndWorldObjects
 	APPLIES_TO_SECTION @SECTION.Inventories
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-1)"
-		REF @PROJECT.PCST
 
 RULE APlayerIdentifierIsCarriedAsExactDecimalText
 	HOLDS_FOR both
@@ -318,7 +306,6 @@ RULE APlayerIdentifierIsCarriedAsExactDecimalText
 	APPLIES_TO_SECTION @SECTION.Players
 	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-6 and GR-ID-7)"
-		REF @PROJECT.PCST
 
 RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 	HOLDS_FOR current
@@ -352,7 +339,6 @@ RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-2, GR-ID-3 and GR-ID-5); GR-ID-4"
 		+ "placed the step in the pipeline and was already @DECISION.AMergeProducesAnOrdinarySave,"
 		+ "so it was deleted"
-		REF @PROJECT.PCST
 		REF @DECISION.AMergeProducesAnOrdinarySave
 
 RULE APlanetNumericIdIsStableAcrossSaves
@@ -369,7 +355,6 @@ RULE APlanetNumericIdIsStableAcrossSaves
 		+ "code units, which reproduces the six known ids; the table stays a maintained lookup"
 		+ "because a save carries the id and the name must be found from it"
 	SOURCE "Extracted from docs/save-format.md, Planet numeric IDs, on 2026-09-18"
-		REF @PROJECT.PCST
 	SOURCE "Hash algorithm and the six ids it reproduces, Skeo -440810600 among them, read on"
 		+ "2026-09-21 and recomputed for the six names"
 		REF @URL.PceditPlanetHash
@@ -387,7 +372,6 @@ RULE APurificationLevelOfMinusOneMeansNotUnlocked
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-TERRA-3, a"
 		+ "fact about the save left inside @RULE.TerraformationLevelsTakeTheHigherValue"
-		REF @PROJECT.PCST
 		REF @RULE.TerraformationLevelsTakeTheHigherValue
 
 RULE APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
@@ -401,5 +385,4 @@ RULE APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
 	APPLIES_TO_SECTION @SECTION.Players
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-PLAYER-4, a"
 		+ "fact about the save left inside @RULE.PlayersAreDeduplicatedByName"
-		REF @PROJECT.PCST
 		REF @RULE.PlayersAreDeduplicatedByName
