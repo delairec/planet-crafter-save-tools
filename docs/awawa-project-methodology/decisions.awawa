@@ -2567,5 +2567,3 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "the import stays relative; the legacy terrain layer properties are read by no module and"
 		+ "sit in shared-save-processing, which owns the wire format. A schema is imported by no"
 		+ "module, so it follows the script that reads it rather than the table it describes"
-	SOURCE "ruled while delivering CHORE52, 2026-09-18"
-		REF @PULL_REQUEST.PCST103
