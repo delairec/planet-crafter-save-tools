@@ -803,3 +803,49 @@ TASK CHORE64
 	SOURCE "Usage reports of pull requests 95 to 103; ruled with the user on 2026-09-21"
 		REF @USAGE_REPORT.PR95
 		REF @USAGE_REPORT.PR101_102_103
+
+TASK FEAT56
+	TITLE "edit inventories in the save manager UI"
+	STATUS draft
+	SPEC "The save manager UI provides an inventory editor for player items, allowing users to"
+		+ "view, add, remove, and modify item quantities"
+	SPEC "Item edits are validated against the item definitions and saved back to the save file"
+	SPEC "The editor is accessible from the main edit panel and persists changes to the current"
+		+ "save"
+	WAVE 6
+	RATIONALE "Inventory editing is a foundational feature for save manipulation, enabling players"
+		+ "to adjust their item counts and gear"
+
+TASK FEAT57
+	TITLE "edit terraformation state in the save manager UI"
+	STATUS draft
+	SPEC "The save manager UI provides a terraformation editor for world state data, including"
+		+ "soil, waterway, and biomass modification levels"
+	SPEC "Terraformation edits are validated and persisted to the save file"
+	SPEC "The editor displays current terraformation metrics and allows incremental adjustments"
+	WAVE 6
+	RATIONALE "Terraformation state editing allows players to modify their world transformation"
+		+ "progress and see immediate effects on load"
+
+TASK FEAT58
+	TITLE "edit tech tokens in the save manager UI"
+	STATUS draft
+	SPEC "The save manager UI provides a tech token editor allowing users to manage research tokens"
+		+ "and tech point balances"
+	SPEC "Tech token changes are validated and reflected in the save file"
+	SPEC "The editor allows adding, removing, or modifying token quantities"
+	WAVE 6
+	RATIONALE "Tech token editing enables players to adjust their research progress and technology"
+		+ "unlock state"
+
+TASK FEAT59
+	TITLE "edit player positions and coordinates in the save manager UI"
+	STATUS draft
+	SPEC "The save manager UI provides a position editor for player location coordinates (x, y, z),"
+		+ "allowing users to teleport or adjust their position"
+	SPEC "Position values are validated as valid coordinates and persisted to the save file"
+	SPEC "The editor shows current position and allows direct coordinate input or preset locations"
+	AFTER @TASK.FEAT58
+	WAVE 6
+	RATIONALE "Position editing allows players to quickly navigate their world and undo unwanted"
+		+ "location changes"
