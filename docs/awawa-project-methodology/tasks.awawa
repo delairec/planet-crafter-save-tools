@@ -932,3 +932,479 @@ TASK FEAT68
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog
 		REF @GAME_RELEASE.2.102
+
+TASK FEAT69
+	TITLE "Open a validated save as an editable draft and write the draft to a new save"
+	STATUS draft
+	SPEC "a draft opened from a save in the current format and exported without an edit produces"
+		+ "the same bytes as the file it was opened from"
+	SPEC "an edit operation applied to a draft changes the field it names and nothing else, and the"
+		+ "file the draft was opened from is never written"
+	SPEC "a draft is validated before it is serialized, by the validator the display and the merge"
+		+ "already run, and an invalid draft produces no save"
+	WAVE 6
+	RATIONALE "The display flow keeps the loaded save as its raw text and re-parses it once per"
+		+ "section, so nothing holds a save an edit could reach; the serializer is reachable from"
+		+ "the merge alone, and every domain entity is read-only. An editable draft is therefore a"
+		+ "use case of core-mapping beside MergeSaveFiles, holding the parsed sections, taking"
+		+ "typed operations and giving back a new save text, so that the user interface holds edit"
+		+ "state and no save format knowledge. Exporting the unedited draft byte for byte is what"
+		+ "proves the draft loses nothing the loaded save carried, the float suffix and the int64"
+		+ "player identifier first; it closes the key order and unknown property questions the"
+		+ "round trip tests leave open. The rest of wave 6 edits fields through this draft"
+		REF @PACKAGE.core_mapping
+		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
+		REF @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
+		REF @RULE.ASectionLineIsOneJsonEntry
+		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @DECISION.DissolvedPackagesAreNotRecreated
+		REF @TASK.FEAT71
+	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
+		+ "108: the save manager gains an edit mode, every field it displays becomes editable, each"
+		+ "case designed on its own"
+		REF @PROJECT.PCST
+	SOURCE "Round trip measured on 2026-09-21 at commit c65c7cb over the three valid scenario"
+		+ "fixtures: parse then serialize returns the exact bytes of baseline_valid.json and"
+		+ "other-player_valid.json, and returns 2538 bytes against 2620 for"
+		+ "legacy-format_valid.json, whose terrain layers section the normalization drops"
+		REF @PROJECT.PCST
+
+TASK FEAT70
+	TITLE "Offer a save built in the browser as a new file under a name distinct from the loaded"
+		+ "one"
+	STATUS draft
+	SPEC "a save content built in the browser is offered for download as a new file whose name"
+		+ "derives from the loaded one and differs from it, the loaded file being left untouched"
+	SPEC "the merge result offers its merged save through that same path, under the name it carries"
+		+ "today"
+	SPEC "offering a second content releases the link of the first"
+	WAVE 6
+	RATIONALE "The merge result is the one place a save built in the browser reaches the user, as a"
+		+ "blob behind a download link whose object URL is revoked on every new result, and the"
+		+ "display flow has no such path. The edit mode of wave 6 and the save repair of wave 7"
+		+ "both end on a new file the user downloads, so the path is extracted once from the merge"
+		+ "result rather than written a second and a third time. It is a task of its own so that"
+		+ "neither wave waits for the other: the repair view depends on this task and on nothing"
+		+ "else of wave 6"
+		REF @PACKAGE.ui_save_manager
+		REF @TASK.FEAT71
+		REF @TASK.FEAT80
+	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
+		+ "108: the edit mode and the save repair each create a new save file and never overwrite"
+		+ "the loaded one"
+		REF @PROJECT.PCST
+	SOURCE "Read on 2026-09-21 at commit c65c7cb: the merge result section builds the blob, the"
+		+ "object URL and the download link and revokes the URL on each new result and on cleanup,"
+		+ "and the merged file name is built from the sanitised stems of the two loaded files"
+		REF @PROJECT.PCST
+
+TASK FEAT71
+	TITLE "Enter an edit mode in the save manager and export the edited save as a new file"
+	STATUS draft
+	SPEC "a loaded save is displayed read-only until the edit mode is entered, and leaving the edit"
+		+ "mode with an edit pending either exports it or discards it, the choice being asked"
+	SPEC "exporting validates the edited save and offers it through the download path of the"
+		+ "package, under a name distinct from the loaded one"
+	SPEC "an export the validation refuses offers no download and shows the located messages the"
+		+ "validator produced"
+	AFTER @TASK.FEAT69
+	AFTER @TASK.FEAT70
+	WAVE 6
+	RATIONALE "The display flow shows a loaded save read-only and holds no state for a pending"
+		+ "edit. The edit mode adds that state in the user interface, core-mapping holding the"
+		+ "draft, and exports through the download path extracted from the merge result rather than"
+		+ "inventing a second one. An export the validator refuses offers nothing to download: the"
+		+ "failure notice follows the single error idiom of the package, under the button that"
+		+ "produced it, and the located messages are the ones the single validator produced"
+		REF @PACKAGE.ui_save_manager
+		REF @DECISION.UiSaveManagerHasOneUiErrorIdiom
+		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @TASK.FEAT69
+		REF @TASK.FEAT70
+	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
+		+ "108: a first minimal edit mode, its evolutions listed apart"
+		REF @PROJECT.PCST
+
+TASK FEAT72
+	TITLE "Edit the save configuration and the global progression the save manager displays"
+	STATUS draft
+	SPEC "the save title, the game mode, the five difficulty modifiers, the all time terra tokens"
+		+ "and the crafted object count are edited and carry their new value into the exported save"
+	SPEC "a modifier is edited as the percentage the section displays and written back as the float"
+		+ "the save carries"
+	SPEC "a value the section schema refuses is refused on the field that carries it, before the"
+		+ "export is offered"
+	AFTER @TASK.FEAT71
+	WAVE 6
+	RATIONALE "The two sections display eight values, seven of them raw fields of the save"
+		+ "configuration and of the global metadata, the eighth being the crafted object count,"
+		+ "which the statistics section carries and this section only borrows. The game mode has no"
+		+ "enumeration anywhere, the section schema documenting example values alone, so it is"
+		+ "edited as free text, not chosen from a list. The modifiers are the only values the"
+		+ "display formats, as percentages, and the editor binds the float, the formatting having"
+		+ "no inverse"
+		REF @SECTION.SaveConfiguration
+		REF @SECTION.GlobalMetadata
+		REF @SECTION.Statistics
+		REF @TASK.FEAT71
+	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
+		+ "108: every field the save manager displays becomes editable"
+		REF @PROJECT.PCST
+
+TASK FEAT73
+	TITLE "Edit the terraformation unit levels and recompute the index and the biomass"
+	STATUS draft
+	SPEC "the seven unit levels of a planet are edited and carry their new value into the exported"
+		+ "save"
+	SPEC "the terraformation index and the biomass are not edited, and follow the unit levels as"
+		+ "they are edited"
+	SPEC "the purification level accepts the minus one that means not unlocked, and refuses every"
+		+ "other negative value"
+	AFTER @TASK.FEAT71
+	WAVE 6
+	RATIONALE "The section displays nine values for a planet: seven unit levels the save carries"
+		+ "and two sums it does not, the index over oxygen, heat, pressure, purification and"
+		+ "biomass, and the biomass over plants, insects and animals. A save has no field to write"
+		+ "an index or a biomass back to, so they stay read-only and are recomputed from the edited"
+		+ "levels. The planet identifier heading the planet is the key binding the levels to the"
+		+ "world objects placed on that planet and is not edited. The purification sentinel is the"
+		+ "one level whose lower bound is not zero"
+		REF @SECTION.TerraformationLevels
+		REF @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+		REF @TASK.FEAT71
+	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
+		+ "108: every field the save manager displays becomes editable, the computed ones staying"
+		+ "read-only"
+		REF @PROJECT.PCST
+
+TASK FEAT74
+	TITLE "Pick a world object by its label in a catalogue filtered on the name typed"
+	STATUS draft
+	SPEC "the catalogue lists the 652 rows of the world object label table and keeps the rows whose"
+		+ "label or world object name carries the fragment typed"
+	SPEC "picking a row yields the world object name the save carries, the label never being"
+		+ "written to the save"
+	AFTER @TASK.FEAT71
+	WAVE 6
+	RATIONALE "The label table is the only catalogue the repository holds: a label for each world"
+		+ "object name, with no category, no craft cost, no stack size and no statement of which"
+		+ "names are items an inventory may hold. The catalogue therefore offers the whole table,"
+		+ "filtered on the name typed, and the responsibility for picking a name that makes sense"
+		+ "in an inventory stays with the user; a category tree would need a table that does not"
+		+ "exist. The energy table covers 111 of those names and says nothing of the others, so it"
+		+ "is no substitute"
+		REF @DATATABLE.WorldObjectLabels
+		REF @DATATABLE.EnergyLevels
+		REF @TASK.FEAT75
+	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
+		+ "108: editing an inventory needs a list of the available objects and a filter on the name"
+		REF @PROJECT.PCST
+	SOURCE "Label table counted on 2026-09-21 at commit c65c7cb: 652 rows, one label per world"
+		+ "object name, no other column"
+		REF @PROJECT.PCST
+
+TASK FEAT75
+	TITLE "Edit a player, their equipment and their inventory as grids of slots"
+	STATUS draft
+	SPEC "the inventory and the equipment of a player are displayed as a grid of as many cells as"
+		+ "the size of that inventory declares, an item per cell, the empty cells shown"
+	SPEC "an item is added into an empty cell only, from the catalogue, and the save gains a world"
+		+ "object whose identifier is above every inventory and world object identifier it carries"
+	SPEC "removing an item drops it from the inventory and from the world objects of the save, and"
+		+ "replacing an item is a removal followed by an addition in the same cell"
+	SPEC "an item the loaded save carries with a quantity keeps that quantity through an edit of"
+		+ "the inventory it sits in"
+	SPEC "the player name is edited and carries its new value into the exported save"
+	AFTER @TASK.FEAT69
+	AFTER @TASK.FEAT74
+	WAVE 6
+	RATIONALE "An inventory names its items by identifier and declares a size nothing checks, so a"
+		+ "free list would let a save be written with more items than the inventory holds; a grid"
+		+ "of exactly size cells makes that save unrepresentable rather than refused after the"
+		+ "fact. Adding an item mints an identifier above the maximum of the two sections sharing"
+		+ "the numbering space, as the merge sequence does, uniqueness over the union being no"
+		+ "property of a save the game itself writes. The display resolves an item identifier to"
+		+ "its world object name and drops the identifier, so the section needs a reader carrying"
+		+ "the cell, the identifier and the name. Removing an item drops the world object too, no"
+		+ "reader tolerating an inventory naming an identifier no world object carries"
+		REF @SECTION.Inventories
+		REF @SECTION.WorldObjects
+		REF @SECTION.Players
+		REF @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects
+		REF @TASK.FEAT74
+		REF @TASK.FEAT69
+	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
+		+ "108: a view of its own for an inventory, a grid whose cell is a slot, so that nothing"
+		+ "can be added beyond the limit of the inventory"
+		REF @PROJECT.PCST
+
+TASK TEST76
+	TITLE "Edit a save in the save manager and export it, from the file input to the download"
+	STATUS draft
+	SPEC "a generated scenario fixture is loaded, one field of each editable section and one"
+		+ "inventory slot are edited, and the exported save passes validation"
+	SPEC "the scenario asserts the edit mode, the pending edit and the export on what the screen"
+		+ "shows, by role and by label, and the exported name differs from the loaded one"
+	AFTER @TASK.FEAT71
+	AFTER @TASK.FEAT72
+	AFTER @TASK.FEAT73
+	AFTER @TASK.FEAT75
+	WAVE 6
+	RATIONALE "The package has no component layer, so the edit mode is covered by an end-to-end"
+		+ "scenario on the three engines, where a blob and a download diverge most. The fixture is"
+		+ "declared in the generator and replayed byte for byte by the guard, never copied from a"
+		+ "real save, and carries only an allowed pseudonym and a synthetic account identifier. The"
+		+ "scenario reaches the new grid and the catalogue by role and by label, the locator guard"
+		+ "refusing anything the screen does not show"
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
+		REF @DECISION.NoRealPlayerNameInPublicContent
+		REF @DECISION.SteamIdentifiersAreAnonymisedLikeNames
+		REF @TASK.FEAT75
+	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
+		+ "108"
+		REF @PROJECT.PCST
+
+TASK FEAT77
+	TITLE "Locate every validation issue in a way a repair can act on"
+	STATUS draft
+	SPEC "every issue the validator reports names the section it concerns, and the ones bearing on"
+		+ "one entry name that entry in a single index space, whichever code they carry"
+	SPEC "an issue bearing on one field names that field as a value of its own, and not only inside"
+		+ "the sentence shown on screen"
+	SPEC "a float serialization issue and a unique host issue each name the entry they concern,"
+		+ "where today they name nothing"
+	SPEC "the sentences the command line and the save manager display for an invalid save are"
+		+ "unchanged"
+	WAVE 7
+	RATIONALE "A fix the user ticks has to be applied to one entry of one section, and today an"
+		+ "issue cannot say which. The two codes that carry an entryIndex do not count in the same"
+		+ "space: the unreadable line carries its rank among the lines of the section, the schema"
+		+ "violation its rank among the readable entries alone, so one unreadable line above a"
+		+ "violation shifts every index below it and a repair would rewrite the wrong entry. The"
+		+ "field is only present inside the detail sentence, which presentation treats as opaque"
+		+ "text. The float serialization and unique host checks carry no location at all, the first"
+		+ "because it scans the raw text and the second because it counts across the whole players"
+		+ "section. Nothing here changes what the validator accepts or refuses, so the single"
+		+ "source of warnings stays one source and the four flows keep their verdict; only the"
+		+ "shape of an issue grows. This is the precondition of the fix catalogue and of everything"
+		+ "the rest of the wave applies"
+		REF @COMMAND.ValidateSave
+		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @RULE.ASectionLineIsOneJsonEntry
+		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
+		REF @SECTION.Players
+		REF @PACKAGE.core_mapping
+	SOURCE "User ruling of 2026-09-21 on pull request #108: its wave 7 tasks are rejected; the"
+		+ "repair rests on the existing validator, detects the defects of the save, presents a"
+		+ "table of fixes to tick and writes a new save file on confirmation"
+		REF @PROJECT.PCST
+	SOURCE "Read on 2026-09-21 on the default branch: the unreadable line carries the rank of the"
+		+ "line in its section and the schema violation the rank of the entry among the readable"
+		+ "ones, the field name sits inside the detail sentence as the instance path of the schema"
+		+ "error, and the float serialization and unique host issues carry neither section nor"
+		+ "entry"
+		REF @PROJECT.PCST
+		REF @PACKAGE.core_mapping
+
+TASK FEAT78
+	TITLE "Propose the fixes that repair a save the validator rejects"
+	STATUS draft
+	SPEC "a save the validator rejects yields a plan listing, for each proposed fix, the issues it"
+		+ "resolves, what the save carries before and what it will carry after, whether the fix"
+		+ "discards data, and whether it can be left out or comes with any rewritten file"
+	SPEC "a defect for which no fix is known appears in the plan as not repairable automatically,"
+		+ "and never disappears from it"
+	SPEC "a save the validator accepts yields a plan proposing no fix"
+	SPEC "a save whose section count is unsupported yields a plan saying so and saying that no"
+		+ "other defect could be looked for"
+	AFTER @TASK.FEAT77
+	WAVE 7
+	RATIONALE "The table the user confirms is this plan, so the plan is built before any UI exists"
+		+ "and is tested without one. Building it needs the sections of a save the validator"
+		+ "rejects, which no use case exposes today: display and merge both return before calling"
+		+ "the parser when validation fails, while the parser itself never refuses a save, records"
+		+ "the lines it cannot read and returns every other one. The plan therefore reads the"
+		+ "issues from the validator, the single source, and the sections from the parser, and"
+		+ "pairs them; it invents no detection of its own. Two defects need no fix code at all, the"
+		+ "unreadable line being already dropped by the parser and the float suffix being already"
+		+ "written back by the serializer, which is why the plan is worth its own task before"
+		+ "anything is applied. A defect with no known fix stays visible: a repair that hides what"
+		+ "it cannot mend is worse than one that mends nothing"
+		REF @COMMAND.ValidateSave
+		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
+		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
+		REF @TASK.FEAT77
+		REF @PACKAGE.core_mapping
+		REF @PACKAGE.shared_save_processing
+	SOURCE "User ruling of 2026-09-21 on pull request #108: the defects of the save are detected by"
+		+ "the existing validator and presented as a table of the fixes to apply, the user ideally"
+		+ "ticking which ones"
+		REF @PROJECT.PCST
+	SOURCE "Read on 2026-09-21 on the default branch: the parser records an unreadable line and"
+		+ "continues, the display and merge use cases call it only after a valid verdict, and the"
+		+ "entry serializer writes the dot zero suffix back for the twelve float fields the check"
+		+ "scans"
+		REF @PROJECT.PCST
+		REF @PACKAGE.shared_save_processing
+
+TASK FEAT79
+	TITLE "Write a new save file applying the fixes the caller selected"
+	STATUS draft
+	SPEC "applying a selection of fixes produces new save content, leaves the content it was given"
+		+ "untouched, and reports the validation of the result"
+	SPEC "the fixes the rewrite itself carries are applied whatever the selection, and the result"
+		+ "lists them"
+	SPEC "the result names the issues that remain and the selected fixes that could not be applied,"
+		+ "each with its reason"
+	SPEC "a player identifier beyond the range of a double comes out of the repair as the same"
+		+ "decimal text it went in with"
+	SPEC "a save carrying the legacy twelve part format comes out in the eleven section format, and"
+		+ "the result says that the terrain layers are not carried over"
+	AFTER @TASK.FEAT78
+	WAVE 7
+	RATIONALE "This is where the repair writes. The whole result is produced by parsing the"
+		+ "rejected save, applying the selected fixes to the parsed sections and serializing them"
+		+ "again, so the two defects the round trip already mends cost no fix code and the third,"
+		+ "several host players, is a single assignment on the players section. Serializing is what"
+		+ "makes the repair risky rather than the fixes: the entry serializer refuses a nested"
+		+ "value, so a save whose corruption is a nested field cannot be written at all and has to"
+		+ "come back as a named failure instead of a thrown error; the identifier of a player is"
+		+ "written as its exact decimal text and must not be parsed into a number on the way"
+		+ "through; and the serializer writes ten sections, so a legacy save is converted whether"
+		+ "or not the user asked. The result is validated again before it is handed back, exactly"
+		+ "as the merge validates its own output, and what remains is reported rather than"
+		+ "swallowed"
+		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
+		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
+		REF @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
+		REF @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+		REF @SECTION.Players
+		REF @SECTION.Reserved
+		REF @TASK.FEAT78
+		REF @PACKAGE.core_mapping
+	SOURCE "User ruling of 2026-09-21 on pull request #108: on confirmation a new save file is"
+		+ "created carrying the corrections, the file loaded being never overwritten"
+		REF @PROJECT.PCST
+	SOURCE "Read on 2026-09-21 on the default branch: the merge use case validates the content it"
+		+ "has just serialized before presenting it, the entry serializer throws on a nested field,"
+		+ "and the round trip of an int64 player identifier is covered by the serializer"
+		+ "specification"
+		REF @PROJECT.PCST
+		REF @PACKAGE.shared_save_processing
+
+TASK FEAT80
+	TITLE "Repair a rejected save from the save manager"
+	STATUS draft
+	SPEC "loading a save the validator rejects shows, besides its errors, the defects grouped by"
+		+ "kind with the fix proposed for each; a fix that can be left out carries a box to tick,"
+		+ "and a fix any rewritten file carries is shown as always applied, with what it discards"
+	SPEC "a defect for which no fix is proposed is shown as such, with the entry it concerns and no"
+		+ "box"
+	SPEC "confirming downloads a new file under a name distinct from the loaded one, and shows what"
+		+ "the validator still reports about it"
+	SPEC "a save whose section count is unsupported shows the one defect it produces and no repair"
+		+ "to confirm"
+	AFTER @TASK.FEAT79
+	AFTER @TASK.FEAT70
+	WAVE 7
+	RATIONALE "Today a rejected save ends the page: the route shows the list of validation messages"
+		+ "and nothing else, and the visualization area stays empty. The repair view takes that"
+		+ "dead end and turns it into the table the user acts on, reusing the export path the wave"
+		+ "before builds so that the corrected save leaves as a new file and the loaded one is"
+		+ "never overwritten. Grouping by kind is what makes the table usable when a defect repeats"
+		+ "across hundreds of entries. A fix the rewrite itself carries cannot be left out, the"
+		+ "parser having already dropped the unreadable line and the serializer writing the float"
+		+ "suffix back, so it is shown as always applied with the loss named in its row rather than"
+		+ "behind a box that could not be honoured, because a save manager that silently drops"
+		+ "entries of a save is the failure this feature exists to avoid. A call that does not"
+		+ "complete keeps the one failure idiom of the package, distinct from what the validator"
+		+ "reports"
+		REF @DECISION.UiSaveManagerHasOneUiErrorIdiom
+		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
+		REF @TASK.FEAT79
+		REF @PACKAGE.ui_save_manager
+		REF @PACKAGE.core_mapping
+	SOURCE "User ruling of 2026-09-21 on pull request #108: the defects are presented as a table of"
+		+ "the fixes to apply, ideally with a box per fix, and confirming creates a new corrected"
+		+ "save file"
+		REF @PROJECT.PCST
+	SOURCE "Read on 2026-09-21 on the default branch: the display route renders the validation"
+		+ "messages and the visualization area is shown only when the save carries no error, and"
+		+ "the merge result is the only place that turns serialized content into a downloadable"
+		+ "file"
+		REF @PROJECT.PCST
+		REF @PACKAGE.ui_save_manager
+
+TASK TEST81
+	TITLE "Repair a corrupted scenario fixture in the save manager"
+	STATUS draft
+	SPEC "a scenario fixture is generated carrying a float gauge written without its decimal suffix"
+		+ "and an unreadable entry line, and the validator rejects it"
+	SPEC "the save manager shows that fixture as repairable, and confirming yields a file the"
+		+ "validator accepts"
+	SPEC "a scenario fixture is generated whose section count is unsupported, and the save manager"
+		+ "shows it as not repairable"
+	AFTER @TASK.FEAT80
+	WAVE 7
+	RATIONALE "The repair is a flow across three engines, files, blobs and downloads, where the"
+		+ "package has no layer below end to end; the scenario is what covers it. The fixtures are"
+		+ "declared in the generator and replayed byte for byte by the guard, never copied from a"
+		+ "real save, so no real player name and no real Steam account identifier reaches them and"
+		+ "the corruption they carry is built on purpose rather than found. Two fixtures are needed"
+		+ "because the two outcomes of the feature are opposite: one save that the round trip mends"
+		+ "entirely, one whose section count hides everything else. The scenario asserts what the"
+		+ "screen shows, the presence and the location of what is offered, never the sentence a"
+		+ "rule produced, and it changes the UI for nothing but its own sake"
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+		REF @DECISION.NoRealPlayerNameInPublicContent
+		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
+		REF @TASK.FEAT80
+		REF @PACKAGE.ui_save_manager
+	SOURCE "User ruling of 2026-09-21 on pull request #108: the wave delivers a repair the user"
+		+ "confirms, so the scenario covers the confirmation and the file it produces"
+		REF @PROJECT.PCST
+	SOURCE "Read on 2026-09-21 on the default branch: the four scenario fixtures of the package are"
+		+ "generated by the fixture script and replayed by the guard, and the invalid one carries a"
+		+ "single violation on one record"
+		REF @PROJECT.PCST
+		REF @PACKAGE.ui_save_manager
+
+TASK FEAT82
+	TITLE "Detect the links between the objects of a save that lead nowhere"
+	STATUS draft
+	DESC "drafted for memory, no research done: which links a save carries, which of them the game"
+		+ "tolerates broken and what fix each defect calls for are established when the task is"
+		+ "refined"
+	SPEC "a link from one object of a save to another that names an identifier nothing carries is"
+		+ "reported by the validator with the entry it sits in, the equipment identifier of a"
+		+ "player naming no inventory being the first case"
+	SPEC "each defect so reported enters the repair plan, with a fix or as not repairable"
+		+ "automatically"
+	AFTER @TASK.FEAT80
+	RATIONALE "The validator checks each entry against the schema of its section and never one"
+		+ "entry against another, so a save whose player names an equipment inventory that does not"
+		+ "exist is accepted today. The owner expects the repair to earn its keep on the coherence"
+		+ "of the data rather than on its shape, in a second step once the minimal repair of wave 7"
+		+ "is delivered. The check enters the single validator, which changes the verdict of the"
+		+ "display, merge and validate flows for a save accepted today, a cost to weigh at"
+		+ "refinement. A repeated identifier is no such defect, the game itself writing collisions"
+		+ "between inventories and world objects; a link that leads nowhere is"
+		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects
+		REF @SECTION.Players
+		REF @SECTION.Inventories
+		REF @TASK.FEAT78
+	SOURCE "Owner ruling of 2026-09-21 on the rewrite of the wave 7 tasks of pull request 108: the"
+		+ "validator validates against a schema, the least a save fixer adds is checking the links"
+		+ "between objects, an equipment identifier having to name an inventory; that part comes in"
+		+ "a second step and is drafted for memory only, without further research"
+		REF @PROJECT.PCST
