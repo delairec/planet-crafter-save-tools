@@ -626,16 +626,67 @@ TASK CHORE54
 	SPEC "the new setup doesn't break existing node commands (compatibility)"
 
 TASK FEAT55
-	TITLE "Provide support for new save format from Skeo update"
+	TITLE "Read, validate and merge a save written by the Skeo update"
 	STATUS draft
-	DESC "this task will require a discovery phase to gather information about the new save format"
-		+ "(structure and objects)"
-	RATIONALE "Skeo update introduced a new save format with new objects and new properties in the"
-		+ "save files. Currently the new format is not supported, which causes a validation error"
-		+ "when trying to display"
-	SPEC "Skeo save format is supported"
-	SOURCE "We need to check for @GAME_RELEASE.2.103 from the wiki source"
+	SPEC "a save whose global metadata carries logisticsPaused passes validation, and a save"
+		+ "without it still does"
+	SPEC "the merged save carries the logisticsPaused of save A when save A has it, otherwise the"
+		+ "one of save B, and no logisticsPaused when neither save has it"
+	SPEC "a merge of two saves that carry no logisticsPaused produces the same bytes as before the"
+		+ "task"
+	SPEC "a world object or a world event carrying the planet numeric id -440810600 is placed on"
+		+ "Skeo"
+	SPEC "TreePlanter3, PodUnderground and RocketAnimals2 each carry a row in the energy table with"
+		+ "the kilowatts measured in game 2.103 when the machine draws or produces power"
+	SPEC "the save manager displays a 2.103 save, anonymised, without a validation error"
+	RATIONALE "The Skeo update is game release 2.102; release 2.103 is its first patch and changes"
+		+ "no save key. The only key the update adds is logisticsPaused in the global metadata, the"
+		+ "state of the drone button stop and recall all drones, written as false on save and"
+		+ "absent from saves written before 2.102. The closed section 0 schema rejects it and the"
+		+ "global metadata merge would drop it. logisticsPaused is arbitrated like the open"
+		+ "instance fields, save A winning, so that a merge of saves written before 2.102 keeps the"
+		+ "output whose checksum the verification protocol records. Skeo is the planet whose id"
+		+ "-440810600 is missing from the planet table; the stable hash of the planet name gives"
+		+ "it, as it gives the five rows already there. Every group id the update adds already has"
+		+ "a label row. The wiki gives the power of Incubator2 and InsideLamp2, already in the"
+		+ "energy table, and no energy for the three other machines, whose predecessors have no"
+		+ "row; a value missing from the wiki is undocumented, never zero, so the user measures it"
+		+ "in game and supplies it"
+		REF @GAME_RELEASE.2.102
 		REF @GAME_RELEASE.2.103
+		REF @RULE.GlobalMetadataIsSummedAndUnioned
+		REF @RULE.APlanetNumericIdIsStableAcrossSaves
+		REF @DATATABLE.PlanetNamesByNumericId
+		REF @DATATABLE.EnergyLevels
+		REF @DATATABLE.WorldObjectLabels
+	SOURCE "Skeo update and its first patch, release dates and patch notes, read on 2026-09-21:"
+		+ "Skeo live 2026-09-01 (gid 1842212951312440), Skeo Moon Patch #1 2026-09-14 (gid"
+		+ "1843481262701200)"
+		REF @URL.SteamNewsOfThePlanetCrafter
+		REF @URL.WikiGameUpdates
+		REF @URL.WikiVersionHistory
+		REF @GAME_RELEASE.2.102
+		REF @GAME_RELEASE.2.103
+	SOURCE "logisticsPaused, the only key added between 2.008 and 2.102, optional and written as"
+		+ "false, and the label Ui_logistics_pause, read on 2026-09-21"
+		REF @URL.PceditSaveDiff
+		REF @URL.PceditSaveFileUnlocks
+		REF @URL.AkarnokdEnglishPlusLabels
+	SOURCE "Group ids added by the Skeo update and the mods raising their supported version to"
+		+ "2.103, read on 2026-09-21"
+		REF @URL.PceditItemCatalog
+		REF @URL.AkarnokdSupports2103
+	SOURCE "Power of the Skeo machines: T2 Incubator -715.00 kW/s, Intense Area Lamp -25 kW/s;"
+		+ "Giant Trees Pot, T2 Animals Spreader Rocket and Underground Living Compartment carry no"
+		+ "energy field; read on 2026-09-21"
+		REF @URL.WikiSkeoMoon
+		REF @URL.WikiIncubator
+		REF @URL.WikiFurniture
+		REF @URL.WikiRockets
+		REF @URL.WikiBaseBuilding
+	SOURCE "Sample save written by 2.103 on Skeo, in the private context, imperfect: it carries"
+		+ "logisticsPaused and the planet id -440810600, no Skeo machine"
+		REF @PROJECT.DNC
 	SOURCE "Earlier game releases recorded alongside this task; cited here by user ruling of"
 		+ "2026-09-21 on pull request #103"
 		REF @GAME_RELEASE.1.618

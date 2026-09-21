@@ -297,3 +297,67 @@ USAGE_REPORT PR101_102_103
 	EVALUATES @PULL_REQUEST.PCST103
 	DESC "one usage report for the three task pull requests of the wave of 2026-09-18, committed on"
 		+ "the branch of pull request 102"
+
+GAME_RELEASE 2.102
+	DESC "Skeo update"
+
+URL SteamNewsOfThePlanetCrafter
+	LOCATION "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=1284190&count=50&maxlength=0&format=json"
+	DESC "official Steam announcements of the game, full text, one item per gid"
+
+URL WikiSkeoMoon
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=19068&prop=wikitext&format=json"
+	DESC "fandom wiki page Skeo (Moon), revision of 2026-09-10"
+
+URL WikiGameUpdates
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=19232&prop=wikitext&format=json"
+	DESC "fandom wiki page Game Updates, revision of 2026-09-21"
+
+URL WikiVersionHistory
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=19204&prop=wikitext&format=json"
+	DESC "fandom wiki page Version history, revision of 2026-09-15"
+
+URL WikiIncubator
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=18732&prop=wikitext&format=json"
+	DESC "fandom wiki page Incubator, revision of 2026-09-04"
+
+URL WikiFurniture
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=18854&prop=wikitext&format=json"
+	DESC "fandom wiki page Furniture, revision of 2026-09-06"
+
+URL WikiRockets
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=18808&prop=wikitext&format=json"
+	DESC "fandom wiki page Rockets, revision of 2026-09-05"
+
+URL WikiBaseBuilding
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=19176&prop=wikitext&format=json"
+	DESC "fandom wiki page Base Building, revision of 2026-09-11"
+
+URL PceditPlanetHash
+	LOCATION "https://github.com/Valkerran/PCEdit/blob/ca7760bd869bfcb07dbd8427ef814f0b917b7efb/PCEdit.SaveFileHandler/PlanetHash.cs"
+	DESC "third-party save editor: the stable hash turning a planet id into its numeric id"
+
+URL PceditPlanetHashTests
+	LOCATION "https://github.com/Valkerran/PCEdit/blob/ca7760bd869bfcb07dbd8427ef814f0b917b7efb/PCEdit.SaveFileHandler.Tests/PlanetHashTests.cs"
+	DESC "third-party save editor: the six planet numeric ids its hash reproduces"
+
+URL PceditSaveDiff
+	LOCATION "https://github.com/Valkerran/PCEdit/blob/ca7760bd869bfcb07dbd8427ef814f0b917b7efb/tools/save-diff/README.md"
+	DESC "third-party save editor: key diff of real saves written by 2.008 and 2.102"
+
+URL PceditSaveFileUnlocks
+	LOCATION "https://github.com/Valkerran/PCEdit/blob/ca7760bd869bfcb07dbd8427ef814f0b917b7efb/PCEdit.SaveFileHandler/Models/SaveFileUnlocks.cs"
+	DESC "third-party save editor: model of section 0, logisticsPaused optional"
+
+URL PceditItemCatalog
+	LOCATION "https://github.com/Valkerran/PCEdit/blob/ca7760bd869bfcb07dbd8427ef814f0b917b7efb/tools/item-catalog/gen_catalog.py"
+	DESC "third-party save editor: group ids by the game release that added them"
+
+URL AkarnokdEnglishPlusLabels
+	LOCATION "https://github.com/akarnokd/ThePlanetCrafterMods/blob/3f10f457eb9dab78537a3b9dc9f1692679782391/UITranslationEnglishPlus/labels-engplus.txt"
+	DESC "community translation mod: GROUP_NAME_<gId> keys are the game group ids, labels are"
+		+ "community text"
+
+URL AkarnokdSupports2103
+	LOCATION "https://github.com/akarnokd/ThePlanetCrafterMods/commit/16fa2a630497ba0154406822e42919ed9d789039"
+	DESC "community mods raise their supported game version to 2.103, 2026-09-14"

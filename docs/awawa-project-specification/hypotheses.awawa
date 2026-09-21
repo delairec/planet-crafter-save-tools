@@ -58,3 +58,16 @@ HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 	SOURCE "Extracted from docs/save-format.md, what the reference saves say about the rarest"
 		+ "three, on 2026-09-18"
 		REF @PROJECT.PCST
+
+HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
+	DESC "terraTokens and allTimeTerraTokens stay below 2^53 in a real save, so reading them as a"
+		+ "double loses nothing"
+	UNTIL "a save whose terraTokens or allTimeTerraTokens exceeds 9007199254740991"
+	RATIONALE "Release 2.102 stores the token counts as unsigned 64-bit values; the reference saves"
+		+ "reach 735473, so the exact text reading given to the player identifier is not extended"
+		+ "to them"
+		REF @RULE.ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
+	SOURCE "Development branch note v2.102 of 2026-07-28 (gid 1839041357038231): Terra tokens"
+		+ "counts now stored as a unsigned 64bits value; read on 2026-09-21"
+		REF @URL.SteamNewsOfThePlanetCrafter
+		REF @GAME_RELEASE.2.102

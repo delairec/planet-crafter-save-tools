@@ -1,0 +1,12 @@
+OPEN_QUESTION TheEnergyOfTheSkeoMachinesIsMeasuredInGame
+	DESC "how much power do TreePlanter3, PodUnderground and RocketAnimals2 draw or produce in game"
+		+ "2.103, none being a valid answer"
+		REF @DATATABLE.EnergyLevels
+	BLOCKS @TASK.FEAT55
+	RATIONALE "The wiki documents no energy for the three machines and a missing value is never a"
+		+ "zero; the user measures them in game, ruled on 2026-09-21 in the refinement of the task"
+	SOURCE "Wiki pages read on 2026-09-21, no energy field on the three infoboxes"
+		REF @URL.WikiFurniture
+		REF @URL.WikiRockets
+		REF @URL.WikiBaseBuilding
+		REF @GAME_RELEASE.2.103

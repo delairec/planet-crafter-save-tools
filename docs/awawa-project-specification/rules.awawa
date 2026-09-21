@@ -365,10 +365,15 @@ RULE APlanetNumericIdIsStableAcrossSaves
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	APPLIES_TO_SECTION @SECTION.WorldEvents
 	VALUES_FROM @DATATABLE.PlanetNamesByNumericId
-	RATIONALE "No known deterministic hash reproduces the five identifiers from the planet name, so"
-		+ "the correspondence is a maintained lookup rather than a computation"
+	RATIONALE "The id is the stable hash of the planet name, a two-accumulator djb2 over its UTF-16"
+		+ "code units, which reproduces the six known ids; the table stays a maintained lookup"
+		+ "because a save carries the id and the name must be found from it"
 	SOURCE "Extracted from docs/save-format.md, Planet numeric IDs, on 2026-09-18"
 		REF @PROJECT.PCST
+	SOURCE "Hash algorithm and the six ids it reproduces, Skeo -440810600 among them, read on"
+		+ "2026-09-21 and recomputed for the six names"
+		REF @URL.PceditPlanetHash
+		REF @URL.PceditPlanetHashTests
 
 RULE APurificationLevelOfMinusOneMeansNotUnlocked
 	HOLDS_FOR both
