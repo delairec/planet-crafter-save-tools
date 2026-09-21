@@ -455,7 +455,6 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 	REJECTED "Making up a new identifier for the save B player whose identifier already appears in"
 		+ "save A: the value would designate no real account"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST43
 	RESTS_ON @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
 	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
 	RATIONALE "The identifier is unique neither across two saves nor, formally, within one;"
@@ -620,7 +619,6 @@ DECISION AnEmptyMetadataSectionIsRefusedByValidation
 		+ "save from two invalid inputs, with an instance seed of zero, while what the user must"
 		+ "see of a corrupted save is the refusal of validation"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FIX45
 	RATIONALE "Measured on 2026-09-15: mergeGlobalMetadata([], []) throws TypeError, and bun merge"
 		+ "on a folder of two saves with an empty section 0 prints « Error: undefined is not an"
 		+ "object » then exits with 1 without writing a file. On origin/master the"
@@ -747,7 +745,6 @@ DECISION LoadingScenariosLocateTheSpinnerByRoleNeverByLabel
 	REJECTED "Designating the busy indicator by its Loading... label, which the hydration fallback"
 		+ "carries identically"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT42
 	RATIONALE "The label is shared: displayRouteLoadingLabel and spinnerLoadingLabel are both «"
 		+ "Loading... » in two distinct message modules. Only the role tells them apart, the"
 		+ "fallback being a p without a role and the indicator a span with role=status, and the"
@@ -1005,8 +1002,6 @@ DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 	DESC "the two renderings, save string and already parsed sections, consume the record builders"
 		+ "and are never their source"
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
-	APPLIES_TO_TASK @TASK.TEST43
-	APPLIES_TO_TASK @TASK.TEST44
 	SPEC "The save record builders are declared once, in the shared-save-processing testing"
 		+ "directory, and imported one by one, without a barrel or a re-export for a historical"
 		+ "caller"
@@ -1031,7 +1026,6 @@ DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 DECISION ASectionIndexIsNeverHardCoded
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST44
 	SPEC "Section indexes, including those of the legacy format and the reserved part, are declared"
 		+ "once and read from their module"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::PLAYERS_SECTION_INDEX"
@@ -1690,9 +1684,6 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 		+ "and is not a required check"
 		IMPL ".github/workflows/ui-tests.yml::workflow_dispatch"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.TEST40
-	APPLIES_TO_TASK @TASK.FEAT41
-	APPLIES_TO_TASK @TASK.FEAT42
 	RATIONALE "Task pull requests do not trigger the suite, so making the job a required check"
 		+ "would block them; local browser installation deliberately differs from CI, because"
 		+ "installing with system dependencies needs privilege elevation and fails on a workstation"
@@ -1715,7 +1706,6 @@ DECISION AControllerSpecCoversWiringNotBranches
 		IMPL "packages/core-mapping/src/controllers/LoadAndValidateSaveFileController.spec.ts::When"
 			+ "the content is not a valid save"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST44
 	RATIONALE "Replaying branches at controller level duplicates coverage already gained and makes"
 		+ "every rule change cost twice; for LoadAndValidateSaveFileController the invalid"
 		+ "extension is refused by the validator before the use case calls the parser and leaves"
@@ -1734,7 +1724,6 @@ DECISION ATestNeverDerivesItsInputSetFromItsSubject
 	SPEC "The partition of world object names is declared, and both directions of it are asserted"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::worldObjectNamesByEnergyRole"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST43
 	RATIONALE "An iteration over the keys of a table silently loses a case when an entry is"
 		+ "removed, so it cannot break the rule that constrains that table; the same defect let an"
 		+ "emptied constant run zero cases without a word, hence the test pinning it to its values"
@@ -1750,7 +1739,6 @@ DECISION AnIllegalTestInputIsWrittenWithTsExpectError
 	SPEC "A guard walks every spec of the repository and refuses untyped fixtures"
 		IMPL "scripts/check-fixture-typing.ts"
 		ENFORCED_BY "scripts/check-fixture-typing.spec.ts"
-	APPLIES_TO_TASK @TASK.TEST44
 	RATIONALE "The directive fails the day the factory stops rejecting the data, which a cast does"
 		+ "not: an illegal input test built on a cast cannot fail"
 	SOURCE "Decided with T19"
@@ -1773,8 +1761,6 @@ DECISION RepositoryGuardsAreGroupedScripts
 	SPEC "Guards are declared as entry points of the quality audit, otherwise they are reported as"
 		+ "unreachable files"
 		IMPL "fallow.toml::scripts/check-test-assertions.ts"
-	APPLIES_TO_TASK @TASK.FEAT41
-	APPLIES_TO_TASK @TASK.FEAT42
 	RATIONALE "Two merged guards would make one script with two reasons to change, one reading"
 		+ "assertions and the other fixtures; the guard reads only the outermost asserted"
 		+ "expression, otherwise a comparison inside a callback, a type argument or a JSX element"
@@ -1799,7 +1785,6 @@ DECISION TheDoublesOfASpecShareOneFactory
 		+ "accept everything and counting the tests that fail"
 		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST44
 	RATIONALE "Five doubles of the same spec each invented their own way to recognise a save and"
 		+ "did not even agree on what identifies it; leaving the sibling double out of scope is"
 		+ "what made the remaining one look arbitrary"
@@ -1854,7 +1839,6 @@ DECISION NoSaveIsCommittedToThePublicRepository
 	SPEC "Each test creates its own temporary directory before and removes it after, never a shared"
 		+ "registry that is emptied"
 		IMPL "packages/shared-platforms/platform.fs.adapters.spec.js::await fs.rm(directory"
-	APPLIES_TO_TASK @TASK.FEAT41
 	RATIONALE "A shared registry leaves a spy on the global object for the rest of the test process"
 		+ "when nobody restores it, which happened"
 	SOURCE "Decided with T22; temporary directory form settled in the review of T36"
@@ -1895,7 +1879,6 @@ DECISION AScenarioReadsTheDownloadThroughTheNodeFileApi
 		IMPL "packages/ui-save-manager/e2e/tsconfig.json::@playwright/test"
 		IMPL "packages/ui-save-manager/tsconfig.json::vite/client"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.TEST40
 	RATIONALE "A scenario file runs in the runner and not in the browser: denying it the Node API"
 		+ "would have left the content check to the name of the link, which the task card"
 		+ "explicitly forbids; this is not a widened quality gate but the declaration of the real"
@@ -1920,8 +1903,6 @@ DECISION AScenarioFixtureIsNamedByContentAndVerdict
 		+ "binds it and in the README of the fixtures directory"
 		IMPL "packages/ui-save-manager/e2e/fixtures/README.md::## `baseline_valid.json`"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.TEST40
-	APPLIES_TO_TASK @TASK.FEAT41
 	RATIONALE "A role segment does not hold, since baseline_valid.json is both the displayed save"
 		+ "of the display scenarios and save A of the merge scenario, so a role segment would lie"
 		+ "or force a duplicate; content and verdict are the two stable properties of a fixture,"
@@ -1945,7 +1926,6 @@ DECISION AUiScenarioAssertsWhatTheScreenShows
 		+ "of the scenario is the location alone"
 		IMPL "packages/ui-save-manager/e2e/fixtures/negative-gauge_invalid.json"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.TEST40
 	RATIONALE "An invalid fixture shows a message without reasserting the rule that produces it,"
 		+ "otherwise the scenario duplicates on three engines a coverage core-mapping already"
 		+ "holds; the location and the choice of a sentence over a code are presentation decisions,"
@@ -1973,7 +1953,6 @@ DECISION ALoadingStateIsObservedByHoldingTheFileRead
 		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts::should end the busy state and hand"
 			+ "the button back"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.TEST40
 	RATIONALE "A fixture of a few kilobytes is read faster than the first poll of the runner:"
 		+ "without a hold the scenario passes when it catches the indicator and breaks when it"
 		+ "misses it, an intermittent test rather than coverage; the hold was checked by"
@@ -1990,7 +1969,6 @@ DECISION TheFirstDescribeNamesTheRuleTheSpecCovers
 		IMPL "packages/core-mapping/src/domain/rules/merge/determineSaveOrder.spec.ts::describe('Determine"
 			+ "save order'"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST43
 	RATIONALE "determineSaveOrder.spec.ts announced itself by its function name prefixed with a"
 		+ "hash; removing only the technical prefix left a title already carried by"
 		+ "mergeSaveSections.spec.ts, and two files under one name"
@@ -2008,7 +1986,6 @@ DECISION ScenarioSuiteArtifactsAreAlreadyIgnored
 		IMPL ".gitignore::playwright-report/"
 		IMPL ".gitignore::test-results/"
 		IMPL ".gitignore::blob-report/"
-	APPLIES_TO_TASK @TASK.FEAT42
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "Measured on 2026-09-15: with the three directories created and populated under"
 		+ "packages/ui-save-manager, the porcelain status with all untracked files returns nothing,"
@@ -2050,8 +2027,6 @@ DECISION ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		IMPL "package.json::check:scenario-fixtures"
 		IMPL "fallow.toml::scripts/check-scenario-fixtures.ts"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT41
-	APPLIES_TO_TASK @TASK.FEAT42
 	RATIONALE "The generator extracted from the README recipes reproduces the four versioned"
 		+ "fixtures byte for byte, and the scenarios pass on the three engines with the input/ link"
 		+ "removed; replaying the generator rather than comparing a fingerprint makes the guard"
@@ -2081,8 +2056,6 @@ DECISION TheSharedWalkFilterIsNamedAfterWhatItFilters
 		+ "only"
 		IMPL "scripts/specSources.ts::readOwnSpecFiles"
 		IMPL "scripts/specSources.ts::SPEC_FILES_PATTERN"
-	APPLIES_TO_TASK @TASK.FEAT41
-	APPLIES_TO_TASK @TASK.FEAT42
 	RATIONALE "The renaming is done in the pull request that created the mismatch, not in a commit"
 		+ "deferred after the wave is merged: deferring left a false name in the base for the whole"
 		+ "wave, against a one-line rebase conflict on a stacked branch that is rebased anyway"
@@ -2128,7 +2101,6 @@ DECISION AGuardRefusesLocatorsTheScreenDoesNotShow
 	SPEC "The guard and its spec are declared as entry points of the quality audit"
 		IMPL "fallow.toml::scripts/check-scenario-locators.spec.ts"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT42
 	RATIONALE "Before the guard, none of the five existing guards read what a scenario asserts: the"
 		+ "two reading test content walked a pattern fixed on spec files that never meets a .e2e.ts"
 		+ "file, and the two walking packages read only import specifiers; replayed on the five"
@@ -2164,7 +2136,6 @@ DECISION TheAmbiguousLabelIsPinnedInTheGuardSpec
 		+ "modules"
 		IMPL "scripts/check-scenario-locators.spec.ts::import {spinnerLoadingLabel} from"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT42
 	RATIONALE "The constant was a third copy of the label that nothing tied to the two modules; the"
 		+ "rejected clause of the guard ruling covers deriving the label in the guard, which would"
 		+ "give it a second reason to change, whereas the spec already changes with the guard, so"
@@ -2195,7 +2166,6 @@ DECISION RefusedShortcutsAreReadFromThePlaywrightApi
 		IMPL "scripts/check-scenario-locators.ts::SELECTOR_QUERY"
 		IMPL "scripts/check-scenario-locators.spec.ts::frameLocator('iframe.preview')"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT42
 	RATIONALE "dragAndDrop, setChecked, inputValue and frameLocator were missing from the delivered"
 		+ "guard; read on playwright-core 1.63.0, Page has thirty methods whose first argument is a"
 		+ "selector, and those four were the only absent ones; frameLocator also escaped the"
@@ -2531,7 +2501,6 @@ DECISION ABrokenInvariantOfADomainRuleFailsWithADomainErrorType
 		+ "belongs to validation, and reached in the merge it is a broken invariant"
 		REF @DECISION.AnErrorsOriginDecidesItsPath
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FIX45
 	RATIONALE "The named error directory of the infrastructure covers its own layer only; the empty"
 		+ "global metadata section is met by mergeGlobalMetadata, a domain rule, so its type lives"
 		+ "in the domain errors directory that already holds InvalidSaveDataError. The extension of"
