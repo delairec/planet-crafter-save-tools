@@ -278,3 +278,22 @@ PULL_REQUEST PCST102
 	PROJECT @PROJECT.PCST
 	NUMBER 102
 	DESC "fix(core-mapping): refuse a save whose section 0 carries no entry"
+
+PULL_REQUEST PCST101
+	PROJECT @PROJECT.PCST
+	NUMBER 101
+	DESC "chore(guards): refuse a corpus anchor naming a path git does not track"
+
+PULL_REQUEST PCST103
+	PROJECT @PROJECT.PCST
+	NUMBER 103
+	DESC "chore(tables): the product value tables become JSON files with a JSON Schema each"
+
+USAGE_REPORT PR101_102_103
+	FILE "docs/awawa-usage-reports/pull-requests/2026-09-21-pr-101-102-103.md::<!--"
+		+ "awawa-usage-report -->"
+	EVALUATES @PULL_REQUEST.PCST101
+	EVALUATES @PULL_REQUEST.PCST102
+	EVALUATES @PULL_REQUEST.PCST103
+	DESC "one usage report for the three task pull requests of the wave of 2026-09-18, committed on"
+		+ "the branch of pull request 102"
