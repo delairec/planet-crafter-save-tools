@@ -618,3 +618,23 @@ TASK FEAT55
 	SPEC "Skeo save format is supported"
 	SOURCE "We need to check for @GAME_RELEASE.2.103 from the wiki source"
 		REF @GAME_RELEASE.2.103
+
+TASK CHORE56
+	TITLE "the repository guards are run by an orchestrator rather than a chain of scripts"
+	STATUS draft
+	DESC "Raised in the review of pull request 101: check:guards chains eight bun run calls in"
+		+ "package.json and grows by one with each guard; the shape of the orchestrator, one file"
+		+ "or several, is to be decided when the task is refined"
+	SPEC "check:guards runs every guard without its list being restated in package.json"
+	SPEC "each guard stays runnable alone"
+	SPEC "a failing guard does not stop the others, and the run reports every guard that failed"
+
+TASK CHORE57
+	TITLE "PULL_REQUEST is no longer a source type of the corpus"
+	STATUS draft
+	DESC "Raised in the review of pull request 101: a decision does not need a source every time,"
+		+ "and recording one PULL_REQUEST entity per cited pull request duplicates the log of the"
+		+ "repository; the entities of that type are cited today by SOURCE fields of decisions and"
+		+ "processes and by the EVALUATES field of USAGE_REPORT"
+	SPEC "the schema declares no PULL_REQUEST type, and no entity of the corpus cites one"
+	SPEC "what a USAGE_REPORT evaluates is still named once PULL_REQUEST is gone"
