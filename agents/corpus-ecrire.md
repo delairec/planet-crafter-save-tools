@@ -2,8 +2,8 @@
 
 À lire avant toute création ou modification d'une entité, en complément du schéma (`awawa show TYPE .`).
 
-**Une section arrive avec la règle qui la cite.** `WHEN HOLDS_FOR current` et `WHEN HOLDS_FOR both` portent
-`INCOMING CONSTRAINED_BY` : une `SECTION` que le jeu écrit aujourd'hui et qu'aucune `RULE` ne nomme sous
+**Une section arrive avec la règle qui la cite.** `WHEN HOLDS_FOR all` et `WHEN HOLDS_FOR @GAME_RELEASE.2.004`,
+la dernière release que `HOLDS_FOR` nomme, portent `INCOMING CONSTRAINED_BY` : une `SECTION` que le jeu écrit aujourd'hui et qu'aucune `RULE` ne nomme sous
 `APPLIES_TO_SECTION` est un `L026`. Les entités s'écrivent donc par paires, section et règle, jamais une section
 seule ; c'est ce qui rend la spécification complète par construction, un trou prenant la forme d'une section sans
 règle (@DECISION.ASectionIsWrittenWithTheRuleThatCitesIt).
@@ -28,10 +28,12 @@ pull request qui touche son fichier
 (@PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived).
 
 **Un champ légal dans un seul état n'est déclaré que là.** Un champ conditionné par la valeur d'un autre champ se
-déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `INDEX` sous `WHEN HOLDS_FOR current` et
-`WHEN HOLDS_FOR both`, `CONFLICT` et `RESOLUTION` sous `WHEN DOMAIN merge`. Déclaré au niveau du type puis rendu
-requis dans le bloc, il resterait légal partout, la monotonie de `WHEN` ne pouvant rien interdire ; répété dans
-chaque bloc qui l'admet, il est refusé ailleurs par `L003`
+déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `INDEX` sous `WHEN HOLDS_FOR all` et
+`WHEN HOLDS_FOR @GAME_RELEASE.2.004`, `LEGACY_INDEX` sous `WHEN HOLDS_FOR all` et
+`WHEN HOLDS_FOR @GAME_RELEASE.1.618`, `CONFLICT` et `RESOLUTION` sous `WHEN DOMAIN merge`. Déclaré au niveau du type
+puis rendu requis dans le bloc, il resterait légal partout, la monotonie de `WHEN` ne pouvant rien interdire ;
+répété dans chaque bloc qui l'admet, il est refusé ailleurs par `L003`. Une entité qui nomme plusieurs valeurs d'un
+champ répétable entre dans le bloc de chacune
 (@DECISION.AFieldLegalInOneStateIsDeclaredInThatStateAlone).
 
 **Une observation dans le jeu cite sa version**, une page lue dehors cite son adresse. Le jeu est une entité
@@ -40,8 +42,17 @@ entité `URL` dont `LOCATION` est l'adresse exacte lue, figée sur un commit qua
 lecture reste dans la prose de la `SOURCE` : une même page se lit plusieurs jours
 (@DECISION.AGameReleaseIsCitedAsASource, @DECISION.AnExternalPageIsCitedAtTheAddressRead).
 
-**L'ère n'est pas l'archive** : une `SECTION` que le jeu n'écrit plus reste active avec `HOLDS_FOR legacy` — les
-sauvegardes anciennes se lisent encore ; `STATUS archived` ne s'écrit que le jour où le projet cesse de supporter ce
+**`HOLDS_FOR` nomme les releases pour lesquelles une règle ou une section vaut**, répété une fois par release, et
+seulement celles que le code distingue de la précédente : aujourd'hui `@GAME_RELEASE.1.618` (la save porte Terrain
+Layers) et `@GAME_RELEASE.2.004` (elle ne la porte plus). Une save écrite par une release non nommée — 2.102, 2.103 —
+se lit par la branche de la dernière release nommée avant elle. Une release ne s'ajoute qu'avec la branche du code
+qui la distingue, et elle s'ajoute alors à chaque entité qui la liste. **`HOLDS_FOR all`, seul**, marque ce qui ne
+dépend pas de la release — les règles de merge, les invariants du format — et couvre d'office une release nommée
+plus tard ; une entité qui décrit un écart entre releases les liste au contraire. Le code ne discrimine jamais une save
+par sa seule version déclarée (@DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone).
+
+**L'ère n'est pas l'archive** : une `SECTION` que le jeu n'écrit plus reste active et nomme par `HOLDS_FOR` les
+releases qui l'écrivaient — `@GAME_RELEASE.1.618` pour Terrain Layers —, les sauvegardes anciennes se lisant encore ; `STATUS archived` ne s'écrit que le jour où le projet cesse de supporter ce
 que l'entité décrit. Archiver éteint toute validation de l'entité et retire son corps des paquets `context` qui la
 citent : une entité s'archive propre, et rien d'actif ne doit plus pointer vers elle
 (@DECISION.TheEraIsNotTheArchive).
