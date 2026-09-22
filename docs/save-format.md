@@ -220,8 +220,10 @@ numeric ID rather than the textual `planetId` used elsewhere (`TerraformationLev
 the save's world seed or content) — confirmed by cross-referencing several real save files. The known ids are the rows of
 `packages/core-mapping/src/domain/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`).
 
-No known deterministic hash function (crc32, fnv1a, djb2, sdbm, Java-style `hashCode`, …) reproduces these IDs
-from the planet name, so this table is currently maintained as a fixed lookup rather than computed.
+The numeric id is a two-accumulator djb2 hash of the planet name over its UTF-16 code units, which reproduces
+all six known ids; the table stays a maintained lookup because a save carries the id and the name must be found
+from it. See `@RULE.APlanetNumericIdIsStableAcrossSaves` in
+[`awawa-project-specification/rules.awawa`](./awawa-project-specification/rules.awawa).
 
 ---
 
