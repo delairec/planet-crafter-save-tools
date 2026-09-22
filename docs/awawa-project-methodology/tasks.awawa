@@ -218,7 +218,7 @@ TASK FEAT55
 		REF @TASK.FEAT65
 		REF @TASK.FEAT66
 		REF @TASK.TEST67
-		REF @TASK.FEAT68
+		REF @TASK.TEST68
 	SOURCE "Skeo update and its first patch, release dates and patch notes, read on 2026-09-21:"
 		+ "Skeo live 2026-09-01 (gid 1842212951312440), Skeo Moon Patch #1 2026-09-14 (gid"
 		+ "1843481262701200)"
@@ -501,20 +501,20 @@ TASK TEST67
 		+ "planet id -440810600"
 		REF @PROJECT.DNC
 
-TASK FEAT68
-	TITLE "Handle the group ids the Skeo update deprecates"
+TASK TEST68
+	TITLE "Attest that a deprecated group id survives a read, a validation and a merge unchanged"
 	STATUS todo
 	AFTER @TASK.DOCS86
 	AFTER @TASK.FEAT89
-	DESC "type prefix and spec to settle once the open question is ruled"
-	SPEC "a world object or an item whose group id is Phytoplankton2 or Phytoplankton3 is read,"
-		+ "validated and merged as the ruling of the open question sets"
+	SPEC "a save carrying Phytoplankton2 or Phytoplankton3 is read and validated without a warning"
+		+ "the deprecation alone produces"
+	SPEC "merging two saves of which one carries a deprecated group id writes that group id"
+		+ "unchanged, whichever release the other save declares"
 	WAVE 5
-	RATIONALE "The update deprecates Phytoplankton2 and Phytoplankton3, which saves written before"
-		+ "2.102 still carry. A local save written after 2.102 carries them too, but its provenance"
-		+ "is unknown, so it proves nothing on what the game does with them, and how the tool"
-		+ "handles them is not ruled"
-		REF @OPEN_QUESTION.DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
+	RATIONALE "The ruling is that the tool converts nothing, and the two group ids are already"
+		+ "among the world object names, so what the task delivers is the test that fails the day a"
+		+ "conversion is added"
+		REF @DECISION.ADeprecatedGroupIdIsCarriedThroughUnchanged
 		REF @GAME_RELEASE.2.102
 		REF @DATATABLE.WorldObjectLabels
 	SOURCE "PCEdit item catalog: deprecated(\"2.102\", \"Phytoplankton2\", \"Phytoplankton3\"),"
@@ -1037,7 +1037,7 @@ TASK DOCS86
 	WAVE 5
 	DESC "The decisions taken here must anticipate the next tasks of wave 5 and especially"
 		+ "@TASK.FEAT68"
-		REF @TASK.FEAT68
+		REF @TASK.TEST68
 	SPEC "the eras current, legacy and both are dropped: no value of HOLDS_FOR names an era"
 		IMPL "docs/_schema.awawa::FIELD HOLDS_FOR @GAME_RELEASE"
 	SPEC "HOLDS_FOR names a GAME_RELEASE and is repeatable: a rule or a section holds for each"
@@ -1141,7 +1141,7 @@ TASK FEAT89
 		+ "instead of a second list of versions. Every scenario fixture declares version 1.0 today,"
 		+ "which resolves to 1.618 while three of the four carry the format of 2.004"
 		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
-		REF @TASK.FEAT68
+		REF @TASK.TEST68
 	SOURCE "The owner, 2026-09-22, while ruling the releases of HOLDS_FOR for DOCS86"
 		REF @TASK.DOCS86
 

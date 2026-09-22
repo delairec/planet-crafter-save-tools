@@ -1317,3 +1317,21 @@ DECISION AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 		+ "tells a user who wanted the other that the option exists"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+
+DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
+	SPEC "a world object or an item whose group id a release deprecated is read, validated and"
+		+ "merged like any other, and is never converted, flagged nor dropped"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts"
+	REJECTED "Converting Phytoplankton2 and Phytoplankton3 to the remaining phytoplankton: the game"
+		+ "is believed to do it on load, so the tool would rewrite a save the user did not ask to"
+		+ "convert"
+	REJECTED "Dropping a deprecated object: it destroys content a save legitimately carries"
+	REJECTED "A table of deprecated group ids by release: nothing reads it once no conversion"
+		+ "happens, and the release table of FEAT89 already carries what the code tells apart"
+	ASSUMES @HYPOTHESIS.TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.TEST68
+	RATIONALE "The same ground as the format: the tool returns the save the user gave it, and"
+		+ "rewriting a value the game itself resolves would be a conversion nobody asked for"
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+	SOURCE "Owner ruling, 2026-09-22, on the wave carried by integration/save-format-preserved"

@@ -88,3 +88,19 @@ HYPOTHESIS TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 		REF @URL.WikiFurniture
 		REF @URL.WikiRockets
 		REF @URL.WikiBaseBuilding
+
+HYPOTHESIS TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
+	UNTIL "a save carrying Phytoplankton2 or Phytoplankton3 is loaded in 2.102 or later and saved"
+		+ "again, and the two group ids are found unchanged in the file written"
+	DESC "the game converts a world object or an item whose group id is Phytoplankton2 or"
+		+ "Phytoplankton3 to the single remaining phytoplankton when it loads a save carrying it"
+		REF @GAME_RELEASE.2.102
+		REF @DATATABLE.WorldObjectLabels
+	RATIONALE "Release 2.102 replaced Phytoplankton B and C with one variant and updated every"
+		+ "recipe and generator, so the game meets those ids in saves written before it and has to"
+		+ "resolve them; a save written by 2.103 still carrying them would refute this at once, and"
+		+ "the only file seen carrying them is untracked and of unknown provenance"
+		REF @URL.PCFandomWikiPhytoplankton
+	SOURCE "Owner ruling, 2026-09-22, closing the question of what the tool does with the group ids"
+		+ "the Skeo update deprecated"
+		REF @URL.PceditItemCatalog
