@@ -966,12 +966,27 @@ TASK CHORE83
 
 TASK FEAT84
 	TITLE "Display the logisticsPaused of a save written by the Skeo update in the save manager"
-	STATUS todo
+	STATUS implemented
 	SPEC "the global progression section displays whether the drone logistics are paused when the"
 		+ "global metadata carries logisticsPaused"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts::should"
+			+ "present the drone logistics as paused when the global metadata carries"
+			+ "logisticsPaused true"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts::should"
+			+ "present the drone logistics as running when the global metadata carries"
+			+ "logisticsPaused false"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
+			+ "extract logisticsPaused alongside the terra tokens"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should display the drone logistics as"
+			+ "paused"
 	SPEC "a save whose global metadata carries no logisticsPaused displays the section as before"
 		+ "the task"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts::should"
+			+ "present all GlobalProgression"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
+			+ "extract global metadata"
 	AFTER @TASK.FEAT55
+	DELIVERED_BY 125
 	WAVE 5
 	RATIONALE "FEAT55 validates and merges logisticsPaused but displays nothing: the global"
 		+ "progression section shows the all time terra tokens alone. TEST67 asserts that a Skeo"
