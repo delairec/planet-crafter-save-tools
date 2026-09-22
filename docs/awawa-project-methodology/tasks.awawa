@@ -464,15 +464,20 @@ TASK FEAT66
 
 TASK TEST67
 	TITLE "Display a save written by the Skeo update in the save manager"
-	STATUS todo
+	STATUS implemented
 	AFTER @TASK.DOCS86
 	SPEC "a scenario fixture generated with logisticsPaused in its global metadata and a placed"
 		+ "world object carrying the planet numeric id -440810600 passes validation"
+		IMPL "scripts/generate-scenario-fixtures.ts::generateSkeoUpdateContent"
+		IMPL "packages/ui-save-manager/e2e/fixtures/skeo-update_valid.json"
 	SPEC "the save manager displays that fixture without a validation error, and its energy section"
 		+ "names the planet of that world object Skeo"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should display it without a validation"
+			+ "error, naming the planet of its placed world object Skeo"
 	AFTER @TASK.FEAT55
 	AFTER @TASK.FEAT65
 	WAVE 5
+	DELIVERED_BY 119
 	RATIONALE "A scenario fixture is generated and replayed by a guard, never copied from a real"
 		+ "save, so no player name nor Steam identifier of a real save reaches it; the fixture"
 		+ "models the private sample save. It fails validation until the section 0 schema admits"
