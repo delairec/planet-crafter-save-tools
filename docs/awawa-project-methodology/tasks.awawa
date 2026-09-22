@@ -973,6 +973,7 @@ TASK TEST81
 TASK FEAT82
 	TITLE "Detect the links between the objects of a save that lead nowhere"
 	STATUS draft
+	WAVE 7
 	DESC "drafted for memory, no research done: which links a save carries, which of them the game"
 		+ "tolerates broken and what fix each defect calls for are established when the task is"
 		+ "refined"
@@ -1016,6 +1017,7 @@ TASK FEAT84
 	SPEC "a save whose global metadata carries no logisticsPaused displays the section as before"
 		+ "the task"
 	AFTER @TASK.FEAT55
+	WAVE 5
 	RATIONALE "FEAT55 validates and merges logisticsPaused but displays nothing: the global"
 		+ "progression section shows the all time terra tokens alone. TEST67 asserts that a Skeo"
 		+ "save displays without a validation error, not that the key is shown, and FEAT72 edits"
