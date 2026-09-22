@@ -1073,3 +1073,28 @@ TASK TEST85
 	SOURCE "Review of pull request 112 on 2026-09-22: an expect reprojecting the planets with map,"
 		+ "flagged across the whole spec file, while the guard passed"
 		PR 112
+
+TASK DOCS87
+	TITLE "Realign the two documents the corpus contradicts at the heads of pull requests 111 and"
+		+ "112"
+	STATUS draft
+	SPEC "docs/save-format.md states that a planet numeric id is the two-accumulator djb2 hash of"
+		+ "the planet name, as the rule on planet numeric ids does, and no longer that no known"
+		+ "hash reproduces the ids"
+	SPEC "agents/corpus-ecrire.md names, as the model task to read before awawa new, a task that"
+		+ "exists in the corpus"
+	SPEC "a guard of check:guards refuses an entity name that AGENTS.md or a file of agents/ cites"
+		+ "and the corpus does not define"
+	RATIONALE "Pull request 107 corrected the rationale of the rule on planet numeric ids to the"
+		+ "djb2 hash, verified on six ids, and left the format document at its previous sentence;"
+		+ "the FEAT65 agent flagged the document at its hand-back on 2026-09-21 as outside its SPEC"
+		+ "and no task carried it. The cleanup commit 1a23069 on master deleted the task FIX45"
+		+ "while agents/corpus-ecrire.md still names it as the model task, which breaks the SPEC of"
+		+ "the decision naming one model entity per type; L016 sees neither, a sentence of a"
+		+ "markdown file being no anchor, so the third SPEC gives that decision a guard"
+		REF @RULE.APlanetNumericIdIsStableAcrossSaves
+		REF @DECISION.AgentsMdNamesOneModelEntityPerType
+		REF @TASK.FEAT65
+	SOURCE "Usage report of pull requests 111 and 112, part A remediation 2"
+		PR 112
+		REF @USAGE_REPORT.PR111_112
