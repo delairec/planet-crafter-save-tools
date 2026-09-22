@@ -129,6 +129,14 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 
 ## Branches
 
-**Base des tâches, aujourd'hui : `master`.** Le chantier de conformité est fusionné (PR #15). Le nom de la base
-reste ici et non dans le corpus parce qu'il change à chaque chantier : une entité dont le `DESC` se réécrit tous les
-mois ne gagne rien à être une entité.
+**Base des tâches, aujourd'hui : `integration/save-format-preserved`.** Le chantier en cours conserve le format de
+chaque save au lieu de la convertir (@DECISION.ASaveKeepsTheFormatItWasWrittenIn) ; il touche
+`shared-save-processing`, `core-mapping`, les deux CLIs et l'UI, et la branche d'intégration évite que `master`
+casse pendant la vague. Toute PR de tâche de la vague se base dessus, et s'y rebase, jamais sur `master`.
+
+Deux exceptions, qui restent basées sur `master` : une tâche extérieure à la vague, et les trois fichiers de
+@DECISION.ThreeFilesAreChangedOnMasterFirst. La branche d'intégration se rebase elle-même sur `master` quand
+`master` avance.
+
+Le nom de la base reste ici et non dans le corpus parce qu'il change à chaque chantier : une entité dont le `DESC`
+se réécrit tous les mois ne gagne rien à être une entité.

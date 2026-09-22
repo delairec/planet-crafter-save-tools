@@ -1258,3 +1258,62 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
 		PR 120
+
+DECISION ASaveKeepsTheFormatItWasWrittenIn
+	SPEC "loading a save keeps every part it carries: no section is dropped and no index is shifted"
+		+ "to bring the save to a single canonical format"
+		IMPL "packages/shared-save-processing/normalizeRawSections.js"
+	SPEC "the format a save was read in travels with it and is the format it is written back in, so"
+		+ "reading a save and writing it back reproduces the part count of the file read"
+		IMPL "packages/shared-save-processing/serializeSave.js"
+	SPEC "the legacy-save-format warning states that the save was written by an earlier game"
+		+ "release, never that the loader adapted it"
+		IMPL "packages/shared-save-processing/normalizeRawSections.js"
+	SPEC "the save manager and the two commands read, validate and write every format the corpus"
+		+ "names, and none of them assumes one"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsParserService.ts"
+	REJECTED "Converting a legacy save to the current format at the user-input boundary: a merge"
+		+ "whose save A was legacy then wrote a file declaring 1.618 in eleven parts, a"
+		+ "contradiction our own validator warns on"
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "The canonical eleven-part format was a convenience of the loader, and it made the"
+		+ "tool rewrite a file the user did not ask to convert; the corpus already describes both"
+		+ "formats through INDEX and LEGACY_INDEX, so it is the code that catches up"
+		REF @SECTION.TerrainLayers
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+
+DECISION AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+	SPEC "when the two saves are written in different formats, the merged save is written in the"
+		+ "format of the more recent of the two releases"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts"
+	SPEC "the save manager offers a checkbox and the merge command an option, both off by default"
+		+ "and both asking for the legacy format, so the two surfaces carry one polarity"
+		IMPL "packages/cli-merge/cli/merge-cli.js"
+	SPEC "a merge whose two saves differ in format reports the format it wrote and what writing it"
+		+ "dropped; the report names the option that would have kept the legacy format whenever"
+		+ "that option was not applied"
+		IMPL "packages/cli-merge/cli/merge-cli.js"
+	SPEC "the Terrain Layers section survives a merge only when both saves carry it, and is taken"
+		+ "from save A; otherwise it is dropped and the merge reports it"
+		IMPL "packages/core-mapping/src/domain/rules/merge"
+	SPEC "the version the merged save configuration declares is the release of the format actually"
+		+ "written, not the version of save A"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts"
+	REJECTED "Refusing a merge of two different formats: it blocks the use the tool exists for,"
+		+ "folding an old save into a current one"
+	REJECTED "Writing the format of save A without asking: the output is then not readable by the"
+		+ "installed game whenever save A is the older of the two"
+	RESTS_ON @RULE.SaveConfigurationComesFromSaveA
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "The user knows which game release they will open the result in and the tool does"
+		+ "not; the default is the one that opens in the installed game, and the report is what"
+		+ "tells a user who wanted the other that the option exists"
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
