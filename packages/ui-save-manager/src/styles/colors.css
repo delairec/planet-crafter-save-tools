@@ -1,6 +1,6 @@
 :root {
     /* FOND & SURFACES */
-    --canvas: #0af;
+    --canvas: #f4f6fd;
     --surface: #ffffff;
     --elevated: #f1f4ff;
     --disclaimer: #cccfdc;
@@ -8,26 +8,26 @@
     /* TEXTE */
     --content: #0f1226;
     --muted: #5c6285;
-    --subtle: #8a90b2;
+    --subtle: #656d99;
     --inverted: #ffffff;
 
     /* ACCENTS */
-    --primary: #5b7cfa;
+    --primary: #4368f9;
     --secondary: #a855f7;
     --accent: #06b6d4;
 
     /* NÉON / FUTURISTE */
-    --neon-pink: #ff3cac;
-    --neon-cyan: #22d3ee;
-    --neon-purple: #8b5cf6;
+    --neon-pink: #d9007d;
+    --neon-cyan: #0b8194;
+    --neon-purple: #7f4af5;
 
     /* BORDURES */
     --border: #d9ddff;
 
     /* ÉTATS */
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --danger: #ef4444;
+    --success: #16813e;
+    --warning: #9c6406;
+    --danger: #e01313;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,7 +39,7 @@
 
         --content: #f1f3ff;
         --muted: #a4a9d4;
-        --subtle: #6c72a6;
+        --subtle: #7c82b0;
         --inverted: #0a0d1a;
 
         --primary: #6d8dff;
