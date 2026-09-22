@@ -1004,3 +1004,42 @@ TASK FEAT84
 	SOURCE "Review of pull request 111 by the owner, 2026-09-22: the field should be displayed and"
 		+ "no task plans it"
 		PR 111
+
+TASK DOCS86
+	TITLE "Type the era of a rule and a section by game release"
+	STATUS draft
+	SPEC "HOLDS_FOR names a GAME_RELEASE and is repeatable: a rule or a section holds for each"
+		+ "release it names, and for no other"
+	SPEC "every entity that held for legacy holds for 1.618, every entity that held for current"
+		+ "holds for 2.008 and 2.102, and every entity that held for both holds for 1.618, 2.008"
+		+ "and 2.102, unless a source shows the statement false for one of them"
+	SPEC "the fields and constraints the schema keys on the era, INDEX, LEGACY_INDEX and the"
+		+ "incoming CONSTRAINED_BY of a section, are keyed on the releases instead, so that a"
+		+ "section written by 2.102 still needs a rule that cites it"
+	SPEC "the decision that cites a game release as a source is rewritten in place: its SPEC that"
+		+ "no type of the specification area carries the game version as a field of its own, and"
+		+ "its REJECTED version field on RULE, are revised to admit the release a statement holds"
+		+ "for, the previous form kept as a REJECTED"
+	WAVE 5
+	RATIONALE "HOLDS_FOR current|legacy|both assumes two formats, split by the removal of the"
+		+ "Terrain Layers section. What was called legacy is one release, 1.618, before v2; the"
+		+ "project now handles three: 1.618, the intermediate release 2.008, and 2.102, the Skeo"
+		+ "update being integrated. A two-valued era cannot say that a statement holds since 2.102"
+		+ "only. The change conflicts with a recorded decision, which rejects the game version as a"
+		+ "field of the specification area on the ground that it would mean the version of the last"
+		+ "reading; typed by release, the field names the releases the statement holds for, not the"
+		+ "one it was read in. 2.103 is the first patch of 2.102 and changes no save key; whether"
+		+ "it is listed is for the refinement of this task"
+		REF @DECISION.AGameReleaseIsCitedAsASource
+		REF @FIELDSET.Era
+		REF @SCHEMA.SECTION
+		REF @GAME_RELEASE.1.618
+		REF @GAME_RELEASE.2.008
+		REF @GAME_RELEASE.2.102
+		REF @GAME_RELEASE.2.103
+		REF @TASK.FEAT55
+	SOURCE "Review of pull request 111 by the owner, 2026-09-22: HOLDS_FOR should be typed by game"
+		+ "release and repeatable; legacy no longer suffices now that more than two releases are"
+		+ "handled; legacy becomes 1.618, the intermediate release is 2.008, the release being"
+		+ "integrated is 2.102; deferred to a task of wave 5"
+		PR 111
