@@ -411,15 +411,16 @@ TASK FEAT65
 	STATUS implemented
 	SPEC "a world object or a world event carrying the planet numeric id -440810600 is placed on"
 		+ "Skeo"
-		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
-			+ "resolve the planet name of $numericIdCase (Rule EN-PLANET-3)"
+		IMPL "packages/core-mapping/src/domain/planetNamesByNumericId.json::-440810600"
 	WAVE 5
 	DELIVERED_BY 112
 	RATIONALE "Skeo, added by game release 2.102, is the planet whose id -440810600 is missing from"
 		+ "the planet table; the stable hash of the planet name gives it, as it gives the five rows"
 		+ "already there. Without the row the planet name is guessed from the group ids of the"
 		+ "world objects placed on it, and the energy section falls back to its unnamed planet"
-		+ "label when no group id names it"
+		+ "label when no group id names it. The task carries no test of its own: its SPEC is proven"
+		+ "by the table row, a data table is not tested, and the read that turns any row into a"
+		+ "planet name is the EN-PLANET-3 case of SaveSectionsReaderService.spec.ts"
 		REF @GAME_RELEASE.2.102
 		REF @RULE.APlanetNumericIdIsStableAcrossSaves
 		REF @DATATABLE.PlanetNamesByNumericId
