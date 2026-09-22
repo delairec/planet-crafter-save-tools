@@ -1140,7 +1140,7 @@ TASK DOCS88
 
 TASK FEAT89
 	TITLE "Warn when a save contradicts the game release it declares"
-	STATUS draft
+	STATUS todo
 	WAVE 5
 	AFTER @TASK.DOCS86
 	SPEC "the releases HOLDS_FOR names are a table beside the module that reads it, one row per"
