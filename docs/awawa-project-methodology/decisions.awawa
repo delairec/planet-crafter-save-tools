@@ -1278,3 +1278,21 @@ DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
 		REF @USAGE_REPORT.PR101_102_103
 	SOURCE "Ruled in the pull request that delivers the task"
 		PR 128
+
+DECISION ACallerReachesASaveSectionThroughASharedFunction
+	REJECTED "A read-only accessor plus a caller-side split/join to write a section back: every"
+		+ "existing caller replaces a section, none only reads one, so a second function only the"
+		+ "read case would use is unneeded"
+	SPEC "A caller needing to replace one section of a raw save string calls"
+		+ "replaceSaveSection(saveString, sectionIndex, updateSection) and never calls"
+		+ "saveString.split on the section separator itself"
+		IMPL "packages/shared-save-processing/replaceSaveSection.js"
+		ENFORCED_BY "packages/shared-save-processing/replaceSaveSection.spec.js"
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_TASK @TASK.REFACTOR62
+	RATIONALE "Four call sites split a save string on '@', mutated the array at a section index and"
+		+ "rejoined it by hand; a fifth caller repeating that pattern with a different mutation is"
+		+ "what this closes off"
+	SOURCE "Review of pull request #102, 2026-09-21, on"
+		+ "packages/cli-merge/testing/fakeSaveStrings.js"
+		PR 123
