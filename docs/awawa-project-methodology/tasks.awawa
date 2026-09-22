@@ -1033,7 +1033,8 @@ TASK FEAT84
 
 TASK DOCS86
 	TITLE "Type the era of a rule and a section by game release"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 115
 	WAVE 5
 	DESC "The decisions taken here must anticipate the next tasks of wave 5 and especially"
 		+ "@TASK.FEAT68"
