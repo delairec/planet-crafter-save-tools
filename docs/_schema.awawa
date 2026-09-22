@@ -263,12 +263,14 @@ SCHEMA URL
 
 FIELDSET ReleaseScope
 	DESC "the game releases the statement holds for"
-	FIELD HOLDS_FOR @GAME_RELEASE
+	FIELD HOLDS_FOR @GAME_RELEASE|all
 		REQUIRED
 		REPEATABLE
 		DESC "a release the statement holds for, named only if the code tells it apart from the"
 			+ "release before it; a save written by an unnamed release is read by the branch of the"
 			+ "last named release before it"
+		DESC "all, alone: the statement does not depend on the release, a release named later"
+			+ "included"
 
 SCHEMA SECTION
 	DESC "a part of the save the game writes at a fixed index"
@@ -287,6 +289,14 @@ SCHEMA SECTION
 			REQUIRED
 			DESC "the position of the section in the format 2.004 and later releases write"
 	WHEN HOLDS_FOR @GAME_RELEASE.1.618
+		FIELD LEGACY_INDEX uint
+			REQUIRED
+			DESC "the position of the section in the format 1.618 and earlier releases write"
+	WHEN HOLDS_FOR all
+		INCOMING CONSTRAINED_BY
+		FIELD INDEX uint
+			REQUIRED
+			DESC "the position of the section in the format 2.004 and later releases write"
 		FIELD LEGACY_INDEX uint
 			REQUIRED
 			DESC "the position of the section in the format 1.618 and earlier releases write"

@@ -1042,8 +1042,10 @@ TASK DOCS86
 	SPEC "the eras current, legacy and both are dropped: no value of HOLDS_FOR names an era"
 		IMPL "docs/_schema.awawa::FIELD HOLDS_FOR @GAME_RELEASE"
 	SPEC "HOLDS_FOR names a GAME_RELEASE and is repeatable: a rule or a section holds for each"
-		+ "release it names, and for no other"
+		+ "release it names, and for no other; HOLDS_FOR all, alone, marks a statement that does"
+		+ "not depend on the release"
 		IMPL "docs/_schema.awawa::a release the statement holds for"
+		IMPL "docs/_schema.awawa::all, alone: the statement does not depend on the release"
 	SPEC "HOLDS_FOR names only a release that creates a branch in the code, one the code tells"
 		+ "apart from the release before it; a release the code does not tell apart is never named,"
 		+ "and a save it writes is read by the branch of the last named release before it"
@@ -1099,6 +1101,9 @@ TASK DOCS86
 		+ "are dropped in favour of game releases, and HOLDS_FOR lists only the game releases that"
 		+ "create a branch in the code"
 		PR 111
+	SOURCE "The owner on pull request 115, 2026-09-22: a rule that holds whatever the release"
+		+ "carries HOLDS_FOR all"
+		PR 115
 
 TASK TEST85
 	TITLE "Refuse an assertion that reprojects the value it compares"
