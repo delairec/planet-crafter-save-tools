@@ -1056,3 +1056,19 @@ TASK DOCS86
 		+ "are dropped in favour of game releases, and HOLDS_FOR lists only the game releases that"
 		+ "create a branch in the code"
 		PR 111
+
+TASK TEST85
+	TITLE "Refuse an assertion that reprojects the value it compares"
+	STATUS draft
+	SPEC "check:assertions reports a spec whose expect argument maps the returned value into"
+		+ "another collection before comparing it"
+	SPEC "no spec of the repository reprojects the value it compares, the energy levels presenter"
+		+ "spec included"
+	RATIONALE "The testing instructions forbid reprojecting the returned value before comparing it,"
+		+ "and state that a rule the project ships a guard for is enforced by the guard rather than"
+		+ "re-audited by hand; check:assertions catches the boolean forms only, so pull request 112"
+		+ "added a map reprojection beside two already on the default branch, and its review found"
+		+ "them. One more stands outside that pull request, in EnergyLevelsPresenter.spec.ts"
+	SOURCE "Review of pull request 112 on 2026-09-22: an expect reprojecting the planets with map,"
+		+ "flagged across the whole spec file, while the guard passed"
+		PR 112
