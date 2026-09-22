@@ -862,18 +862,6 @@ DECISION AControllerSpecCoversWiringNotBranches
 		PR 61
 		PR 82
 
-DECISION ATestNeverDerivesItsInputSetFromItsSubject
-	REJECTED "Iterating over the keys of the tested table and claiming exhaustiveness: a removed"
-		+ "entry silently loses its case"
-	SPEC "A test whose input set derives from the tested subject does not claim to cover the"
-		+ "matching exhaustiveness rule"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::worldObjectNamesByEnergyRole"
-	SPEC "The partition of world object names is declared, and both directions of it are asserted"
-		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::worldObjectNamesByEnergyRole"
-	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	SOURCE "T25"
-		PR 43
-
 DECISION AnIllegalTestInputIsWrittenWithTsExpectError
 	REJECTED "A cast to the expected type: an illegal input test built on a cast cannot fail"
 	SPEC "A deliberately illegal test input is written with an expected-error directive naming the"
@@ -900,19 +888,6 @@ DECISION RepositoryGuardsAreGroupedScripts
 	SOURCE "T12"
 		PR 40
 		PR 46
-
-DECISION TheDoublesOfASpecShareOneFactory
-	REJECTED "One double per case, each with its own recognition criterion"
-	SPEC "A spec mounts its subject through a factory named with an action verb, and the doubles of"
-		+ "one port answer through a single indexed factory"
-		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::createUseCase"
-		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::parserAnswering"
-	SPEC "A double carries its weight or is removed, checked by a mutation forcing it to accept"
-		+ "everything"
-		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
-	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	SOURCE "T28, review"
-		PR 59
 
 DECISION EveryPublishedCommandHasARealProcessTest
 	REJECTED "A dedicated CI job instead of a test: it does not cover the workstation"
