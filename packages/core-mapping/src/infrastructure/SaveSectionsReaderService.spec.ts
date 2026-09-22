@@ -20,9 +20,6 @@ import {WorldObjectEntity} from '../domain/entities/WorldObjectEntity';
 import {InventoryEntity} from '../domain/entities/InventoryEntity';
 import {PlacedWorldObjectEntity} from '../domain/entities/PlacedWorldObjectEntity';
 
-const PRIME_PLANET_NUMERIC_ID = -1140328421;
-const SKEO_PLANET_NUMERIC_ID = -440810600;
-const UNKNOWN_PLANET_NUMERIC_ID = 1;
 
 const CARRIED_WORLD_OBJECTS: WorldObjectEntry[] = [
   {id: 79111656, gId: 'Phytoplankton3'},
@@ -253,12 +250,18 @@ describe('SaveSectionsReaderService', () => {
       ]);
     });
 
-    it('should label each planet with the name resolved from its numeric id (Rule EN-PLANET-3)', () => {
+    it.each([
+      {planetNumericId: 110910045, planetName: 'Toxicity'},
+      {planetNumericId: -1140328421, planetName: 'Prime'},
+      {planetNumericId: -1016990411, planetName: 'Selenea'},
+      {planetNumericId: -486276833, planetName: 'Humble'},
+      {planetNumericId: -1291310150, planetName: 'Aqualis'},
+      {planetNumericId: -440810600, planetName: 'Skeo'}
+    ])('should name $planetName the planet whose numeric id is $planetNumericId (Rule EN-PLANET-3)', ({planetNumericId, planetName}) => {
       // Arrange
       const sections = createSaveSections({
         worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: PRIME_PLANET_NUMERIC_ID},
-          {id: 2, gId: 'EnergyGenerator1', pos: '0,0,0', planet: UNKNOWN_PLANET_NUMERIC_ID}
+          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: planetNumericId}
         ]
       });
       const service = new SaveSectionsReaderService(sections);
@@ -267,23 +270,7 @@ describe('SaveSectionsReaderService', () => {
       const rawData = service.getEnergyLevelsRawData();
 
       // Assert
-      expect(rawData.planets.map((planet) => planet.planetName)).toEqual(['Prime', undefined]);
-    });
-
-    it('should resolve the numeric id of Skeo to its planet name (Rule EN-PLANET-3)', () => {
-      // Arrange
-      const sections = createSaveSections({
-        worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: SKEO_PLANET_NUMERIC_ID}
-        ]
-      });
-      const service = new SaveSectionsReaderService(sections);
-
-      // Act
-      const rawData = service.getEnergyLevelsRawData();
-
-      // Assert
-      expect(rawData.planets.map((planet) => planet.planetName)).toEqual(['Skeo']);
+      expect(rawData.planets[0].planetName).toBe(planetName);
     });
 
     it('should offer the terraformed planet names as hints when the numeric id is unknown (Rule EN-PLANET-2)', () => {
@@ -301,7 +288,7 @@ describe('SaveSectionsReaderService', () => {
       const rawData = service.getEnergyLevelsRawData();
 
       // Assert
-      expect(rawData.planets.map((planet) => planet.planetName)).toEqual(['Humble']);
+      expect(rawData.planets[0].planetName).toBe('Humble');
     });
 
     it('should translate the save format fields of a placed world object into business terms', () => {
