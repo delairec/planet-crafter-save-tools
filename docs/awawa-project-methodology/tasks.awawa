@@ -525,8 +525,8 @@ TASK FEAT68
 TASK FEAT69
 	TITLE "Open a validated save as an editable draft and write the draft to a new save"
 	STATUS draft
-	SPEC "a draft opened from a save in the current format and exported without an edit produces"
-		+ "the same bytes as the file it was opened from"
+	SPEC "a draft opened from a save and exported without an edit produces the same bytes as the"
+		+ "file it was opened from, whichever format that save carries"
 	SPEC "an edit operation applied to a draft changes the field it names and nothing else, and the"
 		+ "file the draft was opened from is never written"
 	SPEC "a draft is validated before it is serialized, by the validator the display and the merge"
@@ -1167,3 +1167,101 @@ TASK CHORE91
 	SOURCE "FIX53's task DESC, PR 121"
 		PR 121
 		REF @TASK.FIX53
+
+TASK FEAT92
+	TITLE "Keep the format a save carries in shared-save-processing and name which one it is"
+	STATUS draft
+	WAVE 5
+	AFTER @TASK.FEAT89
+	SPEC "parsing a save returns every part the file carries, Terrain Layers included, and names"
+		+ "the release whose format it carries"
+	SPEC "serializing a save writes the format it is given, so parsing then serializing a save of"
+		+ "1.618 returns the exact bytes of the file read"
+	SPEC "the legacy-save-format warning states that the save was written by 1.618 or earlier, and"
+		+ "no longer that the loader adapted it"
+	SPEC "the twelve-part format of 1.618 is a RULE of DOMAIN format citing the Terrain Layers"
+		+ "section, which no rule names today"
+	RATIONALE "The round trip measured for FEAT69 on 2026-09-21 returns 2538 bytes against 2620 for"
+		+ "legacy-format_valid.json, the difference being the Terrain Layers section the"
+		+ "normalization drops; the package is where the loss happens and where it is repaired"
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+		REF @SECTION.TerrainLayers
+		REF @TASK.FEAT69
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+
+TASK FEAT93
+	TITLE "Read and validate a save of either format in core-mapping"
+	STATUS draft
+	WAVE 5
+	AFTER @TASK.FEAT92
+	SPEC "a section is reached by the index the format of the save gives it, never by a constant"
+		+ "that assumes one format"
+	SPEC "validating a save of 1.618 reports on its twelve parts and one of 2.004 on its eleven,"
+		+ "neither being converted to the other"
+	SPEC "a save of either format is displayed by the save manager without a validation error the"
+		+ "format alone produces"
+	RATIONALE "The section index module exposes the legacy indexes as constants only the input"
+		+ "boundary was meant to read; once the format is kept, every reader needs the index of the"
+		+ "format at hand"
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+		REF @SECTION.WorldEvents
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+
+TASK FEAT94
+	TITLE "Write the merged save in the format the merge was asked for"
+	STATUS draft
+	WAVE 5
+	AFTER @TASK.FEAT93
+	SPEC "merging two saves of different formats writes the format of the more recent of the two"
+		+ "releases, and the legacy format when the merge is asked for it"
+	SPEC "the version the merged save configuration declares is the release of the format actually"
+		+ "written, and the rule that the configuration comes from save A is rewritten in place to"
+		+ "say so"
+	SPEC "the Terrain Layers section is kept, from save A, only when both saves carry it, and"
+		+ "dropped otherwise"
+	SPEC "a merge whose two saves differ in format reports the format it wrote and every section"
+		+ "writing it dropped"
+	RATIONALE "Verified on the branch of FEAT89: verifyDeclaredGameRelease('1.618', 11) raises"
+		+ "declared-release-contradicts-content, so a merge taking the version of a legacy save A"
+		+ "and writing eleven parts produces a file our own validator warns on; tying the declared"
+		+ "version to the format written is what removes the contradiction"
+		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+		REF @RULE.SaveConfigurationComesFromSaveA
+		REF @TASK.FEAT89
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+		PR 124
+
+TASK FEAT95
+	TITLE "Offer the legacy format option and the merge report in the command and in the save"
+		+ "manager"
+	STATUS draft
+	WAVE 5
+	AFTER @TASK.FEAT94
+	SPEC "the merge command takes an option asking for the legacy format, off by default, and the"
+		+ "save manager offers a checkbox of the same polarity beside the merge"
+	SPEC "the save manager surfaces the merge report through the path it already surfaces"
+		+ "validation warnings through"
+	SPEC "when the two saves differ in format and the legacy format was not asked for, the report"
+		+ "names the option that would have kept it"
+	RATIONALE "One polarity across the two surfaces is what keeps the two descriptions of the same"
+		+ "merge from contradicting each other; the report is the only thing that tells a user who"
+		+ "wanted the other format that the option exists"
+		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+		REF @COMMAND.MergeSaves
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+
+TASK TEST96
+	TITLE "Cover both formats and the mixed merge with scenario fixtures"
+	STATUS draft
+	WAVE 5
+	AFTER @TASK.FEAT95
+	SPEC "a scenario merges a legacy save with a current one and asserts the current format is"
+		+ "written, and its mirror asserts the legacy format when the option is asked for"
+	SPEC "a scenario opens a legacy save and asserts it is displayed and exported byte for byte"
+	SPEC "every scenario fixture is written by the generator and declares the version of the"
+		+ "release whose format it carries"
+	RATIONALE "legacy-format_valid.json is the only legacy fixture and no scenario merges across"
+		+ "formats, so nothing today would fail if the conversion came back"
+		REF @TASK.FEAT89
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
