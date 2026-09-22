@@ -981,3 +981,26 @@ TASK CHORE83
 	DESC "drafted for memory, no research done; what do we want to version? core-mapping + clis +"
 		+ "uis separetly? or the whole package? what is the trigger for a new version?"
 	SPEC "explore the options for a versionning mechanism, and choose one"
+
+TASK FEAT84
+	TITLE "Display the logisticsPaused of a save written by the Skeo update in the save manager"
+	STATUS draft
+	SPEC "the global progression section displays whether the drone logistics are paused when the"
+		+ "global metadata carries logisticsPaused"
+	SPEC "a save whose global metadata carries no logisticsPaused displays the section as before"
+		+ "the task"
+	AFTER @TASK.FEAT55
+	RATIONALE "FEAT55 validates and merges logisticsPaused but displays nothing: the global"
+		+ "progression section shows the all time terra tokens alone. TEST67 asserts that a Skeo"
+		+ "save displays without a validation error, not that the key is shown, and FEAT72 edits"
+		+ "the eight values the save manager displays today, of which logisticsPaused is not one."
+		+ "Once displayed, the value falls under the owner ruling that every displayed field"
+		+ "becomes editable"
+		REF @TASK.FEAT55
+		REF @TASK.TEST67
+		REF @TASK.FEAT72
+		REF @SECTION.GlobalMetadata
+		REF @RULE.TheGlobalMetadataEntryMayOmitLogisticsPaused
+	SOURCE "Review of pull request 111 by the owner, 2026-09-22: the field should be displayed and"
+		+ "no task plans it"
+		PR 111
