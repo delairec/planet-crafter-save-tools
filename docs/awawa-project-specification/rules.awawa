@@ -151,9 +151,9 @@ RULE PlayersAreDeduplicatedByName
 	APPLIES_TO_SECTION @SECTION.Players
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-PLAYER-1 to GR-PLAYER-3);"
 		+ "GR-PLAYER-4 split off, its format half becoming"
-		+ "@RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate and its defaulting half"
+		+ "@RULE.APlayerEntryCarriesCameraViewAndItsLifetimeTotals and its defaulting half"
 		+ "@DECISION.MissingPlayerFieldsAreWrittenAsZero"
-		REF @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+		REF @RULE.APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 		REF @DECISION.MissingPlayerFieldsAreWrittenAsZero
 
 RULE WorldObjectsAreDeduplicatedByPlanetAndPosition
@@ -388,33 +388,30 @@ RULE APurificationLevelOfMinusOneMeansNotUnlocked
 		+ "fact about the save left inside @RULE.TerraformationLevelsTakeTheHigherValue"
 		REF @RULE.TerraformationLevelsTakeTheHigherValue
 
-RULE APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
-	HOLDS_FOR @GAME_RELEASE.1.618
+RULE APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
-	SPEC "a player entry may omit cameraView, totalCraftedObjects and totalTerraTokenEarned, which"
-		+ "the section schema does not require"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section2-players.schema.json::\"required\":"
-			+ "[\"id\", \"name\""
+	SPEC "a player entry carries cameraView, totalCraftedObjects and totalTerraTokenEarned; one"
+		+ "written by 1.618 or earlier has none of them"
+		ATTESTED_BY "packages/shared-save-processing/schemas/section2-players.schema.json::\"cameraView\":"
+			+ "{"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::LegacyCompatiblePlayer"
 	APPLIES_TO_SECTION @SECTION.Players
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-PLAYER-4, a"
 		+ "fact about the save left inside @RULE.PlayersAreDeduplicatedByName"
 		REF @RULE.PlayersAreDeduplicatedByName
 
-RULE TheGlobalMetadataEntryMayOmitLogisticsPaused
-	HOLDS_FOR @GAME_RELEASE.1.618
-	HOLDS_FOR @GAME_RELEASE.2.004
+RULE TheGlobalMetadataEntryCarriesLogisticsPaused
+	HOLDS_FOR @GAME_RELEASE.2.102
 	DOMAIN format
-	SPEC "the global metadata entry may carry logisticsPaused, a boolean, and may omit it, the"
-		+ "section schema not requiring it"
+	SPEC "the global metadata entry carries logisticsPaused, a boolean; one written before 2.102"
+		+ "has no such key"
 		ATTESTED_BY "packages/shared-save-processing/schemas/section0-player-progression.schema.json::\"logisticsPaused\""
 		ATTESTED_BY "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::written"
 			+ "by the Skeo update and carries logisticsPaused"
 	APPLIES_TO_SECTION @SECTION.GlobalMetadata
 	RATIONALE "Game release 2.102, the Skeo update, adds logisticsPaused, the state of the drone"
-		+ "button stop and recall all drones, written as false on save; a save written before it"
-		+ "has no such key"
+		+ "button stop and recall all drones, written as false on save"
 		REF @GAME_RELEASE.2.102
 	SOURCE "The PCEdit save diff between 2.008 and 2.102, read on 2026-09-21, and the sample save"
 		+ "written by 2.103 in the private context, whose metadata entry ends on logisticsPaused"

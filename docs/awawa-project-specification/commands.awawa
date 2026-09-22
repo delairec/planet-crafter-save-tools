@@ -21,8 +21,8 @@ COMMAND MergeSaves
 	APPLIES @RULE.ASectionLineIsOneJsonEntry
 	APPLIES @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
 	APPLIES @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
-	APPLIES @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
-	APPLIES @RULE.TheGlobalMetadataEntryMayOmitLogisticsPaused
+	APPLIES @RULE.APlayerEntryCarriesCameraViewAndItsLifetimeTotals
+	APPLIES @RULE.TheGlobalMetadataEntryCarriesLogisticsPaused
 	RATIONALE "The node: form of the script reaches the same entry point on the other runtime; the"
 		+ "parity of the two runtimes is a ruling of ours, not a second command"
 		REF @DECISION.NodeCommandsRunSourcesThroughModuleHooks
@@ -36,5 +36,5 @@ COMMAND ValidateSave
 	APPLIES @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	APPLIES @RULE.ASectionLineIsOneJsonEntry
 	APPLIES @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
-	APPLIES @RULE.TheGlobalMetadataEntryMayOmitLogisticsPaused
+	APPLIES @RULE.TheGlobalMetadataEntryCarriesLogisticsPaused
 	SOURCE "Extracted from the published scripts of the root manifest on 2026-09-18"

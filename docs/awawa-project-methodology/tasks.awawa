@@ -875,7 +875,7 @@ TASK FEAT79
 		REF @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
 		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
 		REF @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
-		REF @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+		REF @RULE.APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 		REF @SECTION.Players
 		REF @SECTION.Reserved
 		REF @TASK.FEAT78
@@ -1026,7 +1026,7 @@ TASK FEAT84
 		REF @TASK.TEST67
 		REF @TASK.FEAT72
 		REF @SECTION.GlobalMetadata
-		REF @RULE.TheGlobalMetadataEntryMayOmitLogisticsPaused
+		REF @RULE.TheGlobalMetadataEntryCarriesLogisticsPaused
 	SOURCE "Review of pull request 111 by the owner, 2026-09-22: the field should be displayed and"
 		+ "no task plans it"
 		PR 111

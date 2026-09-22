@@ -1145,7 +1145,7 @@ DECISION MissingPlayerFieldsAreWrittenAsZero
 		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.spec.ts::should"
 			+ "default the missing fields to 0"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RESTS_ON @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
+	RESTS_ON @RULE.APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 	RATIONALE "Zero is the value the game starts them at"
 
 DECISION TheDomainOfARuleIsDecidedByWhetherThePlayWouldChange
