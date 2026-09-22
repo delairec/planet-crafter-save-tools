@@ -47,3 +47,8 @@ which is what makes it the fixture of the scenarios asserting that an error says
 The content of `baseline_valid.json` in the legacy save format, the one still carrying the Terrain Layers section a
 later game update removed. Loading it adapts the save and raises a warning, so the file is valid and warned about at
 once.
+
+## `skeo-update_valid.json`
+
+A save written by the Skeo update: `logisticsPaused` in its global metadata, and one placed world object carrying
+the numeric planet id of Skeo, `-440810600`.
