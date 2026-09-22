@@ -993,7 +993,7 @@ TASK CHORE83
 
 TASK FEAT84
 	TITLE "Display the logisticsPaused of a save written by the Skeo update in the save manager"
-	STATUS draft
+	STATUS todo
 	SPEC "the global progression section displays whether the drone logistics are paused when the"
 		+ "global metadata carries logisticsPaused"
 	SPEC "a save whose global metadata carries no logisticsPaused displays the section as before"
