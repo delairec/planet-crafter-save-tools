@@ -126,3 +126,15 @@ USAGE_REPORT PR111_112
 URL PCFandomWikiPhytoplankton
 	LOCATION "https://planet-crafter.fandom.com/wiki/Phytoplankton"
 	DESC "Phytoplankton wiki page revised for the Skeo update, read on 2026-09-22"
+
+URL PCFandomWikiVersionHistory
+	LOCATION "https://planet-crafter.fandom.com/wiki/Version_history"
+	DESC "game version history of the wiki, read on 2026-09-22"
+
+GAME_RELEASE 2.004
+	DESC "2.0 Update, the first release whose save no longer carries the Terrain Layers section"
+	SOURCE "Version history page of the wiki, read on 2026-09-22: 2.004 is the full changelog of"
+		+ "the 2.0 Update, 1.618 the last patch before it"
+		REF @URL.PCFandomWikiVersionHistory
+	SOURCE "The owner, 2026-09-22: the Terrain Layers section was removed at the passage to 2.0, a"
+		+ "save written by 1.618 or earlier carries it"

@@ -1,5 +1,6 @@
 SECTION GlobalMetadata
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Global metadata"
 	INDEX 0
 	LEGACY_INDEX 0
@@ -12,7 +13,8 @@ SECTION GlobalMetadata
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION TerraformationLevels
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Terraformation levels"
 	INDEX 1
 	LEGACY_INDEX 1
@@ -25,7 +27,8 @@ SECTION TerraformationLevels
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION Players
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Players"
 	INDEX 2
 	LEGACY_INDEX 2
@@ -36,7 +39,8 @@ SECTION Players
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION WorldObjects
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "World objects"
 	INDEX 3
 	LEGACY_INDEX 3
@@ -48,7 +52,8 @@ SECTION WorldObjects
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION Inventories
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Inventories"
 	INDEX 4
 	LEGACY_INDEX 4
@@ -60,7 +65,8 @@ SECTION Inventories
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION Statistics
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Statistics"
 	INDEX 5
 	LEGACY_INDEX 5
@@ -72,7 +78,8 @@ SECTION Statistics
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION MailboxMessages
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Mailbox messages"
 	INDEX 6
 	LEGACY_INDEX 6
@@ -85,7 +92,8 @@ SECTION MailboxMessages
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION StoryEvents
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Story events"
 	INDEX 7
 	LEGACY_INDEX 7
@@ -97,7 +105,8 @@ SECTION StoryEvents
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION SaveConfiguration
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Save configuration"
 	INDEX 8
 	LEGACY_INDEX 8
@@ -110,7 +119,8 @@ SECTION SaveConfiguration
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION WorldEvents
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "World events"
 	INDEX 9
 	LEGACY_INDEX 10
@@ -122,7 +132,8 @@ SECTION WorldEvents
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION Reserved
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	LABEL "Reserved"
 	INDEX 10
 	LEGACY_INDEX 11
@@ -137,7 +148,7 @@ SECTION Reserved
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION TerrainLayers
-	HOLDS_FOR legacy
+	HOLDS_FOR @GAME_RELEASE.1.618
 	LABEL "Terrain layers"
 	LEGACY_INDEX 9
 	DESC "the section a game update removed; a legacy save still carries it and loading one"

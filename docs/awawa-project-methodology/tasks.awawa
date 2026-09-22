@@ -508,6 +508,7 @@ TASK FEAT68
 	TITLE "Handle the group ids the Skeo update deprecates"
 	STATUS todo
 	AFTER @TASK.DOCS86
+	AFTER @TASK.FEAT89
 	DESC "type prefix and spec to settle once the open question is ruled"
 	SPEC "a world object or an item whose group id is Phytoplankton2 or Phytoplankton3 is read,"
 		+ "validated and merged as the ruling of the open question sets"
@@ -1038,22 +1039,38 @@ TASK DOCS86
 		+ "@TASK.FEAT68"
 		REF @TASK.FEAT68
 	SPEC "the eras current, legacy and both are dropped: no value of HOLDS_FOR names an era"
+		IMPL "docs/_schema.awawa::FIELD HOLDS_FOR @GAME_RELEASE"
 	SPEC "HOLDS_FOR names a GAME_RELEASE and is repeatable: a rule or a section holds for each"
 		+ "release it names, and for no other"
+		IMPL "docs/_schema.awawa::a release the statement holds for"
 	SPEC "HOLDS_FOR names only a release that creates a branch in the code, one the code tells"
 		+ "apart from the release before it; a release the code does not tell apart is never named,"
 		+ "and a save it writes is read by the branch of the last named release before it"
+		IMPL "docs/_schema.awawa::named only if the code tells it apart from the"
+		IMPL "packages/shared-save-processing/normalizeRawSections.js::rawParts.length ==="
+			+ "LEGACY_SPLIT_PARTS_COUNT"
 	SPEC "each entity that carried an era is rewritten with the releases it holds for, read from"
 		+ "the branches of the code and not translated from the era it carried"
+		IMPL "docs/awawa-project-specification/sections.awawa"
+		IMPL "docs/awawa-project-specification/rules.awawa"
 	SPEC "the fields and constraints the schema keys on the era, INDEX, LEGACY_INDEX and the"
 		+ "incoming CONSTRAINED_BY of a section, are keyed on the releases instead, so that a"
 		+ "section written by the latest release still needs a rule that cites it"
+		IMPL "docs/_schema.awawa::the position of the section in the format 2.004 and later"
+		IMPL "docs/_schema.awawa::the position of the section in the format 1.618 and earlier"
 	SPEC "the decision that cites a game release as a source is rewritten in place: its SPEC that"
 		+ "no type of the specification area carries the game version as a field of its own, and"
 		+ "its REJECTED version field on RULE, are revised to admit the release a statement holds"
 		+ "for, the previous form kept as a REJECTED"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION AGameReleaseIsCitedAsASource"
 	SPEC "the decision that the era is not the archive is rewritten to name a section the game"
 		+ "stopped writing by the releases it holds for instead of HOLDS_FOR legacy"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION TheEraIsNotTheArchive"
+	SPEC "the ruling that a save is never discriminated by its declared version alone is recorded,"
+		+ "and the cross-check of a save against its version is a draft task of wave 5"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "ASaveIsNeverDiscriminatedByItsVersionAlone"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT89"
 	RATIONALE "HOLDS_FOR current|legacy|both assumes two formats, split by the removal of the"
 		+ "Terrain Layers section; the project now handles more, and a two-valued era cannot say"
 		+ "that a statement holds since 2.102 only. The eras are not mapped onto sets of releases:"
@@ -1066,7 +1083,7 @@ TASK DOCS86
 		+ "field names the releases the statement holds for, not the one it was read in"
 		REF @DECISION.AGameReleaseIsCitedAsASource
 		REF @DECISION.TheEraIsNotTheArchive
-		REF @FIELDSET.Era
+		REF @FIELDSET.ReleaseScope
 		REF @SCHEMA.SECTION
 		REF @GAME_RELEASE.1.618
 		REF @GAME_RELEASE.2.008
@@ -1114,3 +1131,27 @@ TASK DOCS88
 		+ "the owner's review of pull request 112 on 2026-09-22"
 		PR 112
 		REF @USAGE_REPORT.PR111_112
+
+TASK FEAT89
+	TITLE "Warn when a save contradicts the game release it declares"
+	STATUS draft
+	WAVE 5
+	AFTER @TASK.DOCS86
+	SPEC "the releases HOLDS_FOR names are a table beside the module that reads it, one row per"
+		+ "release with what the code tells apart in the saves it writes, the number of parts today"
+	SPEC "the version a save configuration declares resolves to the last release of the table not"
+		+ "later than it"
+	SPEC "a save is read by what it carries; when that contradicts the release its version resolves"
+		+ "to, loading it raises a warning naming both, and the save is still read"
+	SPEC "a save declaring 2.004 or later and carrying the Terrain Layers section raises that"
+		+ "warning, and so does a save declaring 1.618 or earlier without it"
+	SPEC "the scenario fixtures declare the version of a release whose format they carry"
+	RATIONALE "The code tells the two formats apart by the number of parts alone and never reads"
+		+ "the version the save declares, so a hand edit that makes them disagree goes unreported."
+		+ "The table is the mechanism FEAT68 extends with the release that removed a group id,"
+		+ "instead of a second list of versions. Every scenario fixture declares version 1.0 today,"
+		+ "which resolves to 1.618 while three of the four carry the format of 2.004"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+		REF @TASK.FEAT68
+	SOURCE "The owner, 2026-09-22, while ruling the releases of HOLDS_FOR for DOCS86"
+		REF @TASK.DOCS86

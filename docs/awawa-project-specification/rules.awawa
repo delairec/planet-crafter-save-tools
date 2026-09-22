@@ -1,5 +1,5 @@
 RULE ASaveHasElevenSectionsTheLastReservedAndEmpty
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	SPEC "a save splits into 11 parts, indexed 0 to 10, the last being the reserved empty part the"
 		+ "terminating separator produces"
@@ -13,7 +13,8 @@ RULE ASaveHasElevenSectionsTheLastReservedAndEmpty
 		PR 47
 
 RULE ASectionLineIsOneJsonEntry
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	SPEC "each line of a section is one JSON entry, lines being separated by a pipe"
 		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::{\"id\":44,\"woIds\":\"79111656,58524136\",\"size\":20}|"
@@ -23,7 +24,8 @@ RULE ASectionLineIsOneJsonEntry
 		PR 47
 
 RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	SPEC "the player identifier exceeds the exact integer range of a double, and it is the only"
 		+ "such field in the six reference saves"
@@ -36,7 +38,8 @@ RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 		PR 49
 
 RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	SPEC "the float fields of a save carry a .0 suffix when their value is whole, and the records"
 		+ "of the format are flat"
@@ -52,7 +55,8 @@ RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 		PR 36
 
 RULE TheSaveOnPrimeBecomesSaveA
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "which of the two saves takes the role A, whose entries win every section conflict"
 	RESOLUTION "the save whose configuration names Prime, when exactly one does; otherwise the"
@@ -67,7 +71,8 @@ RULE TheSaveOnPrimeBecomesSaveA
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ORDER-1)"
 
 RULE GlobalMetadataIsSummedAndUnioned
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the merged save holds one metadata entry while each input carries its own counters,"
 		+ "unlocked groups and open instance fields"
@@ -105,7 +110,8 @@ RULE GlobalMetadataIsSummedAndUnioned
 		REF @GAME_RELEASE.2.102
 
 RULE TerraformationLevelsTakeTheHigherValue
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the same planet carries different terraformation levels in the two saves"
 	RESOLUTION "one entry per planet, every numeric field taking the higher of the two, the"
@@ -127,7 +133,8 @@ RULE TerraformationLevelsTakeTheHigherValue
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-TERRA-1 to GR-TERRA-3)"
 
 RULE PlayersAreDeduplicatedByName
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the same player name appears in both saves, and each save flags a host"
 	RESOLUTION "the whole save A entry is kept, its host flag alone stays true, and a save B name"
@@ -157,7 +164,8 @@ RULE PlayersAreDeduplicatedByName
 		REF @DECISION.MissingPlayerFieldsAreWrittenAsZero
 
 RULE WorldObjectsAreDeduplicatedByPlanetAndPosition
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "two world objects of the two saves stand at the same position on the same planet"
 	RESOLUTION "save A's object is kept; an object with no position is never deduplicated, and the"
@@ -181,7 +189,8 @@ RULE WorldObjectsAreDeduplicatedByPlanetAndPosition
 		+ "id conflict step and became no SPEC"
 
 RULE InventoriesAreKeptUnlessTheirOwnerIsEjected
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "an inventory of save B belongs to a player the deduplication ejected, and inventory"
 		+ "ids collide across the two saves"
@@ -204,7 +213,8 @@ RULE InventoriesAreKeptUnlessTheirOwnerIsEjected
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-INV-1 to GR-INV-3)"
 
 RULE StatisticsAreSummed
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the merged save holds one statistics entry while each input carries its own counters"
 	RESOLUTION "every numeric field is summed; no value of either save is chosen over the other,"
@@ -216,7 +226,8 @@ RULE StatisticsAreSummed
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-STAT-1)"
 
 RULE MailboxMessagesAreDeduplicatedByStringId
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the same message id appears in both saves, read in one and unread in the other"
 	RESOLUTION "the fields of save A are kept and isRead is the boolean or of the two"
@@ -235,7 +246,8 @@ RULE MailboxMessagesAreDeduplicatedByStringId
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-MSG-1 to GR-MSG-3)"
 
 RULE StoryEventsAreUnioned
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the same story event id appears in both saves and the merged save must not list it"
 		+ "twice; the two entries cannot disagree, the id being their only field"
@@ -250,7 +262,8 @@ RULE StoryEventsAreUnioned
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-STORY-1 and GR-STORY-2)"
 
 RULE SaveConfigurationComesFromSaveA
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the two saves carry different configurations"
 	RESOLUTION "save A's configuration is used as is, save B's discarded, and the display name"
@@ -264,7 +277,8 @@ RULE SaveConfigurationComesFromSaveA
 		REF @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
 
 RULE WorldEventsAreDeduplicatedByPlanetSeedAndPosition
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the same planet, seed and pos triplet appears in both saves"
 	RESOLUTION "save A's entry is kept and save B's discarded; a triplet absent from save A is"
@@ -280,7 +294,8 @@ RULE WorldEventsAreDeduplicatedByPlanetSeedAndPosition
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-EVT-1 and GR-EVT-2)"
 
 RULE IdentifiersAreSharedByInventoriesAndWorldObjects
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	DOMAIN merge
 	CONFLICT "one id is held at once by an inventory and by a world object of the merged save"
@@ -299,7 +314,8 @@ RULE IdentifiersAreSharedByInventoriesAndWorldObjects
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-1)"
 
 RULE APlayerIdentifierIsCarriedAsExactDecimalText
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	DOMAIN merge
 	CONFLICT "two players of the two saves carry the same Steam account identifier"
@@ -321,7 +337,8 @@ RULE APlayerIdentifierIsCarriedAsExactDecimalText
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-6 and GR-ID-7)"
 
 RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
-	HOLDS_FOR current
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN merge
 	CONFLICT "the same id designates one logical object in save A and another in save B"
 	RESOLUTION "the save B entry receives a new id from a sequence seeded above every id of the"
@@ -355,7 +372,8 @@ RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 		REF @DECISION.AMergeProducesAnOrdinarySave
 
 RULE APlanetNumericIdIsStableAcrossSaves
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	SPEC "the numeric planet id a world object and a world event carry is the same value in every"
 		+ "save, being derived neither from the world seed nor from the content of the save"
@@ -375,7 +393,8 @@ RULE APlanetNumericIdIsStableAcrossSaves
 		REF @URL.PceditPlanetHashTests
 
 RULE APurificationLevelOfMinusOneMeansNotUnlocked
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	SPEC "unitPurificationLevel carries -1 while purification is not unlocked, and a non-negative"
 		+ "value once it is"
@@ -389,7 +408,8 @@ RULE APurificationLevelOfMinusOneMeansNotUnlocked
 		REF @RULE.TerraformationLevelsTakeTheHigherValue
 
 RULE APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	SPEC "a player entry may omit cameraView, totalCraftedObjects and totalTerraTokenEarned, which"
 		+ "the section schema does not require"
@@ -402,7 +422,8 @@ RULE APlayerEntryMayOmitTheFieldsAddedByALaterUpdate
 		REF @RULE.PlayersAreDeduplicatedByName
 
 RULE TheGlobalMetadataEntryMayOmitLogisticsPaused
-	HOLDS_FOR both
+	HOLDS_FOR @GAME_RELEASE.1.618
+	HOLDS_FOR @GAME_RELEASE.2.004
 	DOMAIN format
 	SPEC "the global metadata entry may carry logisticsPaused, a boolean, and may omit it, the"
 		+ "section schema not requiring it"
