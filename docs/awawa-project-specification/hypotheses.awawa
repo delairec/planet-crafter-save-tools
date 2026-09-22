@@ -83,6 +83,7 @@ HYPOTHESIS TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 		REF @DATATABLE.EnergyLevels
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement, a hypothesis of no power is recorded instead"
+		PR 120
 	SOURCE "Wiki pages read on 2026-09-21, no energy field on the three infoboxes"
 		REF @URL.WikiFurniture
 		REF @URL.WikiRockets

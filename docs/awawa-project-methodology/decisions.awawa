@@ -1233,3 +1233,4 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
+		PR 120
