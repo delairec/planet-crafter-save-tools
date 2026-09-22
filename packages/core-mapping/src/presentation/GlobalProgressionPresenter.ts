@@ -5,6 +5,9 @@ import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {
   globalProgressionSectionAllTimeTerraTokensLabel,
+  globalProgressionSectionLogisticsPausedLabel,
+  globalProgressionSectionLogisticsPausedPausedValue,
+  globalProgressionSectionLogisticsPausedRunningValue,
   globalProgressionSectionTerraTokenUnit,
   globalProgressionSectionTotalCraftedObjectsLabel
 } from "./messages/globalProgressionSectionMessages.js";
@@ -52,6 +55,12 @@ function createViewModel(globalProgression: GlobalProgressionValueObject, totalC
           header: globalProgressionSectionTotalCraftedObjectsLabel,
           values: [`${totalCraftedObjects}`]
         },
+        ...(globalProgression.logisticsPaused === undefined ? [] : [{
+          header: globalProgressionSectionLogisticsPausedLabel,
+          values: [globalProgression.logisticsPaused
+            ? globalProgressionSectionLogisticsPausedPausedValue
+            : globalProgressionSectionLogisticsPausedRunningValue]
+        }])
       ]
     }
   };

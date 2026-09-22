@@ -40,7 +40,8 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
     }
 
     return createGlobalProgressionValueObject({
-      allTimeTerraTokens: metadata.allTimeTerraTokens
+      allTimeTerraTokens: metadata.allTimeTerraTokens,
+      logisticsPaused: metadata.logisticsPaused
     });
   }
 

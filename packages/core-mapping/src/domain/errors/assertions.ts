@@ -28,6 +28,16 @@ export function assertOptionalString(value: unknown, field: string): string | un
   return value;
 }
 
+export function assertOptionalBoolean(value: unknown, field: string): boolean | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (typeof value !== 'boolean') {
+    throw new InvalidSaveDataError(`${field} must be a boolean, received ${String(value)}`);
+  }
+  return value;
+}
+
 export function assertArray<Item>(value: unknown, field: string): Item[] {
   if (!Array.isArray(value)) {
     throw new InvalidSaveDataError(`${field} must be an array, received ${String(value)}`);
