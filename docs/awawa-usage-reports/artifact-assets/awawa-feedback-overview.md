@@ -1,19 +1,19 @@
-*Feedback for the awawa dev team · awawa 2.7.0 · 2026-09-18*
+*Feedback for the awawa dev team · awawa 2.7.0 · 2026-09-22*
 
 # awawa feedback: the overview
 
 One project — a seven-package monorepo worked daily by AI agents — moved its specification into an awawa corpus and
-reported what it met, five times in a week. This page gathers the five reports into one list: **one proposed
+reported what it met, six times in under two weeks. This page gathers the six reports into one list: **one proposed
 remediation per row, and facing it every defect or gap it would close**, whatever report raised it. Only what is
 yours to handle is kept — the binary, the schema language, the manual, the skills and the distribution. What was
 ours — our method, our starter, our conduct — stays in the reports.
 
-- **5** — reports, 2026-09-12 to 2026-09-18, all on awawa 2.7.0
-- **72** — defects or gaps raised about the tool, 7 of them with nothing asked
-- **49** — remediations once the repetitions are merged
+- **6** — reports, 2026-09-12 to 2026-09-22, all on awawa 2.7.0
+- **73** — defects or gaps raised about the tool, 7 of them with nothing asked
+- **50** — remediations once the repetitions are merged
 - **16** — remediations raised by two reports or more
 
-## The five reports
+## The six reports
 
 | Code | Report | Date | What it measured |
 |---|---|---|---|
@@ -22,9 +22,11 @@ ours — our method, our starter, our conduct — stays in the reports.
 | M2 | Migration 2 | 2026-09-16 | the schema rebuilt from what the first had cost: 45 throwaway corpora, 141 probe rows, a scan of 59 sessions |
 | IDE | IDE plugins report | 2026-09-16 | a read-only table view built on the `--json` replies, under the rule that the plugin holds no logic |
 | M3 | Migration 3 | 2026-09-18 | a product specification added as a second area of the same workspace: 12 sessions, 60 probe lines, 404 `awawa` calls |
+| CTX | Context savings example | 2026-09-22 | what one session loaded into the agent's context by reading the corpus and its instructions, in lines of output, and the levers that would lower it |
 
 A reference reads « report · number »: `F·02` is defect 02 of the field report, `M3·5` defect 5 of section 5 of
-Migration 3. Migration 1 numbers nothing; `M1·6` is the sixth row of its « What went wrong » table.
+Migration 3. Migration 1 and the context report number nothing; `M1·6` is the sixth row of the « What went wrong »
+table of Migration 1, `CTX·1` the first row of the « Additional levers » table of the context report.
 
 ## Where to start
 
@@ -60,6 +62,7 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R13 | `show TARGET --json` returns typed atoms — kind, text, unescaped value, resolved target | `IDE·03` atoms come back as source text, so a view must carry the token rules itself | IDE |
 | R14 | `statuses` in `status --json` keeps to the declared values, per type, and lists undeclared ones apart | `IDE·04` an invalid `STATUS` value joins the lifecycle list as one more stage | IDE |
 | R15 | On an unresolved name in a git checkout, name the commit that removed it, or say « never written » | `F·05` a deleted entity is indistinguishable from one never written, 3 / 11 | F |
+| R51 | `show` takes `--skip CATEGORY`, as `context` does | `CTX·1` a task read by `show` carries its `RATIONALE` and `SOURCE`: about 60 lines where only its `SPEC` lines were used | CTX |
 
 ## Writing a corpus
 
@@ -146,6 +149,7 @@ above are asked of a tool that carried the method through three migrations.
 
 ---
 
-*Synthesised on 2026-09-18 from the five reports, all written on awawa 2.7.0. One defect was probed again for this
+*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example,
+all written on awawa 2.7.0. One defect was probed again for this
 page and withdrawn, `M2·15`; every other figure keeps the perimeter of the report it comes from, and a claim wrong
 at the source is wrong here.*
