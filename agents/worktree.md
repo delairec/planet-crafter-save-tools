@@ -14,7 +14,7 @@ que rien ne rappelle et dont l'oubli ne produit aucune erreur, seulement un verd
    `bun merge` sur les saves de référence le lient depuis le dépôt principal
    (`ln -sfn <dépôt principal>/input input`). La règle `input` du `.gitignore` n'a pas de barre finale précisément
    pour attraper ce lien ; même forme et même raison pour `.do-not-commit`
-   (@DECISION.ThePrivateContextIgnoreRuleHasNoTrailingSlash).
+   (CFG-2 de `~/.ai/instructions/configuration.md`).
 
 `.do-not-commit/` suit la même logique : chaque worktree porte son propre clone, à rafraîchir par `bun run
 private:sync` — voir `agents/contexte-prive.md`. **Le corpus, lui, est versionné dans la branche** : `awawa` lancé dans un
