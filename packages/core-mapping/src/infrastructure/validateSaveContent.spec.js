@@ -4,6 +4,7 @@ import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
 import {createFakeSaveString, createLegacyFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
 import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
+import {replaceSaveSection} from 'shared-save-processing/replaceSaveSection.js';
 import {
   createEquipment,
   createGlobalMetadata,
@@ -90,9 +91,7 @@ describe('validateSaveContent', () => {
     describe('When the section carries no entry', () => {
       it('should reject the save, naming the global metadata section', () => {
         // Arrange
-        const sections = createFakeSaveContent().split('@');
-        sections[GLOBAL_METADATA_SECTION_INDEX] = '';
-        const saveWithoutGlobalMetadata = sections.join('@');
+        const saveWithoutGlobalMetadata = replaceSaveSection(createFakeSaveContent(), GLOBAL_METADATA_SECTION_INDEX, () => '');
 
         // Act
         const result = validateSaveContent(saveWithoutGlobalMetadata);
