@@ -1233,6 +1233,9 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 		+ "reported"
 	SOURCE "Owner ruling"
 		REF @TASK.DOCS86
+	SOURCE "The table, the resolution of a declared version and the contradiction warning, on"
+		+ "delivery of the task"
+		PR 124
 
 DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SPEC "Every text/background token pair packages/ui-save-manager/src/styles/ composes reaches"
