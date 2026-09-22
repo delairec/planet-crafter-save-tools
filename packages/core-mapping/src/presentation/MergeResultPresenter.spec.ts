@@ -1,15 +1,15 @@
 import {describe, expect, it} from 'bun:test';
 import {MergeResultPresenter} from './MergeResultPresenter';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noErrorsFromSaveB: ValidationIssue[] = [];
 const noErrorsFromTheMerge: ValidationIssue[] = [];
-const noWarningsFromSaveA: SaveWarningCode[] = [];
-const noWarningsFromSaveB: SaveWarningCode[] = [];
+const noWarningsFromSaveA: SaveWarning[] = [];
+const noWarningsFromSaveB: SaveWarning[] = [];
 
 describe('MergeResultPresenter', () => {
 
@@ -50,7 +50,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
-        saveAWarnings: ['legacy-save-format'],
+        saveAWarnings: [{code: 'legacy-save-format'}],
         saveBWarnings: noWarningsFromSaveB
       });
 
@@ -145,7 +145,7 @@ describe('MergeResultPresenter', () => {
         saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'}],
         saveBErrors: noErrorsFromSaveB,
         saveAWarnings: noWarningsFromSaveA,
-        saveBWarnings: ['legacy-save-format']
+        saveBWarnings: [{code: 'legacy-save-format'}]
       });
 
       // Assert

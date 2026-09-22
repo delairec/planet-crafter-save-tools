@@ -65,7 +65,7 @@ describe('SaveValidatorService', () => {
       const result = service.validate('Save-A.json', content);
 
       // Assert
-      expect(result).toEqual({isValid: true, errors: [], warnings: ['legacy-save-format']});
+      expect(result).toEqual({isValid: true, errors: [], warnings: [{code: 'legacy-save-format'}]});
     });
   });
 });

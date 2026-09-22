@@ -18,7 +18,7 @@ const validSaveConfiguration = {
   modifierMeteoOccurence: 1.0,
   modifierMultiplayerTerraformationFactor: 1.0,
   modded: false,
-  version: '1.0',
+  version: '2.004',
   mode: 'Standard',
   dyingConsequencesLabel: 'DropSomeItems',
   startLocationLabel: 'Standard',

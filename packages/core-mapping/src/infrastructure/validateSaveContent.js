@@ -18,7 +18,7 @@ import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
  * once let a lost section pass for a valid save.
  *
  * @param {string} saveContent
- * @returns {{isValid: boolean, errors: import('../application/ports/ValidationIssue').ValidationIssue[], warnings: import('shared-save-processing/gameDefinitions').SaveWarningCode[]}}
+ * @returns {{isValid: boolean, errors: import('../application/ports/ValidationIssue').ValidationIssue[], warnings: import('shared-save-processing/gameDefinitions').SaveWarning[]}}
  */
 export function validateSaveContent(saveContent) {
   const sectionCountErrors = verifySectionCount(saveContent.split('@'));

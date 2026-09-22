@@ -46,7 +46,7 @@ describe('normalizeRawSections', () => {
       const {warnings} = normalizeRawSections(legacyParts);
 
       // Assert
-      expect(warnings).toEqual(['legacy-save-format']);
+      expect(warnings).toEqual([{code: 'legacy-save-format'}]);
     });
   });
 

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "gameReleases.schema.json",
+  "title": "Game releases",
+  "description": "The game releases the specification names, in release order, each with what the code tells apart in the saves it writes.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "required": ["release", "splitPartsCount"],
+    "additionalProperties": false,
+    "properties": {
+      "release": {"type": "string", "pattern": "^[0-9]+(\\.[0-9]+)+$"},
+      "splitPartsCount": {"type": "integer", "minimum": 1}
+    }
+  }
+}

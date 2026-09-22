@@ -8,7 +8,7 @@ import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
 import {SaveValidationResult} from './ports/SaveValidationResult';
-import {SaveParseError, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SaveParseError, SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {INVENTORIES_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createPlayer, createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
 import {createSaveSections} from '../testing/createSaveSections';
@@ -22,7 +22,7 @@ describe('MergeSaveFiles', () => {
 
   const ACCEPTED: SaveValidationResult = {isValid: true, errors: [], warnings: []};
   const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResult => ({isValid: false, errors, warnings: []});
-  const acceptedWith = (...warnings: SaveWarningCode[]): SaveValidationResult => ({isValid: true, errors: [], warnings});
+  const acceptedWith = (...warnings: SaveWarning[]): SaveValidationResult => ({isValid: true, errors: [], warnings});
 
   const validatorAnswering = (resultsByFileName: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
     (fileName: string) => resultsByFileName[fileName] ?? ACCEPTED;
@@ -176,7 +176,7 @@ describe('MergeSaveFiles', () => {
     it('should present the warnings of each save on a successful merge', async () => {
       // Arrange
       const {useCase, presenter} = createUseCase({
-        validate: validatorAnswering({'Save-A.json': acceptedWith('legacy-save-format')})
+        validate: validatorAnswering({'Save-A.json': acceptedWith({code: 'legacy-save-format'})})
       });
 
       // Act
@@ -187,7 +187,7 @@ describe('MergeSaveFiles', () => {
         fileName: 'Save-A-Save-B-merged.json',
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
-        saveAWarnings: ['legacy-save-format'],
+        saveAWarnings: [{code: 'legacy-save-format'}],
         saveBWarnings: []
       } satisfies MergeSucceededResponse);
     });
@@ -197,7 +197,7 @@ describe('MergeSaveFiles', () => {
       const invalidJsonError = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentB'};
       const {useCase, presenter} = createUseCase({
         validate: validatorAnswering({
-          'Save-A.json': acceptedWith('legacy-save-format'),
+          'Save-A.json': acceptedWith({code: 'legacy-save-format'}),
           'Save-B.json': rejectedWith(invalidJsonError)
         })
       });
@@ -209,7 +209,7 @@ describe('MergeSaveFiles', () => {
       expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
         saveAErrors: [],
         saveBErrors: [invalidJsonError],
-        saveAWarnings: ['legacy-save-format'],
+        saveAWarnings: [{code: 'legacy-save-format'}],
         saveBWarnings: []
       } satisfies SaveFilesInvalidResponse);
     });

@@ -19,7 +19,7 @@ describe('Merge save configurations', () => {
 
       // Assert
       expect<SaveConfiguration | undefined>(result).toEqual({
-        saveDisplayName: 'SAVE_NAME', planetId: 'Prime', version: '1.0', mode: 'Standard', worldSeed: 42, modded: false,
+        saveDisplayName: 'SAVE_NAME', planetId: 'Prime', version: '2.004', mode: 'Standard', worldSeed: 42, modded: false,
         modifierTerraformationPace: 0.1, modifierPowerConsumption: 0.2, modifierGaugeDrain: 0.3,
         modifierMeteoOccurence: 0.4, modifierMultiplayerTerraformationFactor: 0.5,
         unlockedSpaceTrading: false, unlockedOreExtrators: false, unlockedTeleporters: false, unlockedDrones: false,
@@ -41,7 +41,7 @@ describe('Merge save configurations', () => {
 
       // Assert
       expect<SaveConfiguration | undefined>(result).toEqual({
-        saveDisplayName: 'SAVE_NAME', planetId: 'Aqualis', version: '1.0', mode: 'Standard', worldSeed: 7, modded: false,
+        saveDisplayName: 'SAVE_NAME', planetId: 'Aqualis', version: '2.004', mode: 'Standard', worldSeed: 7, modded: false,
         modifierTerraformationPace: 0.1, modifierPowerConsumption: 0.2, modifierGaugeDrain: 0.3,
         modifierMeteoOccurence: 0.4, modifierMultiplayerTerraformationFactor: 0.5,
         unlockedSpaceTrading: false, unlockedOreExtrators: false, unlockedTeleporters: false, unlockedDrones: false,

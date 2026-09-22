@@ -1,13 +1,13 @@
 import {describe, expect, it} from 'bun:test';
 import {LoadSaveFilePresenter} from './LoadSaveFilePresenter';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {SaveParseError, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SaveParseError, SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {LoadSaveFileViewModel} from './viewModels/LoadSaveFileViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noParsingErrors: SaveParseError[] = [];
-const noWarnings: SaveWarningCode[] = [];
+const noWarnings: SaveWarning[] = [];
 
 describe('LoadSaveFilePresenter', () => {
 
@@ -44,7 +44,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile(noParsingErrors, ['legacy-save-format']);
+      presenter.presentLoadedSaveFile(noParsingErrors, [{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -75,7 +75,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}], ['legacy-save-format']);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}], [{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{

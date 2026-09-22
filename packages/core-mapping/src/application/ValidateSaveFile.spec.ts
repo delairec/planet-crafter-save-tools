@@ -45,7 +45,7 @@ describe('ValidateSaveFile', () => {
   describe('When validation reports that the save had to be adapted', () => {
     it('should present the warnings of a valid save file', async () => {
       // Arrange
-      const validator: SaveValidatorPort = {validate: mock(() => ({isValid: true, errors: [], warnings: ['legacy-save-format' as const]}))};
+      const validator: SaveValidatorPort = {validate: mock(() => ({isValid: true, errors: [], warnings: [{code: 'legacy-save-format' as const}]}))};
       const presenter: SaveFileValidationPresenterPort = {presentValidSaveFile: mock(), presentInvalidSaveFile: mock()};
       const useCase = new ValidateSaveFile(validator, presenter);
 
@@ -53,13 +53,13 @@ describe('ValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
-      expect(presenter.presentValidSaveFile).toHaveBeenCalledWith(['legacy-save-format']);
+      expect(presenter.presentValidSaveFile).toHaveBeenCalledWith([{code: 'legacy-save-format'}]);
     });
 
     it('should present the warnings of an invalid save file too', async () => {
       // Arrange
       const errors = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}];
-      const validator: SaveValidatorPort = {validate: mock(() => ({isValid: false, errors, warnings: ['legacy-save-format' as const]}))};
+      const validator: SaveValidatorPort = {validate: mock(() => ({isValid: false, errors, warnings: [{code: 'legacy-save-format' as const}]}))};
       const presenter: SaveFileValidationPresenterPort = {presentValidSaveFile: mock(), presentInvalidSaveFile: mock()};
       const useCase = new ValidateSaveFile(validator, presenter);
 
@@ -67,7 +67,7 @@ describe('ValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
-      expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith(errors, ['legacy-save-format']);
+      expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith(errors, [{code: 'legacy-save-format'}]);
     });
   });
 });
