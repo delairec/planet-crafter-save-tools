@@ -51,7 +51,7 @@ citent : une entité s'archive propre, et rien d'actif ne doit plus pointer vers
 - **Avant `awawa new`, lire une entité modèle du type avec `awawa show`** plutôt que les fichiers du corpus :
   `@DECISION.AMergeProducesAnOrdinarySave` (décision), `@PROCESS.ATaskBranchIsRebasedNeverMerged` (règle de
   conduite), `@LIMITATION.AnAtSignInAFolderNameCorruptsTheMergedSave` (limitation),
-  `@TASK.FIX45` (tâche), `@SECTION.Players` (section de la save), `@RULE.PlayersAreDeduplicatedByName` (règle),
+  `@TASK.DOCS1` (tâche), `@SECTION.Players` (section de la save), `@RULE.PlayersAreDeduplicatedByName` (règle),
   `@COMMAND.MergeSaves` (commande), `@HYPOTHESIS.AWorldObjectMayCarryALinkedObjectList` (hypothèse). Pas de fichier d'exemple : la
   marche le chargerait et `status` le compterait (@DECISION.AgentsMdNamesOneModelEntityPerType).
 - **Les commentaires `//` ne sont lus par aucune commande.** Un fait écrit là n'atteint pas la session suivante ; ce

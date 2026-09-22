@@ -1,3 +1,18 @@
+TASK DOCS1
+	TITLE "Example task, the model entity of the TASK type cited by the agent instructions"
+	STATUS implemented
+	DESC "example task, the model entity the agent instructions cite for the TASK type; no work to"
+		+ "do"
+	SPEC "agents/corpus-ecrire.md names this task as the model entity of the TASK type"
+		IMPL "agents/corpus-ecrire.md"
+	DELIVERED_BY 114
+	PURGE false
+	RATIONALE "The model entity of a type must outlive the cleanup pass: FIX45, a real task named"
+		+ "as the model, was deleted in commit 1a23069 and left the reference in"
+		+ "agents/corpus-ecrire.md dangling. An example task numbered 1, placed first in its file,"
+		+ "is never delivered work and is never purged"
+		REF @DECISION.AgentsMdNamesOneModelEntityPerType
+
 TASK CHORE46
 	TITLE "the repository security alerts are enabled"
 	STATUS todo
@@ -1073,28 +1088,6 @@ TASK TEST85
 	SOURCE "Review of pull request 112 on 2026-09-22: an expect reprojecting the planets with map,"
 		+ "flagged across the whole spec file, while the guard passed"
 		PR 112
-
-TASK DOCS87
-	TITLE "Restore the task FIX45, deleted while implemented, that agents/corpus-ecrire.md names as"
-		+ "its model task"
-	STATUS draft
-	SPEC "@TASK.FIX45 is defined in the corpus with STATUS implemented, DELIVERED_BY 102 and the"
-		+ "SPEC and IMPL it carried before commit 1a23069"
-	SPEC "every entity name that AGENTS.md or a file of agents/ cites resolves in the corpus"
-	SPEC "a guard of check:guards refuses an entity name that AGENTS.md or a file of agents/ cites"
-		+ "and the corpus does not define"
-	RATIONALE "The cleanup commits 750cfde and 1a23069 on master deleted fifteen entities: fourteen"
-		+ "were STATUS archived, and FIX45 alone was STATUS implemented, so its deletion skipped"
-		+ "the archive step and the reference in agents/corpus-ecrire.md is still valid; restoring"
-		+ "the task, rather than naming another model, keeps the model the decision chose. Of the"
-		+ "56 entity names AGENTS.md, agents/, README.md, docs/*.md and packages/ cite, FIX45 is"
-		+ "the only one the corpus does not define. L016 cannot see it, a sentence of a markdown"
-		+ "file being no anchor, hence the guard"
-		REF @DECISION.AgentsMdNamesOneModelEntityPerType
-	SOURCE "Usage report of pull requests 111 and 112, part A remediation 2, and the owner's review"
-		+ "of pull request 112 on 2026-09-22"
-		PR 112
-		REF @USAGE_REPORT.PR111_112
 
 TASK DOCS88
 	TITLE "State in docs/save-format.md that a planet numeric id is the djb2 hash of its name"
