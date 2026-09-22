@@ -108,3 +108,9 @@ USAGE_REPORT PR107
 	EVALUATES 107
 	DESC "usage report of pull request 107, the refinement and split of FEAT55, committed on its"
 		+ "branch before the merge"
+
+USAGE_REPORT IntellijUi_2026_09_22
+	FILE "docs/awawa-usage-reports/intellij-plugins/2026-09-22-four-views-and-a-clean-the-binary-cannot-do.md::<!--"
+		+ "awawa-usage-report -->"
+	DESC "usage report of the awawa-ui plugin sessions of 2026-09-21 and 2026-09-22, addressed to"
+		+ "the awawa authors; evaluates no pull request"

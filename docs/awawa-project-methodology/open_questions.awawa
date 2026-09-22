@@ -20,3 +20,14 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog
 		REF @GAME_RELEASE.2.102
+
+OPEN_QUESTION CleanButtonAndTheCleanupPass
+	DESC "whether the awawa-ui Clean button stands in for the purge half of FEAT47, and who then"
+		+ "removes the reference lines to a purged entity and honours PURGE and the incoming count"
+		REF @TASK.FEAT47
+		REF @PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
+	BLOCKS @TASK.FEAT47
+	SOURCE "the first real clean, 2026-09-22 01:23 and 01:39: 14 archived entities and FIX45 at"
+		+ "implemented deleted, 10 of the 12 tasks with incoming edges, and 31 APPLIES_TO_TASK"
+		+ "lines removed by hand in the same commit"
+		REF @USAGE_REPORT.IntellijUi_2026_09_22
