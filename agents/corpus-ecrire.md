@@ -42,14 +42,15 @@ entité `URL` dont `LOCATION` est l'adresse exacte lue, figée sur un commit qua
 lecture reste dans la prose de la `SOURCE` : une même page se lit plusieurs jours
 (@DECISION.AGameReleaseIsCitedAsASource, @DECISION.AnExternalPageIsCitedAtTheAddressRead).
 
-**`HOLDS_FOR` nomme les releases pour lesquelles une règle ou une section vaut**, répété une fois par release, et
-seulement celles que le code distingue de la précédente : aujourd'hui `@GAME_RELEASE.1.618` (la save porte Terrain
-Layers) et `@GAME_RELEASE.2.004` (elle ne la porte plus). Une save écrite par une release non nommée — 2.102, 2.103 —
-se lit par la branche de la dernière release nommée avant elle. Une release ne s'ajoute qu'avec la branche du code
-qui la distingue, et elle s'ajoute alors à chaque entité qui la liste. **`HOLDS_FOR all`, seul**, marque ce qui ne
-dépend pas de la release — les règles de merge, les invariants du format — et couvre d'office une release nommée
-plus tard ; une entité qui décrit un écart entre releases les liste au contraire. Le code ne discrimine jamais une save
-par sa seule version déclarée (@DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone).
+**`HOLDS_FOR` écrit la vérité du jeu** : la release à partir de laquelle une règle ou une section vaut, nommée une
+seule fois. Une entité qui décrit un écart entre releases s'énonce par ce que la release ajoute, jamais par ce qui
+manque à la précédente, et ne nomme que cette release : `@GAME_RELEASE.2.004` pour les champs ajoutés à l'entrée
+joueur, `@GAME_RELEASE.2.102` pour `logisticsPaused`. Une release que le code ne distingue pas encore se nomme quand
+même : c'est au code de rattraper le corpus, par la tâche qui la branche. Une save écrite par une release non
+nommée — 2.008, 2.103 — se lit par la branche de la dernière release nommée avant elle. **`HOLDS_FOR all`, seul**,
+marque ce qui ne dépend pas de la release — les règles de merge, les invariants du format — et couvre d'office une
+release nommée plus tard. Le code ne discrimine jamais une save par sa seule version déclarée
+(@DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone).
 
 **L'ère n'est pas l'archive** : une `SECTION` que le jeu n'écrit plus reste active et nomme par `HOLDS_FOR` les
 releases qui l'écrivaient — `@GAME_RELEASE.1.618` pour Terrain Layers —, les sauvegardes anciennes se lisant encore ; `STATUS archived` ne s'écrit que le jour où le projet cesse de supporter ce
