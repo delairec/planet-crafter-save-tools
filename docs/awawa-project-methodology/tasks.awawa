@@ -435,14 +435,20 @@ TASK FEAT65
 
 TASK FEAT66
 	TITLE "Give TreePlanter3, PodUnderground and RocketAnimals2 their energy"
-	STATUS todo
+	STATUS implemented
 	AFTER @TASK.DOCS86
 	DESC "We can save a hypothesis that these three machines do not produce or draw power. Previous"
 		+ "objects with similar labels are not in the energy tables. Observation in game will be"
 		+ "the until condition."
 	SPEC "TreePlanter3, PodUnderground and RocketAnimals2 each carry a row in the energy table with"
 		+ "the kilowatts measured in game 2.103 when the machine draws or produces power"
+		IMPL "docs/awawa-project-specification/hypotheses.awawa::HYPOTHESIS"
+			+ "TreePlanter3PodUndergroundRocketAnimals2DrawNoPower"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should neither produce nor"
+			+ "charge for the world objects without a known energy level"
 	WAVE 5
+	DELIVERED_BY 120
 	RATIONALE "Every group id the Skeo update adds already has a label row. The wiki gives the"
 		+ "power of Incubator2 and InsideLamp2, already in the energy table, and no energy for the"
 		+ "three other machines, whose predecessors have no row; a value missing from the wiki is"

@@ -3,13 +3,17 @@ OPEN_QUESTION TheEnergyOfTheSkeoMachinesIsMeasuredInGame
 		+ "2.103, none being a valid answer"
 		REF @DATATABLE.EnergyLevels
 	BLOCKS @TASK.FEAT66
-	RATIONALE "The wiki documents no energy for the three machines and a missing value is never a"
-		+ "zero; the user measures them in game, ruled on 2026-09-21 in the refinement of the task"
+	RATIONALE "Settled by a hypothesis rather than by the in-game measurement this question asked"
+		+ "for: the owner ruled on 2026-09-22 that the task does not wait for it, and recorded"
+		+ "instead that the three machines draw and produce no power until observed otherwise"
+		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 	SOURCE "Wiki pages read on 2026-09-21, no energy field on the three infoboxes"
 		REF @URL.WikiFurniture
 		REF @URL.WikiRockets
 		REF @URL.WikiBaseBuilding
 		REF @GAME_RELEASE.2.103
+	STATUS archived
+	ARCHIVED_ON "2026-09-22"
 
 OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 	DESC "what the tool does with a world object or an item whose group id release 2.102"

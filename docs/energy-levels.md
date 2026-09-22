@@ -82,6 +82,17 @@ draw any energy", [Drone Station](https://planet-crafter.fandom.com/wiki/Drone_S
 [fusion reactor](https://planet-crafter.fandom.com/wiki/Fusion_reactor) is inert scenery that "ha[s] run out of
 power since [it] crashed" — not the player-built nuclear fusion generator, which the same page disambiguates.
 
+**Skeo update (game v2.103), read 2026-09-21.** `TreePlanter3` (Giant trees pot), `PodUnderground` (Underground
+living compartment) and `RocketAnimals2` (T2 Animals spreader rocket) also print no energy field on their wiki
+infoboxes, but they are handled differently from the machines above: their predecessors with a similar label
+(`TreePlanter`, `TreePlanter2`, `RocketAnimals1`) carry no energy value either, so the missing field is read as
+these three neither drawing nor producing power, not as an undocumented cost
+(`@HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower`). They stay in the group without a known energy
+level, the same way an undocumented-cost machine does, but are not counted among the machines this document lists
+above, whose consumption the tool underestimates
+(`@DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine`). The hypothesis stands until observed
+otherwise in game.
+
 **Source registry.** Each value the 2026-09-07/09 cross-check added carries, in the `source` field of its row, the
 wiki page it was read from (game v2.102). Earlier values are sourced by the wiki pages listed in EN-BASE-2 above.
 
