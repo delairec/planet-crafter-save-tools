@@ -122,3 +122,7 @@ USAGE_REPORT PR111_112
 	EVALUATES 112
 	DESC "one usage report for the two task pull requests of wave 5, committed on the branch of"
 		+ "pull request 112"
+
+URL PCFandomWikiPhytoplankton
+	LOCATION "https://planet-crafter.fandom.com/wiki/Phytoplankton"
+	DESC "Phytoplankton wiki page revised for the Skeo update, read on 2026-09-22"

@@ -449,7 +449,11 @@ TASK FEAT65
 
 TASK FEAT66
 	TITLE "Give TreePlanter3, PodUnderground and RocketAnimals2 their energy"
-	STATUS draft
+	STATUS todo
+	AFTER @TASK.DOCS86
+	DESC "We can save a hypothesis that these three machines do not produce or draw power. Previous"
+		+ "objects with similar labels are not in the energy tables. Observation in game will be"
+		+ "the until condition."
 	SPEC "TreePlanter3, PodUnderground and RocketAnimals2 each carry a row in the energy table with"
 		+ "the kilowatts measured in game 2.103 when the machine draws or produces power"
 	WAVE 5
@@ -479,6 +483,7 @@ TASK FEAT66
 TASK TEST67
 	TITLE "Display a save written by the Skeo update in the save manager"
 	STATUS todo
+	AFTER @TASK.DOCS86
 	SPEC "a scenario fixture generated with logisticsPaused in its global metadata and a placed"
 		+ "world object carrying the planet numeric id -440810600 passes validation"
 	SPEC "the save manager displays that fixture without a validation error, and its energy section"
@@ -501,7 +506,8 @@ TASK TEST67
 
 TASK FEAT68
 	TITLE "Handle the group ids the Skeo update deprecates"
-	STATUS draft
+	STATUS todo
+	AFTER @TASK.DOCS86
 	DESC "type prefix and spec to settle once the open question is ruled"
 	SPEC "a world object or an item whose group id is Phytoplankton2 or Phytoplankton3 is read,"
 		+ "validated and merged as the ruling of the open question sets"
@@ -1026,7 +1032,11 @@ TASK FEAT84
 
 TASK DOCS86
 	TITLE "Type the era of a rule and a section by game release"
-	STATUS draft
+	STATUS todo
+	WAVE 5
+	DESC "The decisions taken here must anticipate the next tasks of wave 5 and especially"
+		+ "@TASK.FEAT68"
+		REF @TASK.FEAT68
 	SPEC "the eras current, legacy and both are dropped: no value of HOLDS_FOR names an era"
 	SPEC "HOLDS_FOR names a GAME_RELEASE and is repeatable: a rule or a section holds for each"
 		+ "release it names, and for no other"
@@ -1044,7 +1054,6 @@ TASK DOCS86
 		+ "for, the previous form kept as a REJECTED"
 	SPEC "the decision that the era is not the archive is rewritten to name a section the game"
 		+ "stopped writing by the releases it holds for instead of HOLDS_FOR legacy"
-	WAVE 5
 	RATIONALE "HOLDS_FOR current|legacy|both assumes two formats, split by the removal of the"
 		+ "Terrain Layers section; the project now handles more, and a two-valued era cannot say"
 		+ "that a statement holds since 2.102 only. The eras are not mapped onto sets of releases:"
