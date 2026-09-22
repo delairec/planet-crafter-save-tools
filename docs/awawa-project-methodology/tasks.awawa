@@ -157,7 +157,7 @@ TASK CHORE52
 
 TASK FIX53
 	TITLE "Ensure text colors are readable in both light and dark themes"
-	STATUS draft
+	STATUS todo
 	DESC "study the addition of a more general accessibility checker"
 	SPEC "all text colors are readable in light theme"
 	SPEC "all text colors are readable in dark theme"
@@ -363,7 +363,7 @@ TASK CHORE59
 
 TASK REFACTOR62
 	TITLE "shared-save-processing exposes a function selecting one section of a save string"
-	STATUS draft
+	STATUS todo
 	SPEC "A caller reaching one section of a save string calls a shared-save-processing function"
 		+ "given the section index, and never splits the string on the section separator itself"
 	DESC "callers splitting on '@' to reach one section today: cli-merge testing/fakeSaveStrings.js"
@@ -389,36 +389,18 @@ TASK CHORE60
 
 TASK CHORE63
 	TITLE "a reference between draft tasks of two branches is not refused by the corpus gate"
-	STATUS draft
+	STATUS todo
 	SPEC "awawa lint --strict . exits 0 on a draft TASK citing a task absent from the workspace,"
 		+ "and exits 1 once the citing task is todo"
 	DESC "to be refined with the user: lint --strict promotes warnings to errors, so a GATE warning"
-		+ "on draft alone does not meet the SPEC"
+		+ "on draft alone does not meet the SPEC; draft tasks should maybe raise nothing at all, or"
+		+ "a warning only"
 	RATIONALE "WHEN STATUS draft of TASK is gated error, while awawa treats a draft with dangling"
 		+ "references as normal exploration; the reference from the draft that CHORE57 absorbed to"
 		+ "CHORE57, both on sibling branches, was refused by L004 in the review of pull requests"
 		+ "101 to 103"
 		REF @TASK.CHORE57
 	SOURCE "Usage report of pull requests 101, 102 and 103; ruled with the user on 2026-09-21"
-		REF @USAGE_REPORT.PR101_102_103
-
-TASK CHORE64
-	TITLE "an archived task leaves the corpus once delivered, and appending entities stops"
-		+ "conflicting on rebase"
-	STATUS draft
-	SPEC "an archived TASK whose decisions stay in force carries no incoming APPLIES_TO_TASK that"
-		+ "prevents its deletion"
-	SPEC "two branches each adding an entity to the same corpus file rebase one on the other"
-		+ "without a conflict on that file"
-	DESC "to be refined with the user"
-	RATIONALE "Measured on master b2f48f5: 29 of the 32 APPLIES_TO_TASK edges point at archived"
-		+ "tasks, which keeps 10 of the 12 archived tasks from being purged; appending every new"
-		+ "entity at the end of the file of its type made all writers edit the same tail, with"
-		+ "conflicts resolved by hand or by script on pull requests 76, 79 and 83"
-		REF @PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
-		REF @DECISION.TheCorpusLivesInThePublicRepository
-	SOURCE "Usage reports of pull requests 95 to 103; ruled with the user on 2026-09-21"
-		REF @USAGE_REPORT.PR95
 		REF @USAGE_REPORT.PR101_102_103
 
 TASK FEAT65
@@ -1004,7 +986,7 @@ TASK FEAT82
 
 TASK CHORE83
 	TITLE "Add a versionning mechanism"
-	STATUS draft
+	STATUS todo
 	DESC "drafted for memory, no research done; what do we want to version? core-mapping + clis +"
 		+ "uis separetly? or the whole package? what is the trigger for a new version?"
 	SPEC "explore the options for a versionning mechanism, and choose one"
@@ -1107,25 +1089,9 @@ TASK DOCS86
 		+ "carries HOLDS_FOR all"
 		PR 115
 
-TASK TEST85
-	TITLE "Refuse an assertion that reprojects the value it compares"
-	STATUS draft
-	SPEC "check:assertions reports a spec whose expect argument maps the returned value into"
-		+ "another collection before comparing it"
-	SPEC "no spec of the repository reprojects the value it compares, the energy levels presenter"
-		+ "spec included"
-	RATIONALE "The testing instructions forbid reprojecting the returned value before comparing it,"
-		+ "and state that a rule the project ships a guard for is enforced by the guard rather than"
-		+ "re-audited by hand; check:assertions catches the boolean forms only, so pull request 112"
-		+ "added a map reprojection beside two already on the default branch, and its review found"
-		+ "them. One more stands outside that pull request, in EnergyLevelsPresenter.spec.ts"
-	SOURCE "Review of pull request 112 on 2026-09-22: an expect reprojecting the planets with map,"
-		+ "flagged across the whole spec file, while the guard passed"
-		PR 112
-
 TASK DOCS88
 	TITLE "State in docs/save-format.md that a planet numeric id is the djb2 hash of its name"
-	STATUS draft
+	STATUS todo
 	SPEC "docs/save-format.md states that a planet numeric id is the two-accumulator djb2 hash of"
 		+ "the planet name, as the rule on planet numeric ids does, and no longer that no known"
 		+ "hash reproduces the ids"
