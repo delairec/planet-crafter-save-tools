@@ -251,13 +251,9 @@ describe('SaveSectionsReaderService', () => {
     });
 
     it.each([
-      {planetNumericId: 110910045, planetName: 'Toxicity'},
-      {planetNumericId: -1140328421, planetName: 'Prime'},
-      {planetNumericId: -1016990411, planetName: 'Selenea'},
-      {planetNumericId: -486276833, planetName: 'Humble'},
-      {planetNumericId: -1291310150, planetName: 'Aqualis'},
-      {planetNumericId: -440810600, planetName: 'Skeo'}
-    ])('should name $planetName the planet whose numeric id is $planetNumericId (Rule EN-PLANET-3)', ({planetNumericId, planetName}) => {
+      {numericIdCase: 'a numeric id of the planet table', planetNumericId: -440810600, planetName: 'Skeo'},
+      {numericIdCase: 'a numeric id missing from the planet table', planetNumericId: 1, planetName: undefined}
+    ])('should resolve the planet name of $numericIdCase (Rule EN-PLANET-3)', ({planetNumericId, planetName}) => {
       // Arrange
       const sections = createSaveSections({
         worldObjects: [

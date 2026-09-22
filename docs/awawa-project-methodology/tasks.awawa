@@ -412,7 +412,7 @@ TASK FEAT65
 	SPEC "a world object or a world event carrying the planet numeric id -440810600 is placed on"
 		+ "Skeo"
 		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
-			+ "name $planetName the planet whose numeric id is $planetNumericId (Rule EN-PLANET-3)"
+			+ "resolve the planet name of $numericIdCase (Rule EN-PLANET-3)"
 	WAVE 5
 	DELIVERED_BY 112
 	RATIONALE "Skeo, added by game release 2.102, is the planet whose id -440810600 is missing from"
