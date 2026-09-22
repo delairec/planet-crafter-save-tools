@@ -157,13 +157,17 @@ TASK CHORE52
 
 TASK FIX53
 	TITLE "Ensure text colors are readable in both light and dark themes"
-	STATUS todo
+	STATUS implemented
 	DESC "study the addition of a more general accessibility checker"
 	SPEC "all text colors are readable in light theme"
+		IMPL "packages/ui-save-manager/src/styles/colors.css"
 	SPEC "all text colors are readable in dark theme"
+		IMPL "packages/ui-save-manager/src/styles/colors.css"
 	SPEC "color accessibility is verified using a color contrast checker"
+		IMPL "scripts/check-color-contrast.ts"
 	RATIONALE "observed that some text colors are not readable in light theme, need to ensure"
 		+ "accessibility and readability for all users"
+	DELIVERED_BY 121
 
 TASK CHORE54
 	TITLE "Simplify commands in sub-packages"
@@ -1135,3 +1139,26 @@ TASK FEAT89
 		REF @TASK.FEAT68
 	SOURCE "The owner, 2026-09-22, while ruling the releases of HOLDS_FOR for DOCS86"
 		REF @TASK.DOCS86
+
+TASK CHORE91
+	TITLE "investigate axe-core in the ui-save-manager Playwright suite for a general accessibility"
+		+ "check"
+	STATUS draft
+	DESC "FIX53 added check:contrast, a static, catalog-driven WCAG contrast check limited to the"
+		+ "declared CSS custom properties of packages/ui-save-manager/src/styles/; it verifies"
+		+ "nothing else (non-text contrast, labels, roles, landmarks, focus order) and nothing"
+		+ "about how the DOM actually renders. Investigate whether @axe-core/playwright, run"
+		+ "against the existing e2e scenarios in both color schemes, is worth adding, without"
+		+ "opening a new test layer"
+		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
+	SPEC "the task records whether @axe-core/playwright can run inside the existing"
+		+ "playwright.config.ts scenario suite"
+	SPEC "the task records which WCAG rules axe-core would add over check:contrast, and at what"
+		+ "run-time cost across the three engines"
+	SPEC "when the gain is worth it, a todo task carries the change; otherwise the reason is"
+		+ "written in this task"
+	SOURCE "FIX53's task DESC, PR 121"
+		PR 121
+		REF @TASK.FIX53

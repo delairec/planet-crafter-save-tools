@@ -1208,6 +1208,30 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 	SOURCE "Owner ruling"
 		REF @TASK.DOCS86
 
+DECISION ColorTokenPairsMeetWcagAaByCatalog
+	SPEC "Every text/background token pair packages/ui-save-manager/src/styles/ composes reaches"
+		+ "WCAG 2.1 AA, 4.5:1, in both themes"
+		IMPL "packages/ui-save-manager/src/styles/colors.css"
+		ENFORCED_BY "scripts/check-color-contrast.ts::MINIMUM_CONTRAST_RATIO"
+	SPEC "The pairs checked are the ones the stylesheet and its components actually compose,"
+		+ "curated once from the component tree, not every declared token crossed with every other"
+		IMPL "scripts/check-color-contrast.ts::TOKEN_PAIRS"
+		ENFORCED_BY "scripts/check-color-contrast.ts::findUncataloguedForegroundDeclarations"
+	REJECTED "WCAG 2.1 AAA (7:1): unreachable by the neon accent palette (--neon-pink,"
+		+ "--neon-purple, --neon-cyan) without abandoning the palette's own identity"
+	REJECTED "The full cross-product of every declared color token, text or not: produces pairs no"
+		+ "component ever renders and would force narrowing tokens nobody sees adjacent"
+	REJECTED "A one-off manual verification: the task's SPEC asks for an automated check that fails"
+		+ "the build"
+	RATIONALE "The task's SPEC left the threshold and the verification method open. WCAG 2.1 AA is"
+		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
+		+ "-rendered DOM, a gap @TASK.CHORE91 studies closing with axe-core"
+		REF @TASK.CHORE91
+	APPLIES_TO_TASK @TASK.FIX53
+	SOURCE "the launching command's defensible-option guidance, checked against the palette before"
+		+ "ratifying"
+		PR 121
+
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	REJECTED "Moving TreePlanter3, PodUnderground and RocketAnimals2 into the machines the"
 		+ "eleven-machine limitation lists: that limitation is about a cost the sources leave"
