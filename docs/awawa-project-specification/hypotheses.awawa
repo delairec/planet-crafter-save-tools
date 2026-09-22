@@ -70,3 +70,20 @@ HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 		+ "counts now stored as a unsigned 64bits value; read on 2026-09-21"
 		REF @URL.SteamNewsOfThePlanetCrafter
 		REF @GAME_RELEASE.2.102
+
+HYPOTHESIS TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
+	DESC "TreePlanter3, PodUnderground and RocketAnimals2 neither draw nor produce power in game"
+		+ "2.103"
+		REF @GAME_RELEASE.2.103
+	UNTIL "the observation in game"
+	RATIONALE "Their predecessors have no row in the energy table either: TreePlanter, TreePlanter2"
+		+ "and RocketAnimals1 carry no energy value, and the three infoboxes of TreePlanter3,"
+		+ "PodUnderground and RocketAnimals2 print no energy field, so the missing value is read as"
+		+ "these machines drawing or producing none rather than as an undocumented cost"
+		REF @DATATABLE.EnergyLevels
+	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
+		+ "measurement, a hypothesis of no power is recorded instead"
+	SOURCE "Wiki pages read on 2026-09-21, no energy field on the three infoboxes"
+		REF @URL.WikiFurniture
+		REF @URL.WikiRockets
+		REF @URL.WikiBaseBuilding

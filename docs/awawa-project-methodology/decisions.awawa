@@ -1207,3 +1207,29 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 		+ "reported"
 	SOURCE "Owner ruling"
 		REF @TASK.DOCS86
+
+DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
+	REJECTED "Moving TreePlanter3, PodUnderground and RocketAnimals2 into the machines the"
+		+ "eleven-machine limitation lists: that limitation is about a cost the sources leave"
+		+ "undecided, not about a hypothesis of no cost"
+		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	REJECTED "Adding a zero-kilowatt row for the three machines to the energy table: a hypothesis"
+		+ "is not an observed value, and an unprinted value is already never inferred as zero"
+		REF @DATATABLE.EnergyLevels
+		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+	SPEC "A machine whose only known energy is a hypothesis of no power stays out of the energy"
+		+ "table, in the same group as a machine with an unprinted value, and is not counted among"
+		+ "the placed machines whose energy is unknown"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should neither produce nor"
+			+ "charge for the world objects without a known energy level"
+		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT66
+	ASSUMES @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
+	RATIONALE "The eleven-machine limitation is believed to actually cost power in-game, so"
+		+ "excluding those machines underestimates consumption; the hypothesis states the opposite"
+		+ "for these three, so excluding them is not a limitation"
+		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
+		+ "measurement"
