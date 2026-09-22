@@ -23,6 +23,7 @@ https://raw.githubusercontent.com/delairec/planet-crafter-save-tools/master/docs
 | `awawa-field-report.md`                 | The Markdown export of the field report, as the page generates it.                                                                                                                                          |
 | `awawa-ide-plugins-report.md`           | The Markdown export of the IDE plugins report, as the page generates it.                                                                                                                                    |
 | `awawa-ide-plugins-report-2.md`         | The second IDE plugins report, as written: the page's « IDE plugins 2 » tab is built from it.                                                                                                                |
+| `2026-09-22-corpus-reading-cost.md`     | The context savings example, as written: the page's « Context savings example » tab and the CTX row of its overview are built from it.                                                                      |
 
 The awawa team reads these files outside the repository: no file here carries a
 relative link, which would resolve to nothing for them.
