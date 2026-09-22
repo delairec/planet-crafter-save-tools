@@ -376,7 +376,7 @@ TASK REFACTOR62
 TASK CHORE60
 	TITLE "the per-worktree instructions name the acceptance commands a task branch runs before its"
 		+ "pull request opens, the CI quality gate included"
-	STATUS draft
+	STATUS todo
 	SPEC "agents/worktree.md names, as a fourth item, the commands a task branch runs green before"
 		+ "its pull request is opened or updated, bun run audit:quality among them, and the wave"
 		+ "launch prompt copies that list rather than its own"
