@@ -35,11 +35,28 @@ function generateOtherPlayerContent(): string {
   });
 }
 
+const SKEO_PLANET_NUMERIC_ID = -440810600;
+
+function generateSkeoUpdateContent(): string {
+  return createFakeSaveContent({
+    globalMetadata: createGlobalMetadata({logisticsPaused: true}),
+    inventories: [createInventory(), createEquipment()],
+    worldObjects: [
+      createWorldObject({id: 79111656, gId: 'Phytoplankton3'}),
+      createWorldObject({id: 58524136, gId: 'MagnetarQuartz'}),
+      createWorldObject({id: 85274195, gId: 'Backpack4'}),
+      createWorldObject({id: 48456321, gId: 'OxygenTank5'}),
+      createWorldObject({id: 95585250, gId: 'WindTurbine2', pos: '0,0,0', planet: SKEO_PLANET_NUMERIC_ID})
+    ]
+  });
+}
+
 export const SCENARIO_FIXTURES: ScenarioFixture[] = [
   {fileName: 'baseline_valid.json', generateContent: () => createFakeSaveContent()},
   {fileName: 'other-player_valid.json', generateContent: generateOtherPlayerContent},
   {fileName: 'negative-gauge_invalid.json', generateContent: () => createFakeSaveContent({players: [createPlayer({playerGaugeToxic: -1})]})},
-  {fileName: 'legacy-format_valid.json', generateContent: () => createLegacyFakeSaveContent()}
+  {fileName: 'legacy-format_valid.json', generateContent: () => createLegacyFakeSaveContent()},
+  {fileName: 'skeo-update_valid.json', generateContent: generateSkeoUpdateContent}
 ];
 
 /**
