@@ -114,3 +114,11 @@ USAGE_REPORT IntellijUi_2026_09_22
 		+ "awawa-usage-report -->"
 	DESC "usage report of the awawa-ui plugin sessions of 2026-09-21 and 2026-09-22, addressed to"
 		+ "the awawa authors; evaluates no pull request"
+
+USAGE_REPORT PR111_112
+	FILE "docs/awawa-usage-reports/pull-requests/2026-09-22-pr-111-112.md::<!-- awawa-usage-report"
+		+ "-->"
+	EVALUATES 111
+	EVALUATES 112
+	DESC "one usage report for the two task pull requests of wave 5, committed on the branch of"
+		+ "pull request 112"

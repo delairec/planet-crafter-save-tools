@@ -361,6 +361,7 @@ RULE APlanetNumericIdIsStableAcrossSaves
 		+ "save, being derived neither from the world seed nor from the content of the save"
 		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.json::-1140328421"
 		ATTESTED_BY "packages/shared-save-processing/schemas/section9-world-events.schema.json::planet"
+		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.json::-440810600"
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	APPLIES_TO_SECTION @SECTION.WorldEvents
 	VALUES_FROM @DATATABLE.PlanetNamesByNumericId
