@@ -1615,6 +1615,7 @@ DECISION ArtifactAssetsFollowThePublishedPage
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-ide-plugins-report.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-migration-3-feedback.md"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-feedback-overview.md"
+		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-ide-plugins-report-2.md"
 	SPEC "The folder also holds each file the page embeds for its download button, linked by the"
 		+ "same raw GitHub URL: the two versions of the specification starter"
 		IMPL "docs/awawa-usage-reports/artifact-assets/awawa-specification-starter.md"
