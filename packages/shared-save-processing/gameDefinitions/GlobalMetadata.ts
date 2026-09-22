@@ -4,4 +4,5 @@ export interface GlobalMetadata {
   unlockedGroups: string;
   openedInstanceSeed: number;
   openedInstanceTimeLeft: number;
+  logisticsPaused?: boolean;
 }

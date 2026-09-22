@@ -161,13 +161,29 @@ TASK CHORE54
 
 TASK FEAT55
 	TITLE "Validate and merge the logisticsPaused a save written by the Skeo update carries"
-	STATUS todo
+	STATUS implemented
 	SPEC "a save whose global metadata carries logisticsPaused passes validation, and a save"
 		+ "without it still does"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::written by the"
+			+ "Skeo update and carries logisticsPaused"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::should report"
+			+ "the save as valid, with no error and no warning"
+		IMPL "packages/shared-save-processing/schemas/section0-player-progression.schema.json::\"logisticsPaused\""
 	SPEC "the merged save carries the logisticsPaused of save A when save A has it, otherwise the"
 		+ "one of save B, and no logisticsPaused when neither save has it"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should keep"
+			+ "the logistics pause state from save A"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should keep"
+			+ "the logistics pause state from save B"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "write the metadata entry with no logisticsPaused key"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts::...(logisticsPaused"
+			+ "=== undefined ? {} : {logisticsPaused})"
 	SPEC "a merge of two saves that carry no logisticsPaused produces the same bytes as before the"
 		+ "task"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
+			+ "write the metadata entry with no logisticsPaused key"
+	DELIVERED_BY 111
 	WAVE 5
 	RATIONALE "The Skeo update is game release 2.102; release 2.103 is its first patch and changes"
 		+ "no save key. The only key the update adds is logisticsPaused in the global metadata, the"
@@ -965,3 +981,75 @@ TASK CHORE83
 	DESC "drafted for memory, no research done; what do we want to version? core-mapping + clis +"
 		+ "uis separetly? or the whole package? what is the trigger for a new version?"
 	SPEC "explore the options for a versionning mechanism, and choose one"
+
+TASK FEAT84
+	TITLE "Display the logisticsPaused of a save written by the Skeo update in the save manager"
+	STATUS draft
+	SPEC "the global progression section displays whether the drone logistics are paused when the"
+		+ "global metadata carries logisticsPaused"
+	SPEC "a save whose global metadata carries no logisticsPaused displays the section as before"
+		+ "the task"
+	AFTER @TASK.FEAT55
+	RATIONALE "FEAT55 validates and merges logisticsPaused but displays nothing: the global"
+		+ "progression section shows the all time terra tokens alone. TEST67 asserts that a Skeo"
+		+ "save displays without a validation error, not that the key is shown, and FEAT72 edits"
+		+ "the eight values the save manager displays today, of which logisticsPaused is not one."
+		+ "Once displayed, the value falls under the owner ruling that every displayed field"
+		+ "becomes editable"
+		REF @TASK.FEAT55
+		REF @TASK.TEST67
+		REF @TASK.FEAT72
+		REF @SECTION.GlobalMetadata
+		REF @RULE.TheGlobalMetadataEntryMayOmitLogisticsPaused
+	SOURCE "Review of pull request 111 by the owner, 2026-09-22: the field should be displayed and"
+		+ "no task plans it"
+		PR 111
+
+TASK DOCS86
+	TITLE "Type the era of a rule and a section by game release"
+	STATUS draft
+	SPEC "the eras current, legacy and both are dropped: no value of HOLDS_FOR names an era"
+	SPEC "HOLDS_FOR names a GAME_RELEASE and is repeatable: a rule or a section holds for each"
+		+ "release it names, and for no other"
+	SPEC "HOLDS_FOR names only a release that creates a branch in the code, one the code tells"
+		+ "apart from the release before it; a release the code does not tell apart is never named,"
+		+ "and a save it writes is read by the branch of the last named release before it"
+	SPEC "each entity that carried an era is rewritten with the releases it holds for, read from"
+		+ "the branches of the code and not translated from the era it carried"
+	SPEC "the fields and constraints the schema keys on the era, INDEX, LEGACY_INDEX and the"
+		+ "incoming CONSTRAINED_BY of a section, are keyed on the releases instead, so that a"
+		+ "section written by the latest release still needs a rule that cites it"
+	SPEC "the decision that cites a game release as a source is rewritten in place: its SPEC that"
+		+ "no type of the specification area carries the game version as a field of its own, and"
+		+ "its REJECTED version field on RULE, are revised to admit the release a statement holds"
+		+ "for, the previous form kept as a REJECTED"
+	SPEC "the decision that the era is not the archive is rewritten to name a section the game"
+		+ "stopped writing by the releases it holds for instead of HOLDS_FOR legacy"
+	WAVE 5
+	RATIONALE "HOLDS_FOR current|legacy|both assumes two formats, split by the removal of the"
+		+ "Terrain Layers section; the project now handles more, and a two-valued era cannot say"
+		+ "that a statement holds since 2.102 only. The eras are not mapped onto sets of releases:"
+		+ "that mapping would carry the two-format assumption into the new field. Naming only the"
+		+ "releases that create a branch in the code keeps the list short and stable: a patch such"
+		+ "as 2.103, which changes no save key, adds no value and touches no entity, which answers"
+		+ "the objection that a closed list must grow with every release. The change conflicts with"
+		+ "a recorded decision, which rejects the game version as a field of the specification area"
+		+ "on the ground that it would mean the version of the last reading; typed by release, the"
+		+ "field names the releases the statement holds for, not the one it was read in"
+		REF @DECISION.AGameReleaseIsCitedAsASource
+		REF @DECISION.TheEraIsNotTheArchive
+		REF @FIELDSET.Era
+		REF @SCHEMA.SECTION
+		REF @GAME_RELEASE.1.618
+		REF @GAME_RELEASE.2.008
+		REF @GAME_RELEASE.2.102
+		REF @GAME_RELEASE.2.103
+		REF @TASK.FEAT55
+	SOURCE "Review of pull request 111 by the owner, 2026-09-22: HOLDS_FOR should be typed by game"
+		+ "release and repeatable; legacy no longer suffices now that more than two releases are"
+		+ "handled; deferred to a task of wave 5"
+		PR 111
+	SOURCE "Clarification by the owner on pull request 111, 2026-09-22: legacy, current and both"
+		+ "are dropped in favour of game releases, and HOLDS_FOR lists only the game releases that"
+		+ "create a branch in the code"
+		PR 111

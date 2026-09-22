@@ -20,6 +20,7 @@ export function mergeGlobalMetadata([metadataA]: GlobalMetadata[], [metadataB]: 
   const metadataAContribution = metadataA ?? NO_METADATA_CONTRIBUTION;
   const metadataBContribution = metadataB ?? NO_METADATA_CONTRIBUTION;
   const openedInstanceSource = metadataA ?? metadataB;
+  const logisticsPaused = metadataA?.logisticsPaused ?? metadataB?.logisticsPaused;
 
   const deduplicatedUnlockedGroups = new Set([
     ...metadataAContribution.unlockedGroups.split(','),
@@ -32,5 +33,6 @@ export function mergeGlobalMetadata([metadataA]: GlobalMetadata[], [metadataB]: 
     unlockedGroups: Array.from(deduplicatedUnlockedGroups).filter(Boolean).join(','),
     openedInstanceSeed: openedInstanceSource.openedInstanceSeed,
     openedInstanceTimeLeft: openedInstanceSource.openedInstanceTimeLeft,
+    ...(logisticsPaused === undefined ? {} : {logisticsPaused}),
   };
 }

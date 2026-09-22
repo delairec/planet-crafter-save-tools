@@ -121,6 +121,36 @@ describe('validateSaveContent', () => {
         ]);
       });
     });
+
+    describe('When the save was written by the Skeo update and carries logisticsPaused', () => {
+      it('should accept the save', () => {
+        // Arrange
+        const save = createFakeSaveContent({globalMetadata: createGlobalMetadata({logisticsPaused: false})});
+
+        // Act
+        const result = validateSaveContent(save);
+
+        // Assert
+        expect(result).toEqual({isValid: true, errors: [], warnings: []});
+      });
+    });
+
+    describe('When logisticsPaused is not a boolean', () => {
+      it('should reject the save', () => {
+        // Arrange
+        // @ts-expect-error intentionally invalid type to test validation
+        const save = createFakeSaveString({globalMetadata: createGlobalMetadata({logisticsPaused: 'false'})});
+
+        // Act
+        const result = validateSaveContent(save);
+
+        // Assert
+        expect(result.isValid).toBe(false);
+        expect(result.errors).toMatchObject([
+          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 0}
+        ]);
+      });
+    });
   });
 
   describe('When validating the terraformation levels section', () => {

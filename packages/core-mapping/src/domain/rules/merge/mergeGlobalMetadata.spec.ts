@@ -62,6 +62,43 @@ describe('Merge global metadata', () => {
     });
   });
 
+  describe('When both saves carry logisticsPaused', () => {
+    it('should keep the logistics pause state from save A', () => {
+      // Arrange
+      const pausedMetadataFromSaveA = {...metadataFromSaveA, logisticsPaused: false};
+      const pausedMetadataFromSaveB = {...metadataFromSaveB, logisticsPaused: true};
+
+      // Act
+      const mergeResult = mergeGlobalMetadata([pausedMetadataFromSaveA], [pausedMetadataFromSaveB]);
+
+      // Assert
+      expect(mergeResult.logisticsPaused).toBe(false);
+    });
+  });
+
+  describe('When only save B carries logisticsPaused', () => {
+    it('should keep the logistics pause state from save B', () => {
+      // Arrange
+      const pausedMetadataFromSaveB = {...metadataFromSaveB, logisticsPaused: true};
+
+      // Act
+      const mergeResult = mergeGlobalMetadata([metadataFromSaveA], [pausedMetadataFromSaveB]);
+
+      // Assert
+      expect(mergeResult.logisticsPaused).toBe(true);
+    });
+  });
+
+  describe('When neither save carries logisticsPaused', () => {
+    it('should write the metadata entry with no logisticsPaused key', () => {
+      // Act
+      const mergeResult = mergeGlobalMetadata([metadataFromSaveA], [metadataFromSaveB]);
+
+      // Assert
+      expect(Object.keys(mergeResult)).toEqual(['terraTokens', 'allTimeTerraTokens', 'unlockedGroups', 'openedInstanceSeed', 'openedInstanceTimeLeft']);
+    });
+  });
+
   describe('When save A has no global metadata', () => {
     it('should fall back to save B global metadata', () => {
       // Arrange
