@@ -22,6 +22,7 @@ https://raw.githubusercontent.com/delairec/planet-crafter-save-tools/master/docs
 | `awawa-specification-starter-v2.md`     | The second version of the starter, carrying what one full walk of version 1 found. The page embeds it for the download button of its Migration 3 view.                                                      |
 | `awawa-field-report.md`                 | The Markdown export of the field report, as the page generates it.                                                                                                                                          |
 | `awawa-ide-plugins-report.md`           | The Markdown export of the IDE plugins report, as the page generates it.                                                                                                                                    |
+| `awawa-ide-plugins-report-2.md`         | The second IDE plugins report, as written: the page's « IDE plugins 2 » tab is built from it.                                                                                                                |
 
 The awawa team reads these files outside the repository: no file here carries a
 relative link, which would resolve to nothing for them.
