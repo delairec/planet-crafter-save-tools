@@ -335,23 +335,32 @@ TASK CHORE57
 		REF @USAGE_REPORT.PR101_102_103
 
 TASK CHORE58
-	TITLE "investigate running awawa in CI, and what it would simplify"
-	STATUS draft
-	DESC "Raised in the review of pull request 101: the guards CI job does not install awawa, so"
-		+ "check:anchors parses the corpus text itself; find out whether awawa can run in CI and"
-		+ "what it would simplify or add"
-	SPEC "the task records whether awawa can be installed in a GitHub Actions runner, from which"
-		+ "source and at which cost per run"
-	SPEC "the task records, for each place named in its rationale, the lines awawa in CI would"
-		+ "remove or the check it would add, and whether that gain is worth the installation"
-	SPEC "when the gain is worth it, a todo task carries the change; otherwise the reason is"
-		+ "written in this task"
-	RATIONALE "awawa is today a local x86-64 binary, 2.7.0 in ~/.local/bin, and the repository"
-		+ "names no source to install it from; it could simplify the corpus parser of"
-		+ "scripts/check-corpus-anchors.ts and its spec, which awawa show or status --json would"
-		+ "replace, and the whole guard if lint L016 consulted git instead of the disk; it would"
-		+ "add a CI run of awawa fmt --check and awawa lint --strict, which no job runs today, so"
-		+ "the conformance of the corpus is checked only on the machine of its author"
+	TITLE "investigate running awawa in CI, then deliver in the same pull request the change the"
+		+ "user picks from the findings"
+	STATUS todo
+	SPEC "the pull request body reports whether awawa can be installed in a GitHub Actions runner,"
+		+ "from which source and at which cost per run"
+	SPEC "the pull request body reports, for each place named in the rationale, the lines awawa in"
+		+ "CI would remove or the check it would add, and whether that gain is worth the"
+		+ "installation"
+	SPEC "the change the user picks after reading that report is delivered in the same pull"
+		+ "request, and the report leaves the body once the change is in"
+	RATIONALE "awawa is today a local x86-64 binary, 2.7.0 in ~/.local/bin, 1.6 MB and dynamically"
+		+ "linked, installed from a local archive awawa-2.7.0+gd66a2ad-dirty-linux-x86_64.zip under"
+		+ "the MIT licence, whose install.sh copies its bin/ and whose README gives no download"
+		+ "URL; the repository names no source to install it from. Three places would change: the"
+		+ "corpus parser of scripts/check-corpus-anchors.ts and its spec, which awawa show or"
+		+ "status --json would replace, and the whole guard if lint L016 consulted git instead of"
+		+ "the disk; a CI run of awawa fmt --check and awawa lint --strict, which no job runs"
+		+ "today, so the conformance of the corpus is checked only on the machine of its author;"
+		+ "and the SPEC of CHORE63, proven in pull request 129 by a manual probe because no test"
+		+ "may run awawa in CI, which a test could then prove. Ruled with the user on 2026-09-23:"
+		+ "the findings go to the pull request body, not to a file; the user picks the change after"
+		+ "reading them and it lands in the same pull request without a DECISION; the task"
+		+ "therefore runs in an interactive session, never as an unattended wave agent"
+		REF @TASK.CHORE63
+	SOURCE "Review of pull request 101"
+		PR 101
 
 TASK CHORE59
 	TITLE "investigate whether the repository guards need a shared helper package"
