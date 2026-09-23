@@ -11,6 +11,10 @@ This project provides tools to manipulate save files from **The Planet Crafter**
 - **Merger**: combine two save files into one, following specific rules to preserve as much information as possible.
 - **Validator**: check if a save file is correctly formatted according to the game's specifications.
 
+Both run in the browser, without installing anything, in the Save Manager web UI:
+https://planet-crafter-save-manager.netlify.app/. A save never leaves the browser: the page sends no request outside
+its own origin.
+
 In progress:
 
 - **Save Manager**: a UI to visualize save files. In the long term, it could also include editing capabilities, but for
@@ -245,6 +249,11 @@ application layer; only the presentation boundary is closed. Every `.js`, `.ts` 
 is scanned, outside dependencies and build outputs, and type-only and dynamic imports count.
 
 #### Save Manager UI
+
+The production build is served at https://planet-crafter-save-manager.netlify.app/; a deployment reaches it only once
+published by hand on Netlify. The `Site check` workflow, run from the Actions tab after each publication and every week,
+checks that it loads and carries the headers of `packages/ui-save-manager/public/_headers`;
+`bun run --filter ui-save-manager check:site -- --url=<address>` runs the same check locally.
 
 ```
 bun run dev:ui
