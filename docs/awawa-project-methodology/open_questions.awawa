@@ -34,15 +34,3 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog
 		REF @GAME_RELEASE.2.102
-
-OPEN_QUESTION TheSiteCheckKnowsWhichDeploymentItChecks
-	DESC "the push run of the site check polls production for ten minutes and may pass on the"
-		+ "previous deployment when the new one is slow"
-	BLOCKS @TASK.FIX101
-	RATIONALE "Netlify creates no GitHub deployment and posts no commit status on master, only"
-		+ "deploy-preview statuses on pull request heads, so nothing tells the workflow when the"
-		+ "pushed commit is live. Candidates: a Netlify deploy notification triggering the workflow"
-		+ "by repository_dispatch, or the site serving the commit it was built from for the check"
-		+ "to compare"
-	SOURCE "Measured with the GitHub deployments and statuses APIs on 2026-09-23"
-		PR 134

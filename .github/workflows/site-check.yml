@@ -2,8 +2,10 @@ name: Site check
 
 # Checks that the production web UI loads and carries the headers of
 # packages/ui-save-manager/public/_headers. Netlify deploys master on each push and reports no
-# GitHub deployment, so the push run retries for ten minutes while the deployment lands; the weekly
-# run catches a header lost outside a deployment. On demand, `url` checks a deploy preview.
+# GitHub deployment, so the push run retries for ten minutes until the document names the pushed
+# commit in X-Build-Commit, and fails when it never does; a newer push cancels the run of the older
+# one, whose deployment Netlify supersedes. The weekly run catches a header lost outside a
+# deployment. On demand, `url` checks a deploy preview.
 on:
   push:
     branches: [ master ]
@@ -18,6 +20,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: site-check-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
 jobs:
   site:
     runs-on: ubuntu-latest
@@ -27,8 +33,9 @@ jobs:
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
-      - run: bun run check:site -- "--url=${SITE_URL}" "--attempts=${ATTEMPTS}"
+      - run: bun run check:site -- "--url=${SITE_URL}" "--attempts=${ATTEMPTS}" ${EXPECTED_COMMIT:+"--commit=${EXPECTED_COMMIT}"}
         working-directory: packages/ui-save-manager
         env:
           SITE_URL: ${{ inputs.url || 'https://planet-crafter-save-manager.netlify.app/' }}
           ATTEMPTS: ${{ github.event_name == 'push' && '20' || '1' }}
+          EXPECTED_COMMIT: ${{ github.event_name == 'push' && github.sha || '' }}

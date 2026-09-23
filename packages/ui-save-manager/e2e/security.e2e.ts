@@ -61,6 +61,16 @@ test.describe('Site security', () => {
     });
   });
 
+  test.describe('When the site was built from a commit', () => {
+    test('should name that commit on the document', async ({page}) => {
+      // Act
+      const response = await page.goto('/');
+
+      // Assert
+      expect(await response?.headerValue('X-Build-Commit')).toBe('0123456789abcdef0123456789abcdef01234567');
+    });
+  });
+
   test.describe('When a save is loaded, viewed and merged', () => {
     test('should send no request outside the origin of the page', async ({page}) => {
       // Arrange

@@ -1,26 +1,31 @@
 import {readSiteHeaders} from '../siteHeaders';
 import {removeScriptNonces} from '../src/lib/scriptNonce';
 
-/** The headers every response of the site must carry, as `public/_headers` declares them. */
 const checkedHeaderNames = ['Content-Security-Policy', 'Referrer-Policy', 'Permissions-Policy'];
 
 const productionSiteUrl = 'https://planet-crafter-save-manager.netlify.app/';
 
 const urlFlag = '--url=';
 const attemptsFlag = '--attempts=';
+const commitFlag = '--commit=';
 
-/** Pause between two attempts, long enough for a deployment to progress. */
+const buildCommitHeaderName = 'X-Build-Commit';
+
 const attemptIntervalMilliseconds = 30_000;
 
 function readFlag(flag: string): string | undefined {
   return process.argv.find((argument) => argument.startsWith(flag))?.slice(flag.length);
 }
 
-/** The defects of the site at `siteUrl`, one line each; none when it loads with every header. */
-async function findSiteDefects(siteUrl: string): Promise<string[]> {
+async function findSiteDefects(siteUrl: string, expectedCommit: string | undefined): Promise<string[]> {
   const response = await fetch(siteUrl);
   if (!response.ok) {
     return [`${siteUrl} answers ${response.status}.`];
+  }
+
+  const servedCommit = response.headers.get(buildCommitHeaderName);
+  if (expectedCommit !== undefined && servedCommit !== expectedCommit) {
+    return [`${siteUrl} serves the build of commit ${servedCommit ?? 'unnamed'}, not of ${expectedCommit}.`];
   }
 
   const siteHeaders = readSiteHeaders();
@@ -39,10 +44,11 @@ async function findSiteDefects(siteUrl: string): Promise<string[]> {
 
 const siteUrl = readFlag(urlFlag) ?? productionSiteUrl;
 const attempts = Number(readFlag(attemptsFlag) ?? '1');
+const expectedCommit = readFlag(commitFlag);
 
 let defects: string[] = [];
 for (let attempt = 1; attempt <= attempts; attempt++) {
-  defects = await findSiteDefects(siteUrl);
+  defects = await findSiteDefects(siteUrl, expectedCommit);
   if (defects.length === 0) {
     break;
   }
