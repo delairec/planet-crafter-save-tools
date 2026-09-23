@@ -65,6 +65,13 @@ ignoreUnresolvedImports = [
 [audit]
 gate = "new-only"
 
+# renderVersion and renderUnknownArguments of cli-merge and cli-validate: terminal rendering, which no
+# shared-* package may hold and no cli-* package may import from another, so each CLI keeps its own
+# (@DECISION.EachCliKeepsItsOwnTerminalRendering). The key names this content at two instances only:
+# a change to either copy, or a third copy, reports the group again.
+[duplicates]
+ignoredClones = ["dup:6f87acd9:2"]
+
 [health]
 
 
