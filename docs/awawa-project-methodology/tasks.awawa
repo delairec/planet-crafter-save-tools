@@ -1384,3 +1384,19 @@ TASK FIX104
 		REF @LIMITATION.TheContentSecurityPolicyAllowsEval
 	SOURCE "Measured while implementing FIX101 on 2026-09-23"
 		PR 134
+
+TASK DOCS108
+	TITLE "the README shows the state of the project in badges under its title"
+	STATUS draft
+	SPEC "the README carries, next to the Netlify deploy badge, one badge per CI workflow run on"
+		+ "master, each linking to the runs of that workflow"
+	SPEC "the README carries a license badge linking to the LICENSE file"
+	SPEC "the Netlify badge shows the state of the last production deploy, never that of a deploy"
+		+ "preview"
+	WAVE 8
+	RATIONALE "the Netlify deploy badge, added on master by commit 957d86e, is the only one; the"
+		+ "state of the quality, UI test and dependency workflows is visible only from the Actions"
+		+ "tab. The set of badges is left to the refinement. The badge URL today carries no branch"
+		+ "and turns to canceled on a deploy preview; the badge endpoint answers ?branch= with a"
+		+ "different image for an unknown branch, read on 2026-09-23, so it filters by branch"
+	SOURCE "Request of the user on 2026-09-23"
