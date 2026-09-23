@@ -3,7 +3,8 @@
 
 import {normalizeRawSections} from './normalizeRawSections.js';
 import {verifySectionCount} from './verifySectionCount.js';
-import {PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from './sectionIndexes.js';
+import {PLAYERS_SECTION_INDEX, SAVE_CONFIGURATION_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from './sectionIndexes.js';
+import {verifyDeclaredGameRelease} from './gameReleases.js';
 import {keepInt64IdentifierText} from './int64Identifiers.js';
 
 /** Head of the offending line, enough to recognise it without printing a whole entry. */
@@ -16,6 +17,8 @@ const REPORTED_LINE_LENGTH = 60;
  * Section 3 (WorldObjects) is a Generator factory; all others are arrays.
  * Legacy saves (still containing Terrain Layers) are transparently adapted to the current format —
  * see `normalizeRawSections.js` — and produce a warning instead of an error.
+ * A save is read by the format it carries; the game release its version declares is checked
+ * against that format, and a contradiction produces a warning, never an error.
  *
  * A line that cannot be read is reported in `errors` with its location, and never takes the
  * section holding it down with it. This module is the only place in the production code where a
@@ -28,19 +31,39 @@ export function parseSaveSections(save) {
   const rawSections = save.split('@');
 
   const errors = verifySectionCount(rawSections);
-  const {sections: normalizedSections, warnings} = normalizeRawSections(rawSections);
+  const {sections: normalizedSections, warnings: formatWarnings} = normalizeRawSections(rawSections);
+  const sections = normalizedSections.map((section, sectionIndex) => {
+    if (isWorldObjectsSection(sectionIndex)) {
+      return () => createSectionEntriesGenerator(section, sectionIndex, errors);
+    }
+
+    return [...createSectionEntriesGenerator(section, sectionIndex, errors)];
+  });
+  const declaredVersion = readDeclaredVersion(sections[SAVE_CONFIGURATION_SECTION_INDEX]);
 
   return /** @type {ParsedSave} */ ({
     errors,
-    warnings,
-    sections: normalizedSections.map((section, sectionIndex) => {
-      if (isWorldObjectsSection(sectionIndex)) {
-        return () => createSectionEntriesGenerator(section, sectionIndex, errors);
-      }
-
-      return [...createSectionEntriesGenerator(section, sectionIndex, errors)];
-    })
+    warnings: [...formatWarnings, ...verifyDeclaredGameRelease(declaredVersion, rawSections.length)],
+    sections
   });
+}
+
+/**
+ * @param {unknown} saveConfigurationSection
+ * @returns {unknown}
+ */
+function readDeclaredVersion(saveConfigurationSection) {
+  if (!Array.isArray(saveConfigurationSection)) {
+    return undefined;
+  }
+
+  const [saveConfiguration] = saveConfigurationSection;
+
+  if (typeof saveConfiguration !== 'object' || saveConfiguration === null) {
+    return undefined;
+  }
+
+  return /** @type {{version?: unknown}} */ (saveConfiguration).version;
 }
 
 function isWorldObjectsSection(sectionIndex) {

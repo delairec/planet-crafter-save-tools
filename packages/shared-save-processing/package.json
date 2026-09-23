@@ -11,6 +11,6 @@
   "scripts": {
     "test": "bun test",
     "lint:types": "tsc --noEmit",
-    "validate:tables": "bun ../../scripts/validate-tables/validate-tables.ts legacyTerrainLayerProperties"
+    "validate:tables": "bun ../../scripts/validate-tables/validate-tables.ts gameReleases legacyTerrainLayerProperties"
   }
 }

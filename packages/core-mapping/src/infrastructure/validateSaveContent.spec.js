@@ -601,7 +601,7 @@ describe('validateSaveContent', () => {
         players: [createPlayer()],
         inventories: [createInventory(), createEquipment()],
         statistics: createStatistics(),
-        saveConfiguration: createSaveConfiguration(),
+        saveConfiguration: createSaveConfiguration({version: '1.618'}),
         terrainLayers: [{layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1'}]
       });
 

@@ -58,6 +58,8 @@ export function createFakeSaveContent(overrides = {}) {
   return createFakeSaveString({...createDefaultSaveOptions(), ...overrides});
 }
 
+const LEGACY_FORMAT_RELEASE = '1.618';
+
 const DEFAULT_TERRAIN_LAYERS = [{layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1'}];
 
 /**
@@ -65,5 +67,10 @@ const DEFAULT_TERRAIN_LAYERS = [{layerId: 'PC-Toxicity-Layer2', planet: 11091004
  * game update removed is still there, so loading it reports the legacy save format warning.
  */
 export function createLegacyFakeSaveContent(overrides = {}) {
-  return createLegacyFakeSaveString({...createDefaultSaveOptions(), terrainLayers: DEFAULT_TERRAIN_LAYERS, ...overrides});
+  return createLegacyFakeSaveString({
+    ...createDefaultSaveOptions(),
+    saveConfiguration: createSaveConfiguration({version: LEGACY_FORMAT_RELEASE}),
+    terrainLayers: DEFAULT_TERRAIN_LAYERS,
+    ...overrides
+  });
 }

@@ -68,7 +68,7 @@ export function createSaveConfiguration(overrides = {}) {
     modifierMeteoOccurence: 0.4,
     modifierMultiplayerTerraformationFactor: 0.5,
     modded: false,
-    version: '1.0',
+    version: '2.004',
     mode: 'Standard',
     dyingConsequencesLabel: 'DropSomeItems',
     startLocationLabel: 'Standard',

@@ -33,7 +33,7 @@
 @
 
 @
-{"saveDisplayName":"Merged Save","planetId":"Toxicity","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":0.1,"modifierPowerConsumption":0.2,"modifierGaugeDrain":0.3,"modifierMeteoOccurence":0.4,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"1.0","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":42,"hasPlayedIntro":true,"gameStartLocation":"Standard"}
+{"saveDisplayName":"Merged Save","planetId":"Toxicity","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":0.1,"modifierPowerConsumption":0.2,"modifierGaugeDrain":0.3,"modifierMeteoOccurence":0.4,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"1.618","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":42,"hasPlayedIntro":true,"gameStartLocation":"Standard"}
 @
 {"layerId":"PC-Toxicity-Layer2","planet":110910045,"colorBase":"0.5-0.5-0.5-1"}
 @

@@ -12,18 +12,14 @@
  * save file). Everywhere else in the codebase, the canonical 11-part format is assumed.
  */
 
-/** @import { SaveWarningCode } from './gameDefinitions' */
+/** @import { SaveWarning } from './gameDefinitions' */
 
 import {
   LEGACY_SPLIT_PARTS_COUNT,
   LEGACY_TERRAIN_LAYERS_SECTION_INDEX,
   LEGACY_WORLD_EVENTS_SECTION_INDEX
 } from './sectionIndexes.js';
-
-/** @type {Readonly<Record<'LEGACY_SAVE_FORMAT', SaveWarningCode>>} */
-export const SAVE_WARNING_CODES = Object.freeze({
-  LEGACY_SAVE_FORMAT: 'legacy-save-format'
-});
+import {SAVE_WARNING_CODES} from './saveWarningCodes.js';
 
 /**
  * Adapts the raw `@`-split parts of a save to the current 11-part format.
@@ -31,7 +27,7 @@ export const SAVE_WARNING_CODES = Object.freeze({
  * Events (and the trailing reserved part) up by one index.
  *
  * @param {string[]} rawParts - result of `save.split('@')`
- * @returns {{ sections: string[], warnings: SaveWarningCode[] }}
+ * @returns {{ sections: string[], warnings: SaveWarning[] }}
  */
 export function normalizeRawSections(rawParts) {
   if (rawParts.length === LEGACY_SPLIT_PARTS_COUNT) {
@@ -40,7 +36,7 @@ export function normalizeRawSections(rawParts) {
         ...rawParts.slice(0, LEGACY_TERRAIN_LAYERS_SECTION_INDEX),
         ...rawParts.slice(LEGACY_WORLD_EVENTS_SECTION_INDEX)
       ],
-      warnings: [SAVE_WARNING_CODES.LEGACY_SAVE_FORMAT]
+      warnings: [{code: SAVE_WARNING_CODES.LEGACY_SAVE_FORMAT}]
     };
   }
 

@@ -8,7 +8,7 @@ import {MailboxMessage} from "./MailboxMessage";
 import {StoryEvent} from "./StoryEvent";
 import {SaveConfiguration} from "./SaveConfiguration";
 import {WorldEvent} from "./WorldEvent";
-import {SaveWarningCode} from "./SaveWarningCode";
+import {SaveWarning} from "./SaveWarning";
 import {SaveParseError} from "./SaveParseError";
 
 export type ParsedSections = [
@@ -28,5 +28,5 @@ export type ParsedSections = [
 export type ParsedSave = {
   sections: ParsedSections;
   errors: SaveParseError[];
-  warnings: SaveWarningCode[];
+  warnings: SaveWarning[];
 };

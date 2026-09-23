@@ -36,10 +36,12 @@ function generateOtherPlayerContent(): string {
 }
 
 const SKEO_PLANET_NUMERIC_ID = -440810600;
+const SKEO_UPDATE_RELEASE = '2.102';
 
 function generateSkeoUpdateContent(): string {
   return createFakeSaveContent({
     globalMetadata: createGlobalMetadata({logisticsPaused: true}),
+    saveConfiguration: createSaveConfiguration({version: SKEO_UPDATE_RELEASE}),
     inventories: [createInventory(), createEquipment()],
     worldObjects: [
       createWorldObject({id: 79111656, gId: 'Phytoplankton'}),

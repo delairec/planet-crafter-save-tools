@@ -1,4 +1,4 @@
-/** @import { ParsedSave, SaveParseError, SaveWarningCode, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
+/** @import { ParsedSave, SaveParseError, SaveWarning, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
 
 import {createGlobalMetadata} from './createSaveRecords.js';
 
@@ -19,7 +19,7 @@ function* createEmptyGenerator() {
  * @property {SaveConfiguration[]} [saveConfigurations]
  * @property {WorldEvent[]} [worldEvents]
  * @property {SaveParseError[]} [errors]
- * @property {SaveWarningCode[]} [warnings]
+ * @property {SaveWarning[]} [warnings]
  */
 
 /**
