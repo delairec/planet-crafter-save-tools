@@ -1248,27 +1248,57 @@ TASK FEAT93
 
 TASK FEAT94
 	TITLE "Write the merged save in the format the merge was asked for"
-	STATUS draft
+	STATUS todo
 	WAVE 5
 	AFTER @TASK.FEAT93
-	SPEC "merging two saves of different formats writes the format of the more recent of the two"
-		+ "releases, and the legacy format when the merge is asked for it"
-	SPEC "the version the merged save configuration declares is the release of the format actually"
-		+ "written, and the rule that the configuration comes from save A is rewritten in place to"
-		+ "say so"
-	SPEC "the Terrain Layers section is kept, from save A, only when both saves carry it, and"
-		+ "dropped otherwise"
-	SPEC "a merge whose two saves differ in format reports the format it wrote and every section"
-		+ "writing it dropped"
+	SPEC "merging two saves written in different formats writes the format of the more recent of"
+		+ "the two releases, and the legacy format when the merge request asks for it; the request"
+		+ "carries that choice and no surface offers it yet"
+		IMPL "packages/core-mapping/src/application/requests/MergeSaveFilesRequest.ts"
+	SPEC "the version the merged save configuration declares is the version of the save whose"
+		+ "format is written, so a merge of two saves of the same format still declares the version"
+		+ "of save A and no release name is written in place of a patch level"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts"
+	SPEC "the Terrain Layers section is written whenever the format written carries one, taking the"
+		+ "text of save A when both saves carry it and the text of the save that carries it"
+		+ "otherwise; the format written carrying none, the section is dropped"
+		IMPL "packages/core-mapping/src/domain/rules/merge"
+	SPEC "a merge reports the format it wrote and every section writing it dropped, on the single"
+		+ "warning list of the merge output that no producer filled until now; the command and the"
+		+ "save manager render that list in FEAT95"
+		IMPL "packages/core-mapping/src/application/responses/MergeSucceededResponse.ts"
+	SPEC "the rule that the configuration of save A is used as is is rewritten in place to except"
+		+ "the version, as it already excepts the display name"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE SaveConfigurationComesFromSaveA"
+	SPEC "the decision on the merged format is rewritten in place on the two points this task rules"
+		+ "otherwise: the declared version is the one of the save whose format is written, and the"
+		+ "Terrain Layers section is taken from the save that carries it rather than surviving only"
+		+ "when both do"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AMergedSaveTakesTheMoreRecentFormatUnlessAsked"
 	RATIONALE "Verified on the branch of FEAT89: verifyDeclaredGameRelease('1.618', 11) raises"
 		+ "declared-release-contradicts-content, so a merge taking the version of a legacy save A"
 		+ "and writing eleven parts produces a file our own validator warns on; tying the declared"
-		+ "version to the format written is what removes the contradiction"
+		+ "version to the save whose format is written is what removes the contradiction. Declaring"
+		+ "the release itself would remove it too, and would cost more than it buys: two saves of"
+		+ "2.103 merged would come out declaring 2.004, a patch level lost on the ordinary merge to"
+		+ "repair the mixed one. The merge is where the first warning of the output is produced,"
+		+ "the channel having been left closed until a producer existed; FEAT94 fills it and FEAT95"
+		+ "renders it, so that the format choice and its report cross the layers once."
+		+ "mergeSaveConfigurations copies save A's configuration whole and never reads the version,"
+		+ "and serializeSave writes ten sections with no parameter, so both statements of the"
+		+ "rewritten rule are false in the code today"
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+		REF @DECISION.NoMergeWarningChannelWithoutAProducer
 		REF @RULE.SaveConfigurationComesFromSaveA
+		REF @SECTION.TerrainLayers
 		REF @TASK.FEAT89
+		REF @TASK.FEAT95
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
 		PR 124
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the merged save declares the version of"
+		+ "the save whose format is written, the Terrain Layers section is taken from the save that"
+		+ "carries it, and the task stops at the warning list of core-mapping"
 
 TASK FEAT95
 	TITLE "Offer the legacy format option and the merge report in the command and in the save"
