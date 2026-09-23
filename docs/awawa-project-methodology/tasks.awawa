@@ -1411,22 +1411,31 @@ TASK CHORE98
 
 TASK CHORE99
 	TITLE "Close the three gaps of the check:contrast guard"
-	STATUS draft
-	DESC "findUncataloguedForegroundDeclarations covers by (token, file) pair and not by"
-		+ "declaration, so a second declaration of an already catalogued token over another"
-		+ "background passes in silence; FOREGROUND_DECLARATION_PATTERN recognises only a color set"
-		+ "by var(--token), never a literal; the scan reads"
-		+ "packages/ui-save-manager/src/styles/*.css and leaves"
-		+ "packages/ui-save-manager/src/app.css out"
+	STATUS todo
+	SPEC "the guard reports a foreground declaration whose background the catalog does not cover,"
+		+ "even when the same token is catalogued for that stylesheet over another background"
+	SPEC "the guard reports a foreground declaration whose color is written as a literal instead of"
+		+ "var(--token)"
+	SPEC "the guard scans every stylesheet of packages/ui-save-manager/src,"
+		+ "packages/ui-save-manager/src/app.css included"
+	SPEC ".text-color-inverted is gone from packages/ui-save-manager/src/styles/typography.css and"
+		+ "check:guards passes"
+	RATIONALE "The catalog of @DECISION.ColorTokenPairsMeetWcagAaByCatalog is the authority on the"
+		+ "pairs checked, and findUncataloguedForegroundDeclarations keys its coverage on the"
+		+ "(token, file) pair, so a second declaration of a token already catalogued for that"
+		+ "stylesheet passes in silence. The standing instance is .text-color-inverted of"
+		+ "typography.css, a class no markup uses, measuring 1.08:1 in the light theme and 1.00:1"
+		+ "in the dark one while --inverted is catalogued for that file over --neon-cyan; a class"
+		+ "nothing renders has no background to catalogue, so it is deleted rather than catalogued."
+		+ "The other two gaps have no standing instance — no stylesheet writes a literal color, and"
+		+ "app.css carries only @import lines — and are each proven on a constructed source."
+		+ "Distinct from CHORE91, which instructs axe-core on the rendered DOM and would never see"
+		+ "a class no markup uses"
 		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
-	SPEC "the guard reports a foreground declaration the catalog does not cover, whatever the"
-		+ "background it renders against, the form the color is written in and the stylesheet of"
-		+ "packages/ui-save-manager/src it sits in"
-	RATIONALE "The standing instance of the first gap is .text-color-inverted of typography.css, a"
-		+ "class no markup uses, measuring 1.08:1 in the light theme and 1.00:1 in the dark one"
-		+ "while --inverted is catalogued for that file over --neon-cyan. Distinct from CHORE91,"
-		+ "which instructs axe-core on the rendered DOM and would never see a class no markup uses"
 		REF @TASK.CHORE91
 	SOURCE "Coherence pass of pull request 127, 2026-09-23: three gaps found by reading the guard"
 		+ "against the stylesheets it scans"
+		PR 127
+	SOURCE "Owner ruling, 2026-09-23, refining CHORE99: one criterion per gap, and the dead class"
+		+ "is deleted instead of catalogued"
 		PR 127
