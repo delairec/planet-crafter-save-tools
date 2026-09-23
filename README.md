@@ -250,10 +250,10 @@ is scanned, outside dependencies and build outputs, and type-only and dynamic im
 
 #### Save Manager UI
 
-The production build is served at https://planet-crafter-save-manager.netlify.app/. The `Site check` workflow checks,
-after each push to `master` and every week, that it loads and carries the headers of
-`packages/ui-save-manager/public/_headers`; `bun run --filter ui-save-manager check:site -- --url=<address>` runs the same
-check by hand.
+The production build is served at https://planet-crafter-save-manager.netlify.app/; a deployment reaches it only once
+published by hand on Netlify. The `Site check` workflow, run from the Actions tab after each publication and every week,
+checks that it loads and carries the headers of `packages/ui-save-manager/public/_headers`;
+`bun run --filter ui-save-manager check:site -- --url=<address>` runs the same check locally.
 
 ```
 bun run dev:ui

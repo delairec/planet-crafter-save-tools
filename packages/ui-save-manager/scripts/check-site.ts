@@ -6,26 +6,11 @@ const checkedHeaderNames = ['Content-Security-Policy', 'Referrer-Policy', 'Permi
 const productionSiteUrl = 'https://planet-crafter-save-manager.netlify.app/';
 
 const urlFlag = '--url=';
-const attemptsFlag = '--attempts=';
-const commitFlag = '--commit=';
 
-const buildCommitHeaderName = 'X-Build-Commit';
-
-const attemptIntervalMilliseconds = 30_000;
-
-function readFlag(flag: string): string | undefined {
-  return process.argv.find((argument) => argument.startsWith(flag))?.slice(flag.length);
-}
-
-async function findSiteDefects(siteUrl: string, expectedCommit: string | undefined): Promise<string[]> {
+async function findSiteDefects(siteUrl: string): Promise<string[]> {
   const response = await fetch(siteUrl);
   if (!response.ok) {
     return [`${siteUrl} answers ${response.status}.`];
-  }
-
-  const servedCommit = response.headers.get(buildCommitHeaderName);
-  if (expectedCommit !== undefined && servedCommit !== expectedCommit) {
-    return [`${siteUrl} serves the build of commit ${servedCommit ?? 'unnamed'}, not of ${expectedCommit}.`];
   }
 
   const siteHeaders = readSiteHeaders();
@@ -42,20 +27,9 @@ async function findSiteDefects(siteUrl: string, expectedCommit: string | undefin
   });
 }
 
-const siteUrl = readFlag(urlFlag) ?? productionSiteUrl;
-const attempts = Number(readFlag(attemptsFlag) ?? '1');
-const expectedCommit = readFlag(commitFlag);
+const siteUrl = process.argv.find((argument) => argument.startsWith(urlFlag))?.slice(urlFlag.length) ?? productionSiteUrl;
 
-let defects: string[] = [];
-for (let attempt = 1; attempt <= attempts; attempt++) {
-  defects = await findSiteDefects(siteUrl, expectedCommit);
-  if (defects.length === 0) {
-    break;
-  }
-  if (attempt < attempts) {
-    await Bun.sleep(attemptIntervalMilliseconds);
-  }
-}
+const defects = await findSiteDefects(siteUrl);
 
 if (defects.length > 0) {
   console.error(defects.join('\n'));

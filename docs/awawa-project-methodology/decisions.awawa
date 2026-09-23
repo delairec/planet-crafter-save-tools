@@ -1320,26 +1320,3 @@ DECISION TheSiteHeadersReachTheDocumentThroughTheServer
 	APPLIES_TO_TASK @TASK.FIX101
 	SOURCE "Measured while implementing FIX101 on 2026-09-23"
 		PR 134
-
-DECISION TheSiteCheckWaitsForTheDocumentToNameThePushedCommit
-	SPEC "the build names the commit Netlify builds, COMMIT_REF, in an X-Build-Commit header of"
-		+ "every rendered response"
-		IMPL "packages/ui-save-manager/vite.config.ts::X-Build-Commit"
-		ENFORCED_BY "packages/ui-save-manager/e2e/security.e2e.ts::should name that commit on the"
-			+ "document"
-	SPEC "the site check run by a push to master checks the headers only once the document names"
-		+ "the pushed commit, and fails when it never does within its attempts"
-		IMPL "packages/ui-save-manager/scripts/check-site.ts::--commit="
-		IMPL ".github/workflows/site-check.yml::EXPECTED_COMMIT"
-	SPEC "a newer push cancels the site check of the older one"
-		IMPL ".github/workflows/site-check.yml::cancel-in-progress"
-	REJECTED "retrying for a fixed time without knowing the served build: a deployment slower than"
-		+ "the retries passes on the previous one"
-	REJECTED "a Netlify deploy notification starting the workflow by repository_dispatch: it needs"
-		+ "a GitHub token stored in Netlify and a configuration no pull request can review"
-	RATIONALE "Netlify creates no GitHub deployment and posts no commit status on master, so only"
-		+ "the site can say which build it serves"
-	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FIX101
-	SOURCE "Review of the site check workflow"
-		PR 134

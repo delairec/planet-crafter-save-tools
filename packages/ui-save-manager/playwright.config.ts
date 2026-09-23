@@ -24,7 +24,6 @@ export default defineConfig({
   webServer: {
     command: 'bun run preview',
     url: previewUrl,
-    env: {COMMIT_REF: '0123456789abcdef0123456789abcdef01234567'},
     reuseExistingServer: !isContinuousIntegration,
     // The command builds the application before serving it.
     timeout: 180_000
