@@ -116,8 +116,7 @@ LIMITATION TheSecurityAuditIgnoresTwoTransitiveAdvisories
 	SYMPTOM "Two high-severity advisories carried by transitive dependencies, which the repository"
 		+ "does not declare itself, are ignored by name in the audit script: the audit job is green"
 		+ "while the advisories stay unresolved"
-	UNTIL "the upstream dependencies upgrade past both advisories, or a resolution is forced from"
-		+ "the root manifest"
+	UNTIL @TASK.FIX106
 	SEEN_IN "package.json::--ignore=GHSA-3v7f-55p6-f55p --ignore=GHSA-c2c7-rcm5-vvqj"
 	RATIONALE "The failure predates the pull requests that meet it and does not come from them: it"
 		+ "was seen identically on a pull request touching only an ignore file. It is exactly what"
