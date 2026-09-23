@@ -1,5 +1,6 @@
-import {findVersionsToTag} from './findVersionsToTag.ts';
-import {readWorkspace, runGit} from './readWorkspace.ts';
+import {findVersionCommit} from './findVersionCommit.ts';
+import {composeTag, findVersionsToTag} from './findVersionsToTag.ts';
+import {readWorkspace, REPOSITORY_ROOT, runGit} from './readWorkspace.ts';
 import {resolveConsumerPaths} from './resolveConsumerPaths.ts';
 
 const RELEASE_BRANCH = 'master';
@@ -14,17 +15,21 @@ async function tagRelease(): Promise<void> {
   const workspacePackages = await readWorkspace();
   const consumerNames = resolveConsumerPaths(workspacePackages).map(consumer => consumer.name);
   const consumers = workspacePackages.filter(workspacePackage => consumerNames.includes(workspacePackage.name));
-  const tags = findVersionsToTag(consumers, runGit(['tag', '--list']).split('\n'));
+  const untaggedConsumers = findVersionsToTag(consumers, runGit(['tag', '--list']).split('\n'));
 
-  if (tags.length === 0) {
+  if (untaggedConsumers.length === 0) {
     console.log('Every declared version is already tagged.');
     return;
   }
 
-  for (const tag of tags) {
-    runGit(['tag', '--annotate', tag, '--message', tag]);
-    console.log(`Tagged ${tag}`);
-  }
+  const tags = untaggedConsumers.map(consumer => {
+    const tag = composeTag(consumer);
+    const versionCommit = findVersionCommit({repositoryRoot: REPOSITORY_ROOT, manifestPath: consumer.manifestPath, version: consumer.version});
+
+    runGit(['tag', '--annotate', tag, '--message', tag, versionCommit]);
+    console.log(`Tagged ${tag} on ${versionCommit}`);
+    return tag;
+  });
   console.log(`Push the tags: git push origin ${tags.join(' ')}`);
 }
 

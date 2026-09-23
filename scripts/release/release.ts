@@ -2,7 +2,7 @@ import {join} from 'node:path';
 import {addChangelogEntry} from './addChangelogEntry.ts';
 import {planRelease, type PlannedRelease} from './planRelease.ts';
 import {readCommitSubjects} from './readCommitSubjects.ts';
-import {composeTag} from './findVersionsToTag.ts';
+import {findSinceTag} from './findVersionsToTag.ts';
 import {readWorkspace, REPOSITORY_ROOT, runGit, type WorkspacePackage} from './readWorkspace.ts';
 import {resolveConsumerPaths} from './resolveConsumerPaths.ts';
 
@@ -34,8 +34,7 @@ async function release(): Promise<void> {
 
   const histories = resolveConsumerPaths(workspacePackages).map(consumer => {
     const {version} = packagesByName.get(consumer.name)!;
-    const versionTag = composeTag({name: consumer.name, version});
-    const sinceTag = existingTags.includes(versionTag) ? versionTag : undefined;
+    const sinceTag = findSinceTag({name: consumer.name, version}, existingTags);
 
     return {name: consumer.name, version, commitSubjects: readCommitSubjects({repositoryRoot: REPOSITORY_ROOT, sinceTag, paths: consumer.paths})};
   });
