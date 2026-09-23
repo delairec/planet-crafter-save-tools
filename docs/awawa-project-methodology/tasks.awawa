@@ -1204,21 +1204,47 @@ TASK FEAT92
 
 TASK FEAT93
 	TITLE "Read and validate a save of either format in core-mapping"
-	STATUS draft
+	STATUS todo
 	WAVE 5
 	AFTER @TASK.FEAT92
-	SPEC "a section is reached by the index the format of the save gives it, never by a constant"
-		+ "that assumes one format"
+	SPEC "a section is reached by the index the format of the save gives it, never by a position"
+		+ "nor a constant that assumes one format"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsParserService.ts"
 	SPEC "validating a save of 1.618 reports on its twelve parts and one of 2.004 on its eleven,"
 		+ "neither being converted to the other"
 	SPEC "a save of either format is displayed by the save manager without a validation error the"
 		+ "format alone produces"
+	SPEC "the section carried as raw text is validated against no schema and breaks no invariant of"
+		+ "the validator, which raises no unexpected-section error on a save the format alone makes"
+		+ "twelve parts long"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js"
+	SPEC "each format has a whole-file schema of its own, pinned to the part count of that format"
+		+ "and to the section each of its indexes holds; no schema is loosened to admit both"
+		IMPL "packages/shared-save-processing/schemas/save-file.schema.json"
+	SPEC "no message announces eleven parts to a save carrying twelve: the count a validation"
+		+ "message names is the one the format at hand expects"
+		IMPL "packages/shared-save-processing/verifySectionCount.js"
+	SPEC "an error location names its section by the label the format of the save at hand gives"
+		+ "that index"
+		IMPL "packages/core-mapping/src/presentation/messages/saveSectionLabels.js"
 	RATIONALE "The section index module exposes the legacy indexes as constants only the input"
 		+ "boundary was meant to read; once the format is kept, every reader needs the index of the"
-		+ "format at hand"
+		+ "format at hand. The reader that breaks first holds no constant at all: the parser"
+		+ "service destructures the ten sections positionally, so a twelve-part save hands Terrain"
+		+ "Layers to the world events field. Downstream, the schema validator walks indexes 0 to 9"
+		+ "and raises an unexpected-section error the moment one of them is not a list of entries,"
+		+ "which the carried raw text is not, and the section labels are indexed on the current"
+		+ "format alone. Widening one schema to admit both part counts would trade a false reading"
+		+ "for a validation that no longer catches anything, so each format is pinned by a schema"
+		+ "of its own"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 		REF @SECTION.WorldEvents
+		REF @SECTION.TerrainLayers
+		REF @TASK.FEAT92
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the two formats are validated by two"
+		+ "schemas rather than by one loosened schema, and the validator, the expected part count"
+		+ "and the section labels are read by the format at hand"
 
 TASK FEAT94
 	TITLE "Write the merged save in the format the merge was asked for"
@@ -1278,3 +1304,27 @@ TASK TEST96
 		REF @TASK.FEAT89
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+
+TASK FEAT97
+	TITLE "Validate the entries of the Terrain Layers section"
+	STATUS draft
+	WAVE 5
+	AFTER @TASK.FEAT93
+	SPEC "the entries of the Terrain Layers section are validated against a schema of their own,"
+		+ "read by the branch the format of the save selects"
+	SPEC "those entries are read for validation alone: the serializer keeps writing the text the"
+		+ "section was read as, so the byte for byte round trip of a legacy save is unchanged"
+	SPEC "the parser stays the only production reader of a save line: no validator parses the"
+		+ "section a second time"
+	RATIONALE "A broken entry of that section travels through the tool without a word today, and a"
+		+ "save the game refuses to load is the cost. Nothing about validating it needs a second"
+		+ "reader: the parser yields the entries of index 9 as it yields those of any other"
+		+ "section, and the validator applies the schema the format gives that index. What the task"
+		+ "must keep is the separation the round trip rests on, the carried text being what is"
+		+ "written back and never a re-emission of the parsed entries"
+		REF @DECISION.OneModuleAloneParsesASaveLine
+		REF @DATATABLE.LegacyTerrainLayerProperties
+		REF @SECTION.TerrainLayers
+		REF @TASK.FEAT92
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT93: a section carried without validation can"
+		+ "break a save in game, and that validation is a task of its own"
