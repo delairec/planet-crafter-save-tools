@@ -1344,20 +1344,35 @@ TASK FEAT95
 		+ "decision"
 
 TASK TEST96
-	TITLE "Cover both formats and the mixed merge with scenario fixtures"
-	STATUS draft
+	TITLE "Cover both formats and the mixed merge with save manager scenarios"
+	STATUS todo
 	WAVE 5
 	AFTER @TASK.FEAT95
-	SPEC "a scenario merges a legacy save with a current one and asserts the current format is"
-		+ "written, and its mirror asserts the legacy format when the option is asked for"
-	SPEC "a scenario opens a legacy save and asserts it is displayed and exported byte for byte"
-	SPEC "every scenario fixture is written by the generator and declares the version of the"
-		+ "release whose format it carries"
-	RATIONALE "legacy-format_valid.json is the only legacy fixture and no scenario merges across"
-		+ "formats, so nothing today would fail if the conversion came back"
-		REF @TASK.FEAT89
+	SPEC "a scenario merges a legacy save with a current one and asserts the file it hands over"
+		+ "carries the current format, and its mirror, the legacy checkbox ticked, asserts it"
+		+ "carries the legacy format"
+	SPEC "the mixed merge scenario asserts the report the screen shows: the sentence of the warning"
+		+ "code and the reminder the save manager adds naming its checkbox, never the code itself"
+	SPEC "a scenario opens a legacy save and asserts it is displayed without a validation error the"
+		+ "format alone produces"
+	RATIONALE "legacy-format_valid.json is the only legacy fixture, and the one scenario that"
+		+ "already merges it with a current save asserts the attribution of its warning and the"
+		+ "presence of the download link, never the format written, so nothing today would fail if"
+		+ "the conversion came back. What the scenarios can observe stops at what the screen hands"
+		+ "over: the only download the save manager offers is the merged file, no surface exports a"
+		+ "save that was merely visualized, and the byte for byte round trip is therefore proven"
+		+ "where it happens, on the parse and serialize pair of FEAT92. The report is asserted here"
+		+ "because FEAT95 writes no scenario, and the two halves of its rendering, the shared"
+		+ "sentence and the surface's own reminder, are only visible together on the screen"
+		REF @TASK.FEAT92
+		REF @TASK.FEAT95
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the byte for byte round trip stays with"
+		+ "FEAT92 for want of an export surface, the task stays on the save manager scenarios"
+		+ "rather than reaching the command end to end, and the generated fixtures declaring the"
+		+ "version of their format stay the criterion of FEAT89"
 
 TASK FEAT97
 	TITLE "Validate the entries of the Terrain Layers section"
