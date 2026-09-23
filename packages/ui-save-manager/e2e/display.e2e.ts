@@ -32,6 +32,19 @@ test.describe('Save display', () => {
       await expect(page.getByRole('heading', {name: 'Skeo', level: 4})).toBeVisible();
       await expect(page.getByText('Wind turbine T2')).toBeVisible();
     });
+
+    test('should display the drone logistics as paused', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+      await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
+
+      // Act
+      await page.getByRole('button', {name: 'Visualize'}).click();
+
+      // Assert
+      await expect(page.getByText('Drone logistics')).toBeVisible();
+      await expect(page.getByText('Paused', {exact: true})).toBeVisible();
+    });
   });
 
   test.describe('When reading the chosen save file fails', () => {

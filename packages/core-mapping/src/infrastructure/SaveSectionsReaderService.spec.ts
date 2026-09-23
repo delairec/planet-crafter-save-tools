@@ -71,6 +71,22 @@ describe('SaveSectionsReaderService', () => {
     });
   });
 
+  describe('When the global metadata carries logisticsPaused', () => {
+    it('should extract logisticsPaused alongside the terra tokens', () => {
+      // Arrange
+      const service = new SaveSectionsReaderService(createSaveSections({globalMetadata: [createGlobalMetadata({logisticsPaused: true})]}));
+
+      // Act
+      const metadata = service.getGlobalProgression();
+
+      // Assert
+      expect<GlobalProgressionValueObject>(metadata).toEqual({
+        allTimeTerraTokens: 200_345,
+        logisticsPaused: true
+      });
+    });
+  });
+
   describe('When global metadata are missing', () => {
     it('should use fallback values', () => {
       // Arrange
