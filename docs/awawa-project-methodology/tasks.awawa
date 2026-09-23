@@ -15,14 +15,22 @@ TASK DOCS1
 
 TASK CHORE46
 	TITLE "the repository security alerts are enabled"
-	STATUS todo
+	STATUS archived
+	ARCHIVED_ON "2026-09-23"
+	PURGE false
 	SPEC "The security alerts are enabled in the repository security settings, a gesture left to"
 		+ "the user outside the repository, and the API no longer refuses them"
 	RATIONALE "The repository security alerts are disabled: the API refuses them, and without them"
 		+ "dependency tracking only yields version updates. Vulnerability advisories today appear"
 		+ "only in the audit job, on a pull request, never on a schedule. The other way out is to"
 		+ "schedule the audit job, which the repository does not do: it runs only on a pull request"
-		+ "and on the default branch"
+		+ "and on the default branch. Archived rather than implemented on 2026-09-23: the SPEC is a"
+		+ "setting of the GitHub repository, which no IMPL anchor of this workspace can prove, and"
+		+ "WHEN STATUS implemented requires one per SPEC. Done that day with the account of the"
+		+ "owner, whose token carries the repo scope the endpoints accept: PUT vulnerability-alerts"
+		+ "and PUT automated-security-fixes both answered 204, and PATCH of the repository enabled"
+		+ "secret scanning and its push protection; the API never refused them, the token the"
+		+ "earlier attempt used did"
 	SOURCE "Observed while checking the weekly Dependabot updates after their merge"
 		PR 53
 
@@ -396,13 +404,16 @@ TASK CHORE63
 	STATUS todo
 	SPEC "awawa lint --strict . exits 0 on a draft TASK citing a task absent from the workspace,"
 		+ "and exits 1 once the citing task is todo"
-	DESC "to be refined with the user: lint --strict promotes warnings to errors, so a GATE warning"
-		+ "on draft alone does not meet the SPEC; draft tasks should maybe raise nothing at all, or"
-		+ "a warning only"
 	RATIONALE "WHEN STATUS draft of TASK is gated error, while awawa treats a draft with dangling"
 		+ "references as normal exploration; the reference from the draft that CHORE57 absorbed to"
 		+ "CHORE57, both on sibling branches, was refused by L004 in the review of pull requests"
-		+ "101 to 103"
+		+ "101 to 103. The gate on draft goes suppressed, not warning: measured on 2026-09-23 on a"
+		+ "probe draft, GATE warning leaves lint . at 0 but --strict promotes L004 back to an"
+		+ "error, so it does not meet the SPEC, while GATE suppressed meets both halves. Its price"
+		+ "is measured too: the same probe kept a missing required TITLE (L006) and a broken IMPL"
+		+ "anchor (L016) unreported for as long as the task stays draft, and both come back on"
+		+ "ratification, whose lint runs with the task todo. Per-rule gating, which would tolerate"
+		+ "L004 alone, does not exist in awawa 2.7.0 and would not be deliverable here anyway"
 		REF @TASK.CHORE57
 	SOURCE "Usage report of pull requests 101, 102 and 103; ruled with the user on 2026-09-21"
 		REF @USAGE_REPORT.PR101_102_103
