@@ -1359,3 +1359,16 @@ TASK FEAT107
 		REF @COMMAND.ValidateSave
 	SOURCE "Owner request, refinement session of 2026-09-23"
 		PR 135
+
+TASK FIX104
+	TITLE "the web UI validates saves without compiling code at run time, so its content security"
+		+ "policy drops 'unsafe-eval'"
+	STATUS draft
+	SPEC "the Content-Security-Policy of packages/ui-save-manager/public/_headers carries no"
+		+ "'unsafe-eval'"
+	SPEC "loading, viewing and merging a save raise no securitypolicyviolation event on the three"
+		+ "engines"
+	RATIONALE "Ajv compiles the section validators with new Function; validators precompiled at"
+		+ "build as standalone modules would need no eval in the browser"
+		REF @LIMITATION.TheContentSecurityPolicyAllowsEval
+	SOURCE "Measured while implementing FIX101 on 2026-09-23"

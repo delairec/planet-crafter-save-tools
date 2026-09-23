@@ -1,0 +1,34 @@
+name: Site check
+
+# Checks that the production web UI loads and carries the headers of
+# packages/ui-save-manager/public/_headers. Netlify deploys master on each push and reports no
+# GitHub deployment, so the push run retries for ten minutes while the deployment lands; the weekly
+# run catches a header lost outside a deployment. On demand, `url` checks a deploy preview.
+on:
+  push:
+    branches: [ master ]
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Address of the site to check
+        default: https://planet-crafter-save-manager.netlify.app/
+
+permissions:
+  contents: read
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - run: bun install --frozen-lockfile
+      - run: bun run check:site -- "--url=${SITE_URL}" "--attempts=${ATTEMPTS}"
+        working-directory: packages/ui-save-manager
+        env:
+          SITE_URL: ${{ inputs.url || 'https://planet-crafter-save-manager.netlify.app/' }}
+          ATTEMPTS: ${{ github.event_name == 'push' && '20' || '1' }}

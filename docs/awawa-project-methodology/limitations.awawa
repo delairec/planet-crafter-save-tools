@@ -125,6 +125,8 @@ LIMITATION TheSecurityAuditIgnoresTwoTransitiveAdvisories
 		PR 53
 
 LIMITATION TheContentSecurityPolicyAllowsInlineScript
+	STATUS archived
+	ARCHIVED_ON 2026-09-23
 	SYMPTOM "The content security policy allows inline script and style: a script injected into the"
 		+ "page runs despite it"
 	UNTIL @TASK.FIX101
@@ -174,6 +176,8 @@ LIMITATION ADecorativeIconInAViewModelValueIsReadAloud
 		PR 71
 
 LIMITATION TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader
+	STATUS archived
+	ARCHIVED_ON 2026-09-23
 	SYMPTOM "The HTML document of the production web UI carries no Content-Security-Policy,"
 		+ "Referrer-Policy nor Permissions-Policy: another site may frame it, and nothing restricts"
 		+ "a script injected into it"
@@ -183,3 +187,16 @@ LIMITATION TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader
 	RATIONALE "Netlify applies _headers to the static files it serves, not to the responses of the"
 		+ "function that renders the document: the headers were written as if the site were static"
 	SOURCE "Measured with curl -I on the production site and on the local build on 2026-09-23"
+
+LIMITATION TheContentSecurityPolicyAllowsEval
+	SYMPTOM "the content security policy of the web UI allows 'unsafe-eval' in script-src: a string"
+		+ "an injected script hands to eval or new Function runs despite it"
+	UNTIL @TASK.FIX104
+	SEEN_IN "packages/ui-save-manager/public/_headers::'unsafe-eval'"
+	SEEN_IN "packages/core-mapping/src/infrastructure/validateSchemas.js::ajv.compile"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "Ajv compiles each section validator with new Function in the browser: measured in"
+		+ "chromium on 2026-09-23, without 'unsafe-eval' the validation throws an EvalError and the"
+		+ "web UI cannot load a save. FIX101 removed 'unsafe-inline' and kept this source"
+		REF @TASK.FIX101
+	SOURCE "Measured while implementing FIX101 on 2026-09-23"

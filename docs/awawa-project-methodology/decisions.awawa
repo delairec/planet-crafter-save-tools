@@ -1297,3 +1297,25 @@ DECISION AReleaseIsVerifiedOnATagHoldingAVersionNumber
 		REF @TASK.CHORE83
 	SOURCE "Delivery of CHORE100"
 		PR 133
+
+DECISION TheSiteHeadersReachTheDocumentThroughTheServer
+	SPEC "public/_headers is the single source of the site headers: the build reads its /* block"
+		IMPL "packages/ui-save-manager/siteHeaders.ts::readSiteHeaders"
+	SPEC "the server route rule sends every header of public/_headers but the"
+		+ "Content-Security-Policy on each response it renders"
+		IMPL "packages/ui-save-manager/vite.config.ts::routeRules"
+	SPEC "the rendered document carries the Content-Security-Policy of public/_headers with a nonce"
+		+ "drawn for that response in script-src, and Solid writes it on its inline scripts"
+		IMPL "packages/ui-save-manager/src/entry-server.tsx::allowTheInlineScriptsOf"
+		IMPL "packages/ui-save-manager/e2e/security.e2e.ts"
+	REJECTED "hashes of the inline scripts in the policy: Solid emits its serialisation script or"
+		+ "not depending on streaming timing, so the hash changes, and the synchronous mode emits a"
+		+ "second script"
+	REJECTED "headers declared in netlify.toml: Netlify applies them to static files only, like"
+		+ "_headers, never to the responses of the rendering function"
+	REJECTED "the handler reading back or overriding the Content-Security-Policy of the route rule:"
+		+ "measured, the route-rule header is neither visible nor overridable from the SolidStart"
+		+ "handler, and the nonce never reached the response"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FIX101
+	SOURCE "Measured while implementing FIX101 on 2026-09-23"
