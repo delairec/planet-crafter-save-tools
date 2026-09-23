@@ -1423,21 +1423,35 @@ TASK FEAT97
 
 TASK CHORE98
 	TITLE "Guard the single production reader of a save line"
-	STATUS draft
+	STATUS todo
 	WAVE 5
-	SPEC "a guard fails when production code outside the parser reads a save line as JSON"
+	SPEC "a JSON.parse call in the production code of any package fails the guard, unless it sits"
+		+ "in packages/shared-save-processing/parseSaveSections.js; JSON.parse named in a comment"
+		+ "does not fail it"
+	SPEC "the production code the guard reads is every source file of packages/*, except spec and"
+		+ "test files, the e2e and testing directories and generated directories"
 	SPEC "the guard is one of the check:* scripts check:guards chains, reads no git history, and"
 		+ "carries its own spec as the other guards do"
+	SPEC "the first SPEC of the single-parser decision the rationale names carries the guard by"
+		+ "ENFORCED_BY"
 	RATIONALE "The decision rests on review alone: no guard of the repository names it, and the"
 		+ "divergence it forbids is what kept a lost section invisible until the parser became the"
 		+ "only reader. The repository already holds the idiom, a check:* script with its own spec,"
 		+ "and the wave that spreads the format of a save across every reader is when a second"
-		+ "reader is most tempting"
+		+ "reader is most tempting. A line reading cannot tell a save line from any other JSON, so"
+		+ "every JSON.parse outside the parser is refused: none exists today, and a legitimate"
+		+ "reader of another JSON is admitted by an explicit exception in a later pull request. The"
+		+ "task waits on no other: if FEAT92 moves the parsing out of the parser module, its own"
+		+ "pull request updates the one path the guard admits"
 		REF @DECISION.OneModuleAloneParsesASaveLine
 		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+		REF @TASK.FEAT92
 	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the invariant becomes a guard, in a task of"
 		+ "its own"
 		REF @TASK.FEAT97
+	SOURCE "Owner ruling, 2026-09-23, refining CHORE98: every JSON.parse outside the parser is"
+		+ "refused, the production perimeter is stated, the decision names the guard, and no task"
+		+ "comes first"
 
 TASK CHORE99
 	TITLE "Close the three gaps of the check:contrast guard"
