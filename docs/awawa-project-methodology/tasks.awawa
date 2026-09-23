@@ -410,12 +410,15 @@ TASK FEAT66
 	RATIONALE "Every group id the Skeo update adds already has a label row. The wiki gives the"
 		+ "power of Incubator2 and InsideLamp2, already in the energy table, and no energy for the"
 		+ "three other machines, whose predecessors have no row; a value missing from the wiki is"
-		+ "undocumented, never zero, so the user measures it in game and supplies it. The recorded"
-		+ "decision keeps a machine the wiki prints no value for out of the energy tables; a value"
-		+ "measured in game, cited by its release, is a source that decision does not foresee"
+		+ "undocumented, never zero, so the recorded decision keeps those machines out of the"
+		+ "energy tables. The task does not wait for the in-game measurement: the three machines"
+		+ "are delivered on @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower, whose"
+		+ "UNTIL is that observation, and a value measured then, cited by its release, is a source"
+		+ "the decision does not foresee"
 		REF @DATATABLE.EnergyLevels
 		REF @DATATABLE.WorldObjectLabels
 		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 		REF @GAME_RELEASE.2.103
 	SOURCE "Group ids added by the Skeo update and the mods raising their supported version to"
 		+ "2.103, read on 2026-09-21"
