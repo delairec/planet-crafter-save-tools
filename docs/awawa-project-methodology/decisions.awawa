@@ -1331,6 +1331,7 @@ DECISION ConsumerVersionsAreComputedByARepositoryScript
 		+ "every workspace package it bundles, and only the paths a commit changes say which"
 	APPLIES_TO_TASK @TASK.CHORE83
 	SOURCE "Ruled with the user on 2026-09-23 after the comparison CHORE83 asks for"
+		PR 135
 
 DECISION ProductionIsPublishedByHandFromAReleaseTag
 	SPEC "Netlify publishes no production deploy by itself; production is the deploy of the commit"
@@ -1348,3 +1349,4 @@ DECISION ProductionIsPublishedByHandFromAReleaseTag
 		+ "deploy Netlify built from master"
 	APPLIES_TO_TASK @TASK.CHORE83
 	SOURCE "Ruled with the user on 2026-09-23 during CHORE83"
+		PR 135
