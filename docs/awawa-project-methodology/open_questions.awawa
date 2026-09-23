@@ -1,20 +1,3 @@
-OPEN_QUESTION TheEnergyOfTheSkeoMachinesIsMeasuredInGame
-	DESC "how much power do TreePlanter3, PodUnderground and RocketAnimals2 draw or produce in game"
-		+ "2.103, none being a valid answer"
-		REF @DATATABLE.EnergyLevels
-	BLOCKS @TASK.FEAT66
-	RATIONALE "Settled by a hypothesis rather than by the in-game measurement this question asked"
-		+ "for: the owner ruled on 2026-09-22 that the task does not wait for it, and recorded"
-		+ "instead that the three machines draw and produce no power until observed otherwise"
-		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
-	SOURCE "Wiki pages read on 2026-09-21, no energy field on the three infoboxes"
-		REF @URL.WikiFurniture
-		REF @URL.WikiRockets
-		REF @URL.WikiBaseBuilding
-		REF @GAME_RELEASE.2.103
-	STATUS archived
-	ARCHIVED_ON "2026-09-22"
-
 OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 	STATUS archived
 	ARCHIVED_ON "2026-09-22"
@@ -32,7 +15,6 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		+ "ids by release is written"
 		REF @DECISION.ADeprecatedGroupIdIsCarriedThroughUnchanged
 		REF @HYPOTHESIS.TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
-	BLOCKS @TASK.TEST68
 	SOURCE "PCEdit item catalog: deprecated(\"2.102\", \"Phytoplankton2\", \"Phytoplankton3\"),"
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog

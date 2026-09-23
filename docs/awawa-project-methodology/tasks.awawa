@@ -46,25 +46,6 @@ TASK FEAT47
 		+ "design was probed on throwaway corpora before the migration, the pass reading only"
 		+ "status, show and refs in JSON"
 
-TASK DOCS48
-	TITLE "the corpus section of AGENTS.md is split into files it links to, read only when needed"
-	DESC "the target is this project's AGENTS.md, not the one of the .ai repository"
-	STATUS archived
-	ARCHIVED_ON "2026-09-22"
-	DELIVERED_BY 105
-	SPEC "AGENTS.md keeps, about the corpus, only what a session needs before its first command,"
-		+ "and links to the rest"
-		IMPL "AGENTS.md::## Charger avant d'agir"
-	SPEC "each part taken out is a file of its own, named by the link that says when to read it"
-		IMPL "AGENTS.md::`agents/corpus-ecrire.md`"
-	SPEC "the awawa command replacing each shell read of a corpus file is listed in the global"
-		+ "instructions, corpus.md, and AGENTS.md points at that list"
-		IMPL "AGENTS.md::la règle CORPUS-4 de `~/.ai/instructions/corpus.md`"
-	RATIONALE "the section grew with the migration, and every session that loads AGENTS.md loads"
-		+ "all of it, whether its task touches the corpus or not"
-	SOURCE "Review of the corpus migration"
-		PR 95
-
 TASK DOCS50
 	TITLE "the five points the corpus migration left in its pull request body are ruled in the"
 		+ "corpus"
@@ -88,30 +69,6 @@ TASK DOCS50
 		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
 	SOURCE "Usage report of the corpus migration, part A remediation 1"
 		REF @USAGE_REPORT.PR95
-
-TASK CHORE51
-	TITLE "a guard refuses an anchor of the corpus that names a file git does not track"
-	STATUS archived
-	ARCHIVED_ON "2026-09-22"
-	DELIVERED_BY 101
-	SPEC "bun run check:anchors reads every anchor of the corpus and exits non-zero when one names"
-		+ "a path git does not track, naming the entity, the field and the path"
-		IMPL "scripts/check-corpus-anchors.ts::names ${path}, a path git does not track"
-		IMPL "package.json::check:anchors"
-	SPEC "the guard covers every field the schema declares as an anchor, read from the schema and"
-		+ "not from a list written in the script"
-		IMPL "scripts/check-corpus-anchors.ts::export function readAnchorFields"
-		IMPL "scripts/check-corpus-anchors.spec.ts::describe('readAnchorFields'"
-	SPEC "check:anchors is called by check:guards, as the seven guards already there are"
-		IMPL "package.json::&& bun run check:anchors"
-	SPEC "a spec file pins the guard on a tracked path, on an untracked one and on a path that does"
-		+ "not exist at all"
-		IMPL "scripts/check-corpus-anchors.spec.ts::describe('findUntrackedCorpusAnchors'"
-	RATIONALE "L016 tests existence on disk and never consults git, so an anchor on an ignored path"
-		+ "is clean for its author and an error in a fresh clone; the rule is written"
-		+ "(@DECISION.AnAnchorNamesAFileTrackedByGit) and enforced by nothing"
-		REF @DECISION.AnAnchorNamesAFileTrackedByGit
-	SOURCE "Review of the target schema, 2026-09-18"
 
 TASK CHORE52
 	TITLE "the product value tables become JSON files with a JSON Schema each, and five DATATABLE"
