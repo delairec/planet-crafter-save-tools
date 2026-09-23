@@ -1278,3 +1278,21 @@ DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
 		REF @USAGE_REPORT.PR101_102_103
 	SOURCE "Ruled in the pull request that delivers the task"
 		PR 128
+
+DECISION AReleaseIsVerifiedOnATagHoldingAVersionNumber
+	SPEC "the Release workflow runs release:verify on every pushed tag whose name holds v or @"
+		+ "followed by a digit, and on no other tag"
+		IMPL ".github/workflows/release.yml::'**v[0-9]*'"
+		IMPL ".github/workflows/release.yml::'**@[0-9]*'"
+	SPEC "the release job creates a local master from origin/master before release:verify, so the"
+		+ "fallow scripts keep their --base master"
+		IMPL ".github/workflows/release.yml::branch master origin/master"
+	REJECTED "every tag: the before-awawa rollback tag would run a release check"
+	REJECTED "a release copy of the fallow scripts on --base origin/master: two copies to keep in"
+		+ "step"
+	APPLIES_TO_TASK @TASK.CHORE100
+	RATIONALE "The tag form of a version is CHORE83's to pick; both patterns cover the forms its"
+		+ "candidates write, cli-merge-v1.2.0 and cli-merge@1.2.0, and a tag checkout leaves only"
+		+ "tracking references, on which --base master exits 2"
+		REF @TASK.CHORE83
+	SOURCE "Delivery of CHORE100"
