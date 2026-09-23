@@ -1303,21 +1303,45 @@ TASK FEAT94
 TASK FEAT95
 	TITLE "Offer the legacy format option and the merge report in the command and in the save"
 		+ "manager"
-	STATUS draft
+	STATUS todo
 	WAVE 5
 	AFTER @TASK.FEAT94
-	SPEC "the merge command takes an option asking for the legacy format, off by default, and the"
-		+ "save manager offers a checkbox of the same polarity beside the merge"
+	SPEC "the merge command takes a valueless --prefer-legacy flag asking for the legacy format,"
+		+ "absent by default, applying to every folder of the run, and the save manager offers a"
+		+ "checkbox of the same polarity beside the merge"
+	SPEC "the shared argument reader reads a flag carrying no value and accepts it as known, a"
+		+ "dash-prefixed argument naming no known flag staying unknown"
+	SPEC "the usage message of the command names the option, alongside the ones it already names"
 	SPEC "the save manager surfaces the merge report through the path it already surfaces"
-		+ "validation warnings through"
-	SPEC "when the two saves differ in format and the legacy format was not asked for, the report"
-		+ "names the option that would have kept it"
+		+ "validation warnings through, and the command writes it where it writes its other"
+		+ "diagnostics, the single output path staying alone on stdout"
+	SPEC "when the two saves differ in format and the legacy format was not asked for, each surface"
+		+ "tells in its own rendering how to keep it, the option in the command and the checkbox in"
+		+ "the save manager, the sentence the two share naming neither"
 	RATIONALE "One polarity across the two surfaces is what keeps the two descriptions of the same"
 		+ "merge from contradicting each other; the report is the only thing that tells a user who"
-		+ "wanted the other format that the option exists"
+		+ "wanted the other format that the option exists. Two findings shape the criteria. The"
+		+ "shared argument reader knows only the --name=value form and reports a bare flag as"
+		+ "unknown, so a valueless flag is read by a reader this task adds rather than spelled"
+		+ "--prefer-legacy=true, a form that would then have to rule what false, an empty value and"
+		+ "a misspelt word mean. And the sentence of a warning code is produced once in the"
+		+ "core-mapping presentation and served to both surfaces, so a sentence naming the command"
+		+ "option would show that option to a user of the browser who has none: the shared sentence"
+		+ "states the fact, and the reminder of how to ask for the other format belongs to each"
+		+ "surface's own rendering. No scenario is written here: the save manager has no component"
+		+ "test layer and the scenarios that cover both formats and the mixed merge are TEST96."
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
 		REF @COMMAND.MergeSaves
+		REF @PACKAGE.shared_platforms
+		REF @TASK.TEST96
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+		PR 124
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the option is the valueless flag"
+		+ "--prefer-legacy, the shared sentence states the fact alone and each surface adds its own"
+		+ "reminder, and the valueless flag form binds this task rather than being recorded as a"
+		+ "decision"
 
 TASK TEST96
 	TITLE "Cover both formats and the mixed merge with scenario fixtures"
