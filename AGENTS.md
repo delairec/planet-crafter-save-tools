@@ -134,7 +134,7 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 | Wave | Base | PR d'intégration |
 |------|------|------------------|
 | 5 | `integration/save-format-preserved` | #127 |
-| 8 | `integration/release-and-hardening` | à ouvrir |
+| 8 | `integration/release-and-hardening` | #132 |
 | hors wave | `master` | — |
 
 Une branche d'intégration part de `master`, porte le corpus de sa wave et n'est fusionnée qu'une fois la wave
