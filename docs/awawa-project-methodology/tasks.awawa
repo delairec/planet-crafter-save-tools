@@ -1036,7 +1036,7 @@ TASK DOCS86
 	DELIVERED_BY 115
 	WAVE 5
 	DESC "The decisions taken here must anticipate the next tasks of wave 5 and especially"
-		+ "@TASK.FEAT68"
+		+ "@TASK.TEST68"
 		REF @TASK.TEST68
 	SPEC "the eras current, legacy and both are dropped: no value of HOLDS_FOR names an era"
 		IMPL "docs/_schema.awawa::FIELD HOLDS_FOR @GAME_RELEASE"
@@ -1138,7 +1138,7 @@ TASK FEAT89
 	SPEC "the scenario fixtures declare the version of a release whose format they carry"
 	RATIONALE "The code tells the two formats apart by the number of parts alone and never reads"
 		+ "the version the save declares, so a hand edit that makes them disagree goes unreported."
-		+ "The table is the mechanism FEAT68 extends with the release that removed a group id,"
+		+ "The table is the mechanism TEST68 extends with the release that removed a group id,"
 		+ "instead of a second list of versions. Every scenario fixture declares version 1.0 today,"
 		+ "which resolves to 1.618 while three of the four carry the format of 2.004"
 		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
