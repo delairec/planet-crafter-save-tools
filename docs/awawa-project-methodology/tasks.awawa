@@ -1170,24 +1170,37 @@ TASK CHORE91
 
 TASK FEAT92
 	TITLE "Keep the format a save carries in shared-save-processing and name which one it is"
-	STATUS draft
+	STATUS todo
 	WAVE 5
 	AFTER @TASK.FEAT89
 	SPEC "parsing a save returns every part the file carries, Terrain Layers included, and names"
 		+ "the release whose format it carries"
+	SPEC "the Terrain Layers section is carried as the raw text read, parsed into no entry and"
+		+ "typed by nothing"
 	SPEC "serializing a save writes the format it is given, so parsing then serializing a save of"
 		+ "1.618 returns the exact bytes of the file read"
-	SPEC "the legacy-save-format warning states that the save was written by 1.618 or earlier, and"
-		+ "no longer that the loader adapted it"
+	SPEC "neither warning message says a save was adapted: the legacy-save-format one states that"
+		+ "the save was written by 1.618 or earlier, and the fallback one names no adaptation"
 	SPEC "the twelve-part format of 1.618 is a RULE of DOMAIN format citing the Terrain Layers"
-		+ "section, which no rule names today"
+		+ "section, which no rule names today, and taking authority over the properties of a layer"
+		+ "entry by VALUES_FROM"
+	SPEC "the DESC of the Terrain Layers section no longer says that loading a legacy save discards"
+		+ "it"
 	RATIONALE "The round trip measured for FEAT69 on 2026-09-21 returns 2538 bytes against 2620 for"
 		+ "legacy-format_valid.json, the difference being the Terrain Layers section the"
-		+ "normalization drops; the package is where the loss happens and where it is repaired"
+		+ "normalization drops; the package is where the loss happens and where it is repaired."
+		+ "Carrying that section as raw text is what keeps the round trip exact without inventing"
+		+ "domain entities: nothing displays a layer and the merge takes the section whole, so a"
+		+ "typed entry would only put the byte equality at the mercy of key order. The table of"
+		+ "layer properties documents the shape the rule has authority over, and the code reads"
+		+ "none of it"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 		REF @SECTION.TerrainLayers
+		REF @DATATABLE.LegacyTerrainLayerProperties
 		REF @TASK.FEAT69
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the carried section stays raw text, and"
+		+ "the corpus corrections the change falsifies are part of the task"
 
 TASK FEAT93
 	TITLE "Read and validate a save of either format in core-mapping"
