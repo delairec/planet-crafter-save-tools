@@ -1258,3 +1258,23 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
 		PR 120
+
+DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
+	SPEC "A task branch runs bun test, bun run lint:types, bun run check:guards, bun run"
+		+ "audit:quality, awawa fmt --check . and awawa lint --strict . green before its pull"
+		+ "request is opened or updated"
+		IMPL "agents/worktree.md::- `bun run audit:quality`"
+	SPEC "A wave launch prompt quotes the acceptance list of agents/worktree.md rather than a list"
+		+ "of its own"
+		IMPL "agents/worktree.md::C'est cette liste que cite le prompt de lancement d'une vague"
+	REJECTED "An acceptance list held by the wave launch prompt: it omitted bun run audit:quality"
+		+ "and drifted unreported"
+	REJECTED "bun run check:guards as the whole local gate: the fallow audit it leaves out is a CI"
+		+ "job of its own"
+	APPLIES_TO_TASK @TASK.CHORE60
+	RATIONALE "Two of the three pull requests of the wave of 2026-09-18 arrived red on the fallow"
+		+ "CI job, the acceptance list of their prompt lacking bun run audit:quality"
+	SOURCE "Usage report of pull requests 101, 102 and 103, remediation 1"
+		REF @USAGE_REPORT.PR101_102_103
+	SOURCE "Ruled in the pull request that delivers the task"
+		PR 128

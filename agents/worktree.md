@@ -1,6 +1,6 @@
 # Travailler dans un worktree ou lancer un agent
 
-Une tâche menée dans un `git worktree` — c'est le cas de toute tâche lancée en agent de fond — demande trois gestes
+Une tâche menée dans un `git worktree` — c'est le cas de toute tâche lancée en agent de fond — demande quatre gestes
 que rien ne rappelle et dont l'oubli ne produit aucune erreur, seulement un verdict faux.
 
 1. **`bun install --frozen-lockfile` dans le worktree, avant le premier test.** Sans lui, Bun résout les packages du
@@ -15,6 +15,20 @@ que rien ne rappelle et dont l'oubli ne produit aucune erreur, seulement un verd
    (`ln -sfn <dépôt principal>/input input`). La règle `input` du `.gitignore` n'a pas de barre finale précisément
    pour attraper ce lien ; même forme et même raison pour `.do-not-commit`
    (CFG-2 de `~/.ai/instructions/configuration.md`).
+4. **Les commandes d'acceptation, vertes à chaque commit, avant que la pull request soit ouverte ou mise à jour.**
+   Les lignes `SPEC` de la tâche, puis, depuis la racine du worktree :
+   - `bun test`
+   - `bun run lint:types`
+   - `bun run check:guards`
+   - `bun run audit:quality` — la porte qualité entière, dont l'audit `fallow` que le job du même nom rejoue en CI ;
+     `check:guards` seul n'en est que la moitié rapide
+   - `awawa fmt --check .`
+   - `awawa lint --strict .`
+
+   **C'est cette liste que cite le prompt de lancement d'une vague**, comme commandes d'acceptation de chaque agent :
+   la session qui pilote la vague la recopie telle quelle, au lieu d'en tenir une à elle. Une liste propre au prompt
+   dérive sans que rien le signale : celle de la vague du 2026-09-18 omettait `audit:quality`, et deux des trois pull
+   requests (#101, #102) sont arrivées rouges sur `fallow`, au prix de deux sessions de correction.
 
 `.do-not-commit/` suit la même logique : chaque worktree porte son propre clone, à rafraîchir par `bun run
 private:sync` — voir `agents/contexte-prive.md`. **Le corpus, lui, est versionné dans la branche** : `awawa` lancé dans un
