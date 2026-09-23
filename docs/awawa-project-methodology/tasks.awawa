@@ -1400,3 +1400,16 @@ TASK DOCS108
 		+ "and turns to canceled on a deploy preview; the badge endpoint answers ?branch= with a"
 		+ "different image for an unknown branch, read on 2026-09-23, so it filters by branch"
 	SOURCE "Request of the user on 2026-09-23"
+
+TASK CHORE109
+	TITLE "every active decision that records a defect left in place is rewritten as a limitation"
+	STATUS draft
+	SPEC "every DECISION whose ruling is a workaround of a defect of this project, kept until a"
+		+ "fix, is replaced by a LIMITATION carrying its SYMPTOM, WORKAROUND and UNTIL"
+	SPEC "every reference to a replaced DECISION points at its LIMITATION"
+	SPEC "the pull request lists each DECISION reviewed and kept, with the reason it is a ruling"
+	WAVE 8
+	RATIONALE "the user suspects that some of the 91 active decisions describe a defect left in"
+		+ "place rather than a choice; a defect of an external tool stays a DECISION with UNTIL,"
+		+ "only a defect of this project is a LIMITATION"
+	SOURCE "Request of the user on 2026-09-23"
