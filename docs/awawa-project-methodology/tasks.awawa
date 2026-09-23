@@ -396,13 +396,16 @@ TASK CHORE63
 	STATUS todo
 	SPEC "awawa lint --strict . exits 0 on a draft TASK citing a task absent from the workspace,"
 		+ "and exits 1 once the citing task is todo"
-	DESC "to be refined with the user: lint --strict promotes warnings to errors, so a GATE warning"
-		+ "on draft alone does not meet the SPEC; draft tasks should maybe raise nothing at all, or"
-		+ "a warning only"
 	RATIONALE "WHEN STATUS draft of TASK is gated error, while awawa treats a draft with dangling"
 		+ "references as normal exploration; the reference from the draft that CHORE57 absorbed to"
 		+ "CHORE57, both on sibling branches, was refused by L004 in the review of pull requests"
-		+ "101 to 103"
+		+ "101 to 103. The gate on draft goes suppressed, not warning: measured on 2026-09-23 on a"
+		+ "probe draft, GATE warning leaves lint . at 0 but --strict promotes L004 back to an"
+		+ "error, so it does not meet the SPEC, while GATE suppressed meets both halves. Its price"
+		+ "is measured too: the same probe kept a missing required TITLE (L006) and a broken IMPL"
+		+ "anchor (L016) unreported for as long as the task stays draft, and both come back on"
+		+ "ratification, whose lint runs with the task todo. Per-rule gating, which would tolerate"
+		+ "L004 alone, does not exist in awawa 2.7.0 and would not be deliverable here anyway"
 		REF @TASK.CHORE57
 	SOURCE "Usage report of pull requests 101, 102 and 103; ruled with the user on 2026-09-21"
 		REF @USAGE_REPORT.PR101_102_103
