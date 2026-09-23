@@ -181,6 +181,7 @@ DECISION OneModuleAloneParsesASaveLine
 	SPEC "The parser is the only point of production code where a save line reaches JSON.parse;"
 		+ "validation and merge both use it"
 		IMPL "packages/shared-save-processing/parseSaveSections.js"
+		ENFORCED_BY "scripts/check-save-line-reader.spec.ts"
 	SPEC "Failure is per line and located, without taking down the valid entries around it"
 		IMPL "packages/shared-save-processing/parseSaveSections.js"
 	REJECTED "A second parser in the validator: the divergence let validation accept a save whose"
