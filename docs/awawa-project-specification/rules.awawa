@@ -429,7 +429,6 @@ RULE ALegacySaveCarriesTerrainLayersAndLoadingDiscardsIt
 		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json::PC-Toxicity-Layer2"
 	SPEC "loading such a save drops the Terrain Layers part and reports the legacy-save-format"
 		+ "warning, so every later stage reads the 11 parts of the current format"
-		ATTESTED_BY "packages/shared-save-processing/normalizeRawSections.js::LEGACY_SAVE_FORMAT:"
-			+ "'legacy-save-format'"
+		ATTESTED_BY "packages/shared-save-processing/saveWarningCodes.js::('legacy-save-format')"
 	APPLIES_TO_SECTION @SECTION.TerrainLayers
 	SOURCE "Extracted from the section index module and the legacy normalisation on 2026-09-23"
