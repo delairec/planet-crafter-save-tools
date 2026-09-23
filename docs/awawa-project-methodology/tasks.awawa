@@ -1175,25 +1175,31 @@ TASK FEAT92
 	AFTER @TASK.FEAT89
 	SPEC "parsing a save returns every part the file carries, Terrain Layers included, and names"
 		+ "the release whose format it carries"
-	SPEC "the Terrain Layers section is carried as the raw text read, parsed into no entry and"
-		+ "typed by nothing"
+	SPEC "the Terrain Layers section is read, typed and written back like every other section: its"
+		+ "lines are parsed into entries by the one parser, and the serializer writes those entries"
 	SPEC "serializing a save writes the format it is given, so parsing then serializing a save of"
 		+ "1.618 returns the exact bytes of the file read"
 	SPEC "neither warning message says a save was adapted: the legacy-save-format one states that"
 		+ "the save was written by 1.618 or earlier, and the fallback one names no adaptation"
 	SPEC "the twelve-part format of 1.618 is a RULE of DOMAIN format citing the Terrain Layers"
 		+ "section, which no rule names today, and taking authority over the properties of a layer"
-		+ "entry by VALUES_FROM"
+		+ "entry by VALUES_FROM; the rule states that the game writes the six properties of the"
+		+ "table in every entry it writes"
+	SPEC "the table of layer properties carries the shapes the reference saves attest: each of the"
+		+ "two colours four numbers separated by dashes, each of the two intensities an integer no"
+		+ "upper bound holds, the layer id a free string no pattern describes"
 	SPEC "the DESC of the Terrain Layers section no longer says that loading a legacy save discards"
 		+ "it"
 	RATIONALE "The round trip measured for FEAT69 on 2026-09-21 returns 2538 bytes against 2620 for"
 		+ "legacy-format_valid.json, the difference being the Terrain Layers section the"
 		+ "normalization drops; the package is where the loss happens and where it is repaired."
-		+ "Carrying that section as raw text is what keeps the round trip exact without inventing"
-		+ "domain entities: nothing displays a layer and the merge takes the section whole, so a"
-		+ "typed entry would only put the byte equality at the mercy of key order. The table of"
-		+ "layer properties documents the shape the rule has authority over, and the code reads"
-		+ "none of it"
+		+ "Reading that section like any other costs the byte equality nothing, and the measurement"
+		+ "is what says so: of the 66 layer entries the three reference twelve-part saves carry, 66"
+		+ "come back byte for byte identical from a parse followed by a stringify, none of the six"
+		+ "properties being a float or an identifier beyond the exact range of a double. What"
+		+ "protects the round trip is therefore the criterion above, run on a real legacy save, and"
+		+ "not holding the section apart from the others. The table of layer properties documents"
+		+ "the shape the rule has authority over, and the code reads none of it"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 		REF @SECTION.TerrainLayers
 		REF @DATATABLE.LegacyTerrainLayerProperties
@@ -1201,6 +1207,10 @@ TASK FEAT92
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
 	SOURCE "Owner ruling, 2026-09-23, refining the task: the carried section stays raw text, and"
 		+ "the corpus corrections the change falsifies are part of the task"
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the Terrain Layers section behaves like"
+		+ "every other section, the earlier ruling of raw text being reversed; measured on the"
+		+ "reference saves Standard-1, Standard-3 and Standard-4, whose 66 layer entries all carry"
+		+ "the six properties and all survive a parse and a stringify unchanged"
 
 TASK FEAT93
 	TITLE "Read and validate a save of either format in core-mapping"
@@ -1214,10 +1224,13 @@ TASK FEAT93
 		+ "neither being converted to the other"
 	SPEC "a save of either format is displayed by the save manager without a validation error the"
 		+ "format alone produces"
-	SPEC "the section carried as raw text is validated against no schema and breaks no invariant of"
-		+ "the validator, which raises no unexpected-section error on a save the format alone makes"
-		+ "twelve parts long"
+	SPEC "the Terrain Layers section of a legacy save is validated against a schema of its own,"
+		+ "requiring the six properties the game writes in every layer entry and admitting no"
+		+ "other, applied at the index the legacy format gives that section"
 		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js"
+	SPEC "the legacy save the generator writes carries the six properties in its layer entry, so"
+		+ "the versioned fixture attests the shape the schema pins"
+		IMPL "packages/shared-save-processing/testing/createFakeSaveContent.js"
 	SPEC "each format has a whole-file schema of its own, pinned to the part count of that format"
 		+ "and to the section each of its indexes holds; no schema is loosened to admit both"
 		IMPL "packages/shared-save-processing/schemas/save-file.schema.json"
@@ -1232,19 +1245,27 @@ TASK FEAT93
 		+ "format at hand. The reader that breaks first holds no constant at all: the parser"
 		+ "service destructures the ten sections positionally, so a twelve-part save hands Terrain"
 		+ "Layers to the world events field. Downstream, the schema validator walks indexes 0 to 9"
-		+ "and raises an unexpected-section error the moment one of them is not a list of entries,"
-		+ "which the carried raw text is not, and the section labels are indexed on the current"
-		+ "format alone. Widening one schema to admit both part counts would trade a false reading"
-		+ "for a validation that no longer catches anything, so each format is pinned by a schema"
-		+ "of its own"
+		+ "against a map keyed on the current format, so the legacy index 9 would be validated"
+		+ "against the world events schema and the legacy world events left unvalidated; the"
+		+ "section needs a schema of its own at that index, and the six properties it requires are"
+		+ "what the three reference saves write in all 66 of their layer entries. The public"
+		+ "fixture carries three of the six today, so the generator is extended with the same"
+		+ "change, its guard replaying it. Widening one whole-file schema to admit both part counts"
+		+ "would trade a false reading for a validation that no longer catches anything, so each"
+		+ "format is pinned by a schema of its own"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 		REF @SECTION.WorldEvents
 		REF @SECTION.TerrainLayers
+		REF @DATATABLE.LegacyTerrainLayerProperties
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		REF @TASK.FEAT92
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
 	SOURCE "Owner ruling, 2026-09-23, refining the task: the two formats are validated by two"
 		+ "schemas rather than by one loosened schema, and the validator, the expected part count"
 		+ "and the section labels are read by the format at hand"
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the schema of a layer entry and the fixture"
+		+ "that attests it come here, FEAT97 being archived"
+		REF @TASK.FEAT97
 
 TASK FEAT94
 	TITLE "Write the merged save in the format the merge was asked for"
@@ -1260,7 +1281,7 @@ TASK FEAT94
 		+ "of save A and no release name is written in place of a patch level"
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts"
 	SPEC "the Terrain Layers section is written whenever the format written carries one, taking the"
-		+ "text of save A when both saves carry it and the text of the save that carries it"
+		+ "entries of save A when both saves carry it and the entries of the save that carries it"
 		+ "otherwise; the format written carrying none, the section is dropped"
 		IMPL "packages/core-mapping/src/domain/rules/merge"
 	SPEC "a merge reports the format it wrote and every section writing it dropped, on the single"
@@ -1376,9 +1397,18 @@ TASK TEST96
 
 TASK FEAT97
 	TITLE "Validate the entries of the Terrain Layers section"
-	STATUS draft
+	STATUS archived
+	ARCHIVED_ON "2026-09-23"
+	PURGE false
 	WAVE 5
 	AFTER @TASK.FEAT93
+	DESC "Archived on 2026-09-23: the section is an ordinary section, so validating its entries is"
+		+ "no longer a task of its own. The schema of a layer entry and the fixture that attests it"
+		+ "are criteria of FEAT93, the section being read into entries by FEAT92, and the guard"
+		+ "that keeps a second reader of a save line out of the production code is CHORE98"
+		REF @TASK.FEAT92
+		REF @TASK.FEAT93
+		REF @TASK.CHORE98
 	SPEC "the entries of the Terrain Layers section are validated against a schema of their own,"
 		+ "read by the branch the format of the save selects"
 	SPEC "those entries are read for validation alone: the serializer keeps writing the text the"
@@ -1386,14 +1416,33 @@ TASK FEAT97
 	SPEC "the parser stays the only production reader of a save line: no validator parses the"
 		+ "section a second time"
 	RATIONALE "A broken entry of that section travels through the tool without a word today, and a"
-		+ "save the game refuses to load is the cost. Nothing about validating it needs a second"
-		+ "reader: the parser yields the entries of index 9 as it yields those of any other"
-		+ "section, and the validator applies the schema the format gives that index. What the task"
-		+ "must keep is the separation the round trip rests on, the carried text being what is"
-		+ "written back and never a re-emission of the parsed entries"
+		+ "save the game refuses to load is the cost. The design this task rested on is the one the"
+		+ "refinement reversed: the section was to be carried as raw text and read a second time"
+		+ "for validation alone, where the measurement showed that an ordinary section costs the"
+		+ "byte equality nothing"
 		REF @DECISION.OneModuleAloneParsesASaveLine
 		REF @DATATABLE.LegacyTerrainLayerProperties
 		REF @SECTION.TerrainLayers
 		REF @TASK.FEAT92
 	SOURCE "Owner ruling, 2026-09-23, refining FEAT93: a section carried without validation can"
 		+ "break a save in game, and that validation is a task of its own"
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the section behaves like every other one,"
+		+ "so what is left of the task belongs to FEAT93 and to CHORE98"
+
+TASK CHORE98
+	TITLE "Guard the single production reader of a save line"
+	STATUS draft
+	WAVE 5
+	SPEC "a guard fails when production code outside the parser reads a save line as JSON"
+	SPEC "the guard is one of the check:* scripts check:guards chains, reads no git history, and"
+		+ "carries its own spec as the other guards do"
+	RATIONALE "The decision rests on review alone: no guard of the repository names it, and the"
+		+ "divergence it forbids is what kept a lost section invisible until the parser became the"
+		+ "only reader. The repository already holds the idiom, a check:* script with its own spec,"
+		+ "and the wave that spreads the format of a save across every reader is when a second"
+		+ "reader is most tempting"
+		REF @DECISION.OneModuleAloneParsesASaveLine
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the invariant becomes a guard, in a task of"
+		+ "its own"
+		REF @TASK.FEAT97
