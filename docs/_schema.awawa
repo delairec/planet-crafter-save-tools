@@ -183,8 +183,8 @@ SCHEMA TASK
 		DESC "what the task delivers, in one line"
 	FIELD STATUS draft|todo|implemented|archived
 		REQUIRED
-		DESC "draft: not ratified by the user; todo: ratified; implemented: merged; archived by the"
-			+ "cleanup pass"
+		DESC "draft: not ratified by the user, no finding reported until ratified; todo: ratified;"
+			+ "implemented: merged; archived by the cleanup pass"
 	FIELD SPEC string
 		REQUIRED
 		REPEATABLE
@@ -205,7 +205,7 @@ SCHEMA TASK
 		DEFAULT true
 		DESC "whether the cleanup pass deletes the task once archived; false keeps it"
 	WHEN STATUS draft
-		GATE error
+		GATE suppressed
 	WHEN STATUS todo
 		GATE error
 	WHEN STATUS implemented
