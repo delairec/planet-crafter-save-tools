@@ -1316,3 +1316,33 @@ TASK FIX106
 		REF @TASK.CHORE100
 		REF @LIMITATION.TheSecurityAuditIgnoresTwoTransitiveAdvisories
 	SOURCE "Owner request, refinement session of 2026-09-23"
+
+TASK FEAT107
+	TITLE "both CLIs print their help on --help and on an unknown argument"
+	STATUS todo
+	SPEC "--help prints the help of the CLI on standard output and exits 0 without reading"
+		+ "anything, whatever other argument accompanies it"
+	SPEC "the help names the invocation, then every flag and switch the CLI accepts, one line each"
+		+ "saying what it does; --platform is described as reserved to the node:* scripts"
+	SPEC "a flag or switch the parser accepts without a line in the help fails a test"
+	SPEC "an unknown argument is named on standard error, followed by the same help, and the CLI"
+		+ "exits 1 before reading anything"
+	SPEC "-h is an unknown argument"
+	SPEC "--help and an unknown argument are each proven on a spawned process of both CLIs, under"
+		+ "Bun and under Node"
+	SPEC "AnUnknownCliFlagIsAUsageError states the help in place of the usage line"
+	AFTER @TASK.CHORE83
+	WAVE 8
+	RATIONALE "On an unknown argument both CLIs print one usage line today, which names neither"
+		+ "what each flag does nor --version, the switch CHORE83 adds in pull request 135; that"
+		+ "pull request also brings switches to findUnknownArguments, which --help builds on, hence"
+		+ "the order. Ruled with the owner on 2026-09-23: --help wins over every other argument, no"
+		+ "short alias, --platform listed rather than hidden so the help and the parser never"
+		+ "diverge"
+		REF @TASK.CHORE83
+		REF @DECISION.AnUnknownCliFlagIsAUsageError
+		REF @DECISION.EveryPublishedCommandHasARealProcessTest
+		REF @COMMAND.MergeSaves
+		REF @COMMAND.ValidateSave
+	SOURCE "Owner request, refinement session of 2026-09-23"
+		PR 135
