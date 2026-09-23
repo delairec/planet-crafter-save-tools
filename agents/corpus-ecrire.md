@@ -2,11 +2,10 @@
 
 À lire avant toute création ou modification d'une entité, en complément du schéma (`awawa show TYPE .`).
 
-**Une section arrive avec la règle qui la cite.** `WHEN HOLDS_FOR all` et `WHEN HOLDS_FOR @GAME_RELEASE.2.004`,
-la dernière release que `HOLDS_FOR` nomme, portent `INCOMING CONSTRAINED_BY` : une `SECTION` que le jeu écrit aujourd'hui et qu'aucune `RULE` ne nomme sous
-`APPLIES_TO_SECTION` est un `L026`. Les entités s'écrivent donc par paires, section et règle, jamais une section
-seule ; c'est ce qui rend la spécification complète par construction, un trou prenant la forme d'une section sans
-règle (@DECISION.ASectionIsWrittenWithTheRuleThatCitesIt).
+**Une section arrive avec la règle qui la cite.** `WHEN STATUS active` porte `INCOMING CONSTRAINED_BY` : une
+`SECTION` active qu'aucune `RULE` ne nomme sous `APPLIES_TO_SECTION` est un `L026`. Les entités s'écrivent donc par
+paires, section et règle, jamais une section seule ; c'est ce qui rend la spécification complète par construction,
+un trou prenant la forme d'une section sans règle (@DECISION.ASectionIsWrittenWithTheRuleThatCitesIt).
 
 **Une table de valeurs est un fichier JSON à côté du module qui la lit.** Un tableau, une ligne par rangée, dans le
 paquet dont le module l'importe ; aucune rangée ne se recopie dans un module TypeScript ni dans un document markdown.
@@ -28,8 +27,7 @@ pull request qui touche son fichier
 (@PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived).
 
 **Un champ légal dans un seul état n'est déclaré que là.** Un champ conditionné par la valeur d'un autre champ se
-déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `INDEX` sous `WHEN HOLDS_FOR all` et
-`WHEN HOLDS_FOR @GAME_RELEASE.2.004`, `LEGACY_INDEX` sous `WHEN HOLDS_FOR all` et
+déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `LEGACY_INDEX` sous `WHEN HOLDS_FOR all` et
 `WHEN HOLDS_FOR @GAME_RELEASE.1.618`, `CONFLICT` et `RESOLUTION` sous `WHEN DOMAIN merge`. Déclaré au niveau du type
 puis rendu requis dans le bloc, il resterait légal partout, la monotonie de `WHEN` ne pouvant rien interdire ;
 répété dans chaque bloc qui l'admet, il est refusé ailleurs par `L003`. Une entité qui nomme plusieurs valeurs d'un
