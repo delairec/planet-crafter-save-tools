@@ -157,7 +157,7 @@ bun run audit
 
 Audits production and development dependencies against the GitHub Advisory Database, failing on an advisory of
 moderate severity or above. The `Dependencies` workflow runs it on every pull request, on every push to `master` and
-once a day on `master`, so an advisory published against an unchanged `bun.lock` fails a run within a day. The two
+once a month on `master`, so an advisory published against an unchanged `bun.lock` fails a run within a month. The two
 Picomatch advisories are explicitly allowlisted because `micromatch` still requires the affected 2.x dependency
 transitively; they should be removed as soon as that upstream constraint is updated. An allowlisted advisory stays
 tied to the corpus: `check:audit-ignores` fails when an `--ignore=` of the script is named by the `SEEN_IN` of no

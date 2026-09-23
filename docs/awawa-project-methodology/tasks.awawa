@@ -1218,16 +1218,17 @@ TASK CHORE91
 
 TASK CHORE100
 	TITLE "a release is refused while a quality or security check fails on the commit it tags, and"
-		+ "an advisory published against an unchanged lockfile is reported within a day"
+		+ "an advisory published against an unchanged lockfile is reported within a month"
 	STATUS implemented
 	SPEC "a root package.json script, run by hand and by CI on every version tag, exits non-zero"
 		+ "when lint:types, check:guards, bun test, test:ui, the fallow audit or the dependency"
 		+ "audit fails on that commit"
 		IMPL "package.json::release:verify"
 		IMPL ".github/workflows/release.yml::bun run release:verify"
-	SPEC "the dependency audit runs every day on master, so an advisory published against an"
-		+ "unchanged bun.lock fails a run within 24 hours"
-		IMPL ".github/workflows/dependencies.yml::cron: '23 4 * * *'"
+	SPEC "the dependency audit runs on every pull request, on every push to master and once a month"
+		+ "on master, so an advisory published against an unchanged bun.lock fails a run within a"
+		+ "month"
+		IMPL ".github/workflows/dependencies.yml::cron: '23 4 1 * *'"
 	SPEC "the dependency audit fails on an advisory of moderate severity or above"
 		IMPL "package.json::--audit-level=moderate"
 	SPEC "an advisory the dependency audit ignores that no active LIMITATION names in a SEEN_IN"
@@ -1248,7 +1249,9 @@ TASK CHORE100
 		+ "The moderate threshold was ruled with the user on 2026-09-23, a moderate cross-site"
 		+ "scripting counting on a public site. The script does not depend on the version mechanism"
 		+ "CHORE83 picks, so both belong to the same wave; both touch the scripts of the root"
-		+ "package.json"
+		+ "package.json. The monthly schedule was ruled by the user in the review of pull request"
+		+ "133, replacing a daily one: the audit already runs on every pull request and push to"
+		+ "master, and a monthly run suffices for an unchanged lockfile"
 		REF @TASK.CHORE83
 		REF @LIMITATION.TheSecurityAuditIgnoresTwoTransitiveAdvisories
 	SOURCE "Refinement of CHORE83 with the user on 2026-09-23"
