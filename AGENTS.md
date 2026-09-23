@@ -129,6 +129,16 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 
 ## Branches
 
-**Base des tâches, aujourd'hui : `master`.** Le chantier de conformité est fusionné (PR #15). Le nom de la base
+**Base des tâches, aujourd'hui, par wave :**
+
+| Wave | Base | PR d'intégration |
+|------|------|------------------|
+| 5 | `integration/save-format-preserved` | #127 |
+| 8 | `integration/release-and-hardening` | à ouvrir |
+| hors wave | `master` | — |
+
+Une branche d'intégration part de `master`, porte le corpus de sa wave et n'est fusionnée qu'une fois la wave
+terminée. Un numéro de tâche se lit sur toutes les branches ouvertes, pas seulement sur la base : la wave 5 tenait
+92 à 99 quand la wave 8 a été numérotée. Le nom de la base
 reste ici et non dans le corpus parce qu'il change à chaque chantier : une entité dont le `DESC` se réécrit tous les
 mois ne gagne rien à être une entité.
