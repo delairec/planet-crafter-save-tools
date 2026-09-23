@@ -54,6 +54,7 @@
     },
     "packages/ui-save-manager": {
       "name": "ui-save-manager",
+      "version": "1.0.0",
       "dependencies": {
         "@solidjs/router": "^1.0.0",
         "@solidjs/start": "2.0.5",

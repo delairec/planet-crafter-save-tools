@@ -2,7 +2,8 @@ import {Router, RouteSectionProps} from "@solidjs/router";
 import {FileRoutes} from "@solidjs/start/router";
 import "./app.css";
 import {Component, Suspense} from "solid-js";
-import {appName} from "~/messages/appMessages";
+import {appName, resolveVersionLabel} from "~/messages/appMessages";
+import {version} from "../package.json";
 
 const Layout: Component<RouteSectionProps> = (props) => {
   return (
@@ -14,8 +15,7 @@ const Layout: Component<RouteSectionProps> = (props) => {
         {props.children}
       </div>
       <footer class="text-center">
-        &nbsp;
-        {/* TODO */}
+        {resolveVersionLabel(version)}
       </footer>
     </>
   );

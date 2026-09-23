@@ -1,6 +1,6 @@
 import {ValidateSaveFileController} from 'core-mapping/controllers/ValidateSaveFileController';
 import {parseValidateCliArguments} from './parseValidateCliArguments.js';
-import {renderSaveErrors, renderSaveIsValid, renderSaveWarnings, renderUnknownArguments, renderUsage} from './renderValidateCliOutput.js';
+import {renderSaveErrors, renderSaveIsValid, renderSaveWarnings, renderUnknownArguments, renderUsage, renderVersion} from './renderValidateCliOutput.js';
 
 const SUCCESS_EXIT_CODE = 0;
 const FAILURE_EXIT_CODE = 1;
@@ -8,14 +8,21 @@ const FAILURE_EXIT_CODE = 1;
 /**
  * @param {{readTextFile: (path: string) => Promise<string>, exitProcess: (code: number) => void}} platform
  * @param {string[]} argv
+ * @param {{name: string, version: string}} release
  */
-export function initValidateCli({readTextFile, exitProcess}, argv = []) {
-  const {filePath, unknownArguments} = parseValidateCliArguments(argv);
+export function initValidateCli({readTextFile, exitProcess}, argv = [], release) {
+  const {filePath, isVersionAsked, unknownArguments} = parseValidateCliArguments(argv);
 
   async function main() {
     if (unknownArguments.length > 0) {
       renderUnknownArguments(unknownArguments);
       exitProcess(FAILURE_EXIT_CODE);
+      return;
+    }
+
+    if (isVersionAsked) {
+      renderVersion(release);
+      exitProcess(SUCCESS_EXIT_CODE);
       return;
     }
 

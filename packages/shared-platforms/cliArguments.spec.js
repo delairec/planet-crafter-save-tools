@@ -1,10 +1,12 @@
 import {describe, expect, it} from 'bun:test';
-import {findUnknownArguments, PLATFORM_FLAG_NAME, readFlagValue} from './cliArguments.js';
+import {findUnknownArguments, hasSwitch, PLATFORM_FLAG_NAME, readFlagValue} from './cliArguments.js';
 
 const FILE_FLAG_NAME = 'file';
+const VERSION_SWITCH_NAME = 'version';
 const INPUT_FLAG_NAME = 'input';
 const NO_ARGUMENTS = [];
 const NO_KNOWN_FLAG_NAME = [];
+const NO_KNOWN_SWITCH_NAME = [];
 
 describe('CLI argument reading', () => {
   describe('When the flag is absent', () => {
@@ -98,7 +100,7 @@ describe('CLI unknown argument detection', () => {
       const argv = ['bun', 'merge-cli.js', '--input=saves', '--platform=node'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, [INPUT_FLAG_NAME, PLATFORM_FLAG_NAME]);
+      const unknownArguments = findUnknownArguments(argv, {flagNames: [INPUT_FLAG_NAME, PLATFORM_FLAG_NAME], switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(NO_ARGUMENTS);
@@ -111,7 +113,7 @@ describe('CLI unknown argument detection', () => {
       const argv = ['--inpt=saves'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, [INPUT_FLAG_NAME]);
+      const unknownArguments = findUnknownArguments(argv, {flagNames: [INPUT_FLAG_NAME], switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(['--inpt=saves']);
@@ -124,7 +126,7 @@ describe('CLI unknown argument detection', () => {
       const argv = ['--input', 'saves'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, [INPUT_FLAG_NAME]);
+      const unknownArguments = findUnknownArguments(argv, {flagNames: [INPUT_FLAG_NAME], switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(['--input']);
@@ -137,7 +139,7 @@ describe('CLI unknown argument detection', () => {
       const argv = ['-i', 'saves', '--output'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, [INPUT_FLAG_NAME]);
+      const unknownArguments = findUnknownArguments(argv, {flagNames: [INPUT_FLAG_NAME], switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(['-i', '--output']);
@@ -150,10 +152,77 @@ describe('CLI unknown argument detection', () => {
       const argv = ['bun', 'merge-cli.js', '--input=saves'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, NO_KNOWN_FLAG_NAME);
+      const unknownArguments = findUnknownArguments(argv, {flagNames: NO_KNOWN_FLAG_NAME, switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(['--input=saves']);
+    });
+  });
+
+  describe('When a known switch is given', () => {
+    it('should report no unknown argument', () => {
+      // Arrange
+      const argv = ['bun', 'merge-cli.js', '--version'];
+
+      // Act
+      const unknownArguments = findUnknownArguments(argv, {flagNames: NO_KNOWN_FLAG_NAME, switchNames: [VERSION_SWITCH_NAME]});
+
+      // Assert
+      expect(unknownArguments).toEqual(NO_ARGUMENTS);
+    });
+  });
+
+  describe('When a known switch comes with a value', () => {
+    it('should report that argument', () => {
+      // Arrange
+      const argv = ['--version=2'];
+
+      // Act
+      const unknownArguments = findUnknownArguments(argv, {flagNames: NO_KNOWN_FLAG_NAME, switchNames: [VERSION_SWITCH_NAME]});
+
+      // Assert
+      expect(unknownArguments).toEqual(['--version=2']);
+    });
+  });
+});
+
+describe('CLI switch reading', () => {
+  describe('When the switch is given', () => {
+    it('should report it present', () => {
+      // Arrange
+      const argv = ['bun', 'merge-cli.js', '--version'];
+
+      // Act
+      const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);
+
+      // Assert
+      expect(isPresent).toBe(true);
+    });
+  });
+
+  describe('When the switch is absent', () => {
+    it('should report it absent', () => {
+      // Arrange
+      const argv = ['bun', 'merge-cli.js', '--input=saves'];
+
+      // Act
+      const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);
+
+      // Assert
+      expect(isPresent).toBe(false);
+    });
+  });
+
+  describe('When the switch comes with a value', () => {
+    it('should report it absent', () => {
+      // Arrange
+      const argv = ['--version=2'];
+
+      // Act
+      const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);
+
+      // Assert
+      expect(isPresent).toBe(false);
     });
   });
 });

@@ -7,6 +7,7 @@ import {SAVE_CONTENT_WITH_INVALID_ENTRY} from '../testing/fakeSaveContentWithInv
 import {createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 
 const NO_ARGUMENTS = [];
+const CLI_RELEASE = {name: 'cli-validate', version: '1.4.2'};
 const USAGE_MESSAGE = 'Usage: bun validate -- --file=<filepath>';
 
 describe('Validate CLI', () => {
@@ -17,7 +18,7 @@ describe('Validate CLI', () => {
   let exitProcess;
 
   function initCli(argv) {
-    return initValidateCli({readTextFile, exitProcess}, argv);
+    return initValidateCli({readTextFile, exitProcess}, argv, CLI_RELEASE);
   }
 
   beforeEach(() => {
@@ -27,6 +28,45 @@ describe('Validate CLI', () => {
 
     readTextFile = mock();
     exitProcess = mock();
+  });
+
+  describe('When the version is asked', () => {
+    it('should print the name and the version of the command on stdout', async () => {
+      // Arrange
+      const {main} = initCli(['--version']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).toHaveBeenCalledWith('cli-validate 1.4.2');
+    });
+
+    it('should exit with code 0 without reading any file', async () => {
+      // Arrange
+      const {main} = initCli(['--version']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readTextFile).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the version is asked beside an argument the command does not accept', () => {
+    it('should refuse the run with code 1 without printing the version', async () => {
+      // Arrange
+      const {main} = initCli(['--version', '--fil=save.json']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
   });
 
   describe('When no file path is provided', () => {
