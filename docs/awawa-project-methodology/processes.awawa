@@ -127,6 +127,9 @@ PROCESS AnImplAnchorNamesAFileOrASymbol
 		PR 69
 
 PROCESS TheCorpusHoldsNoViewItAlreadyRenders
+	SPEC "One fact has one home in the repository: what the code, a test or a corpus entity already"
+		+ "holds is restated in no other file, and a restatement found elsewhere is deleted rather"
+		+ "than updated"
 	SPEC "Nothing the corpus already renders is written in it: no dependency graph in a comment,"
 		+ "the AFTER edges carrying it"
 	SPEC "A task split is not recorded as a decision: the TASK entities it produces carry it, and"
@@ -143,6 +146,10 @@ PROCESS TheCorpusHoldsNoViewItAlreadyRenders
 		+ "rejected, and its removal lost no sentence"
 	SOURCE "review of PR #75, user ruling of 2026-09-14"
 		PR 75
+	SOURCE "Owner's ruling on pull request 127, 2026-09-23: the one-home rule is not the corpus's"
+		+ "alone but the whole repository's, and a fact a unit test can hold lives there rather"
+		+ "than in prose"
+		PR 127
 
 PROCESS ATestTaskChangesTheUiOnlyForItsOwnSake
 	REJECTED "Changing the interface for the sole convenience of a locator"
