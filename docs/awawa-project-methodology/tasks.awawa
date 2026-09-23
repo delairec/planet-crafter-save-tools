@@ -384,12 +384,17 @@ TASK CHORE59
 
 TASK REFACTOR62
 	TITLE "shared-save-processing exposes a function selecting one section of a save string"
-	STATUS todo
+	STATUS implemented
 	SPEC "A caller reaching one section of a save string calls a shared-save-processing function"
 		+ "given the section index, and never splits the string on the section separator itself"
+		IMPL "packages/shared-save-processing/replaceSaveSection.js"
+		IMPL "packages/cli-merge/testing/fakeSaveStrings.js"
+		IMPL "packages/cli-validate/testing/fakeSaveContentWithInvalidEntry.js"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js"
 	DESC "callers splitting on '@' to reach one section today: cli-merge testing/fakeSaveStrings.js"
 		+ "(twice), cli-validate testing/fakeSaveContentWithInvalidEntry.js, core-mapping"
 		+ "validateSaveContent.spec.js"
+	DELIVERED_BY 123
 	SOURCE "Review of pull request #102, 2026-09-21, on"
 		+ "packages/cli-merge/testing/fakeSaveStrings.js"
 		PR 102
