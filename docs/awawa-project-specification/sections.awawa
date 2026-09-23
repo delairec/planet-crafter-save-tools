@@ -139,6 +139,7 @@ SECTION Reserved
 SECTION TerrainLayers
 	HOLDS_FOR @GAME_RELEASE.1.618
 	LABEL "Terrain layers"
+	INDEX 9
 	LEGACY_INDEX 9
 	DESC "the section a game update removed; a legacy save still carries it and loading one"
 		+ "discards it with a warning"
