@@ -26,7 +26,7 @@ export interface UntrackedAnchor extends CorpusAnchor {
   file: string;
 }
 
-interface CorpusLine {
+export interface CorpusLine {
   depth: number;
   keyword: string;
   pieces: string[];
@@ -49,7 +49,7 @@ interface DeclarationLine {
  * @param {string} source the text of one or several corpus files
  * @returns every meaningful line, its continuation lines joined to it
  */
-function readCorpusLines(source: string): CorpusLine[] {
+export function readCorpusLines(source: string): CorpusLine[] {
   const corpusLines: CorpusLine[] = [];
   source.split('\n').forEach((text, lineIndex) => {
     const content = text.trim();
@@ -75,7 +75,7 @@ function readCorpusLines(source: string): CorpusLine[] {
  * @param {string} piece a field value, quoted or not
  * @returns that value without its surrounding quotes
  */
-function removeQuotes(piece: string): string {
+export function removeQuotes(piece: string): string {
   return piece.replace(/^"(.*)"$/, '$1');
 }
 

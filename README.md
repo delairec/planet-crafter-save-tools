@@ -155,9 +155,13 @@ silently, and the `.tsx` files of the UI are covered. `ui-save-manager` runs two
 bun run audit
 ```
 
-Audits production and development dependencies. The two Picomatch advisories are explicitly allowlisted because
-`micromatch` still requires the affected 2.x dependency transitively; they should be removed as soon as that upstream
-constraint is updated.
+Audits production and development dependencies against the GitHub Advisory Database, failing on an advisory of
+moderate severity or above. The `Dependencies` workflow runs it on every pull request, on every push to `master` and
+once a month on `master`, so an advisory published against an unchanged `bun.lock` fails a run within a month. The two
+Picomatch advisories are explicitly allowlisted because `micromatch` still requires the affected 2.x dependency
+transitively; they should be removed as soon as that upstream constraint is updated. An allowlisted advisory stays
+tied to the corpus: `check:audit-ignores` fails when an `--ignore=` of the script is named by the `SEEN_IN` of no
+active `LIMITATION`.
 
 Version bumps are raised on a schedule next to it. `.github/dependabot.yml`, maintained on the default branch because
 Dependabot reads its configuration there and nowhere else, opens one grouped pull request per week for the actions the
@@ -176,6 +180,15 @@ unused exports, unresolved imports) against `master`. This is the whole gate in 
 CI covers the same ground in two jobs, each running the half it is equipped for: `guards` runs `check:guards`, and
 `fallow` runs the audit and the health report through the Fallow action, which scopes them to the base of the pull
 request and renders them into the run summary.
+
+```
+bun run release:verify
+```
+
+Runs every check a release must pass on the commit it tags: `lint:types`, `audit:quality`, `bun test`, `test:ui` and
+the dependency audit, stopping at the first failure. The `Release` workflow runs it on every version tag pushed — a tag
+whose name holds `v` or `@` followed by a digit — and it can be run by hand before tagging. `test:ui` needs the
+browsers of `test:ui:install`.
 
 ```
 bun run check:guards

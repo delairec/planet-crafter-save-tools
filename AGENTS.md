@@ -99,7 +99,11 @@ Depuis la racine du dépôt (workspace Bun) :
   lancer en cours d'écriture.
 - `bun run check:dependencies` — vérifie la matrice de dépendances par préfixe (manifestes et imports, imports
   type-only et directives JSDoc `@import` compris). La matrice est documentée dans le `README.md` public.
-- `bun run audit` — `bun audit` sur les dépendances de production et de développement.
+- `bun run audit` — `bun audit` sur les dépendances de production et de développement, au seuil `moderate` ; le
+  workflow `Dependencies` le lance sur chaque pull request, chaque push sur `master` et une fois par mois sur `master`.
+- `bun run release:verify` — toutes les vérifications qu'une release doit passer sur le commit qu'elle étiquette
+  (`lint:types`, `audit:quality`, `bun test`, `test:ui`, `audit`) ; le workflow `Release` le lance sur chaque tag de
+  version.
 - `awawa status .` et les commandes du corpus — voir la section « Corpus de spécification » plus haut.
 
 ## Anonymisation des noms de joueurs
