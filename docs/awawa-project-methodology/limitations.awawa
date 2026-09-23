@@ -128,8 +128,7 @@ LIMITATION TheSecurityAuditIgnoresTwoTransitiveAdvisories
 LIMITATION TheContentSecurityPolicyAllowsInlineScript
 	SYMPTOM "The content security policy allows inline script and style: a script injected into the"
 		+ "page runs despite it"
-	UNTIL "the hydration script carries a hash or a nonce, or the framework is shown not to allow"
-		+ "one"
+	UNTIL @TASK.FIX101
 	SEEN_IN "packages/ui-save-manager/public/_headers::script-src 'self' 'unsafe-inline'"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "The policy was set to be compatible with the production build, without removing"
@@ -174,3 +173,14 @@ LIMITATION ADecorativeIconInAViewModelValueIsReadAloud
 		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
 	SOURCE "Found on 2026-09-14 in the review of pull request 71"
 		PR 71
+
+LIMITATION TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader
+	SYMPTOM "The HTML document of the production web UI carries no Content-Security-Policy,"
+		+ "Referrer-Policy nor Permissions-Policy: another site may frame it, and nothing restricts"
+		+ "a script injected into it"
+	UNTIL @TASK.FIX101
+	SEEN_IN "packages/ui-save-manager/public/_headers::Content-Security-Policy"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "Netlify applies _headers to the static files it serves, not to the responses of the"
+		+ "function that renders the document: the headers were written as if the site were static"
+	SOURCE "Measured with curl -I on the production site and on the local build on 2026-09-23"
