@@ -394,9 +394,6 @@ TASK FEAT66
 	TITLE "Give TreePlanter3, PodUnderground and RocketAnimals2 their energy"
 	STATUS implemented
 	AFTER @TASK.DOCS86
-	DESC "We can save a hypothesis that these three machines do not produce or draw power. Previous"
-		+ "objects with similar labels are not in the energy tables. Observation in game will be"
-		+ "the until condition."
 	SPEC "TreePlanter3, PodUnderground and RocketAnimals2 are named among the world object names"
 		+ "without a known energy level, on the recorded hypothesis that they neither draw nor"
 		+ "produce power, and the planet energy grid neither charges nor produces for them"
