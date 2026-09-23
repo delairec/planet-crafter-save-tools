@@ -19,7 +19,7 @@ test.describe('Save display', () => {
   });
 
   test.describe('When a save file written by the Skeo update is visualized', () => {
-    test('should display it without a validation error, naming the planet of its placed world object Skeo', async ({page}) => {
+    test('should display it without a validation error, naming the planet of its placed world object Skeo and the power that object produces', async ({page}) => {
       // Arrange
       await page.goto('/');
       await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
@@ -30,6 +30,7 @@ test.describe('Save display', () => {
       // Assert
       await expect(page.getByText('Errors', {exact: true})).toBeHidden();
       await expect(page.getByRole('heading', {name: 'Skeo', level: 4})).toBeVisible();
+      await expect(page.getByText('Wind turbine T2')).toBeVisible();
     });
   });
 
