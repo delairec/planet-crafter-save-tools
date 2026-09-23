@@ -1423,17 +1423,25 @@ TASK FEAT97
 
 TASK CHORE98
 	TITLE "Guard the single production reader of a save line"
-	STATUS todo
+	STATUS implemented
 	WAVE 5
+	DELIVERED_BY 137
 	SPEC "a JSON.parse call in the production code of any package fails the guard, unless it sits"
 		+ "in packages/shared-save-processing/parseSaveSections.js; JSON.parse named in a comment"
 		+ "does not fail it"
+		IMPL "scripts/check-save-line-reader.ts::findUnadmittedJsonParseCalls"
+		IMPL "scripts/check-save-line-reader.spec.ts"
 	SPEC "the production code the guard reads is every source file of packages/*, except spec and"
 		+ "test files, the e2e and testing directories and generated directories"
+		IMPL "scripts/check-save-line-reader.ts::isProductionSourceFile"
+		IMPL "scripts/check-save-line-reader.spec.ts"
 	SPEC "the guard is one of the check:* scripts check:guards chains, reads no git history, and"
 		+ "carries its own spec as the other guards do"
+		IMPL "package.json"
+		IMPL "scripts/check-save-line-reader.spec.ts"
 	SPEC "the first SPEC of the single-parser decision the rationale names carries the guard by"
 		+ "ENFORCED_BY"
+		IMPL "docs/awawa-project-methodology/decisions.awawa"
 	RATIONALE "The decision rests on review alone: no guard of the repository names it, and the"
 		+ "divergence it forbids is what kept a lost section invisible until the parser became the"
 		+ "only reader. The repository already holds the idiom, a check:* script with its own spec,"
