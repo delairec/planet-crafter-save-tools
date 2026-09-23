@@ -1065,10 +1065,11 @@ TASK DOCS86
 
 TASK DOCS88
 	TITLE "State in docs/save-format.md that a planet numeric id is the djb2 hash of its name"
-	STATUS todo
+	STATUS implemented
 	SPEC "docs/save-format.md states that a planet numeric id is the two-accumulator djb2 hash of"
 		+ "the planet name, as the rule on planet numeric ids does, and no longer that no known"
 		+ "hash reproduces the ids"
+		IMPL "docs/save-format.md::The numeric id is a two-accumulator djb2 hash of the planet name"
 	RATIONALE "Pull request 107 corrected the rationale of the rule on planet numeric ids to the"
 		+ "djb2 hash, verified on six ids, and left the format document at its previous sentence;"
 		+ "the FEAT65 agent flagged the document at its hand-back on 2026-09-21 as outside its SPEC"
@@ -1079,6 +1080,7 @@ TASK DOCS88
 		+ "the owner's review of pull request 112 on 2026-09-22"
 		PR 112
 		REF @USAGE_REPORT.PR111_112
+	DELIVERED_BY 122
 
 TASK FEAT89
 	TITLE "Warn when a save contradicts the game release it declares"
