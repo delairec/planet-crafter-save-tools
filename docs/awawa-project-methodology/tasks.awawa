@@ -1257,8 +1257,8 @@ TASK CHORE100
 	SOURCE "Refinement of CHORE83 with the user on 2026-09-23"
 
 TASK FIX101
-	TITLE "the production web UI serves its security headers on every response, is checked after"
-		+ "each deployment and every week, and the README gives its address"
+	TITLE "the production web UI serves its security headers on every response, is checked every"
+		+ "week and on demand after each publication, and the README gives its address"
 	STATUS implemented
 	SPEC "every response of the production site, the HTML document included, carries the"
 		+ "Content-Security-Policy, Referrer-Policy and Permissions-Policy of"
