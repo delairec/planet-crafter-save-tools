@@ -418,9 +418,14 @@ TASK CHORE60
 
 TASK CHORE63
 	TITLE "a reference between draft tasks of two branches is not refused by the corpus gate"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 129
 	SPEC "awawa lint --strict . exits 0 on a draft TASK citing a task absent from the workspace,"
 		+ "and exits 1 once the citing task is todo"
+		IMPL "docs/_schema.awawa::draft: not ratified by the user, no finding reported until"
+			+ "ratified"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "ADraftTaskReportsNoFindingUntilRatified"
 	RATIONALE "WHEN STATUS draft of TASK is gated error, while awawa treats a draft with dangling"
 		+ "references as normal exploration; the reference from the draft that CHORE57 absorbed to"
 		+ "CHORE57, both on sibling branches, was refused by L004 in the review of pull requests"
