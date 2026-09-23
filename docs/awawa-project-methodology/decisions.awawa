@@ -1358,22 +1358,14 @@ DECISION ProductionIsPublishedByHandFromAReleaseTag
 	SOURCE "Ruled with the user on 2026-09-23 during CHORE83"
 		PR 135
 
-DECISION EachCliKeepsItsOwnTerminalRendering
+DECISION BothCliEntryFilesRunThroughOneSharedFunction
 	SPEC "Running the command of a CLI when its module is the entry point, and exiting with its"
 		+ "unexpected error code when the command fails, is one shared-platforms function both"
 		+ "entry files call, the rendering of the failure handed to it by each CLI"
 		IMPL "packages/shared-platforms/runWhenEntryPoint.js::runWhenEntryPoint"
 		ENFORCED_BY "packages/shared-platforms/runWhenEntryPoint.spec.js"
-	SPEC "The terminal rendering of a CLI stays in its own package, even where two CLIs write the"
-		+ "same line, and the fallow clone group it forms is listed as reviewed under its exact key"
-		IMPL "fallow.toml::ignoredClones"
-	REJECTED "Moving renderVersion and renderUnknownArguments into shared-platforms: a shared"
-		+ "package holds no UI concern (ARCH-SHR-2), and terminal output is the presentation of a"
-		+ "CLI"
-	REJECTED "One cli-* package importing the rendering of the other: the dependency matrix allows"
-		+ "a cli-* package only shared-*, util-* and core-* dependencies"
-	REJECTED "Ignoring the rendering files for duplication: every later clone there would go"
-		+ "unseen, where the reviewed key lapses as soon as either copy changes or a third appears"
+	REJECTED "Each entry file keeping its own entry-point check, catch and exit: the two blocks"
+		+ "were the same lines, reported by fallow as a clone group"
 	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
 	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
 	APPLIES_TO_PACKAGE @PACKAGE.shared_platforms
