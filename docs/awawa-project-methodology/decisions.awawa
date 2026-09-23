@@ -1276,3 +1276,5 @@ DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
 		+ "CI job, the acceptance list of their prompt lacking bun run audit:quality"
 	SOURCE "Usage report of pull requests 101, 102 and 103, remediation 1"
 		REF @USAGE_REPORT.PR101_102_103
+	SOURCE "Ruled in the pull request that delivers the task"
+		PR 128
