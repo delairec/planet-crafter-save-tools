@@ -28,7 +28,7 @@ function generateOtherPlayerContent(): string {
       createWorldObject({id: 31000002, gId: 'NeptunQuartz'}),
       createWorldObject({id: 31000003, gId: 'Backpack5'}),
       createWorldObject({id: 31000004, gId: 'OxygenTank3'}),
-      createWorldObject({id: 31000005, gId: 'WindTurbine2', pos: '20,0,0', planet: 1}),
+      createWorldObject({id: 31000005, gId: 'WindTurbine1', pos: '20,0,0', planet: 1}),
       createWorldObject({id: 31000006, gId: 'Heater2', pos: '21,0,0', planet: 1})
     ],
     saveConfiguration: createSaveConfiguration({saveDisplayName: 'Companion Save', worldSeed: 77})
@@ -46,7 +46,7 @@ function generateSkeoUpdateContent(): string {
       createWorldObject({id: 58524136, gId: 'MagnetarQuartz'}),
       createWorldObject({id: 85274195, gId: 'Backpack4'}),
       createWorldObject({id: 48456321, gId: 'OxygenTank5'}),
-      createWorldObject({id: 95585250, gId: 'WindTurbine2', pos: '0,0,0', planet: SKEO_PLANET_NUMERIC_ID})
+      createWorldObject({id: 95585250, gId: 'WindTurbine1', pos: '0,0,0', planet: SKEO_PLANET_NUMERIC_ID})
     ]
   });
 }
