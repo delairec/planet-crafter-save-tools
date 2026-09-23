@@ -25,8 +25,17 @@ function determineIncrement(commitSubjects: string[]): VersionIncrement {
   return 'patch';
 }
 
-function raiseVersion(version: string, increment: VersionIncrement): string {
+function lowerIncrementBeforeFirstMajor(increment: VersionIncrement): VersionIncrement {
+  if (increment === 'major') {
+    return 'minor';
+  }
+  return 'patch';
+}
+
+function raiseVersion(version: string, commitSubjects: string[]): string {
   const [major = 0, minor = 0, patch = 0] = version.split('.').map(Number);
+  const commitsIncrement = determineIncrement(commitSubjects);
+  const increment = major === 0 ? lowerIncrementBeforeFirstMajor(commitsIncrement) : commitsIncrement;
   if (increment === 'major') {
     return `${major + 1}.0.0`;
   }
@@ -41,7 +50,7 @@ export function planRelease(histories: ConsumerHistory[]): PlannedRelease[] {
     .filter((history) => history.commitSubjects.length > 0)
     .map((history) => ({
       name: history.name,
-      version: raiseVersion(history.version, determineIncrement(history.commitSubjects)),
+      version: raiseVersion(history.version, history.commitSubjects),
       commitSubjects: history.commitSubjects
     }));
 }

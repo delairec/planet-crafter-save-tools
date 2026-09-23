@@ -70,6 +70,40 @@ describe('planRelease', () => {
     });
   });
 
+  describe('When a consumer below its first major version carries a breaking change', () => {
+    it('should raise its minor number and reset its patch number', () => {
+      // Arrange
+      const histories: ConsumerHistory[] = [
+        {name: 'cli-validate', version: '0.3.2', commitSubjects: ['feat(cli-validate)!: rename the file flag (#140)']}
+      ];
+
+      // Act
+      const releases = planRelease(histories);
+
+      // Assert
+      expect(releases).toEqual([
+        {name: 'cli-validate', version: '0.4.0', commitSubjects: ['feat(cli-validate)!: rename the file flag (#140)']}
+      ]);
+    });
+  });
+
+  describe('When a consumer below its first major version carries a feature', () => {
+    it('should raise its patch number', () => {
+      // Arrange
+      const histories: ConsumerHistory[] = [
+        {name: 'ui-save-manager', version: '0.3.2', commitSubjects: ['feat(ui-save-manager): show the version (#151)']}
+      ];
+
+      // Act
+      const releases = planRelease(histories);
+
+      // Assert
+      expect(releases).toEqual([
+        {name: 'ui-save-manager', version: '0.3.3', commitSubjects: ['feat(ui-save-manager): show the version (#151)']}
+      ]);
+    });
+  });
+
   describe('When a consumer carries no commit since its last version', () => {
     it('should plan no release for it', () => {
       // Arrange

@@ -1,6 +1,6 @@
 {
   "name": "ui-save-manager",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "lint:types": "tsc --noEmit && tsc --noEmit --project e2e",

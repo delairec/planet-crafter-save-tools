@@ -1,6 +1,6 @@
 {
   "name": "cli-validate",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Validate Planet Crafter save files against a JSON schema",
   "type": "module",
   "main": "cli/validate-cli.js",
