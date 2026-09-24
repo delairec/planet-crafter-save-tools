@@ -2182,3 +2182,21 @@ TASK FEAT119
 		REF @RULE.TheSaveOnPrimeBecomesSaveA
 	SOURCE "Owner request after the README rewrite described picking the files"
 		PR 165
+
+TASK FEAT120
+	TITLE "a changelog entry lists only the feat, fix and breaking commits of the version"
+	STATUS draft
+	SPEC "a changelog entry lists the commits whose subject has the type feat or fix, with or"
+		+ "without a scope, and every commit whose subject carries a ! whatever its type, in the"
+		+ "order bun run release reads them"
+	SPEC "a commit of any other type — chore, docs, refactor, ci, test, build — carrying no ! is"
+		+ "left out of the entry"
+	SPEC "the version a tool takes is still computed from every commit since its last tag"
+	SPEC "a version whose commits hold no feat, no fix and no ! gets an entry with the single line"
+		+ "- Maintenance changes only"
+	RATIONALE "The changelog is the release note of each tool, and the user reads it for what"
+		+ "changed in the tool; chore and docs titles such as dependency bumps or corpus edits say"
+		+ "nothing to a player and bury the features and fixes"
+		REF @LIMITATION.AVersionTagCreatesNoGitHubRelease
+	SOURCE "Owner request after reading the 0.1.0 changelog entries"
+		PR 165
