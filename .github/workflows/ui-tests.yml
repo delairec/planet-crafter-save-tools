@@ -1,10 +1,13 @@
 name: UI tests
 
-# Scenario suite of ui-save-manager. It runs on the pull requests targeting the production branch and
-# on demand, never on the task pull requests targeting an integration branch. Do not make it a
-# required check: a pull request it does not trigger on would stay blocked forever.
+# Scenario suite of ui-save-manager. It runs on the pull requests targeting the production branch, on
+# each push to it — the run the README badge shows — and on demand, never on the task pull requests
+# targeting an integration branch. Do not make it a required check: a pull request it does not
+# trigger on would stay blocked forever.
 on:
   workflow_dispatch:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 

@@ -1,6 +1,12 @@
 # Planet Crafter Save Tools
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status?branch=master)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
+[![Quality](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml?query=branch%3Amaster)
+[![Dependencies](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml?query=branch%3Amaster)
+[![UI tests](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml?query=branch%3Amaster)
+[![Site check](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml?query=branch%3Amaster)
+[![Release](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/release.yml/badge.svg)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/release.yml)
+[![License: GPL-3.0](https://img.shields.io/github/license/delairec/planet-crafter-save-tools)](LICENSE)
 
 > ❗ I’m not going to actively maintain this project (or only minimally). If you’d like to add improvements or fix bugs,
 > feel free to fork it
