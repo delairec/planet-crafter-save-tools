@@ -4,4 +4,5 @@ export interface MergeSaveFilesRequest {
   fileNameB: string;
   contentB: string;
   saveDisplayName?: string;
+  preferLegacyFormat?: boolean;
 }

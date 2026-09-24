@@ -4,10 +4,12 @@ import {ValidationIssue, VALIDATION_ISSUE_CODES} from '../application/ports/Vali
 import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
+import {MergeWarning} from '../application/responses/MergeWarning';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noErrorsFromSaveB: ValidationIssue[] = [];
 const noErrorsFromTheMerge: ValidationIssue[] = [];
+const noMergeWarnings: MergeWarning[] = [];
 const noWarningsFromSaveA: SaveWarning[] = [];
 const noWarningsFromSaveB: SaveWarning[] = [];
 
@@ -23,6 +25,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
+        mergeWarnings: noMergeWarnings,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -50,6 +53,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
+        mergeWarnings: noMergeWarnings,
         saveAWarnings: [{code: 'legacy-save-format'}],
         saveBWarnings: noWarningsFromSaveB
       });
@@ -73,6 +77,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeErrors: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: PLAYERS_SECTION_INDEX, formatRelease: '2.004'}],
+        mergeWarnings: noMergeWarnings,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -100,6 +105,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 12, formatRelease: '2.004'}],
+        mergeWarnings: noMergeWarnings,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });

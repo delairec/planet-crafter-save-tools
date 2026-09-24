@@ -4,7 +4,7 @@ import {createGlobalMetadata, createSaveConfiguration} from 'shared-save-process
 import {createSaveSections} from '../../../testing/createSaveSections';
 
 describe('Determine save order', () => {
-  const saveDisplayName = 'SAVE_NAME';
+  const mergeOptions = {saveDisplayName: 'SAVE_NAME', preferLegacyFormat: false};
 
   const primeConfig = createSaveConfiguration({planetId: 'Prime'});
   const toxicityConfig = createSaveConfiguration({planetId: 'Toxicity'});
@@ -17,7 +17,7 @@ describe('Determine save order', () => {
       const saveB = createSaveSections({saveConfigurations: [primeConfig]});
 
       // Act
-      const result = mergeSaveSections(saveA, saveB, saveDisplayName);
+      const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
       expect(result.saveConfiguration?.planetId).toBe('Prime');
@@ -31,7 +31,7 @@ describe('Determine save order', () => {
       const saveB = createSaveSections({saveConfigurations: [toxicityConfig]});
 
       // Act
-      const result = mergeSaveSections(saveA, saveB, saveDisplayName);
+      const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
       expect(result.saveConfiguration?.planetId).toBe('Prime');
@@ -45,7 +45,7 @@ describe('Determine save order', () => {
       const saveB = createSaveSections({saveConfigurations: [aqualisConfig]});
 
       // Act
-      const result = mergeSaveSections(saveA, saveB, saveDisplayName);
+      const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
       expect(result.saveConfiguration?.planetId).toBe('Toxicity');
@@ -59,7 +59,7 @@ describe('Determine save order', () => {
       const saveB = createSaveSections({saveConfigurations: [createSaveConfiguration({planetId: 'Prime', worldSeed: 2})]});
 
       // Act
-      const result = mergeSaveSections(saveA, saveB, saveDisplayName);
+      const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
       expect(result.saveConfiguration?.worldSeed).toBe(1);
@@ -76,7 +76,7 @@ describe('Determine save order', () => {
       });
 
       // Act
-      const result = mergeSaveSections(saveA, saveB, saveDisplayName);
+      const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
       expect(result.globalMetadata.openedInstanceSeed).toBe(2);

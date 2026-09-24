@@ -1,6 +1,5 @@
 import {serializeSave} from "shared-save-processing/serializeSave.js";
 import {serializeIdList} from "shared-save-processing/idList.js";
-import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
 import {Inventory, WorldObject} from "shared-save-processing/gameDefinitions";
 import {SaveSectionsSerializerPort} from "../application/ports/SaveSectionsSerializerPort";
 import {InventoryEntry} from "../domain/save/InventoryEntry";
@@ -10,7 +9,8 @@ import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
 export class SaveSectionsSerializerService implements SaveSectionsSerializerPort {
   serialize(sections: SaveSections): string {
     return serializeSave({
-      formatRelease: CURRENT_FORMAT_RELEASE,
+      formatRelease: sections.formatRelease,
+      terrainLayers: sections.terrainLayers,
       metadata: sections.globalMetadata,
       terraformationLevels: sections.terraformationLevels,
       players: sections.players,

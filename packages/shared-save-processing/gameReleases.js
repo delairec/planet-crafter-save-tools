@@ -58,6 +58,15 @@ export function resolveGameRelease(declaredVersion) {
   return (reachedReleases.at(-1) ?? gameReleases[0])?.release;
 }
 
+/**
+ * @param {string} releaseA
+ * @param {string} releaseB
+ * @returns {number} negative when releaseA is the earlier, positive when it is the later, zero when both are the same
+ */
+export function compareGameReleases(releaseA, releaseB) {
+  return compareVersionSegments(splitVersionSegments(releaseA), splitVersionSegments(releaseB));
+}
+
 /** The release whose format the save manager writes when no other is asked for. */
 export const CURRENT_FORMAT_RELEASE = /** @type {string} */ (gameReleases.at(-1)?.release);
 

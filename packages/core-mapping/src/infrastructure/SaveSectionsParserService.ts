@@ -1,6 +1,7 @@
 import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
 import {parseIdList} from "shared-save-processing/idList.js";
 import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
+import {UnknownFormatReleaseError} from "shared-save-processing/gameReleases.js";
 import {
   GlobalMetadata,
   Inventory,
@@ -12,6 +13,7 @@ import {
   Statistics,
   StoryEvent,
   TerraformationLevel,
+  TerrainLayer,
   WorldEvent,
   WorldObject
 } from "shared-save-processing/gameDefinitions";
@@ -30,6 +32,7 @@ interface ParsedSectionContents {
   mailboxMessages: MailboxMessage[];
   storyEvents: StoryEvent[];
   saveConfiguration: SaveConfiguration[];
+  terrainLayers: TerrainLayer[];
   worldEvents: WorldEvent[];
 }
 
@@ -37,16 +40,26 @@ export class SaveSectionsParserService implements SaveSectionsParserPort {
   parse(content: string): ParsedSaveSections {
     const {formatRelease, sections, errors} = parseSaveSections(content);
 
-    return {sections: toSaveSections(sections, resolveSectionIndexes(formatRelease)), errors};
+    if (formatRelease === undefined) {
+      throw new UnknownFormatReleaseError(formatRelease);
+    }
+
+    return {sections: toSaveSections(sections, formatRelease, resolveSectionIndexes(formatRelease)), errors};
   }
 }
 
-function toSaveSections(sections: ParsedSections, sectionIndexes: SaveSectionIndexes): SaveSections {
-  function readSection<Name extends keyof ParsedSectionContents>(name: Name): ParsedSectionContents[Name] {
+function toSaveSections(sections: ParsedSections, formatRelease: string, sectionIndexes: SaveSectionIndexes): SaveSections {
+  function readSection<Name extends Exclude<keyof ParsedSectionContents, 'terrainLayers'>>(name: Name): ParsedSectionContents[Name] {
     return sections[sectionIndexes[name]] as ParsedSectionContents[Name];
   }
 
+  function readTerrainLayers(): TerrainLayer[] | undefined {
+    const {terrainLayers: terrainLayersIndex} = sectionIndexes;
+    return terrainLayersIndex === undefined ? undefined : sections[terrainLayersIndex] as TerrainLayer[];
+  }
+
   return {
+    formatRelease,
     globalMetadata: readSection('globalMetadata'),
     terraformationLevels: readSection('terraformationLevels'),
     players: readSection('players'),
@@ -56,6 +69,7 @@ function toSaveSections(sections: ParsedSections, sectionIndexes: SaveSectionInd
     mailboxes: readSection('mailboxMessages'),
     storyEvents: readSection('storyEvents'),
     saveConfigurations: readSection('saveConfiguration'),
+    terrainLayers: readTerrainLayers(),
     worldEvents: readSection('worldEvents')
   };
 }
