@@ -2032,3 +2032,22 @@ TASK FEAT114
 	SOURCE "Owner review, 2026-09-24: the output of the two commands is hard to read, a draft task"
 		+ "with no wave"
 		PR 127
+
+TASK FEAT115
+	TITLE "a README badge shows the version production serves"
+	STATUS draft
+	SPEC "the build of ui-save-manager writes a static version.json at the site root, carrying the"
+		+ "package version and the commit Netlify built from its COMMIT_REF"
+	SPEC "a README badge reads the version of the production version.json through the shields.io"
+		+ "dynamic JSON endpoint"
+	SPEC "the Netlify status badge of the README is labelled as a build status, not as production"
+	SPEC "the site check prints the commit production serves and how many master commits it lags,"
+		+ "and fails on neither"
+	WAVE 8
+	RATIONALE "With publishing locked, Netlify's status badge and its 'Deployed' label report the"
+		+ "build of master, not what production serves: after PR 127 both read as deployed while"
+		+ "production still served the release before it. A lag is the owner's call, so it is"
+		+ "reported and never fails a run"
+		REF @DECISION.ProductionIsPublishedByHandFromAReleaseTag
+		REF @LIMITATION.TheSiteCheckCannotTellWhichCommitProductionServes
+	SOURCE "Asked by the owner on 2026-09-24, after PR 127 was built but not published"
