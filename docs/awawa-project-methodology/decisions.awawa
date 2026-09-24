@@ -300,6 +300,9 @@ DECISION AMergeThatWritesAFileIsASuccess
 	REJECTED "An option that skips the revalidation"
 	REJECTED "Reporting the warnings of the revalidation: their vocabulary does not apply to an"
 		+ "output"
+	REJECTED "Injecting the merge controller into the merge CLI so that a spec reaches the branch"
+		+ "reporting an invalid merged save: a seam for a test alone; no known input produces such"
+		+ "a save, and renderMergedSaveIssues is specified on its own"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SOURCE "Pull request"
 		PR 59
@@ -1156,6 +1159,14 @@ DECISION TheMergedSaveDisplayNameComesFromTheCaller
 			+ "saveDisplayName}"
 		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
 			+ "use the saveDisplayName parameter and take save configuration from save A"
+	SPEC "every @ of that value, the section separator of the save format, is replaced by _"
+		IMPL "packages/core-mapping/src/application/sanitizeSaveDisplayName.ts::replaceAll"
+		ENFORCED_BY "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should give the"
+			+ "merged save that display name with each separator replaced"
+	REJECTED "Refusing a folder name holding @: the merge would fail on a name the save format can"
+		+ "carry once replaced"
+	REJECTED "Replacing @ in cli-merge alone: any other caller of the merge would still write a"
+		+ "save split into one section too many"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "Neither save is read, so the obligation settles no disagreement between saves and is"
 		+ "not a merge rule"

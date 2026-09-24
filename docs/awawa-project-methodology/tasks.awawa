@@ -1334,15 +1334,23 @@ TASK FIX101
 TASK CHORE102
 	TITLE "review the accepted limitations, lifting those the user picks in the same pull request"
 		+ "or giving them a draft task"
-	STATUS todo
+	STATUS implemented
 	SPEC "the pull request body carries one row per active LIMITATION that no other task of the"
 		+ "wave retires or frames: whether its UNTIL condition is already met, verified by a"
 		+ "command, and what lifting it costs"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::Picked in the review of the accepted"
+			+ "limitations, CHORE102"
 	SPEC "each limitation the user picks is lifted in the same pull request and archived with"
 		+ "ARCHIVED_ON, or gets a draft TASK its UNTIL names, as the user rules limitation by"
 		+ "limitation"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::ARCHIVED_ON 2026-09-24"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FIX113"
 	SPEC "the review leaves the pull request body once the picked changes are in"
+		IMPL "packages/core-mapping/src/application/sanitizeSaveDisplayName.ts::replaceAll"
+		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::<Icon"
+			+ "content={annotation().icon}/>"
 	AFTER @TASK.CHORE109
+	DELIVERED_BY 152
 	WAVE 8
 	RATIONALE "Nine limitations were active on 2026-09-23, each accepted when it was written and"
 		+ "none reread since. FIX101 retires TheContentSecurityPolicyAllowsInlineScript and"
@@ -1448,6 +1456,7 @@ TASK FIX104
 		REF @LIMITATION.TheContentSecurityPolicyAllowsEval
 	SOURCE "Measured while implementing FIX101 on 2026-09-23"
 		PR 134
+	WAVE 8
 
 TASK DOCS108
 	TITLE "the README shows the state of the project in badges under its title"
@@ -1534,6 +1543,36 @@ TASK FIX110
 	SOURCE "Ruled with the user on 2026-09-23: restrict the accepted URL rather than dismiss the"
 		+ "alert"
 		PR 139
+
+TASK FIX111
+	TITLE "every section name shown to a user is the LABEL of its SECTION"
+	STATUS draft
+	SPEC "the section named in the location of a validation message equals the LABEL of the SECTION"
+		+ "entity of that index"
+	SPEC "a SECTION LABEL the code does not follow fails a check of the repository"
+	SOURCE "Picked in the review of the accepted limitations, CHORE102"
+		REF @LIMITATION.SectionLabelsDivergeFromTheFormatDocument
+
+TASK CHORE112
+	TITLE "the fallow audit and health report cover ui-save-manager"
+	STATUS draft
+	SPEC "fallow.toml ignores no file of packages/ui-save-manager/src"
+	SPEC "bun run audit:quality exits 0 with ui-save-manager in the fallow perimeter"
+	RATIONALE "Measured on 2026-09-24 with ui-save-manager brought in, app.tsx and routes/*.tsx as"
+		+ "entries: no dead code, five more clone groups (e2e scenarios and buttons.css), one"
+		+ "function above the complexity threshold in routes/index.tsx"
+	SOURCE "Picked in the review of the accepted limitations, CHORE102"
+		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
+
+TASK FIX113
+	TITLE "the production breakdown by machine counts the boost of optimizers once"
+	STATUS draft
+	SPEC "with energy fuses in play, the totalLevel of the production breakdown entries sums to the"
+		+ "production of the planet"
+	SPEC "the productionRatio shares of the production breakdown sum to 1"
+	SPEC "the boost of an optimizer is counted once in the production of the planet"
+	SOURCE "Picked in the review of the accepted limitations, CHORE102"
+		REF @LIMITATION.TheMachineBreakdownIgnoresOptimizerBoost
 
 TASK CHORE105
 	TITLE "measure the unit test coverage and fail the CI when it drops"

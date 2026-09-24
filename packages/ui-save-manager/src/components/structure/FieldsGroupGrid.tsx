@@ -1,8 +1,8 @@
-import {For} from "solid-js";
+import {For, JSX} from "solid-js";
 import FieldsGroup, {ColumnViewModel} from "./FieldsGroup";
 
 interface FieldsGroupGridProps<T> {
-  title: string;
+  title: JSX.Element;
   items: T[];
   itemLabel: (item: T) => string;
   columns: (item: T) => ColumnViewModel[];

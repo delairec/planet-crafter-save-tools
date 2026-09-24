@@ -553,7 +553,7 @@ describe('Merge CLI', () => {
     });
   });
 
-  describe('When the merged save does not pass validation', () => {
+  describe('When the folder name holds the section separator of the save format', () => {
     const FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR = 'Alpha@Beta';
     const MERGED_SAVE_PATH = `${OUTPUT_DIR}/${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}/Standard-1-Standard-2-merged.json`;
     const SAVE_A_PATH = `input/${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}/${SAVE_A_FILENAME}`;
@@ -565,24 +565,23 @@ describe('Merge CLI', () => {
       serveSaves({[SAVE_A_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_PATH]: FAKE_SAVE_STRING_B});
     });
 
-    it('should name the folder and what the save it wrote does not pass', async () => {
+    it('should name the merged save after the folder, each separator replaced', async () => {
       // Act
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ Folder "${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}" was merged, but the save file written does not pass validation:`);
-      expect(consoleErrorSpy).toHaveBeenCalledWith('  [Save configuration (section 8), entry 0] Invalid JSON: {"saveDisplayName":"Alpha');
+      expect(writeTextFile.mock.calls[0][1]).toContain('"saveDisplayName":"Alpha_Beta"');
     });
 
-    it('should blame neither save A nor save B for a defect the merge created', async () => {
+    it('should write a merged save that passes validation', async () => {
       // Act
       await main();
 
       // Assert
-      expect(consoleErrorSpy).not.toHaveBeenCalledWith(`✖ Folder "${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}" contains an invalid save file:`);
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(`✖ Folder "${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}" was merged, but the save file written does not pass validation:`);
     });
 
-    it('should still write the merged save and announce it on stdout', async () => {
+    it('should write the merged save under the folder name and announce it on stdout', async () => {
       // Act
       await main();
 
@@ -591,7 +590,7 @@ describe('Merge CLI', () => {
       expect(consoleLogSpy).toHaveBeenCalledWith(MERGED_SAVE_PATH);
     });
 
-    it('should still exit successfully, the merged save being there to be used', async () => {
+    it('should exit successfully', async () => {
       // Act
       await main();
 

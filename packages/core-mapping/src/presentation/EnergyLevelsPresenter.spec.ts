@@ -45,11 +45,13 @@ describe('EnergyLevelsPresenter', () => {
               },
               {
                 header: 'Consumption',
-                values: ['0' + `${nbsp}kW 🚧 Work In Progress`]
+                values: ['0' + `${nbsp}kW`],
+                annotation: {icon: '🚧', label: 'Work In Progress'}
               },
               {
                 header: 'Available',
-                values: ['80,000' + `${nbsp}kW 🚧 Work In Progress`]
+                values: ['80,000' + `${nbsp}kW`],
+                annotation: {icon: '🚧', label: 'Work In Progress'}
               }
             ]
           },

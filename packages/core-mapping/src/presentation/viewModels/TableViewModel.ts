@@ -5,4 +5,10 @@ export interface TableViewModel {
 interface ColumnViewModel {
   header: string;
   values: string[];
+  annotation?: ColumnAnnotationViewModel;
+}
+
+interface ColumnAnnotationViewModel {
+  icon: string;
+  label: string;
 }
