@@ -114,6 +114,21 @@ test.describe('Save merge', () => {
       await expect(page.getByText('To write the legacy format instead, tick "Write the legacy format of 1.618" and merge again.')).toBeVisible();
       await expect(page.getByRole('list').last()).not.toContainText('merged-save-format');
     });
+
+    test('should show the merge report and the way to keep the legacy format above the success message', async ({page}) => {
+      // Arrange
+      await chooseTheTwoSaves(page, legacySaveFixturePath, saveAFixturePath);
+
+      // Act
+      await mergeAndRevealTheMergeReport(page);
+
+      // Assert
+      const successMessageTop = (await page.getByText('Merge successful!').boundingBox())!.y;
+      const mergeWarningsTitleTop = (await page.getByText('Merge warnings').boundingBox())!.y;
+      const keepLegacyFormatReminderTop = (await page.getByText('To write the legacy format instead, tick "Write the legacy format of 1.618" and merge again.').boundingBox())!.y;
+      expect(mergeWarningsTitleTop).toBeLessThan(successMessageTop);
+      expect(keepLegacyFormatReminderTop).toBeLessThan(successMessageTop);
+    });
   });
 
   test.describe('When a legacy save is merged with a current one, the legacy format being asked for', () => {

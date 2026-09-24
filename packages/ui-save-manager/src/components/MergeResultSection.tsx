@@ -54,11 +54,6 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
           </Show>
 
           <Show when={result().status === 'success'}>
-            <p class="text-color-success">{mergeResultSectionSuccessMessage}</p>
-            <p>{mergeResultSectionFileCreatedMessage} <code>{result().fileName}</code> <a class="button-link"
-                                                                                          href={downloadUrl() ?? undefined}
-                                                                                          download={result().fileName}>{mergeResultSectionDownloadLinkLabel}</a>
-            </p>
             <Show when={result().mergeWarnings.length > 0}>
               <ValidationMessagesList title={mergeResultSectionMergeWarningsTitle} severity="warning"
                                       messages={result().mergeWarnings}/>
@@ -66,6 +61,11 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
             <Show when={result().legacyFormatCouldBeKept}>
               <p>{mergeResultSectionKeepLegacyFormatReminder}</p>
             </Show>
+            <p class="text-color-success">{mergeResultSectionSuccessMessage}</p>
+            <p>{mergeResultSectionFileCreatedMessage} <code>{result().fileName}</code> <a class="button-link"
+                                                                                          href={downloadUrl() ?? undefined}
+                                                                                          download={result().fileName}>{mergeResultSectionDownloadLinkLabel}</a>
+            </p>
             <Show when={result().mergeErrors.length > 0}>
               <ValidationMessagesList title={mergeResultSectionMergedSaveInvalidMessage} severity="danger"
                                       messages={result().mergeErrors}/>
