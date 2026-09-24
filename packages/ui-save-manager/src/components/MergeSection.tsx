@@ -65,9 +65,10 @@ export default function MergeSection(props: MergeSectionProps) {
         <p><label>{mergeSectionSaveBLabel}<input type="file" accept="application/json"
                                                  onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/></label>
         </p>
+        <p><label><input type="checkbox" checked={preferLegacyFormat()}
+                         onChange={(event) => setPreferLegacyFormat(event.currentTarget.checked)}/>{mergeSectionPreferLegacyFormatLabel}</label>
+        </p>
       </div>
-      <label><input type="checkbox" checked={preferLegacyFormat()}
-                    onChange={(event) => setPreferLegacyFormat(event.currentTarget.checked)}/>{mergeSectionPreferLegacyFormatLabel}</label>
       <button onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
       <Show when={isMerging()}>
         <Spinner/>
