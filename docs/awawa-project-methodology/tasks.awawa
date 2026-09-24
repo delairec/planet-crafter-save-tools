@@ -1413,3 +1413,24 @@ TASK CHORE109
 		+ "place rather than a choice; a defect of an external tool stays a DECISION with UNTIL,"
 		+ "only a defect of this project is a LIMITATION"
 	SOURCE "Request of the user on 2026-09-23"
+TASK FIX110
+	TITLE "the site check fetches only the production site or one of its deploy previews"
+	STATUS implemented
+	SPEC "check:site refuses, with an error and a non-zero exit before any request, a --url= that"
+		+ "is not https, carries userinfo, a port, a path, a query or a fragment, or names a host"
+		+ "other than planet-crafter-save-manager.netlify.app or"
+		+ "deploy-preview-<N>--planet-crafter-save-manager.netlify.app"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.ts::resolveCheckedSiteUrl"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.spec.ts"
+		IMPL "packages/ui-save-manager/scripts/check-site.ts::is refused"
+	SPEC "the CodeQL analysis of the pull request reports no js/request-forgery alert on"
+		+ "packages/ui-save-manager/scripts/check-site.ts"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.ts::encodeURIComponent"
+	AFTER @TASK.FIX101
+	DELIVERED_BY 139
+	WAVE 8
+	RATIONALE "CodeQL alert #2 (js/request-forgery, critical) was raised on PR 132 at cdeb1ef: the"
+		+ "URL fetched by check-site.ts came from the --url= argument unchecked"
+	SOURCE "Ruled with the user on 2026-09-23: restrict the accepted URL rather than dismiss the"
+		+ "alert"
+		PR 139
