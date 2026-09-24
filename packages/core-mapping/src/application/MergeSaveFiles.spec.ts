@@ -177,7 +177,7 @@ describe('MergeSaveFiles', () => {
         }));
       });
 
-      it('should report the legacy format written and no section dropped', async () => {
+      it('should report the legacy format written, no section dropped, and the content the earlier release may not know', async () => {
         // Arrange
         const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
 
@@ -186,7 +186,10 @@ describe('MergeSaveFiles', () => {
 
         // Assert
         expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({
-          mergeWarnings: [{code: 'merged-save-format', formatRelease: '1.618'}]
+          mergeWarnings: [
+            {code: 'merged-save-format', formatRelease: '1.618'},
+            {code: 'merged-save-content-newer-than-format', formatRelease: '1.618', contentRelease: '2.004'}
+          ]
         }));
       });
 

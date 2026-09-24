@@ -1369,6 +1369,12 @@ DECISION AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 		+ "that option was not applied"
 		IMPL "packages/cli-merge/cli/renderMergeCliOutput.js::export function renderMergeReport"
 		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::legacyFormatCouldBeKept"
+	SPEC "a merge that writes the earlier of the two formats carries the content of the later save"
+		+ "unchanged and reports that a game of the earlier release may not know part of it and"
+		+ "drop it on load"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::merged-save-content-newer-than-format"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::the content the earlier"
+			+ "release may not know"
 	SPEC "the Terrain Layers section is written whenever the format written carries one, taken from"
 		+ "save A when both saves carry it and from the save that carries it otherwise; the format"
 		+ "written carrying none, it is dropped and the merge reports it"
@@ -1381,6 +1387,8 @@ DECISION AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 		+ "merged would declare 2.004, a patch level lost on the ordinary merge"
 	REJECTED "Keeping the Terrain Layers section only when both saves carry it: a legacy merge"
 		+ "asked for would lose the layers of its only legacy save"
+	REJECTED "Removing from a legacy merge what the earlier release does not know: no table of the"
+		+ "objects each release knows exists, and the tool would drop what the game may keep"
 	REJECTED "Refusing a merge of two different formats: it blocks the use the tool exists for,"
 		+ "folding an old save into a current one"
 	REJECTED "Writing the format of save A without asking: the output is then not readable by the"
@@ -1394,6 +1402,9 @@ DECISION AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 		+ "tells a user who wanted the other that the option exists"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+	SOURCE "Owner review, 2026-09-24: asked whether a legacy merge of a current save drops what the"
+		+ "earlier release does not know, and whether it warns of that loss"
+		PR 127
 
 DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
 	SPEC "a world object or an item whose group id a release deprecated is read, validated and"

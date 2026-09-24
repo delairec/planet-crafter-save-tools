@@ -1,6 +1,7 @@
 import {MergeWarning} from "../application/responses/MergeWarning";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {
+  formatMergedSaveContentNewerThanFormatWarningMessage,
   formatMergedSaveFormatWarningMessage,
   formatMergedSaveSectionDroppedWarningMessage,
   unknownMergeWarningMessage
@@ -12,7 +13,8 @@ type MergeWarningMessageFormatters = {
 
 const messageFormattersByWarningCode: MergeWarningMessageFormatters = {
   'merged-save-format': formatMergedSaveFormatWarningMessage,
-  'merged-save-section-dropped': formatMergedSaveSectionDroppedWarningMessage
+  'merged-save-section-dropped': formatMergedSaveSectionDroppedWarningMessage,
+  'merged-save-content-newer-than-format': formatMergedSaveContentNewerThanFormatWarningMessage
 };
 
 export function formatMergeWarning(warning: MergeWarning): SaveValidationMessageViewModel {

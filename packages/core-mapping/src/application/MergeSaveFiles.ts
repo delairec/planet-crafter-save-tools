@@ -1,3 +1,4 @@
+import {compareGameReleases} from "shared-save-processing/gameReleases.js";
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
 import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
@@ -62,10 +63,16 @@ function reportMergedSaveFormat(sectionsA: SaveSections, sectionsB: SaveSections
     return [];
   }
 
-  const formatWarning: MergeWarning = {code: 'merged-save-format', formatRelease: mergedSave.formatRelease};
-  if (mergedSave.terrainLayers !== undefined) {
-    return [formatWarning];
+  const writtenRelease = mergedSave.formatRelease;
+  const otherRelease = sectionsA.formatRelease === writtenRelease ? sectionsB.formatRelease : sectionsA.formatRelease;
+  const warnings: MergeWarning[] = [{code: 'merged-save-format', formatRelease: writtenRelease}];
+
+  if (mergedSave.terrainLayers === undefined) {
+    warnings.push({code: 'merged-save-section-dropped', section: 'terrainLayers'});
+  }
+  if (compareGameReleases(writtenRelease, otherRelease) < 0) {
+    warnings.push({code: 'merged-save-content-newer-than-format', formatRelease: writtenRelease, contentRelease: otherRelease});
   }
 
-  return [formatWarning, {code: 'merged-save-section-dropped', section: 'terrainLayers'}];
+  return warnings;
 }

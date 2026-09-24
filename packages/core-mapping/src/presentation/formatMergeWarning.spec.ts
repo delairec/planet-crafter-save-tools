@@ -31,6 +31,19 @@ describe('formatMergeWarning', () => {
     });
   });
 
+  describe('When the merge reports content written by a release later than the format written', () => {
+    it('should name both releases and say that the game may drop what the earlier release does not know', () => {
+      // Act
+      const warning = formatMergeWarning({code: 'merged-save-content-newer-than-format', formatRelease: '1.618', contentRelease: '2.004'});
+
+      // Assert
+      expect<SaveValidationMessageViewModel>(warning).toEqual({
+        message: 'The merged save carries content of a save written in the format of release 2.004 or a later one; the tool dropped none of it, but a game of release 1.618 may not know every object, item or planet it names and may drop them when it loads the save.',
+        location: null
+      });
+    });
+  });
+
   describe('When the warning code is unknown', () => {
     it('should return a generic sentence rather than the code', () => {
       // Arrange
