@@ -1,4 +1,5 @@
-import {Accessor, For} from "solid-js";
+import {Accessor, For, Show} from "solid-js";
+import Icon from "~/components/Icon";
 import {TableViewModel} from "core-mapping/presentation/viewModels/TableViewModel";
 
 export type ColumnViewModel = TableViewModel['columns'][number];
@@ -17,7 +18,13 @@ export default function FieldsGroup(props: FieldsGroupProps) {
             <div class="label">{column.header}</div>
             <For each={column.values}>
               {(value) => (
-                <div class="value">{value}</div>
+                <div class="value">
+                  <Show when={column.annotation} fallback={value}>
+                    {(annotation) => (
+                      <>{value} <Icon content={annotation().icon}/> {annotation().label}</>
+                    )}
+                  </Show>
+                </div>
               )}
             </For>
           </div>
