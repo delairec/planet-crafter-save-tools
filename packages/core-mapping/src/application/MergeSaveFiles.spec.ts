@@ -150,31 +150,33 @@ describe('MergeSaveFiles', () => {
       }));
     });
 
-    it('should hand the serializer the sections in the legacy format when the merge asks for it', async () => {
-      // Arrange
-      const {useCase, serializer} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
+    describe('When the merge asks for the legacy format', () => {
+      it('should hand the serializer the sections in the legacy format', async () => {
+        // Arrange
+        const {useCase, serializer} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
 
-      // Act
-      await useCase.execute({...TWO_VALID_SAVES, preferLegacyFormat: true});
+        // Act
+        await useCase.execute({...TWO_VALID_SAVES, preferLegacyFormat: true});
 
-      // Assert
-      expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
-        formatRelease: '1.618',
-        terrainLayers: [createTerrainLayer()]
-      }));
-    });
+        // Assert
+        expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
+          formatRelease: '1.618',
+          terrainLayers: [createTerrainLayer()]
+        }));
+      });
 
-    it('should report the legacy format written and no section dropped when the merge asks for it', async () => {
-      // Arrange
-      const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
+      it('should report the legacy format written and no section dropped', async () => {
+        // Arrange
+        const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
 
-      // Act
-      await useCase.execute({...TWO_VALID_SAVES, preferLegacyFormat: true});
+        // Act
+        await useCase.execute({...TWO_VALID_SAVES, preferLegacyFormat: true});
 
-      // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({
-        mergeWarnings: [{code: 'merged-save-format', formatRelease: '1.618'}]
-      }));
+        // Assert
+        expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({
+          mergeWarnings: [{code: 'merged-save-format', formatRelease: '1.618'}]
+        }));
+      });
     });
   });
 
@@ -226,46 +228,50 @@ describe('MergeSaveFiles', () => {
   });
 
   describe('When validation reports that a save was written by 1.618 or earlier', () => {
-    it('should present the warnings of each save on a successful merge', async () => {
-      // Arrange
-      const {useCase, presenter} = createUseCase({
-        validate: validatorAnswering({'Save-A.json': acceptedWith({code: 'legacy-save-format'})})
+    describe('When the merge succeeds', () => {
+      it('should present the warnings of each save', async () => {
+        // Arrange
+        const {useCase, presenter} = createUseCase({
+          validate: validatorAnswering({'Save-A.json': acceptedWith({code: 'legacy-save-format'})})
+        });
+
+        // Act
+        await useCase.execute(TWO_VALID_SAVES);
+
+        // Assert
+        expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
+          fileName: 'Save-A-Save-B-merged.json',
+          content: 'merged content',
+          mergeErrors: noErrorsFromTheMerge,
+          mergeWarnings: noMergeWarnings,
+          saveAWarnings: [{code: 'legacy-save-format'}],
+          saveBWarnings: []
+        } satisfies MergeSucceededResponse);
       });
-
-      // Act
-      await useCase.execute(TWO_VALID_SAVES);
-
-      // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
-        fileName: 'Save-A-Save-B-merged.json',
-        content: 'merged content',
-        mergeErrors: noErrorsFromTheMerge,
-        mergeWarnings: noMergeWarnings,
-        saveAWarnings: [{code: 'legacy-save-format'}],
-        saveBWarnings: []
-      } satisfies MergeSucceededResponse);
     });
 
-    it('should present the warnings of each save when the merge is rejected', async () => {
-      // Arrange
-      const invalidJsonError = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentB'};
-      const {useCase, presenter} = createUseCase({
-        validate: validatorAnswering({
-          'Save-A.json': acceptedWith({code: 'legacy-save-format'}),
-          'Save-B.json': rejectedWith(invalidJsonError)
-        })
+    describe('When the merge is rejected', () => {
+      it('should present the warnings of each save', async () => {
+        // Arrange
+        const invalidJsonError = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentB'};
+        const {useCase, presenter} = createUseCase({
+          validate: validatorAnswering({
+            'Save-A.json': acceptedWith({code: 'legacy-save-format'}),
+            'Save-B.json': rejectedWith(invalidJsonError)
+          })
+        });
+
+        // Act
+        await useCase.execute(TWO_VALID_SAVES);
+
+        // Assert
+        expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
+          saveAErrors: [],
+          saveBErrors: [invalidJsonError],
+          saveAWarnings: [{code: 'legacy-save-format'}],
+          saveBWarnings: []
+        } satisfies SaveFilesInvalidResponse);
       });
-
-      // Act
-      await useCase.execute(TWO_VALID_SAVES);
-
-      // Assert
-      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
-        saveAErrors: [],
-        saveBErrors: [invalidJsonError],
-        saveAWarnings: [{code: 'legacy-save-format'}],
-        saveBWarnings: []
-      } satisfies SaveFilesInvalidResponse);
     });
   });
 

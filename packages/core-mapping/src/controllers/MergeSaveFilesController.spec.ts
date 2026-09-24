@@ -63,18 +63,20 @@ describe('MergeSaveFilesController', () => {
       expect<SaveWarning[]>(warnings).toEqual([]);
     });
 
-    it('should write the format of 1.618 and declare a version of that format when the legacy format is asked for', async () => {
-      // Arrange
-      const contentA = createLegacyFakeSaveContent();
-      const contentB = createFakeSaveContent();
+    describe('When the legacy format is asked for', () => {
+      it('should write the format of 1.618 and declare a version of that format', async () => {
+        // Arrange
+        const contentA = createLegacyFakeSaveContent();
+        const contentB = createFakeSaveContent();
 
-      // Act
-      const viewModel = await MergeSaveFilesController.mergeSaveFiles({fileNameA: 'Legacy.json', contentA, fileNameB: 'Standard-2.json', contentB, preferLegacyFormat: true});
+        // Act
+        const viewModel = await MergeSaveFilesController.mergeSaveFiles({fileNameA: 'Legacy.json', contentA, fileNameB: 'Standard-2.json', contentB, preferLegacyFormat: true});
 
-      // Assert
-      const {formatRelease, warnings} = parseSaveSections(viewModel.content);
-      expect(formatRelease).toBe('1.618');
-      expect<SaveWarning[]>(warnings).toEqual([{code: 'legacy-save-format'}]);
+        // Assert
+        const {formatRelease, warnings} = parseSaveSections(viewModel.content);
+        expect(formatRelease).toBe('1.618');
+        expect<SaveWarning[]>(warnings).toEqual([{code: 'legacy-save-format'}]);
+      });
     });
   });
 });
