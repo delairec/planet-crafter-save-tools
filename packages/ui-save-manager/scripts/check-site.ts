@@ -1,9 +1,8 @@
 import {readSiteHeaders} from '../siteHeaders';
 import {removeScriptNonces} from '../src/lib/scriptNonce';
+import {productionSiteUrl, resolveCheckedSiteUrl} from './checkedSiteUrl.ts';
 
 const checkedHeaderNames = ['Content-Security-Policy', 'Referrer-Policy', 'Permissions-Policy'];
-
-const productionSiteUrl = 'https://planet-crafter-save-manager.netlify.app/';
 
 const urlFlag = '--url=';
 
@@ -27,7 +26,13 @@ async function findSiteDefects(siteUrl: string): Promise<string[]> {
   });
 }
 
-const siteUrl = process.argv.find((argument) => argument.startsWith(urlFlag))?.slice(urlFlag.length) ?? productionSiteUrl;
+const requestedUrl = process.argv.find((argument) => argument.startsWith(urlFlag))?.slice(urlFlag.length) ?? productionSiteUrl;
+const siteUrl = resolveCheckedSiteUrl(requestedUrl);
+
+if (siteUrl === undefined) {
+  console.error(`${requestedUrl} is refused: ${urlFlag} accepts ${productionSiteUrl} or one of its deploy previews, https://deploy-preview-<number>--planet-crafter-save-manager.netlify.app/.`);
+  process.exit(1);
+}
 
 const defects = await findSiteDefects(siteUrl);
 
