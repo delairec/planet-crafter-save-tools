@@ -2039,3 +2039,33 @@ TASK FEAT114
 	SOURCE "Owner review, 2026-09-24: the output of the two commands is hard to read, a draft task"
 		+ "with no wave"
 		PR 127
+
+TASK FEAT115
+	TITLE "a README badge shows the version production serves"
+	STATUS todo
+	SPEC "the build of ui-save-manager emits a static version.json at the site root, carrying the"
+		+ "package version and the commit Netlify built from its COMMIT_REF, without writing into"
+		+ "the versioned public directory"
+	SPEC "a build without COMMIT_REF succeeds and writes a null commit into version.json"
+	SPEC "a README badge labelled production shows the version alone, read from the production"
+		+ "version.json through the shields.io dynamic JSON endpoint"
+	SPEC "the Netlify status badge stays in the README, next to the production badge, with the alt"
+		+ "text Netlify build of master"
+	SPEC "the site check prints the version and the commit production serves, names the latest"
+		+ "ui-save-manager-v* tag when production does not serve it, and fails on neither"
+	WAVE 8
+	RATIONALE "With publishing locked, Netlify's status badge and its 'Deployed' label report the"
+		+ "build of master, not what production serves: after PR 127 both read as deployed while"
+		+ "production still served the release before it. The image of the Netlify badge cannot be"
+		+ "relabelled, hence its alt text and its place next to the production badge. Production is"
+		+ "always the commit of a release tag, so the badge shows the version and the site check"
+		+ "compares with the latest tag, not with master, which also moves on commits that leave"
+		+ "the web UI untouched. An unpublished tag is the owner's call, so it is reported and"
+		+ "never fails a run. version.json is read under the production root check:site already"
+		+ "rebuilds from constants; the badge reads an error until the release carrying this task"
+		+ "is published"
+		REF @DECISION.ProductionIsPublishedByHandFromAReleaseTag
+		REF @LIMITATION.TheSiteCheckCannotTellWhichCommitProductionServes
+		REF @DECISION.TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
+	SOURCE "Asked by the owner on 2026-09-24, after PR 127 was built but not published"
+	SOURCE "Refinement with the user on 2026-09-24"
