@@ -1786,6 +1786,7 @@ DECISION ADependencyVersionIsHeldBackForSevenDays
 	APPLIES_TO_TASK @TASK.CHORE117
 	SOURCE "Owner request, security review of 2026-09-24"
 		PR 161
+		PR 162
 
 DECISION EveryActionIsPinnedOnACommitSha
 	SPEC "every uses: of .github/workflows names a full 40-character commit SHA followed by a"
