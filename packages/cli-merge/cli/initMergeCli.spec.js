@@ -17,10 +17,19 @@ import {
   INPUT_SUBFOLDER_ALPHA,
   OUTPUT_DIR
 } from '../testing/fakePaths.js';
+import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 
 const NO_INPUT_FOLDERS = [];
 const SINGLE_SAVE_FILENAME = 'only-one.json';
 const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>]';
+const SAVE_CARRYING_DEPRECATED_GROUP_IDS = createFakeSaveContent({
+  worldObjects: [
+    createWorldObject({id: 79111656, gId: 'Phytoplankton2'}),
+    createWorldObject({id: 79111657, gId: 'Phytoplankton3'})
+  ]
+});
+const WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID = [createWorldObject({id: 15974863, gId: 'Phytoplankton1'})];
 
 describe('Merge CLI', () => {
   let consoleLogSpy;
@@ -538,6 +547,30 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('When one save of a folder carries group ids that game release 2.102 deprecated', () => {
+    it.each([
+      ['1.618', createLegacyFakeSaveContent({worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID})],
+      ['2.004', createFakeSaveContent({worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID})],
+      ['2.102', createFakeSaveContent({
+        saveConfiguration: createSaveConfiguration({version: '2.102'}),
+        worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID
+      })]
+    ])('should write those group ids unchanged when the other save declares release %s', async (_otherSaveRelease, otherSave) => {
+      // Arrange
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      serveSaves({[SAVE_A_INPUT_PATH]: SAVE_CARRYING_DEPRECATED_GROUP_IDS, [SAVE_B_INPUT_PATH]: otherSave});
+
+      // Act
+      await main();
+
+      // Assert
+      const writtenContent = writeTextFile.mock.calls[0][1];
+      expect(writtenContent).toContain('{"id":79111656,"gId":"Phytoplankton2"}');
+      expect(writtenContent).toContain('{"id":79111657,"gId":"Phytoplankton3"}');
     });
   });
 });

@@ -2,6 +2,7 @@ import {describe, expect, it} from 'bun:test';
 import {SaveValidatorService} from './SaveValidatorService';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 
 describe('SaveValidatorService', () => {
 
@@ -66,6 +67,23 @@ describe('SaveValidatorService', () => {
 
       // Assert
       expect(result).toEqual({isValid: true, errors: [], warnings: [{code: 'legacy-save-format'}]});
+    });
+  });
+
+  describe('When the save carries a group id that game release 2.102 deprecated', () => {
+    it.each(['Phytoplankton2', 'Phytoplankton3'])('should return a valid result with no warning for %s', (deprecatedGroupId) => {
+      // Arrange
+      const service = new SaveValidatorService();
+      const content = createFakeSaveContent({
+        saveConfiguration: createSaveConfiguration({version: '2.102'}),
+        worldObjects: [createWorldObject({id: 79111656, gId: deprecatedGroupId})]
+      });
+
+      // Act
+      const result = service.validate('Save-A.json', content);
+
+      // Assert
+      expect(result).toEqual({isValid: true, errors: [], warnings: []});
     });
   });
 });
