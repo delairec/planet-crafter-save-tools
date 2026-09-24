@@ -4,11 +4,16 @@
 import {describe, it, expect} from 'bun:test';
 import {serializeSave, UnknownFormatReleaseError} from './serializeSave.js';
 import {
+  GLOBAL_METADATA_SECTION_INDEX,
+  INVENTORIES_SECTION_INDEX,
   LEGACY_SPLIT_PARTS_COUNT,
   LEGACY_TERRAIN_LAYERS_SECTION_INDEX,
+  LEGACY_WORLD_EVENTS_SECTION_INDEX,
+  MAILBOX_MESSAGES_SECTION_INDEX,
   PLAYERS_SECTION_INDEX,
   SAVE_CONFIGURATION_SECTION_INDEX,
   STATISTICS_SECTION_INDEX,
+  STORY_EVENTS_SECTION_INDEX,
   TERRAFORMATION_LEVELS_SECTION_INDEX,
   WORLD_EVENTS_SECTION_INDEX,
   WORLD_OBJECTS_SECTION_INDEX
@@ -24,22 +29,32 @@ import {parseSaveSections} from './parseSaveSections.js';
  */
 function readBackSave(save) {
   const {sections, formatRelease} = parseSaveSections(save);
-  const [metadata, terraformationLevels, players, worldObjects, inventories, statistics, mailboxes, storyEvents, saveConfigurations] = sections;
   const sectionsBeforeTerrainLayers = {
     formatRelease: String(formatRelease),
-    metadata, terraformationLevels, players, worldObjects: [...worldObjects()], inventories, statistics, mailboxes,
-    storyEvents, saveConfigurations
+    metadata: sections[GLOBAL_METADATA_SECTION_INDEX],
+    terraformationLevels: sections[TERRAFORMATION_LEVELS_SECTION_INDEX],
+    players: sections[PLAYERS_SECTION_INDEX],
+    worldObjects: [...sections[WORLD_OBJECTS_SECTION_INDEX]()],
+    inventories: sections[INVENTORIES_SECTION_INDEX],
+    statistics: sections[STATISTICS_SECTION_INDEX],
+    mailboxes: sections[MAILBOX_MESSAGES_SECTION_INDEX],
+    storyEvents: sections[STORY_EVENTS_SECTION_INDEX],
+    saveConfigurations: sections[SAVE_CONFIGURATION_SECTION_INDEX]
   };
 
   if (sections.length === LEGACY_SPLIT_PARTS_COUNT) {
-    const [, , , , , , , , , terrainLayers, worldEvents] = /** @type {LegacyFormatSections} */ (sections);
+    const legacySections = /** @type {LegacyFormatSections} */ (sections);
 
-    return {...sectionsBeforeTerrainLayers, terrainLayers, worldEvents};
+    return {
+      ...sectionsBeforeTerrainLayers,
+      terrainLayers: legacySections[LEGACY_TERRAIN_LAYERS_SECTION_INDEX],
+      worldEvents: legacySections[LEGACY_WORLD_EVENTS_SECTION_INDEX]
+    };
   }
 
-  const [, , , , , , , , , worldEvents] = /** @type {CurrentFormatSections} */ (sections);
+  const currentSections = /** @type {CurrentFormatSections} */ (sections);
 
-  return {...sectionsBeforeTerrainLayers, worldEvents};
+  return {...sectionsBeforeTerrainLayers, worldEvents: currentSections[WORLD_EVENTS_SECTION_INDEX]};
 }
 
 describe('serializeSave', () => {

@@ -582,10 +582,13 @@ DECISION ASectionIndexIsNeverHardCoded
 		+ "what it pins"
 	REJECTED "Renaming sections to parts and data sections: section is the word of the public"
 		+ "vocabulary"
+	REJECTED "Destructuring the sections by position, holes included: each position is a section"
+		+ "index written without its name"
 	RESTS_ON @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	SOURCE "Owner ruling in review"
 		PR 47
 		PR 82
+		PR 141
 
 DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 	UNTIL "fallow follows the @import tag"
