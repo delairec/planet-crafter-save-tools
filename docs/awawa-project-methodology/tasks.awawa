@@ -1501,15 +1501,21 @@ TASK CHORE98
 
 TASK CHORE99
 	TITLE "Close the three gaps of the check:contrast guard"
-	STATUS todo
+	STATUS implemented
 	SPEC "the guard reports a foreground declaration whose background the catalog does not cover,"
 		+ "even when the same token is catalogued for that stylesheet over another background"
+		IMPL "scripts/check-color-contrast.spec.ts::the background of that selector being"
+			+ "uncatalogued"
 	SPEC "the guard reports a foreground declaration whose color is written as a literal instead of"
 		+ "var(--token)"
+		IMPL "scripts/check-color-contrast.spec.ts::as naming no color token"
 	SPEC "the guard scans every stylesheet of packages/ui-save-manager/src,"
 		+ "packages/ui-save-manager/src/app.css included"
+		IMPL "scripts/check-color-contrast.spec.ts::app.css included"
 	SPEC ".text-color-inverted is gone from packages/ui-save-manager/src/styles/typography.css and"
 		+ "check:guards passes"
+		IMPL "packages/ui-save-manager/src/styles/typography.css"
+		IMPL "package.json::check:contrast"
 	RATIONALE "The catalog of @DECISION.ColorTokenPairsMeetWcagAaByCatalog is the authority on the"
 		+ "pairs checked, and findUncataloguedForegroundDeclarations keys its coverage on the"
 		+ "(token, file) pair, so a second declaration of a token already catalogued for that"
@@ -1529,3 +1535,4 @@ TASK CHORE99
 	SOURCE "Owner ruling, 2026-09-23, refining CHORE99: one criterion per gap, and the dead class"
 		+ "is deleted instead of catalogued"
 		PR 127
+	DELIVERED_BY 150
