@@ -1,18 +1,29 @@
+<div align="center" width="100%">
+<div>
+  
 # Planet Crafter Save Tools
+</div>
+</div>
 
-[![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fplanet-crafter-save-manager.netlify.app%2Fversion.json&query=%24.version&label=production)](https://planet-crafter-save-manager.netlify.app/)
+<div align="center" width="100%">
+<div>
+
+  
+  [![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fplanet-crafter-save-manager.netlify.app%2Fversion.json&query=%24.version&label=production)](https://planet-crafter-save-manager.netlify.app/)
 [![Netlify build of master](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status?branch=master)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
-[![Quality](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml?query=branch%3Amaster)
+[![Site check](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml?query=branch%3Amaster)
+[![License: GPL-3.0](https://img.shields.io/github/license/delairec/planet-crafter-save-tools)](LICENSE)
+
+  [![Quality](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml?query=branch%3Amaster)
 [![Dependencies](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml?query=branch%3Amaster)
 [![Dependabot](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates?query=branch%3Amaster)
 [![UI tests](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml?query=branch%3Amaster)
-[![Site check](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml?query=branch%3Amaster)
 [![Release](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/release.yml/badge.svg)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/release.yml)
-[![License: GPL-3.0](https://img.shields.io/github/license/delairec/planet-crafter-save-tools)](LICENSE)
+</div>
+</div>
 
-> ❗ I’m not going to actively maintain this project (or only minimally). If you’d like to add improvements or fix bugs,
-> feel free to fork it
-> 😃
+> ❗ I’m not actively maintaining this project (or only minimally). If you’d like to add improvements or fix bugs,
+> feel free to fork it 😃
 
 ## Overview
 
