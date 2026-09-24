@@ -1369,3 +1369,21 @@ DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
 		+ "rewriting a value the game itself resolves would be a conversion nobody asked for"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 	SOURCE "Owner ruling, 2026-09-22, on the wave carried by integration/save-format-preserved"
+
+DECISION CoreMappingReadsTheCurrentFormatThroughOneSelection
+	SPEC "core-mapping reads the sections of a parsed save at the indexes of the format of 2.004,"
+		+ "through one selection that leaves out the Terrain Layers section of a 1.618 save"
+		IMPL "packages/core-mapping/src/infrastructure/selectCurrentFormatSections.ts::selectCurrentFormatSections"
+	SPEC "a merge writes the format of 2.004, whatever the formats of its two saves"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsSerializerService.ts"
+	REJECTED "Making core-mapping reach each section by the index the format of its save gives it"
+		+ "in the task that keeps every part in shared-save-processing: that is the scope of the"
+		+ "task that follows it"
+		REF @TASK.FEAT93
+	UNTIL @TASK.FEAT93
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT92
+	RATIONALE "shared-save-processing now returns every part a save carries; one selection keeps"
+		+ "core-mapping on the only format it reads until FEAT93 makes it format-aware, instead of"
+		+ "spreading index shifts through each caller"
+	SOURCE "Agent ruling while implementing FEAT92, 2026-09-24"
