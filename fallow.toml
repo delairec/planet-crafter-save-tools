@@ -46,6 +46,8 @@ ignoreDependencies = [
 # on a schema its importer cannot load. Every schema imported this way is listed, so one added
 # without its entry is reported rather than silently unresolved.
 ignoreUnresolvedImports = [
+    "shared-save-processing/schemas/legacy-save-file.schema.json",
+    "shared-save-processing/schemas/legacy-section9-terrain-layers.schema.json",
     "shared-save-processing/schemas/save-file.schema.json",
     "shared-save-processing/schemas/section0-player-progression.schema.json",
     "shared-save-processing/schemas/section1-terraformation-levels.schema.json",
