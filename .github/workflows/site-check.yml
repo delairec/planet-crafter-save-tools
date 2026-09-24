@@ -4,8 +4,9 @@ name: Site check
 # packages/ui-save-manager/public/_headers. Netlify builds master on each push but publishes a
 # deployment by hand, so no GitHub event follows a publication: run this workflow by hand once a
 # deployment is published. The weekly run catches a header lost outside a deployment. On demand,
-# `url` checks a deploy preview. It does not check which commit production serves: production
-# lags master by design, since a merge is published only when its owner chooses to.
+# `url` checks a deploy preview. It prints the version and the commit production serves and names
+# the latest ui-save-manager-v* tag when production does not serve it, but fails on neither:
+# production lags master by design, since a merge is published only when its owner chooses to.
 on:
   schedule:
     - cron: '17 6 * * 1'
