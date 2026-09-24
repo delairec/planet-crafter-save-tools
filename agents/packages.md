@@ -2,7 +2,7 @@
 
 Matrice de dépendances par préfixe (appliquée, voir les instructions `~/.ai`) : `core-*` → `shared-*`, `util-*` ;
 `util-*` → aucune ; `cli-*` → `shared-*`, `util-*`, `core-*` ; `ui-*` → `shared-*`, `util-*`, `core-*` ;
-`shared-*` → `util-*`. Elle est vérifiée par `bun run check:dependencies` et documentée dans le `README.md` public :
+`shared-*` → `util-*`. Elle est vérifiée par `bun run check:dependencies` et documentée dans `docs/wiki/architecture.md` :
 elle n'est pas recopiée dans le corpus.
 
 **Ce que fait chaque package est dans le corpus** : `awawa status PACKAGE .`, puis `awawa show @PACKAGE.<Nom> .`.

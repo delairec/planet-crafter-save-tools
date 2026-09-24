@@ -271,3 +271,19 @@ LIMITATION TheFallowAuditReadsNoFileOfUiSaveManager
 		PR 61
 	SOURCE "Rewritten from a decision by the review of CHORE109"
 		PR 145
+
+LIMITATION AVersionTagCreatesNoGitHubRelease
+	SYMPTOM "A pushed <tool>-v<version> tag creates no GitHub release: the Releases page of the"
+		+ "repository stays empty and a watcher of releases is never notified"
+	WORKAROUND "The CHANGELOG.md of each tool is its release note"
+	UNTIL "a tool is distributed as a file to download, or people outside the project ask to follow"
+		+ "its releases"
+	SEEN_IN ".github/workflows/release.yml::contents: read"
+	SEEN_IN "scripts/release/release-tag.ts::RELEASE_BRANCH"
+	RATIONALE "Nothing is downloaded today: the web UI is published by hand on Netlify and both"
+		+ "CLIs run from a clone. One release sets one tag per tool, so it would open up to three"
+		+ "GitHub releases carrying the changelog entries again, and the Latest mark would single"
+		+ "out one tool arbitrarily. Creating the release in the Release workflow after its verify"
+		+ "job is the intended fix, at the cost of granting that workflow contents: write"
+	SOURCE "Asked by the owner after the first release, 0.1.0, and kept as a limitation so the"
+		+ "question can be reopened when the need appears"

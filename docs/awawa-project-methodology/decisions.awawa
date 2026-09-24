@@ -945,7 +945,7 @@ DECISION MockIsolationIsAGlobalPreload
 		ENFORCED_BY "testIsolation.spec.ts"
 	SPEC "Tests run from a directory with no bunfig.toml load the preload through BUN_OPTIONS by"
 		+ "absolute path"
-		IMPL "README.md::BUN_OPTIONS=--preload=<absolute path>/testSetup.ts"
+		IMPL "docs/wiki/development.md::BUN_OPTIONS=--preload=<absolute path>/testSetup.ts"
 	RATIONALE "Bun resolves bunfig.toml from the working directory only, and a missing preload"
 		+ "fails silently"
 	SOURCE "Review of T9"
