@@ -2185,7 +2185,7 @@ TASK FEAT119
 
 TASK FEAT120
 	TITLE "a changelog entry lists only the feat, fix and breaking commits of the version"
-	STATUS draft
+	STATUS todo
 	SPEC "a changelog entry lists the commits whose subject has the type feat or fix, with or"
 		+ "without a scope, and every commit whose subject carries a ! whatever its type, in the"
 		+ "order bun run release reads them"
