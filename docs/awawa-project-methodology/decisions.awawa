@@ -1455,6 +1455,7 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 		+ "runs of master"
 		IMPL "README.md::deploy-status?branch=master"
 		IMPL "README.md::quality.yml/badge.svg?branch=master"
+		IMPL "README.md::dependabot-updates/badge.svg?branch=master"
 		IMPL "README.md::site-check.yml?query=branch%3Amaster"
 	SPEC "The Release badge carries no branch filter"
 		IMPL "README.md::release.yml/badge.svg)"

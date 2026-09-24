@@ -1440,6 +1440,9 @@ TASK DOCS108
 	SPEC "the Netlify badge shows the state of the production deploy of master; a deploy preview"
 		+ "leaves it unchanged"
 		IMPL "README.md::deploy-status?branch=master"
+	SPEC "the README carries a Dependabot badge showing the state of the last Dependabot update run"
+		+ "on master and linking to those runs"
+		IMPL "README.md::dependabot-updates?query=branch%3Amaster"
 	WAVE 8
 	DELIVERED_BY 144
 	RATIONALE "the Netlify deploy badge, added on master by commit 957d86e, is the only one; the"
