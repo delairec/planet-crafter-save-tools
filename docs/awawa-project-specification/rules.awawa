@@ -436,4 +436,5 @@ RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 	SOURCE "Measured on 2026-09-24 on the reference saves Standard-1, Standard-3 and Standard-4:"
 		+ "their 66 layer entries all carry the six properties of the table and no other, each"
 		+ "colour four numbers separated by dashes, each intensity an integer up to 101"
+		PR 141
 		REF @PROJECT.DNC

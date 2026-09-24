@@ -1167,26 +1167,42 @@ TASK CHORE91
 
 TASK FEAT92
 	TITLE "Keep the format a save carries in shared-save-processing and name which one it is"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 141
 	WAVE 5
 	AFTER @TASK.FEAT89
 	SPEC "parsing a save returns every part the file carries, Terrain Layers included, and names"
 		+ "the release whose format it carries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should return every part"
+			+ "the file carries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should name 1.618 as the"
+			+ "release whose format it carries"
 	SPEC "the Terrain Layers section is read, typed and written back like every other section: its"
 		+ "lines are parsed into entries by the one parser, and the serializer writes those entries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should read the Terrain"
+			+ "Layers section into its entries"
+		IMPL "packages/shared-save-processing/serializeSave.spec.js::should write the twelve parts"
+			+ "of that format"
 	SPEC "serializing a save writes the format it is given, so parsing then serializing a save of"
 		+ "1.618 returns the exact bytes of the file read"
+		IMPL "packages/shared-save-processing/serializeSave.spec.js::should return the exact bytes"
+			+ "of a save of 1.618 parsed then serialized"
 	SPEC "neither warning message says a save was adapted: the legacy-save-format one states that"
 		+ "the save was written by 1.618 or earlier, and the fallback one names no adaptation"
+		IMPL "packages/core-mapping/src/presentation/messages/saveWarningMessages.js"
 	SPEC "the twelve-part format of 1.618 is a RULE of DOMAIN format citing the Terrain Layers"
 		+ "section, which no rule names today, and taking authority over the properties of a layer"
 		+ "entry by VALUES_FROM; the rule states that the game writes the six properties of the"
 		+ "table in every entry it writes"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
+			+ "ALegacySaveCarriesTerrainLayersInTwelveParts"
 	SPEC "the table of layer properties carries the shapes the reference saves attest: each of the"
 		+ "two colours four numbers separated by dashes, each of the two intensities an integer no"
 		+ "upper bound holds, the layer id a free string no pattern describes"
+		IMPL "packages/shared-save-processing/legacyTerrainLayerProperties.json"
 	SPEC "the DESC of the Terrain Layers section no longer says that loading a legacy save discards"
 		+ "it"
+		IMPL "docs/awawa-project-specification/sections.awawa::parsing reads it"
 	RATIONALE "The round trip measured for FEAT69 on 2026-09-21 returns 2538 bytes against 2620 for"
 		+ "legacy-format_valid.json, the difference being the Terrain Layers section the"
 		+ "normalization drops; the package is where the loss happens and where it is repaired."

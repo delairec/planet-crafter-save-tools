@@ -1387,3 +1387,4 @@ DECISION CoreMappingReadsTheCurrentFormatThroughOneSelection
 		+ "core-mapping on the only format it reads until FEAT93 makes it format-aware, instead of"
 		+ "spreading index shifts through each caller"
 	SOURCE "Agent ruling while implementing FEAT92, 2026-09-24"
+		PR 141
