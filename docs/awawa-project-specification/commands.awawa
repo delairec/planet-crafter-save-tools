@@ -2,7 +2,7 @@ COMMAND MergeSaves
 	INVOCATION "bun run merge"
 	DESC "merges the two saves of each folder of the input directory and writes the result to the"
 		+ "output directory"
-	IMPL "packages/cli-merge/cli/merge-cli.js::initMergeCli(platform, cliArguments)"
+	IMPL "packages/cli-merge/cli/merge-cli.js::initMergeCli(platform, cliArguments, cliManifest)"
 	APPLIES @RULE.TheSaveOnPrimeBecomesSaveA
 	APPLIES @RULE.GlobalMetadataIsSummedAndUnioned
 	APPLIES @RULE.TerraformationLevelsTakeTheHigherValue
@@ -32,7 +32,8 @@ COMMAND ValidateSave
 	INVOCATION "bun run validate"
 	DESC "reads every save of the input directory and reports, located, what does not meet the"
 		+ "format"
-	IMPL "packages/cli-validate/cli/validate-cli.js::initValidateCli(platform, cliArguments)"
+	IMPL "packages/cli-validate/cli/validate-cli.js::initValidateCli(platform, cliArguments,"
+		+ "cliManifest)"
 	APPLIES @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	APPLIES @RULE.ASectionLineIsOneJsonEntry
 	APPLIES @RULE.APlayerIdentifierIsCarriedAsExactDecimalText

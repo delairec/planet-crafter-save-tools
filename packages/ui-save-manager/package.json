@@ -1,5 +1,6 @@
 {
   "name": "ui-save-manager",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "lint:types": "tsc --noEmit && tsc --noEmit --project e2e",
@@ -8,7 +9,8 @@
     "preview": "vite build && PORT=4173 node .output/server/index.mjs",
     "clean": "rm -rf .output",
     "test:ui": "playwright test",
-    "test:ui:install": "playwright install chromium firefox webkit"
+    "test:ui:install": "playwright install chromium firefox webkit",
+    "check:site": "bun scripts/check-site.ts"
   },
   "dependencies": {
     "@solidjs/router": "^1.0.0",

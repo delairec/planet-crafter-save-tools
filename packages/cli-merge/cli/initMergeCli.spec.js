@@ -17,13 +17,14 @@ import {
   INPUT_SUBFOLDER_ALPHA,
   OUTPUT_DIR
 } from '../testing/fakePaths.js';
+import {MERGE_CLI_HELP} from '../testing/mergeCliHelp.js';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 
 const NO_INPUT_FOLDERS = [];
+const CLI_RELEASE = {name: 'cli-merge', version: '1.4.2'};
 const SINGLE_SAVE_FILENAME = 'only-one.json';
-const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>] [--prefer-legacy]';
 const KEEP_LEGACY_FORMAT_REMINDER = '  Run the merge again with --prefer-legacy to write the legacy format instead.';
 const SAVE_CARRYING_DEPRECATED_GROUP_IDS = createFakeSaveContent({
   worldObjects: [
@@ -62,7 +63,7 @@ describe('Merge CLI', () => {
       exitProcess,
     };
 
-    return initMergeCli(fakePlatform, argv);
+    return initMergeCli(fakePlatform, argv, CLI_RELEASE);
   }
 
   beforeEach(() => {
@@ -305,8 +306,87 @@ describe('Merge CLI', () => {
     });
   });
 
+  describe('When the version is asked', () => {
+    it('should print the name and the version of the command on stdout', async () => {
+      // Arrange
+      ({main} = initCli(['--version']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).toHaveBeenCalledWith('cli-merge 1.4.2');
+    });
+
+    it('should exit with code 0 without reading any directory', async () => {
+      // Arrange
+      ({main} = initCli(['--version']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readDirectory).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the version is asked beside an argument the command does not accept', () => {
+    it('should refuse the run with code 1 without printing the version', async () => {
+      // Arrange
+      ({main} = initCli(['--version', '--inpt=custom-input']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('When the help is asked', () => {
+    it('should print the help of the command on stdout', async () => {
+      // Arrange
+      ({main} = initCli(['--help']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy.mock.calls).toEqual([[MERGE_CLI_HELP]]);
+    });
+
+    it('should exit with code 0 without reading any directory', async () => {
+      // Arrange
+      ({main} = initCli(['--help']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readDirectory).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the help is asked beside the version and an argument the command does not accept', () => {
+    it('should print the help alone and exit with code 0', async () => {
+      // Arrange
+      ({main} = initCli(['--inpt=custom-input', '--version', '--help']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy.mock.calls).toEqual([[MERGE_CLI_HELP]]);
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
   describe('When an argument names no flag the command accepts', () => {
-    it('should name that argument and print a usage message', async () => {
+    it('should name that argument on stderr, followed by the help', async () => {
       // Arrange
       ({main} = initCli(['--inpt=custom-input']));
 
@@ -314,8 +394,8 @@ describe('Merge CLI', () => {
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith('✖ Unknown argument(s): --inpt=custom-input');
-      expect(consoleErrorSpy).toHaveBeenCalledWith(USAGE_MESSAGE);
+      expect(consoleErrorSpy.mock.calls).toEqual([['✖ Unknown argument(s): --inpt=custom-input'], [MERGE_CLI_HELP]]);
+      expect(consoleLogSpy).not.toHaveBeenCalled();
     });
 
     it('should exit with code 1 without reading any directory', async () => {
@@ -327,6 +407,20 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(readDirectory).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('When the help is asked by its short form', () => {
+    it('should name -h as an unknown argument and exit with code 1', async () => {
+      // Arrange
+      ({main} = initCli(['-h']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith('✖ Unknown argument(s): -h');
       expect(exitProcess).toHaveBeenCalledWith(1);
     });
   });
@@ -569,7 +663,7 @@ describe('Merge CLI', () => {
     });
   });
 
-  describe('When the merged save does not pass validation', () => {
+  describe('When the folder name holds the section separator of the save format', () => {
     const FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR = 'Alpha@Beta';
     const MERGED_SAVE_PATH = `${OUTPUT_DIR}/${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}/Standard-1-Standard-2-merged.json`;
     const SAVE_A_PATH = `input/${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}/${SAVE_A_FILENAME}`;
@@ -581,24 +675,23 @@ describe('Merge CLI', () => {
       serveSaves({[SAVE_A_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_PATH]: FAKE_SAVE_STRING_B});
     });
 
-    it('should name the folder and what the save it wrote does not pass', async () => {
+    it('should name the merged save after the folder, each separator replaced', async () => {
       // Act
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ Folder "${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}" was merged, but the save file written does not pass validation:`);
-      expect(consoleErrorSpy).toHaveBeenCalledWith('  [Save configuration (section 8), entry 0] Invalid JSON: {"saveDisplayName":"Alpha');
+      expect(writeTextFile.mock.calls[0][1]).toContain('"saveDisplayName":"Alpha_Beta"');
     });
 
-    it('should blame neither save A nor save B for a defect the merge created', async () => {
+    it('should write a merged save that passes validation', async () => {
       // Act
       await main();
 
       // Assert
-      expect(consoleErrorSpy).not.toHaveBeenCalledWith(`✖ Folder "${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}" contains an invalid save file:`);
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(`✖ Folder "${FOLDER_NAME_HOLDING_A_SECTION_SEPARATOR}" was merged, but the save file written does not pass validation:`);
     });
 
-    it('should still write the merged save and announce it on stdout', async () => {
+    it('should write the merged save under the folder name and announce it on stdout', async () => {
       // Act
       await main();
 
@@ -607,7 +700,7 @@ describe('Merge CLI', () => {
       expect(consoleLogSpy).toHaveBeenCalledWith(MERGED_SAVE_PATH);
     });
 
-    it('should still exit successfully, the merged save being there to be used', async () => {
+    it('should exit successfully', async () => {
       // Act
       await main();
 

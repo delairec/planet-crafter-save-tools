@@ -2,6 +2,7 @@ import {For, Resource} from "solid-js";
 import FieldsGroup from "./structure/FieldsGroup";
 import FieldsGroupGrid from "./structure/FieldsGroupGrid";
 import SectionState from "./structure/SectionState";
+import Icon from "~/components/Icon";
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {
   energyLevelsSectionBoostedMachinesLabel,
@@ -14,6 +15,7 @@ import {
   energyLevelsSectionTitle,
   energyLevelsSectionTotalLabel,
   energyLevelsSectionUnitLabel,
+  energyLevelsSectionWorkInProgressIcon,
   energyLevelsSectionWorkInProgressLabel
 } from "~/messages/energyLevelsSectionMessages";
 
@@ -58,7 +60,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
                 />
 
                 <FieldsGroupGrid
-                  title={`${energyLevelsSectionConsumptionTitle} ${energyLevelsSectionWorkInProgressLabel}`}
+                  title={<>{energyLevelsSectionConsumptionTitle} <Icon content={energyLevelsSectionWorkInProgressIcon}/> {energyLevelsSectionWorkInProgressLabel}</>}
                   items={planet.consumptionBreakdown}
                   itemLabel={(row) => row.label}
                   columns={(row) => [

@@ -6,6 +6,7 @@ import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
 import {MergeWarning} from "./responses/MergeWarning";
 import {nameMergedFile} from "./nameMergedFile";
+import {sanitizeSaveDisplayName} from "./sanitizeSaveDisplayName";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 import {SaveSections} from "../domain/save/SaveSections";
@@ -41,7 +42,7 @@ export class MergeSaveFiles {
     }
 
     const {fileName, stem} = nameMergedFile({fileNameA, fileNameB});
-    const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, {saveDisplayName: saveDisplayName ?? stem, preferLegacyFormat}));
+    const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, {saveDisplayName: sanitizeSaveDisplayName(saveDisplayName ?? stem), preferLegacyFormat}));
     const content = this.serializer.serialize(mergedSave);
 
     const mergedSaveValidation = this.validator.validate(fileName, content);

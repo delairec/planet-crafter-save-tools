@@ -18,6 +18,9 @@ entry = [
     "scripts/generate-scenario-fixtures.ts",
     "scripts/check-scenario-locators.ts",
     "scripts/check-scenario-locators.spec.ts",
+    "scripts/release/release.ts",
+    "scripts/release/release-tag.ts",
+    "scripts/release/*.spec.ts",
     "packages/ui-save-manager/src/entry-client.tsx",
     "packages/ui-save-manager/src/entry-server.tsx",
     "packages/**/*.spec.js",
@@ -27,6 +30,7 @@ entry = [
     "testIsolation.spec.ts",
 ]
 
+# packages/ui-save-manager/** is a gap of this project, not a ruling (@LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager).
 ignorePatterns = [
     "output/**",
     "input/**",
@@ -63,6 +67,13 @@ ignoreUnresolvedImports = [
 
 [audit]
 gate = "new-only"
+
+# renderVersion and renderUnknownArguments of cli-merge and cli-validate: terminal rendering, which no
+# shared-* package may hold and no cli-* package may import from another, so each CLI keeps its own
+# (@LIMITATION.EachCliDuplicatesItsVersionAndUnknownArgumentRendering). The key names this content at two instances only:
+# a change to either copy, or a third copy, reports the group again.
+[duplicates]
+ignoredClones = ["dup:6f87acd9:2"]
 
 [health]
 

@@ -129,6 +129,25 @@ describe('MergeSaveFiles', () => {
     });
   });
 
+  describe('When the requested display name holds the section separator of the save format', () => {
+    it('should give the merged save that display name with each separator replaced', async () => {
+      // Arrange
+      const {useCase, serializer} = createUseCase({
+        parse: parserAnswering({
+          contentA: {sections: createSaveSections({saveConfigurations: [createSaveConfiguration({saveDisplayName: 'Save A'})]}), errors: noParseErrors}
+        })
+      });
+
+      // Act
+      await useCase.execute({...TWO_VALID_SAVES, saveDisplayName: 'Alpha@Beta@Gamma'});
+
+      // Assert
+      expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
+        saveConfigurations: [expect.objectContaining({saveDisplayName: 'Alpha_Beta_Gamma'})]
+      }));
+    });
+  });
+
   describe('When the two saves carry different formats', () => {
     const parseALegacySaveAAndACurrentSaveB = parserAnswering({
       contentA: {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayer()]}), errors: noParseErrors},

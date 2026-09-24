@@ -17,6 +17,7 @@ import {
   energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
   resolveEnergyLevelsSectionUnnamedPlanetName,
+  energyLevelsSectionWorkInProgressIcon,
   energyLevelsSectionWorkInProgressLabel
 } from "./messages/energyLevelsSectionMessages.js";
 
@@ -50,11 +51,13 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
           },
           {
             header: energyLevelsSectionConsumptionTitle,
-            values: [formatNumber(planet.consumption) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit} ${energyLevelsSectionWorkInProgressLabel}`]
+            values: [formatNumber(planet.consumption) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`],
+            annotation: {icon: energyLevelsSectionWorkInProgressIcon, label: energyLevelsSectionWorkInProgressLabel}
           },
           {
             header: energyLevelsSectionAvailableTitle,
-            values: [formatNumber(planet.available) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit} ${energyLevelsSectionWorkInProgressLabel}`]
+            values: [formatNumber(planet.available) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`],
+            annotation: {icon: energyLevelsSectionWorkInProgressIcon, label: energyLevelsSectionWorkInProgressLabel}
           }
         ]
       },

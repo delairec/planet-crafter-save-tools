@@ -3,21 +3,30 @@ const FLAG_PREFIX = '--';
 const FLAG_VALUE_SEPARATOR = '=';
 
 export const PLATFORM_FLAG_NAME = 'platform';
+export const PLATFORM_FLAG = {name: PLATFORM_FLAG_NAME, valueName: 'bun|node', description: 'reserved to the node:* scripts, which pass it themselves'};
+export const VERSION_SWITCH = {name: 'version', description: 'print the version and exit'};
+export const HELP_SWITCH = {name: 'help', description: 'print this help and exit'};
+
+/**
+ * @typedef {object} KnownArguments
+ * @property {readonly string[]} flagNames the `--<name>=<value>` flags the command acts on, without their dashes
+ * @property {readonly string[]} switchNames the `--<name>` switches the command acts on, without their dashes
+ */
 
 /**
  * @param {string} flagName
  * @returns {string} the `--<flagName>=` an argument carrying that flag starts with
  */
 function toFlag(flagName) {
-  return `${toValuelessFlag(flagName)}${FLAG_VALUE_SEPARATOR}`;
+  return `${FLAG_PREFIX}${flagName}${FLAG_VALUE_SEPARATOR}`;
 }
 
 /**
- * @param {string} flagName
- * @returns {string} the `--<flagName>` an argument giving that flag without a value equals
+ * @param {string} switchName
+ * @returns {string} the `--<switchName>` argument naming that switch
  */
-function toValuelessFlag(flagName) {
-  return `${FLAG_PREFIX}${flagName}`;
+function toSwitch(switchName) {
+  return `${FLAG_PREFIX}${switchName}`;
 }
 
 /**
@@ -34,31 +43,73 @@ export function readFlagValue(argv, flagName) {
 
 /**
  * @param {string[]} argv
- * @param {string} flagName the name of a `--<flagName>` flag carrying no value, without its dashes
+ * @param {string} switchName the name of a `--<switchName>` switch, without its dashes
  * @returns {boolean}
  */
-export function isFlagPresent(argv, flagName) {
-  return argv.includes(toValuelessFlag(flagName));
+export function hasSwitch(argv, switchName) {
+  return argv.includes(toSwitch(switchName));
 }
 
 /**
- * @typedef {object} KnownFlags
- * @property {readonly string[]} valueFlagNames the names of the `--<flagName>=<value>` flags the command acts on
- * @property {readonly string[]} valuelessFlagNames the names of the `--<flagName>` flags the command acts on
+ * @typedef {object} FlagHelp
+ * @property {string} name the name of the `--<name>=<value>` flag, without its dashes
+ * @property {string} valueName the placeholder the help shows for its value
+ * @property {string} description
  */
+
+/**
+ * @typedef {object} SwitchHelp
+ * @property {string} name the name of the `--<name>` switch, without its dashes
+ * @property {string} description
+ */
+
+/**
+ * @typedef {object} CommandArguments
+ * @property {string} invocation
+ * @property {readonly FlagHelp[]} flags
+ * @property {readonly SwitchHelp[]} switches
+ */
+
+/**
+ * @param {FlagHelp | SwitchHelp} argument
+ * @returns {argument is FlagHelp} whether the argument is a flag, carrying a value
+ */
+function isFlag(argument) {
+  return 'valueName' in argument;
+}
+
+/**
+ * @param {FlagHelp | SwitchHelp} argument
+ * @returns {string} the `--<name>` or `--<name>=<valueName>` text the help lists for that argument
+ */
+function formatArgument(argument) {
+  return isFlag(argument) ? `--${argument.name}=<${argument.valueName}>` : `--${argument.name}`;
+}
+
+/**
+ * @param {CommandArguments} commandArguments
+ * @returns {string}
+ */
+export function formatHelp({invocation, flags, switches}) {
+  const entries = [...flags, ...switches].map(argument => ({text: formatArgument(argument), description: argument.description}));
+  const longestArgumentLength = Math.max(...entries.map(entry => entry.text.length));
+  const optionLines = entries.map(entry => `  ${entry.text.padEnd(longestArgumentLength)}  ${entry.description}`);
+
+  return [`Usage: ${invocation}`, '', 'Options:', ...optionLines].join('\n');
+}
 
 /**
  * Only dash-prefixed arguments are candidates: the argument vector of a command also carries the
  * interpreter and the script it runs, which are paths.
  * @param {string[]} argv
- * @param {KnownFlags} knownFlags the flags the command acts on, named without their dashes
- * @returns {string[]} the dash-prefixed arguments naming none of those flags
+ * @param {KnownArguments} knownArguments
+ * @returns {string[]} the dash-prefixed arguments naming none of those flags or switches
  */
-export function findUnknownArguments(argv, {valueFlagNames, valuelessFlagNames}) {
-  const knownValueFlags = valueFlagNames.map(toFlag);
-  const knownValuelessFlags = valuelessFlagNames.map(toValuelessFlag);
+export function findUnknownArguments(argv, {flagNames, switchNames}) {
+  const knownFlags = flagNames.map(toFlag);
+  const knownSwitches = switchNames.map(toSwitch);
 
   return argv.filter(argument => argument.startsWith(DASH)
-    && !knownValueFlags.some(flag => argument.startsWith(flag))
-    && !knownValuelessFlags.includes(argument));
+    && !knownSwitches.includes(argument)
+    && !knownFlags.some(flag => argument.startsWith(flag)));
 }

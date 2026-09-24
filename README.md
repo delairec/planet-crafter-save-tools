@@ -1,6 +1,14 @@
 # Planet Crafter Save Tools
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
+[![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fplanet-crafter-save-manager.netlify.app%2Fversion.json&query=%24.version&label=production)](https://planet-crafter-save-manager.netlify.app/)
+[![Netlify build of master](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status?branch=master)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
+[![Quality](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml?query=branch%3Amaster)
+[![Dependencies](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml?query=branch%3Amaster)
+[![Dependabot](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates?query=branch%3Amaster)
+[![UI tests](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml?query=branch%3Amaster)
+[![Site check](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml?query=branch%3Amaster)
+[![Release](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/release.yml/badge.svg)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/release.yml)
+[![License: GPL-3.0](https://img.shields.io/github/license/delairec/planet-crafter-save-tools)](LICENSE)
 
 > ❗ I’m not going to actively maintain this project (or only minimally). If you’d like to add improvements or fix bugs,
 > feel free to fork it
@@ -12,6 +20,10 @@ This project provides tools to manipulate save files from **The Planet Crafter**
 
 - **Merger**: combine two save files into one, following specific rules to preserve as much information as possible.
 - **Validator**: check if a save file is correctly formatted according to the game's specifications.
+
+Both run in the browser, without installing anything, in the Save Manager web UI:
+https://planet-crafter-save-manager.netlify.app/. A save never leaves the browser: the page sends no request outside
+its own origin.
 
 In progress:
 
@@ -104,10 +116,25 @@ bun validate -- --file=<filepath>
 
 Validates a json save file against the json schemas stored in this project. This is useful mostly for debugging.
 
-Both commands take their arguments in the `--name=value` form, `--prefer-legacy` alone carrying no value, and act on
-none they do not know: an argument such as `--inpt=x`, `--input x`, a bare `--file` or `--prefer-legacy=true` is named
-on stderr with a usage message, and the command exits with code `1` without reading anything. The value is taken
-whole, so a path or a directory name may hold an equals sign.
+```
+bun merge -- --version
+bun validate -- --version
+```
+
+Prints the name and the version of the command, and exits with code `0`. Quote that line in a bug report.
+
+```
+bun merge -- --help
+bun validate -- --help
+```
+
+Prints the help of the command — its invocation, then every argument it accepts with what it does — and exits with
+code `0` without reading anything, whatever other argument accompanies it. `-h` is not an alias.
+
+Both commands accept `--name=value` arguments and the `--version` and `--help` switches only — `bun merge` the
+`--prefer-legacy` switch besides — and act on none they do not know: an argument such as `--inpt=x`, `--input x`, a
+bare `--file`, `--prefer-legacy=true` or `-h` is named on stderr, followed by the help, and the command exits with
+code `1` without reading anything. The value is taken whole, so a path or a directory name may hold an equals sign.
 
 ```
 bun test
@@ -161,9 +188,13 @@ silently, and the `.tsx` files of the UI are covered. `ui-save-manager` runs two
 bun run audit
 ```
 
-Audits production and development dependencies. The two Picomatch advisories are explicitly allowlisted because
-`micromatch` still requires the affected 2.x dependency transitively; they should be removed as soon as that upstream
-constraint is updated.
+Audits production and development dependencies against the GitHub Advisory Database, failing on an advisory of
+moderate severity or above. The `Dependencies` workflow runs it on every pull request, on every push to `master` and
+once a month on `master`, so an advisory published against an unchanged `bun.lock` fails a run within a month. The two
+Picomatch advisories are explicitly allowlisted because `micromatch` still requires the affected 2.x dependency
+transitively; they should be removed as soon as that upstream constraint is updated. An allowlisted advisory stays
+tied to the corpus: `check:audit-ignores` fails when an `--ignore=` of the script is named by the `SEEN_IN` of no
+active `LIMITATION`.
 
 Version bumps are raised on a schedule next to it. `.github/dependabot.yml`, maintained on the default branch because
 Dependabot reads its configuration there and nowhere else, opens one grouped pull request per week for the actions the
@@ -184,13 +215,21 @@ CI covers the same ground in two jobs, each running the half it is equipped for:
 request and renders them into the run summary.
 
 ```
+bun run release:verify
+```
+
+Runs every check a release must pass on the commit it tags: `lint:types`, `audit:quality`, `bun test`, `test:ui` and
+the dependency audit, stopping at the first failure. The `Release` workflow runs it on every version tag pushed — a tag
+whose name holds `v` or `@` followed by a digit — and it can be run by hand before tagging. `test:ui` needs the
+browsers of `test:ui:install`.
+
+```
 bun run check:guards
 ```
 
-Runs the four guard scripts of this repository — `check:assertions`, `check:fixtures`, `check:dependencies` and
-`check:presentation` — which enforce conventions no off-the-shelf linter knows about. They read no git history and take
-a fraction of a
-second, so they are the half of `audit:quality` to run while writing code.
+Runs the guard scripts of this repository — every `check:*` script of `package.json`, plus `validate:tables` — which
+enforce conventions no off-the-shelf linter knows about. They read no git history and take a fraction of a second, so
+they are the half of `audit:quality` to run while writing code.
 
 ```
 bun run check:assertions
@@ -237,7 +276,26 @@ build entities — that is where a save is read and validated — and the reader
 application layer; only the presentation boundary is closed. Every `.js`, `.ts` and `.tsx` source of every package
 is scanned, outside dependencies and build outputs, and type-only and dynamic imports count.
 
+```
+bun run check:action-pins
+```
+
+Fails on any `uses:` of `.github/workflows/` that names a tag, a branch or an abbreviated SHA instead of a full
+40-character commit SHA, or that pins a SHA without a comment giving the version it resolves to
+(`actions/checkout@<sha> # v7.0.1`). Whoever controls an action's repository can move any of its tags, an exact one
+included, and some of those actions receive secrets; a commit SHA cannot be moved. Dependabot keeps proposing their
+updates, rewriting the SHA and the version comment together. A local action (`./…`) names no ref and is not checked.
+
 #### Save Manager UI
+
+The production build is served at https://planet-crafter-save-manager.netlify.app/; a deployment reaches it only once
+published by hand on Netlify. The `Site check` workflow, run from the Actions tab after each publication and every week,
+checks that it loads and carries the headers of `packages/ui-save-manager/public/_headers`;
+`bun run --filter ui-save-manager check:site -- --url=<address>` runs the same check locally. It also prints the
+version and the commit the site serves, read from the `version.json` every build writes at the site root, and names
+the latest `ui-save-manager-v*` tag when the site does not serve it; neither fails the check, since publishing a tag
+is its owner's call. The `production` badge at the top of this file reads the same `version.json`; the Netlify badge
+next to it reports the build of `master`, not what production serves.
 
 ```
 bun run dev:ui
@@ -305,6 +363,41 @@ temporary directory, and assert their output, their exit code and the content of
 `bun test`, so a command that no longer starts under Node — or that loses the content of a save while still
 reporting success — fails the suite instead of reaching a release. Running them needs the Node version
 `engines.node` declares.
+
+### Releases
+
+The three tools a user runs carry a version each: `cli-merge`, `cli-validate` and `ui-save-manager`, every package
+whose name starts with `cli-` or `ui-`. The other packages are internal and carry none that anyone reads. The web UI
+shows its version in the footer.
+
+A tool takes a new version when a commit of `master` since its last version changes its package or a workspace
+package it depends on, directly or not: a fix in `core-mapping` raises all three, a fix in `cli-merge` raises that one
+only. The Conventional Commits type of the commit sizes the step. The tools are below their first major version:
+there, a `!` before the colon raises the minor number and anything else the patch number. Leaving `0` is a decision
+written by hand in the `package.json`, never the outcome of a release; from `1.0.0` on, a `!` raises the major
+number, a `feat` the minor one, anything else the patch number. Every change reaches `master` through a pull
+request, so every commit there carries a checked title.
+
+```
+bun run release
+```
+
+Run on a branch cut from an up-to-date `master`. For each tool that changed, it raises the `version` of its
+`package.json`, adds an entry listing the commits it carries to its `CHANGELOG.md`, and refreshes `bun.lock`. Open
+the pull request it names, `chore(release): …`, against `master`.
+
+```
+bun run release:tag
+git push origin <the tags it names>
+```
+
+Run on `master` once the release pull request is merged. It sets an annotated tag `<tool>-v<version>` on that squash
+commit for every version no tag names yet.
+
+Netlify publishes no production deploy by itself: it builds every push to `master` and every pull request against
+it, and the deploy previews stay public, but production changes only when a deploy is published by hand. Publish the
+deploy of the commit a `ui-save-manager-v*` tag names — the squash commit of the release pull request — from the
+Netlify dashboard.
 
 ### Preparing data
 

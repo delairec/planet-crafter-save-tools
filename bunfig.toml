@@ -1,2 +1,9 @@
+[install]
+# Seven days, in seconds: a version published to npm more recently is not resolved by
+# bun install nor bun add. A malicious release is usually withdrawn within that window.
+# No exclusion list: an exempted package would reopen the window for exactly the one a
+# compromise targets. A one-off urgent install passes --minimum-release-age=0 explicitly.
+minimumReleaseAge = 604800
+
 [test]
 preload = ["./testSetup.ts"]

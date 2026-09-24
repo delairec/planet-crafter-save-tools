@@ -1,16 +1,27 @@
 /** @import { SaveValidationMessageViewModel } from 'core-mapping/presentation/viewModels/SaveFileValidationViewModel' */
 
+import {formatHelp} from 'shared-platforms/cliArguments.js';
+import {MERGE_CLI_ARGUMENTS} from './parseMergeCliArguments.js';
+
 /**
  * Rendering for the merge CLI. Diagnostics go to stderr, the merge result (output file paths) goes to stdout.
  */
 
-const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>] [--prefer-legacy]';
 const KEEP_LEGACY_FORMAT_REMINDER = 'Run the merge again with --prefer-legacy to write the legacy format instead.';
+
+export function renderHelp() {
+  console.log(formatHelp(MERGE_CLI_ARGUMENTS));
+}
+
+/** @param {{name: string, version: string}} release */
+export function renderVersion({name, version}) {
+  console.log(`${name} ${version}`);
+}
 
 /** @param {string[]} unknownArguments */
 export function renderUnknownArguments(unknownArguments) {
   console.error(`✖ Unknown argument(s): ${unknownArguments.join(', ')}`);
-  console.error(USAGE_MESSAGE);
+  console.error(formatHelp(MERGE_CLI_ARGUMENTS));
 }
 
 /** @param {number} count */

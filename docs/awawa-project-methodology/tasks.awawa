@@ -996,11 +996,60 @@ TASK FEAT82
 		REF @PROJECT.PCST
 
 TASK CHORE83
-	TITLE "Add a versionning mechanism"
-	STATUS todo
-	DESC "drafted for memory, no research done; what do we want to version? core-mapping + clis +"
-		+ "uis separetly? or the whole package? what is the trigger for a new version?"
-	SPEC "explore the options for a versionning mechanism, and choose one"
+	TITLE "each consumer of core-mapping carries its own version, investigated then delivered in"
+		+ "the same pull request with the mechanism the user picks"
+	STATUS implemented
+	DELIVERED_BY 135
+	SPEC "the pull request body compares, for ui-save-manager, cli-merge and cli-validate, a script"
+		+ "over the Conventional Commits titles, changesets and release-please in manifest mode:"
+		+ "what each adds as dependency and workflow, and what a release costs with it"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "ConsumerVersionsAreComputedByARepositoryScript"
+	SPEC "ui-save-manager, cli-merge and cli-validate each carry a version that rises when a merged"
+		+ "commit changes the package or a workspace package it depends on transitively, and only"
+		+ "then"
+		IMPL "scripts/release/resolveConsumerPaths.spec.ts"
+		IMPL "scripts/release/readCommitSubjects.spec.ts"
+		IMPL "scripts/release/planRelease.spec.ts"
+	SPEC "bun merge -- --version and bun validate -- --version print their version under Bun and"
+		+ "under Node, and the web UI displays its own"
+		IMPL "packages/cli-merge/cli/merge-cli.version.spec.js"
+		IMPL "packages/cli-validate/cli/validate-cli.version.spec.js"
+		IMPL "packages/ui-save-manager/e2e/version.e2e.ts"
+	SPEC "each version is a git tag naming its consumer, set on the squash commit of a release pull"
+		+ "request, with a changelog entry listing the commits it carries"
+		IMPL "scripts/release/findVersionsToTag.spec.ts"
+		IMPL "scripts/release/release-tag.ts::RELEASE_BRANCH"
+		IMPL "scripts/release/addChangelogEntry.spec.ts"
+	SPEC "Netlify publishes no production deploy on a push to master and keeps the deploy previews"
+		+ "of pull requests against master; the README states that production is published by hand"
+		+ "from the deploy of the commit a ui-save-manager version tag names"
+		IMPL "README.md::Netlify publishes no production deploy by itself"
+	SPEC "master refuses a push that does not come through a pull request"
+		IMPL "docs/awawa-project-methodology/processes.awawa::PROCESS"
+			+ "EveryChangeReachesMasterThroughAPullRequest"
+	SPEC "the mechanism the user picks after reading the comparison is delivered in the same pull"
+		+ "request, and the comparison leaves the body once it is in"
+		IMPL "scripts/release/release.ts"
+		IMPL "package.json::scripts/release/release.ts"
+	WAVE 8
+	RATIONALE "A version exists so that a bug report or a save names what ran, and nothing reads"
+		+ "one today: every manifest is at 1.0.0 and ui-save-manager declares none, no tag names a"
+		+ "version, no command answers --version, the UI shows none, and Netlify deploys the UI"
+		+ "from a configuration outside the repository. No package is published on its own and the"
+		+ "workspace dependencies are internal, so a version per package would have no reader: the"
+		+ "three consumers of core-mapping are what a user runs. cli-merge and cli-validate also"
+		+ "depend directly on shared-save-processing and shared-platforms, so a rule limited to"
+		+ "core-mapping would leave a change there unversioned. Pull request titles are"
+		+ "Conventional Commits checked in CI, so a bump and a changelog can be computed from them."
+		+ "Ruled with the user on 2026-09-23: the task runs in an interactive session like CHORE58,"
+		+ "never as an unattended wave agent. Ruled with the user on 2026-09-23 after the"
+		+ "comparison: a repository script, run by hand, decides a bump from the paths a commit"
+		+ "changes and its size from the Conventional Commits type; since master takes pull"
+		+ "requests only, a release is a pull request whose squash commit then receives the tags;"
+		+ "Netlify cannot build a tag, so production is published by hand"
+		REF @TASK.CHORE58
+	SOURCE "Refinement with the user on 2026-09-23 of a task drafted for memory"
 
 TASK FEAT84
 	TITLE "Display the logisticsPaused of a save written by the Skeo update in the save manager"
@@ -1403,12 +1452,13 @@ TASK FEAT95
 			+ "preferLegacyFormat()"
 	SPEC "the shared argument reader reads a flag carrying no value and accepts it as known, a"
 		+ "dash-prefixed argument naming no known flag staying unknown"
-		IMPL "packages/shared-platforms/cliArguments.spec.js::CLI valueless flag reading"
-		IMPL "packages/shared-platforms/cliArguments.spec.js::When a valueless flag the command"
-			+ "knows is given a value"
+		IMPL "packages/shared-platforms/cliArguments.spec.js::CLI switch reading"
+		IMPL "packages/shared-platforms/cliArguments.spec.js::When a known switch comes with a"
+			+ "value"
 	SPEC "the usage message of the command names the option, alongside the ones it already names"
-		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should name that argument and print a"
-			+ "usage message"
+		IMPL "packages/cli-merge/testing/mergeCliHelp.js::--prefer-legacy"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should name that argument on stderr,"
+			+ "followed by the help"
 	SPEC "the save manager surfaces the merge report through the path it already surfaces"
 		+ "validation warnings through, and the command writes it where it writes its other"
 		+ "diagnostics, the single output path staying alone on stdout"
@@ -1601,6 +1651,349 @@ TASK CHORE99
 		PR 127
 	DELIVERED_BY 150
 
+TASK CHORE100
+	TITLE "a release is refused while a quality or security check fails on the commit it tags, and"
+		+ "an advisory published against an unchanged lockfile is reported within a month"
+	STATUS implemented
+	SPEC "a root package.json script, run by hand and by CI on every version tag, exits non-zero"
+		+ "when lint:types, check:guards, bun test, test:ui, the fallow audit or the dependency"
+		+ "audit fails on that commit"
+		IMPL "package.json::release:verify"
+		IMPL ".github/workflows/release.yml::bun run release:verify"
+	SPEC "the dependency audit runs on every pull request, on every push to master and once a month"
+		+ "on master, so an advisory published against an unchanged bun.lock fails a run within a"
+		+ "month"
+		IMPL ".github/workflows/dependencies.yml::cron: '23 4 1 * *'"
+	SPEC "the dependency audit fails on an advisory of moderate severity or above"
+		IMPL "package.json::--audit-level=moderate"
+	SPEC "an advisory the dependency audit ignores that no active LIMITATION names in a SEEN_IN"
+		+ "makes check:guards fail"
+		IMPL "scripts/check-audit-ignores.ts::findUnacknowledgedAdvisories"
+		IMPL "scripts/check-audit-ignores.spec.ts::When no limitation names an ignored advisory"
+		IMPL "package.json::bun run check:audit-ignores"
+	SPEC "the workflow run on a version tag pins every action by commit SHA and declares its"
+		+ "permissions job by job"
+		IMPL ".github/workflows/release.yml::permissions: {}"
+		IMPL ".github/workflows/release.yml::actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+	WAVE 8
+	DELIVERED_BY 133
+	RATIONALE "bun audit, which reads the GitHub Advisory Database, runs today only on a pull"
+		+ "request and on a push to master, at --audit-level=high: an advisory published against"
+		+ "dependencies that did not move is seen at the next push, a moderate one never, and"
+		+ "nothing runs at a release; Dependabot brings no security update for the bun ecosystem."
+		+ "The moderate threshold was ruled with the user on 2026-09-23, a moderate cross-site"
+		+ "scripting counting on a public site. The script does not depend on the version mechanism"
+		+ "CHORE83 picks, so both belong to the same wave; both touch the scripts of the root"
+		+ "package.json. The monthly schedule was ruled by the user in the review of pull request"
+		+ "133, replacing a daily one: the audit already runs on every pull request and push to"
+		+ "master, and a monthly run suffices for an unchanged lockfile"
+		REF @TASK.CHORE83
+		REF @LIMITATION.TheSecurityAuditIgnoresTwoTransitiveAdvisories
+	SOURCE "Refinement of CHORE83 with the user on 2026-09-23"
+
+TASK FIX101
+	TITLE "the production web UI serves its security headers on every response, is checked every"
+		+ "week and on demand after each publication, and the README gives its address"
+	STATUS implemented
+	SPEC "every response of the production site, the HTML document included, carries the"
+		+ "Content-Security-Policy, Referrer-Policy and Permissions-Policy of"
+		+ "packages/ui-save-manager/public/_headers"
+		IMPL "packages/ui-save-manager/e2e/security.e2e.ts"
+		IMPL "packages/ui-save-manager/vite.config.ts::routeRules"
+		IMPL "packages/ui-save-manager/src/entry-server.tsx::allowTheInlineScriptsOf"
+	SPEC "the Content-Security-Policy of the production site allows no 'unsafe-inline' in"
+		+ "script-src"
+		IMPL "packages/ui-save-manager/public/_headers::script-src 'self'; style-src 'self'"
+	SPEC "a scenario proves that loading, viewing and merging a save sends no request outside the"
+		+ "origin of the page"
+		IMPL "packages/ui-save-manager/e2e/security.e2e.ts"
+	SPEC "a workflow checks the production site every week and on demand after each publication,"
+		+ "and fails when the page does not load or a header the first criterion names is missing"
+		IMPL ".github/workflows/site-check.yml"
+		IMPL "packages/ui-save-manager/scripts/check-site.ts"
+	SPEC "SECURITY.md names the private channel to report a vulnerability, and private"
+		+ "vulnerability reporting is enabled on the repository"
+		IMPL "SECURITY.md"
+	SPEC "README.md gives the address of the production web UI,"
+		+ "https://planet-crafter-save-manager.netlify.app/"
+		IMPL "README.md::https://planet-crafter-save-manager.netlify.app/"
+	DELIVERED_BY 134
+	WAVE 8
+	RATIONALE "The web UI is served by Netlify, its document rendered by a function. Measured with"
+		+ "curl -I on 2026-09-23: the document at / carries only strict-transport-security and"
+		+ "x-content-type-options, Netlify's defaults, while a static file such as /favicon.ico"
+		+ "carries the whole _headers set, so the document that matters is the one another site may"
+		+ "frame; the node server of the local build sends none either. A test of the local build"
+		+ "proves nothing of what Netlify serves, so the check runs against production. Private"
+		+ "vulnerability reporting was disabled on 2026-09-23. Ruled with the user on 2026-09-23:"
+		+ "the address enters the README once the site meets the other criteria"
+		REF @LIMITATION.TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader
+		REF @LIMITATION.TheContentSecurityPolicyAllowsInlineScript
+	SOURCE "Refinement of CHORE83 with the user on 2026-09-23"
+
+TASK CHORE102
+	TITLE "review the accepted limitations, lifting those the user picks in the same pull request"
+		+ "or giving them a draft task"
+	STATUS implemented
+	SPEC "the pull request body carries one row per active LIMITATION that no other task of the"
+		+ "wave retires or frames: whether its UNTIL condition is already met, verified by a"
+		+ "command, and what lifting it costs"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::Picked in the review of the accepted"
+			+ "limitations, CHORE102"
+	SPEC "each limitation the user picks is lifted in the same pull request and archived with"
+		+ "ARCHIVED_ON, or gets a draft TASK its UNTIL names, as the user rules limitation by"
+		+ "limitation"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::ARCHIVED_ON 2026-09-24"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FIX113"
+	SPEC "the review leaves the pull request body once the picked changes are in"
+		IMPL "packages/core-mapping/src/application/sanitizeSaveDisplayName.ts::replaceAll"
+		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::<Icon"
+			+ "content={annotation().icon}/>"
+	AFTER @TASK.CHORE109
+	DELIVERED_BY 152
+	WAVE 8
+	RATIONALE "Nine limitations were active on 2026-09-23, each accepted when it was written and"
+		+ "none reread since. FIX101 retires TheContentSecurityPolicyAllowsInlineScript and"
+		+ "TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader, and CHORE100 frames"
+		+ "TheSecurityAuditIgnoresTwoTransitiveAdvisories, which leaves the others to this review."
+		+ "Ruled with the user on 2026-09-23: a cheap lift lands in the same pull request, a costly"
+		+ "one becomes a draft task; the task runs in an interactive session like CHORE58"
+		REF @TASK.FIX101
+		REF @TASK.CHORE100
+		REF @TASK.CHORE58
+	SOURCE "Refinement of CHORE83 with the user on 2026-09-23"
+
+TASK FIX106
+	TITLE "the dependency audit ignores no advisory"
+	STATUS implemented
+	SPEC "the audit script of the root package.json carries no --ignore"
+		IMPL "package.json::bun audit --audit-level=moderate"
+	SPEC "bun run audit exits 0 on the delivering branch"
+		IMPL ".github/workflows/dependencies.yml::bun run audit"
+	SPEC "package.json gains no override nor resolution: every picomatch bun.lock resolves stays"
+		+ "inside the range its dependent declares"
+		IMPL "bun.lock::picomatch@2.3.2"
+	SPEC "TheSecurityAuditIgnoresTwoTransitiveAdvisories is archived with ARCHIVED_ON"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::LIMITATION"
+			+ "TheSecurityAuditIgnoresTwoTransitiveAdvisories"
+	AFTER @TASK.CHORE100
+	WAVE 8
+	DELIVERED_BY 143
+	RATIONALE "Both ignored advisories, GHSA-3v7f-55p6-f55p (moderate) and GHSA-c2c7-rcm5-vvqj"
+		+ "(high), target picomatch below 2.3.2. On 2026-09-23 the only affected copy is"
+		+ "micromatch/picomatch@2.3.1, pulled by @solidjs/start through micromatch, whose range"
+		+ "^2.3.1 admits 2.3.2; on a scratch copy, bun audit fix moved that one bun.lock line to"
+		+ "2.3.2, left package.json untouched, and bun audit --audit-level=low then reported"
+		+ "nothing. CHORE100 rewrites the same audit script line and adds check:audit-ignores,"
+		+ "hence the order"
+		REF @TASK.CHORE100
+		REF @LIMITATION.TheSecurityAuditIgnoresTwoTransitiveAdvisories
+	SOURCE "Owner request, refinement session of 2026-09-23"
+
+TASK FEAT107
+	TITLE "both CLIs print their help on --help and on an unknown argument"
+	STATUS implemented
+	DELIVERED_BY 148
+	SPEC "--help prints the help of the CLI on standard output and exits 0 without reading"
+		+ "anything, whatever other argument accompanies it"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::When the help is asked beside the"
+			+ "version"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::When the help is asked beside the"
+			+ "version"
+	SPEC "the help names the invocation, then every flag and switch the CLI accepts, one line each"
+		+ "saying what it does; --platform is described as reserved to the node:* scripts"
+		IMPL "packages/shared-platforms/cliArguments.spec.js::CLI help formatting"
+		IMPL "packages/cli-merge/testing/mergeCliHelp.js"
+		IMPL "packages/cli-validate/testing/validateCliHelp.js"
+	SPEC "a flag or switch the parser accepts without a line in the help fails a test"
+		IMPL "packages/cli-merge/cli/parseMergeCliArguments.js::MERGE_CLI_ARGUMENTS.flags.map"
+		IMPL "packages/cli-validate/cli/parseValidateCliArguments.js::VALIDATE_CLI_ARGUMENTS.flags.map"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::MERGE_CLI_HELP"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::VALIDATE_CLI_HELP"
+	SPEC "an unknown argument is named on standard error, followed by the same help, and the CLI"
+		+ "exits 1 before reading anything"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should name that argument on stderr,"
+			+ "followed by the help"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::should name that argument on"
+			+ "stderr, followed by the help"
+	SPEC "-h is an unknown argument"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::When the help is asked by its short form"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::When the help is asked by its"
+			+ "short form"
+	SPEC "--help and an unknown argument are each proven on a spawned process of both CLIs, under"
+		+ "Bun and under Node"
+		IMPL "packages/cli-merge/cli/merge-cli.help.spec.js"
+		IMPL "packages/cli-validate/cli/validate-cli.help.spec.js"
+	SPEC "AnUnknownCliFlagIsAUsageError states the help in place of the usage line"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AnUnknownCliFlagIsAUsageError"
+	AFTER @TASK.CHORE83
+	WAVE 8
+	RATIONALE "On an unknown argument both CLIs print one usage line today, which names neither"
+		+ "what each flag does nor --version, the switch CHORE83 adds in pull request 135; that"
+		+ "pull request also brings switches to findUnknownArguments, which --help builds on, hence"
+		+ "the order. Ruled with the owner on 2026-09-23: --help wins over every other argument, no"
+		+ "short alias, --platform listed rather than hidden so the help and the parser never"
+		+ "diverge"
+		REF @TASK.CHORE83
+		REF @DECISION.AnUnknownCliFlagIsAUsageError
+		REF @DECISION.EveryPublishedCommandHasARealProcessTest
+		REF @COMMAND.MergeSaves
+		REF @COMMAND.ValidateSave
+	SOURCE "Owner request, refinement session of 2026-09-23"
+		PR 135
+
+TASK FIX104
+	TITLE "the content security policy of the web UI allows no 'unsafe-eval'"
+	DESC "start once PR 127 is merged into master and master into integration/release-and-hardening"
+	STATUS implemented
+	SPEC "the Content-Security-Policy of packages/ui-save-manager/public/_headers carries no"
+		+ "'unsafe-eval'"
+		IMPL "packages/ui-save-manager/public/_headers::script-src 'self';"
+	SPEC "loading, viewing and merging a save raise no securitypolicyviolation event on the three"
+		+ "engines"
+		IMPL "packages/ui-save-manager/e2e/security.e2e.ts::should meet no refusal of the content"
+			+ "security policy"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::SECTION_VALIDATORS_BY_SCHEMA_ID"
+	SPEC "a guard of check:guards fails when the versioned section validators differ from what the"
+		+ "JSON Schemas of shared-save-processing produce"
+		IMPL "packages/core-mapping/scripts/check-section-validators.ts::findSectionValidatorsDivergence"
+		IMPL "packages/core-mapping/scripts/check-section-validators.spec.ts"
+		IMPL "package.json::bun run check:section-validators"
+	RATIONALE "Ajv compiles the section validators with new Function, the only eval of the client"
+		+ "bundle measured on 2026-09-23; its standalone ESM output for the ten section schemas"
+		+ "holds no eval and imports nothing from Ajv. Ruled with the user on 2026-09-24: the"
+		+ "validators are generated into core-mapping, versioned and replayed by a guard, as the"
+		+ "scenario fixtures are, so that the CLI and the web UI validate through the same module."
+		+ "A Vite plugin was refused, the CLI keeping a second path compiled at run time; an"
+		+ "unversioned generation was refused, bun test and the CLI then depending on a step having"
+		+ "run. PR 127 rewrites validateSchemas.js and adds the legacy schemas, hence the wait. The"
+		+ "scenario of security.e2e.ts already listens for policy violations and bites once the"
+		+ "source is gone"
+		REF @LIMITATION.TheContentSecurityPolicyAllowsEval
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+	SOURCE "Measured while implementing FIX101 on 2026-09-23"
+		PR 134
+	SOURCE "Refinement with the user on 2026-09-24"
+	DELIVERED_BY 156
+	WAVE 8
+
+TASK DOCS108
+	TITLE "the README shows the state of the project in badges under its title"
+	STATUS implemented
+	SPEC "the README carries under its title, next to the Netlify badge, one badge for each of the"
+		+ "Quality, Dependencies, UI tests and Site check workflows, showing the state of its last"
+		+ "run on master and linking to the runs of that workflow on master"
+		IMPL "README.md::quality.yml?query=branch%3Amaster"
+		IMPL "README.md::dependencies.yml?query=branch%3Amaster"
+		IMPL "README.md::ui-tests.yml?query=branch%3Amaster"
+		IMPL "README.md::site-check.yml?query=branch%3Amaster"
+	SPEC "the README carries a Release badge showing the state of the last release run and linking"
+		+ "to the runs of the Release workflow"
+		IMPL "README.md::[![Release]"
+	SPEC "the UI tests workflow runs on every push to master"
+		IMPL ".github/workflows/ui-tests.yml::the run the README badge shows"
+	SPEC "the README carries a license badge linking to the LICENSE file"
+		IMPL "README.md::(LICENSE)"
+	SPEC "the Netlify badge shows the state of the production deploy of master; a deploy preview"
+		+ "leaves it unchanged"
+		IMPL "README.md::deploy-status?branch=master"
+	SPEC "the README carries a Dependabot badge showing the state of the last Dependabot update run"
+		+ "on master and linking to those runs"
+		IMPL "README.md::dependabot-updates?query=branch%3Amaster"
+	WAVE 8
+	DELIVERED_BY 144
+	RATIONALE "the Netlify deploy badge, added on master by commit 957d86e, is the only one; the"
+		+ "state of the workflows is visible only from the Actions tab. Measured on 2026-09-24:"
+		+ "Quality and Dependencies run on push to master, Site check on a weekly schedule of the"
+		+ "default branch, Release on tags, UI tests only on pull requests and by hand, so its"
+		+ "badge would have no state on master without a push trigger. GitHub detects the LICENSE"
+		+ "as GPL-3.0; no package.json carries a license field. The Netlify badge URL carries no"
+		+ "branch and turns to canceled on a deploy preview; its endpoint answers ?branch=master"
+		+ "with the same image as no branch and an unknown branch with another, so it filters by"
+		+ "branch. The wave 8 integration branch does not carry 957d86e: it is rebased on master"
+		+ "before the task branch is cut from it"
+	SOURCE "Request of the user on 2026-09-23; set of badges ruled with the user on 2026-09-24"
+
+TASK CHORE109
+	TITLE "every active decision that records a defect left in place is rewritten as a limitation"
+	STATUS implemented
+	DELIVERED_BY 145
+	SPEC "every DECISION whose ruling is a workaround of a defect of this project, kept until a"
+		+ "fix, is replaced by a LIMITATION carrying its SYMPTOM, WORKAROUND and UNTIL"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::LIMITATION"
+			+ "TheFallowAuditReadsNoFileOfUiSaveManager"
+	SPEC "every reference to a replaced DECISION points at its LIMITATION"
+		IMPL "fallow.toml::a gap of this project, not a ruling"
+	SPEC "the pull request lists each DECISION reviewed and kept, with the reason it is a ruling"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::Rewritten from a decision by the"
+			+ "review of CHORE109"
+	WAVE 8
+	RATIONALE "the user suspects that some of the 96 active decisions describe a defect left in"
+		+ "place rather than a choice; a defect of an external tool stays a DECISION with UNTIL,"
+		+ "only a defect of this project is a LIMITATION. The review stays in the pull request,"
+		+ "ruled with the user on 2026-09-24. A first pass during the refinement found one"
+		+ "candidate, the exclusion of ui-save-manager from the fallow perimeter, now"
+		+ "TheFallowAuditReadsNoFileOfUiSaveManager: no reasoning recorded, and fallow run on"
+		+ "ui-save-manager with app.tsx and routes as entries reports no unused code and one"
+		+ "high-complexity function, so the exclusion is a gap of this project, not of fallow."
+		+ "CHORE102 runs after this task, so that the limitations it writes enter that review"
+		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
+		REF @TASK.CHORE102
+	SOURCE "Request of the user on 2026-09-23; scope ruled with the user on 2026-09-24"
+
+TASK FIX110
+	TITLE "the site check fetches only the production site or one of its deploy previews"
+	STATUS implemented
+	SPEC "check:site refuses, with an error and a non-zero exit before any request, a --url= that"
+		+ "is not https, carries userinfo, a port, a path, a query or a fragment, or names a host"
+		+ "other than planet-crafter-save-manager.netlify.app or"
+		+ "deploy-preview-<N>--planet-crafter-save-manager.netlify.app"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.ts::resolveCheckedSiteUrl"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.spec.ts"
+		IMPL "packages/ui-save-manager/scripts/check-site.ts::is refused"
+	SPEC "the CodeQL analysis of the pull request reports no js/request-forgery alert on"
+		+ "packages/ui-save-manager/scripts/check-site.ts"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.ts::encodeURIComponent"
+	AFTER @TASK.FIX101
+	DELIVERED_BY 139
+	WAVE 8
+	RATIONALE "CodeQL alert #2 (js/request-forgery, critical) was raised on PR 132 at cdeb1ef: the"
+		+ "URL fetched by check-site.ts came from the --url= argument unchecked"
+	SOURCE "Ruled with the user on 2026-09-23: restrict the accepted URL rather than dismiss the"
+		+ "alert"
+		PR 139
+
+TASK FIX111
+	TITLE "every section name shown to a user is the LABEL of its SECTION"
+	STATUS draft
+	SPEC "the section named in the location of a validation message equals the LABEL of the SECTION"
+		+ "entity of that index"
+	SPEC "a SECTION LABEL the code does not follow fails a check of the repository"
+	SOURCE "Picked in the review of the accepted limitations, CHORE102"
+		REF @LIMITATION.SectionLabelsDivergeFromTheFormatDocument
+
+TASK CHORE112
+	TITLE "the fallow audit and health report cover ui-save-manager"
+	STATUS draft
+	SPEC "fallow.toml ignores no file of packages/ui-save-manager/src"
+	SPEC "bun run audit:quality exits 0 with ui-save-manager in the fallow perimeter"
+	RATIONALE "Measured on 2026-09-24 with ui-save-manager brought in, app.tsx and routes/*.tsx as"
+		+ "entries: no dead code, five more clone groups (e2e scenarios and buttons.css), one"
+		+ "function above the complexity threshold in routes/index.tsx"
+	SOURCE "Picked in the review of the accepted limitations, CHORE102"
+		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
+
+TASK FIX113
+	TITLE "the production breakdown by machine counts the boost of optimizers once"
+	STATUS draft
+	SPEC "with energy fuses in play, the totalLevel of the production breakdown entries sums to the"
+		+ "production of the planet"
+	SPEC "the productionRatio shares of the production breakdown sum to 1"
+	SPEC "the boost of an optimizer is counted once in the production of the planet"
+	SOURCE "Picked in the review of the accepted limitations, CHORE102"
+		REF @LIMITATION.TheMachineBreakdownIgnoresOptimizerBoost
+
 TASK CHORE105
 	TITLE "measure the unit test coverage and fail the CI when it drops"
 	STATUS todo
@@ -1630,7 +2023,7 @@ TASK CHORE105
 		REF @DECISION.EveryPublishedCommandHasARealProcessTest
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
 		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
-		REF @DECISION.UiSaveManagerStaysOutsideTheFallowPerimeter
+		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
 	SOURCE "Owner request, refinement session of 2026-09-23"
 
 TASK FEAT114
@@ -1646,6 +2039,90 @@ TASK FEAT114
 	SOURCE "Owner review, 2026-09-24: the output of the two commands is hard to read, a draft task"
 		+ "with no wave"
 		PR 127
+
+TASK FEAT115
+	TITLE "a README badge shows the version production serves"
+	STATUS implemented
+	SPEC "the build of ui-save-manager emits a static version.json at the site root, carrying the"
+		+ "package version and the commit Netlify built from its COMMIT_REF, without writing into"
+		+ "the versioned public directory"
+		IMPL "packages/ui-save-manager/vite.config.ts::emitVersionDocument"
+		IMPL "packages/ui-save-manager/versionDocument.spec.ts::should carry the version and that"
+			+ "commit"
+	SPEC "a build without COMMIT_REF succeeds and writes a null commit into version.json"
+		IMPL "packages/ui-save-manager/e2e/version.e2e.ts::should serve the version of the web"
+			+ "application and a null commit"
+		IMPL "packages/ui-save-manager/versionDocument.spec.ts::should carry the version and a null"
+			+ "commit"
+	SPEC "a README badge labelled production shows the version alone, read from the production"
+		+ "version.json through the shields.io dynamic JSON endpoint"
+		IMPL "README.md::query=%24.version&label=production"
+	SPEC "the Netlify status badge stays in the README, next to the production badge, with the alt"
+		+ "text Netlify build of master"
+		IMPL "README.md::[![Netlify build of master]"
+	SPEC "the site check prints the version and the commit production serves, names the latest"
+		+ "ui-save-manager-v* tag when production does not serve it, and fails on neither"
+		IMPL "packages/ui-save-manager/scripts/check-site.ts::describeServedVersion"
+		IMPL "packages/ui-save-manager/scripts/servedVersion.spec.ts"
+	WAVE 8
+	DELIVERED_BY 158
+	RATIONALE "With publishing locked, Netlify's status badge and its 'Deployed' label report the"
+		+ "build of master, not what production serves: after PR 127 both read as deployed while"
+		+ "production still served the release before it. The image of the Netlify badge cannot be"
+		+ "relabelled, hence its alt text and its place next to the production badge. Production is"
+		+ "always the commit of a release tag, so the badge shows the version and the site check"
+		+ "compares with the latest tag, not with master, which also moves on commits that leave"
+		+ "the web UI untouched. An unpublished tag is the owner's call, so it is reported and"
+		+ "never fails a run. version.json is read under the production root check:site already"
+		+ "rebuilds from constants; the badge reads an error until the release carrying this task"
+		+ "is published"
+		REF @DECISION.ProductionIsPublishedByHandFromAReleaseTag
+		REF @LIMITATION.TheSiteCheckCannotTellWhichCommitProductionServes
+		REF @DECISION.TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
+	SOURCE "Asked by the owner on 2026-09-24, after PR 127 was built but not published"
+	SOURCE "Refinement with the user on 2026-09-24"
+
+TASK CHORE118
+	TITLE "pin every action the workflows use on a commit SHA"
+	STATUS implemented
+	WAVE 8
+	DELIVERED_BY 163
+	SPEC "every uses: of .github/workflows names a full 40-character commit SHA followed by a"
+		+ "comment giving the version it resolves to"
+		IMPL ".github/workflows/quality.yml::fallow-rs/fallow@bd8fca5af5df4ccfd94c7a835d17bd93c31a7cef"
+			+ "# v3.28.0"
+		IMPL ".github/workflows/claude.yml::anthropics/claude-code-action@8cf3482550831fb35a4fc3fbf7ca139cf8028b4c"
+			+ "# v1.0.233"
+	SPEC "a guard of check:guards fails on a uses: that names a tag or a branch"
+		IMPL "scripts/check-action-pins.ts::findUnpinnedActions"
+		IMPL "scripts/check-action-pins.spec.ts::When a uses: names something other than a full"
+			+ "commit SHA"
+		IMPL "package.json::bun run check:action-pins"
+	SPEC "Dependabot keeps proposing the updates of the pinned actions, SHA and version comment"
+		+ "rewritten together"
+		IMPL ".github/dependabot.yml::Dependabot rewrites both together"
+	RATIONALE "Outside release.yml every workflow references its actions by a moving major tag,"
+		+ "third-party ones included: fallow-rs/fallow@v3, oven-sh/setup-bun@v2 and"
+		+ "anthropics/claude-code-action@v1, which receives CLAUDE_CODE_OAUTH_TOKEN. Whoever moves"
+		+ "one of those tags runs code in the CI. release.yml already pins by SHA, so the"
+		+ "repository holds two policies; the guard keeps one"
+		REF @DECISION.DependabotTracksTwoEcosystemsInWeeklyGroups
+	SOURCE "Owner request, security review of 2026-09-24"
+
+TASK CHORE117
+	TITLE "hold back a dependency version until it is seven days old"
+	STATUS implemented
+	WAVE 8
+	DELIVERED_BY 161
+	SPEC "bunfig.toml declares a minimum release age of seven days for bun install and bun add"
+		IMPL "bunfig.toml::minimumReleaseAge = 604800"
+	SPEC "dependabot.yml declares a cooldown of seven days on both ecosystems"
+		IMPL ".github/dependabot.yml::default-days: 7"
+	RATIONALE "A malicious version published to npm is usually detected and withdrawn within days;"
+		+ "nothing today stops Dependabot from proposing it, nor a bun add from resolving it, on"
+		+ "the day it is published"
+		REF @DECISION.DependabotTracksTwoEcosystemsInWeeklyGroups
+	SOURCE "Owner request, security review of 2026-09-24"
 
 TASK CHORE116
 	TITLE "declare a wave as an entity carrying its milestone and its integration branch"

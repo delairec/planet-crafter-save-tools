@@ -302,6 +302,9 @@ DECISION AMergeThatWritesAFileIsASuccess
 	REJECTED "An option that skips the revalidation"
 	REJECTED "Reporting the warnings of the revalidation: their vocabulary does not apply to an"
 		+ "output"
+	REJECTED "Injecting the merge controller into the merge CLI so that a spec reaches the branch"
+		+ "reporting an invalid merged save: a seam for a test alone; no known input produces such"
+		+ "a save, and renderMergedSaveIssues is specified on its own"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SOURCE "Pull request"
 		PR 59
@@ -522,15 +525,6 @@ DECISION EachUseCaseResponseIsDeclaredInItsOwnFile
 	SOURCE "T28"
 		PR 59
 
-DECISION UiSaveManagerStaysOutsideTheFallowPerimeter
-	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	UNTIL "ui-save-manager is brought into the fallow quality perimeter"
-	SPEC "ui-save-manager is outside the fallow quality perimeter"
-		IMPL "fallow.toml::packages/ui-save-manager/**"
-	REJECTED "Run the fallow quality audit on ui-save-manager now"
-	SOURCE "Migration"
-		PR 61
-
 DECISION DissolvedPackagesAreNotRecreated
 	DESC "util-parsing, util-messages and shared-mapping were dissolved into shared-save-processing"
 		+ "and core-mapping"
@@ -607,13 +601,42 @@ DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 
 DECISION AnUnknownCliFlagIsAUsageError
 	SPEC "Both CLIs name on standard error each dash-prefixed argument that designates none of"
-		+ "their flags, print a usage line and exit with an error before reading anything"
+		+ "their flags and switches, print their help after it and exit 1 before reading anything"
 		IMPL "packages/shared-platforms/cliArguments.js::findUnknownArguments"
+		IMPL "packages/cli-merge/cli/renderMergeCliOutput.js::renderUnknownArguments"
+		IMPL "packages/cli-validate/cli/renderValidateCliOutput.js::renderUnknownArguments"
+		ENFORCED_BY "packages/cli-merge/cli/merge-cli.help.spec.js"
+		ENFORCED_BY "packages/cli-validate/cli/validate-cli.help.spec.js"
+	SPEC "--help wins over every other argument: both CLIs print their help on standard output and"
+		+ "exit 0 before reading anything; -h is no alias of it"
+		IMPL "packages/cli-merge/cli/initMergeCli.js::isHelpAsked"
+		IMPL "packages/cli-validate/cli/initValidateCli.js::isHelpAsked"
+		ENFORCED_BY "packages/cli-merge/cli/merge-cli.help.spec.js"
+		ENFORCED_BY "packages/cli-validate/cli/validate-cli.help.spec.js"
+	SPEC "Each parser derives the flags and switches it accepts from the one declaration its help"
+		+ "is formatted from, --platform included"
+		IMPL "packages/cli-merge/cli/parseMergeCliArguments.js::MERGE_CLI_ARGUMENTS"
+		IMPL "packages/cli-validate/cli/parseValidateCliArguments.js::VALIDATE_CLI_ARGUMENTS"
+		IMPL "packages/shared-platforms/cliArguments.js::formatHelp"
+		ENFORCED_BY "packages/cli-merge/cli/initMergeCli.spec.js::MERGE_CLI_HELP"
+		ENFORCED_BY "packages/cli-validate/cli/initValidateCli.spec.js::VALIDATE_CLI_HELP"
+	SPEC "cli-validate run without a save path prints its help on standard error and exits 1"
+		IMPL "packages/cli-validate/cli/initValidateCli.js::filePath"
 	REJECTED "Warn without changing the exit code: a misspelt flag makes the tool run on the"
 		+ "defaults"
 	REJECTED "Make the banner depend on the runtime: Node is a user-side compatibility only"
+	REJECTED "Print one usage line: it names neither what each flag does nor --version; the"
+		+ "previous form of this ruling"
+	REJECTED "-h as a short alias of --help: ruled out with the owner on 2026-09-23"
+	REJECTED "Hide --platform from the help: the help would no longer list what the parser accepts;"
+		+ "it is described as reserved to the node:* scripts instead"
+	REJECTED "A help text written by hand beside the parser's list of names: the two diverge"
+		+ "without a test failing"
+	APPLIES_TO_TASK @TASK.FEAT107
 	SOURCE "T34"
 		PR 60
+	SOURCE "Rewritten in place by the task pull request of FEAT107"
+		PR 148
 
 DECISION SectionControllersReceiveTheValidatedText
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -849,12 +872,16 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 	SPEC "Scenarios and their versioned fixtures live in the e2e directory, under a suffix the unit"
 		+ "test runner does not collect"
 		IMPL "packages/ui-save-manager/playwright.config.ts::testMatch: '**/*.e2e.ts'"
-	SPEC "The suite runs in CI on pull requests targeting the default branch and on demand, and is"
-		+ "not a required check"
+	SPEC "The suite runs in CI on pull requests targeting the default branch, on each push to it"
+		+ "and on demand, and is not a required check"
 		IMPL ".github/workflows/ui-tests.yml::workflow_dispatch"
+		IMPL ".github/workflows/ui-tests.yml::the run the README badge shows"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.DOCS108
 	SOURCE "T23"
 		PR 38
+	SOURCE "Push trigger added for the README badge"
+		PR 144
 
 DECISION AControllerSpecCoversWiringNotBranches
 	REJECTED "Covering business branches from controller specs: every rule change would cost twice"
@@ -1151,6 +1178,14 @@ DECISION TheMergedSaveDisplayNameComesFromTheCaller
 			+ "saveDisplayName,"
 		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
 			+ "use the saveDisplayName parameter and take save configuration from save A"
+	SPEC "every @ of that value, the section separator of the save format, is replaced by _"
+		IMPL "packages/core-mapping/src/application/sanitizeSaveDisplayName.ts::replaceAll"
+		ENFORCED_BY "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should give the"
+			+ "merged save that display name with each separator replaced"
+	REJECTED "Refusing a folder name holding @: the merge would fail on a name the save format can"
+		+ "carry once replaced"
+	REJECTED "Replacing @ in cli-merge alone: any other caller of the merge would still write a"
+		+ "save split into one section too many"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "Neither save is read, so the obligation settles no disagreement between saves and is"
 		+ "not a merge rule"
@@ -1362,7 +1397,7 @@ DECISION AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts"
 	SPEC "the save manager offers a checkbox and the merge command an option, both off by default"
 		+ "and both asking for the legacy format, so the two surfaces carry one polarity"
-		IMPL "packages/cli-merge/cli/parseMergeCliArguments.js::PREFER_LEGACY_FLAG_NAME"
+		IMPL "packages/cli-merge/cli/parseMergeCliArguments.js::PREFER_LEGACY_SWITCH"
 		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::preferLegacyFormat"
 	SPEC "a merge whose two saves differ in format reports the format it wrote and what writing it"
 		+ "dropped; the report names the option that would have kept the legacy format whenever"
@@ -1560,3 +1595,222 @@ DECISION ADraftTaskReportsNoFindingUntilRatified
 		+ "whose lint runs with the task todo"
 	SOURCE "Refinement of CHORE63 with the user on 2026-09-23"
 		PR 129
+
+DECISION AReleaseIsVerifiedOnATagHoldingAVersionNumber
+	SPEC "the Release workflow runs release:verify on every pushed tag whose name holds v or @"
+		+ "followed by a digit, and on no other tag"
+		IMPL ".github/workflows/release.yml::'**v[0-9]*'"
+		IMPL ".github/workflows/release.yml::'**@[0-9]*'"
+	SPEC "the release job creates a local master from origin/master before release:verify, so the"
+		+ "fallow scripts keep their --base master"
+		IMPL ".github/workflows/release.yml::branch master origin/master"
+	REJECTED "every tag: the before-awawa rollback tag would run a release check"
+	REJECTED "a release copy of the fallow scripts on --base origin/master: two copies to keep in"
+		+ "step"
+	APPLIES_TO_TASK @TASK.CHORE100
+	RATIONALE "The tag form of a version is CHORE83's to pick; both patterns cover the forms its"
+		+ "candidates write, cli-merge-v1.2.0 and cli-merge@1.2.0, and a tag checkout leaves only"
+		+ "tracking references, on which --base master exits 2"
+		REF @TASK.CHORE83
+	SOURCE "Delivery of CHORE100"
+		PR 133
+
+DECISION ConsumerVersionsAreComputedByARepositoryScript
+	SPEC "Only the cli-* and ui-* packages carry a version a release raises"
+		IMPL "scripts/release/resolveConsumerPaths.ts::CONSUMER_PREFIXES"
+	SPEC "A consumer takes a new version when a first-parent commit of master since its last tag"
+		+ "changes its directory or that of a workspace package it depends on transitively"
+		IMPL "scripts/release/resolveConsumerPaths.ts::collectReachableDirectories"
+		IMPL "scripts/release/readCommitSubjects.ts::--first-parent"
+		ENFORCED_BY "scripts/release/readCommitSubjects.spec.ts"
+	SPEC "Below 1.0.0, a ! raises the minor number and any other subject the patch number; a"
+		+ "release never leaves 0"
+		IMPL "scripts/release/planRelease.ts::lowerIncrementBeforeFirstMajor"
+		ENFORCED_BY "scripts/release/planRelease.spec.ts"
+	SPEC "From 1.0.0 on, a ! raises the major number, feat the minor one, any other subject the"
+		+ "patch number"
+		IMPL "scripts/release/planRelease.ts::determineIncrement"
+		ENFORCED_BY "scripts/release/planRelease.spec.ts"
+	SPEC "A version is a tag <consumer>-v<version> set on master after the release pull request is"
+		+ "merged"
+		IMPL "scripts/release/release-tag.ts::RELEASE_BRANCH"
+	SPEC "The tag of a version names the first-parent commit of master that wrote that version into"
+		+ "the manifest, whatever was merged after it"
+		IMPL "scripts/release/findVersionCommit.ts::--first-parent"
+		ENFORCED_BY "scripts/release/findVersionCommit.spec.ts"
+	SPEC "A release refuses a consumer whose declared version, other than 0.0.0, carries no tag"
+		IMPL "scripts/release/findVersionsToTag.ts::INITIAL_VERSION"
+		ENFORCED_BY "scripts/release/findVersionsToTag.spec.ts"
+	REJECTED "release-please in manifest mode: no released version counts the paths of another"
+		+ "package, so core-mapping and the shared packages would carry versions too; refactor,"
+		+ "test and chore commits raise nothing; bun.lock is left stale"
+	REJECTED "changesets: a file written by hand in every pull request, and a dependency that"
+		+ "carries no version does not propagate its release to its dependents"
+	REJECTED "Nx release and lerna-lite: both version the dependencies too, and Nx means adopting a"
+		+ "build system"
+	REJECTED "Deciding a bump from the scope of the commit: scopes name corpus areas and guards as"
+		+ "often as packages"
+	REJECTED "Starting the consumers at 1.0.0: much of the product is not settled yet"
+	RATIONALE "A version exists so that a bug report names what ran; what runs is a consumer and"
+		+ "every workspace package it bundles, and only the paths a commit changes say which"
+	APPLIES_TO_TASK @TASK.CHORE83
+	SOURCE "Ruled with the user on 2026-09-23 after the comparison CHORE83 asks for"
+		PR 135
+
+DECISION ProductionIsPublishedByHandFromAReleaseTag
+	SPEC "Netlify publishes no production deploy by itself; production is the deploy of the commit"
+		+ "a ui-save-manager-v* tag names, published by hand"
+		IMPL "README.md::Netlify publishes no production deploy by itself"
+	SPEC "Deploy previews of pull requests against master stay"
+		IMPL "README.md::the deploy previews stay public"
+	REJECTED "Publishing every push to master: nothing chooses what reaches production"
+	REJECTED "A release branch a workflow moves to each tag and Netlify builds: a second production"
+		+ "branch to keep, for a publication the owner wants to make by hand"
+	REJECTED "netlify deploy --prod from GitHub Actions: an access token in the repository, and the"
+		+ "server function nitro builds for Netlify is not proven to deploy that way"
+	RATIONALE "Netlify cannot build a git tag, and the owner wants to control what reaches"
+		+ "production; the squash commit of a release pull request is both the tagged commit and a"
+		+ "deploy Netlify built from master"
+	APPLIES_TO_TASK @TASK.CHORE83
+	SOURCE "Ruled with the user on 2026-09-23 during CHORE83"
+		PR 135
+
+DECISION BothCliEntryFilesRunThroughOneSharedFunction
+	SPEC "Running the command of a CLI when its module is the entry point, and exiting with its"
+		+ "unexpected error code when the command fails, is one shared-platforms function both"
+		+ "entry files call, the rendering of the failure handed to it by each CLI"
+		IMPL "packages/shared-platforms/runWhenEntryPoint.js::runWhenEntryPoint"
+		ENFORCED_BY "packages/shared-platforms/runWhenEntryPoint.spec.js"
+	REJECTED "Each entry file keeping its own entry-point check, catch and exit: the two blocks"
+		+ "were the same lines, reported by fallow as a clone group"
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
+	APPLIES_TO_PACKAGE @PACKAGE.shared_platforms
+	APPLIES_TO_TASK @TASK.CHORE83
+	SOURCE "Pull request review, the owner asking for the fallow warnings to be resolved"
+		PR 135
+
+DECISION TheSiteHeadersReachTheDocumentThroughTheServer
+	SPEC "public/_headers is the single source of the site headers: the build reads its /* block"
+		IMPL "packages/ui-save-manager/siteHeaders.ts::readSiteHeaders"
+	SPEC "the server route rule sends every header of public/_headers but the"
+		+ "Content-Security-Policy on each response it renders"
+		IMPL "packages/ui-save-manager/vite.config.ts::routeRules"
+	SPEC "the rendered document carries the Content-Security-Policy of public/_headers with a nonce"
+		+ "drawn for that response in script-src, and Solid writes it on its inline scripts"
+		IMPL "packages/ui-save-manager/src/entry-server.tsx::allowTheInlineScriptsOf"
+		IMPL "packages/ui-save-manager/e2e/security.e2e.ts"
+	REJECTED "hashes of the inline scripts in the policy: Solid emits its serialisation script or"
+		+ "not depending on streaming timing, so the hash changes, and the synchronous mode emits a"
+		+ "second script"
+	REJECTED "headers declared in netlify.toml: Netlify applies them to static files only, like"
+		+ "_headers, never to the responses of the rendering function"
+	REJECTED "the handler reading back or overriding the Content-Security-Policy of the route rule:"
+		+ "measured, the route-rule header is neither visible nor overridable from the SolidStart"
+		+ "handler, and the nonce never reached the response"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FIX101
+	SOURCE "Measured while implementing FIX101 on 2026-09-23"
+		PR 134
+
+DECISION TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
+	SPEC "check:site fetches a URL rebuilt from constants, never the --url= argument itself: the"
+		+ "production root, or a deploy preview root whose number passes through encodeURIComponent"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.ts::resolveCheckedSiteUrl"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.spec.ts"
+	REJECTED "dismissing CodeQL alert #2 as a false positive: the workflow input is free text, and"
+		+ "a dismissal leaves any later widening of the fetch unreported"
+	REJECTED "accepting any https URL: the check has no use outside the production site and its"
+		+ "deploy previews"
+	RATIONALE "a URL rebuilt from constants and encodeURIComponent is what the CodeQL"
+		+ "js/request-forgery query treats as sanitised; a URL that only passed a host check does"
+		+ "not clear it"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FIX110
+	SOURCE "Ruled with the user on 2026-09-23 on CodeQL alert #2 of PR 132"
+		PR 139
+
+DECISION TheReadmeBadgesShowTheStateOfMaster
+	SPEC "Every status badge of the README but Release shows the state of master and links to the"
+		+ "runs of master"
+		IMPL "README.md::deploy-status?branch=master"
+		IMPL "README.md::quality.yml/badge.svg?branch=master"
+		IMPL "README.md::dependabot-updates/badge.svg?branch=master"
+		IMPL "README.md::site-check.yml?query=branch%3Amaster"
+	SPEC "The Release badge carries no branch filter"
+		IMPL "README.md::release.yml/badge.svg)"
+	REJECTED "The Netlify badge with no branch: a deploy preview turns it to canceled"
+	REJECTED "A Release badge filtered on master: a release runs on a tag push, which no branch"
+		+ "carries"
+	RATIONALE "a badge reports the product the owner publishes, so a task pull request or a deploy"
+		+ "preview must not move it"
+	APPLIES_TO_TASK @TASK.DOCS108
+	SOURCE "Set of badges ruled with the user on 2026-09-24"
+		PR 144
+
+DECISION TheSectionValidatorsAreGeneratedAndVersioned
+	SPEC "The section validators are Ajv standalone code generated from the JSON Schemas of"
+		+ "shared-save-processing into core-mapping and versioned; the CLI and the web UI validate"
+		+ "through that module, and no schema is compiled at run time"
+		IMPL "packages/core-mapping/scripts/generate-section-validators.ts::standaloneCode"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::./sectionValidators.generated.js"
+	SPEC "check:guards fails when the versioned module differs from what the generator writes"
+		IMPL "packages/core-mapping/scripts/check-section-validators.ts"
+		ENFORCED_BY "packages/core-mapping/scripts/check-section-validators.spec.ts"
+	REJECTED "A Vite plugin generating the validators at build time: the CLI would keep a second"
+		+ "path compiling at run time"
+	REJECTED "An unversioned generation: bun test and the CLI would depend on a step having run"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "Ajv compiles a schema with new Function, which the content security policy of the"
+		+ "web UI refuses without 'unsafe-eval'"
+	SOURCE "Refinement of FIX104 with the user on 2026-09-24"
+
+DECISION TheScheduledDependencyAuditRunsMonthly
+	SPEC "The scheduled run of the Dependencies workflow audits the dependencies once a month"
+		IMPL ".github/workflows/dependencies.yml::cron: '23 4 1 * *'"
+	REJECTED "A daily or weekly schedule: refused by the owner, the audit already runs on every"
+		+ "pull request and every push to master"
+	SOURCE "Owner ruling, security review of 2026-09-24"
+
+DECISION ADependencyVersionIsHeldBackForSevenDays
+	SPEC "bun install and bun add resolve no npm version published less than seven days ago, with"
+		+ "no package exempted"
+		IMPL "bunfig.toml::minimumReleaseAge = 604800"
+	SPEC "Dependabot proposes no version less than seven days old, on both ecosystems"
+		IMPL ".github/dependabot.yml::default-days: 7"
+	REJECTED "Dependabot's implicit three-day cooldown: shorter than the delay bun install applies"
+	REJECTED "An exclusion list: an exempted package reopens the window for the one a compromise"
+		+ "targets; an urgent install passes --minimum-release-age=0 once instead"
+	REJECTED "Per-bump semver cooldown days: github-actions ignores them, and the risk does not"
+		+ "depend on the size of the bump"
+	APPLIES_TO_TASK @TASK.CHORE117
+	SOURCE "Owner request, security review of 2026-09-24"
+		PR 161
+		PR 162
+
+DECISION EveryActionIsPinnedOnACommitSha
+	SPEC "every uses: of .github/workflows names a full 40-character commit SHA followed by a"
+		+ "comment giving the release it resolves to; a local action is exempt"
+		IMPL ".github/workflows/quality.yml::fallow-rs/fallow@bd8fca5af5df4ccfd94c7a835d17bd93c31a7cef"
+			+ "# v3.28.0"
+		IMPL "scripts/check-action-pins.ts::findUnpinnedActions"
+		ENFORCED_BY "package.json::bun run check:action-pins"
+		ENFORCED_BY "scripts/check-action-pins.spec.ts::When a uses: names something other than a"
+			+ "full commit SHA"
+	SPEC "Dependabot updates a pinned action by rewriting its SHA and its same-line version comment"
+		+ "together, with no configuration of its own"
+		IMPL ".github/dependabot.yml::Dependabot rewrites both together"
+	REJECTED "Moving major tags such as @v3: whoever moves the tag runs code in the CI, secrets"
+		+ "included"
+	REJECTED "Exact version tags such as @v3.28.0: a tag can be moved as well, only a commit SHA"
+		+ "cannot"
+	REJECTED "A SHA without its version comment: the pin reads as an opaque hash, and Dependabot"
+		+ "has no version to rewrite beside it"
+	APPLIES_TO_TASK @TASK.CHORE118
+	SOURCE "Owner request, security review of 2026-09-24; the two Claude workflows pinned on master"
+		+ "first, the rest in the task pull request"
+		PR 162
+		PR 163
+	SOURCE "Dependabot reference, read on 2026-09-24: it updates actions referenced as"
+		+ "actions/checkout@<commit>, and the version comment when it sits on the same line"
+		REF @URL.DependabotSupportedEcosystemsGithubActions

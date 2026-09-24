@@ -4,10 +4,11 @@ import {NON_JSON_SAVE_FILE_PATH, SAVE_FILE_PATH} from '../testing/fakePaths.js';
 import {VALID_SAVE_CONTENT} from '../testing/fakeValidSaveContent.js';
 import {INVALID_SAVE_CONTENT} from '../testing/fakeInvalidSaveContent.js';
 import {SAVE_CONTENT_WITH_INVALID_ENTRY} from '../testing/fakeSaveContentWithInvalidEntry.js';
+import {VALIDATE_CLI_HELP} from '../testing/validateCliHelp.js';
 import {createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 
 const NO_ARGUMENTS = [];
-const USAGE_MESSAGE = 'Usage: bun validate -- --file=<filepath>';
+const CLI_RELEASE = {name: 'cli-validate', version: '1.4.2'};
 
 describe('Validate CLI', () => {
   let consoleLogSpy;
@@ -17,7 +18,7 @@ describe('Validate CLI', () => {
   let exitProcess;
 
   function initCli(argv) {
-    return initValidateCli({readTextFile, exitProcess}, argv);
+    return initValidateCli({readTextFile, exitProcess}, argv, CLI_RELEASE);
   }
 
   beforeEach(() => {
@@ -27,6 +28,45 @@ describe('Validate CLI', () => {
 
     readTextFile = mock();
     exitProcess = mock();
+  });
+
+  describe('When the version is asked', () => {
+    it('should print the name and the version of the command on stdout', async () => {
+      // Arrange
+      const {main} = initCli(['--version']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).toHaveBeenCalledWith('cli-validate 1.4.2');
+    });
+
+    it('should exit with code 0 without reading any file', async () => {
+      // Arrange
+      const {main} = initCli(['--version']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readTextFile).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the version is asked beside an argument the command does not accept', () => {
+    it('should refuse the run with code 1 without printing the version', async () => {
+      // Arrange
+      const {main} = initCli(['--version', '--fil=save.json']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
   });
 
   describe('When no file path is provided', () => {
@@ -41,7 +81,7 @@ describe('Validate CLI', () => {
       expect(exitProcess).toHaveBeenCalledWith(1);
     });
 
-    it('should print a usage message', async () => {
+    it('should print the help on stderr', async () => {
       // Arrange
       const {main} = initCli(NO_ARGUMENTS);
 
@@ -49,7 +89,7 @@ describe('Validate CLI', () => {
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith(USAGE_MESSAGE);
+      expect(consoleErrorSpy.mock.calls).toEqual([[VALIDATE_CLI_HELP]]);
     });
 
     it('should not read any file', async () => {
@@ -65,7 +105,7 @@ describe('Validate CLI', () => {
   });
 
   describe('When the --file flag carries no path', () => {
-    it('should print a usage message rather than read an empty path', async () => {
+    it('should print the help rather than read an empty path', async () => {
       // Arrange
       const {main} = initCli(['--file=']);
 
@@ -73,13 +113,67 @@ describe('Validate CLI', () => {
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith(USAGE_MESSAGE);
+      expect(consoleErrorSpy.mock.calls).toEqual([[VALIDATE_CLI_HELP]]);
       expect(readTextFile).not.toHaveBeenCalled();
     });
   });
 
+  describe('When the help is asked', () => {
+    it('should print the help of the command on stdout', async () => {
+      // Arrange
+      const {main} = initCli(['--help']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy.mock.calls).toEqual([[VALIDATE_CLI_HELP]]);
+    });
+
+    it('should exit with code 0 without reading any file', async () => {
+      // Arrange
+      const {main} = initCli([`--file=${SAVE_FILE_PATH}`, '--help']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readTextFile).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the help is asked beside the version and an argument the command does not accept', () => {
+    it('should print the help alone and exit with code 0', async () => {
+      // Arrange
+      const {main} = initCli(['--fil=Standard-1.json', '--version', '--help']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy.mock.calls).toEqual([[VALIDATE_CLI_HELP]]);
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the help is asked by its short form', () => {
+    it('should name -h as an unknown argument and exit with code 1', async () => {
+      // Arrange
+      const {main} = initCli(['-h']);
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith('✖ Unknown argument(s): -h');
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+  });
+
   describe('When an argument names no flag the command accepts', () => {
-    it('should name that argument and print a usage message', async () => {
+    it('should name that argument on stderr, followed by the help', async () => {
       // Arrange
       const {main} = initCli(['--fil=Standard-1.json']);
 
@@ -87,8 +181,8 @@ describe('Validate CLI', () => {
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith('✖ Unknown argument(s): --fil=Standard-1.json');
-      expect(consoleErrorSpy).toHaveBeenCalledWith(USAGE_MESSAGE);
+      expect(consoleErrorSpy.mock.calls).toEqual([['✖ Unknown argument(s): --fil=Standard-1.json'], [VALIDATE_CLI_HELP]]);
+      expect(consoleLogSpy).not.toHaveBeenCalled();
     });
 
     it('should exit with code 1 without reading any file', async () => {

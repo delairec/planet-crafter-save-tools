@@ -1,4 +1,6 @@
 LIMITATION LateWorldObjectParseErrorsWouldNeverReachTheScreen
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
 	SYMPTOM "Nothing today: the path is dead, but the day validation stops draining the world"
 		+ "objects section before reading the parse errors, a save whose unreadable lines sit only"
 		+ "in that section is shown without those errors, and no test fails"
@@ -72,6 +74,8 @@ LIMITATION TheHydrationFallbackHasNoScenario
 		PR 78
 
 LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
 	SYMPTOM "A folder name containing @ makes bun merge write a save that bun validate rejects; the"
 		+ "file is still written, the exit code stays 0 and the errors are printed on stderr"
 	UNTIL "the merge sanitizes the display name at the boundary that receives it, or refuses a name"
@@ -102,7 +106,7 @@ LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
 LIMITATION SectionLabelsDivergeFromTheFormatDocument
 	SYMPTOM "The short section labels used in the location of an error do not match the section"
 		+ "headings of the save format document"
-	UNTIL "every section name shown to a user is read from SECTION.LABEL, the single reference"
+	UNTIL @TASK.FIX111
 	SEEN_IN "packages/core-mapping/src/presentation/messages/saveSectionLabels.js::'Mailbox"
 		+ "messages'"
 	SEEN_IN "docs/save-format.md::#0 — Player Progression (tokens & unlocked groups)"
@@ -116,20 +120,22 @@ LIMITATION TheSecurityAuditIgnoresTwoTransitiveAdvisories
 	SYMPTOM "Two high-severity advisories carried by transitive dependencies, which the repository"
 		+ "does not declare itself, are ignored by name in the audit script: the audit job is green"
 		+ "while the advisories stay unresolved"
-	UNTIL "the upstream dependencies upgrade past both advisories, or a resolution is forced from"
-		+ "the root manifest"
+	UNTIL @TASK.FIX106
 	SEEN_IN "package.json::--ignore=GHSA-3v7f-55p6-f55p --ignore=GHSA-c2c7-rcm5-vvqj"
 	RATIONALE "The failure predates the pull requests that meet it and does not come from them: it"
 		+ "was seen identically on a pull request touching only an ignore file. It is exactly what"
 		+ "dependency tracking should report on a schedule rather than on the day of a merge"
 	SOURCE "Found on 2026-09-10 in pull request 53"
 		PR 53
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
 
 LIMITATION TheContentSecurityPolicyAllowsInlineScript
+	STATUS archived
+	ARCHIVED_ON 2026-09-23
 	SYMPTOM "The content security policy allows inline script and style: a script injected into the"
 		+ "page runs despite it"
-	UNTIL "the hydration script carries a hash or a nonce, or the framework is shown not to allow"
-		+ "one"
+	UNTIL @TASK.FIX101
 	SEEN_IN "packages/ui-save-manager/public/_headers::script-src 'self' 'unsafe-inline'"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "The policy was set to be compatible with the production build, without removing"
@@ -142,7 +148,7 @@ LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
 	SYMPTOM "The production breakdown by machine uses base levels only, without the boost of"
 		+ "optimizers and fuses: once a fuse is in play the totalLevel of the entries sums below"
 		+ "production, and their productionRatio shares do not sum to 1"
-	UNTIL "the breakdown accounts for the optimizer boost without counting it twice"
+	UNTIL @TASK.FIX113
 	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private"
 		+ "productionBreakdown(production: number)"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -154,6 +160,8 @@ LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
 		PR 72
 
 LIMITATION ADecorativeIconInAViewModelValueIsReadAloud
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
 	SYMPTOM "A screen reader announces the name of the construction icon in every consumption and"
 		+ "available cell, and in the title of the consumption grid"
 	UNTIL "the icon is taken out of the work-in-progress label in both message modules"
@@ -174,3 +182,92 @@ LIMITATION ADecorativeIconInAViewModelValueIsReadAloud
 		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
 	SOURCE "Found on 2026-09-14 in the review of pull request 71"
 		PR 71
+
+LIMITATION TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader
+	STATUS archived
+	ARCHIVED_ON 2026-09-23
+	SYMPTOM "The HTML document of the production web UI carries no Content-Security-Policy,"
+		+ "Referrer-Policy nor Permissions-Policy: another site may frame it, and nothing restricts"
+		+ "a script injected into it"
+	UNTIL @TASK.FIX101
+	SEEN_IN "packages/ui-save-manager/public/_headers::Content-Security-Policy"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "Netlify applies _headers to the static files it serves, not to the responses of the"
+		+ "function that renders the document: the headers were written as if the site were static"
+	SOURCE "Measured with curl -I on the production site and on the local build on 2026-09-23"
+
+LIMITATION EachCliDuplicatesItsVersionAndUnknownArgumentRendering
+	SYMPTOM "renderVersion and renderUnknownArguments are written twice, once in cli-merge and once"
+		+ "in cli-validate, and fallow reports the pair as a clone group unless its reviewed key is"
+		+ "listed"
+	WORKAROUND "The clone group is listed as reviewed under its exact key in fallow.toml, which"
+		+ "lapses as soon as either copy changes or a third copy appears; a change to one copy is"
+		+ "made to the other"
+	UNTIL "a package the dependency matrix lets both cli-* packages import can hold terminal"
+		+ "rendering, or a third CLI needs the same lines"
+	SEEN_IN "packages/cli-merge/cli/renderMergeCliOutput.js::renderVersion"
+	SEEN_IN "packages/cli-validate/cli/renderValidateCliOutput.js::renderVersion"
+	SEEN_IN "fallow.toml::ignoredClones"
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
+	RATIONALE "No shared home is allowed today: a shared-* package holds no UI concern (ARCH-SHR-2)"
+		+ "and terminal output is the presentation of a CLI, and a cli-* package may depend only on"
+		+ "shared-*, util-* and core-* packages, so neither CLI can import the other's rendering."
+		+ "Ignoring the rendering files for duplication was rejected: every later clone there would"
+		+ "go unseen, where the reviewed key lapses on its own"
+		REF @DECISION.BothCliEntryFilesRunThroughOneSharedFunction
+	SOURCE "Pull request review, the owner asking for the fallow warnings to be resolved, then for"
+		+ "the kept duplication to be recorded as a limitation rather than a decision"
+		PR 135
+
+LIMITATION TheContentSecurityPolicyAllowsEval
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
+	SYMPTOM "the content security policy of the web UI allows 'unsafe-eval' in script-src: a string"
+		+ "an injected script hands to eval or new Function runs despite it"
+	UNTIL @TASK.FIX104
+	SEEN_IN "packages/ui-save-manager/public/_headers::'unsafe-eval'"
+	SEEN_IN "packages/core-mapping/src/infrastructure/validateSchemas.js::getSchema(sectionSchemaId)"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "Ajv compiles each section validator with new Function in the browser: measured in"
+		+ "chromium on 2026-09-23, without 'unsafe-eval' the validation throws an EvalError and the"
+		+ "web UI cannot load a save. FIX101 removed 'unsafe-inline' and kept this source"
+		REF @TASK.FIX101
+	SOURCE "Measured while implementing FIX101 on 2026-09-23"
+		PR 134
+
+LIMITATION TheSiteCheckCannotTellWhichCommitProductionServes
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
+	SYMPTOM "the site check passes on the headers production serves today, even when master carries"
+		+ "a header change that no published deployment carries yet: nothing says which commit is"
+		+ "live"
+	UNTIL @TASK.FEAT115
+	SEEN_IN ".github/workflows/site-check.yml::fails on neither"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "Netlify builds master on each push but publishes by hand, and production lags master"
+		+ "until its owner publishes. An X-Build-Commit header from Netlify's COMMIT_REF, awaited"
+		+ "by a run on each push, was dropped because that run would wait for a commit never"
+		+ "published. A weekly run failing when the last master commit touching the web UI build"
+		+ "inputs is not an ancestor of the live commit was dropped because it would fail on a lag"
+		+ "that is the owner's call. Both become sound once publication follows the push"
+		REF @TASK.FIX101
+	SOURCE "Owner's ruling in the review of FIX101, 2026-09-23"
+		PR 134
+
+LIMITATION TheFallowAuditReadsNoFileOfUiSaveManager
+	SYMPTOM "fallow audit and fallow health skip every file of ui-save-manager: an unused export,"
+		+ "an unused file, a duplicate or a complex function of the web UI fails no quality gate"
+	WORKAROUND "run fallow by hand on a copy of fallow.toml without the ui-save-manager ignore"
+		+ "pattern and with src/app.tsx and src/routes/*.tsx as entries"
+	UNTIL @TASK.CHORE112
+	SEEN_IN "fallow.toml::packages/ui-save-manager/**"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "The exclusion was written at the migration as a decision with no reasoning, and"
+		+ "nothing in fallow prevents the audit. Measured on 2026-09-24 with the workaround:"
+		+ "dead-code reports no issue and health one high-complexity function, in"
+		+ "src/routes/index.tsx"
+	SOURCE "Exclusion written in the migration"
+		PR 61
+	SOURCE "Rewritten from a decision by the review of CHORE109"
+		PR 145

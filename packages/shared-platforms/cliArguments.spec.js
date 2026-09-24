@@ -1,13 +1,12 @@
 import {describe, expect, it} from 'bun:test';
-import {findUnknownArguments, isFlagPresent, PLATFORM_FLAG_NAME, readFlagValue} from './cliArguments.js';
+import {findUnknownArguments, formatHelp, hasSwitch, PLATFORM_FLAG_NAME, readFlagValue} from './cliArguments.js';
 
 const FILE_FLAG_NAME = 'file';
+const VERSION_SWITCH_NAME = 'version';
 const INPUT_FLAG_NAME = 'input';
-const PREFER_LEGACY_FLAG_NAME = 'prefer-legacy';
-const NO_VALUE_FLAG_NAMES = [];
 const NO_ARGUMENTS = [];
-const NO_VALUELESS_FLAG_NAMES = [];
-const NO_KNOWN_FLAG = {valueFlagNames: [], valuelessFlagNames: NO_VALUELESS_FLAG_NAMES};
+const NO_KNOWN_FLAG_NAME = [];
+const NO_KNOWN_SWITCH_NAME = [];
 
 describe('CLI argument reading', () => {
   describe('When the flag is absent', () => {
@@ -94,60 +93,6 @@ describe('CLI argument reading', () => {
   });
 });
 
-describe('CLI valueless flag reading', () => {
-  describe('When the flag is absent', () => {
-    it('should report it absent', () => {
-      // Arrange
-      const argv = ['bun', 'merge-cli.js', '--input=saves'];
-
-      // Act
-      const isPresent = isFlagPresent(argv, PREFER_LEGACY_FLAG_NAME);
-
-      // Assert
-      expect(isPresent).toBe(false);
-    });
-  });
-
-  describe('When the flag is given', () => {
-    it('should report it present', () => {
-      // Arrange
-      const argv = ['bun', 'merge-cli.js', '--prefer-legacy'];
-
-      // Act
-      const isPresent = isFlagPresent(argv, PREFER_LEGACY_FLAG_NAME);
-
-      // Assert
-      expect(isPresent).toBe(true);
-    });
-  });
-
-  describe('When the flag is given a value', () => {
-    it('should report it absent, a valueless flag carrying none', () => {
-      // Arrange
-      const argv = ['--prefer-legacy=true'];
-
-      // Act
-      const isPresent = isFlagPresent(argv, PREFER_LEGACY_FLAG_NAME);
-
-      // Assert
-      expect(isPresent).toBe(false);
-    });
-  });
-
-  describe('When another flag starts with the same letters', () => {
-    it('should report the flag absent', () => {
-      // Arrange
-      const argv = ['--prefer-legacy-format'];
-
-      // Act
-      const isPresent = isFlagPresent(argv, PREFER_LEGACY_FLAG_NAME);
-
-      // Assert
-      expect(isPresent).toBe(false);
-    });
-  });
-});
-
 describe('CLI unknown argument detection', () => {
   describe('When every dash-prefixed argument names a known flag', () => {
     it('should report no unknown argument', () => {
@@ -155,7 +100,7 @@ describe('CLI unknown argument detection', () => {
       const argv = ['bun', 'merge-cli.js', '--input=saves', '--platform=node'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, {valueFlagNames: [INPUT_FLAG_NAME, PLATFORM_FLAG_NAME], valuelessFlagNames: NO_VALUELESS_FLAG_NAMES});
+      const unknownArguments = findUnknownArguments(argv, {flagNames: [INPUT_FLAG_NAME, PLATFORM_FLAG_NAME], switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(NO_ARGUMENTS);
@@ -168,7 +113,7 @@ describe('CLI unknown argument detection', () => {
       const argv = ['--inpt=saves'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, {valueFlagNames: [INPUT_FLAG_NAME], valuelessFlagNames: NO_VALUELESS_FLAG_NAMES});
+      const unknownArguments = findUnknownArguments(argv, {flagNames: [INPUT_FLAG_NAME], switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(['--inpt=saves']);
@@ -181,7 +126,7 @@ describe('CLI unknown argument detection', () => {
       const argv = ['--input', 'saves'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, {valueFlagNames: [INPUT_FLAG_NAME], valuelessFlagNames: NO_VALUELESS_FLAG_NAMES});
+      const unknownArguments = findUnknownArguments(argv, {flagNames: [INPUT_FLAG_NAME], switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(['--input']);
@@ -194,49 +139,10 @@ describe('CLI unknown argument detection', () => {
       const argv = ['-i', 'saves', '--output'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, {valueFlagNames: [INPUT_FLAG_NAME], valuelessFlagNames: NO_VALUELESS_FLAG_NAMES});
+      const unknownArguments = findUnknownArguments(argv, {flagNames: [INPUT_FLAG_NAME], switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(['-i', '--output']);
-    });
-  });
-
-  describe('When a valueless flag the command knows is given', () => {
-    it('should report no unknown argument', () => {
-      // Arrange
-      const argv = ['bun', 'merge-cli.js', '--input=saves', '--prefer-legacy'];
-
-      // Act
-      const unknownArguments = findUnknownArguments(argv, {valueFlagNames: [INPUT_FLAG_NAME], valuelessFlagNames: [PREFER_LEGACY_FLAG_NAME]});
-
-      // Assert
-      expect(unknownArguments).toEqual(NO_ARGUMENTS);
-    });
-  });
-
-  describe('When a valueless flag the command knows is given a value', () => {
-    it('should report that argument', () => {
-      // Arrange
-      const argv = ['--prefer-legacy=true'];
-
-      // Act
-      const unknownArguments = findUnknownArguments(argv, {valueFlagNames: NO_VALUE_FLAG_NAMES, valuelessFlagNames: [PREFER_LEGACY_FLAG_NAME]});
-
-      // Assert
-      expect(unknownArguments).toEqual(['--prefer-legacy=true']);
-    });
-  });
-
-  describe('When an argument extends the name of a valueless flag the command knows', () => {
-    it('should report that argument', () => {
-      // Arrange
-      const argv = ['--prefer-legacy-format'];
-
-      // Act
-      const unknownArguments = findUnknownArguments(argv, {valueFlagNames: NO_VALUE_FLAG_NAMES, valuelessFlagNames: [PREFER_LEGACY_FLAG_NAME]});
-
-      // Assert
-      expect(unknownArguments).toEqual(['--prefer-legacy-format']);
     });
   });
 
@@ -246,10 +152,151 @@ describe('CLI unknown argument detection', () => {
       const argv = ['bun', 'merge-cli.js', '--input=saves'];
 
       // Act
-      const unknownArguments = findUnknownArguments(argv, NO_KNOWN_FLAG);
+      const unknownArguments = findUnknownArguments(argv, {flagNames: NO_KNOWN_FLAG_NAME, switchNames: NO_KNOWN_SWITCH_NAME});
 
       // Assert
       expect(unknownArguments).toEqual(['--input=saves']);
+    });
+  });
+
+  describe('When a known switch is given', () => {
+    it('should report no unknown argument', () => {
+      // Arrange
+      const argv = ['bun', 'merge-cli.js', '--version'];
+
+      // Act
+      const unknownArguments = findUnknownArguments(argv, {flagNames: NO_KNOWN_FLAG_NAME, switchNames: [VERSION_SWITCH_NAME]});
+
+      // Assert
+      expect(unknownArguments).toEqual(NO_ARGUMENTS);
+    });
+  });
+
+  describe('When a known switch comes with a value', () => {
+    it('should report that argument', () => {
+      // Arrange
+      const argv = ['--version=2'];
+
+      // Act
+      const unknownArguments = findUnknownArguments(argv, {flagNames: NO_KNOWN_FLAG_NAME, switchNames: [VERSION_SWITCH_NAME]});
+
+      // Assert
+      expect(unknownArguments).toEqual(['--version=2']);
+    });
+  });
+
+  describe('When an argument extends the name of a known switch', () => {
+    it('should report that argument', () => {
+      // Arrange
+      const argv = ['--version-full'];
+
+      // Act
+      const unknownArguments = findUnknownArguments(argv, {flagNames: NO_KNOWN_FLAG_NAME, switchNames: [VERSION_SWITCH_NAME]});
+
+      // Assert
+      expect(unknownArguments).toEqual(['--version-full']);
+    });
+  });
+});
+
+describe('CLI switch reading', () => {
+  describe('When the switch is given', () => {
+    it('should report it present', () => {
+      // Arrange
+      const argv = ['bun', 'merge-cli.js', '--version'];
+
+      // Act
+      const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);
+
+      // Assert
+      expect(isPresent).toBe(true);
+    });
+  });
+
+  describe('When the switch is absent', () => {
+    it('should report it absent', () => {
+      // Arrange
+      const argv = ['bun', 'merge-cli.js', '--input=saves'];
+
+      // Act
+      const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);
+
+      // Assert
+      expect(isPresent).toBe(false);
+    });
+  });
+
+  describe('When the switch comes with a value', () => {
+    it('should report it absent', () => {
+      // Arrange
+      const argv = ['--version=2'];
+
+      // Act
+      const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);
+
+      // Assert
+      expect(isPresent).toBe(false);
+    });
+  });
+
+  describe('When another switch starts with the same letters', () => {
+    it('should report the switch absent', () => {
+      // Arrange
+      const argv = ['--version-full'];
+
+      // Act
+      const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);
+
+      // Assert
+      expect(isPresent).toBe(false);
+    });
+  });
+});
+
+describe('CLI help formatting', () => {
+  describe('When the command accepts flags and switches', () => {
+    it('should name the invocation, then one aligned line per flag and per switch', () => {
+      // Arrange
+      const commandArguments = {
+        invocation: 'bun merge -- [options]',
+        flags: [
+          {name: 'input', valueName: 'directory', description: 'read the saves from this directory'},
+          {name: 'platform', valueName: 'bun|node', description: 'reserved to the node:* scripts'}
+        ],
+        switches: [{name: 'version', description: 'print the version and exit'}]
+      };
+
+      // Act
+      const help = formatHelp(commandArguments);
+
+      // Assert
+      expect(help).toBe(`Usage: bun merge -- [options]
+
+Options:
+  --input=<directory>    read the saves from this directory
+  --platform=<bun|node>  reserved to the node:* scripts
+  --version              print the version and exit`);
+    });
+  });
+
+  describe('When the command accepts no switch', () => {
+    it('should list its flags alone', () => {
+      // Arrange
+      const noSwitch = [];
+      const commandArguments = {
+        invocation: 'bun validate -- --file=<path>',
+        flags: [{name: 'file', valueName: 'path', description: 'the save file to validate'}],
+        switches: noSwitch
+      };
+
+      // Act
+      const help = formatHelp(commandArguments);
+
+      // Assert
+      expect(help).toBe(`Usage: bun validate -- --file=<path>
+
+Options:
+  --file=<path>  the save file to validate`);
     });
   });
 });

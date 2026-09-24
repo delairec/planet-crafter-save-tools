@@ -99,7 +99,11 @@ Depuis la racine du dépôt (workspace Bun) :
   lancer en cours d'écriture.
 - `bun run check:dependencies` — vérifie la matrice de dépendances par préfixe (manifestes et imports, imports
   type-only et directives JSDoc `@import` compris). La matrice est documentée dans le `README.md` public.
-- `bun run audit` — `bun audit` sur les dépendances de production et de développement.
+- `bun run audit` — `bun audit` sur les dépendances de production et de développement, au seuil `moderate` ; le
+  workflow `Dependencies` le lance sur chaque pull request, chaque push sur `master` et une fois par mois sur `master`.
+- `bun run release:verify` — toutes les vérifications qu'une release doit passer sur le commit qu'elle étiquette
+  (`lint:types`, `audit:quality`, `bun test`, `test:ui`, `audit`) ; le workflow `Release` le lance sur chaque tag de
+  version.
 - `awawa status .` et les commandes du corpus — voir la section « Corpus de spécification » plus haut.
 
 ## Anonymisation des noms de joueurs
@@ -129,14 +133,15 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 
 ## Branches
 
-**Base des tâches, aujourd'hui : `integration/save-format-preserved`.** Le chantier en cours conserve le format de
-chaque save au lieu de la convertir (@DECISION.ASaveKeepsTheFormatItWasWrittenIn) ; il touche
-`shared-save-processing`, `core-mapping`, les deux CLIs et l'UI, et la branche d'intégration évite que `master`
-casse pendant la vague. Toute PR de tâche de la vague se base dessus, et s'y rebase, jamais sur `master`.
+**Base des tâches, aujourd'hui, par wave :**
 
-Deux exceptions, qui restent basées sur `master` : une tâche extérieure à la vague, et les trois fichiers de
-@DECISION.ThreeFilesAreChangedOnMasterFirst. La branche d'intégration se rebase elle-même sur `master` quand
-`master` avance.
+| Wave | Base | PR d'intégration |
+|------|------|------------------|
+| 8 | `integration/release-and-hardening` | #132 |
+| hors wave | `master` | — |
 
-Le nom de la base reste ici et non dans le corpus parce qu'il change à chaque chantier : une entité dont le `DESC`
-se réécrit tous les mois ne gagne rien à être une entité.
+Une branche d'intégration part de `master`, porte le corpus de sa wave et n'est fusionnée qu'une fois la wave
+terminée. Un numéro de tâche se lit sur toutes les branches ouvertes, pas seulement sur la base : la wave 5 tenait
+92 à 99 quand la wave 8 a été numérotée. Le nom de la base
+reste ici et non dans le corpus parce qu'il change à chaque chantier : une entité dont le `DESC` se réécrit tous les
+mois ne gagne rien à être une entité.

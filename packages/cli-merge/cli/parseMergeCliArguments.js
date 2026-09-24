@@ -1,15 +1,25 @@
-import {findUnknownArguments, isFlagPresent, PLATFORM_FLAG_NAME, readFlagValue} from 'shared-platforms/cliArguments.js';
+import {findUnknownArguments, HELP_SWITCH, hasSwitch, PLATFORM_FLAG, readFlagValue, VERSION_SWITCH} from 'shared-platforms/cliArguments.js';
 
 const DEFAULT_INPUT_DIR = 'input';
 const DEFAULT_OUTPUT_DIR = 'output';
 const INPUT_FLAG_NAME = 'input';
 const OUTPUT_FLAG_NAME = 'output';
-const PREFER_LEGACY_FLAG_NAME = 'prefer-legacy';
-const KNOWN_FLAGS = {valueFlagNames: [INPUT_FLAG_NAME, OUTPUT_FLAG_NAME, PLATFORM_FLAG_NAME], valuelessFlagNames: [PREFER_LEGACY_FLAG_NAME]};
+const PREFER_LEGACY_SWITCH = {name: 'prefer-legacy', description: 'write the legacy format of 1.618 instead of the current one'};
+
+/** @type {import('shared-platforms/cliArguments.js').CommandArguments} */
+export const MERGE_CLI_ARGUMENTS = {
+  invocation: 'bun merge -- [options]',
+  flags: [
+    {name: INPUT_FLAG_NAME, valueName: 'directory', description: 'read the folders of saves to merge from this directory, input by default'},
+    {name: OUTPUT_FLAG_NAME, valueName: 'directory', description: 'write the merged saves under this directory, output by default'},
+    PLATFORM_FLAG
+  ],
+  switches: [PREFER_LEGACY_SWITCH, VERSION_SWITCH, HELP_SWITCH]
+};
 
 /**
  * @param {string[]} argv
- * @returns {{inputDir: string, outputDir: string, preferLegacyFormat: boolean, unknownArguments: string[]}}
+ * @returns {{inputDir: string, outputDir: string, preferLegacyFormat: boolean, unknownArguments: string[], isVersionAsked: boolean, isHelpAsked: boolean}}
  */
 export function parseMergeCliArguments(argv) {
   const inputDir = readFlagValue(argv, INPUT_FLAG_NAME);
@@ -18,7 +28,12 @@ export function parseMergeCliArguments(argv) {
   return {
     inputDir: inputDir === undefined ? DEFAULT_INPUT_DIR : inputDir,
     outputDir: outputDir === undefined ? DEFAULT_OUTPUT_DIR : outputDir,
-    preferLegacyFormat: isFlagPresent(argv, PREFER_LEGACY_FLAG_NAME),
-    unknownArguments: findUnknownArguments(argv, KNOWN_FLAGS)
+    preferLegacyFormat: hasSwitch(argv, PREFER_LEGACY_SWITCH.name),
+    isVersionAsked: hasSwitch(argv, VERSION_SWITCH.name),
+    isHelpAsked: hasSwitch(argv, HELP_SWITCH.name),
+    unknownArguments: findUnknownArguments(argv, {
+      flagNames: MERGE_CLI_ARGUMENTS.flags.map(flag => flag.name),
+      switchNames: MERGE_CLI_ARGUMENTS.switches.map(cliSwitch => cliSwitch.name)
+    })
   };
 }
