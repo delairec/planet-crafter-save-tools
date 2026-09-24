@@ -1487,3 +1487,4 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 		+ "merge"
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 	SOURCE "Agent ruling while implementing FEAT94, 2026-09-24"
+		PR 151
