@@ -1534,3 +1534,35 @@ TASK FIX110
 	SOURCE "Ruled with the user on 2026-09-23: restrict the accepted URL rather than dismiss the"
 		+ "alert"
 		PR 139
+
+TASK CHORE105
+	TITLE "measure the unit test coverage and fail the CI when it drops"
+	STATUS todo
+	SPEC "bun test reports line and function coverage of every module a unit test loads"
+	SPEC "the CI test job fails when line or function coverage falls under the threshold declared"
+		+ "in bunfig.toml"
+	SPEC "the declared threshold equals the floor measured on the delivering branch, rounded down"
+		+ "to the unit"
+	SPEC "the coverage report of the CI test job appears in the run summary"
+	SPEC "the fallow job fails on a source file or export outside ui-save-manager that no test"
+		+ "reaches statically"
+	SPEC "only a module a test runs as a spawned process, or a type declaration file, is exempt"
+		+ "from that check, declared in fallow.toml with its reason"
+	RATIONALE "Nothing measures coverage today: the CI test job runs plain bun test. Measured on"
+		+ "2026-09-23 with Bun 1.4.2: 94.72 % of functions and 97.36 % of lines over the 155"
+		+ "modules the 858 unit tests load, scripts/ the lowest (generate-scenario-fixtures.ts at"
+		+ "28.85 % of lines). Bun reports only the modules a test loads, so a module no test"
+		+ "imports never lowers the figure; fallow health --coverage-gaps closes that blind spot"
+		+ "statically. On 2026-09-23 it reports four files — merge-cli.js, validate-cli.js and"
+		+ "scripts/node/register.js, run as real processes by the command tests, and"
+		+ "jsonSourceTextAccess.d.ts, types only — and five exports: UNEXPECTED_ERROR_EXIT_CODE,"
+		+ "two renderUnexpectedError, RAW_INTEGER_FIELDS, SAVE_SECTIONS_COUNT. ui-save-manager"
+		+ "stays out of scope: no unit test loads it, its flows are covered by the Playwright"
+		+ "scenarios, which are not a required check, and it is already outside the fallow"
+		+ "perimeter. No external coverage service: the report stays in the run summary, nothing"
+		+ "leaves the repository"
+		REF @DECISION.EveryPublishedCommandHasARealProcessTest
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
+		REF @DECISION.UiSaveManagerStaysOutsideTheFallowPerimeter
+	SOURCE "Owner request, refinement session of 2026-09-23"
