@@ -50,7 +50,7 @@ describe('SaveValidatorService', () => {
       // Assert
       expect(result).toEqual({
         isValid: false,
-        errors: [{code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected 11 sections but found 1'}],
+        errors: [{code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected 11 or 12 sections but found 1'}],
         warnings: []
       });
     });

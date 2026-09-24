@@ -1,3 +1,9 @@
+/**
+ * @import { ParsedSections } from 'shared-save-processing/gameDefinitions'
+ * @import { ValidationIssue } from '../application/ports/ValidationIssue.ts'
+ * @import { ValidateFunction } from 'ajv'
+ */
+
 import Ajv from 'ajv';
 import schema0 from 'shared-save-processing/schemas/section0-player-progression.schema.json' with {type: 'json'};
 import schema1 from 'shared-save-processing/schemas/section1-terraformation-levels.schema.json' with {type: 'json'};
@@ -9,82 +15,130 @@ import schema6 from 'shared-save-processing/schemas/section6-messages.schema.jso
 import schema7 from 'shared-save-processing/schemas/section7-story-events.schema.json' with {type: 'json'};
 import schema8 from 'shared-save-processing/schemas/section8-save-config.schema.json' with {type: 'json'};
 import schema9 from 'shared-save-processing/schemas/section9-world-events.schema.json' with {type: 'json'};
-import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import legacyTerrainLayersSchema from 'shared-save-processing/schemas/legacy-section9-terrain-layers.schema.json' with {type: 'json'};
+import saveFileSchema from 'shared-save-processing/schemas/save-file.schema.json' with {type: 'json'};
+import legacySaveFileSchema from 'shared-save-processing/schemas/legacy-save-file.schema.json' with {type: 'json'};
+import {findSplitPartsCount, UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
+import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
 
-const SCHEMAS_BY_SECTION = {0: schema0, 1: schema1, 2: schema2, 3: schema3, 4: schema4, 5: schema5, 6: schema6, 7: schema7, 8: schema8, 9: schema9};
+const SECTION_SCHEMAS = [schema0, schema1, schema2, schema3, schema4, schema5, schema6, schema7, schema8, schema9, legacyTerrainLayersSchema];
 
 /**
- * The sections reaching validation as a list of entries: every section holding a schema but the
- * world objects one, which arrives as a generator factory so that it is never held whole.
+ * @typedef {object} SaveFileSectionSchema
+ * @property {number} [minItems]
+ * @property {{$ref: string}} [items]
  */
-const LISTED_SECTION_INDEXES = Object.keys(SCHEMAS_BY_SECTION)
-  .map(Number)
-  .filter(sectionIndex => sectionIndex !== WORLD_OBJECTS_SECTION_INDEX);
 
-let schemaValidators;
+/**
+ * @typedef {object} SaveFileSchema
+ * @property {number} maxItems
+ * @property {SaveFileSectionSchema[]} items
+ */
 
-function getSchemaValidators() {
-  if (!schemaValidators) {
-    const ajv = new Ajv();
-    schemaValidators = Object.fromEntries(
-      Object.entries(SCHEMAS_BY_SECTION).map(([sectionIndex, schema]) => [sectionIndex, ajv.compile(schema)])
-    );
+const SAVE_FILE_SCHEMAS = /** @type {SaveFileSchema[]} */ ([saveFileSchema, legacySaveFileSchema]);
+
+/** @type {Ajv | undefined} */
+let sectionSchemasAjv;
+
+/** @returns {Ajv} */
+function getSectionSchemasAjv() {
+  if (!sectionSchemasAjv) {
+    sectionSchemasAjv = new Ajv();
+
+    for (const sectionSchema of SECTION_SCHEMAS) {
+      sectionSchemasAjv.addSchema(sectionSchema, sectionSchema.$id);
+    }
   }
-  return schemaValidators;
+
+  return sectionSchemasAjv;
 }
 
 /**
- * Validates the parsed save sections holding a list of entries against their JSON schemas. The
- * world objects section is not one of them: it arrives as a generator factory, and its entries are
- * validated one by one through `validateSectionEntry` while the walker of the section goes past
- * them.
- * @param {import('shared-save-processing/gameDefinitions').ParsedSections | unknown[][]} parsedSections
- * @returns {import('../application/ports/ValidationIssue.ts').ValidationIssue[]}
- * @throws {import('./errors/UnexpectedSaveSectionError.ts').UnexpectedSaveSectionError} when a
- * section that should hold a list of entries does not. The reader of the format guarantees it
- * does, so this is a broken invariant of ours and never a malformed save: fix what handed the
- * section over rather than reading it as a section without a single entry, which is how the world
- * objects section went unvalidated for as long as it did.
+ * @param {string | undefined} formatRelease
+ * @returns {SaveFileSchema}
+ * @throws {UnknownFormatReleaseError}
  */
-export function validateSchemas(parsedSections) {
+export function findSaveFileSchema(formatRelease) {
+  const splitPartsCount = formatRelease === undefined ? undefined : findSplitPartsCount(formatRelease);
+  const saveFileSchemaOfFormat = SAVE_FILE_SCHEMAS.find((schema) => schema.maxItems === splitPartsCount);
+
+  if (saveFileSchemaOfFormat === undefined) {
+    throw new UnknownFormatReleaseError(formatRelease);
+  }
+
+  return saveFileSchemaOfFormat;
+}
+
+/**
+ * @param {string | undefined} formatRelease
+ * @param {number} sectionIndex
+ * @returns {ValidateFunction}
+ */
+function getSectionValidator(formatRelease, sectionIndex) {
+  const sectionSchemaId = findSaveFileSchema(formatRelease).items[sectionIndex]?.items?.$ref;
+  const validate = sectionSchemaId === undefined ? undefined : getSectionSchemasAjv().getSchema(sectionSchemaId);
+
+  if (validate === undefined) {
+    throw new Error(`No schema describes the entries of section ${sectionIndex} in the format of ${formatRelease}`);
+  }
+
+  return validate;
+}
+
+/**
+ * @param {ParsedSections | unknown[][]} parsedSections
+ * @param {string | undefined} formatRelease
+ * @returns {ValidationIssue[]}
+ * @throws {UnexpectedSaveSectionError} when a section that should hold a list of entries does not.
+ * The reader of the format guarantees it does, so this is a broken invariant of ours and never a
+ * malformed save.
+ */
+export function validateSchemas(parsedSections, formatRelease) {
+  const worldObjectsSectionIndex = resolveSectionIndexes(formatRelease).worldObjects;
   const issues = [];
 
-  for (const sectionIndex of LISTED_SECTION_INDEXES) {
+  findSaveFileSchema(formatRelease).items.forEach((sectionSchema, sectionIndex) => {
+    if (sectionSchema.items === undefined || sectionIndex === worldObjectsSectionIndex) {
+      return;
+    }
+
     const entries = parsedSections[sectionIndex];
 
     if (!Array.isArray(entries)) {
       throw new UnexpectedSaveSectionError(sectionIndex, entries);
     }
 
-    for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
-      issues.push(...validateSectionEntry(sectionIndex, entries[entryIndex], entryIndex));
-    }
-  }
+    const validateEntry = createSectionEntryValidator(formatRelease, sectionIndex);
+
+    entries.forEach((entry, entryIndex) => {
+      issues.push(...validateEntry(entry, entryIndex));
+    });
+  });
 
   return issues;
 }
 
 /**
- * Validates a single entry against the schema of its section, so that a section walked one entry at
- * a time is validated without ever being materialized.
- * @param {number} sectionIndex - index of a section holding a schema
- * @param {unknown} entry
- * @param {number} entryIndex - position of the entry among the readable entries of its section
- * @returns {import('../application/ports/ValidationIssue.ts').ValidationIssue[]}
+ * @param {string | undefined} formatRelease
+ * @param {number} sectionIndex
+ * @returns {(entry: unknown, entryIndex: number) => ValidationIssue[]}
  */
-export function validateSectionEntry(sectionIndex, entry, entryIndex) {
-  const validate = getSchemaValidators()[sectionIndex];
+export function createSectionEntryValidator(formatRelease, sectionIndex) {
+  const validate = getSectionValidator(formatRelease, sectionIndex);
 
-  if (validate(entry)) {
-    return [];
-  }
+  return (entry, entryIndex) => {
+    if (validate(entry)) {
+      return [];
+    }
 
-  return (validate.errors ?? []).map(schemaError => ({
-    code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
-    detail: `${schemaError.instancePath} ${schemaError.message}`.trim(),
-    section: sectionIndex,
-    entryIndex
-  }));
+    return (validate.errors ?? []).map(schemaError => ({
+      code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
+      detail: `${schemaError.instancePath} ${schemaError.message}`.trim(),
+      section: sectionIndex,
+      entryIndex,
+      formatRelease
+    }));
+  };
 }

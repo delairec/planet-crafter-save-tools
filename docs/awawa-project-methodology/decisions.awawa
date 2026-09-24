@@ -343,7 +343,7 @@ DECISION AMergeProducesAnOrdinarySave
 
 DECISION AnEmptyMetadataSectionIsRefusedByValidation
 	SPEC "Validation refuses a save whose section 0 carries no entry, before any merge"
-		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js::saveFileSchema.items[GLOBAL_METADATA_SECTION_INDEX].minItems"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js::findSaveFileSchema(formatRelease).items[sectionIndex].minItems"
 		ENFORCED_BY "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::When the"
 			+ "section carries no entry"
 	REJECTED "Falling back to default metadata: the merge would produce a save from two invalid"
@@ -574,6 +574,7 @@ DECISION ASectionIndexIsNeverHardCoded
 		+ "with a name and read from their module"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::PLAYERS_SECTION_INDEX"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::SAVE_SPLIT_PARTS_COUNT"
+		IMPL "packages/shared-save-processing/sectionIndexes.js::resolveSectionIndexes"
 	SPEC "No core-mapping spec hard-codes a section index; the number in an expected message stays"
 		+ "literal"
 		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
@@ -1373,21 +1374,26 @@ DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 	SOURCE "Owner ruling, 2026-09-22, on the wave carried by integration/save-format-preserved"
 
-DECISION CoreMappingReadsTheCurrentFormatThroughOneSelection
-	SPEC "core-mapping reads the sections of a parsed save at the indexes of the format of 2.004,"
-		+ "through one selection that leaves out the Terrain Layers section of a 1.618 save"
-		IMPL "packages/core-mapping/src/infrastructure/selectCurrentFormatSections.ts::selectCurrentFormatSections"
-	SPEC "a merge writes the format of 2.004, whatever the formats of its two saves"
-		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsSerializerService.ts"
-	REJECTED "Making core-mapping reach each section by the index the format of its save gives it"
-		+ "in the task that keeps every part in shared-save-processing: that is the scope of the"
-		+ "task that follows it"
-		REF @TASK.FEAT93
-	UNTIL @TASK.FEAT93
+DECISION EachSaveFormatIsValidatedByAWholeFileSchemaOfItsOwn
+	SPEC "each save format has a whole-file schema pinned to its part count, and an entry is"
+		+ "validated against the section schema that whole-file schema names at the index of the"
+		+ "entry"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::findSaveFileSchema"
+		IMPL "packages/shared-save-processing/schemas/legacy-save-file.schema.json"
+		ENFORCED_BY "packages/core-mapping/src/infrastructure/validateSchemas.spec.js"
+	SPEC "a validation issue or a parse error located in a section carries the release whose format"
+		+ "the save carries, and its location is named by the section that format gives the index"
+		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.ts"
+		ENFORCED_BY "packages/core-mapping/src/presentation/formatErrorLocation.spec.ts"
+	REJECTED "One whole-file schema loosened to admit eleven or twelve parts: it validates the"
+		+ "Terrain Layers entries of a legacy save against the world events schema, or catches"
+		+ "nothing"
+	REJECTED "Choosing the schema by the version the save declares: a save is never discriminated"
+		+ "by its version alone"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT92
-	RATIONALE "shared-save-processing now returns every part a save carries; one selection keeps"
-		+ "core-mapping on the only format it reads until FEAT93 makes it format-aware, instead of"
-		+ "spreading index shifts through each caller"
-	SOURCE "Agent ruling while implementing FEAT92, 2026-09-24"
-		PR 141
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	RESTS_ON @RULE.ALegacySaveCarriesTerrainLayersInTwelveParts
+	RATIONALE "The part count decides which section sits at each index, so a validator reading the"
+		+ "indexes of one format misreads the other"
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT93: two schemas rather than one loosened schema"

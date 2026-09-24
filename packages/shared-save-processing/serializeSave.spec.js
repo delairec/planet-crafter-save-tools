@@ -2,7 +2,8 @@
 /** @import { CurrentFormatSections, LegacyFormatSections } from './gameDefinitions' */
 
 import {describe, it, expect} from 'bun:test';
-import {serializeSave, UnknownFormatReleaseError} from './serializeSave.js';
+import {serializeSave} from './serializeSave.js';
+import {UnknownFormatReleaseError} from './gameReleases.js';
 import {
   GLOBAL_METADATA_SECTION_INDEX,
   INVENTORIES_SECTION_INDEX,

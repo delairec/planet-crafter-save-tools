@@ -13,6 +13,7 @@ describe('formatValidationError', () => {
         code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
         detail: 'must have required property gId',
         section: PLAYERS_SECTION_INDEX,
+        formatRelease: '2.004',
         entryIndex: 3
       });
 
@@ -40,7 +41,8 @@ describe('formatValidationError', () => {
       const error = formatValidationError({
         code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE,
         detail: 'Unexpected number of sections.',
-        section: GLOBAL_METADATA_SECTION_INDEX
+        section: GLOBAL_METADATA_SECTION_INDEX,
+        formatRelease: '2.004'
       });
 
       // Assert

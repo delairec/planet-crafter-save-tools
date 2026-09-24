@@ -41,7 +41,7 @@ describe('MergeSaveFilesController', () => {
 
       // Assert
       expect(viewModel.status).toBe('validationError');
-      expect<SaveValidationMessageViewModel[]>(viewModel.saveAErrors).toEqual([{message: 'Expected 11 sections but found 1', location: null}]);
+      expect<SaveValidationMessageViewModel[]>(viewModel.saveAErrors).toEqual([{message: 'Expected 11 or 12 sections but found 1', location: null}]);
       expect<SaveValidationMessageViewModel[]>(viewModel.saveBErrors).toEqual([]);
     });
   });

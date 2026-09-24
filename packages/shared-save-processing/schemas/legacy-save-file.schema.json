@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "save-file.schema.json",
-  "title": "Planet Crafter — Parsed save file in the format of 2.004 and later",
-  "description": "Representation of a Planet Crafter save written in the format of 2.004 and later after parsing. Array of 11 sections (indexes 0 to 10): the world events at index 9, and section 10 reserved. Each section is an array of JSON entries.",
+  "$id": "legacy-save-file.schema.json",
+  "title": "Planet Crafter — Parsed save file in the format of 1.618",
+  "description": "Representation of a Planet Crafter save written in the format of 1.618 after parsing. Array of 12 parts (indexes 0 to 11): the Terrain layers section at index 9 shifts the world events to index 10, and part 11 is reserved. Each part is an array of JSON entries.",
   "type": "array",
-  "minItems": 11,
-  "maxItems": 11,
+  "minItems": 12,
+  "maxItems": 12,
   "items": [
     {
       "title": "Section 0 — Player progression",
@@ -62,15 +62,19 @@
       "items": { "$ref": "section8-save-config.schema.json" }
     },
     {
-      "title": "Section 9 — World events",
+      "title": "Section 9 — Terrain layers",
+      "type": "array",
+      "items": { "$ref": "legacy-section9-terrain-layers.schema.json" }
+    },
+    {
+      "title": "Section 10 — World events",
       "type": "array",
       "items": { "$ref": "section9-world-events.schema.json" }
     },
     {
-      "title": "Section 10 — Reserved",
+      "title": "Section 11 — Reserved",
       "type": "array",
       "maxItems": 0
     }
   ]
 }
-
