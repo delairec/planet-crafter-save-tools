@@ -2101,10 +2101,13 @@ TASK CHORE118
 
 TASK CHORE117
 	TITLE "hold back a dependency version until it is seven days old"
-	STATUS todo
+	STATUS implemented
 	WAVE 8
+	DELIVERED_BY 161
 	SPEC "bunfig.toml declares a minimum release age of seven days for bun install and bun add"
+		IMPL "bunfig.toml::minimumReleaseAge = 604800"
 	SPEC "dependabot.yml declares a cooldown of seven days on both ecosystems"
+		IMPL ".github/dependabot.yml::default-days: 7"
 	RATIONALE "A malicious version published to npm is usually detected and withdrawn within days;"
 		+ "nothing today stops Dependabot from proposing it, nor a bun add from resolving it, on"
 		+ "the day it is published"
