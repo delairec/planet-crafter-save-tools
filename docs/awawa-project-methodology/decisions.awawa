@@ -1353,3 +1353,20 @@ DECISION TheSiteHeadersReachTheDocumentThroughTheServer
 	APPLIES_TO_TASK @TASK.FIX101
 	SOURCE "Measured while implementing FIX101 on 2026-09-23"
 		PR 134
+
+DECISION TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
+	SPEC "check:site fetches a URL rebuilt from constants, never the --url= argument itself: the"
+		+ "production root, or a deploy preview root whose number passes through encodeURIComponent"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.ts::resolveCheckedSiteUrl"
+		IMPL "packages/ui-save-manager/scripts/checkedSiteUrl.spec.ts"
+	REJECTED "dismissing CodeQL alert #2 as a false positive: the workflow input is free text, and"
+		+ "a dismissal leaves any later widening of the fetch unreported"
+	REJECTED "accepting any https URL: the check has no use outside the production site and its"
+		+ "deploy previews"
+	RATIONALE "a URL rebuilt from constants and encodeURIComponent is what the CodeQL"
+		+ "js/request-forgery query treats as sanitised; a URL that only passed a host check does"
+		+ "not clear it"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FIX110
+	SOURCE "Ruled with the user on 2026-09-23 on CodeQL alert #2 of PR 132"
+		PR 139
