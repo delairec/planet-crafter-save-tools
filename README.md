@@ -105,6 +105,13 @@ bun validate -- --file=<filepath>
 
 Validates a json save file against the json schemas stored in this project. This is useful mostly for debugging.
 
+```
+bun merge -- --version
+bun validate -- --version
+```
+
+Prints the name and the version of the command, and exits with code `0`. Quote that line in a bug report.
+
 Both commands accept `--name=value` arguments only, and act on none they do not know: an argument such as `--inpt=x`,
 `--input x` or a bare `--file` is named on stderr with a usage message, and the command exits with code `1` without
 reading anything. The value is taken whole, so a path or a directory name may hold an equals sign.
@@ -323,6 +330,41 @@ temporary directory, and assert their output, their exit code and the content of
 `bun test`, so a command that no longer starts under Node — or that loses the content of a save while still
 reporting success — fails the suite instead of reaching a release. Running them needs the Node version
 `engines.node` declares.
+
+### Releases
+
+The three tools a user runs carry a version each: `cli-merge`, `cli-validate` and `ui-save-manager`, every package
+whose name starts with `cli-` or `ui-`. The other packages are internal and carry none that anyone reads. The web UI
+shows its version in the footer.
+
+A tool takes a new version when a commit of `master` since its last version changes its package or a workspace
+package it depends on, directly or not: a fix in `core-mapping` raises all three, a fix in `cli-merge` raises that one
+only. The Conventional Commits type of the commit sizes the step. The tools are below their first major version:
+there, a `!` before the colon raises the minor number and anything else the patch number. Leaving `0` is a decision
+written by hand in the `package.json`, never the outcome of a release; from `1.0.0` on, a `!` raises the major
+number, a `feat` the minor one, anything else the patch number. Every change reaches `master` through a pull
+request, so every commit there carries a checked title.
+
+```
+bun run release
+```
+
+Run on a branch cut from an up-to-date `master`. For each tool that changed, it raises the `version` of its
+`package.json`, adds an entry listing the commits it carries to its `CHANGELOG.md`, and refreshes `bun.lock`. Open
+the pull request it names, `chore(release): …`, against `master`.
+
+```
+bun run release:tag
+git push origin <the tags it names>
+```
+
+Run on `master` once the release pull request is merged. It sets an annotated tag `<tool>-v<version>` on that squash
+commit for every version no tag names yet.
+
+Netlify publishes no production deploy by itself: it builds every push to `master` and every pull request against
+it, and the deploy previews stay public, but production changes only when a deploy is published by hand. Publish the
+deploy of the commit a `ui-save-manager-v*` tag names — the squash commit of the release pull request — from the
+Netlify dashboard.
 
 ### Preparing data
 

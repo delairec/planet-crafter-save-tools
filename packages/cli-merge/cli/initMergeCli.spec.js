@@ -19,6 +19,7 @@ import {
 } from '../testing/fakePaths.js';
 
 const NO_INPUT_FOLDERS = [];
+const CLI_RELEASE = {name: 'cli-merge', version: '1.4.2'};
 const SINGLE_SAVE_FILENAME = 'only-one.json';
 const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>]';
 
@@ -51,7 +52,7 @@ describe('Merge CLI', () => {
       exitProcess,
     };
 
-    return initMergeCli(fakePlatform, argv);
+    return initMergeCli(fakePlatform, argv, CLI_RELEASE);
   }
 
   beforeEach(() => {
@@ -292,6 +293,45 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(readDirectory).toHaveBeenCalledWith('custom-input');
+    });
+  });
+
+  describe('When the version is asked', () => {
+    it('should print the name and the version of the command on stdout', async () => {
+      // Arrange
+      ({main} = initCli(['--version']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).toHaveBeenCalledWith('cli-merge 1.4.2');
+    });
+
+    it('should exit with code 0 without reading any directory', async () => {
+      // Arrange
+      ({main} = initCli(['--version']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readDirectory).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the version is asked beside an argument the command does not accept', () => {
+    it('should refuse the run with code 1 without printing the version', async () => {
+      // Arrange
+      ({main} = initCli(['--version', '--inpt=custom-input']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(1);
     });
   });
 

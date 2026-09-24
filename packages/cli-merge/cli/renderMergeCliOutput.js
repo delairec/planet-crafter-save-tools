@@ -6,6 +6,11 @@
 
 const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>]';
 
+/** @param {{name: string, version: string}} release */
+export function renderVersion({name, version}) {
+  console.log(`${name} ${version}`);
+}
+
 /** @param {string[]} unknownArguments */
 export function renderUnknownArguments(unknownArguments) {
   console.error(`✖ Unknown argument(s): ${unknownArguments.join(', ')}`);

@@ -1,4 +1,8 @@
 export const appName = 'Planet Crafter Save Manager';
+
+/** @param {string} version */
+export const resolveVersionLabel = (version) => `Version ${version}`;
+
 export const privacyDisclaimerLabel = 'Privacy';
 export const fileSafetyDisclaimerLabel = 'File safety';
 export const securityDisclaimerLabel = 'Security';

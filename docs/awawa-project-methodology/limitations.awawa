@@ -188,6 +188,30 @@ LIMITATION TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader
 		+ "function that renders the document: the headers were written as if the site were static"
 	SOURCE "Measured with curl -I on the production site and on the local build on 2026-09-23"
 
+LIMITATION EachCliDuplicatesItsVersionAndUnknownArgumentRendering
+	SYMPTOM "renderVersion and renderUnknownArguments are written twice, once in cli-merge and once"
+		+ "in cli-validate, and fallow reports the pair as a clone group unless its reviewed key is"
+		+ "listed"
+	WORKAROUND "The clone group is listed as reviewed under its exact key in fallow.toml, which"
+		+ "lapses as soon as either copy changes or a third copy appears; a change to one copy is"
+		+ "made to the other"
+	UNTIL "a package the dependency matrix lets both cli-* packages import can hold terminal"
+		+ "rendering, or a third CLI needs the same lines"
+	SEEN_IN "packages/cli-merge/cli/renderMergeCliOutput.js::renderVersion"
+	SEEN_IN "packages/cli-validate/cli/renderValidateCliOutput.js::renderVersion"
+	SEEN_IN "fallow.toml::ignoredClones"
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
+	RATIONALE "No shared home is allowed today: a shared-* package holds no UI concern (ARCH-SHR-2)"
+		+ "and terminal output is the presentation of a CLI, and a cli-* package may depend only on"
+		+ "shared-*, util-* and core-* packages, so neither CLI can import the other's rendering."
+		+ "Ignoring the rendering files for duplication was rejected: every later clone there would"
+		+ "go unseen, where the reviewed key lapses on its own"
+		REF @DECISION.BothCliEntryFilesRunThroughOneSharedFunction
+	SOURCE "Pull request review, the owner asking for the fallow warnings to be resolved, then for"
+		+ "the kept duplication to be recorded as a limitation rather than a decision"
+		PR 135
+
 LIMITATION TheContentSecurityPolicyAllowsEval
 	SYMPTOM "the content security policy of the web UI allows 'unsafe-eval' in script-src: a string"
 		+ "an injected script hands to eval or new Function runs despite it"

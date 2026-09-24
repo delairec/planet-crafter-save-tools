@@ -10,6 +10,11 @@ export function renderUsage() {
   console.error(USAGE_MESSAGE);
 }
 
+/** @param {{name: string, version: string}} release */
+export function renderVersion({name, version}) {
+  console.log(`${name} ${version}`);
+}
+
 /** @param {string[]} unknownArguments */
 export function renderUnknownArguments(unknownArguments) {
   console.error(`✖ Unknown argument(s): ${unknownArguments.join(', ')}`);
