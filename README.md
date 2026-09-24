@@ -25,13 +25,14 @@
 > ❗ I’m not actively maintaining this project (or only minimally). If you’d like to add improvements or fix bugs,
 > feel free to fork it 😃
 
-**Played the same world twice — solo on one side, with friends on the other — and wish it were one planet again?**
-Planet Crafter Save Tools merges two saves of **The Planet Crafter** into a single one, keeping as much of both as it
-can: your buildings, your inventories, your terraformation progress, every player who set foot on the planet.
+<div align="center" width="100%">
+<div>
 
-### 👉 [Open the Save Manager](https://planet-crafter-save-manager.netlify.app/) — nothing to install
+  ## 👉 [Open the Save Manager in browser](https://planet-crafter-save-manager.netlify.app/) — nothing to install
 
 ![The Save Manager welcome page](docs/assets/welcome-page.png)
+</div>
+</div>
 
 ## What you can do
 
