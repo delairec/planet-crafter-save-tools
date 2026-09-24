@@ -1798,7 +1798,7 @@ DECISION EveryActionIsPinnedOnACommitSha
 			+ "full commit SHA"
 	SPEC "Dependabot updates a pinned action by rewriting its SHA and its same-line version comment"
 		+ "together, with no configuration of its own"
-		IMPL ".github/dependabot.yml::package-ecosystem: \"github-actions\""
+		IMPL ".github/dependabot.yml::Dependabot rewrites both together"
 	REJECTED "Moving major tags such as @v3: whoever moves the tag runs code in the CI, secrets"
 		+ "included"
 	REJECTED "Exact version tags such as @v3.28.0: a tag can be moved as well, only a commit SHA"
@@ -1806,7 +1806,10 @@ DECISION EveryActionIsPinnedOnACommitSha
 	REJECTED "A SHA without its version comment: the pin reads as an opaque hash, and Dependabot"
 		+ "has no version to rewrite beside it"
 	APPLIES_TO_TASK @TASK.CHORE118
-	SOURCE "Owner request, security review of 2026-09-24"
+	SOURCE "Owner request, security review of 2026-09-24; the two Claude workflows pinned on master"
+		+ "first, the rest in the task pull request"
+		PR 162
+		PR 163
 	SOURCE "Dependabot reference, read on 2026-09-24: it updates actions referenced as"
 		+ "actions/checkout@<commit>, and the version comment when it sits on the same line"
 		REF @URL.DependabotSupportedEcosystemsGithubActions
