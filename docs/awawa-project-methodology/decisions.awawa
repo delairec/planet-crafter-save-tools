@@ -1488,3 +1488,56 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 	SOURCE "Agent ruling while implementing FEAT94, 2026-09-24"
 		PR 151
+
+DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
+	SPEC "A task branch runs bun test, bun run lint:types, bun run check:guards, bun run"
+		+ "audit:quality, awawa fmt --check . and awawa lint --strict . green before its pull"
+		+ "request is opened or updated"
+		IMPL "agents/worktree.md::- `bun run audit:quality`"
+	SPEC "A wave launch prompt quotes the acceptance list of agents/worktree.md rather than a list"
+		+ "of its own"
+		IMPL "agents/worktree.md::C'est cette liste que cite le prompt de lancement d'une vague"
+	REJECTED "An acceptance list held by the wave launch prompt: it omitted bun run audit:quality"
+		+ "and drifted unreported"
+	REJECTED "bun run check:guards as the whole local gate: the fallow audit it leaves out is a CI"
+		+ "job of its own"
+	APPLIES_TO_TASK @TASK.CHORE60
+	RATIONALE "Two of the three pull requests of the wave of 2026-09-18 arrived red on the fallow"
+		+ "CI job, the acceptance list of their prompt lacking bun run audit:quality"
+	SOURCE "Usage report of pull requests 101, 102 and 103, remediation 1"
+		REF @USAGE_REPORT.PR101_102_103
+	SOURCE "Ruled in the pull request that delivers the task"
+		PR 128
+
+DECISION ACallerReachesASaveSectionThroughASharedFunction
+	REJECTED "A read-only accessor plus a caller-side split/join to write a section back: every"
+		+ "existing caller replaces a section, none only reads one, so a second function only the"
+		+ "read case would use is unneeded"
+	SPEC "A caller needing to replace one section of a raw save string calls"
+		+ "replaceSaveSection(saveString, sectionIndex, updateSection) and never calls"
+		+ "saveString.split on the section separator itself"
+		IMPL "packages/shared-save-processing/replaceSaveSection.js"
+		ENFORCED_BY "packages/shared-save-processing/replaceSaveSection.spec.js"
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_TASK @TASK.REFACTOR62
+	RATIONALE "Four call sites split a save string on '@', mutated the array at a section index and"
+		+ "rejoined it by hand; a fifth caller repeating that pattern with a different mutation is"
+		+ "what this closes off"
+	SOURCE "Review of pull request #102, 2026-09-21, on"
+		+ "packages/cli-merge/testing/fakeSaveStrings.js"
+		PR 123
+
+DECISION ADraftTaskReportsNoFindingUntilRatified
+	SPEC "The gate of TASK at STATUS draft is suppressed: awawa lint --strict . exits 0 on a draft"
+		+ "citing a task absent from the workspace, and exits 1 once that task is todo"
+		IMPL "docs/_schema.awawa::draft: not ratified by the user, no finding reported until"
+			+ "ratified"
+	APPLIES_TO_TASK @TASK.CHORE63
+	REJECTED "GATE warning: lint --strict promotes the L004 warning back to an error"
+	REJECTED "GATE error: it refuses a draft citing a draft of a sibling branch"
+	REJECTED "Per-rule gating tolerating L004 alone: awawa 2.7.0 has none"
+	REJECTED "A spec spawning awawa lint on a probe corpus: no CI job installs awawa"
+	RATIONALE "A draft is exploration; what it lacks or cites wrongly is reported at ratification,"
+		+ "whose lint runs with the task todo"
+	SOURCE "Refinement of CHORE63 with the user on 2026-09-23"
+		PR 129

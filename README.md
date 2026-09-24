@@ -1,5 +1,7 @@
 # Planet Crafter Save Tools
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
+
 > ❗ I’m not going to actively maintain this project (or only minimally). If you’d like to add improvements or fix bugs,
 > feel free to fork it
 > 😃

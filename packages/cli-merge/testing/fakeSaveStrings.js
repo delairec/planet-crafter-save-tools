@@ -1,6 +1,7 @@
 import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {createGlobalMetadata} from 'shared-save-processing/testing/createSaveRecords.js';
 import {GLOBAL_METADATA_SECTION_INDEX, PLAYERS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import {replaceSaveSection} from 'shared-save-processing/replaceSaveSection.js';
 
 export const FAKE_SAVE_STRING_A = createFakeSaveContent({globalMetadata: createGlobalMetadata({terraTokens: 10, allTimeTerraTokens: 10})});
 export const LEGACY_FAKE_SAVE_STRING_A = createLegacyFakeSaveContent({globalMetadata: createGlobalMetadata({terraTokens: 10, allTimeTerraTokens: 10})});
@@ -8,16 +9,15 @@ export const FAKE_SAVE_STRING_B = createFakeSaveContent({globalMetadata: createG
 
 const BROKEN_ENTRY = '{ broken entry';
 
-const sectionsWithBrokenPlayer = FAKE_SAVE_STRING_A.split('@');
-sectionsWithBrokenPlayer[PLAYERS_SECTION_INDEX] = `${sectionsWithBrokenPlayer[PLAYERS_SECTION_INDEX]}|\n${BROKEN_ENTRY}`;
-
-export const FAKE_SAVE_STRING_WITH_INVALID_ENTRY = sectionsWithBrokenPlayer.join('@');
+export const FAKE_SAVE_STRING_WITH_INVALID_ENTRY = replaceSaveSection(
+  FAKE_SAVE_STRING_A,
+  PLAYERS_SECTION_INDEX,
+  (currentSection) => `${currentSection}|\n${BROKEN_ENTRY}`
+);
 
 /** @param {string} saveString */
 function removeGlobalMetadata(saveString) {
-  const sections = saveString.split('@');
-  sections[GLOBAL_METADATA_SECTION_INDEX] = '';
-  return sections.join('@');
+  return replaceSaveSection(saveString, GLOBAL_METADATA_SECTION_INDEX, () => '');
 }
 
 export const FAKE_SAVE_STRING_A_WITHOUT_GLOBAL_METADATA = removeGlobalMetadata(FAKE_SAVE_STRING_A);
