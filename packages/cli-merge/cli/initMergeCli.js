@@ -4,6 +4,7 @@ import {parseMergeCliArguments} from './parseMergeCliArguments.js';
 import {
   renderDone,
   renderFoldersFound,
+  renderHelp,
   renderMergeCouldNotProduceASave,
   renderMergedSaveIssues,
   renderMergeFailed,
@@ -25,7 +26,7 @@ const SUCCESS_EXIT_CODE = 0;
 export const UNEXPECTED_ERROR_EXIT_CODE = 1;
 
 export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = [], release) {
-  const {inputDir, outputDir, isVersionAsked, unknownArguments} = parseMergeCliArguments(argv);
+  const {inputDir, outputDir, isVersionAsked, isHelpAsked, unknownArguments} = parseMergeCliArguments(argv);
 
   /**
    * @param {string[]} folders
@@ -96,6 +97,12 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
   }
 
   async function main() {
+    if (isHelpAsked) {
+      renderHelp();
+      exitProcess(SUCCESS_EXIT_CODE);
+      return;
+    }
+
     if (unknownArguments.length > 0) {
       renderUnknownArguments(unknownArguments);
       exitProcess(USAGE_ERROR_EXIT_CODE);

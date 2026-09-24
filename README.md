@@ -112,9 +112,17 @@ bun validate -- --version
 
 Prints the name and the version of the command, and exits with code `0`. Quote that line in a bug report.
 
-Both commands accept `--name=value` arguments only, and act on none they do not know: an argument such as `--inpt=x`,
-`--input x` or a bare `--file` is named on stderr with a usage message, and the command exits with code `1` without
-reading anything. The value is taken whole, so a path or a directory name may hold an equals sign.
+```
+bun merge -- --help
+bun validate -- --help
+```
+
+Prints the help of the command — its invocation, then every argument it accepts with what it does — and exits with
+code `0` without reading anything, whatever other argument accompanies it. `-h` is not an alias.
+
+Both commands accept `--name=value` arguments and the `--version` and `--help` switches only, and act on none they do
+not know: an argument such as `--inpt=x`, `--input x`, a bare `--file` or `-h` is named on stderr, followed by the
+help, and the command exits with code `1` without reading anything. The value is taken whole, so a path or a directory name may hold an equals sign.
 
 ```
 bun test

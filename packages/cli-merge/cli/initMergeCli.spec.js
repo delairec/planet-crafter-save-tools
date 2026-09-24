@@ -17,11 +17,11 @@ import {
   INPUT_SUBFOLDER_ALPHA,
   OUTPUT_DIR
 } from '../testing/fakePaths.js';
+import {MERGE_CLI_HELP} from '../testing/mergeCliHelp.js';
 
 const NO_INPUT_FOLDERS = [];
 const CLI_RELEASE = {name: 'cli-merge', version: '1.4.2'};
 const SINGLE_SAVE_FILENAME = 'only-one.json';
-const USAGE_MESSAGE = 'Usage: bun merge -- [--input=<directory>] [--output=<directory>]';
 
 describe('Merge CLI', () => {
   let consoleLogSpy;
@@ -335,8 +335,48 @@ describe('Merge CLI', () => {
     });
   });
 
+  describe('When the help is asked', () => {
+    it('should print the help of the command on stdout', async () => {
+      // Arrange
+      ({main} = initCli(['--help']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy.mock.calls).toEqual([[MERGE_CLI_HELP]]);
+    });
+
+    it('should exit with code 0 without reading any directory', async () => {
+      // Arrange
+      ({main} = initCli(['--help']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(readDirectory).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the help is asked beside the version and an argument the command does not accept', () => {
+    it('should print the help alone and exit with code 0', async () => {
+      // Arrange
+      ({main} = initCli(['--inpt=custom-input', '--version', '--help']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy.mock.calls).toEqual([[MERGE_CLI_HELP]]);
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
   describe('When an argument names no flag the command accepts', () => {
-    it('should name that argument and print a usage message', async () => {
+    it('should name that argument on stderr, followed by the help', async () => {
       // Arrange
       ({main} = initCli(['--inpt=custom-input']));
 
@@ -344,8 +384,8 @@ describe('Merge CLI', () => {
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith('✖ Unknown argument(s): --inpt=custom-input');
-      expect(consoleErrorSpy).toHaveBeenCalledWith(USAGE_MESSAGE);
+      expect(consoleErrorSpy.mock.calls).toEqual([['✖ Unknown argument(s): --inpt=custom-input'], [MERGE_CLI_HELP]]);
+      expect(consoleLogSpy).not.toHaveBeenCalled();
     });
 
     it('should exit with code 1 without reading any directory', async () => {
@@ -357,6 +397,20 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(readDirectory).not.toHaveBeenCalled();
+      expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('When the help is asked by its short form', () => {
+    it('should name -h as an unknown argument and exit with code 1', async () => {
+      // Arrange
+      ({main} = initCli(['-h']));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith('✖ Unknown argument(s): -h');
       expect(exitProcess).toHaveBeenCalledWith(1);
     });
   });
