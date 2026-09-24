@@ -6,6 +6,8 @@
   "scripts": {
     "test": "bun test",
     "lint:types": "tsc --noEmit",
+    "generate:section-validators": "bun scripts/generate-section-validators.ts",
+    "check:section-validators": "bun scripts/check-section-validators.ts",
     "validate:tables": "bun ../../scripts/validate-tables/validate-tables.ts src/domain/energyLevels src/domain/optimizerConfig src/domain/planetNamesByNumericId src/presentation/worldObjectLabels"
   },
   "exports": {
@@ -13,7 +15,9 @@
     "./presentation/viewModels/*": "./src/presentation/viewModels/*.ts"
   },
   "dependencies": {
-    "ajv": "^8.20.0",
     "shared-save-processing": "*"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0"
   }
 }

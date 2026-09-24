@@ -1747,3 +1747,20 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 	APPLIES_TO_TASK @TASK.DOCS108
 	SOURCE "Set of badges ruled with the user on 2026-09-24"
 		PR 144
+
+DECISION TheSectionValidatorsAreGeneratedAndVersioned
+	SPEC "The section validators are Ajv standalone code generated from the JSON Schemas of"
+		+ "shared-save-processing into core-mapping and versioned; the CLI and the web UI validate"
+		+ "through that module, and no schema is compiled at run time"
+		IMPL "packages/core-mapping/scripts/generate-section-validators.ts::standaloneCode"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::./sectionValidators.generated.js"
+	SPEC "check:guards fails when the versioned module differs from what the generator writes"
+		IMPL "packages/core-mapping/scripts/check-section-validators.ts"
+		ENFORCED_BY "packages/core-mapping/scripts/check-section-validators.spec.ts"
+	REJECTED "A Vite plugin generating the validators at build time: the CLI would keep a second"
+		+ "path compiling at run time"
+	REJECTED "An unversioned generation: bun test and the CLI would depend on a step having run"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "Ajv compiles a schema with new Function, which the content security policy of the"
+		+ "web UI refuses without 'unsafe-eval'"
+	SOURCE "Refinement of FIX104 with the user on 2026-09-24"
