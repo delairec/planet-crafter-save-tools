@@ -1228,7 +1228,7 @@ TASK FEAT92
 TASK FEAT93
 	TITLE "Read and validate a save of either format in core-mapping"
 	STATUS implemented
-	DELIVERED_BY 0
+	DELIVERED_BY 146
 	WAVE 5
 	AFTER @TASK.FEAT92
 	SPEC "a section is reached by the index the format of the save gives it, never by a position"
