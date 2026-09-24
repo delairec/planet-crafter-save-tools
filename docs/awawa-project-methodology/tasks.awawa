@@ -1451,16 +1451,25 @@ TASK FEAT95
 
 TASK TEST96
 	TITLE "Cover both formats and the mixed merge with save manager scenarios"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 155
 	WAVE 5
 	AFTER @TASK.FEAT95
 	SPEC "a scenario merges a legacy save with a current one and asserts the file it hands over"
 		+ "carries the current format, and its mirror, the legacy checkbox ticked, asserts it"
 		+ "carries the legacy format"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should hand over a merged save written in"
+			+ "the current format"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should hand over a merged save written in"
+			+ "the legacy format"
 	SPEC "the mixed merge scenario asserts the report the screen shows: the sentence of the warning"
 		+ "code and the reminder the save manager adds naming its checkbox, never the code itself"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should report the format written and tell"
+			+ "how to keep the legacy one, never showing a warning code"
 	SPEC "a scenario opens a legacy save and asserts it is displayed without a validation error the"
 		+ "format alone produces"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::When a save file written in the legacy"
+			+ "format is visualized"
 	RATIONALE "legacy-format_valid.json is the only legacy fixture, and the one scenario that"
 		+ "already merges it with a current save asserts the attribution of its warning and the"
 		+ "presence of the download link, never the format written, so nothing today would fail if"
