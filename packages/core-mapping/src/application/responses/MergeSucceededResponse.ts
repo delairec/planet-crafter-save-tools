@@ -7,6 +7,7 @@ export interface MergeSucceededResponse {
   content: string;
   mergeErrors: ValidationIssue[];
   mergeWarnings: MergeWarning[];
+  legacyFormatCouldBeKept: boolean;
   saveAWarnings: SaveWarning[];
   saveBWarnings: SaveWarning[];
 }

@@ -60,6 +60,7 @@ describe('MergeSaveFiles', () => {
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
         mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: [],
         saveBWarnings: []
       } satisfies MergeSucceededResponse);
@@ -150,6 +151,17 @@ describe('MergeSaveFiles', () => {
       }));
     });
 
+    it('should state that the legacy format could have been kept', async () => {
+      // Arrange
+      const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({legacyFormatCouldBeKept: true}));
+    });
+
     describe('When the merge asks for the legacy format', () => {
       it('should hand the serializer the sections in the legacy format', async () => {
         // Arrange
@@ -177,6 +189,31 @@ describe('MergeSaveFiles', () => {
           mergeWarnings: [{code: 'merged-save-format', formatRelease: '1.618'}]
         }));
       });
+
+      it('should not state that the legacy format could have been kept, the merge having kept it', async () => {
+        // Arrange
+        const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
+
+        // Act
+        await useCase.execute({...TWO_VALID_SAVES, preferLegacyFormat: true});
+
+        // Assert
+        expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({legacyFormatCouldBeKept: false}));
+      });
+    });
+  });
+
+  describe('When the two saves carry the legacy format', () => {
+    it('should not state that the legacy format could have been kept, no format being lost', async () => {
+      // Arrange
+      const legacySave: ParsedSaveSections = {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayer()]}), errors: noParseErrors};
+      const {useCase, presenter} = createUseCase({parse: parserAnswering({contentA: legacySave, contentB: legacySave})});
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({legacyFormatCouldBeKept: false}));
     });
   });
 
@@ -244,6 +281,7 @@ describe('MergeSaveFiles', () => {
           content: 'merged content',
           mergeErrors: noErrorsFromTheMerge,
           mergeWarnings: noMergeWarnings,
+          legacyFormatCouldBeKept: false,
           saveAWarnings: [{code: 'legacy-save-format'}],
           saveBWarnings: []
         } satisfies MergeSucceededResponse);
@@ -293,6 +331,7 @@ describe('MergeSaveFiles', () => {
         content: 'merged content',
         mergeErrors: [uniqueHostError],
         mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: [],
         saveBWarnings: []
       } satisfies MergeSucceededResponse);

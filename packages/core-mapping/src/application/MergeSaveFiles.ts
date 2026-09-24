@@ -50,6 +50,7 @@ export class MergeSaveFiles {
       content,
       mergeErrors: mergedSaveValidation.errors,
       mergeWarnings: reportMergedSaveFormat(saveA.sections, saveB.sections, mergedSave),
+      legacyFormatCouldBeKept: saveA.sections.formatRelease !== saveB.sections.formatRelease && !preferLegacyFormat,
       saveAWarnings: validationA.warnings,
       saveBWarnings: validationB.warnings
     });

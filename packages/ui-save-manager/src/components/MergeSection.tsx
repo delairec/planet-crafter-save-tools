@@ -6,6 +6,7 @@ import {yieldToPaint} from '~/lib/yieldToPaint';
 import {
   mergeButtonLabel,
   mergeSectionCallFailedMessage,
+  mergeSectionPreferLegacyFormatLabel,
   mergeSectionSaveALabel,
   mergeSectionSaveBLabel,
   mergeSectionTitle
@@ -19,6 +20,7 @@ interface MergeSectionProps {
 export default function MergeSection(props: MergeSectionProps) {
   const [fileA, setFileA] = createSignal<File | null>(null);
   const [fileB, setFileB] = createSignal<File | null>(null);
+  const [preferLegacyFormat, setPreferLegacyFormat] = createSignal<boolean>(false);
   const [isMerging, setIsMerging] = createSignal<boolean>(false);
   const [hasMergeCallFailed, setHasMergeCallFailed] = createSignal<boolean>(false);
 
@@ -40,7 +42,8 @@ export default function MergeSection(props: MergeSectionProps) {
         fileNameA: savedFileA.name,
         contentA,
         fileNameB: savedFileB.name,
-        contentB
+        contentB,
+        preferLegacyFormat: preferLegacyFormat()
       });
 
       props.onMergeResult(viewModel);
@@ -63,6 +66,8 @@ export default function MergeSection(props: MergeSectionProps) {
                                                  onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/></label>
         </p>
       </div>
+      <label><input type="checkbox" checked={preferLegacyFormat()}
+                    onChange={(event) => setPreferLegacyFormat(event.currentTarget.checked)}/>{mergeSectionPreferLegacyFormatLabel}</label>
       <button onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
       <Show when={isMerging()}>
         <Spinner/>

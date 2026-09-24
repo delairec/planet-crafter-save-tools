@@ -6,6 +6,8 @@ export interface MergeResultViewModel {
   content: string;
   mergeFailureMessage: string;
   mergeErrors: SaveValidationMessageViewModel[];
+  mergeWarnings: SaveValidationMessageViewModel[];
+  legacyFormatCouldBeKept: boolean;
   saveAErrors: SaveValidationMessageViewModel[];
   saveBErrors: SaveValidationMessageViewModel[];
   saveAWarnings: SaveValidationMessageViewModel[];

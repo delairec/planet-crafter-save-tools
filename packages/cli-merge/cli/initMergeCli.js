@@ -7,6 +7,7 @@ import {
   renderMergeCouldNotProduceASave,
   renderMergedSaveIssues,
   renderMergeFailed,
+  renderMergeReport,
   renderMergeSucceeded,
   renderMergeWarnings,
   renderNoValidFolders,
@@ -24,7 +25,7 @@ const SUCCESS_EXIT_CODE = 0;
 export const UNEXPECTED_ERROR_EXIT_CODE = 1;
 
 export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = []) {
-  const {inputDir, outputDir, unknownArguments} = parseMergeCliArguments(argv);
+  const {inputDir, outputDir, preferLegacyFormat, unknownArguments} = parseMergeCliArguments(argv);
 
   /**
    * @param {string[]} folders
@@ -55,7 +56,8 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
       contentA: await readTextFile(joinPath(folderPath, fileNameA)),
       fileNameB,
       contentB: await readTextFile(joinPath(folderPath, fileNameB)),
-      saveDisplayName: folder
+      saveDisplayName: folder,
+      preferLegacyFormat
     });
 
     renderMergeWarnings(folder, viewModel.saveAWarnings, viewModel.saveBWarnings);
@@ -74,6 +76,7 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
 
     if (mergedSaveWasWritten) {
       renderMergedSaveIssues(folder, viewModel.mergeErrors);
+      renderMergeReport(folder, viewModel.mergeWarnings, viewModel.legacyFormatCouldBeKept);
     }
 
     return mergedSaveWasWritten;
