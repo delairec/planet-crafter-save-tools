@@ -81,6 +81,38 @@ describe('SaveSectionsParserService', () => {
       // Assert
       expect(sections.worldEvents).toEqual([{planet: 110910045, seed: 7, pos: '0,0,0'}]);
     });
+
+    it('should hand over its Terrain Layers section and name the release whose format it carries', () => {
+      // Arrange
+      const service = new SaveSectionsParserService();
+      const content = createLegacyFakeSaveString({
+        terrainLayers: [{layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1', colorCustom: '1-1-1-1', colorBaseLerp: 100, colorCustomLerp: 0}]
+      });
+
+      // Act
+      const {sections} = service.parse(content);
+
+      // Assert
+      expect(sections.formatRelease).toBe('1.618');
+      expect(sections.terrainLayers).toEqual([
+        {layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1', colorCustom: '1-1-1-1', colorBaseLerp: 100, colorCustomLerp: 0}
+      ]);
+    });
+  });
+
+  describe('When reading a save written in the format of 2.004', () => {
+    it('should name the release whose format it carries and hand over no Terrain Layers section', () => {
+      // Arrange
+      const service = new SaveSectionsParserService();
+      const content = createFakeSaveString({});
+
+      // Act
+      const {sections} = service.parse(content);
+
+      // Assert
+      expect(sections.formatRelease).toBe('2.004');
+      expect(sections.terrainLayers).toBeUndefined();
+    });
   });
 
   describe('When a save splits into a part count no release writes', () => {
@@ -112,18 +144,20 @@ describe('SaveSectionsParserService', () => {
       expect(errors).toEqual([expect.objectContaining({detail: 'Invalid JSON: {not valid json'})]);
     });
 
-    it('should report the unreadable line as soon as the save is read, even when it is a world object', () => {
-      // Arrange
-      const service = new SaveSectionsParserService();
-      const unreadableWorldObject = createWorldObject({id: 79111656, gId: 'Phytoplankton3'});
-      const content = createFakeSaveContent()
-        .replace(stringifyEntry(unreadableWorldObject), '{not valid json');
+    describe('When the unreadable line is a world object', () => {
+      it('should report the unreadable line as soon as the save is read', () => {
+        // Arrange
+        const service = new SaveSectionsParserService();
+        const unreadableWorldObject = createWorldObject({id: 79111656, gId: 'Phytoplankton3'});
+        const content = createFakeSaveContent()
+          .replace(stringifyEntry(unreadableWorldObject), '{not valid json');
 
-      // Act
-      const {errors} = service.parse(content);
+        // Act
+        const {errors} = service.parse(content);
 
-      // Assert
-      expect(errors).toEqual([expect.objectContaining({detail: 'Invalid JSON: {not valid json'})]);
+        // Assert
+        expect(errors).toEqual([expect.objectContaining({detail: 'Invalid JSON: {not valid json'})]);
+      });
     });
   });
 });

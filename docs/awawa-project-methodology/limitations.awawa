@@ -77,7 +77,7 @@ LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
 	UNTIL "the merge sanitizes the display name at the boundary that receives it, or refuses a name"
 		+ "the save format cannot carry"
 	SEEN_IN "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts::return"
-		+ "{...saveConfiguration, saveDisplayName};"
+		+ "{...saveConfiguration, saveDisplayName,"
 	SEEN_IN "packages/cli-merge/cli/initMergeCli.spec.js::When the merged save does not pass"
 		+ "validation"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping

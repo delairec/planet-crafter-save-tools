@@ -1,8 +1,8 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveSectionsSerializerService} from './SaveSectionsSerializerService';
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
-import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX, SAVE_CONFIGURATION_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
-import {createPlayer, createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
+import {INVENTORIES_SECTION_INDEX, LEGACY_TERRAIN_LAYERS_SECTION_INDEX, LEGACY_WORLD_EVENTS_SECTION_INDEX, PLAYERS_SECTION_INDEX, SAVE_CONFIGURATION_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import {createPlayer, createSaveConfiguration, createTerrainLayer, createWorldEvent} from 'shared-save-processing/testing/createSaveRecords.js';
 import {createSaveSections} from '../testing/createSaveSections';
 
 describe('SaveSectionsSerializerService', () => {
@@ -45,6 +45,25 @@ describe('SaveSectionsSerializerService', () => {
       const {sections: written} = parseSaveSections(content);
       expect(written[PLAYERS_SECTION_INDEX]).toEqual([player]);
       expect(written[SAVE_CONFIGURATION_SECTION_INDEX]).toEqual([saveConfiguration]);
+    });
+  });
+
+  describe('When serializing a save in the format of 1.618', () => {
+    it('should write its Terrain Layers section before its world events', () => {
+      // Arrange
+      const service = new SaveSectionsSerializerService();
+      const terrainLayer = createTerrainLayer({layerId: 'PC-Toxicity-Layer1'});
+      const worldEvent = createWorldEvent({seed: 7});
+      const sections = createSaveSections({formatRelease: '1.618', terrainLayers: [terrainLayer], worldEvents: [worldEvent]});
+
+      // Act
+      const content = service.serialize(sections);
+
+      // Assert
+      const {formatRelease, sections: written} = parseSaveSections(content);
+      expect(formatRelease).toBe('1.618');
+      expect(written[LEGACY_TERRAIN_LAYERS_SECTION_INDEX]).toEqual([terrainLayer]);
+      expect(written[LEGACY_WORLD_EVENTS_SECTION_INDEX]).toEqual([worldEvent]);
     });
   });
 });

@@ -30,6 +30,7 @@ export function resolveIdConflicts(mergedSections: MergedSaveSections): SaveSect
 
   const remappings = {inventoryIds: inventories.saveBIdRemapping, worldObjectIds: worldObjects.saveBIdRemapping};
   return {
+    formatRelease: mergedSections.formatRelease,
     globalMetadata: [mergedSections.globalMetadata],
     terraformationLevels: [...mergedSections.terraformationLevels],
     players: inOriginOrder(rewritePlayerReferences(mergedSections.players, remappings)),
@@ -39,6 +40,7 @@ export function resolveIdConflicts(mergedSections: MergedSaveSections): SaveSect
     mailboxes: [...mergedSections.mailboxes],
     storyEvents: [...mergedSections.storyEvents],
     saveConfigurations: mergedSections.saveConfiguration ? [mergedSections.saveConfiguration] : [],
+    terrainLayers: mergedSections.terrainLayers ? [...mergedSections.terrainLayers] : undefined,
     worldEvents: [...mergedSections.worldEvents]
   };
 }

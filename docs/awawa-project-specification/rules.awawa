@@ -253,11 +253,18 @@ RULE SaveConfigurationComesFromSaveA
 	HOLDS_FOR all
 	DOMAIN merge
 	CONFLICT "the two saves carry different configurations"
-	RESOLUTION "save A's configuration is used as is, save B's discarded, and the display name"
-		+ "overridden by the caller"
-	SPEC "the configuration of save A is used as is and the one of save B is entirely discarded"
+	RESOLUTION "save A's configuration is used as is, save B's discarded, the display name"
+		+ "overridden by the caller and the version taken from the save whose format is written"
+	SPEC "the configuration of save A is used as is and the one of save B is entirely discarded,"
+		+ "except the display name and the version"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
 			+ "use the saveDisplayName parameter and take save configuration from save A"
+	SPEC "the version the merged configuration declares is the one of the save whose format is"
+		+ "written, so a merge of two saves of the same format declares the version of save A"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
+			+ "declare the version of that save"
+		ATTESTED_BY "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::should"
+			+ "write the format of 2.004 and declare a version of that format"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-CFG-1 and GR-CFG-3); GR-CFG-2 moved"
 		+ "to @DECISION.TheMergedSaveDisplayNameComesFromTheCaller"

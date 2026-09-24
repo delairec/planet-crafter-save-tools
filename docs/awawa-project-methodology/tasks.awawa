@@ -1299,7 +1299,8 @@ TASK FEAT93
 
 TASK FEAT94
 	TITLE "Write the merged save in the format the merge was asked for"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 151
 	WAVE 5
 	AFTER @TASK.FEAT93
 	SPEC "merging two saves written in different formats writes the format of the more recent of"
@@ -1313,7 +1314,7 @@ TASK FEAT94
 	SPEC "the Terrain Layers section is written whenever the format written carries one, taking the"
 		+ "entries of save A when both saves carry it and the entries of the save that carries it"
 		+ "otherwise; the format written carrying none, the section is dropped"
-		IMPL "packages/core-mapping/src/domain/rules/merge"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeTerrainLayers.ts"
 	SPEC "a merge reports the format it wrote and every section writing it dropped, on the single"
 		+ "warning list of the merge output that no producer filled until now; the command and the"
 		+ "save manager render that list in FEAT95"
