@@ -850,6 +850,8 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 	APPLIES_TO_TASK @TASK.DOCS108
 	SOURCE "T23"
 		PR 38
+	SOURCE "Push trigger added for the README badge"
+		PR 144
 
 DECISION AControllerSpecCoversWiringNotBranches
 	REJECTED "Covering business branches from controller specs: every rule change would cost twice"
@@ -1463,3 +1465,4 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 		+ "preview must not move it"
 	APPLIES_TO_TASK @TASK.DOCS108
 	SOURCE "Set of badges ruled with the user on 2026-09-24"
+		PR 144

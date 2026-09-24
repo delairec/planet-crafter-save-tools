@@ -1422,17 +1422,26 @@ TASK FIX104
 
 TASK DOCS108
 	TITLE "the README shows the state of the project in badges under its title"
-	STATUS todo
+	STATUS implemented
 	SPEC "the README carries under its title, next to the Netlify badge, one badge for each of the"
 		+ "Quality, Dependencies, UI tests and Site check workflows, showing the state of its last"
 		+ "run on master and linking to the runs of that workflow on master"
+		IMPL "README.md::quality.yml?query=branch%3Amaster"
+		IMPL "README.md::dependencies.yml?query=branch%3Amaster"
+		IMPL "README.md::ui-tests.yml?query=branch%3Amaster"
+		IMPL "README.md::site-check.yml?query=branch%3Amaster"
 	SPEC "the README carries a Release badge showing the state of the last release run and linking"
 		+ "to the runs of the Release workflow"
+		IMPL "README.md::[![Release]"
 	SPEC "the UI tests workflow runs on every push to master"
+		IMPL ".github/workflows/ui-tests.yml::the run the README badge shows"
 	SPEC "the README carries a license badge linking to the LICENSE file"
+		IMPL "README.md::(LICENSE)"
 	SPEC "the Netlify badge shows the state of the production deploy of master; a deploy preview"
 		+ "leaves it unchanged"
+		IMPL "README.md::deploy-status?branch=master"
 	WAVE 8
+	DELIVERED_BY 144
 	RATIONALE "the Netlify deploy badge, added on master by commit 957d86e, is the only one; the"
 		+ "state of the workflows is visible only from the Actions tab. Measured on 2026-09-24:"
 		+ "Quality and Dependencies run on push to master, Site check on a weekly schedule of the"
