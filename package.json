@@ -46,7 +46,7 @@
     "fallow:health:local": "fallow health --config ./fallow.toml --base master --no-cache",
     "release": "bun scripts/release/release.ts",
     "release:tag": "bun scripts/release/release-tag.ts",
-    "audit": "bun audit --audit-level=moderate --ignore=GHSA-3v7f-55p6-f55p --ignore=GHSA-c2c7-rcm5-vvqj",
+    "audit": "bun audit --audit-level=moderate",
     "dev:ui": "bun run --filter ui-save-manager dev",
     "preview:ui": "bun run --filter ui-save-manager preview",
     "clean:ui": "bun run --filter ui-save-manager clean",

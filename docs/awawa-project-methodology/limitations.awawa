@@ -123,6 +123,8 @@ LIMITATION TheSecurityAuditIgnoresTwoTransitiveAdvisories
 		+ "dependency tracking should report on a schedule rather than on the day of a merge"
 	SOURCE "Found on 2026-09-10 in pull request 53"
 		PR 53
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
 
 LIMITATION TheContentSecurityPolicyAllowsInlineScript
 	STATUS archived
