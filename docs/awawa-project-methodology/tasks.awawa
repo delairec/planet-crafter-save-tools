@@ -1646,3 +1646,26 @@ TASK FEAT114
 	SOURCE "Owner review, 2026-09-24: the output of the two commands is hard to read, a draft task"
 		+ "with no wave"
 		PR 127
+
+TASK CHORE116
+	TITLE "declare a wave as an entity carrying its milestone and its integration branch"
+	STATUS draft
+	SPEC "the schema declares a WAVE type, one entity per wave, named by its number"
+	SPEC "a WAVE entity requires MILESTONE, the title of the GitHub milestone every pull request of"
+		+ "the wave carries"
+	SPEC "a WAVE entity requires BRANCH, the integration branch every task pull request of the wave"
+		+ "targets"
+	SPEC "the WAVE field of TASK is a reference to a WAVE entity, and every task carrying a wave"
+		+ "today resolves to one"
+	SPEC "the Branches section of AGENTS.md names no branch, and points to the WAVE entity of the"
+		+ "open wave instead"
+	RATIONALE "WAVE is a bare uint today: an agent launched on a task learns its number, not the"
+		+ "branch to cut from nor the milestone to set on the pull request, so it asks, or reads"
+		+ "the base from AGENTS.md, which names it in prose and drifts — on 2026-09-24 it still"
+		+ "named integration/save-format-preserved while the open milestone and branch were"
+		+ "release-and-hardening. AGENTS.md kept the base out of the corpus because a DESC"
+		+ "rewritten every month gains nothing; one entity per wave is written once and never"
+		+ "rewritten, which removes that objection. Open for refinement: the milestone and branch"
+		+ "of the past waves 5, 6 and 7, and whether the wave-start command reads BRANCH instead of"
+		+ "asking — that command lives outside this repository"
+	SOURCE "Owner request, session of 2026-09-24"
