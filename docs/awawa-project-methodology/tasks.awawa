@@ -1444,18 +1444,30 @@ TASK FEAT107
 		PR 135
 
 TASK FIX104
-	TITLE "the web UI validates saves without compiling code at run time, so its content security"
-		+ "policy drops 'unsafe-eval'"
-	STATUS draft
+	TITLE "the content security policy of the web UI allows no 'unsafe-eval'"
+	DESC "start once PR 127 is merged into master and master into integration/release-and-hardening"
+	STATUS todo
 	SPEC "the Content-Security-Policy of packages/ui-save-manager/public/_headers carries no"
 		+ "'unsafe-eval'"
 	SPEC "loading, viewing and merging a save raise no securitypolicyviolation event on the three"
 		+ "engines"
-	RATIONALE "Ajv compiles the section validators with new Function; validators precompiled at"
-		+ "build as standalone modules would need no eval in the browser"
+	SPEC "a guard of check:guards fails when the versioned section validators differ from what the"
+		+ "JSON Schemas of shared-save-processing produce"
+	RATIONALE "Ajv compiles the section validators with new Function, the only eval of the client"
+		+ "bundle measured on 2026-09-23; its standalone ESM output for the ten section schemas"
+		+ "holds no eval and imports nothing from Ajv. Ruled with the user on 2026-09-24: the"
+		+ "validators are generated into core-mapping, versioned and replayed by a guard, as the"
+		+ "scenario fixtures are, so that the CLI and the web UI validate through the same module."
+		+ "A Vite plugin was refused, the CLI keeping a second path compiled at run time; an"
+		+ "unversioned generation was refused, bun test and the CLI then depending on a step having"
+		+ "run. PR 127 rewrites validateSchemas.js and adds the legacy schemas, hence the wait. The"
+		+ "scenario of security.e2e.ts already listens for policy violations and bites once the"
+		+ "source is gone"
 		REF @LIMITATION.TheContentSecurityPolicyAllowsEval
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
 	SOURCE "Measured while implementing FIX101 on 2026-09-23"
 		PR 134
+	SOURCE "Refinement with the user on 2026-09-24"
 	WAVE 8
 
 TASK DOCS108
@@ -1603,5 +1615,5 @@ TASK CHORE105
 		REF @DECISION.EveryPublishedCommandHasARealProcessTest
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
 		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
-		REF @DECISION.UiSaveManagerStaysOutsideTheFallowPerimeter
+		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
 	SOURCE "Owner request, refinement session of 2026-09-23"
