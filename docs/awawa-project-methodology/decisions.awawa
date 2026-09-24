@@ -591,13 +591,42 @@ DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 
 DECISION AnUnknownCliFlagIsAUsageError
 	SPEC "Both CLIs name on standard error each dash-prefixed argument that designates none of"
-		+ "their flags, print a usage line and exit with an error before reading anything"
+		+ "their flags and switches, print their help after it and exit 1 before reading anything"
 		IMPL "packages/shared-platforms/cliArguments.js::findUnknownArguments"
+		IMPL "packages/cli-merge/cli/renderMergeCliOutput.js::renderUnknownArguments"
+		IMPL "packages/cli-validate/cli/renderValidateCliOutput.js::renderUnknownArguments"
+		ENFORCED_BY "packages/cli-merge/cli/merge-cli.help.spec.js"
+		ENFORCED_BY "packages/cli-validate/cli/validate-cli.help.spec.js"
+	SPEC "--help wins over every other argument: both CLIs print their help on standard output and"
+		+ "exit 0 before reading anything; -h is no alias of it"
+		IMPL "packages/cli-merge/cli/initMergeCli.js::isHelpAsked"
+		IMPL "packages/cli-validate/cli/initValidateCli.js::isHelpAsked"
+		ENFORCED_BY "packages/cli-merge/cli/merge-cli.help.spec.js"
+		ENFORCED_BY "packages/cli-validate/cli/validate-cli.help.spec.js"
+	SPEC "Each parser derives the flags and switches it accepts from the one declaration its help"
+		+ "is formatted from, --platform included"
+		IMPL "packages/cli-merge/cli/parseMergeCliArguments.js::MERGE_CLI_ARGUMENTS"
+		IMPL "packages/cli-validate/cli/parseValidateCliArguments.js::VALIDATE_CLI_ARGUMENTS"
+		IMPL "packages/shared-platforms/cliArguments.js::formatHelp"
+		ENFORCED_BY "packages/cli-merge/cli/initMergeCli.spec.js::MERGE_CLI_HELP"
+		ENFORCED_BY "packages/cli-validate/cli/initValidateCli.spec.js::VALIDATE_CLI_HELP"
+	SPEC "cli-validate run without a save path prints its help on standard error and exits 1"
+		IMPL "packages/cli-validate/cli/initValidateCli.js::filePath"
 	REJECTED "Warn without changing the exit code: a misspelt flag makes the tool run on the"
 		+ "defaults"
 	REJECTED "Make the banner depend on the runtime: Node is a user-side compatibility only"
+	REJECTED "Print one usage line: it names neither what each flag does nor --version; the"
+		+ "previous form of this ruling"
+	REJECTED "-h as a short alias of --help: ruled out with the owner on 2026-09-23"
+	REJECTED "Hide --platform from the help: the help would no longer list what the parser accepts;"
+		+ "it is described as reserved to the node:* scripts instead"
+	REJECTED "A help text written by hand beside the parser's list of names: the two diverge"
+		+ "without a test failing"
+	APPLIES_TO_TASK @TASK.FEAT107
 	SOURCE "T34"
 		PR 60
+	SOURCE "Rewritten in place by the task pull request of FEAT107"
+		PR 148
 
 DECISION SectionControllersReceiveTheValidatedText
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping

@@ -1,13 +1,18 @@
 /** @import { SaveValidationMessageViewModel } from 'core-mapping/presentation/viewModels/SaveFileValidationViewModel' */
 
+import {formatHelp} from 'shared-platforms/cliArguments.js';
+import {VALIDATE_CLI_ARGUMENTS} from './parseValidateCliArguments.js';
+
 /**
  * Rendering for the validate CLI. The verdict of a valid save goes to stdout, every diagnostic to stderr.
  */
 
-const USAGE_MESSAGE = 'Usage: bun validate -- --file=<filepath>';
+export function renderHelp() {
+  console.log(formatHelp(VALIDATE_CLI_ARGUMENTS));
+}
 
-export function renderUsage() {
-  console.error(USAGE_MESSAGE);
+export function renderMissingFile() {
+  console.error(formatHelp(VALIDATE_CLI_ARGUMENTS));
 }
 
 /** @param {{name: string, version: string}} release */
@@ -18,7 +23,7 @@ export function renderVersion({name, version}) {
 /** @param {string[]} unknownArguments */
 export function renderUnknownArguments(unknownArguments) {
   console.error(`✖ Unknown argument(s): ${unknownArguments.join(', ')}`);
-  renderUsage();
+  console.error(formatHelp(VALIDATE_CLI_ARGUMENTS));
 }
 
 /** @param {SaveValidationMessageViewModel[]} warnings */

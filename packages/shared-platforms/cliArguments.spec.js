@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {findUnknownArguments, hasSwitch, PLATFORM_FLAG_NAME, readFlagValue} from './cliArguments.js';
+import {findUnknownArguments, formatHelp, hasSwitch, PLATFORM_FLAG_NAME, readFlagValue} from './cliArguments.js';
 
 const FILE_FLAG_NAME = 'file';
 const VERSION_SWITCH_NAME = 'version';
@@ -223,6 +223,54 @@ describe('CLI switch reading', () => {
 
       // Assert
       expect(isPresent).toBe(false);
+    });
+  });
+});
+
+describe('CLI help formatting', () => {
+  describe('When the command accepts flags and switches', () => {
+    it('should name the invocation, then one aligned line per flag and per switch', () => {
+      // Arrange
+      const commandArguments = {
+        invocation: 'bun merge -- [options]',
+        flags: [
+          {name: 'input', valueName: 'directory', description: 'read the saves from this directory'},
+          {name: 'platform', valueName: 'bun|node', description: 'reserved to the node:* scripts'}
+        ],
+        switches: [{name: 'version', description: 'print the version and exit'}]
+      };
+
+      // Act
+      const help = formatHelp(commandArguments);
+
+      // Assert
+      expect(help).toBe(`Usage: bun merge -- [options]
+
+Options:
+  --input=<directory>    read the saves from this directory
+  --platform=<bun|node>  reserved to the node:* scripts
+  --version              print the version and exit`);
+    });
+  });
+
+  describe('When the command accepts no switch', () => {
+    it('should list its flags alone', () => {
+      // Arrange
+      const noSwitch = [];
+      const commandArguments = {
+        invocation: 'bun validate -- --file=<path>',
+        flags: [{name: 'file', valueName: 'path', description: 'the save file to validate'}],
+        switches: noSwitch
+      };
+
+      // Act
+      const help = formatHelp(commandArguments);
+
+      // Assert
+      expect(help).toBe(`Usage: bun validate -- --file=<path>
+
+Options:
+  --file=<path>  the save file to validate`);
     });
   });
 });

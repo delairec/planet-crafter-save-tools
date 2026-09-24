@@ -3,6 +3,9 @@ const FLAG_PREFIX = '--';
 const FLAG_VALUE_SEPARATOR = '=';
 
 export const PLATFORM_FLAG_NAME = 'platform';
+export const PLATFORM_FLAG = {name: PLATFORM_FLAG_NAME, valueName: 'bun|node', description: 'reserved to the node:* scripts, which pass it themselves'};
+export const VERSION_SWITCH = {name: 'version', description: 'print the version and exit'};
+export const HELP_SWITCH = {name: 'help', description: 'print this help and exit'};
 
 /**
  * @typedef {object} KnownArguments
@@ -45,6 +48,54 @@ export function readFlagValue(argv, flagName) {
  */
 export function hasSwitch(argv, switchName) {
   return argv.includes(toSwitch(switchName));
+}
+
+/**
+ * @typedef {object} FlagHelp
+ * @property {string} name the name of the `--<name>=<value>` flag, without its dashes
+ * @property {string} valueName the placeholder the help shows for its value
+ * @property {string} description
+ */
+
+/**
+ * @typedef {object} SwitchHelp
+ * @property {string} name the name of the `--<name>` switch, without its dashes
+ * @property {string} description
+ */
+
+/**
+ * @typedef {object} CommandArguments
+ * @property {string} invocation
+ * @property {readonly FlagHelp[]} flags
+ * @property {readonly SwitchHelp[]} switches
+ */
+
+/**
+ * @param {FlagHelp | SwitchHelp} argument
+ * @returns {argument is FlagHelp} whether the argument is a flag, carrying a value
+ */
+function isFlag(argument) {
+  return 'valueName' in argument;
+}
+
+/**
+ * @param {FlagHelp | SwitchHelp} argument
+ * @returns {string} the `--<name>` or `--<name>=<valueName>` text the help lists for that argument
+ */
+function formatArgument(argument) {
+  return isFlag(argument) ? `--${argument.name}=<${argument.valueName}>` : `--${argument.name}`;
+}
+
+/**
+ * @param {CommandArguments} commandArguments
+ * @returns {string}
+ */
+export function formatHelp({invocation, flags, switches}) {
+  const entries = [...flags, ...switches].map(argument => ({text: formatArgument(argument), description: argument.description}));
+  const longestArgumentLength = Math.max(...entries.map(entry => entry.text.length));
+  const optionLines = entries.map(entry => `  ${entry.text.padEnd(longestArgumentLength)}  ${entry.description}`);
+
+  return [`Usage: ${invocation}`, '', 'Options:', ...optionLines].join('\n');
 }
 
 /**

@@ -1384,18 +1384,41 @@ TASK FIX106
 
 TASK FEAT107
 	TITLE "both CLIs print their help on --help and on an unknown argument"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 148
 	SPEC "--help prints the help of the CLI on standard output and exits 0 without reading"
 		+ "anything, whatever other argument accompanies it"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::When the help is asked beside the"
+			+ "version"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::When the help is asked beside the"
+			+ "version"
 	SPEC "the help names the invocation, then every flag and switch the CLI accepts, one line each"
 		+ "saying what it does; --platform is described as reserved to the node:* scripts"
+		IMPL "packages/shared-platforms/cliArguments.spec.js::CLI help formatting"
+		IMPL "packages/cli-merge/testing/mergeCliHelp.js"
+		IMPL "packages/cli-validate/testing/validateCliHelp.js"
 	SPEC "a flag or switch the parser accepts without a line in the help fails a test"
+		IMPL "packages/cli-merge/cli/parseMergeCliArguments.js::MERGE_CLI_ARGUMENTS.flags.map"
+		IMPL "packages/cli-validate/cli/parseValidateCliArguments.js::VALIDATE_CLI_ARGUMENTS.flags.map"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::MERGE_CLI_HELP"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::VALIDATE_CLI_HELP"
 	SPEC "an unknown argument is named on standard error, followed by the same help, and the CLI"
 		+ "exits 1 before reading anything"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should name that argument on stderr,"
+			+ "followed by the help"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::should name that argument on"
+			+ "stderr, followed by the help"
 	SPEC "-h is an unknown argument"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::When the help is asked by its short form"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::When the help is asked by its"
+			+ "short form"
 	SPEC "--help and an unknown argument are each proven on a spawned process of both CLIs, under"
 		+ "Bun and under Node"
+		IMPL "packages/cli-merge/cli/merge-cli.help.spec.js"
+		IMPL "packages/cli-validate/cli/validate-cli.help.spec.js"
 	SPEC "AnUnknownCliFlagIsAUsageError states the help in place of the usage line"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AnUnknownCliFlagIsAUsageError"
 	AFTER @TASK.CHORE83
 	WAVE 8
 	RATIONALE "On an unknown argument both CLIs print one usage line today, which names neither"
