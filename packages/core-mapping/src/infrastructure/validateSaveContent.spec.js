@@ -593,7 +593,7 @@ describe('validateSaveContent', () => {
       expect(result.isValid).toBe(true);
     });
 
-    it('should report a warning explaining the save was adapted', () => {
+    it('should report a warning stating the save was written by 1.618 or earlier', () => {
       // Arrange
       const save = createLegacyFakeSaveString({
         globalMetadata: createGlobalMetadata(),

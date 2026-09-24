@@ -1,5 +1,5 @@
-export const legacySaveFormatWarningMessage = 'This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.';
-export const unknownSaveWarningMessage = 'This save had to be adapted to the current save format.';
+export const legacySaveFormatWarningMessage = 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.';
+export const unknownSaveWarningMessage = 'This save raised a warning the save manager cannot describe.';
 
 /**
  * @param {{declaredVersion: string, declaredRelease: string, carriedRelease: string}} contradiction

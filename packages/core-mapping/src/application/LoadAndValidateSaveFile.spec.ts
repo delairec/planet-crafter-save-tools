@@ -65,7 +65,7 @@ describe('LoadAndValidateSaveFile', () => {
     });
   });
 
-  describe('When validation reports that the save had to be adapted', () => {
+  describe('When validation reports that the save was written by 1.618 or earlier', () => {
     it('should present the warnings of a loaded save file', async () => {
       // Arrange
       const {useCase, presenter} = setupUseCase({validationWarnings: [{code: 'legacy-save-format'}]});

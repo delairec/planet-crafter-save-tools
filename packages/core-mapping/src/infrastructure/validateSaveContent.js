@@ -3,15 +3,16 @@ import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
 import {GLOBAL_METADATA_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import saveFileSchema from 'shared-save-processing/schemas/save-file.schema.json' with {type: 'json'};
 import {validateSchemas, validateSectionEntry} from './validateSchemas.js';
+import {selectCurrentFormatSections} from './selectCurrentFormatSections.ts';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {validateUniqueHost} from '../domain/rules/validateUniqueHost.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
 
 /**
  * Validates a Planet Crafter save string: JSON schema compliance for each section, plus
- * domain-specific rules. Legacy saves (still containing the Terrain Layers section, removed by a
- * later game update) are transparently adapted to the current format and reported through
- * `warnings` instead of an error.
+ * domain-specific rules. A save of 1.618 and earlier (still carrying the Terrain Layers section a
+ * later game update removed) is validated on the sections the format of 2.004 shares with it, and
+ * reported through `warnings` instead of an error.
  *
  * Reading the save is delegated to `parseSaveSections`, the single reader of the format: a
  * validator tolerating the format differently from the reader used by loading and merging is what
@@ -30,7 +31,8 @@ export function validateSaveContent(saveContent) {
     };
   }
 
-  const {sections, errors: parseErrors, warnings} = parseSaveSections(saveContent);
+  const {sections: parsedSections, errors: parseErrors, warnings} = parseSaveSections(saveContent);
+  const sections = selectCurrentFormatSections(parsedSections);
   const worldObjectIssues = validateWorldObjectsSection(sections[WORLD_OBJECTS_SECTION_INDEX]);
 
   const errors = parseErrors.map(toInvalidJsonIssue);

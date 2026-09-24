@@ -172,7 +172,7 @@ describe('MergeSaveFiles', () => {
     });
   });
 
-  describe('When validation reports that a save had to be adapted', () => {
+  describe('When validation reports that a save was written by 1.618 or earlier', () => {
     it('should present the warnings of each save on a successful merge', async () => {
       // Arrange
       const {useCase, presenter} = createUseCase({

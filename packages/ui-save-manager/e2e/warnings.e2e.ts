@@ -3,7 +3,7 @@ import {expect, test, type Page} from '@playwright/test';
 const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
 const currentFormatSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 
-const legacyFormatWarningFragment = 'created by an older version of the game';
+const legacyFormatWarningFragment = 'written by version 1.618 of the game or earlier';
 const legacyFormatWarningCode = 'legacy-save-format';
 const revealMessagesLabel = 'Show details';
 

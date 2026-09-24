@@ -42,7 +42,7 @@ describe('ValidateSaveFile', () => {
     });
   });
 
-  describe('When validation reports that the save had to be adapted', () => {
+  describe('When validation reports that the save was written by 1.618 or earlier', () => {
     it('should present the warnings of a valid save file', async () => {
       // Arrange
       const validator: SaveValidatorPort = {validate: mock(() => ({isValid: true, errors: [], warnings: [{code: 'legacy-save-format' as const}]}))};

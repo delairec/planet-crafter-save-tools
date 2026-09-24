@@ -1,18 +1,61 @@
 /** @import { SerializeSaveParams } from './serializeSave.js' */
+/** @import { CurrentFormatSections, LegacyFormatSections } from './gameDefinitions' */
 
 import {describe, it, expect} from 'bun:test';
-import {serializeSave} from './serializeSave.js';
+import {serializeSave, UnknownFormatReleaseError} from './serializeSave.js';
 import {
+  GLOBAL_METADATA_SECTION_INDEX,
+  INVENTORIES_SECTION_INDEX,
+  LEGACY_SPLIT_PARTS_COUNT,
+  LEGACY_TERRAIN_LAYERS_SECTION_INDEX,
+  LEGACY_WORLD_EVENTS_SECTION_INDEX,
+  MAILBOX_MESSAGES_SECTION_INDEX,
   PLAYERS_SECTION_INDEX,
   SAVE_CONFIGURATION_SECTION_INDEX,
   STATISTICS_SECTION_INDEX,
+  STORY_EVENTS_SECTION_INDEX,
   TERRAFORMATION_LEVELS_SECTION_INDEX,
   WORLD_EVENTS_SECTION_INDEX,
   WORLD_OBJECTS_SECTION_INDEX
 } from './sectionIndexes.js';
 import {createPlayer, createSaveConfiguration, createStatistics, createTerraformationLevel} from './testing/createSaveRecords.js';
 import {createFakeSaveString} from './testing/createFakeSaveString.js';
+import {createFakeSaveContent, createLegacyFakeSaveContent} from './testing/createFakeSaveContent.js';
 import {parseSaveSections} from './parseSaveSections.js';
+
+/**
+ * @param {string} save
+ * @returns {SerializeSaveParams}
+ */
+function readBackSave(save) {
+  const {sections, formatRelease} = parseSaveSections(save);
+  const sectionsBeforeTerrainLayers = {
+    formatRelease: String(formatRelease),
+    metadata: sections[GLOBAL_METADATA_SECTION_INDEX],
+    terraformationLevels: sections[TERRAFORMATION_LEVELS_SECTION_INDEX],
+    players: sections[PLAYERS_SECTION_INDEX],
+    worldObjects: [...sections[WORLD_OBJECTS_SECTION_INDEX]()],
+    inventories: sections[INVENTORIES_SECTION_INDEX],
+    statistics: sections[STATISTICS_SECTION_INDEX],
+    mailboxes: sections[MAILBOX_MESSAGES_SECTION_INDEX],
+    storyEvents: sections[STORY_EVENTS_SECTION_INDEX],
+    saveConfigurations: sections[SAVE_CONFIGURATION_SECTION_INDEX]
+  };
+
+  if (sections.length === LEGACY_SPLIT_PARTS_COUNT) {
+    const legacySections = /** @type {LegacyFormatSections} */ (sections);
+
+    return {
+      ...sectionsBeforeTerrainLayers,
+      terrainLayers: legacySections[LEGACY_TERRAIN_LAYERS_SECTION_INDEX],
+      worldEvents: legacySections[LEGACY_WORLD_EVENTS_SECTION_INDEX]
+    };
+  }
+
+  const currentSections = /** @type {CurrentFormatSections} */ (sections);
+
+  return {...sectionsBeforeTerrainLayers, worldEvents: currentSections[WORLD_EVENTS_SECTION_INDEX]};
+}
 
 describe('serializeSave', () => {
   const SECTION_SEPARATOR = '\n@\n';
@@ -21,6 +64,7 @@ describe('serializeSave', () => {
 
   /** @type {SerializeSaveParams} */
   const emptyParams = {
+    formatRelease: '2.004',
     metadata: [], terraformationLevels: [], players: [], worldObjects: [], inventories: [],
     statistics: [], mailboxes: [], storyEvents: [], saveConfigurations: [], worldEvents: []
   };
@@ -133,6 +177,53 @@ describe('serializeSave', () => {
       // Assert
       const sections = result.split(SECTION_SEPARATOR);
       expect(sections[PLAYERS_SECTION_INDEX]).toBe('{"id":76561190000000007,"name":"Chileny","inventoryId":44,"equipmentId":45,"playerPosition":"0,0,0","playerRotation":"0,0,0,0","playerGaugeOxygen":280.0,"playerGaugeThirst":96.0,"playerGaugeHealth":72.0,"playerGaugeToxic":0.0,"host":true,"planetId":"Toxicity","cameraView":0,"totalCraftedObjects":0,"totalTerraTokenEarned":0}');
+    });
+  });
+
+  describe('When given the format of 1.618', () => {
+    const terrainLayer = {layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1', colorCustom: '1-1-1-1', colorBaseLerp: 100, colorCustomLerp: 0};
+
+    it('should write the twelve parts of that format, Terrain Layers entries at their legacy index', () => {
+      // Act
+      const sections = serializeSave({...emptyParams, formatRelease: '1.618', terrainLayers: [terrainLayer, terrainLayer]}).split(SECTION_SEPARATOR);
+
+      // Assert
+      expect(sections).toHaveLength(11);
+      expect(sections[LEGACY_TERRAIN_LAYERS_SECTION_INDEX]).toBe(`${JSON.stringify(terrainLayer)}|\n${JSON.stringify(terrainLayer)}`);
+    });
+
+    it('should return the exact bytes of a save of 1.618 parsed then serialized', () => {
+      // Arrange
+      const save = createLegacyFakeSaveContent({terrainLayers: [terrainLayer, {...terrainLayer, layerId: 'PC-Humble-Layer1', colorBaseLerp: 101}]});
+
+      // Act
+      const result = serializeSave(readBackSave(save));
+
+      // Assert
+      expect(result).toBe(save);
+    });
+  });
+
+  describe('When given the format of 2.004', () => {
+    it('should return the exact bytes of a save of 2.004 parsed then serialized', () => {
+      // Arrange
+      const save = createFakeSaveContent();
+
+      // Act
+      const result = serializeSave(readBackSave(save));
+
+      // Assert
+      expect(result).toBe(save);
+    });
+  });
+
+  describe('When given the format of a release the table does not hold', () => {
+    it('should fail with an UnknownFormatReleaseError', () => {
+      // Act
+      const serializeUnknownFormat = () => serializeSave({...emptyParams, formatRelease: '0.9'});
+
+      // Assert
+      expect(serializeUnknownFormat).toThrow(UnknownFormatReleaseError);
     });
   });
 });

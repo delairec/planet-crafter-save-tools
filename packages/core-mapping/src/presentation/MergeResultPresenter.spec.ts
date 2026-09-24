@@ -56,7 +56,7 @@ describe('MergeResultPresenter', () => {
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAWarnings).toEqual([{
-        message: 'This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.',
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
         location: null
       }]);
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBWarnings).toEqual([]);
@@ -150,7 +150,7 @@ describe('MergeResultPresenter', () => {
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBWarnings).toEqual([{
-        message: 'This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.',
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
         location: null
       }]);
     });

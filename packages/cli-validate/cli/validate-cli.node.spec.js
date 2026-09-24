@@ -62,7 +62,7 @@ describe('Validate CLI run as a Node process', () => {
   });
 
   describe('When the save file is in the legacy format', () => {
-    it('should warn about the format adaptation and still report the file as valid', async () => {
+    it('should warn that the save was written by 1.618 or earlier and still report the file as valid', async () => {
       // Arrange
       await writeFile(saveFilePath, createLegacyFakeSaveContent(), 'utf8');
 
@@ -70,7 +70,7 @@ describe('Validate CLI run as a Node process', () => {
       const {exitCode, stdout, stderr} = await runValidateCliUnderNode(saveFilePath);
 
       // Assert
-      expect(stderr).toBe('⚠ This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.\n');
+      expect(stderr).toBe('⚠ This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.\n');
       expect(stdout).toBe(`✓ ${saveFilePath} is valid\n`);
       expect(exitCode).toBe(0);
     });

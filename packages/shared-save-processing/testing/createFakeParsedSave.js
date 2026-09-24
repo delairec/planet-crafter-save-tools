@@ -1,6 +1,7 @@
 /** @import { ParsedSave, SaveParseError, SaveWarning, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
 
 import {createGlobalMetadata} from './createSaveRecords.js';
+import {CURRENT_FORMAT_RELEASE} from '../gameReleases.js';
 
 /** @returns {Generator<never>} */
 function* createEmptyGenerator() {
@@ -43,6 +44,7 @@ export function createFakeParsedSave({
   warnings = []
 } = {}) {
   return {
+    formatRelease: CURRENT_FORMAT_RELEASE,
     errors,
     warnings,
     sections: [

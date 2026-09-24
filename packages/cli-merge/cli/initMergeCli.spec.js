@@ -367,12 +367,12 @@ describe('Merge CLI', () => {
       serveSaves({[SAVE_A_INPUT_PATH]: LEGACY_FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
     });
 
-    it('should warn about the format adaptation of the affected save', async () => {
+    it('should warn that the affected save was written by 1.618 or earlier', async () => {
       // Act
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith('  [save A] This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.');
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  [save A] This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.');
     });
 
     it('should name the folder the warning comes from', async () => {

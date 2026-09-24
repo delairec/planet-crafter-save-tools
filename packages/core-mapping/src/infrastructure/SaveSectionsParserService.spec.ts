@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveSectionsParserService} from './SaveSectionsParserService';
 import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
-import {createFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
+import {createFakeSaveString, createLegacyFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
-import {createEquipment, createInventory, createPlayer, createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createEquipment, createInventory, createPlayer, createSaveConfiguration, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 import {SaveParseError} from 'shared-save-processing/gameDefinitions';
 import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
@@ -62,6 +62,23 @@ describe('SaveSectionsParserService', () => {
       expect(sections.players).toEqual([player]);
       expect(sections.saveConfigurations).toEqual([saveConfiguration]);
       expect<SaveParseError[]>(errors).toEqual([]);
+    });
+  });
+
+  describe('When reading a save written in the format of 1.618', () => {
+    it('should hand over its world events rather than its Terrain Layers section', () => {
+      // Arrange
+      const service = new SaveSectionsParserService();
+      const content = createLegacyFakeSaveString({
+        terrainLayers: [{layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1', colorCustom: '1-1-1-1', colorBaseLerp: 100, colorCustomLerp: 0}],
+        worldEvents: [createWorldEvent({seed: 7})]
+      });
+
+      // Act
+      const {sections} = service.parse(content);
+
+      // Assert
+      expect(sections.worldEvents).toEqual([{planet: 110910045, seed: 7, pos: '0,0,0'}]);
     });
   });
 
