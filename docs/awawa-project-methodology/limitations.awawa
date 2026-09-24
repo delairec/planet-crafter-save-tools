@@ -237,11 +237,13 @@ LIMITATION TheContentSecurityPolicyAllowsEval
 		PR 134
 
 LIMITATION TheSiteCheckCannotTellWhichCommitProductionServes
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
 	SYMPTOM "the site check passes on the headers production serves today, even when master carries"
 		+ "a header change that no published deployment carries yet: nothing says which commit is"
 		+ "live"
-	UNTIL "production is published on each push to master instead of by hand"
-	SEEN_IN ".github/workflows/site-check.yml::It does not check which commit production serves"
+	UNTIL @TASK.FEAT115
+	SEEN_IN ".github/workflows/site-check.yml::fails on neither"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "Netlify builds master on each push but publishes by hand, and production lags master"
 		+ "until its owner publishes. An X-Build-Commit header from Netlify's COMMIT_REF, awaited"

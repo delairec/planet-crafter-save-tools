@@ -1,6 +1,7 @@
 # Planet Crafter Save Tools
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status?branch=master)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
+[![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fplanet-crafter-save-manager.netlify.app%2Fversion.json&query=%24.version&label=production)](https://planet-crafter-save-manager.netlify.app/)
+[![Netlify build of master](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status?branch=master)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
 [![Quality](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml?query=branch%3Amaster)
 [![Dependencies](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml?query=branch%3Amaster)
 [![Dependabot](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates?query=branch%3Amaster)
@@ -281,7 +282,11 @@ is scanned, outside dependencies and build outputs, and type-only and dynamic im
 The production build is served at https://planet-crafter-save-manager.netlify.app/; a deployment reaches it only once
 published by hand on Netlify. The `Site check` workflow, run from the Actions tab after each publication and every week,
 checks that it loads and carries the headers of `packages/ui-save-manager/public/_headers`;
-`bun run --filter ui-save-manager check:site -- --url=<address>` runs the same check locally.
+`bun run --filter ui-save-manager check:site -- --url=<address>` runs the same check locally. It also prints the
+version and the commit the site serves, read from the `version.json` every build writes at the site root, and names
+the latest `ui-save-manager-v*` tag when the site does not serve it; neither fails the check, since publishing a tag
+is its owner's call. The `production` badge at the top of this file reads the same `version.json`; the Netlify badge
+next to it reports the build of `master`, not what production serves.
 
 ```
 bun run dev:ui

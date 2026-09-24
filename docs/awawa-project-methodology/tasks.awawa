@@ -2042,18 +2042,30 @@ TASK FEAT114
 
 TASK FEAT115
 	TITLE "a README badge shows the version production serves"
-	STATUS todo
+	STATUS implemented
 	SPEC "the build of ui-save-manager emits a static version.json at the site root, carrying the"
 		+ "package version and the commit Netlify built from its COMMIT_REF, without writing into"
 		+ "the versioned public directory"
+		IMPL "packages/ui-save-manager/vite.config.ts::emitVersionDocument"
+		IMPL "packages/ui-save-manager/versionDocument.spec.ts::should carry the version and that"
+			+ "commit"
 	SPEC "a build without COMMIT_REF succeeds and writes a null commit into version.json"
+		IMPL "packages/ui-save-manager/e2e/version.e2e.ts::should serve the version of the web"
+			+ "application and a null commit"
+		IMPL "packages/ui-save-manager/versionDocument.spec.ts::should carry the version and a null"
+			+ "commit"
 	SPEC "a README badge labelled production shows the version alone, read from the production"
 		+ "version.json through the shields.io dynamic JSON endpoint"
+		IMPL "README.md::query=%24.version&label=production"
 	SPEC "the Netlify status badge stays in the README, next to the production badge, with the alt"
 		+ "text Netlify build of master"
+		IMPL "README.md::[![Netlify build of master]"
 	SPEC "the site check prints the version and the commit production serves, names the latest"
 		+ "ui-save-manager-v* tag when production does not serve it, and fails on neither"
+		IMPL "packages/ui-save-manager/scripts/check-site.ts::describeServedVersion"
+		IMPL "packages/ui-save-manager/scripts/servedVersion.spec.ts"
 	WAVE 8
+	DELIVERED_BY 158
 	RATIONALE "With publishing locked, Netlify's status badge and its 'Deployed' label report the"
 		+ "build of master, not what production serves: after PR 127 both read as deployed while"
 		+ "production still served the release before it. The image of the Netlify badge cannot be"
