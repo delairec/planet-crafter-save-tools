@@ -1421,19 +1421,28 @@ TASK FIX104
 
 TASK DOCS108
 	TITLE "the README shows the state of the project in badges under its title"
-	STATUS draft
-	SPEC "the README carries, next to the Netlify deploy badge, one badge per CI workflow run on"
-		+ "master, each linking to the runs of that workflow"
+	STATUS todo
+	SPEC "the README carries under its title, next to the Netlify badge, one badge for each of the"
+		+ "Quality, Dependencies, UI tests and Site check workflows, showing the state of its last"
+		+ "run on master and linking to the runs of that workflow on master"
+	SPEC "the README carries a Release badge showing the state of the last release run and linking"
+		+ "to the runs of the Release workflow"
+	SPEC "the UI tests workflow runs on every push to master"
 	SPEC "the README carries a license badge linking to the LICENSE file"
-	SPEC "the Netlify badge shows the state of the last production deploy, never that of a deploy"
-		+ "preview"
+	SPEC "the Netlify badge shows the state of the production deploy of master; a deploy preview"
+		+ "leaves it unchanged"
 	WAVE 8
 	RATIONALE "the Netlify deploy badge, added on master by commit 957d86e, is the only one; the"
-		+ "state of the quality, UI test and dependency workflows is visible only from the Actions"
-		+ "tab. The set of badges is left to the refinement. The badge URL today carries no branch"
-		+ "and turns to canceled on a deploy preview; the badge endpoint answers ?branch= with a"
-		+ "different image for an unknown branch, read on 2026-09-23, so it filters by branch"
-	SOURCE "Request of the user on 2026-09-23"
+		+ "state of the workflows is visible only from the Actions tab. Measured on 2026-09-24:"
+		+ "Quality and Dependencies run on push to master, Site check on a weekly schedule of the"
+		+ "default branch, Release on tags, UI tests only on pull requests and by hand, so its"
+		+ "badge would have no state on master without a push trigger. GitHub detects the LICENSE"
+		+ "as GPL-3.0; no package.json carries a license field. The Netlify badge URL carries no"
+		+ "branch and turns to canceled on a deploy preview; its endpoint answers ?branch=master"
+		+ "with the same image as no branch and an unknown branch with another, so it filters by"
+		+ "branch. The wave 8 integration branch does not carry 957d86e: it is rebased on master"
+		+ "before the task branch is cut from it"
+	SOURCE "Request of the user on 2026-09-23; set of badges ruled with the user on 2026-09-24"
 
 TASK CHORE109
 	TITLE "every active decision that records a defect left in place is rewritten as a limitation"
@@ -1447,6 +1456,7 @@ TASK CHORE109
 		+ "place rather than a choice; a defect of an external tool stays a DECISION with UNTIL,"
 		+ "only a defect of this project is a LIMITATION"
 	SOURCE "Request of the user on 2026-09-23"
+
 TASK FIX110
 	TITLE "the site check fetches only the production site or one of its deploy previews"
 	STATUS implemented
