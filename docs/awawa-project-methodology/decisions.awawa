@@ -1786,3 +1786,31 @@ DECISION ADependencyVersionIsHeldBackForSevenDays
 	APPLIES_TO_TASK @TASK.CHORE117
 	SOURCE "Owner request, security review of 2026-09-24"
 		PR 161
+		PR 162
+
+DECISION EveryActionIsPinnedOnACommitSha
+	SPEC "every uses: of .github/workflows names a full 40-character commit SHA followed by a"
+		+ "comment giving the release it resolves to; a local action is exempt"
+		IMPL ".github/workflows/quality.yml::fallow-rs/fallow@bd8fca5af5df4ccfd94c7a835d17bd93c31a7cef"
+			+ "# v3.28.0"
+		IMPL "scripts/check-action-pins.ts::findUnpinnedActions"
+		ENFORCED_BY "package.json::bun run check:action-pins"
+		ENFORCED_BY "scripts/check-action-pins.spec.ts::When a uses: names something other than a"
+			+ "full commit SHA"
+	SPEC "Dependabot updates a pinned action by rewriting its SHA and its same-line version comment"
+		+ "together, with no configuration of its own"
+		IMPL ".github/dependabot.yml::Dependabot rewrites both together"
+	REJECTED "Moving major tags such as @v3: whoever moves the tag runs code in the CI, secrets"
+		+ "included"
+	REJECTED "Exact version tags such as @v3.28.0: a tag can be moved as well, only a commit SHA"
+		+ "cannot"
+	REJECTED "A SHA without its version comment: the pin reads as an opaque hash, and Dependabot"
+		+ "has no version to rewrite beside it"
+	APPLIES_TO_TASK @TASK.CHORE118
+	SOURCE "Owner request, security review of 2026-09-24; the two Claude workflows pinned on master"
+		+ "first, the rest in the task pull request"
+		PR 162
+		PR 163
+	SOURCE "Dependabot reference, read on 2026-09-24: it updates actions referenced as"
+		+ "actions/checkout@<commit>, and the version comment when it sits on the same line"
+		REF @URL.DependabotSupportedEcosystemsGithubActions

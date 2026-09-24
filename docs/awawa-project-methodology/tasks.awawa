@@ -2084,13 +2084,23 @@ TASK FEAT115
 
 TASK CHORE118
 	TITLE "pin every action the workflows use on a commit SHA"
-	STATUS todo
+	STATUS implemented
 	WAVE 8
+	DELIVERED_BY 163
 	SPEC "every uses: of .github/workflows names a full 40-character commit SHA followed by a"
 		+ "comment giving the version it resolves to"
+		IMPL ".github/workflows/quality.yml::fallow-rs/fallow@bd8fca5af5df4ccfd94c7a835d17bd93c31a7cef"
+			+ "# v3.28.0"
+		IMPL ".github/workflows/claude.yml::anthropics/claude-code-action@8cf3482550831fb35a4fc3fbf7ca139cf8028b4c"
+			+ "# v1.0.233"
 	SPEC "a guard of check:guards fails on a uses: that names a tag or a branch"
+		IMPL "scripts/check-action-pins.ts::findUnpinnedActions"
+		IMPL "scripts/check-action-pins.spec.ts::When a uses: names something other than a full"
+			+ "commit SHA"
+		IMPL "package.json::bun run check:action-pins"
 	SPEC "Dependabot keeps proposing the updates of the pinned actions, SHA and version comment"
 		+ "rewritten together"
+		IMPL ".github/dependabot.yml::Dependabot rewrites both together"
 	RATIONALE "Outside release.yml every workflow references its actions by a moving major tag,"
 		+ "third-party ones included: fallow-rs/fallow@v3, oven-sh/setup-bun@v2 and"
 		+ "anthropics/claude-code-action@v1, which receives CLAUDE_CODE_OAUTH_TOKEN. Whoever moves"
