@@ -244,3 +244,20 @@ LIMITATION TheSiteCheckCannotTellWhichCommitProductionServes
 		REF @TASK.FIX101
 	SOURCE "Owner's ruling in the review of FIX101, 2026-09-23"
 		PR 134
+
+LIMITATION TheFallowAuditReadsNoFileOfUiSaveManager
+	SYMPTOM "fallow audit and fallow health skip every file of ui-save-manager: an unused export,"
+		+ "an unused file, a duplicate or a complex function of the web UI fails no quality gate"
+	WORKAROUND "run fallow by hand on a copy of fallow.toml without the ui-save-manager ignore"
+		+ "pattern and with src/app.tsx and src/routes/*.tsx as entries"
+	UNTIL "ui-save-manager is brought into the fallow quality perimeter"
+	SEEN_IN "fallow.toml::packages/ui-save-manager/**"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "The exclusion was written at the migration as a decision with no reasoning, and"
+		+ "nothing in fallow prevents the audit. Measured on 2026-09-24 with the workaround:"
+		+ "dead-code reports no issue and health one high-complexity function, in"
+		+ "src/routes/index.tsx"
+	SOURCE "Exclusion written in the migration"
+		PR 61
+	SOURCE "Rewritten from a decision by the review of CHORE109"
+		PR 145

@@ -519,15 +519,6 @@ DECISION EachUseCaseResponseIsDeclaredInItsOwnFile
 	SOURCE "T28"
 		PR 59
 
-DECISION UiSaveManagerStaysOutsideTheFallowPerimeter
-	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	UNTIL "ui-save-manager is brought into the fallow quality perimeter"
-	SPEC "ui-save-manager is outside the fallow quality perimeter"
-		IMPL "fallow.toml::packages/ui-save-manager/**"
-	REJECTED "Run the fallow quality audit on ui-save-manager now"
-	SOURCE "Migration"
-		PR 61
-
 DECISION DissolvedPackagesAreNotRecreated
 	DESC "util-parsing, util-messages and shared-mapping were dissolved into shared-save-processing"
 		+ "and core-mapping"

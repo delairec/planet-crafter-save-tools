@@ -1453,22 +1453,28 @@ TASK DOCS108
 
 TASK CHORE109
 	TITLE "every active decision that records a defect left in place is rewritten as a limitation"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 145
 	SPEC "every DECISION whose ruling is a workaround of a defect of this project, kept until a"
 		+ "fix, is replaced by a LIMITATION carrying its SYMPTOM, WORKAROUND and UNTIL"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::LIMITATION"
+			+ "TheFallowAuditReadsNoFileOfUiSaveManager"
 	SPEC "every reference to a replaced DECISION points at its LIMITATION"
+		IMPL "fallow.toml::a gap of this project, not a ruling"
 	SPEC "the pull request lists each DECISION reviewed and kept, with the reason it is a ruling"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::Rewritten from a decision by the"
+			+ "review of CHORE109"
 	WAVE 8
 	RATIONALE "the user suspects that some of the 96 active decisions describe a defect left in"
 		+ "place rather than a choice; a defect of an external tool stays a DECISION with UNTIL,"
 		+ "only a defect of this project is a LIMITATION. The review stays in the pull request,"
 		+ "ruled with the user on 2026-09-24. A first pass during the refinement found one"
-		+ "candidate, UiSaveManagerStaysOutsideTheFallowPerimeter: no reasoning recorded, and"
-		+ "fallow run on ui-save-manager with app.tsx and routes as entries reports no unused code"
-		+ "and one high-complexity function, so the exclusion is a gap of this project, not of"
-		+ "fallow. CHORE102 runs after this task, so that the limitations it writes enter that"
-		+ "review"
-		REF @DECISION.UiSaveManagerStaysOutsideTheFallowPerimeter
+		+ "candidate, the exclusion of ui-save-manager from the fallow perimeter, now"
+		+ "TheFallowAuditReadsNoFileOfUiSaveManager: no reasoning recorded, and fallow run on"
+		+ "ui-save-manager with app.tsx and routes as entries reports no unused code and one"
+		+ "high-complexity function, so the exclusion is a gap of this project, not of fallow."
+		+ "CHORE102 runs after this task, so that the limitations it writes enter that review"
+		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
 		REF @TASK.CHORE102
 	SOURCE "Request of the user on 2026-09-23; scope ruled with the user on 2026-09-24"
 
