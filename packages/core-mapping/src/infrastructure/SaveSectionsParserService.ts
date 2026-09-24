@@ -1,20 +1,21 @@
 import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
 import {parseIdList} from "shared-save-processing/idList.js";
-import {Inventory, ParsedSections, WorldObject} from "shared-save-processing/gameDefinitions";
+import {CurrentFormatSections, Inventory, WorldObject} from "shared-save-processing/gameDefinitions";
 import {ParsedSaveSections, SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
 import {InventoryEntry} from "../domain/save/InventoryEntry";
 import {SaveSections} from "../domain/save/SaveSections";
 import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
+import {selectCurrentFormatSections} from "./selectCurrentFormatSections";
 
 export class SaveSectionsParserService implements SaveSectionsParserPort {
   parse(content: string): ParsedSaveSections {
     const {sections, errors} = parseSaveSections(content);
 
-    return {sections: toSaveSections(sections), errors};
+    return {sections: toSaveSections(selectCurrentFormatSections(sections)), errors};
   }
 }
 
-function toSaveSections(sections: ParsedSections): SaveSections {
+function toSaveSections(sections: CurrentFormatSections): SaveSections {
   const [globalMetadata, terraformationLevels, players, worldObjectsFactory, inventories, statistics, mailboxes, storyEvents, saveConfigurations, worldEvents] = sections;
 
   return {

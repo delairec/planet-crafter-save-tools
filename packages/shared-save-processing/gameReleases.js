@@ -49,6 +49,26 @@ export function resolveGameRelease(declaredVersion) {
   return (reachedReleases.at(-1) ?? gameReleases[0])?.release;
 }
 
+/** The release whose format the save manager writes when no other is asked for. */
+export const CURRENT_FORMAT_RELEASE = /** @type {string} */ (gameReleases.at(-1)?.release);
+
+/**
+ * The release whose format a save carries: the first release of the table writing its part count.
+ * @param {number} splitPartsCount
+ * @returns {string | undefined} undefined when no release writes that count
+ */
+export function findCarriedRelease(splitPartsCount) {
+  return gameReleases.find((row) => row.splitPartsCount === splitPartsCount)?.release;
+}
+
+/**
+ * @param {string} release
+ * @returns {number | undefined} the number of parts the saves of that release split into
+ */
+export function findSplitPartsCount(release) {
+  return gameReleases.find((row) => row.release === release)?.splitPartsCount;
+}
+
 /**
  * @param {unknown} declaredVersion
  * @param {number} splitPartsCount
@@ -60,15 +80,13 @@ export function verifyDeclaredGameRelease(declaredVersion, splitPartsCount) {
   }
 
   const declaredRelease = resolveGameRelease(declaredVersion);
-  const carriedRow = gameReleases.find((row) => row.splitPartsCount === splitPartsCount);
+  const carriedRelease = findCarriedRelease(splitPartsCount);
 
-  if (declaredRelease === undefined || carriedRow === undefined) {
+  if (declaredRelease === undefined || carriedRelease === undefined) {
     return [];
   }
 
-  const declaredRow = gameReleases.find(({release}) => release === declaredRelease);
-
-  if (declaredRow?.splitPartsCount === splitPartsCount) {
+  if (findSplitPartsCount(declaredRelease) === splitPartsCount) {
     return [];
   }
 
@@ -76,6 +94,6 @@ export function verifyDeclaredGameRelease(declaredVersion, splitPartsCount) {
     code: SAVE_WARNING_CODES.DECLARED_RELEASE_CONTRADICTS_CONTENT,
     declaredVersion,
     declaredRelease,
-    carriedRelease: carriedRow.release
+    carriedRelease
   }];
 }

@@ -1,24 +1,29 @@
 /// <reference path="./jsonSourceTextAccess.d.ts" />
-/** @import { ParsedSave, SaveParseError } from './gameDefinitions' */
+/** @import { ParsedSave, SaveParseError, SaveWarning } from './gameDefinitions' */
 
-import {normalizeRawSections} from './normalizeRawSections.js';
 import {verifySectionCount} from './verifySectionCount.js';
-import {PLAYERS_SECTION_INDEX, SAVE_CONFIGURATION_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from './sectionIndexes.js';
-import {verifyDeclaredGameRelease} from './gameReleases.js';
+import {
+  LEGACY_SPLIT_PARTS_COUNT,
+  PLAYERS_SECTION_INDEX,
+  SAVE_CONFIGURATION_SECTION_INDEX,
+  WORLD_OBJECTS_SECTION_INDEX
+} from './sectionIndexes.js';
+import {findCarriedRelease, verifyDeclaredGameRelease} from './gameReleases.js';
+import {SAVE_WARNING_CODES} from './saveWarningCodes.js';
 import {keepInt64IdentifierText} from './int64Identifiers.js';
 
 /** Head of the offending line, enough to recognise it without printing a whole entry. */
 const REPORTED_LINE_LENGTH = 60;
 
 /**
- * Parses a Planet Crafter save string into the 11 sections of the current format (indexes 0 to 10;
- * section 10 is the reserved empty part produced by the terminating `@`, and the Terrain Layers
- * section was removed from the save format by a game update).
- * Section 3 (WorldObjects) is a Generator factory; all others are arrays.
- * Legacy saves (still containing Terrain Layers) are transparently adapted to the current format —
- * see `normalizeRawSections.js` — and produce a warning instead of an error.
- * A save is read by the format it carries; the game release its version declares is checked
- * against that format, and a contradiction produces a warning, never an error.
+ * Parses a Planet Crafter save string into every part the file carries: the eleven parts of the
+ * format of 2.004 and later, or the twelve of the format of 1.618 and earlier, whose Terrain Layers
+ * section sits at index 9 and shifts World Events to index 10. The last part is the reserved empty
+ * one produced by the terminating `@`. Section 3 (WorldObjects) is a Generator factory; all others
+ * are arrays, Terrain Layers included.
+ * A save is read by the format it carries, and `formatRelease` names the release whose format that
+ * is. A save of 1.618 raises the legacy-save-format warning; the game release its version declares
+ * is checked against the format it carries, and a contradiction produces a warning, never an error.
  *
  * A line that cannot be read is reported in `errors` with its location, and never takes the
  * section holding it down with it. This module is the only place in the production code where a
@@ -31,8 +36,7 @@ export function parseSaveSections(save) {
   const rawSections = save.split('@');
 
   const errors = verifySectionCount(rawSections);
-  const {sections: normalizedSections, warnings: formatWarnings} = normalizeRawSections(rawSections);
-  const sections = normalizedSections.map((section, sectionIndex) => {
+  const sections = rawSections.map((section, sectionIndex) => {
     if (isWorldObjectsSection(sectionIndex)) {
       return () => createSectionEntriesGenerator(section, sectionIndex, errors);
     }
@@ -42,10 +46,19 @@ export function parseSaveSections(save) {
   const declaredVersion = readDeclaredVersion(sections[SAVE_CONFIGURATION_SECTION_INDEX]);
 
   return /** @type {ParsedSave} */ ({
+    formatRelease: findCarriedRelease(rawSections.length),
     errors,
-    warnings: [...formatWarnings, ...verifyDeclaredGameRelease(declaredVersion, rawSections.length)],
+    warnings: [...verifyLegacyFormat(rawSections.length), ...verifyDeclaredGameRelease(declaredVersion, rawSections.length)],
     sections
   });
+}
+
+/**
+ * @param {number} splitPartsCount
+ * @returns {SaveWarning[]}
+ */
+function verifyLegacyFormat(splitPartsCount) {
+  return splitPartsCount === LEGACY_SPLIT_PARTS_COUNT ? [{code: SAVE_WARNING_CODES.LEGACY_SAVE_FORMAT}] : [];
 }
 
 /**

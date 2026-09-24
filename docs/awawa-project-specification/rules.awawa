@@ -419,7 +419,7 @@ RULE TheGlobalMetadataEntryCarriesLogisticsPaused
 		REF @URL.PceditSaveDiff
 		REF @PROJECT.DNC
 
-RULE ALegacySaveCarriesTerrainLayersAndLoadingDiscardsIt
+RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 	HOLDS_FOR @GAME_RELEASE.1.618
 	DOMAIN format
 	SPEC "a save written by 1.618 or earlier splits into 12 parts, Terrain Layers at index 9, which"
@@ -427,8 +427,13 @@ RULE ALegacySaveCarriesTerrainLayersAndLoadingDiscardsIt
 		ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 			+ "= 9"
 		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json::PC-Toxicity-Layer2"
-	SPEC "loading such a save drops the Terrain Layers part and reports the legacy-save-format"
-		+ "warning, so every later stage reads the 11 parts of the current format"
-		ATTESTED_BY "packages/shared-save-processing/saveWarningCodes.js::('legacy-save-format')"
+	SPEC "the game writes the six properties of the table in every Terrain Layers entry it writes,"
+		+ "and no other"
+		ATTESTED_BY "packages/shared-save-processing/legacyTerrainLayerProperties.json::colorCustomLerp"
+	VALUES_FROM @DATATABLE.LegacyTerrainLayerProperties
 	APPLIES_TO_SECTION @SECTION.TerrainLayers
 	SOURCE "Extracted from the section index module and the legacy normalisation on 2026-09-23"
+	SOURCE "Measured on 2026-09-24 on the reference saves Standard-1, Standard-3 and Standard-4:"
+		+ "their 66 layer entries all carry the six properties of the table and no other, each"
+		+ "colour four numbers separated by dashes, each intensity an integer up to 101"
+		REF @PROJECT.DNC

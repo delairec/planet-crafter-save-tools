@@ -8,6 +8,7 @@ export * from './SaveParseError';
 export * from './SaveWarning';
 export * from './Statistics';
 export * from './StoryEvent';
+export * from './TerrainLayer';
 export * from './TerraformationLevel';
 export * from './WorldEvent';
 export * from './WorldObject';

@@ -5,6 +5,8 @@ import {createSaveConfiguration} from './testing/createSaveRecords.js';
 import {
   GLOBAL_METADATA_SECTION_INDEX,
   INVENTORIES_SECTION_INDEX,
+  LEGACY_TERRAIN_LAYERS_SECTION_INDEX,
+  LEGACY_WORLD_EVENTS_SECTION_INDEX,
   PLAYERS_SECTION_INDEX,
   RESERVED_TRAILING_SECTION_INDEX,
   TERRAFORMATION_LEVELS_SECTION_INDEX,
@@ -317,7 +319,7 @@ describe('parseSaveSections', () => {
       const {sections} = parseSaveSections(save);
 
       // Assert
-      expect(sections[WORLD_EVENTS_SECTION_INDEX]).toEqual([expectedWorldEvent]);
+      expect(sections[LEGACY_WORLD_EVENTS_SECTION_INDEX]).toEqual([expectedWorldEvent]);
     });
   });
 
@@ -376,26 +378,58 @@ describe('parseSaveSections', () => {
     });
   });
 
-  describe('When the save uses the legacy format (still contains a Terrain Layers section removed by a game update)', () => {
-    it('should adapt it to the current 11-section format', () => {
+  describe('When the save carries the twelve parts of the format of 1.618', () => {
+    const terrainLayer = {layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1', colorCustom: '1-1-1-1', colorBaseLerp: 100, colorCustomLerp: 0};
+
+    it('should return every part the file carries', () => {
       // Arrange
-      const save = createLegacyFakeSaveString({
-        terrainLayers: [{layerId: 'PC-Toxicity-Layer1', planet: 110910047, colorBase: '1-1-1-1'}]
-      });
+      const save = createLegacyFakeSaveString({terrainLayers: [terrainLayer]});
 
       // Act
       const {errors, sections} = parseSaveSections(save);
 
       // Assert
       expect(errors).toEqual([]);
-      expect(sections).toHaveLength(11);
+      expect(sections).toHaveLength(12);
+    });
+
+    it('should name 1.618 as the release whose format it carries', () => {
+      // Arrange
+      const save = createLegacyFakeSaveString({terrainLayers: [terrainLayer]});
+
+      // Act
+      const {formatRelease} = parseSaveSections(save);
+
+      // Assert
+      expect(formatRelease).toBe('1.618');
+    });
+
+    it('should read the Terrain Layers section into its entries', () => {
+      // Arrange
+      const otherTerrainLayer = {...terrainLayer, layerId: 'PC-Humble-Layer1'};
+      const save = createLegacyFakeSaveString({terrainLayers: [terrainLayer, otherTerrainLayer]});
+
+      // Act
+      const {sections} = parseSaveSections(save);
+
+      // Assert
+      expect(sections[LEGACY_TERRAIN_LAYERS_SECTION_INDEX]).toEqual([terrainLayer, otherTerrainLayer]);
+    });
+
+    it('should report an unreadable Terrain Layers line at its legacy index, like a line of any other section', () => {
+      // Arrange
+      const save = createLegacyFakeSaveString({terrainLayers: [terrainLayer]}).replace('{"layerId"', '{layerId');
+
+      // Act
+      const {errors} = parseSaveSections(save);
+
+      // Assert
+      expect(errors).toEqual([{detail: expect.stringContaining('Invalid JSON'), section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0}]);
     });
 
     it('should report a legacy-save-format warning code', () => {
       // Arrange
-      const save = createLegacyFakeSaveString({
-        terrainLayers: [{layerId: 'PC-Toxicity-Layer1', planet: 110910047, colorBase: '1-1-1-1'}]
-      });
+      const save = createLegacyFakeSaveString({terrainLayers: [terrainLayer]});
 
       // Act
       const {warnings} = parseSaveSections(save);
@@ -404,7 +438,7 @@ describe('parseSaveSections', () => {
       expect(warnings).toEqual([{code: 'legacy-save-format'}]);
     });
 
-    it('should still parse world events at the current index (shifted from the legacy index)', () => {
+    it('should read world events at the index the format of 1.618 gives them', () => {
       // Arrange
       const expectedWorldEvent = {planet: 110910045, seed: 1, pos: '0,0,0', owner: 0, index: 0};
       const save = createLegacyFakeSaveString({worldEvents: [expectedWorldEvent]});
@@ -413,8 +447,33 @@ describe('parseSaveSections', () => {
       const {sections} = parseSaveSections(save);
 
       // Assert
-      const worldEvents = sections[WORLD_EVENTS_SECTION_INDEX];
-      expect(worldEvents).toEqual([expectedWorldEvent]);
+      expect(sections[LEGACY_WORLD_EVENTS_SECTION_INDEX]).toEqual([expectedWorldEvent]);
+    });
+  });
+
+  describe('When the save carries the eleven parts of the format of 2.004', () => {
+    it('should name 2.004 as the release whose format it carries', () => {
+      // Arrange
+      const save = createFakeSaveString({});
+
+      // Act
+      const {formatRelease} = parseSaveSections(save);
+
+      // Assert
+      expect(formatRelease).toBe('2.004');
+    });
+  });
+
+  describe('When the save carries a number of parts no release writes', () => {
+    it('should name no release', () => {
+      // Arrange
+      const save = createFakeSaveString({}) + '@@';
+
+      // Act
+      const {formatRelease} = parseSaveSections(save);
+
+      // Assert
+      expect(formatRelease).toBeUndefined();
     });
   });
 });

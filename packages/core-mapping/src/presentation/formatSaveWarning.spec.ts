@@ -6,13 +6,13 @@ import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationVie
 describe('formatSaveWarning', () => {
 
   describe('When the save format is the legacy one', () => {
-    it('should describe the adaptation to the current format, without a location', () => {
+    it('should state that the save was written by 1.618 or earlier, without a location', () => {
       // Act
       const warning = formatSaveWarning({code: 'legacy-save-format'});
 
       // Assert
       expect<SaveValidationMessageViewModel>(warning).toEqual({
-        message: 'This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.',
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
         location: null
       });
     });
@@ -49,7 +49,7 @@ describe('formatSaveWarning', () => {
 
       // Assert
       expect<SaveValidationMessageViewModel>(warning).toEqual({
-        message: 'This save had to be adapted to the current save format.',
+        message: 'This save raised a warning the save manager cannot describe.',
         location: null
       });
     });

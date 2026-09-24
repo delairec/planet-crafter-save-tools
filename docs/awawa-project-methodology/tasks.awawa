@@ -1023,7 +1023,7 @@ TASK DOCS86
 		+ "apart from the release before it; a release the code does not tell apart is never named,"
 		+ "and a save it writes is read by the branch of the last named release before it"
 		IMPL "docs/_schema.awawa::named only if the code tells it apart from the"
-		IMPL "packages/shared-save-processing/normalizeRawSections.js::rawParts.length ==="
+		IMPL "packages/shared-save-processing/parseSaveSections.js::splitPartsCount ==="
 			+ "LEGACY_SPLIT_PARTS_COUNT"
 	SPEC "each entity that carried an era is rewritten with the releases it holds for, read from"
 		+ "the branches of the code and not translated from the era it carried"
