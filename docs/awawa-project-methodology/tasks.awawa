@@ -1334,15 +1334,23 @@ TASK FIX101
 TASK CHORE102
 	TITLE "review the accepted limitations, lifting those the user picks in the same pull request"
 		+ "or giving them a draft task"
-	STATUS todo
+	STATUS implemented
 	SPEC "the pull request body carries one row per active LIMITATION that no other task of the"
 		+ "wave retires or frames: whether its UNTIL condition is already met, verified by a"
 		+ "command, and what lifting it costs"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::Picked in the review of the accepted"
+			+ "limitations, CHORE102"
 	SPEC "each limitation the user picks is lifted in the same pull request and archived with"
 		+ "ARCHIVED_ON, or gets a draft TASK its UNTIL names, as the user rules limitation by"
 		+ "limitation"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::ARCHIVED_ON 2026-09-24"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FIX113"
 	SPEC "the review leaves the pull request body once the picked changes are in"
+		IMPL "packages/core-mapping/src/application/sanitizeSaveDisplayName.ts::replaceAll"
+		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::<Icon"
+			+ "content={annotation().icon}/>"
 	AFTER @TASK.CHORE109
+	DELIVERED_BY 152
 	WAVE 8
 	RATIONALE "Nine limitations were active on 2026-09-23, each accepted when it was written and"
 		+ "none reread since. FIX101 retires TheContentSecurityPolicyAllowsInlineScript and"
