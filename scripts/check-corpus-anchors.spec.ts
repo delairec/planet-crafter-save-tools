@@ -158,6 +158,29 @@ describe('findCorpusAnchors', () => {
     });
   });
 
+  describe('When an entity is archived after the anchors it writes', () => {
+    it('should give only the anchors of the entity that still binds', () => {
+      // Arrange
+      const source = [
+        'TASK FIX45',
+        '\tSPEC "a criterion"',
+        '\t\tIMPL "src/deleted-module.ts"',
+        '\tSTATUS archived',
+        '\tARCHIVED_ON "2026-09-24"',
+        'TASK FIX46',
+        '\tMANIFEST "package.json"'
+      ].join('\n');
+
+      // Act
+      const anchors = findCorpusAnchors(source, anchorFields);
+
+      // Assert
+      expect<CorpusAnchor[]>(anchors).toEqual([
+        {entity: '@TASK.FIX46', field: 'MANIFEST', path: 'package.json', line: 7}
+      ]);
+    });
+  });
+
   describe('When an entity has a type the schema gives no anchor field', () => {
     it('should give nothing, a same-named field of that type not being an anchor', () => {
       // Arrange

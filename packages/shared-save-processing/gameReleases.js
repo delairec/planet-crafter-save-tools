@@ -3,6 +3,15 @@
 import gameReleases from './gameReleases.json' with {type: 'json'};
 import {SAVE_WARNING_CODES} from './saveWarningCodes.js';
 
+/** A save is asked in the format of a release the table of game releases does not hold. */
+export class UnknownFormatReleaseError extends Error {
+  /** @param {string | undefined} formatRelease */
+  constructor(formatRelease) {
+    super(`No game release ${formatRelease} writes a known save format`);
+    this.name = 'UnknownFormatReleaseError';
+  }
+}
+
 const RELEASE_VERSION_PATTERN = /^\d+(\.\d+)*$/;
 
 /**
@@ -67,6 +76,11 @@ export function findCarriedRelease(splitPartsCount) {
  */
 export function findSplitPartsCount(release) {
   return gameReleases.find((row) => row.release === release)?.splitPartsCount;
+}
+
+/** @returns {number[]} */
+export function listSplitPartsCounts() {
+  return [...new Set(gameReleases.map((row) => row.splitPartsCount))].sort((countA, countB) => countA - countB);
 }
 
 /**

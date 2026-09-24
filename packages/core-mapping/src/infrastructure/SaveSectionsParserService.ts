@@ -1,34 +1,62 @@
 import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
 import {parseIdList} from "shared-save-processing/idList.js";
-import {CurrentFormatSections, Inventory, WorldObject} from "shared-save-processing/gameDefinitions";
+import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
+import {
+  GlobalMetadata,
+  Inventory,
+  MailboxMessage,
+  ParsedSections,
+  Player,
+  SaveConfiguration,
+  SaveSectionIndexes,
+  Statistics,
+  StoryEvent,
+  TerraformationLevel,
+  WorldEvent,
+  WorldObject
+} from "shared-save-processing/gameDefinitions";
 import {ParsedSaveSections, SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
 import {InventoryEntry} from "../domain/save/InventoryEntry";
 import {SaveSections} from "../domain/save/SaveSections";
 import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
-import {selectCurrentFormatSections} from "./selectCurrentFormatSections";
+
+interface ParsedSectionContents {
+  globalMetadata: GlobalMetadata[];
+  terraformationLevels: TerraformationLevel[];
+  players: Player[];
+  worldObjects: () => Generator<WorldObject>;
+  inventories: Inventory[];
+  statistics: Statistics[];
+  mailboxMessages: MailboxMessage[];
+  storyEvents: StoryEvent[];
+  saveConfiguration: SaveConfiguration[];
+  worldEvents: WorldEvent[];
+}
 
 export class SaveSectionsParserService implements SaveSectionsParserPort {
   parse(content: string): ParsedSaveSections {
-    const {sections, errors} = parseSaveSections(content);
+    const {formatRelease, sections, errors} = parseSaveSections(content);
 
-    return {sections: toSaveSections(selectCurrentFormatSections(sections)), errors};
+    return {sections: toSaveSections(sections, resolveSectionIndexes(formatRelease)), errors};
   }
 }
 
-function toSaveSections(sections: CurrentFormatSections): SaveSections {
-  const [globalMetadata, terraformationLevels, players, worldObjectsFactory, inventories, statistics, mailboxes, storyEvents, saveConfigurations, worldEvents] = sections;
+function toSaveSections(sections: ParsedSections, sectionIndexes: SaveSectionIndexes): SaveSections {
+  function readSection<Name extends keyof ParsedSectionContents>(name: Name): ParsedSectionContents[Name] {
+    return sections[sectionIndexes[name]] as ParsedSectionContents[Name];
+  }
 
   return {
-    globalMetadata,
-    terraformationLevels,
-    players,
-    worldObjects: [...worldObjectsFactory()].map(toWorldObjectEntry),
-    inventories: inventories.map(toInventoryEntry),
-    statistics,
-    mailboxes,
-    storyEvents,
-    saveConfigurations,
-    worldEvents
+    globalMetadata: readSection('globalMetadata'),
+    terraformationLevels: readSection('terraformationLevels'),
+    players: readSection('players'),
+    worldObjects: [...readSection('worldObjects')()].map(toWorldObjectEntry),
+    inventories: readSection('inventories').map(toInventoryEntry),
+    statistics: readSection('statistics'),
+    mailboxes: readSection('mailboxMessages'),
+    storyEvents: readSection('storyEvents'),
+    saveConfigurations: readSection('saveConfiguration'),
+    worldEvents: readSection('worldEvents')
   };
 }
 

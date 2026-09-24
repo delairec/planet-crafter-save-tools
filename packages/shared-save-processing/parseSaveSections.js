@@ -35,18 +35,21 @@ const REPORTED_LINE_LENGTH = 60;
 export function parseSaveSections(save) {
   const rawSections = save.split('@');
 
+  const formatRelease = findCarriedRelease(rawSections.length);
   const errors = verifySectionCount(rawSections);
   const sections = rawSections.map((section, sectionIndex) => {
+    const sectionReading = {section, sectionIndex, formatRelease, errors};
+
     if (isWorldObjectsSection(sectionIndex)) {
-      return () => createSectionEntriesGenerator(section, sectionIndex, errors);
+      return () => createSectionEntriesGenerator(sectionReading);
     }
 
-    return [...createSectionEntriesGenerator(section, sectionIndex, errors)];
+    return [...createSectionEntriesGenerator(sectionReading)];
   });
   const declaredVersion = readDeclaredVersion(sections[SAVE_CONFIGURATION_SECTION_INDEX]);
 
   return /** @type {ParsedSave} */ ({
-    formatRelease: findCarriedRelease(rawSections.length),
+    formatRelease,
     errors,
     warnings: [...verifyLegacyFormat(rawSections.length), ...verifyDeclaredGameRelease(declaredVersion, rawSections.length)],
     sections
@@ -113,14 +116,20 @@ function splitSectionLines(section) {
 }
 
 /**
- * @param {string} section
- * @param {number} sectionIndex
- * @param {SaveParseError[]} errors - shared with the `ParsedSave` returned by `parseSaveSections`;
+ * @typedef {object} SectionReading
+ * @property {string} section
+ * @property {number} sectionIndex
+ * @property {string | undefined} formatRelease
+ * @property {SaveParseError[]} errors - shared with the `ParsedSave` returned by `parseSaveSections`;
  * an unreadable line of the world objects section is only discovered once this generator is
  * iterated, so errors are pushed here rather than returned.
+ */
+
+/**
+ * @param {SectionReading} sectionReading
  * @returns {Generator<unknown>}
  */
-function* createSectionEntriesGenerator(section, sectionIndex, errors) {
+function* createSectionEntriesGenerator({section, sectionIndex, formatRelease, errors}) {
   for (const [entryIndex, line] of splitSectionLines(section).entries()) {
     let entry;
 
@@ -130,6 +139,7 @@ function* createSectionEntriesGenerator(section, sectionIndex, errors) {
       errors.push({
         detail: `Invalid JSON: ${line.slice(0, REPORTED_LINE_LENGTH)}`,
         section: sectionIndex,
+        formatRelease,
         entryIndex
       });
       continue;

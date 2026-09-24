@@ -19,7 +19,9 @@ vers ces fichiers, et une règle qui fait autorité sur ces valeurs la nomme par
 jamais git : une ancre vers `input/`, `output/` ou `.do-not-commit/` est propre chez son auteur et casse en clone
 neuf. Les témoins commités sont les fixtures de `packages/ui-save-manager/e2e/fixtures/`, les JSON Schemas de
 `packages/shared-save-processing/schemas/`, les tests et les documents de `docs/`. `bun run check:anchors` refuse
-une ancre vers un chemin que git ne suit pas (@DECISION.AnAnchorNamesAFileTrackedByGit).
+une ancre vers un chemin que git ne suit pas, et ignore celles d'une entité archivée : une décision que sa tâche
+retire s'archive donc même quand la tâche supprime le module que son `IMPL` nomme
+(@DECISION.AnAnchorNamesAFileTrackedByGit).
 
 **L'archive se purge à la main.** Aucun script de nettoyage n'est écrit tant que le compte d'entrants publié par
 `awawa status TYPE .` suffit à décider : une entité archivée que plus rien ne cite se supprime dans la prochaine

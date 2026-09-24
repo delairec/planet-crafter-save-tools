@@ -219,7 +219,7 @@ describe('Validate CLI', () => {
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith('  Expected 11 sections but found 1');
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  Expected 11 or 12 sections but found 1');
     });
   });
 

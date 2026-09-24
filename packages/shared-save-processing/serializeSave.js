@@ -1,7 +1,7 @@
 /** @import { GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, TerrainLayer, WorldEvent } from './gameDefinitions' */
 
 import {stringifyEntry} from './stringifyEntry.js';
-import {findSplitPartsCount} from './gameReleases.js';
+import {findSplitPartsCount, UnknownFormatReleaseError} from './gameReleases.js';
 import {LEGACY_SPLIT_PARTS_COUNT} from './sectionIndexes.js';
 
 /**
@@ -19,15 +19,6 @@ import {LEGACY_SPLIT_PARTS_COUNT} from './sectionIndexes.js';
  * @property {TerrainLayer[]} [terrainLayers] - written by the format of 1.618 alone
  * @property {WorldEvent[]} worldEvents
  */
-
-/** A save is asked in the format of a release the table of game releases does not hold. */
-export class UnknownFormatReleaseError extends Error {
-  /** @param {string} formatRelease */
-  constructor(formatRelease) {
-    super(`No game release ${formatRelease} writes a known save format`);
-    this.name = 'UnknownFormatReleaseError';
-  }
-}
 
 const SECTION_SEPARATOR = '\n@\n';
 const ENTRY_SEPARATOR = '|\n';
