@@ -1,8 +1,9 @@
 import {Glob} from 'bun';
-import {reportViolations} from './specSources.ts';
+import {join} from 'node:path';
+import {isOwnSourceFile, reportViolations} from './specSources.ts';
 
 const COLORS_FILE_PATH = 'packages/ui-save-manager/src/styles/colors.css';
-const STYLESHEET_FILES_PATTERN = 'packages/ui-save-manager/src/styles/*.css';
+const STYLESHEET_FILES_PATTERN = 'packages/ui-save-manager/src/**/*.css';
 
 const CHECK_NAME = 'check:contrast';
 
@@ -10,7 +11,10 @@ const ROOT_BLOCK_PATTERN = /:root\s*{([^}]*)}/g;
 const CUSTOM_PROPERTY_PATTERN = /--([\w-]+):\s*(#[0-9a-fA-F]{3,8})\s*;/g;
 const DARK_SCHEME_MARKER = '@media (prefers-color-scheme: dark)';
 
-const FOREGROUND_DECLARATION_PATTERN = /(?<!-)color:\s*var\(--([\w-]+)\)/g;
+const FOREGROUND_DECLARATION_PATTERN = /(?<![\w-])color\s*:([^;}]*)/g;
+const TOKEN_REFERENCE_PATTERN = /^var\(--([\w-]+)\)$/;
+const COMMENT_PATTERN = /\/\*[\s\S]*?\*\//g;
+const RULE_BOUNDARIES = ['}', '{', ';'];
 
 export const MINIMUM_CONTRAST_RATIO = 4.5;
 
@@ -33,7 +37,7 @@ export interface TokenPair {
 }
 
 /**
- * Every place `packages/ui-save-manager/src/styles/` sets a text color, paired with the
+ * Every place a stylesheet of `packages/ui-save-manager/src/` sets a text color, paired with the
  * background it renders against.
  */
 export const TOKEN_PAIRS: TokenPair[] = [
@@ -71,6 +75,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: 'h4',
     foreground: 'inverted',
     background: 'neon-cyan'
+  },
+  {
+    description: 'a list marker, and a list item without a color of its own, on the page background',
+    file: 'packages/ui-save-manager/src/styles/typography.css',
+    selector: 'ul, ol',
+    foreground: 'muted',
+    background: 'canvas'
   },
   {
     description: 'a loading or placeholder message on the page background',
@@ -214,32 +225,98 @@ export function findContrastViolations(pairs: TokenPair[], tokens: ThemeTokens, 
 }
 
 /**
- * @param {string} source the whole content of one stylesheet of `packages/ui-save-manager/src/styles/`
+ * @param {string} source a stylesheet
+ * @returns the stylesheet with every comment replaced by spaces of the same length, its newlines kept
+ */
+function maskComments(source: string): string {
+  return source.replace(COMMENT_PATTERN, comment => comment.replace(/[^\n]/g, ' '));
+}
+
+/**
+ * @param {string} selector a selector or a selector list, as written in a stylesheet
+ * @returns each selector of the list, trimmed and with its whitespace collapsed
+ */
+function splitSelectorList(selector: string): string[] {
+  return selector.split(',').map(part => part.trim().replace(/\s+/g, ' ')).filter(part => part.length > 0);
+}
+
+/**
+ * @param {string} maskedSource a stylesheet whose comments are masked
+ * @param {number} declarationIndex the offset of a declaration inside it
+ * @returns the selectors of the rule enclosing that declaration
+ */
+function readEnclosingSelectors(maskedSource: string, declarationIndex: number): string[] {
+  const ruleOpeningIndex = maskedSource.lastIndexOf('{', declarationIndex);
+  const selectorStartIndex = Math.max(...RULE_BOUNDARIES.map(boundary => maskedSource.lastIndexOf(boundary, ruleOpeningIndex - 1))) + 1;
+  return splitSelectorList(maskedSource.slice(selectorStartIndex, ruleOpeningIndex));
+}
+
+/**
+ * @param {TokenPair[]} filePairs the pairs catalogued for the stylesheet declaring the color
+ * @param {string} token the foreground token the declaration names
+ * @param {string[]} ruleSelectors the selectors of the rule holding the declaration
+ * @returns whether one pair names that token for every one of those selectors, and so states their background
+ */
+function isCoveredByCatalog(filePairs: TokenPair[], token: string, ruleSelectors: string[]): boolean {
+  return filePairs.some(pair => {
+    const pairSelectors = splitSelectorList(pair.selector);
+    return pair.foreground === token && ruleSelectors.every(selector => pairSelectors.includes(selector));
+  });
+}
+
+/**
+ * @param {string} source the whole content of one stylesheet of `packages/ui-save-manager/src/`
  * @param {string} filePath that stylesheet's path, matching a `TokenPair.file`
  * @param {TokenPair[]} pairs the catalog every foreground declaration must appear in
- * @returns one violation per `color: var(--x)` declaration the catalog does not cover
+ * @returns one violation per `color:` declaration that names no token, or whose token and selector no pair of the
+ * file covers
  */
 export function findUncataloguedForegroundDeclarations(source: string, filePath: string, pairs: TokenPair[]): string[] {
-  const cataloguedForegrounds = new Set(pairs.filter(pair => pair.file === filePath).map(pair => pair.foreground));
+  const maskedSource = maskComments(source);
+  const filePairs = pairs.filter(pair => pair.file === filePath);
   const violations: string[] = [];
-  for (const match of source.matchAll(FOREGROUND_DECLARATION_PATTERN)) {
-    const token = match[1];
-    if (!cataloguedForegrounds.has(token)) {
-      const line = source.slice(0, match.index).split('\n').length;
-      violations.push(`${filePath}:${line}: 'color: var(--${token})' has no entry in TOKEN_PAIRS of scripts/check-color-contrast.ts`);
+  for (const match of maskedSource.matchAll(FOREGROUND_DECLARATION_PATTERN)) {
+    const declarationIndex = match.index ?? 0;
+    const line = maskedSource.slice(0, declarationIndex).split('\n').length;
+    const ruleSelectors = readEnclosingSelectors(maskedSource, declarationIndex);
+    const printedSelector = ruleSelectors.join(', ');
+    const value = match[1].trim();
+    const tokenReference = TOKEN_REFERENCE_PATTERN.exec(value);
+    if (!tokenReference) {
+      violations.push(`${filePath}:${line}: '${printedSelector} { color: ${value} }' names no color token; write it var(--token) from colors.css`);
+      continue;
     }
+    const token = tokenReference[1];
+    if (!isCoveredByCatalog(filePairs, token, ruleSelectors)) {
+      violations.push(`${filePath}:${line}: '${printedSelector} { color: var(--${token}) }' has no entry in TOKEN_PAIRS of scripts/check-color-contrast.ts`);
+    }
+  }
+  return violations;
+}
+
+/**
+ * @param {string} workspaceRoot the repository root the stylesheets are looked up from
+ * @returns every foreground violation of the stylesheets of `packages/ui-save-manager/src/`, generated ones excluded,
+ * each cited by its path relative to the workspace root
+ */
+export async function findForegroundViolationsInStylesheets(workspaceRoot: string): Promise<string[]> {
+  const violations: string[] = [];
+  for await (const filePath of new Glob(STYLESHEET_FILES_PATTERN).scan({cwd: workspaceRoot})) {
+    if (!isOwnSourceFile(filePath)) {
+      continue;
+    }
+    const source = await Bun.file(join(workspaceRoot, filePath)).text();
+    violations.push(...findUncataloguedForegroundDeclarations(source, filePath, TOKEN_PAIRS));
   }
   return violations;
 }
 
 async function checkColorContrast(): Promise<number> {
   const tokens = parseColorTokens(await Bun.file(COLORS_FILE_PATH).text());
-  const violations = findContrastViolations(TOKEN_PAIRS, tokens, MINIMUM_CONTRAST_RATIO);
-
-  for await (const filePath of new Glob(STYLESHEET_FILES_PATTERN).scan({cwd: process.cwd()})) {
-    const source = await Bun.file(filePath).text();
-    violations.push(...findUncataloguedForegroundDeclarations(source, filePath, TOKEN_PAIRS));
-  }
+  const violations = [
+    ...findContrastViolations(TOKEN_PAIRS, tokens, MINIMUM_CONTRAST_RATIO),
+    ...await findForegroundViolationsInStylesheets(process.cwd())
+  ];
 
   return reportViolations({
     checkName: CHECK_NAME,
