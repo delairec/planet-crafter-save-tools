@@ -1764,3 +1764,10 @@ DECISION TheSectionValidatorsAreGeneratedAndVersioned
 	RATIONALE "Ajv compiles a schema with new Function, which the content security policy of the"
 		+ "web UI refuses without 'unsafe-eval'"
 	SOURCE "Refinement of FIX104 with the user on 2026-09-24"
+
+DECISION TheScheduledDependencyAuditRunsMonthly
+	SPEC "The scheduled run of the Dependencies workflow audits the dependencies once a month"
+		IMPL ".github/workflows/dependencies.yml::cron: '23 4 1 * *'"
+	REJECTED "A daily or weekly schedule: refused by the owner, the audit already runs on every"
+		+ "pull request and every push to master"
+	SOURCE "Owner ruling, security review of 2026-09-24"

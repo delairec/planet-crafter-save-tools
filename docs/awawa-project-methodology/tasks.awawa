@@ -2081,3 +2081,32 @@ TASK FEAT115
 		REF @DECISION.TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
 	SOURCE "Asked by the owner on 2026-09-24, after PR 127 was built but not published"
 	SOURCE "Refinement with the user on 2026-09-24"
+
+TASK CHORE118
+	TITLE "pin every action the workflows use on a commit SHA"
+	STATUS todo
+	WAVE 8
+	SPEC "every uses: of .github/workflows names a full 40-character commit SHA followed by a"
+		+ "comment giving the version it resolves to"
+	SPEC "a guard of check:guards fails on a uses: that names a tag or a branch"
+	SPEC "Dependabot keeps proposing the updates of the pinned actions, SHA and version comment"
+		+ "rewritten together"
+	RATIONALE "Outside release.yml every workflow references its actions by a moving major tag,"
+		+ "third-party ones included: fallow-rs/fallow@v3, oven-sh/setup-bun@v2 and"
+		+ "anthropics/claude-code-action@v1, which receives CLAUDE_CODE_OAUTH_TOKEN. Whoever moves"
+		+ "one of those tags runs code in the CI. release.yml already pins by SHA, so the"
+		+ "repository holds two policies; the guard keeps one"
+		REF @DECISION.DependabotTracksTwoEcosystemsInWeeklyGroups
+	SOURCE "Owner request, security review of 2026-09-24"
+
+TASK CHORE117
+	TITLE "hold back a dependency version until it is seven days old"
+	STATUS todo
+	WAVE 8
+	SPEC "bunfig.toml declares a minimum release age of seven days for bun install and bun add"
+	SPEC "dependabot.yml declares a cooldown of seven days on both ecosystems"
+	RATIONALE "A malicious version published to npm is usually detected and withdrawn within days;"
+		+ "nothing today stops Dependabot from proposing it, nor a bun add from resolving it, on"
+		+ "the day it is published"
+		REF @DECISION.DependabotTracksTwoEcosystemsInWeeklyGroups
+	SOURCE "Owner request, security review of 2026-09-24"
