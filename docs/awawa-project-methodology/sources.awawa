@@ -138,3 +138,7 @@ GAME_RELEASE 2.004
 		REF @URL.PCFandomWikiVersionHistory
 	SOURCE "The owner, 2026-09-22: the Terrain Layers section was removed at the passage to 2.0, a"
 		+ "save written by 1.618 or earlier carries it"
+
+URL DependabotSupportedEcosystemsGithubActions
+	LOCATION "https://docs.github.com/en/code-security/reference/supply-chain-security/supported-ecosystems-and-repositories#github-actions"
+	DESC "Dependabot caveats for actions: a same-line version comment is rewritten with the pin"

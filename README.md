@@ -227,10 +227,9 @@ browsers of `test:ui:install`.
 bun run check:guards
 ```
 
-Runs the four guard scripts of this repository — `check:assertions`, `check:fixtures`, `check:dependencies` and
-`check:presentation` — which enforce conventions no off-the-shelf linter knows about. They read no git history and take
-a fraction of a
-second, so they are the half of `audit:quality` to run while writing code.
+Runs the guard scripts of this repository — every `check:*` script of `package.json`, plus `validate:tables` — which
+enforce conventions no off-the-shelf linter knows about. They read no git history and take a fraction of a second, so
+they are the half of `audit:quality` to run while writing code.
 
 ```
 bun run check:assertions
@@ -276,6 +275,16 @@ computation runs, and its shape follows the save format rather than what is disp
 build entities — that is where a save is read and validated — and the reader port still hands them to the
 application layer; only the presentation boundary is closed. Every `.js`, `.ts` and `.tsx` source of every package
 is scanned, outside dependencies and build outputs, and type-only and dynamic imports count.
+
+```
+bun run check:action-pins
+```
+
+Fails on any `uses:` of `.github/workflows/` that names a tag, a branch or an abbreviated SHA instead of a full
+40-character commit SHA, or that pins a SHA without a comment giving the version it resolves to
+(`actions/checkout@<sha> # v7.0.1`). Whoever controls an action's repository can move any of its tags, an exact one
+included, and some of those actions receive secrets; a commit SHA cannot be moved. Dependabot keeps proposing their
+updates, rewriting the SHA and the version comment together. A local action (`./…`) names no ref and is not checked.
 
 #### Save Manager UI
 
