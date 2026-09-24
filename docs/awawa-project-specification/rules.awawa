@@ -445,3 +445,22 @@ RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 		+ "colour four numbers separated by dashes, each intensity an integer up to 101"
 		PR 141
 		REF @PROJECT.DNC
+
+RULE TheGameKeepsDeprecatedPhytoplanktonGroupIds
+	HOLDS_FOR @GAME_RELEASE.2.102
+	DOMAIN game
+	DOMAIN format
+	SPEC "a world object or an item whose group id is Phytoplankton2 or Phytoplankton3 loads as"
+		+ "that phytoplankton in play and is written back under the same group id"
+		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/other-player_valid.json::Phytoplankton2"
+		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::Phytoplankton3"
+	APPLIES_TO_SECTION @SECTION.WorldObjects
+	RATIONALE "Release 2.102 replaced Phytoplankton B and C with one variant in recipes and"
+		+ "generators, yet the game still knows both ids: a save carrying them loads them as they"
+		+ "are rather than converting them"
+		REF @GAME_RELEASE.2.102
+	SOURCE "Owner's manual test in game 2.103, 2026-09-24: other-player_valid.json kept"
+		+ "Phytoplankton B in play and Phytoplankton2 in the file written, baseline_valid.json the"
+		+ "same for Phytoplankton3"
+		PR 127
+		REF @GAME_RELEASE.2.103

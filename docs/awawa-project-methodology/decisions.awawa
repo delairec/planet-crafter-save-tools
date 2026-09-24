@@ -1405,6 +1405,13 @@ DECISION AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 	SOURCE "Owner review, 2026-09-24: asked whether a legacy merge of a current save drops what the"
 		+ "earlier release does not know, and whether it warns of that loss"
 		PR 127
+	SOURCE "Owner's manual test in game 2.103, 2026-09-24: the legacy merge of the legacy and Skeo"
+		+ "fixtures loads, is written back in the current format on save, keeps logisticsPaused"
+		+ "true and drops no item; the load in 1.618 is not observed yet"
+		PR 127
+		REF @GAME_RELEASE.2.103
+		REF @HYPOTHESIS.AGameOf1618DropsTheContentItDoesNotKnow
+	ASSUMES @HYPOTHESIS.AGameOf1618DropsTheContentItDoesNotKnow
 
 DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
 	SPEC "a world object or an item whose group id a release deprecated is read, validated and"
@@ -1415,16 +1422,15 @@ DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
 		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should write those group ids unchanged"
 			+ "when the other save declares release %s"
 	REJECTED "Converting Phytoplankton2 and Phytoplankton3 to the remaining phytoplankton: the game"
-		+ "is believed to do it on load, so the tool would rewrite a save the user did not ask to"
-		+ "convert"
+		+ "keeps both ids itself, so the tool would write what the game never writes"
 	REJECTED "Dropping a deprecated object: it destroys content a save legitimately carries"
 	REJECTED "A table of deprecated group ids by release: nothing reads it once no conversion"
 		+ "happens, and the release table of FEAT89 already carries what the code tells apart"
-	ASSUMES @HYPOTHESIS.TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
+	RESTS_ON @RULE.TheGameKeepsDeprecatedPhytoplanktonGroupIds
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.TEST68
 	RATIONALE "The same ground as the format: the tool returns the save the user gave it, and"
-		+ "rewriting a value the game itself resolves would be a conversion nobody asked for"
+		+ "rewriting a value the game itself keeps would be a conversion nobody asked for"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
 	SOURCE "Owner ruling, 2026-09-22, on the wave carried by integration/save-format-preserved"
 
