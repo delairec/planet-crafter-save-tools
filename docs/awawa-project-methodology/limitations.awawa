@@ -287,3 +287,4 @@ LIMITATION AVersionTagCreatesNoGitHubRelease
 		+ "job is the intended fix, at the cost of granting that workflow contents: write"
 	SOURCE "Asked by the owner after the first release, 0.1.0, and kept as a limitation so the"
 		+ "question can be reopened when the need appears"
+		PR 165
