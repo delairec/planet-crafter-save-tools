@@ -1771,3 +1771,18 @@ DECISION TheScheduledDependencyAuditRunsMonthly
 	REJECTED "A daily or weekly schedule: refused by the owner, the audit already runs on every"
 		+ "pull request and every push to master"
 	SOURCE "Owner ruling, security review of 2026-09-24"
+
+DECISION ADependencyVersionIsHeldBackForSevenDays
+	SPEC "bun install and bun add resolve no npm version published less than seven days ago, with"
+		+ "no package exempted"
+		IMPL "bunfig.toml::minimumReleaseAge = 604800"
+	SPEC "Dependabot proposes no version less than seven days old, on both ecosystems"
+		IMPL ".github/dependabot.yml::default-days: 7"
+	REJECTED "Dependabot's implicit three-day cooldown: shorter than the delay bun install applies"
+	REJECTED "An exclusion list: an exempted package reopens the window for the one a compromise"
+		+ "targets; an urgent install passes --minimum-release-age=0 once instead"
+	REJECTED "Per-bump semver cooldown days: github-actions ignores them, and the risk does not"
+		+ "depend on the size of the bump"
+	APPLIES_TO_TASK @TASK.CHORE117
+	SOURCE "Owner request, security review of 2026-09-24"
+		PR 161
