@@ -47,22 +47,26 @@ and the <a href="docs/assets/display-page-light.png">save view in the light them
 
 ## What you can do
 
-- **Merge two saves** into one world, ready to load in the game — pick which format to write when the two saves
+- **Merge two saves** into one new file, ready to load in the game — pick which format to write when the two saves
   come from different game versions.
-- **Look inside a save**: progression, terraformation levels, players, energy balance, world settings.
-- **Check a save** against the game's format, and see exactly which part is wrong when it is not.
+- **Visualize**: progression, terraformation levels, players, energy balance, world settings - still a work in progress
+- **Check a save** against the game's format, and see exactly which part is wrong, thanks to a validator running against your save before it is displayed.
 
 **Your saves stay on your computer.** Everything runs in your browser: the page never sends a save anywhere.
 
-### Coming next
+## Coming next
 
-- Editing a save, beyond viewing it.
-- Recovering what can be saved from a corrupted file.
+- Editing a save right from the browser
+- Auto-fix a corrupted save file both from web UI and CLI
 
-## How to merge two worlds
+## How to merge two saves
 
-1. Find your saves. On Windows they sit in `%APPDATA%\..\LocalLow\MijuGames\Planet Crafter\`.
-2. Open the [Save Manager](https://planet-crafter-save-manager.netlify.app/), pick the two files and press
+> Tips: press F1 on the game main screen to open the save folder.
+
+1. Find your saves.  
+   * On Windows they sit in `%APPDATA%\..\LocalLow\MijuGames\Planet Crafter\`.  
+   * On Linux eh... try something like `~/.steam/steam/steamapps/compatdata/1234567/pfx/drive_c/users/steamuser/AppData/LocalLow/MijuGames/Planet Crafter/` if you installed the game from Steam with Proton. 
+2. In the [Save Manager](https://planet-crafter-save-manager.netlify.app/), pick the two files and press
    **Merge**.
 3. Download the merged save, copy it next to the others, and pick it in the game.
 
