@@ -1447,11 +1447,17 @@ TASK DOCS108
 
 TASK CHORE109
 	TITLE "every active decision that records a defect left in place is rewritten as a limitation"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 145
 	SPEC "every DECISION whose ruling is a workaround of a defect of this project, kept until a"
 		+ "fix, is replaced by a LIMITATION carrying its SYMPTOM, WORKAROUND and UNTIL"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::LIMITATION"
+			+ "TheFallowAuditReadsNoFileOfUiSaveManager"
 	SPEC "every reference to a replaced DECISION points at its LIMITATION"
+		IMPL "fallow.toml::a gap of this project, not a ruling"
 	SPEC "the pull request lists each DECISION reviewed and kept, with the reason it is a ruling"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::Rewritten from a decision by the"
+			+ "review of CHORE109"
 	WAVE 8
 	RATIONALE "the user suspects that some of the 96 active decisions describe a defect left in"
 		+ "place rather than a choice; a defect of an external tool stays a DECISION with UNTIL,"
