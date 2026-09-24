@@ -1388,7 +1388,8 @@ TASK FEAT94
 TASK FEAT95
 	TITLE "Offer the legacy format option and the merge report in the command and in the save"
 		+ "manager"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 153
 	WAVE 5
 	AFTER @TASK.FEAT94
 	SPEC "the merge command takes a valueless --prefer-legacy flag asking for the legacy format,"
