@@ -13,6 +13,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # A version is proposed only once it is seven days old, the delay bunfig.toml sets on
+    # bun install and bun add; Dependabot's implicit default is three.
+    cooldown:
+      default-days: 7
     # Raised from the default of 5 on purpose: a truncated queue would hide pending updates
     # instead of reporting them.
     open-pull-requests-limit: 10
@@ -37,6 +41,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 10
     groups:
       bun-dependencies:
