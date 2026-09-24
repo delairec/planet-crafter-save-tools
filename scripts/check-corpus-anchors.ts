@@ -12,6 +12,8 @@ const ANCHOR_TYPE = 'anchor';
 const PATH_SEPARATOR = ' > ';
 const FRAGMENT_SEPARATOR = '::';
 const CHECK_NAME = 'check:anchors';
+const STATUS_FIELD = 'STATUS';
+const ARCHIVED_STATUS = 'archived';
 
 export type AnchorFields = Map<string, Set<string>>;
 
@@ -168,19 +170,32 @@ export function readAnchorFields(corpusSource: string): AnchorFields {
 /**
  * @param {string} source the text of one corpus file
  * @param {AnchorFields} anchorFields the anchor fields the schema declares
- * @returns every anchor that file writes
+ * @returns every anchor that file writes, except those of an archived entity
  */
 export function findCorpusAnchors(source: string, anchorFields: AnchorFields): CorpusAnchor[] {
   const anchors: CorpusAnchor[] = [];
   const everyEntityAnchors = anchorFields.get('*') ?? new Set<string>();
   let entity: string | undefined;
   let entityAnchors = new Set<string>();
+  let pendingAnchors: CorpusAnchor[] = [];
+  let isArchived = false;
+  const keepPendingAnchors = (): void => {
+    if (!isArchived) {
+      anchors.push(...pendingAnchors);
+    }
+  };
   const ancestorFields: (string | undefined)[] = [];
   for (const {depth, keyword, pieces, line} of readCorpusLines(source)) {
     if (depth === 0) {
+      keepPendingAnchors();
+      pendingAnchors = [];
+      isArchived = false;
       entity = SCHEMA_KEYWORDS.has(keyword) ? undefined : `@${keyword}.${pieces[0]}`;
       entityAnchors = anchorFields.get(keyword) ?? new Set<string>();
       continue;
+    }
+    if (depth === 1 && keyword === STATUS_FIELD && pieces[0] === ARCHIVED_STATUS) {
+      isArchived = true;
     }
     ancestorFields[depth] = keyword;
     ancestorFields.length = depth + 1;
@@ -189,8 +204,9 @@ export function findCorpusAnchors(source: string, anchorFields: AnchorFields): C
       continue;
     }
     const value = pieces.map(removeQuotes).join(' ');
-    anchors.push({entity, field, path: value.split(FRAGMENT_SEPARATOR)[0], line});
+    pendingAnchors.push({entity, field, path: value.split(FRAGMENT_SEPARATOR)[0], line});
   }
+  keepPendingAnchors();
   return anchors;
 }
 

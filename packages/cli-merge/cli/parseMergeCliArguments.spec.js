@@ -28,6 +28,43 @@ describe('Merge CLI argument parsing', () => {
     });
   });
 
+  describe('When no --prefer-legacy flag is given', () => {
+    it('should not ask for the legacy format', () => {
+      // Arrange
+      const argv = ['--input=my-saves'];
+
+      // Act
+      const {preferLegacyFormat} = parseMergeCliArguments(argv);
+
+      // Assert
+      expect(preferLegacyFormat).toBe(false);
+    });
+  });
+
+  describe('When the --prefer-legacy flag is given', () => {
+    it('should ask for the legacy format', () => {
+      // Arrange
+      const argv = ['--prefer-legacy'];
+
+      // Act
+      const {preferLegacyFormat} = parseMergeCliArguments(argv);
+
+      // Assert
+      expect(preferLegacyFormat).toBe(true);
+    });
+
+    it('should not count the flag among the unknown arguments', () => {
+      // Arrange
+      const argv = ['--input=my-saves', '--prefer-legacy'];
+
+      // Act
+      const {unknownArguments} = parseMergeCliArguments(argv);
+
+      // Assert
+      expect(unknownArguments).toEqual(NO_ARGUMENTS);
+    });
+  });
+
   describe('When an --input= argument is provided', () => {
     it('should use the provided input directory', () => {
       // Arrange

@@ -7,6 +7,8 @@ import {MERGE_CLI_ARGUMENTS} from './parseMergeCliArguments.js';
  * Rendering for the merge CLI. Diagnostics go to stderr, the merge result (output file paths) goes to stdout.
  */
 
+const KEEP_LEGACY_FORMAT_REMINDER = 'Run the merge again with --prefer-legacy to write the legacy format instead.';
+
 export function renderHelp() {
   console.log(formatHelp(MERGE_CLI_ARGUMENTS));
 }
@@ -91,6 +93,25 @@ export function renderMergedSaveIssues(folder, mergeErrors) {
   console.error(`✖ Folder "${folder}" was merged, but the save file written does not pass validation:`);
   for (const error of mergeErrors) {
     console.error(`  ${formatMessageLine(error)}`);
+  }
+}
+
+/**
+ * @param {string} folder
+ * @param {SaveValidationMessageViewModel[]} mergeWarnings
+ * @param {boolean} legacyFormatCouldBeKept
+ */
+export function renderMergeReport(folder, mergeWarnings, legacyFormatCouldBeKept) {
+  if (mergeWarnings.length === 0) {
+    return;
+  }
+
+  console.error(`⚠ Folder "${folder}" was merged with warnings:`);
+  for (const warning of mergeWarnings) {
+    console.error(`  ${formatMessageLine(warning)}`);
+  }
+  if (legacyFormatCouldBeKept) {
+    console.error(`  ${KEEP_LEGACY_FORMAT_REMINDER}`);
   }
 }
 

@@ -184,6 +184,19 @@ describe('CLI unknown argument detection', () => {
       expect(unknownArguments).toEqual(['--version=2']);
     });
   });
+
+  describe('When an argument extends the name of a known switch', () => {
+    it('should report that argument', () => {
+      // Arrange
+      const argv = ['--version-full'];
+
+      // Act
+      const unknownArguments = findUnknownArguments(argv, {flagNames: NO_KNOWN_FLAG_NAME, switchNames: [VERSION_SWITCH_NAME]});
+
+      // Assert
+      expect(unknownArguments).toEqual(['--version-full']);
+    });
+  });
 });
 
 describe('CLI switch reading', () => {
@@ -217,6 +230,19 @@ describe('CLI switch reading', () => {
     it('should report it absent', () => {
       // Arrange
       const argv = ['--version=2'];
+
+      // Act
+      const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);
+
+      // Assert
+      expect(isPresent).toBe(false);
+    });
+  });
+
+  describe('When another switch starts with the same letters', () => {
+    it('should report the switch absent', () => {
+      // Arrange
+      const argv = ['--version-full'];
 
       // Act
       const isPresent = hasSwitch(argv, VERSION_SWITCH_NAME);

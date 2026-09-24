@@ -1,11 +1,11 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveFileValidationPresenter} from './SaveFileValidationPresenter';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {GLOBAL_METADATA_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {SaveFileValidationViewModel, SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
-const noWarnings: SaveWarningCode[] = [];
+const noWarnings: SaveWarning[] = [];
 
 describe('SaveFileValidationPresenter', () => {
 
@@ -26,11 +26,11 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentValidSaveFile(['legacy-save-format']);
+      presenter.presentValidSaveFile([{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
-        message: 'This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.',
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
         location: null
       }]);
     });
@@ -57,7 +57,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {', section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 3}], noWarnings);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {', section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 3, formatRelease: '2.004'}], noWarnings);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Global metadata (section 0), entry 3'}]);
@@ -68,11 +68,11 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}], ['legacy-save-format']);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}], [{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
-        message: 'This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.',
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
         location: null
       }]);
     });

@@ -10,9 +10,9 @@ LIMITATION LateWorldObjectParseErrorsWouldNeverReachTheScreen
 	WORKAROUND "The cheapest move, the day it comes, is a spec pinning the guard: validation"
 		+ "refuses a save whose only unreadable line is in the world objects section"
 	SEEN_IN "packages/core-mapping/src/infrastructure/validateSaveContent.js::const"
-		+ "worldObjectIssues = validateWorldObjectsSection(sections[WORLD_OBJECTS_SECTION_INDEX]);"
+		+ "worldObjectIssues = validateWorldObjectsSection("
 	SEEN_IN "packages/shared-save-processing/parseSaveSections.js::return () =>"
-		+ "createSectionEntriesGenerator(section, sectionIndex, errors);"
+		+ "createSectionEntriesGenerator(sectionReading);"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "parseSaveSections returns a shared, mutable errors array; the ten ordinary sections"
 		+ "are materialized at once, while the world objects section is returned as a generator"
@@ -81,7 +81,7 @@ LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
 	UNTIL "the merge sanitizes the display name at the boundary that receives it, or refuses a name"
 		+ "the save format cannot carry"
 	SEEN_IN "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts::return"
-		+ "{...saveConfiguration, saveDisplayName};"
+		+ "{...saveConfiguration, saveDisplayName,"
 	SEEN_IN "packages/cli-merge/cli/initMergeCli.spec.js::When the merged save does not pass"
 		+ "validation"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -225,7 +225,7 @@ LIMITATION TheContentSecurityPolicyAllowsEval
 		+ "an injected script hands to eval or new Function runs despite it"
 	UNTIL @TASK.FIX104
 	SEEN_IN "packages/ui-save-manager/public/_headers::'unsafe-eval'"
-	SEEN_IN "packages/core-mapping/src/infrastructure/validateSchemas.js::ajv.compile"
+	SEEN_IN "packages/core-mapping/src/infrastructure/validateSchemas.js::getSchema(sectionSchemaId)"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "Ajv compiles each section validator with new Function in the browser: measured in"
 		+ "chromium on 2026-09-23, without 'unsafe-eval' the validation throws an EvalError and the"

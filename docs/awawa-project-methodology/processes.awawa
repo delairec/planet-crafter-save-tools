@@ -127,6 +127,9 @@ PROCESS AnImplAnchorNamesAFileOrASymbol
 		PR 69
 
 PROCESS TheCorpusHoldsNoViewItAlreadyRenders
+	SPEC "One fact has one home in the repository: what the code, a test or a corpus entity already"
+		+ "holds is restated in no other file, and a restatement found elsewhere is deleted rather"
+		+ "than updated"
 	SPEC "Nothing the corpus already renders is written in it: no dependency graph in a comment,"
 		+ "the AFTER edges carrying it"
 	SPEC "A task split is not recorded as a decision: the TASK entities it produces carry it, and"
@@ -143,6 +146,10 @@ PROCESS TheCorpusHoldsNoViewItAlreadyRenders
 		+ "rejected, and its removal lost no sentence"
 	SOURCE "review of PR #75, user ruling of 2026-09-14"
 		PR 75
+	SOURCE "Owner's ruling on pull request 127, 2026-09-23: the one-home rule is not the corpus's"
+		+ "alone but the whole repository's, and a fact a unit test can hold lives there rather"
+		+ "than in prose"
+		PR 127
 
 PROCESS ATestTaskChangesTheUiOnlyForItsOwnSake
 	REJECTED "Changing the interface for the sole convenience of a locator"
@@ -205,6 +212,26 @@ PROCESS TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
 		+ "entities, 12 archived, all of them TASK, and 2 of the 12 with no incoming reference. A"
 		+ "script reading status --json and show --json per entity, then fmt and lint --strict,"
 		+ "would cost more to write and to trust than the two deletions it would perform"
+
+PROCESS ACorpusCorrectionBelongsToTheTaskThatFalsifiesIt
+	SPEC "A task whose delivery makes an entity of the corpus false carries the correction of that"
+		+ "entity as one of its own criteria, naming the entity and what it must then say"
+	SPEC "A correction is written in place, on the entity itself, and the ruling it replaces is"
+		+ "kept where the type allows it, as a REJECTED alternative or as a second SOURCE"
+	SPEC "A criterion of a ratified task is rewritten as soon as the design it rests on is"
+		+ "reversed, whatever its status short of implemented, so that no task builds what the next"
+		+ "one undoes"
+	REJECTED "Leaving the correction to a documentation task of its own: the corpus then says"
+		+ "something false for as long as the two tasks are apart, and the task that broke it is"
+		+ "the only one that knows what it must say"
+	REJECTED "Recording the correction as an open question: what a delivery makes false is not open"
+	RATIONALE "The corpus is read instead of the files, so an entity contradicted by the code it"
+		+ "describes is worse than a missing one; the task that falsifies it is where the knowledge"
+		+ "and the timing are, and the same act that changes the code changes what the corpus says"
+		+ "of it. The reversal of a ratified criterion follows from the same rule: a design"
+		+ "abandoned before it is built costs nothing to rewrite, and everything to leave standing"
+	SOURCE "Owner ruling, 2026-09-23, refining the tasks of the wave carried by"
+		+ "integration/save-format-preserved"
 
 PROCESS EveryChangeReachesMasterThroughAPullRequest
 	SPEC "master refuses a push that does not come through a pull request"

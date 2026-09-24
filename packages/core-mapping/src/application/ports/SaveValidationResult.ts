@@ -1,5 +1,5 @@
 import {ValidationIssue} from "./ValidationIssue";
-import {SaveWarningCode} from "shared-save-processing/gameDefinitions";
+import {SaveWarning} from "shared-save-processing/gameDefinitions";
 
 /**
  * Outcome of validating a save file's technical acceptability (extension, structural validity),
@@ -16,5 +16,5 @@ export interface SaveValidationResult {
    * so it is the only step able to warn before anything is displayed or rewritten: warnings are
    * reported here rather than by the parser, and on every outcome including an invalid save.
    */
-  warnings: SaveWarningCode[];
+  warnings: SaveWarning[];
 }

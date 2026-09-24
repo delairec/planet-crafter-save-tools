@@ -1,10 +1,14 @@
 import {GlobalProgressionViewModel} from './viewModels/GlobalProgressionViewModel';
+import {ColumnViewModel} from './viewModels/TableViewModel';
 import {GlobalProgressionPresenterPort} from '../application/ports/GlobalProgressionPresenterPort';
 import {GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {
   globalProgressionSectionAllTimeTerraTokensLabel,
+  globalProgressionSectionLogisticsPausedLabel,
+  globalProgressionSectionLogisticsPausedPausedValue,
+  globalProgressionSectionLogisticsPausedRunningValue,
   globalProgressionSectionTerraTokenUnit,
   globalProgressionSectionTotalCraftedObjectsLabel
 } from "./messages/globalProgressionSectionMessages.js";
@@ -44,15 +48,41 @@ function createViewModel(globalProgression: GlobalProgressionValueObject, totalC
   return {
     statistics: {
       columns: [
-        {
-          header: globalProgressionSectionAllTimeTerraTokensLabel,
-          values: [`${formatNumber(globalProgression.allTimeTerraTokens)} ${globalProgressionSectionTerraTokenUnit}`]
-        },
-        {
-          header: globalProgressionSectionTotalCraftedObjectsLabel,
-          values: [`${totalCraftedObjects}`]
-        },
+        createAllTimeTerraTokensColumn(globalProgression.allTimeTerraTokens),
+        createTotalCraftedObjectsColumn(totalCraftedObjects),
+        ...createLogisticsColumns(globalProgression.logisticsPaused)
       ]
     }
   };
+}
+
+function createAllTimeTerraTokensColumn(allTimeTerraTokens: number): ColumnViewModel {
+  return {
+    header: globalProgressionSectionAllTimeTerraTokensLabel,
+    values: [`${formatNumber(allTimeTerraTokens)} ${globalProgressionSectionTerraTokenUnit}`]
+  };
+}
+
+function createTotalCraftedObjectsColumn(totalCraftedObjects: number): ColumnViewModel {
+  return {
+    header: globalProgressionSectionTotalCraftedObjectsLabel,
+    values: [`${totalCraftedObjects}`]
+  };
+}
+
+function createLogisticsColumns(logisticsPaused: boolean | undefined): ColumnViewModel[] {
+  if (logisticsPaused === undefined) {
+    return [];
+  }
+  return [{
+    header: globalProgressionSectionLogisticsPausedLabel,
+    values: [formatLogisticsState(logisticsPaused)]
+  }];
+}
+
+function formatLogisticsState(logisticsPaused: boolean): string {
+  if (logisticsPaused) {
+    return globalProgressionSectionLogisticsPausedPausedValue;
+  }
+  return globalProgressionSectionLogisticsPausedRunningValue;
 }

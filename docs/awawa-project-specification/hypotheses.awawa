@@ -88,3 +88,38 @@ HYPOTHESIS TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 		REF @URL.WikiFurniture
 		REF @URL.WikiRockets
 		REF @URL.WikiBaseBuilding
+
+HYPOTHESIS TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
+	UNTIL "a save carrying Phytoplankton2 or Phytoplankton3 is loaded in 2.102 or later and saved"
+		+ "again, and the two group ids are found unchanged in the file written"
+	DESC "the game converts a world object or an item whose group id is Phytoplankton2 or"
+		+ "Phytoplankton3 to the single remaining phytoplankton when it loads a save carrying it"
+		REF @GAME_RELEASE.2.102
+		REF @DATATABLE.WorldObjectLabels
+	RATIONALE "Release 2.102 replaced Phytoplankton B and C with one variant and updated every"
+		+ "recipe and generator, so the game meets those ids in saves written before it and has to"
+		+ "resolve them; a save written by 2.103 still carrying them would refute this at once, and"
+		+ "the only file seen carrying them is untracked and of unknown provenance"
+		REF @URL.PCFandomWikiPhytoplankton
+	SOURCE "Owner ruling, 2026-09-22, closing the question of what the tool does with the group ids"
+		+ "the Skeo update deprecated"
+		REF @URL.PceditItemCatalog
+	SOURCE "Refuted by the owner's manual test in game 2.103, 2026-09-24: both ids stay unchanged"
+		+ "in play and in the file written"
+		PR 127
+		REF @RULE.TheGameKeepsDeprecatedPhytoplanktonGroupIds
+	STATUS archived
+	ARCHIVED_ON 2026-09-24
+
+HYPOTHESIS AGameOf1618DropsTheContentItDoesNotKnow
+	UNTIL "a legacy merge of the legacy-format and skeo-update fixtures is loaded in 1.618 and"
+		+ "saved again, and MagnetarQuartz and the world object on Skeo are found in the file"
+		+ "written"
+	DESC "a game of release 1.618 drops on load a world object, an item or a planet it does not"
+		+ "know"
+		REF @GAME_RELEASE.1.618
+	RATIONALE "The merge report of a legacy merge says the game may drop that content; 2.103 was"
+		+ "seen keeping everything a legacy merge carries, which says nothing of 1.618"
+		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+	SOURCE "Owner review, 2026-09-24: the in-game checks left for later"
+		PR 127

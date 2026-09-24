@@ -1,4 +1,6 @@
 OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
+	STATUS archived
+	ARCHIVED_ON "2026-09-22"
 	DESC "what the tool does with a world object or an item whose group id release 2.102"
 		+ "deprecated, Phytoplankton2 and Phytoplankton3: keep, flag, convert or drop; As of"
 		+ "version 2.102 (September, 2026), Phytoplankton B and C have been removed and replaced"
@@ -6,13 +8,13 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		+ "accommodate this change."
 		REF @URL.PCFandomWikiPhytoplankton
 		REF @DATATABLE.WorldObjectLabels
-	RATIONALE "When a user wants to merge 2 saves, it could be 2 saves from 2 different versions."
-		+ "Weather to keep a deprecated world object or not should depend on the highest version."
-		+ "The version is a field that we can read in the save configuration section. How do we"
-		+ "handle this? Should we have a table with deprecated world objects with version? Should"
-		+ "we rather use the corpus with holds_for field? We need to investigate more before"
-		+ "implementing."
-	BLOCKS @TASK.FEAT68
+	RATIONALE "Ruled keep, and no conversion: the owner ruled on 2026-09-22 that the game itself"
+		+ "resolves the deprecated ids when it loads a save carrying them, so converting them in"
+		+ "the tool would rewrite a save nobody asked to convert. The belief is recorded as a"
+		+ "hypothesis with the in-game observation that would refute it, and no table of deprecated"
+		+ "ids by release is written"
+		REF @DECISION.ADeprecatedGroupIdIsCarriedThroughUnchanged
+		REF @HYPOTHESIS.TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
 	SOURCE "PCEdit item catalog: deprecated(\"2.102\", \"Phytoplankton2\", \"Phytoplankton3\"),"
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog

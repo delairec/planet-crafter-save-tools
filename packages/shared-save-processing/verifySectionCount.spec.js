@@ -30,7 +30,7 @@ describe('verifySectionCount', () => {
   });
 
   describe('When the raw parts match neither the current nor the legacy format', () => {
-    it('should report the expected and actual section counts', () => {
+    it('should report the count each format expects and the actual count', () => {
       // Arrange
       const rawParts = ['part0', 'part1'];
 
@@ -38,7 +38,7 @@ describe('verifySectionCount', () => {
       const errors = verifySectionCount(rawParts);
 
       // Assert
-      expect(errors).toEqual([{detail: 'Expected 11 sections but found 2'}]);
+      expect(errors).toEqual([{detail: 'Expected 11 or 12 sections but found 2'}]);
     });
   });
 });

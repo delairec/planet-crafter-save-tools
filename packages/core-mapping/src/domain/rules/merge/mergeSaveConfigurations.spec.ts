@@ -4,7 +4,7 @@ import {mergeSaveConfigurations} from './mergeSaveConfigurations';
 import {createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
 
 describe('Merge save configurations', () => {
-  const saveDisplayName = 'SAVE_NAME';
+  const overrides = {saveDisplayName: 'SAVE_NAME', declaredVersion: '2.004'};
 
   describe('When both saves have a configuration', () => {
     it('should use the saveDisplayName parameter and take save configuration from save A', () => {
@@ -15,11 +15,11 @@ describe('Merge save configurations', () => {
       })];
 
       // Act
-      const result = mergeSaveConfigurations(saveConfigurationsA, saveConfigurationsB, saveDisplayName);
+      const result = mergeSaveConfigurations(saveConfigurationsA, saveConfigurationsB, overrides);
 
       // Assert
       expect<SaveConfiguration | undefined>(result).toEqual({
-        saveDisplayName: 'SAVE_NAME', planetId: 'Prime', version: '1.0', mode: 'Standard', worldSeed: 42, modded: false,
+        saveDisplayName: 'SAVE_NAME', planetId: 'Prime', version: '2.004', mode: 'Standard', worldSeed: 42, modded: false,
         modifierTerraformationPace: 0.1, modifierPowerConsumption: 0.2, modifierGaugeDrain: 0.3,
         modifierMeteoOccurence: 0.4, modifierMultiplayerTerraformationFactor: 0.5,
         unlockedSpaceTrading: false, unlockedOreExtrators: false, unlockedTeleporters: false, unlockedDrones: false,
@@ -37,11 +37,11 @@ describe('Merge save configurations', () => {
       const saveConfigurationsB = [createSaveConfiguration({saveDisplayName: 'SAVE_B', planetId: 'Aqualis', worldSeed: 7})];
 
       // Act
-      const result = mergeSaveConfigurations(noSaveConfigurationInSaveA, saveConfigurationsB, saveDisplayName);
+      const result = mergeSaveConfigurations(noSaveConfigurationInSaveA, saveConfigurationsB, overrides);
 
       // Assert
       expect<SaveConfiguration | undefined>(result).toEqual({
-        saveDisplayName: 'SAVE_NAME', planetId: 'Aqualis', version: '1.0', mode: 'Standard', worldSeed: 7, modded: false,
+        saveDisplayName: 'SAVE_NAME', planetId: 'Aqualis', version: '2.004', mode: 'Standard', worldSeed: 7, modded: false,
         modifierTerraformationPace: 0.1, modifierPowerConsumption: 0.2, modifierGaugeDrain: 0.3,
         modifierMeteoOccurence: 0.4, modifierMultiplayerTerraformationFactor: 0.5,
         unlockedSpaceTrading: false, unlockedOreExtrators: false, unlockedTeleporters: false, unlockedDrones: false,
@@ -59,10 +59,39 @@ describe('Merge save configurations', () => {
       const noSaveConfigurationInSaveB: SaveConfiguration[] = [];
 
       // Act
-      const result = mergeSaveConfigurations(noSaveConfigurationInSaveA, noSaveConfigurationInSaveB, saveDisplayName);
+      const result = mergeSaveConfigurations(noSaveConfigurationInSaveA, noSaveConfigurationInSaveB, overrides);
 
       // Assert
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('When the save whose format is written declares another version than save A', () => {
+    it('should declare the version of that save', () => {
+      // Arrange
+      const saveConfigurationsA = [createSaveConfiguration({version: '1.618'})];
+      const saveConfigurationsB = [createSaveConfiguration({version: '2.103'})];
+
+      // Act
+      const result = mergeSaveConfigurations(saveConfigurationsA, saveConfigurationsB, {saveDisplayName: 'SAVE_NAME', declaredVersion: '2.103'});
+
+      // Assert
+      expect(result?.version).toBe('2.103');
+    });
+  });
+
+  describe('When the save whose format is written declares no version', () => {
+    it('should keep the version of the configuration used', () => {
+      // Arrange
+      const saveConfigurationsA = [createSaveConfiguration({version: '2.103'})];
+      const noSaveConfigurationInSaveB: SaveConfiguration[] = [];
+      const noDeclaredVersion = undefined;
+
+      // Act
+      const result = mergeSaveConfigurations(saveConfigurationsA, noSaveConfigurationInSaveB, {saveDisplayName: 'SAVE_NAME', declaredVersion: noDeclaredVersion});
+
+      // Assert
+      expect(result?.version).toBe('2.103');
     });
   });
 });

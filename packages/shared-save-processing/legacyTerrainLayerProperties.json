@@ -1,8 +1,8 @@
 [
-  {"property": "layerId", "type": "string", "description": "Id of the layer (e.g. \"PC-Toxicity-Layer2\")"},
+  {"property": "layerId", "type": "string", "description": "Id of the layer (e.g. \"PC-Toxicity-Layer2\"), a free string no pattern describes"},
   {"property": "planet", "type": "int", "description": "Planet numeric ID"},
-  {"property": "colorBase", "type": "string", "description": "Base color as \"R-G-B-A\""},
-  {"property": "colorCustom", "type": "string", "description": "Custom color as \"R-G-B-A\""},
-  {"property": "colorBaseLerp", "type": "int", "description": "Base color intensity (≥ 0)"},
-  {"property": "colorCustomLerp", "type": "int", "description": "Custom color intensity (≥ 0)"}
+  {"property": "colorBase", "type": "string", "pattern": "^\\d+(\\.\\d+)?(-\\d+(\\.\\d+)?){3}$", "description": "Base color as four numbers separated by dashes (\"R-G-B-A\")"},
+  {"property": "colorCustom", "type": "string", "pattern": "^\\d+(\\.\\d+)?(-\\d+(\\.\\d+)?){3}$", "description": "Custom color as four numbers separated by dashes (\"R-G-B-A\")"},
+  {"property": "colorBaseLerp", "type": "int", "minimum": 0, "description": "Base color intensity, no upper bound (101 attested)"},
+  {"property": "colorCustomLerp", "type": "int", "minimum": 0, "description": "Custom color intensity, no upper bound"}
 ]

@@ -1,4 +1,4 @@
-/** @import { Player, Inventory, SaveConfiguration, GlobalMetadata, TerraformationLevel, Statistics, WorldObject, MailboxMessage, StoryEvent, WorldEvent } from '../gameDefinitions' */
+/** @import { Player, Inventory, SaveConfiguration, GlobalMetadata, TerraformationLevel, Statistics, WorldObject, MailboxMessage, StoryEvent, TerrainLayer, WorldEvent } from '../gameDefinitions' */
 
 // Single source of the factories building the individual records of a save file, in business
 // language. No other testing module defines or re-exports them: `createFakeSaveContent.js` renders
@@ -68,7 +68,7 @@ export function createSaveConfiguration(overrides = {}) {
     modifierMeteoOccurence: 0.4,
     modifierMultiplayerTerraformationFactor: 0.5,
     modded: false,
-    version: '1.0',
+    version: '2.004',
     mode: 'Standard',
     dyingConsequencesLabel: 'DropSomeItems',
     startLocationLabel: 'Standard',
@@ -159,3 +159,18 @@ export function createWorldEvent(overrides = {}) {
   return {planet: 110910045, seed: 1, pos: '0,0,0', ...overrides};
 }
 
+/**
+ * @param {Partial<TerrainLayer>} overrides
+ * @returns {TerrainLayer}
+ */
+export function createTerrainLayer(overrides = {}) {
+  return {
+    layerId: 'PC-Toxicity-Layer2',
+    planet: 110910045,
+    colorBase: '0.5-0.5-0.5-1',
+    colorCustom: '1-1-1-1',
+    colorBaseLerp: 100,
+    colorCustomLerp: 0,
+    ...overrides
+  };
+}

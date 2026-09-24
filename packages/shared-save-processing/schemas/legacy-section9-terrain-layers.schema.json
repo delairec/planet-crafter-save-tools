@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "legacy-section9-terrain-layers.schema.json",
+  "title": "Section 9 of the format of 1.618 — Terrain layers",
+  "description": "Colour of a terrain layer of the planet. Only the format of 1.618 carries this section, at index 9; a later game update removed it.",
+  "type": "object",
+  "required": ["layerId", "planet", "colorBase", "colorCustom", "colorBaseLerp", "colorCustomLerp"],
+  "additionalProperties": false,
+  "properties": {
+    "layerId": {
+      "type": "string",
+      "description": "Id of the layer (e.g. \"PC-Toxicity-Layer2\"), a free string no pattern describes"
+    },
+    "planet": {
+      "type": "integer",
+      "description": "Planet numeric ID"
+    },
+    "colorBase": {
+      "type": "string",
+      "pattern": "^\\d+(\\.\\d+)?(-\\d+(\\.\\d+)?){3}$",
+      "description": "Base color as four numbers separated by dashes (\"R-G-B-A\")"
+    },
+    "colorCustom": {
+      "type": "string",
+      "pattern": "^\\d+(\\.\\d+)?(-\\d+(\\.\\d+)?){3}$",
+      "description": "Custom color as four numbers separated by dashes (\"R-G-B-A\")"
+    },
+    "colorBaseLerp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Base color intensity, no upper bound (101 attested)"
+    },
+    "colorCustomLerp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Custom color intensity, no upper bound"
+    }
+  }
+}

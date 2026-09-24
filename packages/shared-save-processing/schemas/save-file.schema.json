@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "save-file.schema.json",
-  "title": "Planet Crafter — Parsed save file",
-  "description": "Representation of a Planet Crafter save after parsing. Array of 11 sections (indexes 0 to 10), each section being an array of JSON entries.",
+  "title": "Planet Crafter — Parsed save file in the format of 2.004 and later",
+  "description": "Representation of a Planet Crafter save written in the format of 2.004 and later after parsing. Array of 11 sections (indexes 0 to 10): the world events at index 9, and section 10 reserved. Each section is an array of JSON entries.",
   "type": "array",
   "minItems": 11,
   "maxItems": 11,

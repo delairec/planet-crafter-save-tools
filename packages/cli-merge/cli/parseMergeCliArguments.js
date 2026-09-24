@@ -4,6 +4,7 @@ const DEFAULT_INPUT_DIR = 'input';
 const DEFAULT_OUTPUT_DIR = 'output';
 const INPUT_FLAG_NAME = 'input';
 const OUTPUT_FLAG_NAME = 'output';
+const PREFER_LEGACY_SWITCH = {name: 'prefer-legacy', description: 'write the legacy format of 1.618 instead of the current one'};
 
 /** @type {import('shared-platforms/cliArguments.js').CommandArguments} */
 export const MERGE_CLI_ARGUMENTS = {
@@ -13,12 +14,12 @@ export const MERGE_CLI_ARGUMENTS = {
     {name: OUTPUT_FLAG_NAME, valueName: 'directory', description: 'write the merged saves under this directory, output by default'},
     PLATFORM_FLAG
   ],
-  switches: [VERSION_SWITCH, HELP_SWITCH]
+  switches: [PREFER_LEGACY_SWITCH, VERSION_SWITCH, HELP_SWITCH]
 };
 
 /**
  * @param {string[]} argv
- * @returns {{inputDir: string, outputDir: string, unknownArguments: string[], isVersionAsked: boolean, isHelpAsked: boolean}}
+ * @returns {{inputDir: string, outputDir: string, preferLegacyFormat: boolean, unknownArguments: string[], isVersionAsked: boolean, isHelpAsked: boolean}}
  */
 export function parseMergeCliArguments(argv) {
   const inputDir = readFlagValue(argv, INPUT_FLAG_NAME);
@@ -27,6 +28,7 @@ export function parseMergeCliArguments(argv) {
   return {
     inputDir: inputDir === undefined ? DEFAULT_INPUT_DIR : inputDir,
     outputDir: outputDir === undefined ? DEFAULT_OUTPUT_DIR : outputDir,
+    preferLegacyFormat: hasSwitch(argv, PREFER_LEGACY_SWITCH.name),
     isVersionAsked: hasSwitch(argv, VERSION_SWITCH.name),
     isHelpAsked: hasSwitch(argv, HELP_SWITCH.name),
     unknownArguments: findUnknownArguments(argv, {

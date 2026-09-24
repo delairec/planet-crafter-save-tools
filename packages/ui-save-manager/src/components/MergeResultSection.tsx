@@ -3,8 +3,10 @@ import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeRe
 import {
   mergeResultSectionDownloadLinkLabel,
   mergeResultSectionFileCreatedMessage,
+  mergeResultSectionKeepLegacyFormatReminder,
   mergeResultSectionMergedSaveInvalidMessage,
   mergeResultSectionMergeFailedTitle,
+  mergeResultSectionMergeWarningsTitle,
   mergeResultSectionSaveAInvalidMessage,
   mergeResultSectionSaveAWarningsTitle,
   mergeResultSectionSaveBInvalidMessage,
@@ -52,6 +54,13 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
           </Show>
 
           <Show when={result().status === 'success'}>
+            <Show when={result().mergeWarnings.length > 0}>
+              <ValidationMessagesList title={mergeResultSectionMergeWarningsTitle} severity="warning"
+                                      messages={result().mergeWarnings}/>
+            </Show>
+            <Show when={result().legacyFormatCouldBeKept}>
+              <p>{mergeResultSectionKeepLegacyFormatReminder}</p>
+            </Show>
             <p class="text-color-success">{mergeResultSectionSuccessMessage}</p>
             <p>{mergeResultSectionFileCreatedMessage} <code>{result().fileName}</code> <a class="button-link"
                                                                                           href={downloadUrl() ?? undefined}

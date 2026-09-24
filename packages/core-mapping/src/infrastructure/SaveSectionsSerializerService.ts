@@ -9,6 +9,8 @@ import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
 export class SaveSectionsSerializerService implements SaveSectionsSerializerPort {
   serialize(sections: SaveSections): string {
     return serializeSave({
+      formatRelease: sections.formatRelease,
+      terrainLayers: sections.terrainLayers,
       metadata: sections.globalMetadata,
       terraformationLevels: sections.terraformationLevels,
       players: sections.players,

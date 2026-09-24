@@ -8,7 +8,7 @@
 {"id":58524136,"gId":"MagnetarQuartz"}|
 {"id":85274195,"gId":"Backpack4"}|
 {"id":48456321,"gId":"OxygenTank5"}|
-{"id":95585250,"gId":"WindTurbine2","pos":"0,0,0","planet":-440810600}
+{"id":95585250,"gId":"WindTurbine1","pos":"0,0,0","planet":-440810600}
 @
 {"id":44,"woIds":"79111656,58524136","size":20}|
 {"id":45,"woIds":"85274195,48456321","size":10}
@@ -19,7 +19,7 @@
 @
 
 @
-{"saveDisplayName":"Merged Save","planetId":"Toxicity","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":0.1,"modifierPowerConsumption":0.2,"modifierGaugeDrain":0.3,"modifierMeteoOccurence":0.4,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"1.0","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":42,"hasPlayedIntro":true,"gameStartLocation":"Standard"}
+{"saveDisplayName":"Merged Save","planetId":"Toxicity","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":0.1,"modifierPowerConsumption":0.2,"modifierGaugeDrain":0.3,"modifierMeteoOccurence":0.4,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"2.102","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":42,"hasPlayedIntro":true,"gameStartLocation":"Standard"}
 @
 
 @

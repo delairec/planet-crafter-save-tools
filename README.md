@@ -42,10 +42,10 @@ This is a Bun workspace monorepo, organized around package prefixes:
 | Package                  | Role                                                                                                                                 |
 |--------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                               |
-| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` arguments.                        |
+| `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` and `--name` arguments.           |
 | `util-types`             | `RuntimePlatform` contract type, consumed (type-only) by `shared-platforms`.                                                         |
 | `core-mapping`           | Merge and validation engines organized in Clean Architecture layers to be reusable accross multiple different frontends (CLIs, UIs). |
-| `cli-merge`              | Thin CLI: parses `--input`/`--output` arguments and delegates to `core-mapping`.                                                     |
+| `cli-merge`              | Thin CLI: parses `--input`/`--output`/`--prefer-legacy` arguments and delegates to `core-mapping`.                                   |
 | `cli-validate`           | Thin CLI: parses `--file` argument and delegates to `core-mapping`.                                                                  |
 | `ui-save-manager`        | SolidStart UI to visualize save files, consuming `core-mapping` controllers.                                                         |
 
@@ -101,10 +101,13 @@ code `0`, and the remaining folders are still processed. The merged save is your
 diagnostic in hand.
 
 ```
-bun merge -- --input=<directory> --output=<directory>
+bun merge -- --input=<directory> --output=<directory> --prefer-legacy
 ```
 
-Overrides the default `input` and `output` directories.
+Overrides the default `input` and `output` directories. When the two saves of a folder are written in different
+formats, the merged save takes the format of the more recent game release, and the command reports on stderr the
+format it wrote and the sections writing it dropped. `--prefer-legacy` writes the legacy format of 1.618 instead, for
+every folder of the run; the save manager offers the same choice as a checkbox beside its merge button.
 
 ```
 bun validate -- --file=<filepath>
@@ -127,9 +130,10 @@ bun validate -- --help
 Prints the help of the command — its invocation, then every argument it accepts with what it does — and exits with
 code `0` without reading anything, whatever other argument accompanies it. `-h` is not an alias.
 
-Both commands accept `--name=value` arguments and the `--version` and `--help` switches only, and act on none they do
-not know: an argument such as `--inpt=x`, `--input x`, a bare `--file` or `-h` is named on stderr, followed by the
-help, and the command exits with code `1` without reading anything. The value is taken whole, so a path or a directory name may hold an equals sign.
+Both commands accept `--name=value` arguments and the `--version` and `--help` switches only — `bun merge` the
+`--prefer-legacy` switch besides — and act on none they do not know: an argument such as `--inpt=x`, `--input x`, a
+bare `--file`, `--prefer-legacy=true` or `-h` is named on stderr, followed by the help, and the command exits with
+code `1` without reading anything. The value is taken whole, so a path or a directory name may hold an equals sign.
 
 ```
 bun test

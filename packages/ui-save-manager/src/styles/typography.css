@@ -176,10 +176,6 @@ code {
     text-align: center;
 }
 
-.text-color-inverted {
-    color: var(--inverted);
-}
-
 .text-color-muted {
     color: var(--muted);
 }

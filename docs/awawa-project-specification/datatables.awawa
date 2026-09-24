@@ -27,3 +27,10 @@ DATATABLE LegacyTerrainLayerProperties
 	KEY property
 	JSON_SCHEMA "scripts/validate-tables/schemas/legacyTerrainLayerProperties.schema.json"
 	DESC "the properties of an entry of the Terrain Layers section a legacy save carries"
+
+DATATABLE GameReleases
+	TABLE "packages/shared-save-processing/gameReleases.json"
+	KEY release
+	JSON_SCHEMA "scripts/validate-tables/schemas/gameReleases.schema.json"
+	DESC "the game releases HOLDS_FOR names, in release order, with the number of parts the saves"
+		+ "each writes split into"

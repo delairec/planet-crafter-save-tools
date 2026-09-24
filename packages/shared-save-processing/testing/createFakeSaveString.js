@@ -1,4 +1,4 @@
-/** @import { GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
+/** @import { GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, TerrainLayer, WorldEvent } from '../gameDefinitions' */
 
 /**
  * @typedef {{
@@ -71,7 +71,7 @@ export function createFakeSaveString({
 /**
  * Builds a save string in the legacy format (11 real sections, still containing the Terrain
  * Layers section removed by a later game update). Used to test backward compatibility only.
- * @param {{terrainLayers?: Array<{layerId: string, planet: number, colorBase: string}>} & FakeSaveOptions} options
+ * @param {{terrainLayers?: Array<Partial<TerrainLayer>>} & FakeSaveOptions} options
  * @returns {string}
  */
 export function createLegacyFakeSaveString({terrainLayers = [], ...options}) {

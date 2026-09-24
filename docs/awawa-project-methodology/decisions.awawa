@@ -81,7 +81,7 @@ DECISION ValidationIsTheSingleSourceOfWarnings
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SPEC "The validation result carries the warnings, never the parser"
 		IMPL "packages/core-mapping/src/application/ports/SaveValidationResult.ts::warnings:"
-			+ "SaveWarningCode[]"
+			+ "SaveWarning[]"
 		IMPL "packages/core-mapping/src/application/ports/SaveSectionsParserPort.ts::the single"
 			+ "source of warnings"
 	SPEC "Validation runs first in the four flows, and warnings are reported on every outcome,"
@@ -181,6 +181,7 @@ DECISION OneModuleAloneParsesASaveLine
 	SPEC "The parser is the only point of production code where a save line reaches JSON.parse;"
 		+ "validation and merge both use it"
 		IMPL "packages/shared-save-processing/parseSaveSections.js"
+		ENFORCED_BY "scripts/check-save-line-reader.spec.ts"
 	SPEC "Failure is per line and located, without taking down the valid entries around it"
 		IMPL "packages/shared-save-processing/parseSaveSections.js"
 	REJECTED "A second parser in the validator: the divergence let validation accept a save whose"
@@ -290,7 +291,8 @@ DECISION AMergeThatWritesAFileIsASuccess
 		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::const mergedSaveValidation ="
 			+ "this.validator.validate(fileName, content);"
 	SPEC "The errors of the merged file travel in a channel of their own; a merge success carries"
-		+ "the warnings of its two inputs only"
+		+ "the warnings of its two inputs and the merge's own warnings, never those of the"
+		+ "revalidation"
 		IMPL "packages/core-mapping/src/application/responses/MergeSucceededResponse.ts::mergeErrors"
 	SPEC "In the CLI, an invalid merged save does not make the exit code non-zero; a merge that"
 		+ "produced nothing does"
@@ -308,9 +310,10 @@ DECISION AMergeThatWritesAFileIsASuccess
 		PR 59
 
 DECISION NoMergeWarningChannelWithoutAProducer
-	SPEC "The merge exposes no warning channel on its output while no merge rule produces a"
-		+ "warning; the day one does, it is a single list under one name end to end"
-		IMPL "packages/core-mapping/src/application/responses/MergeSucceededResponse.ts"
+	SPEC "The merge output carries its own warnings on a single list under one name end to end,"
+		+ "opened by its first producer, the report of a merge of two formats"
+		IMPL "packages/core-mapping/src/application/responses/MergeSucceededResponse.ts::mergeWarnings:"
+			+ "MergeWarning[]"
 	REJECTED "Opening the channel ahead of need: an empty section and an identifier collision are"
 		+ "not producers"
 	REJECTED "Folding the output warnings into the per-input lists"
@@ -345,7 +348,7 @@ DECISION AMergeProducesAnOrdinarySave
 
 DECISION AnEmptyMetadataSectionIsRefusedByValidation
 	SPEC "Validation refuses a save whose section 0 carries no entry, before any merge"
-		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js::saveFileSchema.items[GLOBAL_METADATA_SECTION_INDEX].minItems"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js::findSaveFileSchema(formatRelease).items[sectionIndex].minItems"
 		ENFORCED_BY "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::When the"
 			+ "section carries no entry"
 	REJECTED "Falling back to default metadata: the merge would produce a save from two invalid"
@@ -567,6 +570,7 @@ DECISION ASectionIndexIsNeverHardCoded
 		+ "with a name and read from their module"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::PLAYERS_SECTION_INDEX"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::SAVE_SPLIT_PARTS_COUNT"
+		IMPL "packages/shared-save-processing/sectionIndexes.js::resolveSectionIndexes"
 	SPEC "No core-mapping spec hard-codes a section index; the number in an expected message stays"
 		+ "literal"
 		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
@@ -575,10 +579,13 @@ DECISION ASectionIndexIsNeverHardCoded
 		+ "what it pins"
 	REJECTED "Renaming sections to parts and data sections: section is the word of the public"
 		+ "vocabulary"
+	REJECTED "Destructuring the sections by position, holes included: each position is a section"
+		+ "index written without its name"
 	RESTS_ON @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	SOURCE "Owner ruling in review"
 		PR 47
 		PR 82
+		PR 141
 
 DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 	UNTIL "fallow follows the @import tag"
@@ -1085,14 +1092,26 @@ DECISION TheEraIsNotTheArchive
 		+ "from the context packages citing it"
 
 DECISION AnAnchorNamesAFileTrackedByGit
-	SPEC "Every anchor of the corpus names a file git tracks, never a path under input, output or"
-		+ ".do-not-commit"
+	SPEC "Every anchor of an active entity names a file git tracks, never a path under input,"
+		+ "output or .do-not-commit"
 		IMPL "agents/corpus-ecrire.md::Une ancre nomme un fichier suivi par git"
 		ENFORCED_BY "scripts/check-corpus-anchors.ts"
+	SPEC "The anchors of an archived entity are not checked"
+		IMPL "scripts/check-corpus-anchors.ts::ARCHIVED_STATUS"
+		ENFORCED_BY "scripts/check-corpus-anchors.spec.ts::When an entity is archived after the"
+			+ "anchors it writes"
 	REJECTED "Anchoring an attestation on a reference save: the anchor resolves for its author"
 		+ "alone"
-	RATIONALE "L016 tests existence on disk and never consults git"
+	REJECTED "Checking the anchors of an archived entity too: its IMPL may name the module the pull"
+		+ "request retiring it deleted, and the entity would have to be deleted rather than"
+		+ "archived to pass the guard"
+	RATIONALE "L016 tests existence on disk and never consults git; awawa suppresses every check of"
+		+ "an archived entity, and the guard follows it"
+		REF @DECISION.TheEraIsNotTheArchive
 	SOURCE "Review of the target schema"
+	SOURCE "Review of FEAT93: a decision retired by the task was deleted because the guard refused"
+		+ "its archived IMPL"
+		PR 146
 
 DECISION AGameReleaseIsCitedAsASource
 	SPEC "What was observed in the game is sourced by a GAME_RELEASE entity named by the version"
@@ -1156,7 +1175,7 @@ DECISION TheMergedSaveDisplayNameComesFromTheCaller
 	SPEC "saveDisplayName is overridden with the value the caller passes to the merge, taken from"
 		+ "the input folder name"
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts::{...saveConfiguration,"
-			+ "saveDisplayName}"
+			+ "saveDisplayName,"
 		ENFORCED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
 			+ "use the saveDisplayName parameter and take save configuration from save A"
 	SPEC "every @ of that value, the section separator of the save format, is replaced by _"
@@ -1231,41 +1250,91 @@ DECISION APullRequestIsCitedByItsNumberNeverByAnEntity
 DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 	SPEC "The code reads a save by what it carries, never by its declared version alone: the format"
 		+ "of 1.618 and earlier is recognised by its twelve parts"
-		IMPL "packages/shared-save-processing/normalizeRawSections.js::rawParts.length ==="
+		IMPL "packages/shared-save-processing/parseSaveSections.js::splitPartsCount ==="
 			+ "LEGACY_SPLIT_PARTS_COUNT"
+	SPEC "The releases HOLDS_FOR names are the rows of one table, in release order, each with the"
+		+ "number of parts the saves it writes split into"
+		IMPL "packages/shared-save-processing/gameReleases.json"
+	SPEC "A declared version resolves to the last release of the table not later than it, a version"
+		+ "earlier than the first release to the first release, and a version not made of"
+		+ "dot-separated numbers to none"
+		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %s to the last"
+			+ "release not later than it"
+		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %s to the first"
+			+ "release"
+		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %p to no release"
+	SPEC "A save whose parts contradict the release its version resolves to raises a warning naming"
+		+ "the declared version, that release and the first release whose format it carries, and is"
+		+ "still read by what it carries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should warn that the"
+			+ "release its version declares contradicts the format it carries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should still read the save"
+			+ "by the format it carries"
+		IMPL "packages/core-mapping/src/presentation/formatSaveWarning.spec.ts::should name the"
+			+ "declared version, its release and the release whose format the save carries"
 	APPLIES_TO_TASK @TASK.FEAT89
 	REJECTED "Reading a save by its declared version alone: a hand-edited save contradicts its"
 		+ "version"
 	REJECTED "Ignoring the declared version: a contradiction would pass without a word"
 		REF @OPEN_QUESTION.DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
+	REJECTED "Refusing a save that contradicts its version: the content is the fact, and the save"
+		+ "stays readable"
+	REJECTED "Leaving a version earlier than the first release unresolved: the releases before"
+		+ "1.618 write its format"
+	REJECTED "A list of versions of its own for each later check, such as the release that removed"
+		+ "a group id: the table gains a column instead"
 	RATIONALE "The version is a claim of the save, the content its fact; a contradiction is"
 		+ "reported"
 	SOURCE "Owner ruling"
 		REF @TASK.DOCS86
+	SOURCE "The table, the resolution of a declared version and the contradiction warning, on"
+		+ "delivery of the task"
+		PR 124
 
 DECISION ColorTokenPairsMeetWcagAaByCatalog
-	SPEC "Every text/background token pair packages/ui-save-manager/src/styles/ composes reaches"
-		+ "WCAG 2.1 AA, 4.5:1, in both themes"
+	SPEC "Every text/background token pair the stylesheets of packages/ui-save-manager/src compose"
+		+ "reaches WCAG 2.1 AA, 4.5:1, in both themes"
 		IMPL "packages/ui-save-manager/src/styles/colors.css"
 		ENFORCED_BY "scripts/check-color-contrast.ts::MINIMUM_CONTRAST_RATIO"
 	SPEC "The pairs checked are the ones the stylesheet and its components actually compose,"
 		+ "curated once from the component tree, not every declared token crossed with every other"
 		IMPL "scripts/check-color-contrast.ts::TOKEN_PAIRS"
 		ENFORCED_BY "scripts/check-color-contrast.ts::findUncataloguedForegroundDeclarations"
+	SPEC "A color: declaration is covered only by a pair naming its stylesheet, its rule's selector"
+		+ "and its token, the pair stating the background that selector renders on"
+		IMPL "scripts/check-color-contrast.ts::isCoveredByCatalog"
+		ENFORCED_BY "scripts/check-color-contrast.spec.ts::the background of that selector being"
+			+ "uncatalogued"
+	SPEC "A color: declaration names a token as var(--token); a literal or a keyword is reported"
+		IMPL "scripts/check-color-contrast.ts::names no color token"
+		ENFORCED_BY "scripts/check-color-contrast.spec.ts::as naming no color token"
+	SPEC "Every stylesheet of packages/ui-save-manager/src is scanned, app.css included"
+		IMPL "scripts/check-color-contrast.ts::packages/ui-save-manager/src/**/*.css"
+		ENFORCED_BY "scripts/check-color-contrast.spec.ts::app.css included"
 	REJECTED "WCAG 2.1 AAA (7:1): unreachable by the neon accent palette (--neon-pink,"
 		+ "--neon-purple, --neon-cyan) without abandoning the palette's own identity"
 	REJECTED "The full cross-product of every declared color token, text or not: produces pairs no"
 		+ "component ever renders and would force narrowing tokens nobody sees adjacent"
 	REJECTED "A one-off manual verification: the task's SPEC asks for an automated check that fails"
 		+ "the build"
+	REJECTED "Coverage keyed on the (token, file) pair: a second declaration of a token catalogued"
+		+ "for that stylesheet passes in silence over a background nobody checked"
+	REJECTED "Reading the background from the declaring rule's own background property: most text"
+		+ "inherits its background from an ancestor, which a stylesheet scan cannot see"
+	REJECTED "Letting inherit or currentColor through: the pair they render depends on an ancestor"
+		+ "the catalog does not name for that selector"
 	RATIONALE "The task's SPEC left the threshold and the verification method open. WCAG 2.1 AA is"
 		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
 		+ "-rendered DOM, a gap @TASK.CHORE91 studies closing with axe-core"
 		REF @TASK.CHORE91
 	APPLIES_TO_TASK @TASK.FIX53
+	APPLIES_TO_TASK @TASK.CHORE99
 	SOURCE "the launching command's defensible-option guidance, checked against the palette before"
 		+ "ratifying"
 		PR 121
+	SOURCE "CHORE99's delivery: the catalog keyed on the selector, literals reported, every"
+		+ "stylesheet of the package scanned"
+		PR 150
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	REJECTED "Moving TreePlanter3, PodUnderground and RocketAnimals2 into the machines the"
@@ -1293,6 +1362,186 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
 		PR 120
+
+DECISION ASaveKeepsTheFormatItWasWrittenIn
+	SPEC "loading a save keeps every part it carries: no section is dropped and no index is shifted"
+		+ "to bring the save to a single canonical format"
+		IMPL "packages/shared-save-processing/parseSaveSections.js"
+	SPEC "the format a save was read in travels with it and is the format it is written back in, so"
+		+ "reading a save and writing it back reproduces the part count of the file read"
+		IMPL "packages/shared-save-processing/serializeSave.js"
+	SPEC "the legacy-save-format warning states that the save was written by an earlier game"
+		+ "release, never that the loader adapted it"
+		IMPL "packages/core-mapping/src/presentation/messages/saveWarningMessages.js"
+	SPEC "the save manager and the two commands read, validate and write every format the corpus"
+		+ "names, and none of them assumes one"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsParserService.ts"
+	REJECTED "Converting a legacy save to the current format at the user-input boundary: a merge"
+		+ "whose save A was legacy then wrote a file declaring 1.618 in eleven parts, a"
+		+ "contradiction our own validator warns on"
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "The canonical eleven-part format was a convenience of the loader, and it made the"
+		+ "tool rewrite a file the user did not ask to convert; the corpus already describes both"
+		+ "formats through INDEX and LEGACY_INDEX, so it is the code that catches up"
+		REF @SECTION.TerrainLayers
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+
+DECISION AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+	SPEC "when the two saves are written in different formats, the merged save is written in the"
+		+ "format of the more recent of the two releases"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts"
+	SPEC "the save manager offers a checkbox and the merge command an option, both off by default"
+		+ "and both asking for the legacy format, so the two surfaces carry one polarity"
+		IMPL "packages/cli-merge/cli/parseMergeCliArguments.js::PREFER_LEGACY_SWITCH"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::preferLegacyFormat"
+	SPEC "a merge whose two saves differ in format reports the format it wrote and what writing it"
+		+ "dropped; the report names the option that would have kept the legacy format whenever"
+		+ "that option was not applied"
+		IMPL "packages/cli-merge/cli/renderMergeCliOutput.js::export function renderMergeReport"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::legacyFormatCouldBeKept"
+	SPEC "a merge that writes the earlier of the two formats carries the content of the later save"
+		+ "unchanged and reports that a game of the earlier release may not know part of it and"
+		+ "drop it on load"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::merged-save-content-newer-than-format"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::the content the earlier"
+			+ "release may not know"
+	SPEC "the Terrain Layers section is written whenever the format written carries one, taken from"
+		+ "save A when both saves carry it and from the save that carries it otherwise; the format"
+		+ "written carrying none, it is dropped and the merge reports it"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeTerrainLayers.ts"
+	SPEC "the version the merged save configuration declares is the one of the save whose format is"
+		+ "written"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveSections.ts::declaredVersion:"
+			+ "writtenFormatSave.saveConfigurations[0]?.version"
+	REJECTED "Declaring the release of the format written in place of a version: two saves of 2.103"
+		+ "merged would declare 2.004, a patch level lost on the ordinary merge"
+	REJECTED "Keeping the Terrain Layers section only when both saves carry it: a legacy merge"
+		+ "asked for would lose the layers of its only legacy save"
+	REJECTED "Removing from a legacy merge what the earlier release does not know: no table of the"
+		+ "objects each release knows exists, and the tool would drop what the game may keep"
+	REJECTED "Refusing a merge of two different formats: it blocks the use the tool exists for,"
+		+ "folding an old save into a current one"
+	REJECTED "Writing the format of save A without asking: the output is then not readable by the"
+		+ "installed game whenever save A is the older of the two"
+	RESTS_ON @RULE.SaveConfigurationComesFromSaveA
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "The user knows which game release they will open the result in and the tool does"
+		+ "not; the default is the one that opens in the installed game, and the report is what"
+		+ "tells a user who wanted the other that the option exists"
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+	SOURCE "Owner review, 2026-09-24: asked whether a legacy merge of a current save drops what the"
+		+ "earlier release does not know, and whether it warns of that loss"
+		PR 127
+	SOURCE "Owner's manual test in game 2.103, 2026-09-24: the legacy merge of the legacy and Skeo"
+		+ "fixtures loads, is written back in the current format on save, keeps logisticsPaused"
+		+ "true and drops no item; the load in 1.618 is not observed yet"
+		PR 127
+		REF @GAME_RELEASE.2.103
+		REF @HYPOTHESIS.AGameOf1618DropsTheContentItDoesNotKnow
+	ASSUMES @HYPOTHESIS.AGameOf1618DropsTheContentItDoesNotKnow
+
+DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
+	SPEC "a world object or an item whose group id a release deprecated is read, validated and"
+		+ "merged like any other, and is never converted, flagged nor dropped"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts"
+		IMPL "packages/core-mapping/src/infrastructure/SaveValidatorService.spec.ts::should return"
+			+ "a valid result with no warning for %s"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should write those group ids unchanged"
+			+ "when the other save declares release %s"
+	REJECTED "Converting Phytoplankton2 and Phytoplankton3 to the remaining phytoplankton: the game"
+		+ "keeps both ids itself, so the tool would write what the game never writes"
+	REJECTED "Dropping a deprecated object: it destroys content a save legitimately carries"
+	REJECTED "A table of deprecated group ids by release: nothing reads it once no conversion"
+		+ "happens, and the release table of FEAT89 already carries what the code tells apart"
+	RESTS_ON @RULE.TheGameKeepsDeprecatedPhytoplanktonGroupIds
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.TEST68
+	RATIONALE "The same ground as the format: the tool returns the save the user gave it, and"
+		+ "rewriting a value the game itself keeps would be a conversion nobody asked for"
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+	SOURCE "Owner ruling, 2026-09-22, on the wave carried by integration/save-format-preserved"
+
+DECISION CoreMappingReadsTheCurrentFormatThroughOneSelection
+	SPEC "core-mapping reads the sections of a parsed save at the indexes of the format of 2.004,"
+		+ "through one selection that leaves out the Terrain Layers section of a 1.618 save"
+		IMPL "packages/core-mapping/src/infrastructure/selectCurrentFormatSections.ts::selectCurrentFormatSections"
+	SPEC "a merge writes the format of 2.004, whatever the formats of its two saves"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsSerializerService.ts"
+	REJECTED "Making core-mapping reach each section by the index the format of its save gives it"
+		+ "in the task that keeps every part in shared-save-processing: that is the scope of the"
+		+ "task that follows it"
+		REF @TASK.FEAT93
+	UNTIL @TASK.FEAT93
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT92
+	RATIONALE "shared-save-processing now returns every part a save carries; one selection keeps"
+		+ "core-mapping on the only format it reads until FEAT93 makes it format-aware, instead of"
+		+ "spreading index shifts through each caller"
+	SOURCE "Agent ruling while implementing FEAT92, 2026-09-24"
+		PR 141
+	STATUS archived
+	ARCHIVED_ON "2026-09-24"
+
+DECISION EachSaveFormatIsValidatedByAWholeFileSchemaOfItsOwn
+	SPEC "each save format has a whole-file schema pinned to its part count, and an entry is"
+		+ "validated against the section schema that whole-file schema names at the index of the"
+		+ "entry"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::findSaveFileSchema"
+		IMPL "packages/shared-save-processing/schemas/legacy-save-file.schema.json"
+		ENFORCED_BY "packages/core-mapping/src/infrastructure/validateSchemas.spec.js"
+	SPEC "a validation issue or a parse error located in a section carries the release whose format"
+		+ "the save carries, and its location is named by the section that format gives the index"
+		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.ts"
+		ENFORCED_BY "packages/core-mapping/src/presentation/formatErrorLocation.spec.ts"
+	REJECTED "One whole-file schema loosened to admit eleven or twelve parts: it validates the"
+		+ "Terrain Layers entries of a legacy save against the world events schema, or catches"
+		+ "nothing"
+	REJECTED "Choosing the schema by the version the save declares: a save is never discriminated"
+		+ "by its version alone"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+	RESTS_ON @RULE.ALegacySaveCarriesTerrainLayersInTwelveParts
+	RATIONALE "The part count decides which section sits at each index, so a validator reading the"
+		+ "indexes of one format misreads the other"
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT93: two schemas rather than one loosened schema"
+		PR 146
+
+DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
+	SPEC "a merge of two saves of the same format leaves its warning list empty, whether or not the"
+		+ "legacy format was asked for"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::function"
+			+ "reportMergedSaveFormat"
+	SPEC "asking for the legacy format when both saves carry the same format writes that format"
+		IMPL "packages/core-mapping/src/domain/rules/merge/selectWrittenFormatSave.ts::return"
+			+ "mainSave;"
+	SPEC "the format written is chosen by comparing the releases whose formats the two saves carry,"
+		+ "never by which of them carries the Terrain Layers section"
+		IMPL "packages/shared-save-processing/gameReleases.js::export function compareGameReleases"
+	SPEC "a warning naming a dropped section names it by its section name, never by its index nor"
+		+ "its label"
+		IMPL "packages/core-mapping/src/application/responses/MergeWarning.ts::section:"
+			+ "SaveSectionName"
+	REJECTED "Writing the legacy format for two current saves when it is asked for: the Terrain"
+		+ "Layers section would be invented empty, no save carrying it"
+	REJECTED "Naming a dropped section by its index: the index depends on the format, and the label"
+		+ "belongs to the presentation"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT94
+	RATIONALE "The report exists to tell a user what the merge changed in the format of a save; two"
+		+ "saves of one format lose nothing, and a report there would be noise on every ordinary"
+		+ "merge"
+		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+	SOURCE "Agent ruling while implementing FEAT94, 2026-09-24"
+		PR 151
 
 DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
 	SPEC "A task branch runs bun test, bun run lint:types, bun run check:guards, bun run"

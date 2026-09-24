@@ -283,20 +283,17 @@ SCHEMA SECTION
 		REPEATABLE
 		CATEGORY attestation
 		DESC "the committed fixture, JSON Schema, test or document that proves the index"
-	WHEN HOLDS_FOR @GAME_RELEASE.2.004
+	FIELD INDEX uint
+		REQUIRED
+		DESC "the position of the section in the format the last release HOLDS_FOR names writes;"
+			+ "unique among the sections of that format alone"
+	WHEN STATUS active
 		INCOMING CONSTRAINED_BY
-		FIELD INDEX uint
-			REQUIRED
-			DESC "the position of the section in the format 2.004 and later releases write"
 	WHEN HOLDS_FOR @GAME_RELEASE.1.618
 		FIELD LEGACY_INDEX uint
 			REQUIRED
 			DESC "the position of the section in the format 1.618 and earlier releases write"
 	WHEN HOLDS_FOR all
-		INCOMING CONSTRAINED_BY
-		FIELD INDEX uint
-			REQUIRED
-			DESC "the position of the section in the format 2.004 and later releases write"
 		FIELD LEGACY_INDEX uint
 			REQUIRED
 			DESC "the position of the section in the format 1.618 and earlier releases write"

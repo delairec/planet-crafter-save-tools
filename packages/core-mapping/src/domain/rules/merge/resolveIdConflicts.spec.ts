@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'bun:test';
 import {resolveIdConflicts} from './resolveIdConflicts';
 import {MergedSaveSections} from './MergedSaveSections';
-import {Player} from 'shared-save-processing/gameDefinitions';
+import {Player, TerrainLayer} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
-import {createGlobalMetadata, createPlayer, createSaveConfiguration, createStatistics} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createGlobalMetadata, createPlayer, createSaveConfiguration, createStatistics, createTerrainLayer} from 'shared-save-processing/testing/createSaveRecords.js';
 import {InventoryEntry} from '../../save/InventoryEntry';
 import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
@@ -11,9 +11,12 @@ describe('Resolve id conflicts', () => {
   function createMergedSections(overrides: {
     players?: EntriesByOrigin<Player>,
     inventories?: EntriesByOrigin<InventoryEntry>,
-    worldObjects?: EntriesByOrigin<WorldObjectEntry>
+    worldObjects?: EntriesByOrigin<WorldObjectEntry>,
+    formatRelease?: string,
+    terrainLayers?: TerrainLayer[]
   }): MergedSaveSections {
     return {
+      formatRelease: '2.004',
       globalMetadata: createGlobalMetadata(),
       terraformationLevels: [],
       players: {fromSaveA: [], fromSaveB: []},
@@ -23,6 +26,7 @@ describe('Resolve id conflicts', () => {
       mailboxes: [],
       storyEvents: [],
       saveConfiguration: undefined,
+      terrainLayers: undefined,
       worldEvents: [],
       ...overrides
     };
@@ -268,6 +272,21 @@ describe('Resolve id conflicts', () => {
       // Assert
       expect(result.statistics).toEqual([]);
       expect(result.saveConfigurations).toEqual([]);
+    });
+  });
+
+  describe('When the merged save is written in the format of 1.618', () => {
+    it('should carry that format and its Terrain Layers section', () => {
+      // Arrange
+      const terrainLayer = createTerrainLayer({layerId: 'PC-Toxicity-Layer1'});
+      const sections = createMergedSections({formatRelease: '1.618', terrainLayers: [terrainLayer]});
+
+      // Act
+      const result = resolveIdConflicts(sections);
+
+      // Assert
+      expect(result.formatRelease).toBe('1.618');
+      expect(result.terrainLayers).toEqual([terrainLayer]);
     });
   });
 });

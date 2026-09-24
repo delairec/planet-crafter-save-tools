@@ -18,10 +18,21 @@ import {
   OUTPUT_DIR
 } from '../testing/fakePaths.js';
 import {MERGE_CLI_HELP} from '../testing/mergeCliHelp.js';
+import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
+import {createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 
 const NO_INPUT_FOLDERS = [];
 const CLI_RELEASE = {name: 'cli-merge', version: '1.4.2'};
 const SINGLE_SAVE_FILENAME = 'only-one.json';
+const KEEP_LEGACY_FORMAT_REMINDER = '  Run the merge again with --prefer-legacy to write the legacy format instead.';
+const SAVE_CARRYING_DEPRECATED_GROUP_IDS = createFakeSaveContent({
+  worldObjects: [
+    createWorldObject({id: 79111656, gId: 'Phytoplankton2'}),
+    createWorldObject({id: 79111657, gId: 'Phytoplankton3'})
+  ]
+});
+const WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID = [createWorldObject({id: 15974863, gId: 'Phytoplankton1'})];
 
 describe('Merge CLI', () => {
   let consoleLogSpy;
@@ -167,9 +178,8 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(writeTextFile).toHaveBeenCalledTimes(2);
-      const outputPaths = writeTextFile.mock.calls.map(call => call[0]);
-      expect(outputPaths).toContain(MERGED_SAVE_OUTPUT_PATH);
-      expect(outputPaths).toContain(EXPECTED_OUTPUT_PATH_BETA);
+      expect(writeTextFile.mock.calls[0][0]).toBe(MERGED_SAVE_OUTPUT_PATH);
+      expect(writeTextFile.mock.calls[1][0]).toBe(EXPECTED_OUTPUT_PATH_BETA);
     });
   });
 
@@ -452,12 +462,12 @@ describe('Merge CLI', () => {
       serveSaves({[SAVE_A_INPUT_PATH]: LEGACY_FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
     });
 
-    it('should warn about the format adaptation of the affected save', async () => {
+    it('should warn that the affected save was written by 1.618 or earlier', async () => {
       // Act
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith('  [save A] This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.');
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  [save A] This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.');
     });
 
     it('should name the folder the warning comes from', async () => {
@@ -482,6 +492,106 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(exitProcess).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('When the two saves of a folder carry different formats', () => {
+    beforeEach(() => {
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      serveSaves({[SAVE_A_INPUT_PATH]: LEGACY_FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
+    });
+
+    it('should report the format written and the section writing it dropped, naming the folder', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`⚠ Folder "${INPUT_SUBFOLDER_ALPHA}" was merged with warnings:`);
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  The two saves carry different formats; the merged save is written in the format of release 2.004.');
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  Writing that format dropped the Terrain layers section.');
+    });
+
+    it('should tell how to keep the legacy format', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith(KEEP_LEGACY_FORMAT_REMINDER);
+    });
+
+    it('should leave the merged output path alone on stdout', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleLogSpy.mock.calls).toEqual([[MERGED_SAVE_OUTPUT_PATH]]);
+    });
+
+    describe('When the legacy format is asked for', () => {
+      beforeEach(() => {
+        ({main} = initCli(['--prefer-legacy']));
+      });
+
+      it('should write the merged save in the legacy format', async () => {
+        // Act
+        await main();
+
+        // Assert
+        const {formatRelease} = parseSaveSections(writeTextFile.mock.calls[0][1]);
+        expect(formatRelease).toBe('1.618');
+      });
+
+      it('should report the legacy format written', async () => {
+        // Act
+        await main();
+
+        // Assert
+        expect(consoleErrorSpy).toHaveBeenCalledWith('  The two saves carry different formats; the merged save is written in the format of release 1.618.');
+      });
+
+      it('should not tell how to keep the legacy format it kept', async () => {
+        // Act
+        await main();
+
+        // Assert
+        expect(consoleErrorSpy).not.toHaveBeenCalledWith(KEEP_LEGACY_FORMAT_REMINDER);
+      });
+    });
+  });
+
+  describe('When the legacy format is asked for a run of two folders', () => {
+    const FOLDER_BETA = 'Beta';
+
+    it('should write the legacy format in the merged save of each folder', async () => {
+      // Arrange
+      ({main} = initCli(['--prefer-legacy']));
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA, FOLDER_BETA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readTextFile.mockImplementation(path => Promise.resolve(path.endsWith(SAVE_A_FILENAME) ? LEGACY_FAKE_SAVE_STRING_A : FAKE_SAVE_STRING_B));
+
+      // Act
+      await main();
+
+      // Assert
+      expect(parseSaveSections(writeTextFile.mock.calls[0][1]).formatRelease).toBe('1.618');
+      expect(parseSaveSections(writeTextFile.mock.calls[1][1]).formatRelease).toBe('1.618');
+    });
+  });
+
+  describe('When the two saves of a folder carry the same format', () => {
+    it('should report no merge warning', async () => {
+      // Arrange
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      serveSaves({[SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
+
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(`⚠ Folder "${INPUT_SUBFOLDER_ALPHA}" was merged with warnings:`);
     });
   });
 
@@ -631,6 +741,30 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(exitProcess).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('When one save of a folder carries group ids that game release 2.102 deprecated', () => {
+    it.each([
+      ['1.618', createLegacyFakeSaveContent({worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID})],
+      ['2.004', createFakeSaveContent({worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID})],
+      ['2.102', createFakeSaveContent({
+        saveConfiguration: createSaveConfiguration({version: '2.102'}),
+        worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID
+      })]
+    ])('should write those group ids unchanged when the other save declares release %s', async (_otherSaveRelease, otherSave) => {
+      // Arrange
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      serveSaves({[SAVE_A_INPUT_PATH]: SAVE_CARRYING_DEPRECATED_GROUP_IDS, [SAVE_B_INPUT_PATH]: otherSave});
+
+      // Act
+      await main();
+
+      // Assert
+      const writtenContent = writeTextFile.mock.calls[0][1];
+      expect(writtenContent).toContain('{"id":79111656,"gId":"Phytoplankton2"}');
+      expect(writtenContent).toContain('{"id":79111657,"gId":"Phytoplankton3"}');
     });
   });
 });

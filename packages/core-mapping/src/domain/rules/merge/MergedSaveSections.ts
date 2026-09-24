@@ -6,20 +6,15 @@ import {
   Statistics,
   StoryEvent,
   TerraformationLevel,
+  TerrainLayer,
   WorldEvent
 } from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
 import {InventoryEntry} from '../../save/InventoryEntry';
 import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
-/**
- * The ten sections of a save once merged, still structured: serialization happens in
- * infrastructure, after id conflict resolution.
- *
- * Statistics and the save configuration are single-entry sections, absent when neither save
- * carries them.
- */
 export interface MergedSaveSections {
+  readonly formatRelease: string;
   readonly globalMetadata: GlobalMetadata;
   readonly terraformationLevels: readonly TerraformationLevel[];
   readonly players: EntriesByOrigin<Player>;
@@ -29,5 +24,6 @@ export interface MergedSaveSections {
   readonly mailboxes: readonly MailboxMessage[];
   readonly storyEvents: readonly StoryEvent[];
   readonly saveConfiguration: SaveConfiguration | undefined;
+  readonly terrainLayers: readonly TerrainLayer[] | undefined;
   readonly worldEvents: readonly WorldEvent[];
 }
