@@ -28,36 +28,36 @@
 <div align="center" width="100%">
 <div>
 
-  ## 👉 [Open the Save Manager in browser](https://planet-crafter-save-manager.netlify.app/) — nothing to install
+  ## [Open the Save Manager in browser](https://planet-crafter-save-manager.netlify.app/) — nothing to install
 
 <p>
   <a href="docs/assets/welcome-page-dark.png"><picture>
     <source media="(prefers-color-scheme: light)" srcset="docs/assets/welcome-page-light-thumbnail.png">
-    <img src="docs/assets/welcome-page-dark-thumbnail.png" width="300" alt="Merging two saves in the Save Manager">
+    <img src="docs/assets/welcome-page-dark-thumbnail.png" width="300" alt="Merging two saves in the Save Manager (full size)">
   </picture></a>
   <a href="docs/assets/display-page-dark.png"><picture>
     <source media="(prefers-color-scheme: light)" srcset="docs/assets/display-page-light-thumbnail.png">
-    <img src="docs/assets/display-page-dark-thumbnail.png" width="300" alt="Looking inside a save in the Save Manager">
+    <img src="docs/assets/display-page-dark-thumbnail.png" width="300" alt="Looking inside a save in the Save Manager (full size)">
   </picture></a>
 </p>
-<p><sub>Click a screenshot to open it full size — light theme:
-<a href="docs/assets/welcome-page-light.png">merge</a>, <a href="docs/assets/display-page-light.png">save view</a>.</sub></p>
+<p><sub>Open a screenshot at full size, or see the <a href="docs/assets/welcome-page-light.png">merge in the light theme</a>
+and the <a href="docs/assets/display-page-light.png">save view in the light theme</a>.</sub></p>
 </div>
 </div>
 
 ## What you can do
 
-- 🔀 **Merge two saves** into one world, ready to load in the game — pick which format to write when the two saves
+- **Merge two saves** into one world, ready to load in the game — pick which format to write when the two saves
   come from different game versions.
-- 🔍 **Look inside a save**: progression, terraformation levels, players, energy balance, world settings.
-- ✅ **Check a save** against the game's format, and see exactly which part is wrong when it is not.
+- **Look inside a save**: progression, terraformation levels, players, energy balance, world settings.
+- **Check a save** against the game's format, and see exactly which part is wrong when it is not.
 
-🔒 **Your saves stay on your computer.** Everything runs in your browser: the page never sends a save anywhere.
+**Your saves stay on your computer.** Everything runs in your browser: the page never sends a save anywhere.
 
 ### Coming next
 
-- ✏️ Editing a save, beyond viewing it.
-- 🩹 Recovering what can be saved from a corrupted file.
+- Editing a save, beyond viewing it.
+- Recovering what can be saved from a corrupted file.
 
 ## How to merge two worlds
 
@@ -106,7 +106,7 @@ production is published by hand from a `ui-save-manager-v*` tag, and the deploy 
 
 ## Under the hood: how the merge decides
 
-> 📖 **[`docs/awawa-project-specification/rules.awawa`](./docs/awawa-project-specification/rules.awawa) is the single
+> **[`docs/awawa-project-specification/rules.awawa`](./docs/awawa-project-specification/rules.awawa) is the single
 > source of truth for every merge decision.** Each entity states the conflict it settles (`CONFLICT`), how it settles
 > it (`RESOLUTION`), one falsifiable obligation per `SPEC`, and the test that proves each one (`ATTESTED_BY`). The
 > file is plain text and reads as it is; `awawa show @RULE.<Name> docs/` prints one entity, `awawa context
