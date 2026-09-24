@@ -98,7 +98,7 @@ Depuis la racine du dépôt (workspace Bun) :
   Aucune ne lit l'historique git, elles répondent en une fraction de seconde : c'est la moitié d'`audit:quality` à
   lancer en cours d'écriture.
 - `bun run check:dependencies` — vérifie la matrice de dépendances par préfixe (manifestes et imports, imports
-  type-only et directives JSDoc `@import` compris). La matrice est documentée dans le `README.md` public.
+  type-only et directives JSDoc `@import` compris). La matrice est documentée dans `docs/wiki/architecture.md`.
 - `bun run audit` — `bun audit` sur les dépendances de production et de développement, au seuil `moderate` ; le
   workflow `Dependencies` le lance sur chaque pull request, chaque push sur `master` et une fois par mois sur `master`.
 - `bun run release:verify` — toutes les vérifications qu'une release doit passer sur le commit qu'elle étiquette

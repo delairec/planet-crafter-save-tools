@@ -2152,3 +2152,51 @@ TASK CHORE116
 		+ "BRANCH and MILESTONE from the wave instead of asking, and to pass the milestone to the"
 		+ "pull request it opens"
 	SOURCE "Owner request and refinement, session of 2026-09-24"
+
+TASK FEAT119
+	TITLE "a save file is dropped on the Save Manager instead of being picked"
+	STATUS todo
+	SPEC "a JSON file dropped on the display area is selected exactly as if picked with its file"
+		+ "input"
+	SPEC "a JSON file dropped on the save A or the save B area of the merge section is selected for"
+		+ "that save"
+	SPEC "two JSON files dropped together on the merge section fill save A and save B in the"
+		+ "alphabetical order of their names, the order the command gives a folder"
+	SPEC "a button between save A and save B swaps the two selected files, as a route planner swaps"
+		+ "origin and destination"
+	SPEC "a drop an area cannot take — a file that is not JSON, two files on a single-file area,"
+		+ "more than two on the merge section — selects nothing and says why next to the area"
+	SPEC "an area shows that it accepts the drop while a file is dragged over it"
+	SPEC "a file dropped outside every area leaves the page in place instead of opening the file"
+	SPEC "every file input stays, so a file can still be picked with the keyboard"
+	SPEC "UI scenarios on the three engines drop a file on the display area, one on a merge slot"
+		+ "and two at once on the merge section"
+	SPEC "the README merge steps say the two files are dropped or picked"
+	RATIONALE "Picking a save means walking to a hidden AppData folder in a file dialog, twice for"
+		+ "a merge; a drop from the file explorer already open on that folder is the gesture"
+		+ "players expect. The order of a two-file drop matters only when neither save or both name"
+		+ "Prime (@RULE.TheSaveOnPrimeBecomesSaveA); taking the alphabetical order keeps the web UI"
+		+ "and the command merging the same pair the same way, and the swap button reverses it when"
+		+ "that is not the pair the player meant; a save that alone names Prime stays save A"
+		+ "whatever the order"
+		REF @RULE.TheSaveOnPrimeBecomesSaveA
+	SOURCE "Owner request after the README rewrite described picking the files"
+		PR 165
+
+TASK FEAT120
+	TITLE "a changelog entry lists only the feat, fix and breaking commits of the version"
+	STATUS todo
+	SPEC "a changelog entry lists the commits whose subject has the type feat or fix, with or"
+		+ "without a scope, and every commit whose subject carries a ! whatever its type, in the"
+		+ "order bun run release reads them"
+	SPEC "a commit of any other type — chore, docs, refactor, ci, test, build — carrying no ! is"
+		+ "left out of the entry"
+	SPEC "the version a tool takes is still computed from every commit since its last tag"
+	SPEC "a version whose commits hold no feat, no fix and no ! gets an entry with the single line"
+		+ "- Maintenance changes only"
+	RATIONALE "The changelog is the release note of each tool, and the user reads it for what"
+		+ "changed in the tool; chore and docs titles such as dependency bumps or corpus edits say"
+		+ "nothing to a player and bury the features and fixes"
+		REF @LIMITATION.AVersionTagCreatesNoGitHubRelease
+	SOURCE "Owner request after reading the 0.1.0 changelog entries"
+		PR 165

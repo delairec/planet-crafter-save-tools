@@ -234,7 +234,7 @@ async function checkPackageDependencies(): Promise<number> {
     return 0;
   }
   violations.forEach(({location, message}) => console.log(`${location}: ${message}`));
-  console.log(`check:dependencies: ${violations.length} dependency matrix violation(s); see the dependency matrix in README.md.`);
+  console.log(`check:dependencies: ${violations.length} dependency matrix violation(s); see the dependency matrix in docs/wiki/architecture.md.`);
   return 1;
 }
 
