@@ -3,6 +3,7 @@ import {expect, test, type Download, type Page} from '@playwright/test';
 
 const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
+const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
 
 /** The name the merge gives its output, built from the two source file names. */
 const mergedFileName = 'baseline_valid-other-player_valid-merged.json';
@@ -13,12 +14,34 @@ const mergedFileName = 'baseline_valid-other-player_valid-merged.json';
  */
 const mergedSaveDisplayName = '"saveDisplayName":"baseline_valid-other-player_valid-merged"';
 
-async function mergeTheTwoFixtures(page: Page): Promise<void> {
+/**
+ * The Terrain Layers entry of the legacy fixture. Only the legacy format carries that section, so its presence in
+ * the merged save tells the format written.
+ */
+const legacyTerrainLayerEntry = '"layerId":"PC-Toxicity-Layer2"';
+
+const preferLegacyFormatLabel = 'Write the legacy format of 1.618';
+
+async function chooseTheTwoSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
   await page.goto('/');
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
+  await page.getByLabel('Save A:').setInputFiles(chosenSaveAPath);
+  await page.getByLabel('Save B:').setInputFiles(chosenSaveBPath);
+}
+
+async function mergeTheChosenSaves(page: Page): Promise<void> {
   await page.getByRole('button', {name: 'Merge'}).click();
   await expect(page.getByText('Merge successful!')).toBeVisible();
+}
+
+/** The merge report is the last message list of the result: the warnings of each input come before it. */
+async function mergeAndRevealTheMergeReport(page: Page): Promise<void> {
+  await mergeTheChosenSaves(page);
+  await page.getByText('Show details').last().click();
+}
+
+async function mergeTheTwoFixtures(page: Page): Promise<void> {
+  await chooseTheTwoSaves(page, saveAFixturePath, saveBFixturePath);
+  await mergeTheChosenSaves(page);
 }
 
 async function downloadTheProducedFile(page: Page): Promise<Download> {
@@ -62,6 +85,49 @@ test.describe('Save merge', () => {
       expect(downloadedContent).toContain(mergedSaveDisplayName);
       expect(downloadedContent).not.toBe(saveAContent);
       expect(downloadedContent).not.toBe(saveBContent);
+    });
+  });
+
+  test.describe('When a legacy save is merged with a current one', () => {
+    test('should hand over a merged save written in the current format', async ({page}) => {
+      // Arrange
+      await chooseTheTwoSaves(page, legacySaveFixturePath, saveAFixturePath);
+      await mergeTheChosenSaves(page);
+
+      // Act
+      const downloadedContent = await readTheDownloadedFile(page);
+
+      // Assert
+      expect(downloadedContent).not.toContain(legacyTerrainLayerEntry);
+    });
+
+    test('should report the format written and tell how to keep the legacy one, never showing a warning code', async ({page}) => {
+      // Arrange
+      await chooseTheTwoSaves(page, legacySaveFixturePath, saveAFixturePath);
+
+      // Act
+      await mergeAndRevealTheMergeReport(page);
+
+      // Assert
+      await expect(page.getByText('Merge warnings')).toBeVisible();
+      await expect(page.getByText('The two saves carry different formats; the merged save is written in the format of release 2.004.')).toBeVisible();
+      await expect(page.getByText('To write the legacy format instead, tick "Write the legacy format of 1.618" and merge again.')).toBeVisible();
+      await expect(page.getByRole('list').last()).not.toContainText('merged-save-format');
+    });
+  });
+
+  test.describe('When a legacy save is merged with a current one, the legacy format being asked for', () => {
+    test('should hand over a merged save written in the legacy format', async ({page}) => {
+      // Arrange
+      await chooseTheTwoSaves(page, legacySaveFixturePath, saveAFixturePath);
+      await page.getByLabel(preferLegacyFormatLabel).check();
+      await mergeTheChosenSaves(page);
+
+      // Act
+      const downloadedContent = await readTheDownloadedFile(page);
+
+      // Assert
+      expect(downloadedContent).toContain(legacyTerrainLayerEntry);
     });
   });
 });
