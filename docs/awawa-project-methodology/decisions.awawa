@@ -634,6 +634,8 @@ DECISION AnUnknownCliFlagIsAUsageError
 	APPLIES_TO_TASK @TASK.FEAT107
 	SOURCE "T34"
 		PR 60
+	SOURCE "Rewritten in place by the task pull request of FEAT107"
+		PR 148
 
 DECISION SectionControllersReceiveTheValidatedText
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
