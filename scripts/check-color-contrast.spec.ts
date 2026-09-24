@@ -1,7 +1,11 @@
-import {describe, expect, it} from 'bun:test';
+import {afterEach, beforeEach, describe, expect, it} from 'bun:test';
+import {mkdir, mkdtemp, rm, writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {dirname, join} from 'node:path';
 import {
   contrastRatio,
   findContrastViolations,
+  findForegroundViolationsInStylesheets,
   findUncataloguedForegroundDeclarations,
   parseColorTokens,
   type TokenPair
@@ -177,7 +181,7 @@ describe('findUncataloguedForegroundDeclarations', () => {
       const violations = findUncataloguedForegroundDeclarations(source, catalogued.file, [catalogued]);
 
       // Assert
-      expect(violations).toEqual([`${catalogued.file}:6: 'color: var(--danger)' has no entry in TOKEN_PAIRS of scripts/check-color-contrast.ts`]);
+      expect(violations).toEqual([`${catalogued.file}:6: '.new-rule { color: var(--danger) }' has no entry in TOKEN_PAIRS of scripts/check-color-contrast.ts`]);
     });
   });
 
@@ -209,7 +213,109 @@ describe('findUncataloguedForegroundDeclarations', () => {
       const violations = findUncataloguedForegroundDeclarations(source, 'packages/ui-save-manager/src/styles/other.css', [catalogued]);
 
       // Assert
-      expect(violations).toEqual(["packages/ui-save-manager/src/styles/other.css:2: 'color: var(--content)' has no entry in TOKEN_PAIRS of scripts/check-color-contrast.ts"]);
+      expect(violations).toEqual(["packages/ui-save-manager/src/styles/other.css:2: '.other { color: var(--content) }' has no entry in TOKEN_PAIRS of scripts/check-color-contrast.ts"]);
+    });
+  });
+
+  describe('When a token catalogued for the file is declared under a selector no pair names', () => {
+    it('should report it, the background of that selector being uncatalogued', () => {
+      // Arrange
+      const source = '.known {\n    color: var(--content);\n}\n\n.dead-class {\n    color: var(--content);\n}';
+
+      // Act
+      const violations = findUncataloguedForegroundDeclarations(source, catalogued.file, [catalogued]);
+
+      // Assert
+      expect(violations).toEqual([`${catalogued.file}:6: '.dead-class { color: var(--content) }' has no entry in TOKEN_PAIRS of scripts/check-color-contrast.ts`]);
+    });
+  });
+
+  describe('When the pair names a selector list and the stylesheet declares one of its selectors alone', () => {
+    it('should report nothing', () => {
+      // Arrange
+      const listedPair: TokenPair = {...catalogued, selector: 'button, .button-link'};
+      const source = '.button-link {\n    color: var(--content);\n}';
+
+      // Act
+      const violations = findUncataloguedForegroundDeclarations(source, catalogued.file, [listedPair]);
+
+      // Assert
+      expect(violations).toEqual([]);
+    });
+  });
+
+  describe('When the stylesheet writes a selector list over several lines', () => {
+    it('should report nothing, the list matching the pair whatever its layout', () => {
+      // Arrange
+      const listedPair: TokenPair = {...catalogued, selector: 'input, textarea, select'};
+      const source = 'input,\ntextarea,\nselect {\n    color: var(--content);\n}';
+
+      // Act
+      const violations = findUncataloguedForegroundDeclarations(source, catalogued.file, [listedPair]);
+
+      // Assert
+      expect(violations).toEqual([]);
+    });
+  });
+
+  describe('When the declaration sits in a rule nested in a media query, behind a comment', () => {
+    it('should read the selector of the rule itself', () => {
+      // Arrange
+      const source = '@media (min-width: 40rem) {\n    /* wide screens */\n    .known {\n        color: var(--content);\n    }\n}';
+
+      // Act
+      const violations = findUncataloguedForegroundDeclarations(source, catalogued.file, [catalogued]);
+
+      // Assert
+      expect(violations).toEqual([]);
+    });
+  });
+
+  describe('When a color: declaration is written as a literal', () => {
+    it.each([
+      ['#ffffff'],
+      ['white'],
+      ['rgb(255, 255, 255)']
+    ])('should report %s as naming no color token', literal => {
+      // Arrange
+      const source = `.known {\n    color: ${literal};\n}`;
+
+      // Act
+      const violations = findUncataloguedForegroundDeclarations(source, catalogued.file, [catalogued]);
+
+      // Assert
+      expect(violations).toEqual([`${catalogued.file}:2: '.known { color: ${literal} }' names no color token; write it var(--token) from colors.css`]);
+    });
+  });
+});
+
+describe('findForegroundViolationsInStylesheets', () => {
+
+  let workspaceRoot: string;
+
+  const writeWorkspaceFile = async (path: string, content: string) => {
+    await mkdir(dirname(join(workspaceRoot, path)), {recursive: true});
+    await writeFile(join(workspaceRoot, path), content);
+  };
+
+  beforeEach(async () => {
+    workspaceRoot = await mkdtemp(join(tmpdir(), 'check-color-contrast-'));
+  });
+
+  afterEach(async () => {
+    await rm(workspaceRoot, {recursive: true, force: true});
+  });
+
+  describe('When a stylesheet of the package sits outside styles/, app.css included', () => {
+    it('should scan it like the stylesheets of styles/', async () => {
+      // Arrange
+      await writeWorkspaceFile('packages/ui-save-manager/src/app.css', '#app {\n    color: #ffffff;\n}');
+
+      // Act
+      const violations = await findForegroundViolationsInStylesheets(workspaceRoot);
+
+      // Assert
+      expect(violations).toEqual(["packages/ui-save-manager/src/app.css:2: '#app { color: #ffffff }' names no color token; write it var(--token) from colors.css"]);
     });
   });
 });

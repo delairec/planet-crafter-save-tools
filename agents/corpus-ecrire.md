@@ -2,11 +2,10 @@
 
 À lire avant toute création ou modification d'une entité, en complément du schéma (`awawa show TYPE .`).
 
-**Une section arrive avec la règle qui la cite.** `WHEN HOLDS_FOR all` et `WHEN HOLDS_FOR @GAME_RELEASE.2.004`,
-la dernière release que `HOLDS_FOR` nomme, portent `INCOMING CONSTRAINED_BY` : une `SECTION` que le jeu écrit aujourd'hui et qu'aucune `RULE` ne nomme sous
-`APPLIES_TO_SECTION` est un `L026`. Les entités s'écrivent donc par paires, section et règle, jamais une section
-seule ; c'est ce qui rend la spécification complète par construction, un trou prenant la forme d'une section sans
-règle (@DECISION.ASectionIsWrittenWithTheRuleThatCitesIt).
+**Une section arrive avec la règle qui la cite.** `WHEN STATUS active` porte `INCOMING CONSTRAINED_BY` : une
+`SECTION` active qu'aucune `RULE` ne nomme sous `APPLIES_TO_SECTION` est un `L026`. Les entités s'écrivent donc par
+paires, section et règle, jamais une section seule ; c'est ce qui rend la spécification complète par construction,
+un trou prenant la forme d'une section sans règle (@DECISION.ASectionIsWrittenWithTheRuleThatCitesIt).
 
 **Une table de valeurs est un fichier JSON à côté du module qui la lit.** Un tableau, une ligne par rangée, dans le
 paquet dont le module l'importe ; aucune rangée ne se recopie dans un module TypeScript ni dans un document markdown.
@@ -20,7 +19,9 @@ vers ces fichiers, et une règle qui fait autorité sur ces valeurs la nomme par
 jamais git : une ancre vers `input/`, `output/` ou `.do-not-commit/` est propre chez son auteur et casse en clone
 neuf. Les témoins commités sont les fixtures de `packages/ui-save-manager/e2e/fixtures/`, les JSON Schemas de
 `packages/shared-save-processing/schemas/`, les tests et les documents de `docs/`. `bun run check:anchors` refuse
-une ancre vers un chemin que git ne suit pas (@DECISION.AnAnchorNamesAFileTrackedByGit).
+une ancre vers un chemin que git ne suit pas, et ignore celles d'une entité archivée : une décision que sa tâche
+retire s'archive donc même quand la tâche supprime le module que son `IMPL` nomme
+(@DECISION.AnAnchorNamesAFileTrackedByGit).
 
 **L'archive se purge à la main.** Aucun script de nettoyage n'est écrit tant que le compte d'entrants publié par
 `awawa status TYPE .` suffit à décider : une entité archivée que plus rien ne cite se supprime dans la prochaine
@@ -28,8 +29,7 @@ pull request qui touche son fichier
 (@PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived).
 
 **Un champ légal dans un seul état n'est déclaré que là.** Un champ conditionné par la valeur d'un autre champ se
-déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `INDEX` sous `WHEN HOLDS_FOR all` et
-`WHEN HOLDS_FOR @GAME_RELEASE.2.004`, `LEGACY_INDEX` sous `WHEN HOLDS_FOR all` et
+déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `LEGACY_INDEX` sous `WHEN HOLDS_FOR all` et
 `WHEN HOLDS_FOR @GAME_RELEASE.1.618`, `CONFLICT` et `RESOLUTION` sous `WHEN DOMAIN merge`. Déclaré au niveau du type
 puis rendu requis dans le bloc, il resterait légal partout, la monotonie de `WHEN` ne pouvant rien interdire ;
 répété dans chaque bloc qui l'admet, il est refusé ailleurs par `L003`. Une entité qui nomme plusieurs valeurs d'un
@@ -45,8 +45,10 @@ lecture reste dans la prose de la `SOURCE` : une même page se lit plusieurs jou
 **`HOLDS_FOR` écrit la vérité du jeu** : la release à partir de laquelle une règle ou une section vaut, nommée une
 seule fois. Une entité qui décrit un écart entre releases s'énonce par ce que la release ajoute, jamais par ce qui
 manque à la précédente, et ne nomme que cette release : `@GAME_RELEASE.2.004` pour les champs ajoutés à l'entrée
-joueur, `@GAME_RELEASE.2.102` pour `logisticsPaused`. Une release que le code ne distingue pas encore se nomme quand
-même : c'est au code de rattraper le corpus, par la tâche qui la branche. Une save écrite par une release non
+joueur, `@GAME_RELEASE.2.102` pour `logisticsPaused`. **`HOLDS_FOR` — champ de `RULE` et de `SECTION`, d'eux seuls —
+ne nomme qu'une release que le code distingue déjà de la précédente** (SPEC 3 de @TASK.DOCS86). Une release à venir
+ne s'y anticipe pas : elle se nomme depuis une `TASK`, par un `REF @GAME_RELEASE.X` niché sous sa prose, et
+`HOLDS_FOR` ne la prend qu'une fois la branche écrite. Une save écrite par une release non
 nommée — 2.008, 2.103 — se lit par la branche de la dernière release nommée avant elle. **`HOLDS_FOR all`, seul**,
 marque ce qui ne dépend pas de la release — les règles de merge, les invariants du format — et couvre d'office une
 release nommée plus tard. Le code ne discrimine jamais une save par sa seule version déclarée

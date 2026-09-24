@@ -19,5 +19,6 @@ export interface ValidationIssue {
   code: ValidationIssueCode;
   detail: string;
   section?: number;
+  formatRelease?: string;
   entryIndex?: number;
 }

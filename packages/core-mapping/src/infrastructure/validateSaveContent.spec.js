@@ -1,8 +1,8 @@
 import {describe, expect, it} from 'bun:test';
 import {validateSaveContent} from './validateSaveContent.js';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
-import {createFakeSaveString, createLegacyFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
-import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {createFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
+import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 import {replaceSaveSection} from 'shared-save-processing/replaceSaveSection.js';
 import {
@@ -14,11 +14,14 @@ import {
   createSaveConfiguration,
   createStatistics,
   createTerraformationLevel,
+  createTerrainLayer,
   createWorldObject
 } from 'shared-save-processing/testing/createSaveRecords.js';
 import {
   GLOBAL_METADATA_SECTION_INDEX,
   INVENTORIES_SECTION_INDEX,
+  LEGACY_TERRAIN_LAYERS_SECTION_INDEX,
+  LEGACY_WORLD_EVENTS_SECTION_INDEX,
   MAILBOX_MESSAGES_SECTION_INDEX,
   PLAYERS_SECTION_INDEX,
   SAVE_CONFIGURATION_SECTION_INDEX,
@@ -98,7 +101,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toEqual([
-          {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected at least 1 entry but found 0', section: GLOBAL_METADATA_SECTION_INDEX}
+          {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected at least 1 entry but found 0', section: GLOBAL_METADATA_SECTION_INDEX, formatRelease: '2.004'}
         ]);
       });
     });
@@ -572,43 +575,94 @@ describe('validateSaveContent', () => {
     });
   });
 
-  describe('When the save uses the legacy format (still contains a Terrain Layers section removed by a game update)', () => {
-    it('should accept the save as valid (backward compatibility)', () => {
+  describe('When the save carries the format of 1.618', () => {
+    it('should accept the save, reporting only that it was written by 1.618 or earlier', () => {
       // Arrange
-      const save = createLegacyFakeSaveString({
-        globalMetadata: createGlobalMetadata(),
-        terraformationLevels: [createTerraformationLevel()],
-        players: [createPlayer()],
-        inventories: [createInventory(), createEquipment()],
-        statistics: createStatistics(),
-        saveConfiguration: createSaveConfiguration(),
-        terrainLayers: [{layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1'}]
-      });
+      const save = createLegacyFakeSaveContent();
 
       // Act
       const result = validateSaveContent(save);
 
       // Assert
-      expect(result.isValid).toBe(true);
+      expect(result).toEqual({isValid: true, errors: [], warnings: [{code: 'legacy-save-format'}]});
     });
 
-    it('should report a warning explaining the save was adapted', () => {
-      // Arrange
-      const save = createLegacyFakeSaveString({
-        globalMetadata: createGlobalMetadata(),
-        terraformationLevels: [createTerraformationLevel()],
-        players: [createPlayer()],
-        inventories: [createInventory(), createEquipment()],
-        statistics: createStatistics(),
-        saveConfiguration: createSaveConfiguration(),
-        terrainLayers: [{layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1'}]
+    describe('When a Terrain Layers entry lacks a property the game writes in every entry', () => {
+      it('should reject the save, naming the Terrain Layers section at its legacy index', () => {
+        // Arrange
+        const {colorCustomLerp: _, ...terrainLayerWithoutCustomLerp} = createTerrainLayer();
+        const save = createLegacyFakeSaveContent({terrainLayers: [terrainLayerWithoutCustomLerp]});
+
+        // Act
+        const result = validateSaveContent(save);
+
+        // Assert
+        expect(result.errors).toMatchObject([
+          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0, formatRelease: '1.618'}
+        ]);
       });
+    });
 
-      // Act
-      const result = validateSaveContent(save);
+    describe('When a Terrain Layers entry carries a property the game never writes', () => {
+      it('should reject the save', () => {
+        // Arrange
+        const save = createLegacyFakeSaveContent({terrainLayers: [{...createTerrainLayer(), opacity: 1}]});
 
-      // Assert
-      expect(result.warnings.length).toBe(1);
+        // Act
+        const result = validateSaveContent(save);
+
+        // Assert
+        expect(result.errors).toMatchObject([
+          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0}
+        ]);
+      });
+    });
+
+    describe('When a Terrain Layers colour is not four numbers separated by dashes', () => {
+      it('should reject the save', () => {
+        // Arrange
+        const save = createLegacyFakeSaveContent({terrainLayers: [createTerrainLayer({colorBase: '0.5-0.5-0.5'})]});
+
+        // Act
+        const result = validateSaveContent(save);
+
+        // Assert
+        expect(result.errors).toMatchObject([
+          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0}
+        ]);
+      });
+    });
+
+    describe('When a world event breaks its schema', () => {
+      it('should reject the save, naming the world events section at its legacy index', () => {
+        // Arrange
+        const save = createLegacyFakeSaveContent({worldEvents: [{planet: 110910045, seed: 42, pos: 'bad-pos'}]});
+
+        // Act
+        const result = validateSaveContent(save);
+
+        // Assert
+        expect(result.errors).toMatchObject([
+          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_WORLD_EVENTS_SECTION_INDEX, entryIndex: 0, formatRelease: '1.618'}
+        ]);
+      });
+    });
+
+    describe('When the global metadata section carries no entry', () => {
+      it('should reject the save, naming the global metadata section of that format', () => {
+        // Arrange
+        const sections = createLegacyFakeSaveContent().split('@');
+        sections[GLOBAL_METADATA_SECTION_INDEX] = '';
+        const saveWithoutGlobalMetadata = sections.join('@');
+
+        // Act
+        const result = validateSaveContent(saveWithoutGlobalMetadata);
+
+        // Assert
+        expect(result.errors).toEqual([
+          {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected at least 1 entry but found 0', section: GLOBAL_METADATA_SECTION_INDEX, formatRelease: '1.618'}
+        ]);
+      });
     });
   });
 
@@ -626,7 +680,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toEqual([
-          {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {not valid json', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {not valid json', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 0, formatRelease: '2.004'}
         ]);
       });
     });
@@ -645,7 +699,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toEqual([
-          {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {not valid json', section: MAILBOX_MESSAGES_SECTION_INDEX, entryIndex: 1}
+          {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {not valid json', section: MAILBOX_MESSAGES_SECTION_INDEX, entryIndex: 1, formatRelease: '2.004'}
         ]);
       });
     });
@@ -662,7 +716,7 @@ describe('validateSaveContent', () => {
       // Assert
       expect(result.isValid).toBe(false);
       expect(result.errors).toEqual([
-        {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: `Expected 11 sections but found 2`}
+        {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected 11 or 12 sections but found 2'}
       ]);
     });
   });

@@ -24,57 +24,93 @@ describe('GlobalProgressionPresenter', () => {
     });
   });
 
-  it('should present the global progression without statistics as no crafted object', () => {
-    // Arrange
-    const presenter = new GlobalProgressionPresenter();
-    const globalProgression = {allTimeTerraTokens: 200_345};
+  describe('When the statistics are missing', () => {
+    it('should present the global progression as no crafted object', () => {
+      // Arrange
+      const presenter = new GlobalProgressionPresenter();
+      const globalProgression = {allTimeTerraTokens: 200_345};
 
-    // Act
-    presenter.displayGlobalProgressionWithoutStatistics(globalProgression);
+      // Act
+      presenter.displayGlobalProgressionWithoutStatistics(globalProgression);
 
-    // Assert
-    expect(presenter.viewModel).toEqual<GlobalProgressionViewModel>({
-      statistics: {
-        columns: [
-          {
-            header: 'All time Terra Tokens',
-            values: ['200,345 =tt=']
-          },
-          {
-            header: 'Total crafted objects',
-            values: ['0']
-          }
-        ]
-      },
+      // Assert
+      expect(presenter.viewModel).toEqual<GlobalProgressionViewModel>({
+        statistics: {
+          columns: [
+            {
+              header: 'All time Terra Tokens',
+              values: ['200,345 =tt=']
+            },
+            {
+              header: 'Total crafted objects',
+              values: ['0']
+            }
+          ]
+        },
+      });
     });
   });
 
-  it('should present all GlobalProgression', () => {
-    // Arrange
-    const presenter = new GlobalProgressionPresenter();
-    const globalProgression = {
-      allTimeTerraTokens: 200_345
-    };
-    const statistics = {totalCraftedObjects:10};
+  describe('When the global metadata carries no logisticsPaused', () => {
+    it('should present all GlobalProgression', () => {
+      // Arrange
+      const presenter = new GlobalProgressionPresenter();
+      const globalProgression = {allTimeTerraTokens: 200_345};
+      const statistics = {totalCraftedObjects: 10};
 
-    // Act
-    presenter.displayGlobalProgression(globalProgression, statistics);
+      // Act
+      presenter.displayGlobalProgression(globalProgression, statistics);
 
-    // Assert
-    expect(presenter.viewModel).toEqual<GlobalProgressionViewModel>({
-      statistics: {
-        columns: [
-          {
-            header: 'All time Terra Tokens',
-            values: ['200,345 =tt=']
-          },
-          {
-            header: 'Total crafted objects',
-            values: ['10']
-          }
-        ]
-      },
+      // Assert
+      expect(presenter.viewModel).toEqual<GlobalProgressionViewModel>({
+        statistics: {
+          columns: [
+            {
+              header: 'All time Terra Tokens',
+              values: ['200,345 =tt=']
+            },
+            {
+              header: 'Total crafted objects',
+              values: ['10']
+            }
+          ]
+        },
+      });
+    });
+  });
+
+  describe('When the global metadata carries logisticsPaused', () => {
+    it.each([
+      {logisticsPaused: true, logisticsState: 'Paused'},
+      {logisticsPaused: false, logisticsState: 'Running'},
+    ])('should present the drone logistics as $logisticsState', ({logisticsPaused, logisticsState}) => {
+      // Arrange
+      const presenter = new GlobalProgressionPresenter();
+      const globalProgression = {allTimeTerraTokens: 200_345, logisticsPaused};
+      const statistics = {totalCraftedObjects: 10};
+
+      // Act
+      presenter.displayGlobalProgression(globalProgression, statistics);
+
+      // Assert
+      expect(presenter.viewModel).toEqual<GlobalProgressionViewModel>({
+        statistics: {
+          columns: [
+            {
+              header: 'All time Terra Tokens',
+              values: ['200,345 =tt=']
+            },
+            {
+              header: 'Total crafted objects',
+              values: ['10']
+            },
+            {
+              header: 'Drone logistics',
+              values: [logisticsState]
+            }
+          ]
+        },
+      });
     });
   });
 });
-

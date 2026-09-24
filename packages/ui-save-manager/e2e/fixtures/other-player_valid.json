@@ -8,7 +8,7 @@
 {"id":31000002,"gId":"NeptunQuartz"}|
 {"id":31000003,"gId":"Backpack5"}|
 {"id":31000004,"gId":"OxygenTank3"}|
-{"id":31000005,"gId":"WindTurbine2","pos":"20,0,0","planet":1}|
+{"id":31000005,"gId":"WindTurbine1","pos":"20,0,0","planet":1}|
 {"id":31000006,"gId":"Heater2","pos":"21,0,0","planet":1}
 @
 {"id":144,"woIds":"31000001,31000002","size":20}|
@@ -20,7 +20,7 @@
 @
 
 @
-{"saveDisplayName":"Companion Save","planetId":"Toxicity","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":0.1,"modifierPowerConsumption":0.2,"modifierGaugeDrain":0.3,"modifierMeteoOccurence":0.4,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"1.0","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":77,"hasPlayedIntro":true,"gameStartLocation":"Standard"}
+{"saveDisplayName":"Companion Save","planetId":"Toxicity","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":0.1,"modifierPowerConsumption":0.2,"modifierGaugeDrain":0.3,"modifierMeteoOccurence":0.4,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"2.004","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":77,"hasPlayedIntro":true,"gameStartLocation":"Standard"}
 @
 
 @

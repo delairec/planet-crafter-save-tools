@@ -1,11 +1,14 @@
+import {compareGameReleases} from "shared-save-processing/gameReleases.js";
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
 import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
+import {MergeWarning} from "./responses/MergeWarning";
 import {nameMergedFile} from "./nameMergedFile";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
+import {SaveSections} from "../domain/save/SaveSections";
 
 export class MergeSaveFiles {
   constructor(
@@ -15,7 +18,7 @@ export class MergeSaveFiles {
     private readonly presenter: MergeResultPresenterPort
   ) {}
 
-  async execute({fileNameA, contentA, fileNameB, contentB, saveDisplayName}: MergeSaveFilesRequest): Promise<void> {
+  async execute({fileNameA, contentA, fileNameB, contentB, saveDisplayName, preferLegacyFormat = false}: MergeSaveFilesRequest): Promise<void> {
     const validationA = this.validator.validate(fileNameA, contentA);
     const validationB = this.validator.validate(fileNameB, contentB);
 
@@ -38,7 +41,7 @@ export class MergeSaveFiles {
     }
 
     const {fileName, stem} = nameMergedFile({fileNameA, fileNameB});
-    const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, saveDisplayName ?? stem));
+    const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, {saveDisplayName: saveDisplayName ?? stem, preferLegacyFormat}));
     const content = this.serializer.serialize(mergedSave);
 
     const mergedSaveValidation = this.validator.validate(fileName, content);
@@ -47,8 +50,29 @@ export class MergeSaveFiles {
       fileName,
       content,
       mergeErrors: mergedSaveValidation.errors,
+      mergeWarnings: reportMergedSaveFormat(saveA.sections, saveB.sections, mergedSave),
+      legacyFormatCouldBeKept: saveA.sections.formatRelease !== saveB.sections.formatRelease && !preferLegacyFormat,
       saveAWarnings: validationA.warnings,
       saveBWarnings: validationB.warnings
     });
   }
+}
+
+function reportMergedSaveFormat(sectionsA: SaveSections, sectionsB: SaveSections, mergedSave: SaveSections): MergeWarning[] {
+  if (sectionsA.formatRelease === sectionsB.formatRelease) {
+    return [];
+  }
+
+  const writtenRelease = mergedSave.formatRelease;
+  const otherRelease = sectionsA.formatRelease === writtenRelease ? sectionsB.formatRelease : sectionsA.formatRelease;
+  const warnings: MergeWarning[] = [{code: 'merged-save-format', formatRelease: writtenRelease}];
+
+  if (mergedSave.terrainLayers === undefined) {
+    warnings.push({code: 'merged-save-section-dropped', section: 'terrainLayers'});
+  }
+  if (compareGameReleases(writtenRelease, otherRelease) < 0) {
+    warnings.push({code: 'merged-save-content-newer-than-format', formatRelease: writtenRelease, contentRelease: otherRelease});
+  }
+
+  return warnings;
 }

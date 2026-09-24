@@ -11,6 +11,8 @@
     "properties": {
       "property": {"type": "string", "pattern": "^[a-z][A-Za-z0-9]*$"},
       "type": {"enum": ["string", "int"]},
+      "pattern": {"type": "string", "minLength": 1},
+      "minimum": {"type": "integer"},
       "description": {"type": "string", "minLength": 1}
     }
   }

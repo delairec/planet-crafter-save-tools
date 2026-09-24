@@ -16,14 +16,15 @@ The file ends with `@`.
 <section 0>@<section 1>@...@<section 10>@
 ```
 
-> ⚠️ **Backward compatibility:** an earlier version of the save format also had a Terrain Layers section (index 9,
-> shifting World Events to index 10), which a game update removed. Legacy saves in that older format are only
-> supported at the user-input boundary (loading a save file): they are automatically adapted to the current
-> 11-section format described below, discarding the Terrain Layers data, and a warning is reported to the user.
-> Validation detects the adaptation and is the single source of that warning, on every outcome and in every flow
-> (displaying a save, merging saves, `bun validate`, `bun merge`). The warning travels as the code defined in
-> `packages/shared-save-processing/normalizeRawSections.js` and is turned into the sentence shown to the user by
-> `packages/core-mapping/src/presentation/formatSaveWarning.ts`.
+> ⚠️ **Format of 1.618 and earlier:** an earlier version of the save format also had a Terrain Layers section (index 9,
+> shifting World Events to index 10), which a game update removed. Parsing keeps every part a save carries: a save in
+> that older format is read in its twelve parts, its Terrain Layers entries parsed like those of any other section, and
+> serializing it in the format of 1.618 writes the same bytes back. A warning states that the save was written by 1.618
+> or earlier; validation is the single source of that warning, on every outcome and in every flow (displaying a save,
+> merging saves, `bun validate`, `bun merge`). The warning travels as the code defined in
+> `packages/shared-save-processing/saveWarningCodes.js` and is turned into the sentence shown to the user by
+> `packages/core-mapping/src/presentation/formatSaveWarning.ts`. core-mapping still reads the sections the format of
+> 2.004 shares with it, and a merge still writes the format of 2.004.
 
 ```
 entry1|
@@ -220,8 +221,10 @@ numeric ID rather than the textual `planetId` used elsewhere (`TerraformationLev
 the save's world seed or content) — confirmed by cross-referencing several real save files. The known ids are the rows of
 `packages/core-mapping/src/domain/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`).
 
-No known deterministic hash function (crc32, fnv1a, djb2, sdbm, Java-style `hashCode`, …) reproduces these IDs
-from the planet name, so this table is currently maintained as a fixed lookup rather than computed.
+The numeric id is a two-accumulator djb2 hash of the planet name over its UTF-16 code units, which reproduces
+all six known ids; the table stays a maintained lookup because a save carries the id and the name must be found
+from it. See `@RULE.APlanetNumericIdIsStableAcrossSaves` in
+[`awawa-project-specification/rules.awawa`](./awawa-project-specification/rules.awawa).
 
 ---
 

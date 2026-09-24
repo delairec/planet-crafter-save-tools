@@ -219,7 +219,7 @@ describe('Validate CLI', () => {
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith('  Expected 11 sections but found 1');
+      expect(consoleErrorSpy).toHaveBeenCalledWith('  Expected 11 or 12 sections but found 1');
     });
   });
 
@@ -264,7 +264,7 @@ describe('Validate CLI', () => {
       await main();
 
       // Assert
-      expect(consoleWarnSpy).toHaveBeenCalledWith('⚠ This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.');
+      expect(consoleWarnSpy).toHaveBeenCalledWith('⚠ This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.');
     });
 
     it('should still report the save as valid', async () => {

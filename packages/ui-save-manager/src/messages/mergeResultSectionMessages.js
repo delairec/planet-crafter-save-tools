@@ -1,3 +1,5 @@
+import {mergeSectionPreferLegacyFormatLabel} from '~/messages/mergeSectionMessages';
+
 export const mergeResultSectionSuccessMessage = 'Merge successful!';
 export const mergeResultSectionFileCreatedMessage = 'Created file:';
 export const mergeResultSectionDownloadLinkLabel = 'Download';
@@ -7,3 +9,5 @@ export const mergeResultSectionSaveBInvalidMessage = 'Save B is not a valid save
 export const mergeResultSectionSaveAWarningsTitle = 'Save A warnings';
 export const mergeResultSectionSaveBWarningsTitle = 'Save B warnings';
 export const mergeResultSectionMergeFailedTitle = 'Merge failed';
+export const mergeResultSectionMergeWarningsTitle = 'Merge warnings';
+export const mergeResultSectionKeepLegacyFormatReminder = `To write the legacy format instead, tick "${mergeSectionPreferLegacyFormatLabel}" and merge again.`;

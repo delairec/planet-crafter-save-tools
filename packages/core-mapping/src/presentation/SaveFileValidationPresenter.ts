@@ -1,6 +1,6 @@
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveWarningCode} from "shared-save-processing/gameDefinitions";
+import {SaveWarning} from "shared-save-processing/gameDefinitions";
 import {SaveFileValidationViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
@@ -16,11 +16,11 @@ export class SaveFileValidationPresenter implements SaveFileValidationPresenterP
     return this._viewModel;
   }
 
-  presentValidSaveFile(warnings: SaveWarningCode[]): void {
+  presentValidSaveFile(warnings: SaveWarning[]): void {
     this._viewModel = {status: 'valid', errors: [], warnings: warnings.map(formatSaveWarning)};
   }
 
-  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarningCode[]): void {
+  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarning[]): void {
     this._viewModel = {
       status: 'invalid',
       errors: errors.map(formatValidationError),

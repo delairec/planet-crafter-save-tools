@@ -1,18 +1,17 @@
 /** @import { SaveParseError } from './gameDefinitions' */
 
-import {LEGACY_SPLIT_PARTS_COUNT, SAVE_SPLIT_PARTS_COUNT} from './sectionIndexes.js';
+import {listSplitPartsCounts} from './gameReleases.js';
 
 /**
  * @param {string[]} rawParts - result of `save.split('@')`
- * @returns {SaveParseError[]} parse errors, empty when the section count is supported. The count
- * concerns the file as a whole, so the error carries no location.
+ * @returns {SaveParseError[]}
  */
 export function verifySectionCount(rawParts) {
-  const errors = [];
+  const splitPartsCounts = listSplitPartsCounts();
 
-  if (rawParts.length !== SAVE_SPLIT_PARTS_COUNT && rawParts.length !== LEGACY_SPLIT_PARTS_COUNT) {
-    errors.push({detail: `Expected ${SAVE_SPLIT_PARTS_COUNT} sections but found ${rawParts.length}`});
+  if (splitPartsCounts.includes(rawParts.length)) {
+    return [];
   }
 
-  return errors;
+  return [{detail: `Expected ${splitPartsCounts.join(' or ')} sections but found ${rawParts.length}`}];
 }

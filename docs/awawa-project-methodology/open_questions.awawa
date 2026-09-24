@@ -1,21 +1,6 @@
-OPEN_QUESTION TheEnergyOfTheSkeoMachinesIsMeasuredInGame
-	DESC "how much power do TreePlanter3, PodUnderground and RocketAnimals2 draw or produce in game"
-		+ "2.103, none being a valid answer"
-		REF @DATATABLE.EnergyLevels
-	BLOCKS @TASK.FEAT66
-	RATIONALE "Settled by a hypothesis rather than by the in-game measurement this question asked"
-		+ "for: the owner ruled on 2026-09-22 that the task does not wait for it, and recorded"
-		+ "instead that the three machines draw and produce no power until observed otherwise"
-		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
-	SOURCE "Wiki pages read on 2026-09-21, no energy field on the three infoboxes"
-		REF @URL.WikiFurniture
-		REF @URL.WikiRockets
-		REF @URL.WikiBaseBuilding
-		REF @GAME_RELEASE.2.103
+OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 	STATUS archived
 	ARCHIVED_ON "2026-09-22"
-
-OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 	DESC "what the tool does with a world object or an item whose group id release 2.102"
 		+ "deprecated, Phytoplankton2 and Phytoplankton3: keep, flag, convert or drop; As of"
 		+ "version 2.102 (September, 2026), Phytoplankton B and C have been removed and replaced"
@@ -23,13 +8,13 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		+ "accommodate this change."
 		REF @URL.PCFandomWikiPhytoplankton
 		REF @DATATABLE.WorldObjectLabels
-	RATIONALE "When a user wants to merge 2 saves, it could be 2 saves from 2 different versions."
-		+ "Weather to keep a deprecated world object or not should depend on the highest version."
-		+ "The version is a field that we can read in the save configuration section. How do we"
-		+ "handle this? Should we have a table with deprecated world objects with version? Should"
-		+ "we rather use the corpus with holds_for field? We need to investigate more before"
-		+ "implementing."
-	BLOCKS @TASK.FEAT68
+	RATIONALE "Ruled keep, and no conversion: the owner ruled on 2026-09-22 that the game itself"
+		+ "resolves the deprecated ids when it loads a save carrying them, so converting them in"
+		+ "the tool would rewrite a save nobody asked to convert. The belief is recorded as a"
+		+ "hypothesis with the in-game observation that would refute it, and no table of deprecated"
+		+ "ids by release is written"
+		REF @DECISION.ADeprecatedGroupIdIsCarriedThroughUnchanged
+		REF @HYPOTHESIS.TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
 	SOURCE "PCEdit item catalog: deprecated(\"2.102\", \"Phytoplankton2\", \"Phytoplankton3\"),"
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog

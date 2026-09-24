@@ -8,5 +8,6 @@
 export interface SaveParseError {
   detail: string;
   section?: number;
+  formatRelease?: string;
   entryIndex?: number;
 }

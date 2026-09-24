@@ -147,7 +147,7 @@ describe('Merge CLI run as a Node process', () => {
   });
 
   describe('When an input folder holds a save in the legacy format', () => {
-    it('should warn about the format adaptation without failing', async () => {
+    it('should warn that the save was written by 1.618 or earlier without failing', async () => {
       // Arrange
       await writeInputSaves(createLegacySaveUnlockingOnly(GROUP_UNLOCKED_BY_SAVE_A_ONLY), NO_PREFIX);
 
@@ -156,7 +156,7 @@ describe('Merge CLI run as a Node process', () => {
 
       // Assert
       expect(stderr).toContain(`⚠ Folder "${SAVE_FOLDER_NAME}" has warnings on its save files:`);
-      expect(stderr).toContain('  [save A] This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.');
+      expect(stderr).toContain('  [save A] This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.');
       expect(exitCode).toBe(0);
     });
   });

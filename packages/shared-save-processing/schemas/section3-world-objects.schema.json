@@ -31,7 +31,7 @@
     },
     "planet": {
       "type": "integer",
-      "description": "Numeric planet id, a signed integer of either sign: four of the five values observed are negative (-1140328421 for Prime, 110910045 for Toxicity, -1016990411 for Selenea, -486276833 for Humble, -1291310150 for Aqualis)"
+      "description": "Numeric planet id, a signed integer of either sign"
     },
     "count": {
       "type": "string",

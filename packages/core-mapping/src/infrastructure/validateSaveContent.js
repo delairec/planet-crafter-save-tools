@@ -1,24 +1,20 @@
+/**
+ * @import { SaveParseError, SaveWarning } from 'shared-save-processing/gameDefinitions'
+ * @import { ValidationIssue } from '../application/ports/ValidationIssue'
+ * @import { UniqueHostViolation } from '../domain/rules/validateUniqueHost'
+ */
+
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
-import {GLOBAL_METADATA_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
-import saveFileSchema from 'shared-save-processing/schemas/save-file.schema.json' with {type: 'json'};
-import {validateSchemas, validateSectionEntry} from './validateSchemas.js';
+import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
+import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {validateUniqueHost} from '../domain/rules/validateUniqueHost.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
 
 /**
- * Validates a Planet Crafter save string: JSON schema compliance for each section, plus
- * domain-specific rules. Legacy saves (still containing the Terrain Layers section, removed by a
- * later game update) are transparently adapted to the current format and reported through
- * `warnings` instead of an error.
- *
- * Reading the save is delegated to `parseSaveSections`, the single reader of the format: a
- * validator tolerating the format differently from the reader used by loading and merging is what
- * once let a lost section pass for a valid save.
- *
  * @param {string} saveContent
- * @returns {{isValid: boolean, errors: import('../application/ports/ValidationIssue').ValidationIssue[], warnings: import('shared-save-processing/gameDefinitions').SaveWarningCode[]}}
+ * @returns {{isValid: boolean, errors: ValidationIssue[], warnings: SaveWarning[]}}
  */
 export function validateSaveContent(saveContent) {
   const sectionCountErrors = verifySectionCount(saveContent.split('@'));
@@ -30,17 +26,26 @@ export function validateSaveContent(saveContent) {
     };
   }
 
-  const {sections, errors: parseErrors, warnings} = parseSaveSections(saveContent);
-  const worldObjectIssues = validateWorldObjectsSection(sections[WORLD_OBJECTS_SECTION_INDEX]);
+  const {formatRelease, sections, errors: parseErrors, warnings} = parseSaveSections(saveContent);
+  const sectionIndexes = resolveSectionIndexes(formatRelease);
+  const worldObjectIssues = validateWorldObjectsSection(
+    /** @type {() => Generator<unknown>} */ (sections[sectionIndexes.worldObjects]),
+    formatRelease,
+    sectionIndexes.worldObjects
+  );
 
   const errors = parseErrors.map(toInvalidJsonIssue);
 
-  errors.push(...validateGlobalMetadataEntryCount(sections[GLOBAL_METADATA_SECTION_INDEX]));
-  errors.push(...validateSchemas(sections));
+  errors.push(...validateGlobalMetadataEntryCount(
+    /** @type {unknown[]} */ (sections[sectionIndexes.globalMetadata]),
+    formatRelease,
+    sectionIndexes.globalMetadata
+  ));
+  errors.push(...validateSchemas(sections, formatRelease));
   errors.push(...worldObjectIssues);
   errors.push(...validateFloatSerialization(saveContent));
 
-  const uniqueHostViolation = validateUniqueHost(sections[PLAYERS_SECTION_INDEX]);
+  const uniqueHostViolation = validateUniqueHost(/** @type {Parameters<typeof validateUniqueHost>[0]} */ (sections[sectionIndexes.players]));
   if (uniqueHostViolation !== null) {
     errors.push(toUniqueHostIssue(uniqueHostViolation));
   }
@@ -49,8 +54,8 @@ export function validateSaveContent(saveContent) {
 }
 
 /**
- * @param {import('../domain/rules/validateUniqueHost').UniqueHostViolation} violation
- * @returns {import('../application/ports/ValidationIssue').ValidationIssue}
+ * @param {UniqueHostViolation} violation
+ * @returns {ValidationIssue}
  */
 function toUniqueHostIssue({hostCount}) {
   return {
@@ -61,10 +66,12 @@ function toUniqueHostIssue({hostCount}) {
 
 /**
  * @param {unknown[]} globalMetadataSection
- * @returns {import('../application/ports/ValidationIssue').ValidationIssue[]}
+ * @param {string | undefined} formatRelease
+ * @param {number} sectionIndex
+ * @returns {ValidationIssue[]}
  */
-function validateGlobalMetadataEntryCount(globalMetadataSection) {
-  const minItems = saveFileSchema.items[GLOBAL_METADATA_SECTION_INDEX].minItems ?? 0;
+function validateGlobalMetadataEntryCount(globalMetadataSection, formatRelease, sectionIndex) {
+  const minItems = findSaveFileSchema(formatRelease).items[sectionIndex].minItems ?? 0;
 
   if (globalMetadataSection.length >= minItems) {
     return [];
@@ -73,24 +80,24 @@ function validateGlobalMetadataEntryCount(globalMetadataSection) {
   return [{
     code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE,
     detail: `Expected at least ${minItems} entry but found ${globalMetadataSection.length}`,
-    section: GLOBAL_METADATA_SECTION_INDEX
+    section: sectionIndex,
+    formatRelease
   }];
 }
 
 /**
- * The world objects section is a generator, so both the lines it cannot read and the entries
- * breaking its schema are only discovered once it has been walked. Each entry is checked as it
- * goes past and none is kept: a single entry at a time is held in memory, whatever the size of the
- * section — 28425 objects on the largest of the reference saves in `input/`.
  * @param {() => Generator<unknown>} createWorldObjects
- * @returns {import('../application/ports/ValidationIssue').ValidationIssue[]}
+ * @param {string | undefined} formatRelease
+ * @param {number} sectionIndex
+ * @returns {ValidationIssue[]}
  */
-function validateWorldObjectsSection(createWorldObjects) {
+function validateWorldObjectsSection(createWorldObjects, formatRelease, sectionIndex) {
+  const validateWorldObject = createSectionEntryValidator(formatRelease, sectionIndex);
   const issues = [];
   let entryIndex = 0;
 
   for (const worldObject of createWorldObjects()) {
-    issues.push(...validateSectionEntry(WORLD_OBJECTS_SECTION_INDEX, worldObject, entryIndex));
+    issues.push(...validateWorldObject(worldObject, entryIndex));
     entryIndex++;
   }
 
@@ -98,11 +105,9 @@ function validateWorldObjectsSection(createWorldObjects) {
 }
 
 /**
- * The section count is verified before parsing, so every error the reader reports from here on
- * concerns a line it could not read.
- * @param {import('shared-save-processing/gameDefinitions').SaveParseError} parseError
- * @returns {import('../application/ports/ValidationIssue').ValidationIssue}
+ * @param {SaveParseError} parseError
+ * @returns {ValidationIssue}
  */
-function toInvalidJsonIssue({detail, section, entryIndex}) {
-  return {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail, section, entryIndex};
+function toInvalidJsonIssue({detail, section, entryIndex, formatRelease}) {
+  return {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail, section, entryIndex, formatRelease};
 }

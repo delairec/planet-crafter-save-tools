@@ -4,7 +4,7 @@ import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {ParsedSaveSections, SaveSectionsParserPort} from './ports/SaveSectionsParserPort';
 import {LoadAndValidateSaveFilePresenterPort} from './ports/LoadAndValidateSaveFilePresenterPort';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
-import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {createSaveSections} from '../testing/createSaveSections';
 import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 
@@ -12,7 +12,7 @@ const loadedSections = createSaveSections();
 
 interface UseCaseOverrides {
   validationErrors?: ValidationIssue[];
-  validationWarnings?: SaveWarningCode[];
+  validationWarnings?: SaveWarning[];
   parsedSaveSections?: ParsedSaveSections;
 }
 
@@ -65,28 +65,28 @@ describe('LoadAndValidateSaveFile', () => {
     });
   });
 
-  describe('When validation reports that the save had to be adapted', () => {
+  describe('When validation reports that the save was written by 1.618 or earlier', () => {
     it('should present the warnings of a loaded save file', async () => {
       // Arrange
-      const {useCase, presenter} = setupUseCase({validationWarnings: ['legacy-save-format']});
+      const {useCase, presenter} = setupUseCase({validationWarnings: [{code: 'legacy-save-format'}]});
 
       // Act
       await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
-      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith([], ['legacy-save-format']);
+      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith([], [{code: 'legacy-save-format'}]);
     });
 
     it('should present the warnings of an invalid save file too', async () => {
       // Arrange
       const validationErrors = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}];
-      const {useCase, presenter} = setupUseCase({validationErrors, validationWarnings: ['legacy-save-format']});
+      const {useCase, presenter} = setupUseCase({validationErrors, validationWarnings: [{code: 'legacy-save-format'}]});
 
       // Act
       await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
-      expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith(validationErrors, ['legacy-save-format']);
+      expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith(validationErrors, [{code: 'legacy-save-format'}]);
     });
   });
 });

@@ -54,25 +54,6 @@ TASK FEAT47
 		+ "design was probed on throwaway corpora before the migration, the pass reading only"
 		+ "status, show and refs in JSON"
 
-TASK DOCS48
-	TITLE "the corpus section of AGENTS.md is split into files it links to, read only when needed"
-	DESC "the target is this project's AGENTS.md, not the one of the .ai repository"
-	STATUS archived
-	ARCHIVED_ON "2026-09-22"
-	DELIVERED_BY 105
-	SPEC "AGENTS.md keeps, about the corpus, only what a session needs before its first command,"
-		+ "and links to the rest"
-		IMPL "AGENTS.md::## Charger avant d'agir"
-	SPEC "each part taken out is a file of its own, named by the link that says when to read it"
-		IMPL "AGENTS.md::`agents/corpus-ecrire.md`"
-	SPEC "the awawa command replacing each shell read of a corpus file is listed in the global"
-		+ "instructions, corpus.md, and AGENTS.md points at that list"
-		IMPL "AGENTS.md::la règle CORPUS-4 de `~/.ai/instructions/corpus.md`"
-	RATIONALE "the section grew with the migration, and every session that loads AGENTS.md loads"
-		+ "all of it, whether its task touches the corpus or not"
-	SOURCE "Review of the corpus migration"
-		PR 95
-
 TASK DOCS50
 	TITLE "the five points the corpus migration left in its pull request body are ruled in the"
 		+ "corpus"
@@ -96,30 +77,6 @@ TASK DOCS50
 		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
 	SOURCE "Usage report of the corpus migration, part A remediation 1"
 		REF @USAGE_REPORT.PR95
-
-TASK CHORE51
-	TITLE "a guard refuses an anchor of the corpus that names a file git does not track"
-	STATUS archived
-	ARCHIVED_ON "2026-09-22"
-	DELIVERED_BY 101
-	SPEC "bun run check:anchors reads every anchor of the corpus and exits non-zero when one names"
-		+ "a path git does not track, naming the entity, the field and the path"
-		IMPL "scripts/check-corpus-anchors.ts::names ${path}, a path git does not track"
-		IMPL "package.json::check:anchors"
-	SPEC "the guard covers every field the schema declares as an anchor, read from the schema and"
-		+ "not from a list written in the script"
-		IMPL "scripts/check-corpus-anchors.ts::export function readAnchorFields"
-		IMPL "scripts/check-corpus-anchors.spec.ts::describe('readAnchorFields'"
-	SPEC "check:anchors is called by check:guards, as the seven guards already there are"
-		IMPL "package.json::&& bun run check:anchors"
-	SPEC "a spec file pins the guard on a tracked path, on an untracked one and on a path that does"
-		+ "not exist at all"
-		IMPL "scripts/check-corpus-anchors.spec.ts::describe('findUntrackedCorpusAnchors'"
-	RATIONALE "L016 tests existence on disk and never consults git, so an anchor on an ignored path"
-		+ "is clean for its author and an error in a fresh clone; the rule is written"
-		+ "(@DECISION.AnAnchorNamesAFileTrackedByGit) and enforced by nothing"
-		REF @DECISION.AnAnchorNamesAFileTrackedByGit
-	SOURCE "Review of the target schema, 2026-09-18"
 
 TASK CHORE52
 	TITLE "the product value tables become JSON files with a JSON Schema each, and five DATATABLE"
@@ -226,7 +183,7 @@ TASK FEAT55
 		REF @TASK.FEAT65
 		REF @TASK.FEAT66
 		REF @TASK.TEST67
-		REF @TASK.FEAT68
+		REF @TASK.TEST68
 	SOURCE "Skeo update and its first patch, release dates and patch notes, read on 2026-09-21:"
 		+ "Skeo live 2026-09-01 (gid 1842212951312440), Skeo Moon Patch #1 2026-09-14 (gid"
 		+ "1843481262701200)"
@@ -470,11 +427,9 @@ TASK FEAT66
 	TITLE "Give TreePlanter3, PodUnderground and RocketAnimals2 their energy"
 	STATUS implemented
 	AFTER @TASK.DOCS86
-	DESC "We can save a hypothesis that these three machines do not produce or draw power. Previous"
-		+ "objects with similar labels are not in the energy tables. Observation in game will be"
-		+ "the until condition."
-	SPEC "TreePlanter3, PodUnderground and RocketAnimals2 each carry a row in the energy table with"
-		+ "the kilowatts measured in game 2.103 when the machine draws or produces power"
+	SPEC "TreePlanter3, PodUnderground and RocketAnimals2 are named among the world object names"
+		+ "without a known energy level, on the recorded hypothesis that they neither draw nor"
+		+ "produce power, and the planet energy grid neither charges nor produces for them"
 		IMPL "docs/awawa-project-specification/hypotheses.awawa::HYPOTHESIS"
 			+ "TreePlanter3PodUndergroundRocketAnimals2DrawNoPower"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
@@ -485,12 +440,15 @@ TASK FEAT66
 	RATIONALE "Every group id the Skeo update adds already has a label row. The wiki gives the"
 		+ "power of Incubator2 and InsideLamp2, already in the energy table, and no energy for the"
 		+ "three other machines, whose predecessors have no row; a value missing from the wiki is"
-		+ "undocumented, never zero, so the user measures it in game and supplies it. The recorded"
-		+ "decision keeps a machine the wiki prints no value for out of the energy tables; a value"
-		+ "measured in game, cited by its release, is a source that decision does not foresee"
+		+ "undocumented, never zero, so the recorded decision keeps those machines out of the"
+		+ "energy tables. The task does not wait for the in-game measurement: the three machines"
+		+ "are delivered on @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower, whose"
+		+ "UNTIL is that observation, and a value measured then, cited by its release, is a source"
+		+ "the decision does not foresee"
 		REF @DATATABLE.EnergyLevels
 		REF @DATATABLE.WorldObjectLabels
 		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 		REF @GAME_RELEASE.2.103
 	SOURCE "Group ids added by the Skeo update and the mods raising their supported version to"
 		+ "2.103, read on 2026-09-21"
@@ -534,20 +492,25 @@ TASK TEST67
 		+ "planet id -440810600"
 		REF @PROJECT.DNC
 
-TASK FEAT68
-	TITLE "Handle the group ids the Skeo update deprecates"
-	STATUS todo
+TASK TEST68
+	TITLE "Attest that a deprecated group id survives a read, a validation and a merge unchanged"
+	STATUS implemented
+	DELIVERED_BY 140
 	AFTER @TASK.DOCS86
 	AFTER @TASK.FEAT89
-	DESC "type prefix and spec to settle once the open question is ruled"
-	SPEC "a world object or an item whose group id is Phytoplankton2 or Phytoplankton3 is read,"
-		+ "validated and merged as the ruling of the open question sets"
+	SPEC "a save carrying Phytoplankton2 or Phytoplankton3 is read and validated without a warning"
+		+ "the deprecation alone produces"
+		IMPL "packages/core-mapping/src/infrastructure/SaveValidatorService.spec.ts::should return"
+			+ "a valid result with no warning for %s"
+	SPEC "merging two saves of which one carries a deprecated group id writes that group id"
+		+ "unchanged, whichever release the other save declares"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should write those group ids unchanged"
+			+ "when the other save declares release %s"
 	WAVE 5
-	RATIONALE "The update deprecates Phytoplankton2 and Phytoplankton3, which saves written before"
-		+ "2.102 still carry. A local save written after 2.102 carries them too, but its provenance"
-		+ "is unknown, so it proves nothing on what the game does with them, and how the tool"
-		+ "handles them is not ruled"
-		REF @OPEN_QUESTION.DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
+	RATIONALE "The ruling is that the tool converts nothing, and the two group ids are already"
+		+ "among the world object names, so what the task delivers is the test that fails the day a"
+		+ "conversion is added"
+		REF @DECISION.ADeprecatedGroupIdIsCarriedThroughUnchanged
 		REF @GAME_RELEASE.2.102
 		REF @DATATABLE.WorldObjectLabels
 	SOURCE "PCEdit item catalog: deprecated(\"2.102\", \"Phytoplankton2\", \"Phytoplankton3\"),"
@@ -558,8 +521,8 @@ TASK FEAT68
 TASK FEAT69
 	TITLE "Open a validated save as an editable draft and write the draft to a new save"
 	STATUS draft
-	SPEC "a draft opened from a save in the current format and exported without an edit produces"
-		+ "the same bytes as the file it was opened from"
+	SPEC "a draft opened from a save and exported without an edit produces the same bytes as the"
+		+ "file it was opened from, whichever format that save carries"
 	SPEC "an edit operation applied to a draft changes the field it names and nothing else, and the"
 		+ "file the draft was opened from is never written"
 	SPEC "a draft is validated before it is serialized, by the validator the display and the merge"
@@ -1041,12 +1004,23 @@ TASK CHORE83
 
 TASK FEAT84
 	TITLE "Display the logisticsPaused of a save written by the Skeo update in the save manager"
-	STATUS todo
+	STATUS implemented
 	SPEC "the global progression section displays whether the drone logistics are paused when the"
 		+ "global metadata carries logisticsPaused"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts::should"
+			+ "present the drone logistics as $logisticsState"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
+			+ "extract logisticsPaused alongside the terra tokens"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should display the drone logistics as"
+			+ "paused"
 	SPEC "a save whose global metadata carries no logisticsPaused displays the section as before"
 		+ "the task"
+		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts::should"
+			+ "present all GlobalProgression"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
+			+ "extract global metadata"
 	AFTER @TASK.FEAT55
+	DELIVERED_BY 125
 	WAVE 5
 	RATIONALE "FEAT55 validates and merges logisticsPaused but displays nothing: the global"
 		+ "progression section shows the all time terra tokens alone. TEST67 asserts that a Skeo"
@@ -1069,8 +1043,8 @@ TASK DOCS86
 	DELIVERED_BY 115
 	WAVE 5
 	DESC "The decisions taken here must anticipate the next tasks of wave 5 and especially"
-		+ "@TASK.FEAT68"
-		REF @TASK.FEAT68
+		+ "@TASK.TEST68"
+		REF @TASK.TEST68
 	SPEC "the eras current, legacy and both are dropped: no value of HOLDS_FOR names an era"
 		IMPL "docs/_schema.awawa::FIELD HOLDS_FOR @GAME_RELEASE"
 	SPEC "HOLDS_FOR names a GAME_RELEASE and is repeatable: a rule or a section holds for each"
@@ -1082,17 +1056,18 @@ TASK DOCS86
 		+ "apart from the release before it; a release the code does not tell apart is never named,"
 		+ "and a save it writes is read by the branch of the last named release before it"
 		IMPL "docs/_schema.awawa::named only if the code tells it apart from the"
-		IMPL "packages/shared-save-processing/normalizeRawSections.js::rawParts.length ==="
+		IMPL "packages/shared-save-processing/parseSaveSections.js::splitPartsCount ==="
 			+ "LEGACY_SPLIT_PARTS_COUNT"
 	SPEC "each entity that carried an era is rewritten with the releases it holds for, read from"
 		+ "the branches of the code and not translated from the era it carried"
 		IMPL "docs/awawa-project-specification/sections.awawa"
 		IMPL "docs/awawa-project-specification/rules.awawa"
-	SPEC "the fields and constraints the schema keys on the era, INDEX, LEGACY_INDEX and the"
-		+ "incoming CONSTRAINED_BY of a section, are keyed on the releases instead, so that a"
-		+ "section written by the latest release still needs a rule that cites it"
-		IMPL "docs/_schema.awawa::the position of the section in the format 2.004 and later"
+	SPEC "no field and no constraint of a section is keyed on the era: LEGACY_INDEX is keyed on the"
+		+ "releases that write it, INDEX is required of every section, and the incoming"
+		+ "CONSTRAINED_BY is required of every active section, so that a section still needs a rule"
+		+ "that cites it"
 		IMPL "docs/_schema.awawa::the position of the section in the format 1.618 and earlier"
+		IMPL "docs/_schema.awawa::WHEN STATUS active"
 	SPEC "the decision that cites a game release as a source is rewritten in place: its SPEC that"
 		+ "no type of the specification area carries the game version as a field of its own, and"
 		+ "its REJECTED version field on RULE, are revised to admit the release a statement holds"
@@ -1139,10 +1114,11 @@ TASK DOCS86
 
 TASK DOCS88
 	TITLE "State in docs/save-format.md that a planet numeric id is the djb2 hash of its name"
-	STATUS todo
+	STATUS implemented
 	SPEC "docs/save-format.md states that a planet numeric id is the two-accumulator djb2 hash of"
 		+ "the planet name, as the rule on planet numeric ids does, and no longer that no known"
 		+ "hash reproduces the ids"
+		IMPL "docs/save-format.md::The numeric id is a two-accumulator djb2 hash of the planet name"
 	RATIONALE "Pull request 107 corrected the rationale of the rule on planet numeric ids to the"
 		+ "djb2 hash, verified on six ids, and left the format document at its previous sentence;"
 		+ "the FEAT65 agent flagged the document at its hand-back on 2026-09-21 as outside its SPEC"
@@ -1153,28 +1129,49 @@ TASK DOCS88
 		+ "the owner's review of pull request 112 on 2026-09-22"
 		PR 112
 		REF @USAGE_REPORT.PR111_112
+	DELIVERED_BY 122
 
 TASK FEAT89
 	TITLE "Warn when a save contradicts the game release it declares"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 124
 	WAVE 5
 	AFTER @TASK.DOCS86
 	SPEC "the releases HOLDS_FOR names are a table beside the module that reads it, one row per"
 		+ "release with what the code tells apart in the saves it writes, the number of parts today"
+		IMPL "packages/shared-save-processing/gameReleases.json"
 	SPEC "the version a save configuration declares resolves to the last release of the table not"
 		+ "later than it"
+		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %s to the last"
+			+ "release not later than it"
+		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %s to the first"
+			+ "release"
 	SPEC "a save is read by what it carries; when that contradicts the release its version resolves"
 		+ "to, loading it raises a warning naming both, and the save is still read"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should warn that the"
+			+ "release its version declares contradicts the format it carries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should still read the save"
+			+ "by the format it carries"
+		IMPL "packages/core-mapping/src/presentation/formatSaveWarning.spec.ts::should name the"
+			+ "declared version, its release and the release whose format the save carries"
 	SPEC "a save declaring 2.004 or later and carrying the Terrain Layers section raises that"
 		+ "warning, and so does a save declaring 1.618 or earlier without it"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::When the save declares"
+			+ "2.004 or later and still carries the Terrain Layers section"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::When the save declares"
+			+ "1.618 or earlier and carries no Terrain Layers section"
 	SPEC "the scenario fixtures declare the version of a release whose format they carry"
+		IMPL "scripts/generate-scenario-fixtures.ts::SKEO_UPDATE_RELEASE = '2.102'"
+		IMPL "packages/shared-save-processing/testing/createSaveRecords.js::version: '2.004'"
+		IMPL "packages/shared-save-processing/testing/createFakeSaveContent.js::LEGACY_FORMAT_RELEASE"
+			+ "= '1.618'"
 	RATIONALE "The code tells the two formats apart by the number of parts alone and never reads"
 		+ "the version the save declares, so a hand edit that makes them disagree goes unreported."
-		+ "The table is the mechanism FEAT68 extends with the release that removed a group id,"
+		+ "The table is the mechanism TEST68 extends with the release that removed a group id,"
 		+ "instead of a second list of versions. Every scenario fixture declares version 1.0 today,"
 		+ "which resolves to 1.618 while three of the four carry the format of 2.004"
 		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
-		REF @TASK.FEAT68
+		REF @TASK.TEST68
 	SOURCE "The owner, 2026-09-22, while ruling the releases of HOLDS_FOR for DOCS86"
 		REF @TASK.DOCS86
 
@@ -1200,6 +1197,409 @@ TASK CHORE91
 	SOURCE "FIX53's task DESC, PR 121"
 		PR 121
 		REF @TASK.FIX53
+
+TASK FEAT92
+	TITLE "Keep the format a save carries in shared-save-processing and name which one it is"
+	STATUS implemented
+	DELIVERED_BY 141
+	WAVE 5
+	AFTER @TASK.FEAT89
+	SPEC "parsing a save returns every part the file carries, Terrain Layers included, and names"
+		+ "the release whose format it carries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should return every part"
+			+ "the file carries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should name 1.618 as the"
+			+ "release whose format it carries"
+	SPEC "the Terrain Layers section is read, typed and written back like every other section: its"
+		+ "lines are parsed into entries by the one parser, and the serializer writes those entries"
+		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should read the Terrain"
+			+ "Layers section into its entries"
+		IMPL "packages/shared-save-processing/serializeSave.spec.js::should write the twelve parts"
+			+ "of that format"
+	SPEC "serializing a save writes the format it is given, so parsing then serializing a save of"
+		+ "1.618 returns the exact bytes of the file read"
+		IMPL "packages/shared-save-processing/serializeSave.spec.js::should return the exact bytes"
+			+ "of a save of 1.618 parsed then serialized"
+	SPEC "neither warning message says a save was adapted: the legacy-save-format one states that"
+		+ "the save was written by 1.618 or earlier, and the fallback one names no adaptation"
+		IMPL "packages/core-mapping/src/presentation/messages/saveWarningMessages.js"
+	SPEC "the twelve-part format of 1.618 is a RULE of DOMAIN format citing the Terrain Layers"
+		+ "section, which no rule names today, and taking authority over the properties of a layer"
+		+ "entry by VALUES_FROM; the rule states that the game writes the six properties of the"
+		+ "table in every entry it writes"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
+			+ "ALegacySaveCarriesTerrainLayersInTwelveParts"
+	SPEC "the table of layer properties carries the shapes the reference saves attest: each of the"
+		+ "two colours four numbers separated by dashes, each of the two intensities an integer no"
+		+ "upper bound holds, the layer id a free string no pattern describes"
+		IMPL "packages/shared-save-processing/legacyTerrainLayerProperties.json"
+	SPEC "the DESC of the Terrain Layers section no longer says that loading a legacy save discards"
+		+ "it"
+		IMPL "docs/awawa-project-specification/sections.awawa::parsing reads it"
+	RATIONALE "The round trip measured for FEAT69 on 2026-09-21 returns 2538 bytes against 2620 for"
+		+ "legacy-format_valid.json, the difference being the Terrain Layers section the"
+		+ "normalization drops; the package is where the loss happens and where it is repaired."
+		+ "Reading that section like any other costs the byte equality nothing, and the measurement"
+		+ "is what says so: of the 66 layer entries the three reference twelve-part saves carry, 66"
+		+ "come back byte for byte identical from a parse followed by a stringify, none of the six"
+		+ "properties being a float or an identifier beyond the exact range of a double. What"
+		+ "protects the round trip is therefore the criterion above, run on a real legacy save, and"
+		+ "not holding the section apart from the others. The table of layer properties documents"
+		+ "the shape the rule has authority over, and the code reads none of it"
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+		REF @SECTION.TerrainLayers
+		REF @DATATABLE.LegacyTerrainLayerProperties
+		REF @TASK.FEAT69
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the carried section stays raw text, and"
+		+ "the corpus corrections the change falsifies are part of the task"
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the Terrain Layers section behaves like"
+		+ "every other section, the earlier ruling of raw text being reversed; measured on the"
+		+ "reference saves Standard-1, Standard-3 and Standard-4, whose 66 layer entries all carry"
+		+ "the six properties and all survive a parse and a stringify unchanged"
+
+TASK FEAT93
+	TITLE "Read and validate a save of either format in core-mapping"
+	STATUS implemented
+	DELIVERED_BY 146
+	WAVE 5
+	AFTER @TASK.FEAT92
+	SPEC "a section is reached by the index the format of the save gives it, never by a position"
+		+ "nor a constant that assumes one format"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsParserService.ts"
+		IMPL "packages/shared-save-processing/sectionIndexes.spec.js::should give the Terrain"
+			+ "Layers section index 9 and the world events index 10"
+	SPEC "validating a save of 1.618 reports on its twelve parts and one of 2.004 on its eleven,"
+		+ "neither being converted to the other"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.spec.js::should validate its"
+			+ "twelve parts, the Terrain Layers section included, without an issue the format alone"
+			+ "produces"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.spec.js::should validate its"
+			+ "eleven parts without an issue the format alone produces"
+	SPEC "a save of either format is displayed by the save manager without a validation error the"
+		+ "format alone produces"
+		IMPL "packages/core-mapping/src/controllers/LoadAndValidateSaveFileController.spec.ts::should"
+			+ "return a valid view model carrying no error and the warning of that format alone"
+	SPEC "the Terrain Layers section of a legacy save is validated against a schema of its own,"
+		+ "requiring the six properties the game writes in every layer entry and admitting no"
+		+ "other, applied at the index the legacy format gives that section"
+		IMPL "packages/shared-save-processing/schemas/legacy-section9-terrain-layers.schema.json"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::should reject"
+			+ "the save, naming the Terrain Layers section at its legacy index"
+	SPEC "the legacy save the generator writes carries the six properties in its layer entry, so"
+		+ "the versioned fixture attests the shape the schema pins"
+		IMPL "packages/shared-save-processing/testing/createFakeSaveContent.js"
+		IMPL "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json::colorCustomLerp"
+	SPEC "each format has a whole-file schema of its own, pinned to the part count of that format"
+		+ "and to the section each of its indexes holds; no schema is loosened to admit both"
+		IMPL "packages/shared-save-processing/schemas/save-file.schema.json"
+		IMPL "packages/shared-save-processing/schemas/legacy-save-file.schema.json"
+	SPEC "no message announces eleven parts to a save carrying twelve: the count a validation"
+		+ "message names is the one the format at hand expects"
+		IMPL "packages/shared-save-processing/verifySectionCount.spec.js::should report the count"
+			+ "each format expects and the actual count"
+	SPEC "an error location names its section by the label the format of the save at hand gives"
+		+ "that index"
+		IMPL "packages/core-mapping/src/presentation/messages/saveSectionLabels.js"
+		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.spec.ts::When the save"
+			+ "carries the format of 1.618"
+	RATIONALE "The section index module exposes the legacy indexes as constants only the input"
+		+ "boundary was meant to read; once the format is kept, every reader needs the index of the"
+		+ "format at hand. The reader that breaks first holds no constant at all: the parser"
+		+ "service destructures the ten sections positionally, so a twelve-part save hands Terrain"
+		+ "Layers to the world events field. Downstream, the schema validator walks indexes 0 to 9"
+		+ "against a map keyed on the current format, so the legacy index 9 would be validated"
+		+ "against the world events schema and the legacy world events left unvalidated; the"
+		+ "section needs a schema of its own at that index, and the six properties it requires are"
+		+ "what the three reference saves write in all 66 of their layer entries. The public"
+		+ "fixture carries three of the six today, so the generator is extended with the same"
+		+ "change, its guard replaying it. Widening one whole-file schema to admit both part counts"
+		+ "would trade a false reading for a validation that no longer catches anything, so each"
+		+ "format is pinned by a schema of its own"
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+		REF @SECTION.WorldEvents
+		REF @SECTION.TerrainLayers
+		REF @DATATABLE.LegacyTerrainLayerProperties
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+		REF @TASK.FEAT92
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the two formats are validated by two"
+		+ "schemas rather than by one loosened schema, and the validator, the expected part count"
+		+ "and the section labels are read by the format at hand"
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the schema of a layer entry and the fixture"
+		+ "that attests it come here, FEAT97 being archived"
+		REF @TASK.FEAT97
+
+TASK FEAT94
+	TITLE "Write the merged save in the format the merge was asked for"
+	STATUS implemented
+	DELIVERED_BY 151
+	WAVE 5
+	AFTER @TASK.FEAT93
+	SPEC "merging two saves written in different formats writes the format of the more recent of"
+		+ "the two releases, and the legacy format when the merge request asks for it; the request"
+		+ "carries that choice and no surface offers it yet"
+		IMPL "packages/core-mapping/src/application/requests/MergeSaveFilesRequest.ts"
+	SPEC "the version the merged save configuration declares is the version of the save whose"
+		+ "format is written, so a merge of two saves of the same format still declares the version"
+		+ "of save A and no release name is written in place of a patch level"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts"
+	SPEC "the Terrain Layers section is written whenever the format written carries one, taking the"
+		+ "entries of save A when both saves carry it and the entries of the save that carries it"
+		+ "otherwise; the format written carrying none, the section is dropped"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeTerrainLayers.ts"
+	SPEC "a merge reports the format it wrote and every section writing it dropped, on the single"
+		+ "warning list of the merge output that no producer filled until now; the command and the"
+		+ "save manager render that list in FEAT95"
+		IMPL "packages/core-mapping/src/application/responses/MergeSucceededResponse.ts"
+	SPEC "the rule that the configuration of save A is used as is is rewritten in place to except"
+		+ "the version, as it already excepts the display name"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE SaveConfigurationComesFromSaveA"
+	SPEC "the decision on the merged format is rewritten in place on the two points this task rules"
+		+ "otherwise: the declared version is the one of the save whose format is written, and the"
+		+ "Terrain Layers section is taken from the save that carries it rather than surviving only"
+		+ "when both do"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AMergedSaveTakesTheMoreRecentFormatUnlessAsked"
+	RATIONALE "Verified on the branch of FEAT89: verifyDeclaredGameRelease('1.618', 11) raises"
+		+ "declared-release-contradicts-content, so a merge taking the version of a legacy save A"
+		+ "and writing eleven parts produces a file our own validator warns on; tying the declared"
+		+ "version to the save whose format is written is what removes the contradiction. Declaring"
+		+ "the release itself would remove it too, and would cost more than it buys: two saves of"
+		+ "2.103 merged would come out declaring 2.004, a patch level lost on the ordinary merge to"
+		+ "repair the mixed one. The merge is where the first warning of the output is produced,"
+		+ "the channel having been left closed until a producer existed; FEAT94 fills it and FEAT95"
+		+ "renders it, so that the format choice and its report cross the layers once."
+		+ "mergeSaveConfigurations copies save A's configuration whole and never reads the version,"
+		+ "and serializeSave writes ten sections with no parameter, so both statements of the"
+		+ "rewritten rule are false in the code today"
+		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+		REF @DECISION.NoMergeWarningChannelWithoutAProducer
+		REF @RULE.SaveConfigurationComesFromSaveA
+		REF @SECTION.TerrainLayers
+		REF @TASK.FEAT89
+		REF @TASK.FEAT95
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+		PR 124
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the merged save declares the version of"
+		+ "the save whose format is written, the Terrain Layers section is taken from the save that"
+		+ "carries it, and the task stops at the warning list of core-mapping"
+
+TASK FEAT95
+	TITLE "Offer the legacy format option and the merge report in the command and in the save"
+		+ "manager"
+	STATUS implemented
+	DELIVERED_BY 153
+	WAVE 5
+	AFTER @TASK.FEAT94
+	SPEC "the merge command takes a valueless --prefer-legacy flag asking for the legacy format,"
+		+ "absent by default, applying to every folder of the run, and the save manager offers a"
+		+ "checkbox of the same polarity beside the merge"
+		IMPL "packages/cli-merge/cli/parseMergeCliArguments.spec.js::should ask for the legacy"
+			+ "format"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should write the legacy format in the"
+			+ "merged save of each folder"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::preferLegacyFormat:"
+			+ "preferLegacyFormat()"
+	SPEC "the shared argument reader reads a flag carrying no value and accepts it as known, a"
+		+ "dash-prefixed argument naming no known flag staying unknown"
+		IMPL "packages/shared-platforms/cliArguments.spec.js::CLI valueless flag reading"
+		IMPL "packages/shared-platforms/cliArguments.spec.js::When a valueless flag the command"
+			+ "knows is given a value"
+	SPEC "the usage message of the command names the option, alongside the ones it already names"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should name that argument and print a"
+			+ "usage message"
+	SPEC "the save manager surfaces the merge report through the path it already surfaces"
+		+ "validation warnings through, and the command writes it where it writes its other"
+		+ "diagnostics, the single output path staying alone on stdout"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::messages={result().mergeWarnings}"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should leave the merged output path"
+			+ "alone on stdout"
+	SPEC "when the two saves differ in format and the legacy format was not asked for, each surface"
+		+ "tells in its own rendering how to keep it, the option in the command and the checkbox in"
+		+ "the save manager, the sentence the two share naming neither"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should state that the"
+			+ "legacy format could have been kept"
+		IMPL "packages/core-mapping/src/presentation/formatMergeWarning.spec.ts"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should tell how to keep the legacy"
+			+ "format"
+		IMPL "packages/ui-save-manager/src/messages/mergeResultSectionMessages.js::mergeResultSectionKeepLegacyFormatReminder"
+	RATIONALE "One polarity across the two surfaces is what keeps the two descriptions of the same"
+		+ "merge from contradicting each other; the report is the only thing that tells a user who"
+		+ "wanted the other format that the option exists. Two findings shape the criteria. The"
+		+ "shared argument reader knows only the --name=value form and reports a bare flag as"
+		+ "unknown, so a valueless flag is read by a reader this task adds rather than spelled"
+		+ "--prefer-legacy=true, a form that would then have to rule what false, an empty value and"
+		+ "a misspelt word mean. And the sentence of a warning code is produced once in the"
+		+ "core-mapping presentation and served to both surfaces, so a sentence naming the command"
+		+ "option would show that option to a user of the browser who has none: the shared sentence"
+		+ "states the fact, and the reminder of how to ask for the other format belongs to each"
+		+ "surface's own rendering. No scenario is written here: the save manager has no component"
+		+ "test layer and the scenarios that cover both formats and the mixed merge are TEST96."
+		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+		REF @COMMAND.MergeSaves
+		REF @PACKAGE.shared_platforms
+		REF @TASK.TEST96
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+		PR 124
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the option is the valueless flag"
+		+ "--prefer-legacy, the shared sentence states the fact alone and each surface adds its own"
+		+ "reminder, and the valueless flag form binds this task rather than being recorded as a"
+		+ "decision"
+
+TASK TEST96
+	TITLE "Cover both formats and the mixed merge with save manager scenarios"
+	STATUS implemented
+	DELIVERED_BY 155
+	WAVE 5
+	AFTER @TASK.FEAT95
+	SPEC "a scenario merges a legacy save with a current one and asserts the file it hands over"
+		+ "carries the current format, and its mirror, the legacy checkbox ticked, asserts it"
+		+ "carries the legacy format"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should hand over a merged save written in"
+			+ "the current format"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should hand over a merged save written in"
+			+ "the legacy format"
+	SPEC "the mixed merge scenario asserts the report the screen shows: the sentence of the warning"
+		+ "code and the reminder the save manager adds naming its checkbox, never the code itself"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should report the format written and tell"
+			+ "how to keep the legacy one, never showing a warning code"
+	SPEC "a scenario opens a legacy save and asserts it is displayed without a validation error the"
+		+ "format alone produces"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::When a save file written in the legacy"
+			+ "format is visualized"
+	RATIONALE "legacy-format_valid.json is the only legacy fixture, and the one scenario that"
+		+ "already merges it with a current save asserts the attribution of its warning and the"
+		+ "presence of the download link, never the format written, so nothing today would fail if"
+		+ "the conversion came back. What the scenarios can observe stops at what the screen hands"
+		+ "over: the only download the save manager offers is the merged file, no surface exports a"
+		+ "save that was merely visualized, and the byte for byte round trip is therefore proven"
+		+ "where it happens, on the parse and serialize pair of FEAT92. The report is asserted here"
+		+ "because FEAT95 writes no scenario, and the two halves of its rendering, the shared"
+		+ "sentence and the surface's own reminder, are only visible together on the screen"
+		REF @TASK.FEAT92
+		REF @TASK.FEAT95
+		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
+		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
+	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the byte for byte round trip stays with"
+		+ "FEAT92 for want of an export surface, the task stays on the save manager scenarios"
+		+ "rather than reaching the command end to end, and the generated fixtures declaring the"
+		+ "version of their format stay the criterion of FEAT89"
+
+TASK FEAT97
+	TITLE "Validate the entries of the Terrain Layers section"
+	STATUS archived
+	ARCHIVED_ON "2026-09-23"
+	PURGE false
+	WAVE 5
+	AFTER @TASK.FEAT93
+	DESC "Archived on 2026-09-23: the section is an ordinary section, so validating its entries is"
+		+ "no longer a task of its own. The schema of a layer entry and the fixture that attests it"
+		+ "are criteria of FEAT93, the section being read into entries by FEAT92, and the guard"
+		+ "that keeps a second reader of a save line out of the production code is CHORE98"
+		REF @TASK.FEAT92
+		REF @TASK.FEAT93
+		REF @TASK.CHORE98
+	SPEC "the entries of the Terrain Layers section are validated against a schema of their own,"
+		+ "read by the branch the format of the save selects"
+	SPEC "those entries are read for validation alone: the serializer keeps writing the text the"
+		+ "section was read as, so the byte for byte round trip of a legacy save is unchanged"
+	SPEC "the parser stays the only production reader of a save line: no validator parses the"
+		+ "section a second time"
+	RATIONALE "A broken entry of that section travels through the tool without a word today, and a"
+		+ "save the game refuses to load is the cost. The design this task rested on is the one the"
+		+ "refinement reversed: the section was to be carried as raw text and read a second time"
+		+ "for validation alone, where the measurement showed that an ordinary section costs the"
+		+ "byte equality nothing"
+		REF @DECISION.OneModuleAloneParsesASaveLine
+		REF @DATATABLE.LegacyTerrainLayerProperties
+		REF @SECTION.TerrainLayers
+		REF @TASK.FEAT92
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT93: a section carried without validation can"
+		+ "break a save in game, and that validation is a task of its own"
+	SOURCE "Owner ruling, 2026-09-23, refining the task: the section behaves like every other one,"
+		+ "so what is left of the task belongs to FEAT93 and to CHORE98"
+
+TASK CHORE98
+	TITLE "Guard the single production reader of a save line"
+	STATUS implemented
+	WAVE 5
+	DELIVERED_BY 137
+	SPEC "a JSON.parse call in the production code of any package fails the guard, unless it sits"
+		+ "in packages/shared-save-processing/parseSaveSections.js; JSON.parse named in a comment"
+		+ "does not fail it"
+		IMPL "scripts/check-save-line-reader.ts::findUnadmittedJsonParseCalls"
+		IMPL "scripts/check-save-line-reader.spec.ts"
+	SPEC "the production code the guard reads is every source file of packages/*, except spec and"
+		+ "test files, the e2e and testing directories and generated directories"
+		IMPL "scripts/check-save-line-reader.ts::isProductionSourceFile"
+		IMPL "scripts/check-save-line-reader.spec.ts"
+	SPEC "the guard is one of the check:* scripts check:guards chains, reads no git history, and"
+		+ "carries its own spec as the other guards do"
+		IMPL "package.json"
+		IMPL "scripts/check-save-line-reader.spec.ts"
+	SPEC "the first SPEC of the single-parser decision the rationale names carries the guard by"
+		+ "ENFORCED_BY"
+		IMPL "docs/awawa-project-methodology/decisions.awawa"
+	RATIONALE "The decision rests on review alone: no guard of the repository names it, and the"
+		+ "divergence it forbids is what kept a lost section invisible until the parser became the"
+		+ "only reader. The repository already holds the idiom, a check:* script with its own spec,"
+		+ "and the wave that spreads the format of a save across every reader is when a second"
+		+ "reader is most tempting. A line reading cannot tell a save line from any other JSON, so"
+		+ "every JSON.parse outside the parser is refused: none exists today, and a legitimate"
+		+ "reader of another JSON is admitted by an explicit exception in a later pull request. The"
+		+ "task waits on no other: if FEAT92 moves the parsing out of the parser module, its own"
+		+ "pull request updates the one path the guard admits"
+		REF @DECISION.OneModuleAloneParsesASaveLine
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+		REF @TASK.FEAT92
+	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the invariant becomes a guard, in a task of"
+		+ "its own"
+		REF @TASK.FEAT97
+	SOURCE "Owner ruling, 2026-09-23, refining CHORE98: every JSON.parse outside the parser is"
+		+ "refused, the production perimeter is stated, the decision names the guard, and no task"
+		+ "comes first"
+
+TASK CHORE99
+	TITLE "Close the three gaps of the check:contrast guard"
+	STATUS implemented
+	SPEC "the guard reports a foreground declaration whose background the catalog does not cover,"
+		+ "even when the same token is catalogued for that stylesheet over another background"
+		IMPL "scripts/check-color-contrast.spec.ts::the background of that selector being"
+			+ "uncatalogued"
+	SPEC "the guard reports a foreground declaration whose color is written as a literal instead of"
+		+ "var(--token)"
+		IMPL "scripts/check-color-contrast.spec.ts::as naming no color token"
+	SPEC "the guard scans every stylesheet of packages/ui-save-manager/src,"
+		+ "packages/ui-save-manager/src/app.css included"
+		IMPL "scripts/check-color-contrast.spec.ts::app.css included"
+	SPEC ".text-color-inverted is gone from packages/ui-save-manager/src/styles/typography.css and"
+		+ "check:guards passes"
+		IMPL "packages/ui-save-manager/src/styles/typography.css"
+		IMPL "package.json::check:contrast"
+	RATIONALE "The catalog of @DECISION.ColorTokenPairsMeetWcagAaByCatalog is the authority on the"
+		+ "pairs checked, and findUncataloguedForegroundDeclarations keys its coverage on the"
+		+ "(token, file) pair, so a second declaration of a token already catalogued for that"
+		+ "stylesheet passes in silence. The standing instance is .text-color-inverted of"
+		+ "typography.css, a class no markup uses, measuring 1.08:1 in the light theme and 1.00:1"
+		+ "in the dark one while --inverted is catalogued for that file over --neon-cyan; a class"
+		+ "nothing renders has no background to catalogue, so it is deleted rather than catalogued."
+		+ "The other two gaps have no standing instance — no stylesheet writes a literal color, and"
+		+ "app.css carries only @import lines — and are each proven on a constructed source."
+		+ "Distinct from CHORE91, which instructs axe-core on the rendered DOM and would never see"
+		+ "a class no markup uses"
+		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
+		REF @TASK.CHORE91
+	SOURCE "Coherence pass of pull request 127, 2026-09-23: three gaps found by reading the guard"
+		+ "against the stylesheets it scans"
+		PR 127
+	SOURCE "Owner ruling, 2026-09-23, refining CHORE99: one criterion per gap, and the dead class"
+		+ "is deleted instead of catalogued"
+		PR 127
+	DELIVERED_BY 150
 
 TASK CHORE105
 	TITLE "measure the unit test coverage and fail the CI when it drops"
@@ -1232,3 +1632,17 @@ TASK CHORE105
 		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
 		REF @DECISION.UiSaveManagerStaysOutsideTheFallowPerimeter
 	SOURCE "Owner request, refinement session of 2026-09-23"
+
+TASK FEAT114
+	TITLE "make the output of the merge and validate commands easy to read"
+	STATUS draft
+	DESC "drafted for memory, no research done: the form the output takes is settled when the task"
+		+ "is refined"
+	SPEC "the output of the merge and validate commands is judged readable by the owner on the"
+		+ "manual test plan of PR 127"
+	RATIONALE "Seen on the manual test of PR 127: every line carries the bun filter prefix, output"
+		+ "paths are printed in full, and the warnings of a folder are interleaved with those of"
+		+ "the other folders the same run processes"
+	SOURCE "Owner review, 2026-09-24: the output of the two commands is hard to read, a draft task"
+		+ "with no wave"
+		PR 127

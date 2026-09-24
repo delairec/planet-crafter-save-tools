@@ -1,15 +1,17 @@
 import {describe, expect, it} from 'bun:test';
 import {MergeResultPresenter} from './MergeResultPresenter';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
+import {MergeWarning} from '../application/responses/MergeWarning';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noErrorsFromSaveB: ValidationIssue[] = [];
 const noErrorsFromTheMerge: ValidationIssue[] = [];
-const noWarningsFromSaveA: SaveWarningCode[] = [];
-const noWarningsFromSaveB: SaveWarningCode[] = [];
+const noMergeWarnings: MergeWarning[] = [];
+const noWarningsFromSaveA: SaveWarning[] = [];
+const noWarningsFromSaveB: SaveWarning[] = [];
 
 describe('MergeResultPresenter', () => {
 
@@ -23,6 +25,8 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
+        mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -34,6 +38,8 @@ describe('MergeResultPresenter', () => {
         content: 'merged content',
         mergeFailureMessage: '',
         mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
@@ -50,16 +56,64 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
-        saveAWarnings: ['legacy-save-format'],
+        mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
+        saveAWarnings: [{code: 'legacy-save-format'}],
         saveBWarnings: noWarningsFromSaveB
       });
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAWarnings).toEqual([{
-        message: 'This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.',
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
         location: null
       }]);
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBWarnings).toEqual([]);
+    });
+  });
+
+  describe('When presenting a merge success across two save formats', () => {
+    it('should translate the merge warnings into user messages', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentMergeSucceeded({
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergeErrors: noErrorsFromTheMerge,
+        mergeWarnings: [
+          {code: 'merged-save-format', formatRelease: '2.004'},
+          {code: 'merged-save-section-dropped', section: 'terrainLayers'}
+        ],
+        legacyFormatCouldBeKept: true,
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
+
+      // Assert
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.mergeWarnings).toEqual([
+        {message: 'The two saves carry different formats; the merged save is written in the format of release 2.004.', location: null},
+        {message: 'Writing that format dropped the Terrain layers section.', location: null}
+      ]);
+    });
+
+    it('should tell the consumer that the legacy format could have been kept', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentMergeSucceeded({
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergeErrors: noErrorsFromTheMerge,
+        mergeWarnings: [{code: 'merged-save-format', formatRelease: '2.004'}],
+        legacyFormatCouldBeKept: true,
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
+
+      // Assert
+      expect(presenter.viewModel.legacyFormatCouldBeKept).toBe(true);
     });
   });
 
@@ -72,7 +126,9 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: PLAYERS_SECTION_INDEX}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: PLAYERS_SECTION_INDEX, formatRelease: '2.004'}],
+        mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -84,6 +140,8 @@ describe('MergeResultPresenter', () => {
         content: 'merged content',
         mergeFailureMessage: '',
         mergeErrors: [{message: 'Expected exactly one host player, found 2', location: 'Players (section 2)'}],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
@@ -99,7 +157,9 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 12}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 12, formatRelease: '2.004'}],
+        mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -129,6 +189,8 @@ describe('MergeResultPresenter', () => {
         content: '',
         mergeFailureMessage: '',
         mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
         saveAErrors: [{message: 'Invalid JSON: contentA', location: null}],
         saveBErrors: [],
         saveAWarnings: [],
@@ -145,12 +207,12 @@ describe('MergeResultPresenter', () => {
         saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'}],
         saveBErrors: noErrorsFromSaveB,
         saveAWarnings: noWarningsFromSaveA,
-        saveBWarnings: ['legacy-save-format']
+        saveBWarnings: [{code: 'legacy-save-format'}]
       });
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBWarnings).toEqual([{
-        message: 'This save was created by an older version of the game and has been adapted to the current format. The obsolete Terrain Layers section was ignored.',
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
         location: null
       }]);
     });
@@ -161,8 +223,8 @@ describe('MergeResultPresenter', () => {
 
       // Act
       presenter.presentSaveFilesInvalid({
-        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: { broken', section: PLAYERS_SECTION_INDEX, entryIndex: 1}],
-        saveBErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: INVENTORIES_SECTION_INDEX, entryIndex: 0}],
+        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: { broken', section: PLAYERS_SECTION_INDEX, entryIndex: 1, formatRelease: '2.004'}],
+        saveBErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: INVENTORIES_SECTION_INDEX, entryIndex: 0, formatRelease: '2.004'}],
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -188,6 +250,8 @@ describe('MergeResultPresenter', () => {
         content: '',
         mergeFailureMessage: 'The merge could not produce a usable save file. Both save files were left untouched.',
         mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],

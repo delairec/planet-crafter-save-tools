@@ -2,7 +2,7 @@ export interface TableViewModel {
   columns: ColumnViewModel[];
 }
 
-interface ColumnViewModel {
+export interface ColumnViewModel {
   header: string;
   values: string[];
 }

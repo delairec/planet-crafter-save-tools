@@ -23,7 +23,7 @@ describe('ValidateSaveFileController', () => {
       // Assert
       expect<SaveFileValidationViewModel>(viewModel).toEqual({
         status: 'invalid',
-        errors: [{message: 'Expected 11 sections but found 1', location: null}],
+        errors: [{message: 'Expected 11 or 12 sections but found 1', location: null}],
         warnings: []
       });
     });

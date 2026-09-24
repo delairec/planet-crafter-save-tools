@@ -6,6 +6,7 @@ import {
   Statistics,
   StoryEvent,
   TerraformationLevel,
+  TerrainLayer,
   WorldEvent
 } from 'shared-save-processing/gameDefinitions';
 import {createGlobalMetadata} from 'shared-save-processing/testing/createSaveRecords.js';
@@ -14,6 +15,7 @@ import {SaveSections} from '../domain/save/SaveSections';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 
 interface SaveSectionsOptions {
+  formatRelease?: string;
   globalMetadata?: GlobalMetadata[];
   terraformationLevels?: TerraformationLevel[];
   players?: Player[];
@@ -23,10 +25,12 @@ interface SaveSectionsOptions {
   mailboxes?: MailboxMessage[];
   storyEvents?: StoryEvent[];
   saveConfigurations?: SaveConfiguration[];
+  terrainLayers?: TerrainLayer[];
   worldEvents?: WorldEvent[];
 }
 
 export function createSaveSections({
+  formatRelease = '2.004',
   globalMetadata = [createGlobalMetadata()],
   terraformationLevels = [],
   players = [],
@@ -36,9 +40,11 @@ export function createSaveSections({
   mailboxes = [],
   storyEvents = [],
   saveConfigurations = [],
+  terrainLayers = undefined,
   worldEvents = []
 }: SaveSectionsOptions = {}): SaveSections {
   return {
+    formatRelease,
     globalMetadata,
     terraformationLevels,
     players,
@@ -48,6 +54,7 @@ export function createSaveSections({
     mailboxes,
     storyEvents,
     saveConfigurations,
+    terrainLayers,
     worldEvents
   };
 }

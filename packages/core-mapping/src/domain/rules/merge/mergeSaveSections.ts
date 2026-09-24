@@ -10,22 +10,27 @@ import {mergeSaveConfigurations} from './mergeSaveConfigurations';
 import {mergeWorldEvents} from './mergeWorldEvents';
 import {determineSaveOrder} from './determineSaveOrder';
 import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
+import {selectWrittenFormatSave} from './selectWrittenFormatSave';
+import {mergeTerrainLayers} from './mergeTerrainLayers';
 import {MergedSaveSections} from './MergedSaveSections';
 import {SaveSections} from '../../save/SaveSections';
 
+export interface MergeOptions {
+  saveDisplayName: string;
+  preferLegacyFormat: boolean;
+}
+
 /**
- * Merges two Planet Crafter saves section by section.
- * If one save has `planetId === 'Prime'` in its configuration, it is promoted to save A.
- * Every section rule returns structured entries: nothing is serialized here.
- * @param saveDisplayName - Overrides `saveDisplayName` in the merged configuration.
  * @see @RULE.TheSaveOnPrimeBecomesSaveA
  */
-export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSections, saveDisplayName: string): MergedSaveSections {
+export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSections, {saveDisplayName, preferLegacyFormat}: MergeOptions): MergedSaveSections {
   const [mainSave, secondarySave] = determineSaveOrder(sectionsA, sectionsB);
+  const writtenFormatSave = selectWrittenFormatSave(mainSave, secondarySave, preferLegacyFormat);
 
   const ejectedPlayerIds = collectEjectedPlayerInventoryIds(mainSave.players, secondarySave.players, secondarySave.inventories);
 
   return {
+    formatRelease: writtenFormatSave.formatRelease,
     globalMetadata: mergeGlobalMetadata(mainSave.globalMetadata, secondarySave.globalMetadata),
     terraformationLevels: mergeTerraformationLevels(mainSave.terraformationLevels, secondarySave.terraformationLevels),
     players: mergePlayers(mainSave.players, secondarySave.players),
@@ -34,7 +39,11 @@ export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSectio
     statistics: mergeStatistics(mainSave.statistics, secondarySave.statistics),
     mailboxes: mergeMailboxes(mainSave.mailboxes, secondarySave.mailboxes),
     storyEvents: mergeStoryEvents(mainSave.storyEvents, secondarySave.storyEvents),
-    saveConfiguration: mergeSaveConfigurations(mainSave.saveConfigurations, secondarySave.saveConfigurations, saveDisplayName),
+    saveConfiguration: mergeSaveConfigurations(mainSave.saveConfigurations, secondarySave.saveConfigurations, {
+      saveDisplayName,
+      declaredVersion: writtenFormatSave.saveConfigurations[0]?.version
+    }),
+    terrainLayers: mergeTerrainLayers(mainSave, secondarySave, writtenFormatSave),
     worldEvents: mergeWorldEvents(mainSave.worldEvents, secondarySave.worldEvents)
   };
 }
