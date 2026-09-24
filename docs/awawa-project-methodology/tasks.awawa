@@ -461,13 +461,18 @@ TASK TEST67
 
 TASK TEST68
 	TITLE "Attest that a deprecated group id survives a read, a validation and a merge unchanged"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 140
 	AFTER @TASK.DOCS86
 	AFTER @TASK.FEAT89
 	SPEC "a save carrying Phytoplankton2 or Phytoplankton3 is read and validated without a warning"
 		+ "the deprecation alone produces"
+		IMPL "packages/core-mapping/src/infrastructure/SaveValidatorService.spec.ts::should return"
+			+ "a valid result with no warning for %s"
 	SPEC "merging two saves of which one carries a deprecated group id writes that group id"
 		+ "unchanged, whichever release the other save declares"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should write those group ids unchanged"
+			+ "when the other save declares release %s"
 	WAVE 5
 	RATIONALE "The ruling is that the tool converts nothing, and the two group ids are already"
 		+ "among the world object names, so what the task delivers is the test that fails the day a"
