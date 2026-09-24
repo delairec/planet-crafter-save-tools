@@ -1,7 +1,7 @@
 import {findUnknownArguments, PLATFORM_FLAG_NAME, readFlagValue} from 'shared-platforms/cliArguments.js';
 
 const FILE_FLAG_NAME = 'file';
-const KNOWN_FLAG_NAMES = [FILE_FLAG_NAME, PLATFORM_FLAG_NAME];
+const KNOWN_FLAGS = {valueFlagNames: [FILE_FLAG_NAME, PLATFORM_FLAG_NAME], valuelessFlagNames: []};
 
 /**
  * @param {string[]} argv
@@ -10,6 +10,6 @@ const KNOWN_FLAG_NAMES = [FILE_FLAG_NAME, PLATFORM_FLAG_NAME];
 export function parseValidateCliArguments(argv) {
   return {
     filePath: readFlagValue(argv, FILE_FLAG_NAME),
-    unknownArguments: findUnknownArguments(argv, KNOWN_FLAG_NAMES)
+    unknownArguments: findUnknownArguments(argv, KNOWN_FLAGS)
   };
 }

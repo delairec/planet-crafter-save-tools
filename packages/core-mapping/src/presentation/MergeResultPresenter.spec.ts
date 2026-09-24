@@ -26,6 +26,7 @@ describe('MergeResultPresenter', () => {
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
         mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -37,6 +38,8 @@ describe('MergeResultPresenter', () => {
         content: 'merged content',
         mergeFailureMessage: '',
         mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
@@ -54,6 +57,7 @@ describe('MergeResultPresenter', () => {
         content: 'merged content',
         mergeErrors: noErrorsFromTheMerge,
         mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: [{code: 'legacy-save-format'}],
         saveBWarnings: noWarningsFromSaveB
       });
@@ -64,6 +68,52 @@ describe('MergeResultPresenter', () => {
         location: null
       }]);
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBWarnings).toEqual([]);
+    });
+  });
+
+  describe('When presenting a merge success across two save formats', () => {
+    it('should translate the merge warnings into user messages', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentMergeSucceeded({
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergeErrors: noErrorsFromTheMerge,
+        mergeWarnings: [
+          {code: 'merged-save-format', formatRelease: '2.004'},
+          {code: 'merged-save-section-dropped', section: 'terrainLayers'}
+        ],
+        legacyFormatCouldBeKept: true,
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
+
+      // Assert
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.mergeWarnings).toEqual([
+        {message: 'The two saves carry different formats; the merged save is written in the format of release 2.004.', location: null},
+        {message: 'Writing that format dropped the Terrain layers section.', location: null}
+      ]);
+    });
+
+    it('should tell the consumer that the legacy format could have been kept', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentMergeSucceeded({
+        fileName: 'merged.json',
+        content: 'merged content',
+        mergeErrors: noErrorsFromTheMerge,
+        mergeWarnings: [{code: 'merged-save-format', formatRelease: '2.004'}],
+        legacyFormatCouldBeKept: true,
+        saveAWarnings: noWarningsFromSaveA,
+        saveBWarnings: noWarningsFromSaveB
+      });
+
+      // Assert
+      expect(presenter.viewModel.legacyFormatCouldBeKept).toBe(true);
     });
   });
 
@@ -78,6 +128,7 @@ describe('MergeResultPresenter', () => {
         content: 'merged content',
         mergeErrors: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: PLAYERS_SECTION_INDEX, formatRelease: '2.004'}],
         mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -89,6 +140,8 @@ describe('MergeResultPresenter', () => {
         content: 'merged content',
         mergeFailureMessage: '',
         mergeErrors: [{message: 'Expected exactly one host player, found 2', location: 'Players (section 2)'}],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
@@ -106,6 +159,7 @@ describe('MergeResultPresenter', () => {
         content: 'merged content',
         mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 12, formatRelease: '2.004'}],
         mergeWarnings: noMergeWarnings,
+        legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
@@ -135,6 +189,8 @@ describe('MergeResultPresenter', () => {
         content: '',
         mergeFailureMessage: '',
         mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
         saveAErrors: [{message: 'Invalid JSON: contentA', location: null}],
         saveBErrors: [],
         saveAWarnings: [],
@@ -194,6 +250,8 @@ describe('MergeResultPresenter', () => {
         content: '',
         mergeFailureMessage: 'The merge could not produce a usable save file. Both save files were left untouched.',
         mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
         saveAErrors: [],
         saveBErrors: [],
         saveAWarnings: [],
