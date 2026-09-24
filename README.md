@@ -30,7 +30,18 @@
 
   ## 👉 [Open the Save Manager in browser](https://planet-crafter-save-manager.netlify.app/) — nothing to install
 
-![The Save Manager welcome page](docs/assets/welcome-page.png)
+<p>
+  <a href="docs/assets/welcome-page-dark.png"><picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/welcome-page-light-thumbnail.png">
+    <img src="docs/assets/welcome-page-dark-thumbnail.png" width="300" alt="Merging two saves in the Save Manager">
+  </picture></a>
+  <a href="docs/assets/display-page-dark.png"><picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/display-page-light-thumbnail.png">
+    <img src="docs/assets/display-page-dark-thumbnail.png" width="300" alt="Looking inside a save in the Save Manager">
+  </picture></a>
+</p>
+<p><sub>Click a screenshot to open it full size — light theme:
+<a href="docs/assets/welcome-page-light.png">merge</a>, <a href="docs/assets/display-page-light.png">save view</a>.</sub></p>
 </div>
 </div>
 
