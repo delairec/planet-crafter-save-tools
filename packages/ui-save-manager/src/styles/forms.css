@@ -86,9 +86,14 @@ select:focus {
 .merge-slots {
     display: grid;
     grid-template-columns: auto auto;
-    column-gap: 1rem;
+    gap: 1rem 0.5rem;
     align-items: center;
     width: fit-content;
+    margin-block: 1rem;
+}
+
+.merge-slots p {
+    margin: 0;
 }
 
 .merge-slots-swap {
