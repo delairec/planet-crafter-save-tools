@@ -1,3 +1,4 @@
+import {writeFile} from 'node:fs/promises';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from '../packages/shared-save-processing/testing/createFakeSaveContent.js';
 import {
   createEquipment,
@@ -8,9 +9,9 @@ import {
   createWorldObject
 } from '../packages/shared-save-processing/testing/createSaveRecords.js';
 
-export const SCENARIO_FIXTURES_DIRECTORY = 'packages/ui-save-manager/e2e/fixtures';
+const SCENARIO_FIXTURES_DIRECTORY = 'packages/ui-save-manager/e2e/fixtures';
 
-export interface ScenarioFixture {
+interface ScenarioFixture {
   fileName: string;
   generateContent: () => string;
 }
@@ -53,7 +54,7 @@ function generateSkeoUpdateContent(): string {
   });
 }
 
-export const SCENARIO_FIXTURES: ScenarioFixture[] = [
+const SCENARIO_FIXTURES: ScenarioFixture[] = [
   {fileName: 'baseline_valid.json', generateContent: () => createFakeSaveContent()},
   {fileName: 'other-player_valid.json', generateContent: generateOtherPlayerContent},
   {fileName: 'negative-gauge_invalid.json', generateContent: () => createFakeSaveContent({players: [createPlayer({playerGaugeToxic: -1})]})},
@@ -61,25 +62,17 @@ export const SCENARIO_FIXTURES: ScenarioFixture[] = [
   {fileName: 'skeo-update_valid.json', generateContent: generateSkeoUpdateContent}
 ];
 
-/**
- * @param {string} fileName the name of a declared scenario fixture
- * @returns where that fixture is written, resolved from this script rather than from the caller's
- * working directory
- */
-export function resolveScenarioFixturePath(fileName: string): string {
+function resolveScenarioFixturePath(fileName: string): string {
   return new URL(`../${SCENARIO_FIXTURES_DIRECTORY}/${fileName}`, import.meta.url).pathname;
 }
 
-async function writeScenarioFixtures(): Promise<number> {
+export default async function writeScenarioFixtures(): Promise<void> {
   for (const {fileName, generateContent} of SCENARIO_FIXTURES) {
-    await Bun.write(resolveScenarioFixturePath(fileName), generateContent());
-    console.log(`${SCENARIO_FIXTURES_DIRECTORY}/${fileName}`);
+    await writeFile(resolveScenarioFixturePath(fileName), generateContent());
   }
-  console.log(`generate:scenario-fixtures: ${SCENARIO_FIXTURES.length} fixture(s) written.`);
-
-  return 0;
 }
 
 if (import.meta.main) {
-  process.exit(await writeScenarioFixtures());
+  await writeScenarioFixtures();
+  console.log(`generate:scenario-fixtures: ${SCENARIO_FIXTURES.length} fixture(s) written to ${SCENARIO_FIXTURES_DIRECTORY}.`);
 }

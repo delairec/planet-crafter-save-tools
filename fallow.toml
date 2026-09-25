@@ -15,7 +15,6 @@ entry = [
     "scripts/check-solid-idioms.spec.ts",
     "scripts/check-scenario-fixtures.ts",
     "scripts/check-scenario-fixtures.spec.ts",
-    "scripts/generate-scenario-fixtures.ts",
     "scripts/check-scenario-locators.ts",
     "scripts/check-scenario-locators.spec.ts",
     "scripts/release/release.ts",

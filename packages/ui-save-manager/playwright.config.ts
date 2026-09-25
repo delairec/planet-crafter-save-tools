@@ -1,13 +1,14 @@
 import {defineConfig, devices} from '@playwright/test';
 
-/** Port the `preview` script serves the production build on. */
 const previewUrl = 'http://localhost:4173';
 
 const isContinuousIntegration = !!process.env.CI;
+const buildAndPreviewTimeout = 180_000;
 
 export default defineConfig({
   testDir: './e2e',
   testMatch: '**/*.e2e.ts',
+  globalSetup: '../../scripts/generate-scenario-fixtures.ts',
   forbidOnly: isContinuousIntegration,
   retries: isContinuousIntegration ? 1 : 0,
   reporter: isContinuousIntegration ? [['list'], ['html', {open: 'never'}]] : [['list']],
@@ -25,7 +26,6 @@ export default defineConfig({
     command: 'bun run preview',
     url: previewUrl,
     reuseExistingServer: !isContinuousIntegration,
-    // The command builds the application before serving it.
-    timeout: 180_000
+    timeout: buildAndPreviewTimeout
   }
 });
