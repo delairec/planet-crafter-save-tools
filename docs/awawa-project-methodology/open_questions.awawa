@@ -34,3 +34,5 @@ OPEN_QUESTION TheGameDataPriceOfTreePlanter3NarrowsTheNoPowerHypothesis
 		+ "prices the two pots and leaves the hypothesis text as it stands. Recommended answer:"
 		+ "narrow the hypothesis to the two machines the export does not price, TEST125 keeping"
 		+ "TreePlanter3 in its fixture to check the 85 kW in game"
+	SOURCE "Raised while delivering FEAT124"
+		PR 178

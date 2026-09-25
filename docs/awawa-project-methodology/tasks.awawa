@@ -1057,18 +1057,30 @@ TASK TEST123
 TASK FEAT124
 	TITLE "Price every power-drawing world object the public sources attest, placed in a reference"
 		+ "save or not"
-	STATUS todo
+	STATUS implemented
 	SPEC "every machine of the group without a known energy level that a source prices gets its row"
 		+ "in the energy table, the source in the source field of that row, and moves to the"
 		+ "producing or the consuming group"
+		IMPL "packages/core-mapping/src/domain/energyLevels.json::TradePlatform1"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge %s, a world"
+			+ "object grouped as an energy consumer"
 	SPEC "a name no source prices stays in its group, and nothing records the search made for it"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should neither produce nor"
+			+ "charge for the world objects without a known energy level"
 	SPEC "the rows already in the energy table are not checked again"
+		IMPL "docs/energy-levels.md::rows already in the table were not checked again"
 	SPEC "the sources searched include, beyond the wiki, the game data a community mod or save"
 		+ "editor reads from the game, each one recorded as a URL entity at the address read"
+		IMPL "docs/awawa-project-methodology/sources.awawa::URL CompanionAppGameDataV2103"
 	SPEC "docs/energy-levels.md records the date and the game release of the search, and the"
 		+ "limitation on machines without a known energy level lists only the placed machines no"
 		+ "source prices"
+		IMPL "docs/energy-levels.md::Game data search: 2026-09-25"
+		IMPL "docs/awawa-project-methodology/limitations.awawa::Five placed machines have no known"
+			+ "energy level"
 	WAVE @WAVE.9
+	DELIVERED_BY 178
 	RATIONALE "The cross-check of 2026-09-09 covered only the names placed in the six reference"
 		+ "saves, plus the three names of the Skeo update: 541 names stay without a known energy"
 		+ "level against 104 consumers, and a machine a player places that no reference save holds"

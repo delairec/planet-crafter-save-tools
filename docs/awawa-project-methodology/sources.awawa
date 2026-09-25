@@ -170,3 +170,4 @@ URL CompanionAppGameDataV2103
 		+ "kW, negative for a consumer"
 	SOURCE "Read on 2026-09-25 for FEAT124, the 541 names of the group without a known energy level"
 		+ "looked up in it"
+		PR 178

@@ -360,15 +360,22 @@ DECISION AnEmptyMetadataSectionIsRefusedByValidation
 		PR 15
 
 DECISION AnUnprintedEnergyValueIsNeitherInferredNorZero
-	SPEC "A machine whose wiki page prints no energy value stays out of the energy tables, in the"
-		+ "group without a known energy level"
+	SPEC "A machine that neither its wiki page nor the game data export prices stays out of the"
+		+ "energy tables, in the group without a known energy level"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
 	REJECTED "Deducing the values from the regularity between tiers"
 	REJECTED "Setting zero for a value the wiki does not print"
+	REJECTED "The wiki as the only source of values, its previous form: the game data export prices"
+		+ "machines the wiki leaves silent and matches 107 stored rows to the kilowatt"
+		REF @URL.CompanionAppGameDataV2103
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RATIONALE "The wiki is the only source of values"
+	RATIONALE "The wiki and the game data export are the sources of values; a value neither prints"
+		+ "is undocumented, and the export's 0 is no price either"
+		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Pull request"
 		PR 43
+	SOURCE "Widened to the game data export by the delivery of FEAT124"
+		PR 178
 
 DECISION TheByteOrderMarkIsNotPreserved
 	SPEC "Both platform adapters strip the byte order mark on reading and write none"
@@ -1927,3 +1934,4 @@ DECISION AZeroInTheGameDataExportIsNotAPrice
 		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
 	SOURCE "Ruling taken while delivering FEAT124 on 2026-09-25, from the owner ruling that only a"
 		+ "price found is stored"
+		PR 178
