@@ -1282,7 +1282,6 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 	RATIONALE "The version is a claim of the save, the content its fact; a contradiction is"
 		+ "reported"
 	SOURCE "Owner ruling"
-		REF @TASK.DOCS86
 	SOURCE "The table, the resolution of a declared version and the contradiction warning, on"
 		+ "delivery of the task"
 		PR 124
@@ -1582,7 +1581,6 @@ DECISION AReleaseIsVerifiedOnATagHoldingAVersionNumber
 	RATIONALE "The tag form of a version is CHORE83's to pick; both patterns cover the forms its"
 		+ "candidates write, cli-merge-v1.2.0 and cli-merge@1.2.0, and a tag checkout leaves only"
 		+ "tracking references, on which --base master exits 2"
-		REF @TASK.CHORE83
 	SOURCE "Delivery of CHORE100"
 		PR 133
 

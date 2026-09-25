@@ -80,69 +80,6 @@ TASK CHORE54
 	SPEC "the new setup doesn't break existing bun commands"
 	SPEC "the new setup doesn't break existing node commands (compatibility)"
 
-TASK FEAT55
-	TITLE "Validate and merge the logisticsPaused a save written by the Skeo update carries"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	SPEC "a save whose global metadata carries logisticsPaused passes validation, and a save"
-		+ "without it still does"
-		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::written by the"
-			+ "Skeo update and carries logisticsPaused"
-		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::should report"
-			+ "the save as valid, with no error and no warning"
-		IMPL "packages/shared-save-processing/schemas/section0-player-progression.schema.json::\"logisticsPaused\""
-	SPEC "the merged save carries the logisticsPaused of save A when save A has it, otherwise the"
-		+ "one of save B, and no logisticsPaused when neither save has it"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should keep"
-			+ "the logistics pause state from save A"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should keep"
-			+ "the logistics pause state from save B"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
-			+ "write the metadata entry with no logisticsPaused key"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts::...(logisticsPaused"
-			+ "=== undefined ? {} : {logisticsPaused})"
-	SPEC "a merge of two saves that carry no logisticsPaused produces the same bytes as before the"
-		+ "task"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.spec.ts::should"
-			+ "write the metadata entry with no logisticsPaused key"
-	DELIVERED_BY 111
-	WAVE 5
-	RATIONALE "The Skeo update is game release 2.102; release 2.103 is its first patch and changes"
-		+ "no save key. The only key the update adds is logisticsPaused in the global metadata, the"
-		+ "state of the drone button stop and recall all drones, written as false on save and"
-		+ "absent from saves written before 2.102. The closed section 0 schema rejects it and the"
-		+ "global metadata merge would drop it. logisticsPaused is arbitrated like the open"
-		+ "instance fields, save A winning, so that a merge of saves written before 2.102 keeps the"
-		+ "output whose checksum the verification protocol records. The rest of the Skeo support is"
-		+ "split into the other tasks of wave 5, each delivered by its own pull request"
-		REF @GAME_RELEASE.2.102
-		REF @GAME_RELEASE.2.103
-		REF @RULE.GlobalMetadataIsSummedAndUnioned
-		REF @TASK.FEAT65
-		REF @TASK.FEAT66
-		REF @TASK.TEST67
-		REF @TASK.TEST68
-	SOURCE "Skeo update and its first patch, release dates and patch notes, read on 2026-09-21:"
-		+ "Skeo live 2026-09-01 (gid 1842212951312440), Skeo Moon Patch #1 2026-09-14 (gid"
-		+ "1843481262701200)"
-		REF @URL.SteamNewsOfThePlanetCrafter
-		REF @URL.WikiGameUpdates
-		REF @URL.WikiVersionHistory
-		REF @GAME_RELEASE.2.102
-		REF @GAME_RELEASE.2.103
-	SOURCE "logisticsPaused, the only key added between 2.008 and 2.102, optional and written as"
-		+ "false, and the label Ui_logistics_pause, read on 2026-09-21"
-		REF @URL.PceditSaveDiff
-		REF @URL.PceditSaveFileUnlocks
-		REF @URL.AkarnokdEnglishPlusLabels
-	SOURCE "Sample save written by 2.103 on Skeo, in the private context, imperfect: it carries"
-		+ "logisticsPaused and the planet id -440810600, no Skeo machine"
-		REF @PROJECT.DNC
-	SOURCE "Earlier game releases recorded alongside this task; cited here by user ruling of"
-		+ "2026-09-21 on pull request #103"
-		REF @GAME_RELEASE.1.618
-		REF @GAME_RELEASE.2.008
-
 TASK CHORE56
 	TITLE "the repository guards are run by an orchestrator rather than a chain of scripts"
 	STATUS draft
@@ -152,82 +89,6 @@ TASK CHORE56
 	SPEC "check:guards runs every guard without its list being restated in package.json"
 	SPEC "each guard stays runnable alone"
 	SPEC "a failing guard does not stop the others, and the run reports every guard that failed"
-
-TASK CHORE57
-	TITLE "provenance cites what git and GitHub do not hold, a pull request by its number and no"
-		+ "longer by an entity"
-	STATUS archived
-	ARCHIVED_ON "2026-09-22"
-	DELIVERED_BY 109
-	SPEC "the schema declares no PULL_REQUEST type, and no entity of the corpus cites one"
-		IMPL "docs/_schema.awawa::SCHEMA USAGE_REPORT"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "APullRequestIsCitedByItsNumberNeverByAnEntity"
-	SPEC "a SOURCE born in a pull request carries its number in a PR uint field nested under"
-		+ "SOURCE, beside the prose saying what was ruled there; a RATIONALE naming a pull request"
-		+ "names it in its prose"
-		IMPL "docs/_schema.awawa::FIELD PR uint"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FIX45"
-	SPEC "SOURCE.REF is optional, and no SOURCE names the PCST project, the repository every entity"
-		+ "belongs to"
-		IMPL "docs/_schema.awawa::FIELD REF reference"
-	SPEC "no SOURCE is left holding a date and nothing else"
-		IMPL "docs/_schema.awawa::FIELD SOURCE string"
-	SPEC "USAGE_REPORT.EVALUATES is a uint holding the number of the pull request the report"
-		+ "measures, and awawa status USAGE_REPORT --where EVALUATES==101 . returns the report of"
-		+ "pull requests 101 to 103"
-		IMPL "docs/_schema.awawa::FIELD EVALUATES uint"
-		IMPL "docs/awawa-project-methodology/sources.awawa::USAGE_REPORT PR101_102_103"
-	SPEC "URL and GAME_RELEASE carry no INCOMING SOURCE_OF requirement"
-		IMPL "docs/_schema.awawa::SCHEMA GAME_RELEASE"
-		IMPL "docs/_schema.awawa::SCHEMA URL"
-	SPEC "a DECISION records that the corpus cites a pull request by its number, only where a"
-		+ "ruling was taken and never as the source of the task it delivers, the PULL_REQUEST"
-		+ "entity among its REJECTED"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "APullRequestIsCitedByItsNumberNeverByAnEntity"
-	SPEC "agents/corpus-ecrire.md and agents/pull-request.md say what that DECISION says, and name"
-		+ "no PULL_REQUEST entity"
-		IMPL "agents/corpus-ecrire.md::née dans une pull request porte son numéro dans son champ"
-		IMPL "agents/pull-request.md::le numéro de la PR, jamais une entité"
-	SPEC "no DECISION or PROCESS argues from SOURCE.REF being required"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::NAME version_segment validates its"
-			+ "shape"
-	SPEC "the AGENTS.md command run before implementing or specifying passes --skip provenance"
-		IMPL "AGENTS.md::--skip reasoning --skip provenance --with-schema"
-	SPEC "no DESC of docs/_schema.awawa and no line of agents/ names a retention delay for the"
-		+ "archive"
-		IMPL "docs/_schema.awawa::the day the entity was archived"
-		IMPL "agents/pull-request.md::revient à la passe de nettoyage, pas à la PR"
-	RATIONALE "The review of pull request 101 raised that one PULL_REQUEST entity per cited pull"
-		+ "request duplicates the repository log; refined with the user on 2026-09-21, the"
-		+ "duplication is the entity, not the citation. Measured on master b2f48f5: the 51 entities"
-		+ "hold a NUMBER their name repeats and a DESC copying the pull request title, 47 of them"
-		+ "written at once by the migration of pull request 95; 152 of the 154 SOURCE prose lines"
-		+ "citing them say who ruled, when and what, which git does not hold; and the number is not"
-		+ "derivable from git, the log of master carrying (#n) on 18 commits of 158 and git log -S"
-		+ "returning the migration for a ruling taken in pull request 62. The number therefore"
-		+ "stays, as a scalar beside its prose: nested, it is out of reach of status --where, which"
-		+ "the user accepted, the query who cites pull request n having served only the upkeep of"
-		+ "the entities themselves. Keeping a reduced PULL_REQUEST type for rulings only was"
-		+ "rejected: it keeps the question of whether each pull request is a source, which pull"
-		+ "requests 101 to 103 answered three ways. The REQUIRED REF is what forced 50 SOURCE lines"
-		+ "naming the repository itself, 9 of them a bare date, and the INCOMING SOURCE_OF gate"
-		+ "made pull request 103 cite two releases to pass its own rebase. The review of these"
-		+ "gates, first drafted as a separate task, is merged here because it changes the same"
-		+ "lines of the schema. --skip provenance cuts the context package of FIX45 from 7709 to"
-		+ "3662 bytes. The retention delay named by the DESC of ARCHIVED_ON and PURGE and by"
-		+ "agents/pull-request.md contradicts the process that rejects one. The"
-		+ "awawa-plan-wave-start and awawa-usage-report commands, outside this repository, write"
-		+ "PULL_REQUEST entities and change with this task, in a companion change of their own"
-		REF @USAGE_REPORT.PR101_102_103
-		REF @PROCESS.TheCorpusHoldsNoViewItAlreadyRenders
-		REF @PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
-		REF @DECISION.AGameReleaseIsCitedAsASource
-	SOURCE "Review of pull request #101; usage report of pull requests 101 to 103; refined with the"
-		+ "user on 2026-09-21"
-		PR 101
-		REF @USAGE_REPORT.PR101_102_103
 
 TASK CHORE58
 	TITLE "investigate running awawa in CI, then deliver in the same pull request the change the"
@@ -331,134 +192,8 @@ TASK CHORE63
 		+ "anchor (L016) unreported for as long as the task stays draft, and both come back on"
 		+ "ratification, whose lint runs with the task todo. Per-rule gating, which would tolerate"
 		+ "L004 alone, does not exist in awawa 2.7.0 and would not be deliverable here anyway"
-		REF @TASK.CHORE57
 	SOURCE "Usage report of pull requests 101, 102 and 103; ruled with the user on 2026-09-21"
 		REF @USAGE_REPORT.PR101_102_103
-
-TASK FEAT65
-	TITLE "Place the world objects and world events of Skeo on Skeo"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	SPEC "a world object or a world event carrying the planet numeric id -440810600 is placed on"
-		+ "Skeo"
-		IMPL "packages/core-mapping/src/domain/planetNamesByNumericId.json::-440810600"
-	WAVE 5
-	DELIVERED_BY 112
-	RATIONALE "Skeo, added by game release 2.102, is the planet whose id -440810600 is missing from"
-		+ "the planet table; the stable hash of the planet name gives it, as it gives the five rows"
-		+ "already there. Without the row the planet name is guessed from the group ids of the"
-		+ "world objects placed on it, and the energy section falls back to its unnamed planet"
-		+ "label when no group id names it. The task carries no test of its own: its SPEC is proven"
-		+ "by the table row, a data table is not tested, and the read that turns any row into a"
-		+ "planet name is the EN-PLANET-3 case of SaveSectionsReaderService.spec.ts"
-		REF @GAME_RELEASE.2.102
-		REF @RULE.APlanetNumericIdIsStableAcrossSaves
-		REF @DATATABLE.PlanetNamesByNumericId
-	SOURCE "Hash algorithm and the six ids it reproduces, Skeo -440810600 among them, read on"
-		+ "2026-09-21 and recomputed for the six names"
-		REF @URL.PceditPlanetHash
-		REF @URL.PceditPlanetHashTests
-	SOURCE "Sample save written by 2.103 on Skeo, in the private context: it carries the planet id"
-		+ "-440810600"
-		REF @PROJECT.DNC
-
-TASK FEAT66
-	TITLE "Give TreePlanter3, PodUnderground and RocketAnimals2 their energy"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	AFTER @TASK.DOCS86
-	SPEC "TreePlanter3, PodUnderground and RocketAnimals2 are named among the world object names"
-		+ "without a known energy level, on the recorded hypothesis that they neither draw nor"
-		+ "produce power, and the planet energy grid neither charges nor produces for them"
-		IMPL "docs/awawa-project-specification/hypotheses.awawa::HYPOTHESIS"
-			+ "TreePlanter3PodUndergroundRocketAnimals2DrawNoPower"
-		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should neither produce nor"
-			+ "charge for the world objects without a known energy level"
-	WAVE 5
-	DELIVERED_BY 120
-	RATIONALE "Every group id the Skeo update adds already has a label row. The wiki gives the"
-		+ "power of Incubator2 and InsideLamp2, already in the energy table, and no energy for the"
-		+ "three other machines, whose predecessors have no row; a value missing from the wiki is"
-		+ "undocumented, never zero, so the recorded decision keeps those machines out of the"
-		+ "energy tables. The task does not wait for the in-game measurement: the three machines"
-		+ "are delivered on @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower, whose"
-		+ "UNTIL is that observation, and a value measured then, cited by its release, is a source"
-		+ "the decision does not foresee"
-		REF @DATATABLE.EnergyLevels
-		REF @DATATABLE.WorldObjectLabels
-		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
-		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
-		REF @GAME_RELEASE.2.103
-	SOURCE "Group ids added by the Skeo update and the mods raising their supported version to"
-		+ "2.103, read on 2026-09-21"
-		REF @URL.PceditItemCatalog
-		REF @URL.AkarnokdSupports2103
-	SOURCE "Power of the Skeo machines: T2 Incubator -715.00 kW/s, Intense Area Lamp -25 kW/s;"
-		+ "Giant Trees Pot, T2 Animals Spreader Rocket and Underground Living Compartment carry no"
-		+ "energy field; read on 2026-09-21"
-		REF @URL.WikiSkeoMoon
-		REF @URL.WikiIncubator
-		REF @URL.WikiFurniture
-		REF @URL.WikiRockets
-		REF @URL.WikiBaseBuilding
-
-TASK TEST67
-	TITLE "Display a save written by the Skeo update in the save manager"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	AFTER @TASK.DOCS86
-	SPEC "a scenario fixture generated with logisticsPaused in its global metadata and a placed"
-		+ "world object carrying the planet numeric id -440810600 passes validation"
-		IMPL "scripts/generate-scenario-fixtures.ts::generateSkeoUpdateContent"
-		IMPL "packages/ui-save-manager/e2e/fixtures/skeo-update_valid.json"
-	SPEC "the save manager displays that fixture without a validation error, and its energy section"
-		+ "names the planet of that world object Skeo"
-		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should display it without a validation"
-			+ "error, naming the planet of its placed world object Skeo"
-	AFTER @TASK.FEAT55
-	AFTER @TASK.FEAT65
-	WAVE 5
-	DELIVERED_BY 119
-	RATIONALE "A scenario fixture is generated and replayed by a guard, never copied from a real"
-		+ "save, so no player name nor Steam identifier of a real save reaches it; the fixture"
-		+ "models the private sample save. It fails validation until the section 0 schema admits"
-		+ "logisticsPaused, and the energy section shows its unnamed planet label until the planet"
-		+ "table carries Skeo"
-		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
-		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
-		REF @TASK.FEAT55
-		REF @TASK.FEAT65
-	SOURCE "Sample save written by 2.103 on Skeo, in the private context: logisticsPaused and the"
-		+ "planet id -440810600"
-		REF @PROJECT.DNC
-
-TASK TEST68
-	TITLE "Attest that a deprecated group id survives a read, a validation and a merge unchanged"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	DELIVERED_BY 140
-	AFTER @TASK.DOCS86
-	AFTER @TASK.FEAT89
-	SPEC "a save carrying Phytoplankton2 or Phytoplankton3 is read and validated without a warning"
-		+ "the deprecation alone produces"
-		IMPL "packages/core-mapping/src/infrastructure/SaveValidatorService.spec.ts::should return"
-			+ "a valid result with no warning for %s"
-	SPEC "merging two saves of which one carries a deprecated group id writes that group id"
-		+ "unchanged, whichever release the other save declares"
-		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should write those group ids unchanged"
-			+ "when the other save declares release %s"
-	WAVE 5
-	RATIONALE "The ruling is that the tool converts nothing, and the two group ids are already"
-		+ "among the world object names, so what the task delivers is the test that fails the day a"
-		+ "conversion is added"
-		REF @DECISION.ADeprecatedGroupIdIsCarriedThroughUnchanged
-		REF @GAME_RELEASE.2.102
-		REF @DATATABLE.WorldObjectLabels
-	SOURCE "PCEdit item catalog: deprecated(\"2.102\", \"Phytoplankton2\", \"Phytoplankton3\"),"
-		+ "read on 2026-09-21"
-		REF @URL.PceditItemCatalog
-		REF @GAME_RELEASE.2.102
 
 TASK FEAT69
 	TITLE "Open a validated save as an editable draft and write the draft to a new save"
@@ -937,139 +672,6 @@ TASK FEAT82
 		+ "a second step and is drafted for memory only, without further research"
 		REF @PROJECT.PCST
 
-TASK CHORE83
-	TITLE "each consumer of core-mapping carries its own version, investigated then delivered in"
-		+ "the same pull request with the mechanism the user picks"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	DELIVERED_BY 135
-	SPEC "the pull request body compares, for ui-save-manager, cli-merge and cli-validate, a script"
-		+ "over the Conventional Commits titles, changesets and release-please in manifest mode:"
-		+ "what each adds as dependency and workflow, and what a release costs with it"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "ConsumerVersionsAreComputedByARepositoryScript"
-	SPEC "ui-save-manager, cli-merge and cli-validate each carry a version that rises when a merged"
-		+ "commit changes the package or a workspace package it depends on transitively, and only"
-		+ "then"
-		IMPL "scripts/release/resolveConsumerPaths.spec.ts"
-		IMPL "scripts/release/readCommitSubjects.spec.ts"
-		IMPL "scripts/release/planRelease.spec.ts"
-	SPEC "bun merge -- --version and bun validate -- --version print their version under Bun and"
-		+ "under Node, and the web UI displays its own"
-		IMPL "packages/cli-merge/cli/merge-cli.version.spec.js"
-		IMPL "packages/cli-validate/cli/validate-cli.version.spec.js"
-		IMPL "packages/ui-save-manager/e2e/version.e2e.ts"
-	SPEC "each version is a git tag naming its consumer, set on the squash commit of a release pull"
-		+ "request, with a changelog entry listing the commits it carries"
-		IMPL "scripts/release/findVersionsToTag.spec.ts"
-		IMPL "scripts/release/release-tag.ts::RELEASE_BRANCH"
-		IMPL "scripts/release/addChangelogEntry.spec.ts"
-	SPEC "Netlify publishes no production deploy on a push to master and keeps the deploy previews"
-		+ "of pull requests against master; the README states that production is published by hand"
-		+ "from the deploy of the commit a ui-save-manager version tag names"
-		IMPL "README.md::Netlify publishes no production deploy by itself"
-	SPEC "master refuses a push that does not come through a pull request"
-		IMPL "docs/awawa-project-methodology/processes.awawa::PROCESS"
-			+ "EveryChangeReachesMasterThroughAPullRequest"
-	SPEC "the mechanism the user picks after reading the comparison is delivered in the same pull"
-		+ "request, and the comparison leaves the body once it is in"
-		IMPL "scripts/release/release.ts"
-		IMPL "package.json::scripts/release/release.ts"
-	WAVE 8
-	RATIONALE "A version exists so that a bug report or a save names what ran, and nothing reads"
-		+ "one today: every manifest is at 1.0.0 and ui-save-manager declares none, no tag names a"
-		+ "version, no command answers --version, the UI shows none, and Netlify deploys the UI"
-		+ "from a configuration outside the repository. No package is published on its own and the"
-		+ "workspace dependencies are internal, so a version per package would have no reader: the"
-		+ "three consumers of core-mapping are what a user runs. cli-merge and cli-validate also"
-		+ "depend directly on shared-save-processing and shared-platforms, so a rule limited to"
-		+ "core-mapping would leave a change there unversioned. Pull request titles are"
-		+ "Conventional Commits checked in CI, so a bump and a changelog can be computed from them."
-		+ "Ruled with the user on 2026-09-23: the task runs in an interactive session like CHORE58,"
-		+ "never as an unattended wave agent. Ruled with the user on 2026-09-23 after the"
-		+ "comparison: a repository script, run by hand, decides a bump from the paths a commit"
-		+ "changes and its size from the Conventional Commits type; since master takes pull"
-		+ "requests only, a release is a pull request whose squash commit then receives the tags;"
-		+ "Netlify cannot build a tag, so production is published by hand"
-		REF @TASK.CHORE58
-	SOURCE "Refinement with the user on 2026-09-23 of a task drafted for memory"
-
-TASK DOCS86
-	TITLE "Type the era of a rule and a section by game release"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	DELIVERED_BY 115
-	WAVE 5
-	DESC "The decisions taken here must anticipate the next tasks of wave 5 and especially"
-		+ "@TASK.TEST68"
-		REF @TASK.TEST68
-	SPEC "the eras current, legacy and both are dropped: no value of HOLDS_FOR names an era"
-		IMPL "docs/_schema.awawa::FIELD HOLDS_FOR @GAME_RELEASE"
-	SPEC "HOLDS_FOR names a GAME_RELEASE and is repeatable: a rule or a section holds for each"
-		+ "release it names, and for no other; HOLDS_FOR all, alone, marks a statement that does"
-		+ "not depend on the release"
-		IMPL "docs/_schema.awawa::a release the statement holds for"
-		IMPL "docs/_schema.awawa::all, alone: the statement does not depend on the release"
-	SPEC "HOLDS_FOR names only a release that creates a branch in the code, one the code tells"
-		+ "apart from the release before it; a release the code does not tell apart is never named,"
-		+ "and a save it writes is read by the branch of the last named release before it"
-		IMPL "docs/_schema.awawa::named only if the code tells it apart from the"
-		IMPL "packages/shared-save-processing/parseSaveSections.js::splitPartsCount ==="
-			+ "LEGACY_SPLIT_PARTS_COUNT"
-	SPEC "each entity that carried an era is rewritten with the releases it holds for, read from"
-		+ "the branches of the code and not translated from the era it carried"
-		IMPL "docs/awawa-project-specification/sections.awawa"
-		IMPL "docs/awawa-project-specification/rules.awawa"
-	SPEC "no field and no constraint of a section is keyed on the era: LEGACY_INDEX is keyed on the"
-		+ "releases that write it, INDEX is required of every section, and the incoming"
-		+ "CONSTRAINED_BY is required of every active section, so that a section still needs a rule"
-		+ "that cites it"
-		IMPL "docs/_schema.awawa::the position of the section in the format 1.618 and earlier"
-		IMPL "docs/_schema.awawa::WHEN STATUS active"
-	SPEC "the decision that cites a game release as a source is rewritten in place: its SPEC that"
-		+ "no type of the specification area carries the game version as a field of its own, and"
-		+ "its REJECTED version field on RULE, are revised to admit the release a statement holds"
-		+ "for, the previous form kept as a REJECTED"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION AGameReleaseIsCitedAsASource"
-	SPEC "the decision that the era is not the archive is rewritten to name a section the game"
-		+ "stopped writing by the releases it holds for instead of HOLDS_FOR legacy"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION TheEraIsNotTheArchive"
-	SPEC "the ruling that a save is never discriminated by its declared version alone is recorded,"
-		+ "and the cross-check of a save against its version is a draft task of wave 5"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "ASaveIsNeverDiscriminatedByItsVersionAlone"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT89"
-	RATIONALE "HOLDS_FOR current|legacy|both assumes two formats, split by the removal of the"
-		+ "Terrain Layers section; the project now handles more, and a two-valued era cannot say"
-		+ "that a statement holds since 2.102 only. The eras are not mapped onto sets of releases:"
-		+ "that mapping would carry the two-format assumption into the new field. Naming only the"
-		+ "releases that create a branch in the code keeps the list short and stable: a patch such"
-		+ "as 2.103, which changes no save key, adds no value and touches no entity, which answers"
-		+ "the objection that a closed list must grow with every release. The change conflicts with"
-		+ "a recorded decision, which rejects the game version as a field of the specification area"
-		+ "on the ground that it would mean the version of the last reading; typed by release, the"
-		+ "field names the releases the statement holds for, not the one it was read in"
-		REF @DECISION.AGameReleaseIsCitedAsASource
-		REF @DECISION.TheEraIsNotTheArchive
-		REF @FIELDSET.ReleaseScope
-		REF @SCHEMA.SECTION
-		REF @GAME_RELEASE.1.618
-		REF @GAME_RELEASE.2.008
-		REF @GAME_RELEASE.2.102
-		REF @GAME_RELEASE.2.103
-		REF @TASK.FEAT55
-	SOURCE "Review of pull request 111 by the owner, 2026-09-22: HOLDS_FOR should be typed by game"
-		+ "release and repeatable; legacy no longer suffices now that more than two releases are"
-		+ "handled; deferred to a task of wave 5"
-		PR 111
-	SOURCE "Clarification by the owner on pull request 111, 2026-09-22: legacy, current and both"
-		+ "are dropped in favour of game releases, and HOLDS_FOR lists only the game releases that"
-		+ "create a branch in the code"
-		PR 111
-	SOURCE "The owner on pull request 115, 2026-09-22: a rule that holds whatever the release"
-		+ "carries HOLDS_FOR all"
-		PR 115
-
 TASK DOCS88
 	TITLE "State in docs/save-format.md that a planet numeric id is the djb2 hash of its name"
 	STATUS implemented
@@ -1082,57 +684,11 @@ TASK DOCS88
 		+ "the FEAT65 agent flagged the document at its hand-back on 2026-09-21 as outside its SPEC"
 		+ "and no task carried it"
 		REF @RULE.APlanetNumericIdIsStableAcrossSaves
-		REF @TASK.FEAT65
 	SOURCE "Usage report of pull requests 111 and 112, part A remediation 2, split from DOCS87 at"
 		+ "the owner's review of pull request 112 on 2026-09-22"
 		PR 112
 		REF @USAGE_REPORT.PR111_112
 	DELIVERED_BY 122
-
-TASK FEAT89
-	TITLE "Warn when a save contradicts the game release it declares"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	DELIVERED_BY 124
-	WAVE 5
-	AFTER @TASK.DOCS86
-	SPEC "the releases HOLDS_FOR names are a table beside the module that reads it, one row per"
-		+ "release with what the code tells apart in the saves it writes, the number of parts today"
-		IMPL "packages/shared-save-processing/gameReleases.json"
-	SPEC "the version a save configuration declares resolves to the last release of the table not"
-		+ "later than it"
-		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %s to the last"
-			+ "release not later than it"
-		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %s to the first"
-			+ "release"
-	SPEC "a save is read by what it carries; when that contradicts the release its version resolves"
-		+ "to, loading it raises a warning naming both, and the save is still read"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should warn that the"
-			+ "release its version declares contradicts the format it carries"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should still read the save"
-			+ "by the format it carries"
-		IMPL "packages/core-mapping/src/presentation/formatSaveWarning.spec.ts::should name the"
-			+ "declared version, its release and the release whose format the save carries"
-	SPEC "a save declaring 2.004 or later and carrying the Terrain Layers section raises that"
-		+ "warning, and so does a save declaring 1.618 or earlier without it"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::When the save declares"
-			+ "2.004 or later and still carries the Terrain Layers section"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::When the save declares"
-			+ "1.618 or earlier and carries no Terrain Layers section"
-	SPEC "the scenario fixtures declare the version of a release whose format they carry"
-		IMPL "scripts/generate-scenario-fixtures.ts::SKEO_UPDATE_RELEASE = '2.102'"
-		IMPL "packages/shared-save-processing/testing/createSaveRecords.js::version: '2.004'"
-		IMPL "packages/shared-save-processing/testing/createFakeSaveContent.js::LEGACY_FORMAT_RELEASE"
-			+ "= '1.618'"
-	RATIONALE "The code tells the two formats apart by the number of parts alone and never reads"
-		+ "the version the save declares, so a hand edit that makes them disagree goes unreported."
-		+ "The table is the mechanism TEST68 extends with the release that removed a group id,"
-		+ "instead of a second list of versions. Every scenario fixture declares version 1.0 today,"
-		+ "which resolves to 1.618 while three of the four carry the format of 2.004"
-		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
-		REF @TASK.TEST68
-	SOURCE "The owner, 2026-09-22, while ruling the releases of HOLDS_FOR for DOCS86"
-		REF @TASK.DOCS86
 
 TASK CHORE91
 	TITLE "investigate axe-core in the ui-save-manager Playwright suite for a general accessibility"
@@ -1157,154 +713,16 @@ TASK CHORE91
 		PR 121
 		REF @TASK.FIX53
 
-TASK FEAT92
-	TITLE "Keep the format a save carries in shared-save-processing and name which one it is"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	DELIVERED_BY 141
-	WAVE 5
-	AFTER @TASK.FEAT89
-	SPEC "parsing a save returns every part the file carries, Terrain Layers included, and names"
-		+ "the release whose format it carries"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should return every part"
-			+ "the file carries"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should name 1.618 as the"
-			+ "release whose format it carries"
-	SPEC "the Terrain Layers section is read, typed and written back like every other section: its"
-		+ "lines are parsed into entries by the one parser, and the serializer writes those entries"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should read the Terrain"
-			+ "Layers section into its entries"
-		IMPL "packages/shared-save-processing/serializeSave.spec.js::should write the twelve parts"
-			+ "of that format"
-	SPEC "serializing a save writes the format it is given, so parsing then serializing a save of"
-		+ "1.618 returns the exact bytes of the file read"
-		IMPL "packages/shared-save-processing/serializeSave.spec.js::should return the exact bytes"
-			+ "of a save of 1.618 parsed then serialized"
-	SPEC "neither warning message says a save was adapted: the legacy-save-format one states that"
-		+ "the save was written by 1.618 or earlier, and the fallback one names no adaptation"
-		IMPL "packages/core-mapping/src/presentation/messages/saveWarningMessages.js"
-	SPEC "the twelve-part format of 1.618 is a RULE of DOMAIN format citing the Terrain Layers"
-		+ "section, which no rule names today, and taking authority over the properties of a layer"
-		+ "entry by VALUES_FROM; the rule states that the game writes the six properties of the"
-		+ "table in every entry it writes"
-		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
-			+ "ALegacySaveCarriesTerrainLayersInTwelveParts"
-	SPEC "the table of layer properties carries the shapes the reference saves attest: each of the"
-		+ "two colours four numbers separated by dashes, each of the two intensities an integer no"
-		+ "upper bound holds, the layer id a free string no pattern describes"
-		IMPL "packages/shared-save-processing/legacyTerrainLayerProperties.json"
-	SPEC "the DESC of the Terrain Layers section no longer says that loading a legacy save discards"
-		+ "it"
-		IMPL "docs/awawa-project-specification/sections.awawa::parsing reads it"
-	RATIONALE "The round trip measured for FEAT69 on 2026-09-21 returns 2538 bytes against 2620 for"
-		+ "legacy-format_valid.json, the difference being the Terrain Layers section the"
-		+ "normalization drops; the package is where the loss happens and where it is repaired."
-		+ "Reading that section like any other costs the byte equality nothing, and the measurement"
-		+ "is what says so: of the 66 layer entries the three reference twelve-part saves carry, 66"
-		+ "come back byte for byte identical from a parse followed by a stringify, none of the six"
-		+ "properties being a float or an identifier beyond the exact range of a double. What"
-		+ "protects the round trip is therefore the criterion above, run on a real legacy save, and"
-		+ "not holding the section apart from the others. The table of layer properties documents"
-		+ "the shape the rule has authority over, and the code reads none of it"
-		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
-		REF @SECTION.TerrainLayers
-		REF @DATATABLE.LegacyTerrainLayerProperties
-		REF @TASK.FEAT69
-	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
-	SOURCE "Owner ruling, 2026-09-23, refining the task: the carried section stays raw text, and"
-		+ "the corpus corrections the change falsifies are part of the task"
-	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the Terrain Layers section behaves like"
-		+ "every other section, the earlier ruling of raw text being reversed; measured on the"
-		+ "reference saves Standard-1, Standard-3 and Standard-4, whose 66 layer entries all carry"
-		+ "the six properties and all survive a parse and a stringify unchanged"
-
-TASK FEAT93
-	TITLE "Read and validate a save of either format in core-mapping"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	DELIVERED_BY 146
-	WAVE 5
-	AFTER @TASK.FEAT92
-	SPEC "a section is reached by the index the format of the save gives it, never by a position"
-		+ "nor a constant that assumes one format"
-		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsParserService.ts"
-		IMPL "packages/shared-save-processing/sectionIndexes.spec.js::should give the Terrain"
-			+ "Layers section index 9 and the world events index 10"
-	SPEC "validating a save of 1.618 reports on its twelve parts and one of 2.004 on its eleven,"
-		+ "neither being converted to the other"
-		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.spec.js::should validate its"
-			+ "twelve parts, the Terrain Layers section included, without an issue the format alone"
-			+ "produces"
-		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.spec.js::should validate its"
-			+ "eleven parts without an issue the format alone produces"
-	SPEC "a save of either format is displayed by the save manager without a validation error the"
-		+ "format alone produces"
-		IMPL "packages/core-mapping/src/controllers/LoadAndValidateSaveFileController.spec.ts::should"
-			+ "return a valid view model carrying no error and the warning of that format alone"
-	SPEC "the Terrain Layers section of a legacy save is validated against a schema of its own,"
-		+ "requiring the six properties the game writes in every layer entry and admitting no"
-		+ "other, applied at the index the legacy format gives that section"
-		IMPL "packages/shared-save-processing/schemas/legacy-section9-terrain-layers.schema.json"
-		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::should reject"
-			+ "the save, naming the Terrain Layers section at its legacy index"
-	SPEC "the legacy save the generator writes carries the six properties in its layer entry, so"
-		+ "the versioned fixture attests the shape the schema pins"
-		IMPL "packages/shared-save-processing/testing/createFakeSaveContent.js"
-		IMPL "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json::colorCustomLerp"
-	SPEC "each format has a whole-file schema of its own, pinned to the part count of that format"
-		+ "and to the section each of its indexes holds; no schema is loosened to admit both"
-		IMPL "packages/shared-save-processing/schemas/save-file.schema.json"
-		IMPL "packages/shared-save-processing/schemas/legacy-save-file.schema.json"
-	SPEC "no message announces eleven parts to a save carrying twelve: the count a validation"
-		+ "message names is the one the format at hand expects"
-		IMPL "packages/shared-save-processing/verifySectionCount.spec.js::should report the count"
-			+ "each format expects and the actual count"
-	SPEC "an error location names its section by the label the format of the save at hand gives"
-		+ "that index"
-		IMPL "packages/core-mapping/src/presentation/messages/saveSectionLabels.js"
-		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.spec.ts::When the save"
-			+ "carries the format of 1.618"
-	RATIONALE "The section index module exposes the legacy indexes as constants only the input"
-		+ "boundary was meant to read; once the format is kept, every reader needs the index of the"
-		+ "format at hand. The reader that breaks first holds no constant at all: the parser"
-		+ "service destructures the ten sections positionally, so a twelve-part save hands Terrain"
-		+ "Layers to the world events field. Downstream, the schema validator walks indexes 0 to 9"
-		+ "against a map keyed on the current format, so the legacy index 9 would be validated"
-		+ "against the world events schema and the legacy world events left unvalidated; the"
-		+ "section needs a schema of its own at that index, and the six properties it requires are"
-		+ "what the three reference saves write in all 66 of their layer entries. The public"
-		+ "fixture carries three of the six today, so the generator is extended with the same"
-		+ "change, its guard replaying it. Widening one whole-file schema to admit both part counts"
-		+ "would trade a false reading for a validation that no longer catches anything, so each"
-		+ "format is pinned by a schema of its own"
-		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
-		REF @SECTION.WorldEvents
-		REF @SECTION.TerrainLayers
-		REF @DATATABLE.LegacyTerrainLayerProperties
-		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
-		REF @TASK.FEAT92
-	SOURCE "Owner ruling, 2026-09-22, opening the wave carried by integration/save-format-preserved"
-	SOURCE "Owner ruling, 2026-09-23, refining the task: the two formats are validated by two"
-		+ "schemas rather than by one loosened schema, and the validator, the expected part count"
-		+ "and the section labels are read by the format at hand"
-	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the schema of a layer entry and the fixture"
-		+ "that attests it come here, FEAT97 being archived"
-		REF @TASK.FEAT97
-
 TASK FEAT97
 	TITLE "Validate the entries of the Terrain Layers section"
 	STATUS archived
 	ARCHIVED_ON "2026-09-23"
 	PURGE false
 	WAVE 5
-	AFTER @TASK.FEAT93
 	DESC "Archived on 2026-09-23: the section is an ordinary section, so validating its entries is"
 		+ "no longer a task of its own. The schema of a layer entry and the fixture that attests it"
 		+ "are criteria of FEAT93, the section being read into entries by FEAT92, and the guard"
 		+ "that keeps a second reader of a save line out of the production code is CHORE98"
-		REF @TASK.FEAT92
-		REF @TASK.FEAT93
-		REF @TASK.CHORE98
 	SPEC "the entries of the Terrain Layers section are validated against a schema of their own,"
 		+ "read by the branch the format of the save selects"
 	SPEC "those entries are read for validation alone: the serializer keeps writing the text the"
@@ -1319,52 +737,10 @@ TASK FEAT97
 		REF @DECISION.OneModuleAloneParsesASaveLine
 		REF @DATATABLE.LegacyTerrainLayerProperties
 		REF @SECTION.TerrainLayers
-		REF @TASK.FEAT92
 	SOURCE "Owner ruling, 2026-09-23, refining FEAT93: a section carried without validation can"
 		+ "break a save in game, and that validation is a task of its own"
 	SOURCE "Owner ruling, 2026-09-23, refining the task: the section behaves like every other one,"
 		+ "so what is left of the task belongs to FEAT93 and to CHORE98"
-
-TASK CHORE98
-	TITLE "Guard the single production reader of a save line"
-	STATUS archived
-	ARCHIVED_ON "2026-09-25"
-	WAVE 5
-	DELIVERED_BY 137
-	SPEC "a JSON.parse call in the production code of any package fails the guard, unless it sits"
-		+ "in packages/shared-save-processing/parseSaveSections.js; JSON.parse named in a comment"
-		+ "does not fail it"
-		IMPL "scripts/check-save-line-reader.ts::findUnadmittedJsonParseCalls"
-		IMPL "scripts/check-save-line-reader.spec.ts"
-	SPEC "the production code the guard reads is every source file of packages/*, except spec and"
-		+ "test files, the e2e and testing directories and generated directories"
-		IMPL "scripts/check-save-line-reader.ts::isProductionSourceFile"
-		IMPL "scripts/check-save-line-reader.spec.ts"
-	SPEC "the guard is one of the check:* scripts check:guards chains, reads no git history, and"
-		+ "carries its own spec as the other guards do"
-		IMPL "package.json"
-		IMPL "scripts/check-save-line-reader.spec.ts"
-	SPEC "the first SPEC of the single-parser decision the rationale names carries the guard by"
-		+ "ENFORCED_BY"
-		IMPL "docs/awawa-project-methodology/decisions.awawa"
-	RATIONALE "The decision rests on review alone: no guard of the repository names it, and the"
-		+ "divergence it forbids is what kept a lost section invisible until the parser became the"
-		+ "only reader. The repository already holds the idiom, a check:* script with its own spec,"
-		+ "and the wave that spreads the format of a save across every reader is when a second"
-		+ "reader is most tempting. A line reading cannot tell a save line from any other JSON, so"
-		+ "every JSON.parse outside the parser is refused: none exists today, and a legitimate"
-		+ "reader of another JSON is admitted by an explicit exception in a later pull request. The"
-		+ "task waits on no other: if FEAT92 moves the parsing out of the parser module, its own"
-		+ "pull request updates the one path the guard admits"
-		REF @DECISION.OneModuleAloneParsesASaveLine
-		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
-		REF @TASK.FEAT92
-	SOURCE "Owner ruling, 2026-09-23, refining FEAT97: the invariant becomes a guard, in a task of"
-		+ "its own"
-		REF @TASK.FEAT97
-	SOURCE "Owner ruling, 2026-09-23, refining CHORE98: every JSON.parse outside the parser is"
-		+ "refused, the production perimeter is stated, the decision names the guard, and no task"
-		+ "comes first"
 
 TASK CHORE99
 	TITLE "Close the three gaps of the check:contrast guard"

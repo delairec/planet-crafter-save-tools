@@ -46,7 +46,7 @@ lecture reste dans la prose de la `SOURCE` : une même page se lit plusieurs jou
 seule fois. Une entité qui décrit un écart entre releases s'énonce par ce que la release ajoute, jamais par ce qui
 manque à la précédente, et ne nomme que cette release : `@GAME_RELEASE.2.004` pour les champs ajoutés à l'entrée
 joueur, `@GAME_RELEASE.2.102` pour `logisticsPaused`. **`HOLDS_FOR` — champ de `RULE` et de `SECTION`, d'eux seuls —
-ne nomme qu'une release que le code distingue déjà de la précédente** (SPEC 3 de @TASK.DOCS86). Une release à venir
+ne nomme qu'une release que le code distingue déjà de la précédente**. Une release à venir
 ne s'y anticipe pas : elle se nomme depuis une `TASK`, par un `REF @GAME_RELEASE.X` niché sous sa prose, et
 `HOLDS_FOR` ne la prend qu'une fois la branche écrite. Une save écrite par une release non
 nommée — 2.008, 2.103 — se lit par la branche de la dernière release nommée avant elle. **`HOLDS_FOR all`, seul**,

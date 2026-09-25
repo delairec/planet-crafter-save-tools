@@ -200,6 +200,9 @@ PROCESS ADecisionIsRecordedOnlyIfAPullRequestCouldReverseIt
 PROCESS TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
 	SPEC "No cleanup script is written: an archived entity nothing refers to any more is deleted by"
 		+ "hand in the next pull request that touches its file"
+	SPEC "An archived TASK is deleted by the cleanup pass whatever cites it, unless it carries"
+		+ "PURGE false: each REF, AFTER or APPLIES_TO_TASK naming it is removed from the citing"
+		+ "entity, whose prose is kept"
 	SPEC "The script is reconsidered when awawa status shows more than twenty archived entities"
 		+ "with no incoming reference, or when the workspace passes four hundred entities"
 	REJECTED "Writing the script now: of the twelve archived TASK of 2026-09-18, ten still carry"
@@ -207,6 +210,8 @@ PROCESS TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived
 		+ "and DOCS48"
 	REJECTED "Choosing a retention delay in days: nothing dates a reference, and what guards the"
 		+ "deletion is the incoming count awawa status prints, not the age of the archive"
+	REJECTED "Keeping an archived TASK while a DECISION or a live TASK cites it: a delivered task"
+		+ "binds nothing, and on 2026-09-25 citations held back 12 of the 25 archived tasks"
 	RATIONALE "P9 of the corpus starter asks for a cleanup pass or for a conscious skip with the"
 		+ "size at which to reconsider. Measured on 2026-09-18 on the whole workspace: 268"
 		+ "entities, 12 archived, all of them TASK, and 2 of the 12 with no incoming reference. A"
