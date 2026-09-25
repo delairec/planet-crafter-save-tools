@@ -11,4 +11,6 @@ preload = ["./testSetup.ts"]
 # applies the threshold to each module it reports, so a filtered run would fail on the modules it left out.
 # The threshold is the floor measured on the delivering branch, rounded down to the unit, and only rises
 # (@DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule).
+# The figure finds use cases no test covers, it is not the aim: a line under the threshold is brought back by a
+# test asserting the outcome of the use case it serves, never by a test that only executes it.
 coverageThreshold = { lines = 0.29, functions = 0.0 }

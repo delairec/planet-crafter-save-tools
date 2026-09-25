@@ -1019,20 +1019,31 @@ TASK TEST122
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
 
 TASK TEST123
-	TITLE "Bring every module a unit test loads to full line and function coverage"
+	TITLE "Cover every use case of the modules a unit test loads, the coverage report finding the"
+		+ "ones missed"
 	STATUS draft
-	SPEC "bun test --coverage reports 100 % of lines and of functions for every module it lists"
-	SPEC "the coverageThreshold of bunfig.toml is raised to 1.0 for lines and for functions"
+	SPEC "every line or function bun test --coverage reports unexecuted is traced to the use case"
+		+ "it serves, and that use case gets a test asserting its observable outcome"
+	SPEC "no test the task adds exists only to execute a line: each names the use case it covers"
+		+ "and asserts what that use case produces"
+	SPEC "the coverageThreshold of bunfig.toml is raised to the floor measured once those use cases"
+		+ "are covered"
 	AFTER @TASK.CHORE105
 	RATIONALE "Asked by the owner on the review of CHORE105, which gates coverage at the floor it"
-		+ "measured. On 2026-09-25, after the rebase of #173 on master, the suite totals 96.59 % of"
-		+ "lines and 94.34 % of functions, and 42 modules sit under 100 %. The lowest are the"
+		+ "measured. The aim is every use case covered, which no tool can check; 100 % of lines"
+		+ "only says the code ran under a test, so the report serves to find use cases left"
+		+ "untested, and a figure reached by tests asserting nothing would satisfy the tool and"
+		+ "cover nothing. On 2026-09-25, after the rebase of #173 on master, the suite totals 96.59"
+		+ "% of lines and 94.34 % of functions, and 42 modules sit under 100 %. The lowest are the"
 		+ "command-line entry blocks of scripts/ and of core-mapping/scripts/, whose main body runs"
 		+ "only when the script is launched, generate-scenario-fixtures.ts at 29.63 % of lines and"
 		+ "0 % of functions; then the controllers of core-mapping at 66.67 % of functions, and"
 		+ "sectionValidators.generated.js, a generated file. Whether a launched entry block is"
-		+ "reached by a spawned process test, moved out of the measured module or exempted is the"
-		+ "ruling this refinement has to make"
+		+ "reached by a spawned process test, moved out of the measured module or exempted, and"
+		+ "what becomes of a line that serves no use case, are the rulings this refinement has to"
+		+ "make"
 		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
-	SOURCE "Owner request on the review of CHORE105"
+		REF @DECISION.AControllerSpecCoversWiringNotBranches
+	SOURCE "Owner request on the review of CHORE105, and the owner's ruling on its intent in the"
+		+ "same review"
 		PR 173
