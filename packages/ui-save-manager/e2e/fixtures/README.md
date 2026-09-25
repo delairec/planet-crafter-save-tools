@@ -53,3 +53,13 @@ once.
 
 A save written by the Skeo update: `logisticsPaused` in its global metadata, and one placed world object carrying
 the numeric planet id of Skeo, `-440810600`.
+
+## `energy-consumption_valid.json`
+
+The save the owner loads in game 2.103 to read the power consumption the HUD prints, so that the consumption rules
+rest on a save CI can read. On Toxicity, in a row east of the player: one `EnergyGenerator5`, then `TreePlanter3`
+and one of each machine the in-game reading of 2026-09-25 found drawing no power (`ButterflyDisplayer1`,
+`FishDisplayer1`, `FrogDisplayer1`, `Server1`, `CookingStation1`, `PodUnderground`, `RocketAnimals2`); west of the
+player, an `Optimizer1` holding one `FuseEnergy1` and an `Optimizer2` holding one `FuseProduction1`, a fuse of
+another kind. `modifierPowerConsumption` is `0.0`, the value a private reference save carries; the other readings
+edit that field only. No scenario uses it.

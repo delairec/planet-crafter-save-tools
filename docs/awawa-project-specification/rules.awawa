@@ -464,3 +464,48 @@ RULE TheGameKeepsDeprecatedPhytoplanktonGroupIds
 		+ "same for Phytoplankton3"
 		PR 127
 		REF @GAME_RELEASE.2.103
+
+RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "ButterflyDisplayer1, FishDisplayer1, FrogDisplayer1, Server1, CookingStation1,"
+		+ "PodUnderground and RocketAnimals2 placed on a planet add nothing to the consumption the"
+		+ "HUD prints"
+		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::PodUnderground"
+		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge the"
+			+ "85 kW the game shows, TreePlanter3 being the only one drawing power"
+	RATIONALE "The seven machines stay in the group without a known energy level, where nothing is"
+		+ "charged, so the computed consumption matches the HUD without a zero-kilowatt row. The"
+		+ "fixture holds one of each so that the reading on it, which TEST125 still awaits, attests"
+		+ "the rule on a save CI can read"
+		REF @TASK.TEST125
+		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
+	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save placing nearly every"
+		+ "machine: ButterflyDisplayer1, FishDisplayer1, FrogDisplayer1, Server1, CookingStation1,"
+		+ "PodUnderground and RocketAnimals2 draw none"
+		PR 178
+		REF @GAME_RELEASE.2.103
+		REF @PROJECT.DNC
+
+RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the consumption the HUD prints for a planet whose machines stand on dry ground is the sum"
+		+ "of their base consumption levels"
+		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::TreePlanter3"
+		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should sum the"
+			+ "consumption of the placed world objects with known consumption levels"
+		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge the"
+			+ "85 kW the game shows, TreePlanter3 being the only one drawing power"
+	VALUES_FROM @DATATABLE.EnergyLevels
+	RATIONALE "A machine under water draws nothing, which the save cannot tell. Whether an"
+		+ "optimizer, the fuse it holds or modifierPowerConsumption changes the sum is what the"
+		+ "readings of TEST125 on the fixture settle; until then the rule names neither"
+		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
+		REF @TASK.TEST125
+	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save: the HUD of Skeo and of"
+		+ "Toxicity matches the computed consumption, and on Prime the only gap is the 165.5 kW of"
+		+ "four machines under a lake; TreePlanter3 draws 85 kW"
+		PR 178
+		REF @GAME_RELEASE.2.103
+		REF @PROJECT.DNC
