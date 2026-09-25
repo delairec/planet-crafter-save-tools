@@ -46,7 +46,6 @@ LIMITATION SectionLabelsDivergeFromTheFormatDocument
 		+ "headings of the save format document"
 	STATUS archived
 	ARCHIVED_ON 2026-09-25
-	UNTIL @TASK.FIX111
 	SEEN_IN "packages/core-mapping/src/presentation/messages/saveSectionLabels.js::'Mailbox"
 		+ "messages'"
 	SEEN_IN "docs/save-format.md::#0 — Player Progression (tokens & unlocked groups)"
@@ -62,7 +61,6 @@ LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
 		+ "production, and their productionRatio shares do not sum to 1"
 	STATUS archived
 	ARCHIVED_ON 2026-09-25
-	UNTIL @TASK.TEST113
 	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private"
 		+ "productionBreakdown(production: number)"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping

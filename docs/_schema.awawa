@@ -155,7 +155,8 @@ SCHEMA LIMITATION
 	FIELD UNTIL @TASK|string
 		REQUIRED
 		CONVERSE RETIRES
-		DESC "the task that fixes it, or the observable condition that makes the fix due"
+		DESC "the task that fixes it, or the observable condition that makes the fix due; removed"
+			+ "when the limitation is archived, as it no longer holds"
 	FIELD SEEN_IN anchor
 		REPEATABLE
 		DESC "the code where the defect sits, or the test that pins the current behaviour"
