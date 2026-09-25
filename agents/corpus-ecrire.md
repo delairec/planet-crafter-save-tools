@@ -93,10 +93,12 @@ citent : une entité s'archive propre, et rien d'actif ne doit plus pointer vers
   entité, `REF` l'indexe : `@USAGE_REPORT`, `@URL`, `@GAME_RELEASE` pour ce qui a été observé dans le jeu, `@PROJECT.DNC`
   pour un fichier du dépôt privé. Une provenance d'un genre nouveau fait déclarer son type dans la même PR. Aucune
   `SOURCE` ne se réduit à une date seule.
-- **Pas d'historique dans le corpus** : une entité qui cesse de lier est archivée dans la PR qui y met fin
-  (`STATUS archived`, `ARCHIVED_ON`), une règle remplacée sur le même sujet est réécrite en place sous son nom — la forme
-  précédente devient un `REJECTED` si elle enseigne quelque chose. Une entité qui n'aurait jamais dû être écrite est
-  supprimée tout de suite.
+- **Pas d'historique dans le corpus** : une entité qui cesse de lier est archivée (`STATUS archived`,
+  `ARCHIVED_ON`) ou supprimée dans la PR qui y met fin, comme le dit `@RULE.instructions_corpus_archiving` de
+  `~/.ai`, `master` étant la branche par défaut qu'elle nomme
+  (@PROCESS.AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt) ; une règle remplacée sur le même sujet
+  est réécrite en place sous son nom — la forme précédente devient un `REJECTED` si elle enseigne quelque chose. Une
+  entité qui n'aurait jamais dû être écrite est supprimée tout de suite.
 
 ## Décisions et tâches
 
