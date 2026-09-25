@@ -632,7 +632,6 @@ DECISION AnUnknownCliFlagIsAUsageError
 		+ "it is described as reserved to the node:* scripts instead"
 	REJECTED "A help text written by hand beside the parser's list of names: the two diverge"
 		+ "without a test failing"
-	APPLIES_TO_TASK @TASK.FEAT107
 	SOURCE "T34"
 		PR 60
 	SOURCE "Rewritten in place by the task pull request of FEAT107"
@@ -877,7 +876,6 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 		IMPL ".github/workflows/ui-tests.yml::workflow_dispatch"
 		IMPL ".github/workflows/ui-tests.yml::the run the README badge shows"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.DOCS108
 	SOURCE "T23"
 		PR 38
 	SOURCE "Push trigger added for the README badge"
@@ -1231,7 +1229,6 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "together"
 	REJECTED "A TypeScript literal with satisfies: a second home for the rows"
 	REJECTED "A markdown source registry of the energy values: the source is a column of the row"
-	APPLIES_TO_TASK @TASK.CHORE52
 
 DECISION APullRequestIsCitedByItsNumberNeverByAnEntity
 	SPEC "A SOURCE born in a pull request carries its number in a PR field beside the prose; REF"
@@ -1272,7 +1269,6 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 			+ "by the format it carries"
 		IMPL "packages/core-mapping/src/presentation/formatSaveWarning.spec.ts::should name the"
 			+ "declared version, its release and the release whose format the save carries"
-	APPLIES_TO_TASK @TASK.FEAT89
 	REJECTED "Reading a save by its declared version alone: a hand-edited save contradicts its"
 		+ "version"
 	REJECTED "Ignoring the declared version: a contradiction would pass without a word"
@@ -1286,7 +1282,6 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 	RATIONALE "The version is a claim of the save, the content its fact; a contradiction is"
 		+ "reported"
 	SOURCE "Owner ruling"
-		REF @TASK.DOCS86
 	SOURCE "The table, the resolution of a declared version and the contradiction warning, on"
 		+ "delivery of the task"
 		PR 124
@@ -1353,7 +1348,6 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 			+ "charge for the world objects without a known energy level"
 		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT66
 	ASSUMES @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 	RATIONALE "The eleven-machine limitation is believed to actually cost power in-game, so"
 		+ "excluding those machines underestimates consumption; the hypothesis states the opposite"
@@ -1463,7 +1457,6 @@ DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
 		+ "happens, and the release table of FEAT89 already carries what the code tells apart"
 	RESTS_ON @RULE.TheGameKeepsDeprecatedPhytoplanktonGroupIds
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST68
 	RATIONALE "The same ground as the format: the tool returns the save the user gave it, and"
 		+ "rewriting a value the game itself keeps would be a conversion nobody asked for"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
@@ -1514,7 +1507,6 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 	REJECTED "Naming a dropped section by its index: the index depends on the format, and the label"
 		+ "belongs to the presentation"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT94
 	RATIONALE "The report exists to tell a user what the merge changed in the format of a save; two"
 		+ "saves of one format lose nothing, and a report there would be noise on every ordinary"
 		+ "merge"
@@ -1586,11 +1578,9 @@ DECISION AReleaseIsVerifiedOnATagHoldingAVersionNumber
 	REJECTED "every tag: the before-awawa rollback tag would run a release check"
 	REJECTED "a release copy of the fallow scripts on --base origin/master: two copies to keep in"
 		+ "step"
-	APPLIES_TO_TASK @TASK.CHORE100
 	RATIONALE "The tag form of a version is CHORE83's to pick; both patterns cover the forms its"
 		+ "candidates write, cli-merge-v1.2.0 and cli-merge@1.2.0, and a tag checkout leaves only"
 		+ "tracking references, on which --base master exits 2"
-		REF @TASK.CHORE83
 	SOURCE "Delivery of CHORE100"
 		PR 133
 
@@ -1632,7 +1622,6 @@ DECISION ConsumerVersionsAreComputedByARepositoryScript
 	REJECTED "Starting the consumers at 1.0.0: much of the product is not settled yet"
 	RATIONALE "A version exists so that a bug report names what ran; what runs is a consumer and"
 		+ "every workspace package it bundles, and only the paths a commit changes say which"
-	APPLIES_TO_TASK @TASK.CHORE83
 	SOURCE "Ruled with the user on 2026-09-23 after the comparison CHORE83 asks for"
 		PR 135
 
@@ -1650,7 +1639,6 @@ DECISION ProductionIsPublishedByHandFromAReleaseTag
 	RATIONALE "Netlify cannot build a git tag, and the owner wants to control what reaches"
 		+ "production; the squash commit of a release pull request is both the tagged commit and a"
 		+ "deploy Netlify built from master"
-	APPLIES_TO_TASK @TASK.CHORE83
 	SOURCE "Ruled with the user on 2026-09-23 during CHORE83"
 		PR 135
 
@@ -1665,7 +1653,6 @@ DECISION BothCliEntryFilesRunThroughOneSharedFunction
 	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
 	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
 	APPLIES_TO_PACKAGE @PACKAGE.shared_platforms
-	APPLIES_TO_TASK @TASK.CHORE83
 	SOURCE "Pull request review, the owner asking for the fallow warnings to be resolved"
 		PR 135
 
@@ -1688,7 +1675,6 @@ DECISION TheSiteHeadersReachTheDocumentThroughTheServer
 		+ "measured, the route-rule header is neither visible nor overridable from the SolidStart"
 		+ "handler, and the nonce never reached the response"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FIX101
 	SOURCE "Measured while implementing FIX101 on 2026-09-23"
 		PR 134
 
@@ -1705,7 +1691,6 @@ DECISION TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
 		+ "js/request-forgery query treats as sanitised; a URL that only passed a host check does"
 		+ "not clear it"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FIX110
 	SOURCE "Ruled with the user on 2026-09-23 on CodeQL alert #2 of PR 132"
 		PR 139
 
@@ -1721,7 +1706,6 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 		+ "carries"
 	RATIONALE "a badge reports the product the owner publishes, so a task pull request or a deploy"
 		+ "preview must not move it"
-	APPLIES_TO_TASK @TASK.DOCS108
 	SOURCE "Set of badges ruled with the user on 2026-09-24"
 		PR 144
 
@@ -1760,7 +1744,6 @@ DECISION ADependencyVersionIsHeldBackForSevenDays
 		+ "targets; an urgent install passes --minimum-release-age=0 once instead"
 	REJECTED "Per-bump semver cooldown days: github-actions ignores them, and the risk does not"
 		+ "depend on the size of the bump"
-	APPLIES_TO_TASK @TASK.CHORE117
 	SOURCE "Owner request, security review of 2026-09-24"
 		PR 161
 		PR 162
@@ -1783,7 +1766,6 @@ DECISION EveryActionIsPinnedOnACommitSha
 		+ "cannot"
 	REJECTED "A SHA without its version comment: the pin reads as an opaque hash, and Dependabot"
 		+ "has no version to rewrite beside it"
-	APPLIES_TO_TASK @TASK.CHORE118
 	SOURCE "Owner request, security review of 2026-09-24; the two Claude workflows pinned on master"
 		+ "first, the rest in the task pull request"
 		PR 162
