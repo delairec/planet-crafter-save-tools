@@ -1789,3 +1789,38 @@ DECISION AWaveIsAnEntityThatOutlivesItsTasks
 	APPLIES_TO_TASK @TASK.CHORE116
 	SOURCE "Owner request and refinement of the task, session of 2026-09-24"
 		PR 170
+
+DECISION AChangelogEntryListsOnlyUserFacingCommits
+	SPEC "A changelog entry lists the commits whose subject is feat or fix, scoped or not, and"
+		+ "every commit whose subject carries a !, in the order the release reads them"
+		IMPL "scripts/release/addChangelogEntry.ts::commitSubjects.filter(isUserFacingChange)"
+		IMPL "scripts/release/conventionalCommitSubject.ts::isUserFacingChange"
+		ENFORCED_BY "scripts/release/addChangelogEntry.spec.ts::When the release carries commits of"
+			+ "other types beside features, fixes and breaking changes"
+	SPEC "An entry whose version holds no such commit reads the single line - Maintenance changes"
+		+ "only"
+		IMPL "scripts/release/addChangelogEntry.ts::MAINTENANCE_ONLY_LINE"
+		ENFORCED_BY "scripts/release/addChangelogEntry.spec.ts::When the release carries no"
+			+ "feature, no fix and no breaking change"
+	SPEC "The filter applies to the entry alone: the version is still raised from every commit the"
+		+ "tool carries since its last tag"
+		IMPL "scripts/release/planRelease.ts::commitSubjects: history.commitSubjects"
+		ENFORCED_BY "scripts/release/planRelease.spec.ts::When a consumer carries only maintenance"
+			+ "commits"
+	APPLIES_TO_TASK @TASK.FEAT120
+	REJECTED "Filtering the commits when they are read: planRelease would then raise no version for"
+		+ "a tool whose commits are all chore or docs, and a bug report could name a build no"
+		+ "version tells apart"
+	REJECTED "Listing the other commits under a Maintenance heading of their own: the entry stays"
+		+ "as long, and the player still wades through dependency bumps to find the features"
+	REJECTED "Leaving an entry empty when its version holds no user-facing commit: a bare heading"
+		+ "reads as a release that lost its notes"
+	REJECTED "Rewriting the 0.1.0 entries already published: a changelog is history, only the"
+		+ "entries written from now on are filtered"
+	RATIONALE "The changelog is the release note of each tool, read by a player for what changed;"
+		+ "chore, docs, refactor, ci, test and build subjects say nothing to that reader, while a !"
+		+ "announces a change they must know of whatever its type"
+		REF @LIMITATION.AVersionTagCreatesNoGitHubRelease
+	SOURCE "Owner request after reading the 0.1.0 changelog entries, ruled while delivering FEAT120"
+		PR 165
+		PR 171

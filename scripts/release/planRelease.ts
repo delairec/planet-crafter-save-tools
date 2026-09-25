@@ -1,3 +1,5 @@
+import {isBreakingChange, isFeature} from './conventionalCommitSubject.ts';
+
 export interface ConsumerHistory {
   name: string;
   version: string;
@@ -12,14 +14,11 @@ export interface PlannedRelease {
 
 type VersionIncrement = 'major' | 'minor' | 'patch';
 
-const BREAKING_CHANGE_SUBJECT = /^\w+(\([^)]*\))?!:/;
-const FEATURE_SUBJECT = /^feat(\([^)]*\))?:/;
-
 function determineIncrement(commitSubjects: string[]): VersionIncrement {
-  if (commitSubjects.some((subject) => BREAKING_CHANGE_SUBJECT.test(subject))) {
+  if (commitSubjects.some(isBreakingChange)) {
     return 'major';
   }
-  if (commitSubjects.some((subject) => FEATURE_SUBJECT.test(subject))) {
+  if (commitSubjects.some(isFeature)) {
     return 'minor';
   }
   return 'patch';

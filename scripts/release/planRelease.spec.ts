@@ -131,6 +131,23 @@ describe('planRelease', () => {
     });
   });
 
+  describe('When a consumer carries only maintenance commits', () => {
+    it('should raise its patch number from every one of them', () => {
+      // Arrange
+      const histories: ConsumerHistory[] = [
+        {name: 'cli-merge', version: '1.0.0', commitSubjects: ['chore(deps): bump typescript (#170)', 'docs(tasks): archive a task (#171)']}
+      ];
+
+      // Act
+      const releases = planRelease(histories);
+
+      // Assert
+      expect(releases).toEqual([
+        {name: 'cli-merge', version: '1.0.1', commitSubjects: ['chore(deps): bump typescript (#170)', 'docs(tasks): archive a task (#171)']}
+      ]);
+    });
+  });
+
   describe('When several consumers carry different changes', () => {
     it('should raise each one by its own commits', () => {
       // Arrange

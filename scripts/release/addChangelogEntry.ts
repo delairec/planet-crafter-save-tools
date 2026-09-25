@@ -1,4 +1,7 @@
+import {isUserFacingChange} from './conventionalCommitSubject.ts';
 import type {PlannedRelease} from './planRelease.ts';
+
+const MAINTENANCE_ONLY_LINE = '- Maintenance changes only\n';
 
 export interface ChangelogUpdate {
   changelog: string | undefined;
@@ -10,8 +13,16 @@ function renderHeader(name: string): string {
   return `# Changelog of ${name}\n\n`;
 }
 
+function renderCommitLines(commitSubjects: string[]): string {
+  const userFacingSubjects = commitSubjects.filter(isUserFacingChange);
+  if (userFacingSubjects.length === 0) {
+    return MAINTENANCE_ONLY_LINE;
+  }
+  return userFacingSubjects.map((subject) => `- ${subject}\n`).join('');
+}
+
 function renderEntry(release: PlannedRelease, date: string): string {
-  const commitLines = release.commitSubjects.map((subject) => `- ${subject}\n`).join('');
+  const commitLines = renderCommitLines(release.commitSubjects);
   return `## ${release.version} — ${date}\n\n${commitLines}`;
 }
 
