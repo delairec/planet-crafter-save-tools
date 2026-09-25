@@ -142,3 +142,23 @@ GAME_RELEASE 2.004
 URL DependabotSupportedEcosystemsGithubActions
 	LOCATION "https://docs.github.com/en/code-security/reference/supply-chain-security/supported-ecosystems-and-repositories#github-actions"
 	DESC "Dependabot caveats for actions: a same-line version comment is rewritten with the pin"
+
+URL SteamPatchNotesV2100
+	LOCATION "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/1838407329254125"
+	DESC "Steam announcement Development Branch update - v2.100 of 2026-07-15: OreBreaker T1"
+		+ "consumes less energy"
+
+URL SteamPatchNotesSkeoLive
+	LOCATION "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/1842212951312440"
+	DESC "Steam announcement The new Free Moon Skeo is now LIVE of 2026-09-01, repeating the v2.100"
+		+ "change: OreBreaker T1 consumes less energy"
+
+URL WikiToxicWaterCollectorsCreated
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=17215&prop=wikitext&format=json"
+	DESC "fandom wiki page Toxic Water Collectors, first revision of 2025-11-20: T1 -0,8 kW, T2 -60"
+		+ "kW"
+
+URL WikiToxicWaterCollectorsEdited
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=18222&prop=wikitext&format=json"
+	DESC "fandom wiki page Toxic Water Collectors, revision of 2026-03-02 changing T1 to -1.2 kW"
+		+ "and T2 to -48 kW without a comment"
