@@ -2145,3 +2145,42 @@ DECISION AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Ruling taken while delivering FEAT124 on 2026-09-25, from the owner ruling that only a"
 		+ "price found is stored"
 		PR 178
+
+DECISION TheSubmergedMachinesDisclaimerIsCarriedByTheEnergyViewModel
+	SPEC "The submerged machines disclaimer is a message of the core-mapping energy section,"
+		+ "exposed by the energy ViewModel as submergedMachinesDisclaimer, once for the whole"
+		+ "section and never per planet"
+		IMPL "packages/core-mapping/src/presentation/messages/energyLevelsSectionMessages.js::energyLevelsSectionSubmergedMachinesDisclaimer"
+		IMPL "packages/core-mapping/src/presentation/viewModels/EnergyLevelsViewModel.ts::submergedMachinesDisclaimer"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "present the submerged machines disclaimer once for the whole section, whatever the"
+			+ "number of planets"
+	SPEC "The Power section prints the disclaimer unconditionally, under its title"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Disclaimer>{energyLevels().submergedMachinesDisclaimer}</Disclaimer>"
+	REJECTED "A constant of the ui-save-manager messages: the disclaimer qualifies the computed"
+		+ "energy, it is a message of the section and not a technical label of the page"
+	REJECTED "One disclaimer per planet heading: the same sentence repeated under every planet"
+	REJECTED "Printing the disclaimer only when a planet carries a machine that may be submerged:"
+		+ "the save cannot tell a submerged machine from one on dry ground"
+		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT128
+	SOURCE "Owner review of the FEAT128 pull request"
+		PR 187
+
+DECISION ADisclaimerIsRenderedByTheDisclaimerComponent
+	SPEC "A disclaimer printed in a section of the page is rendered by the Disclaimer component,"
+		+ "never by a bare paragraph"
+		IMPL "packages/ui-save-manager/src/components/structure/Disclaimer.tsx"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Disclaimer>"
+	SPEC "The Disclaimer block takes its colours from the tokens of colors.css: a thick left border"
+		+ "in the --warning severity colour on the --disclaimer surface"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::.disclaimer"
+	REJECTED "A bare paragraph under the section title: it reads as ordinary text of the section"
+	REJECTED "A colour literal in the disclaimer rule: it escapes the light and dark themes of"
+		+ "colors.css"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT128
+	SOURCE "Owner review of the FEAT128 pull request"
+		PR 187

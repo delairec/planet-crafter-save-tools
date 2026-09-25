@@ -1281,9 +1281,12 @@ TASK FEAT129
 
 TASK FEAT128
 	TITLE "Warn that submerged machines may distort the available energy"
-	STATUS todo
+	STATUS implemented
 	SPEC "the Power section prints once, under its title, the warning: Submerged machines may"
 		+ "distort the computed available energy"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should warn once, under the Power title,"
+			+ "that submerged machines may distort the computed available energy"
+	DELIVERED_BY 187
 	WAVE @WAVE.9
 	RATIONALE "The save cannot tell a submerged machine from one on dry ground, so the tool keeps"
 		+ "counting it; the warning tells the reader why the available energy may be higher in game"

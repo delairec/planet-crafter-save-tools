@@ -2,7 +2,7 @@ import {For, Resource} from "solid-js";
 import FieldsGroup from "./structure/FieldsGroup";
 import FieldsGroupGrid from "./structure/FieldsGroupGrid";
 import SectionState from "./structure/SectionState";
-import Icon from "~/components/Icon";
+import Disclaimer from "./structure/Disclaimer";
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {
   energyLevelsSectionBoostedMachinesLabel,
@@ -14,9 +14,7 @@ import {
   energyLevelsSectionQuantityLabel,
   energyLevelsSectionTitle,
   energyLevelsSectionTotalLabel,
-  energyLevelsSectionUnitLabel,
-  energyLevelsSectionWorkInProgressIcon,
-  energyLevelsSectionWorkInProgressLabel
+  energyLevelsSectionUnitLabel
 } from "~/messages/energyLevelsSectionMessages";
 
 interface EnergyLevelsProps {
@@ -29,6 +27,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
       {(energyLevels) => (
         <div>
           <h3>{energyLevelsSectionTitle}</h3>
+          <Disclaimer>{energyLevels().submergedMachinesDisclaimer}</Disclaimer>
           <For each={energyLevels().planets}>
             {(planet) => (
               <div>
@@ -60,7 +59,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
                 />
 
                 <FieldsGroupGrid
-                  title={<>{energyLevelsSectionConsumptionTitle} <Icon content={energyLevelsSectionWorkInProgressIcon}/> {energyLevelsSectionWorkInProgressLabel}</>}
+                  title={energyLevelsSectionConsumptionTitle}
                   items={planet.consumptionBreakdown}
                   itemLabel={(row) => row.label}
                   columns={(row) => [
