@@ -106,8 +106,19 @@ in its `source` field. The export prints 0 for 458 other names and omits 75 more
 export writes the same 0 for a resource, a seed or a structural part that has no energy field at all, so these names
 stay in the group without a known energy level (`@DECISION.AZeroInTheGameDataExportIsNotAPrice`). Among the placed
 machines the 2026-09-09 cross-check left unpriced, `ButterflyDisplayer1`, `FishDisplayer1`, `FrogDisplayer1`,
-`Server1` and `CookingStation1` remain so, and only they are listed by
-`@LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel`.
+`Server1` and `CookingStation1` remain so; the in-game reading below shows that they draw no power.
+
+**In-game reading: 2026-09-25**, game version 2.103, by the owner on a private save placing, over six planets, nearly
+every machine of the game, at a power consumption modifier of 1. The HUD matches the computed production of every
+planet to the kilowatt, and its consumption once four corrections are made. Three rows the game data search left
+alone were wrong and follow the export: `ToxicWaterCollector1` 0.8 kW (was 1.2), `ToxicWaterCollector2` 60 kW (was
+48) and `OreBreaker1` 0.6 kW (was 2.6), each read machine by machine; the last gap, 165.5 kW on Prime, is one
+`OreExtractor2` and three `Drill0` standing under a lake, which draw no power in game
+(`@LIMITATION.SubmergedMachinesAreCountedAsDrawingPower`). The reading confirms the eight values the game data search
+added, `TreePlanter3` included, and shows that `ButterflyDisplayer1`, `FishDisplayer1`, `FrogDisplayer1`, `Server1`,
+`CookingStation1`, `PodUnderground` and `RocketAnimals2` draw no power. These seven stay in the group without a known
+energy level until `@TASK.FEAT127` declares the machines that draw none apart from it; the underestimate the
+unpriced five were feared to cause does not exist.
 
 **Source registry.** Each value the 2026-09-07/09 cross-check added carries, in the `source` field of its row, the
 wiki page it was read from (game v2.102). Earlier values are sourced by the wiki pages listed in EN-BASE-2 above.

@@ -1339,10 +1339,9 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		PR 150
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
-	REJECTED "Moving TreePlanter3, PodUnderground and RocketAnimals2 into the machines the"
-		+ "eleven-machine limitation lists: that limitation is about a cost the sources leave"
-		+ "undecided, not about a hypothesis of no cost"
-		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"
+		+ "whose energy is unknown: those have a cost the sources leave undecided, not a hypothesis"
+		+ "of no cost"
 	REJECTED "Adding a zero-kilowatt row for the three machines to the energy table: a hypothesis"
 		+ "is not an observed value, and an unprinted value is already never inferred as zero"
 		REF @DATATABLE.EnergyLevels
@@ -1356,10 +1355,9 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	ASSUMES @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
-	RATIONALE "The eleven-machine limitation is believed to actually cost power in-game, so"
-		+ "excluding those machines underestimates consumption; the hypothesis states the opposite"
-		+ "for the machines it names, so excluding them is not a limitation"
-		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	RATIONALE "A placed machine whose cost the sources leave undecided may draw power in game, so"
+		+ "excluding it may underestimate consumption; the hypothesis states the opposite for the"
+		+ "machines it names, so excluding them is not a limitation"
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
 		PR 120

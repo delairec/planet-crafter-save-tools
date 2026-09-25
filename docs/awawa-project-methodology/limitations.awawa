@@ -1,4 +1,6 @@
 LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
 	SYMPTOM "Five placed machines have no known energy level: ButterflyDisplayer1 (14 placed),"
 		+ "FishDisplayer1 (3), FrogDisplayer1 (2), Server1 (2) and CookingStation1 (2); the"
 		+ "displayed consumption of a game placing one of them is underestimated if the machine"
@@ -27,6 +29,11 @@ LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
 	SOURCE "Reduced to the placed machines no source prices by the game data search of 2026-09-25,"
 		+ "placed counts read in the six reference saves"
 		REF @URL.CompanionAppGameDataV2103
+	SOURCE "Archived on the owner's reading in game 2.103 of 2026-09-25: the five machines draw no"
+		+ "power, so the consumption of a game placing them is not underestimated"
+		PR 178
+		REF @GAME_RELEASE.2.103
+		REF @PROJECT.DNC
 
 LIMITATION TheHydrationFallbackHasNoScenario
 	SYMPTOM "Of the three loading states of the page, the hydration fallback alone has no"

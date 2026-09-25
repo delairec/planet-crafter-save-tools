@@ -93,6 +93,12 @@ HYPOTHESIS PodUndergroundAndRocketAnimals2DrawNoPower
 		+ "hypothesis is narrowed to the two machines the export does not price, TEST125 keeping"
 		+ "TreePlanter3 in its fixture"
 		PR 178
+	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save: the HUD of Skeo and of"
+		+ "Toxicity matches the computed consumption with PodUnderground and RocketAnimals2 counted"
+		+ "at 0 kW; the hypothesis becomes a rule once TEST125 attests it on a public fixture"
+		PR 178
+		REF @GAME_RELEASE.2.103
+		REF @PROJECT.DNC
 
 HYPOTHESIS TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
 	UNTIL "a save carrying Phytoplankton2 or Phytoplankton3 is loaded in 2.102 or later and saved"
