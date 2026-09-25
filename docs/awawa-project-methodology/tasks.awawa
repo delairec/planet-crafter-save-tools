@@ -713,35 +713,6 @@ TASK CHORE91
 		PR 121
 		REF @TASK.FIX53
 
-TASK FEAT97
-	TITLE "Validate the entries of the Terrain Layers section"
-	STATUS archived
-	ARCHIVED_ON "2026-09-23"
-	PURGE false
-	WAVE 5
-	DESC "Archived on 2026-09-23: the section is an ordinary section, so validating its entries is"
-		+ "no longer a task of its own. The schema of a layer entry and the fixture that attests it"
-		+ "are criteria of FEAT93, the section being read into entries by FEAT92, and the guard"
-		+ "that keeps a second reader of a save line out of the production code is CHORE98"
-	SPEC "the entries of the Terrain Layers section are validated against a schema of their own,"
-		+ "read by the branch the format of the save selects"
-	SPEC "those entries are read for validation alone: the serializer keeps writing the text the"
-		+ "section was read as, so the byte for byte round trip of a legacy save is unchanged"
-	SPEC "the parser stays the only production reader of a save line: no validator parses the"
-		+ "section a second time"
-	RATIONALE "A broken entry of that section travels through the tool without a word today, and a"
-		+ "save the game refuses to load is the cost. The design this task rested on is the one the"
-		+ "refinement reversed: the section was to be carried as raw text and read a second time"
-		+ "for validation alone, where the measurement showed that an ordinary section costs the"
-		+ "byte equality nothing"
-		REF @DECISION.OneModuleAloneParsesASaveLine
-		REF @DATATABLE.LegacyTerrainLayerProperties
-		REF @SECTION.TerrainLayers
-	SOURCE "Owner ruling, 2026-09-23, refining FEAT93: a section carried without validation can"
-		+ "break a save in game, and that validation is a task of its own"
-	SOURCE "Owner ruling, 2026-09-23, refining the task: the section behaves like every other one,"
-		+ "so what is left of the task belongs to FEAT93 and to CHORE98"
-
 TASK CHORE99
 	TITLE "Close the three gaps of the check:contrast guard"
 	STATUS implemented
