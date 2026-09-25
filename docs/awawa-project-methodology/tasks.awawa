@@ -781,13 +781,20 @@ TASK CHORE112
 	SOURCE "Picked in the review of the accepted limitations, CHORE102"
 		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
 
-TASK FIX113
-	TITLE "the production breakdown by machine counts the boost of optimizers once"
-	STATUS draft
-	SPEC "with energy fuses in play, the totalLevel of the production breakdown entries sums to the"
-		+ "production of the planet"
-	SPEC "the productionRatio shares of the production breakdown sum to 1"
-	SPEC "the boost of an optimizer is counted once in the production of the planet"
+TASK TEST113
+	TITLE "a test pins that the machine breakdown and the optimizer contributions share the"
+		+ "production of a planet"
+	STATUS todo
+	SPEC "with several optimizers holding energy fuses and a producer reached by two of them, the"
+		+ "totalLevel of the production breakdown entries plus the contributions of the optimizers"
+		+ "equals the production of the planet"
+	SPEC "on the same planet, the productionRatio shares of the breakdown entries and of the"
+		+ "optimizers sum to 1"
+	RATIONALE "The draft took the base-only breakdown for a defect; it is the design. The boost is"
+		+ "counted once, in the optimizer contribution, so the shares tell whether a machine or an"
+		+ "optimizer yields more. No spec pins the two tables together: the existing specs check"
+		+ "each share alone. No behaviour changes: the production formula is confirmed in game"
+		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
 	SOURCE "Picked in the review of the accepted limitations, CHORE102"
 		REF @LIMITATION.TheMachineBreakdownIgnoresOptimizerBoost
 

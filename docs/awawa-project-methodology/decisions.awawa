@@ -1824,3 +1824,21 @@ DECISION AChangelogEntryListsOnlyUserFacingCommits
 	SOURCE "Owner request after reading the 0.1.0 changelog entries, ruled while delivering FEAT120"
 		PR 165
 		PR 171
+
+DECISION TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.TEST113
+	SPEC "A production breakdown entry carries the base level of its machines, without the boost of"
+		+ "energy fuses"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private"
+			+ "productionBreakdown(production: number)"
+	SPEC "The boost of energy fuses is counted once, in the contribution of the optimizers that"
+		+ "hold them, shared by fuse count when several reach one producer"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::contribution += totalBoost"
+	REJECTED "The boost in the breakdown entries so that they alone sum to production: it would be"
+		+ "counted twice, or the optimizer share would go, and with it the comparison between"
+		+ "adding a machine and adding an optimizer"
+	RATIONALE "The shares are indicative: they tell whether adding a machine yields more than"
+		+ "adding an optimizer. The production formula they divide is confirmed by in-game"
+		+ "measurements and stays"
+	SOURCE "Owner ruling while refining FIX113 on 2026-09-25"
