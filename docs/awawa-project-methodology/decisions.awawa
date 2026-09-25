@@ -1899,3 +1899,26 @@ DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
 		REF @DECISION.EveryPublishedCommandHasARealProcessTest
 	SOURCE "Delivery of CHORE105 and its review, fallow 3.27.0 and 3.28.0 tried on 2026-09-25"
 		PR 173
+
+DECISION ADroppedSaveIsSelectedThroughItsFileInput
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT119
+	RESTS_ON @RULE.TheSaveOnPrimeBecomesSaveA
+	SPEC "A dropped save is written into the file input of its area, which then reports a change;"
+		+ "the drop and the pick reach the page through the same handler"
+		IMPL "packages/ui-save-manager/src/lib/selectFileInInput.ts::input.files = selection.files;"
+	SPEC "Drop areas nest, the innermost taking the drop: a save slot inside the merge section"
+		IMPL "packages/ui-save-manager/src/components/structure/DropZone.tsx::event.stopPropagation();"
+	SPEC "Two saves dropped on the merge section are ordered by the code units of their names, the"
+		+ "order the command's sort gives a folder"
+		IMPL "packages/ui-save-manager/src/lib/orderDroppedSaves.ts::compareByName"
+		IMPL "packages/cli-merge/cli/initMergeCli.js::.filter(hasJsonExtension).sort()"
+	SPEC "A single save dropped on the merge section outside both slots fills save A when it is"
+		+ "empty, save B otherwise"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::fileA() ? saveBInput :"
+			+ "saveAInput"
+	REJECTED "A selection signal set by the drop beside the one set by the input: the input would"
+		+ "show no file, and two paths would select a save"
+	REJECTED "localeCompare for the order: it differs from the command's sort on case and accents,"
+		+ "so the web UI and the command would merge a pair differently"
+	SOURCE "Ruled while delivering the drop of save files"

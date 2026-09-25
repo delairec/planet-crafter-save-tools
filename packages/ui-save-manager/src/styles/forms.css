@@ -66,3 +66,13 @@ select:focus {
     color: var(--neon-purple);
     font-weight: var(--bold);
 }
+
+.drop-zone {
+    border: 2px dashed transparent;
+    border-radius: 0.375rem;
+    transition: border-color 0.2s;
+}
+
+.drop-zone-active {
+    border-color: var(--neon-pink);
+}
