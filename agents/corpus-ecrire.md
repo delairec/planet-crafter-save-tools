@@ -23,10 +23,9 @@ une ancre vers un chemin que git ne suit pas, et ignore celles d'une entité arc
 retire s'archive donc même quand la tâche supprime le module que son `IMPL` nomme
 (@DECISION.AnAnchorNamesAFileTrackedByGit).
 
-**L'archive se purge à la main.** Aucun script de nettoyage n'est écrit tant que le compte d'entrants publié par
-`awawa status TYPE .` suffit à décider : une entité archivée que plus rien ne cite se supprime dans la prochaine
-pull request qui touche son fichier
-(@PROCESS.TheArchiveIsPurgedByHandWhileFewEntitiesAreArchived).
+**L'archive se purge sans script.** La passe de nettoyage se fait à la main, par le plugin awawa-ui ou par un agent
+à qui on la demande ; une entité archivée que plus rien ne cite se supprime dans la prochaine pull request qui touche
+son fichier (@PROCESS.TheArchiveIsPurgedWithoutAScript).
 
 **Un champ légal dans un seul état n'est déclaré que là.** Un champ conditionné par la valeur d'un autre champ se
 déclare dans le bloc `WHEN` de cette valeur, et nulle part ailleurs : `LEGACY_INDEX` sous `WHEN HOLDS_FOR all` et

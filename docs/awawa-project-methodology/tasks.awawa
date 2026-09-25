@@ -13,26 +13,6 @@ TASK DOCS1
 		+ "is never delivered work and is never purged"
 		REF @DECISION.AgentsMdNamesOneModelEntityPerType
 
-TASK FEAT47
-	TITLE "a cleanup pass archives the delivered tasks and purges what has been archived for a"
-		+ "delay to be defined"
-	STATUS todo
-	SPEC "A root package.json script, run by hand, stops and reports when awawa fmt --check or"
-		+ "awawa lint --strict fails on the corpus"
-	SPEC "It archives every implemented task no draft or todo task is AFTER, and every active"
-		+ "entity whose UNTIL names an implemented task, writing STATUS archived and ARCHIVED_ON"
-		+ "that day"
-	SPEC "It purges, entity by entity, every archived entity whose PURGE is true and whose"
-		+ "ARCHIVED_ON is at least n days old (n to be configurable), with the reference lines to"
-		+ "it; a purge that breaks lint --strict is restored and reported"
-	SPEC "It deletes every USAGE_REPORT nothing references, until none is left, and never a PROJECT"
-	SPEC "It works on a branch and opens a pull request whose body is its report: what was"
-		+ "archived, purged, deleted and kept with the reason, and every active question whose"
-		+ "BLOCKS names an implemented task; nothing to do opens no pull request"
-	RATIONALE "Without the pass the archive mechanism turns into the history it replaces; the"
-		+ "design was probed on throwaway corpora before the migration, the pass reading only"
-		+ "status, show and refs in JSON"
-
 TASK DOCS50
 	TITLE "the points the corpus migration left in its pull request body are ruled in the corpus"
 	STATUS implemented
