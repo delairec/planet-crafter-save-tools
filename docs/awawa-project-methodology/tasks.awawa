@@ -857,6 +857,7 @@ TASK TEST113
 		+ "equals the production of the planet"
 	SPEC "on the same planet, the productionRatio shares of the breakdown entries and of the"
 		+ "optimizers sum to 1"
+	WAVE @WAVE.9
 	RATIONALE "The draft took the base-only breakdown for a defect; it is the design. The boost is"
 		+ "counted once, in the optimizer contribution, so the shares tell whether a machine or an"
 		+ "optimizer yields more. No spec pins the two tables together: the existing specs check"
@@ -1180,3 +1181,104 @@ TASK TEST123
 		+ "same review"
 		PR 173
 	SOURCE "Owner rulings, refinement session of 2026-09-26"
+
+TASK FEAT124
+	TITLE "Price every power-drawing world object the public sources attest, placed in a reference"
+		+ "save or not"
+	STATUS todo
+	SPEC "every machine of the group without a known energy level that a source prices gets its row"
+		+ "in the energy table, the source in the source field of that row, and moves to the"
+		+ "producing or the consuming group"
+	SPEC "a name no source prices stays in its group, and nothing records the search made for it"
+	SPEC "the rows already in the energy table are not checked again"
+	SPEC "the sources searched include, beyond the wiki, the game data a community mod or save"
+		+ "editor reads from the game, each one recorded as a URL entity at the address read"
+	SPEC "docs/energy-levels.md records the date and the game release of the search, and the"
+		+ "limitation on machines without a known energy level lists only the placed machines no"
+		+ "source prices"
+	WAVE @WAVE.9
+	RATIONALE "The cross-check of 2026-09-09 covered only the names placed in the six reference"
+		+ "saves, plus the three names of the Skeo update: 541 names stay without a known energy"
+		+ "level against 104 consumers, and a machine a player places that no reference save holds"
+		+ "is missing from the consumption without any warning. Only a price found is stored: a"
+		+ "source per name searched would weigh 541 records and say nothing the group does not. The"
+		+ "rows already stored are trusted; a gap between the consumption computed and the reading"
+		+ "in game of TEST125 is what reopens one"
+		REF @DATATABLE.EnergyLevels
+		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+		REF @TASK.TEST125
+	SOURCE "Owner request of 2026-09-25 opening the wave that completes the power consumption: the"
+		+ "collection of power-drawing machines from the sources is finished before the formula is"
+		+ "measured"
+	SOURCE "Owner ruling of 2026-09-25 on the draft: no source stored per name searched, and no"
+		+ "check of the values already stored until a save shows a consumption gap"
+
+TASK TEST125
+	TITLE "Measure in game the consumption the HUD prints and write the consumption formula as"
+		+ "rules"
+	STATUS todo
+	SPEC "a public fixture save built for the measurement holds, on one planet, one of each machine"
+		+ "FEAT124 leaves unpriced, TreePlanter3, PodUnderground, RocketAnimals2, an optimizer"
+		+ "holding energy fuses and an optimizer holding a fuse of another kind"
+	SPEC "the owner loads the fixture in game 2.103 and reads the HUD consumption of the planet as"
+		+ "each machine is added, each reading recorded as a SOURCE citing the game release read"
+	SPEC "the same fixture is read with modifierPowerConsumption at 0, at 1 and at one more value"
+		+ "the game offers"
+	SPEC "the consumption formula is written as RULE entities of domain game, each obligation"
+		+ "attested by the fixture and by a test pinning the value read in game"
+	SPEC "the hypothesis that TreePlanter3, PodUnderground and RocketAnimals2 draw no power is"
+		+ "turned into a rule or archived, as the reading decides"
+	AFTER @TASK.FEAT124
+	WAVE @WAVE.9
+	RATIONALE "The production formula is confirmed by in-game readings; the consumption formula"
+		+ "never was, and no RULE states either. Consumption is today the sum of base levels:"
+		+ "modifierPowerConsumption is read from the save configuration but applied nowhere,"
+		+ "although a private reference save carries 0.0, and whether a fuse other than the energy"
+		+ "fuse changes the draw of a machine is unknown. A public fixture is the only save a"
+		+ "reading in game can attest in CI, the reference saves being private"
+		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
+		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
+		REF @SECTION.SaveConfiguration
+		REF @GAME_RELEASE.2.103
+	SOURCE "Owner request of 2026-09-25 opening the wave, and the owner's agreement the same day to"
+		+ "read the HUD in game on a fixture provided"
+
+TASK FEAT126
+	TITLE "The consumption of a planet applies the power consumption modifier of its save"
+	STATUS todo
+	SPEC "the consumption, the available energy and the consumption breakdown of every planet"
+		+ "follow the effect of modifierPowerConsumption the rules of TEST125 state"
+	SPEC "a unit test pins the consumption computed on the measurement fixture at each modifier"
+		+ "value read in game"
+	SPEC "the Power card names the modifier its figures apply when it is not 1"
+	AFTER @TASK.TEST125
+	WAVE @WAVE.9
+	RATIONALE "The save configuration presenter already shows the modifier, while PlanetEnergyGrid"
+		+ "sums base levels alone: on a save whose modifier is not 1 the displayed consumption and"
+		+ "available energy disagree with the HUD, whatever the completeness of the energy table"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
+		REF @PACKAGE.core_mapping
+	SOURCE "Owner request of 2026-09-25 opening the wave: find the right consumption formula"
+
+TASK FEAT127
+	TITLE "Price the machines whose consumption the reading in game established"
+	STATUS todo
+	SPEC "each machine TEST125 read in game gets its row in the energy table, its source naming the"
+		+ "game release read, and moves to the producing or the consuming group"
+	SPEC "a machine the reading shows drawing no power is declared as drawing none, apart from the"
+		+ "machines whose level is unknown"
+	SPEC "the consumption computed on the measurement fixture at modifier 1 equals the HUD reading"
+	SPEC "the limitation on machines without a known energy level is archived, or lists only the"
+		+ "machines the reading could not reach"
+	AFTER @TASK.TEST125
+	WAVE @WAVE.9
+	RATIONALE "A reading in game is a source of its own, cited by its release, so a value the wiki"
+		+ "does not print can enter the table without being inferred. Declaring a machine that"
+		+ "draws nothing apart from the unknown ones is what the hypothesis-based decision could"
+		+ "not do without an observation"
+		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+		REF @DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
+		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+	SOURCE "Owner request of 2026-09-25 opening the wave: every machine that consumes energy is"
+		+ "taken into account"
