@@ -20,7 +20,12 @@ const mergedSaveDisplayName = '"saveDisplayName":"baseline_valid-other-player_va
  */
 const legacyTerrainLayerEntry = '"layerId":"PC-Toxicity-Layer2"';
 
-const preferLegacyFormatLabel = 'Write the legacy format of 1.618';
+const preferLegacyFormatLabel = 'Prefer legacy format';
+
+const preferLegacyFormatDescription =
+  'Tick this checkbox if you want to align the save format on the older version instead of the newer.';
+
+const keepLegacyFormatReminder = 'To write the legacy format instead, tick "Prefer legacy format" and merge again.';
 
 async function chooseTheTwoSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
   await page.goto('/');
@@ -111,7 +116,7 @@ test.describe('Save merge', () => {
       // Assert
       await expect(page.getByText('Merge warnings')).toBeVisible();
       await expect(page.getByText('The two saves carry different formats; the merged save is written in the format of release 2.004.')).toBeVisible();
-      await expect(page.getByText('To write the legacy format instead, tick "Write the legacy format of 1.618" and merge again.')).toBeVisible();
+      await expect(page.getByText(keepLegacyFormatReminder)).toBeVisible();
       await expect(page.getByRole('list').last()).not.toContainText('merged-save-format');
     });
 
@@ -125,7 +130,7 @@ test.describe('Save merge', () => {
       // Assert
       const successMessageTop = (await page.getByText('Merge successful!').boundingBox())!.y;
       const mergeWarningsTitleTop = (await page.getByText('Merge warnings').boundingBox())!.y;
-      const keepLegacyFormatReminderTop = (await page.getByText('To write the legacy format instead, tick "Write the legacy format of 1.618" and merge again.').boundingBox())!.y;
+      const keepLegacyFormatReminderTop = (await page.getByText(keepLegacyFormatReminder).boundingBox())!.y;
       expect(mergeWarningsTitleTop).toBeLessThan(successMessageTop);
       expect(keepLegacyFormatReminderTop).toBeLessThan(successMessageTop);
     });
@@ -143,6 +148,52 @@ test.describe('Save merge', () => {
 
       // Assert
       expect(downloadedContent).toContain(legacyTerrainLayerEntry);
+    });
+  });
+
+  test.describe('When the legacy format checkbox takes the keyboard focus', () => {
+    test('should show the tooltip that describes it, read by a screen reader as its description', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+      const preferLegacyFormatCheckbox = page.getByRole('checkbox', {name: preferLegacyFormatLabel});
+
+      // Act
+      await preferLegacyFormatCheckbox.focus();
+
+      // Assert
+      await expect(page.getByRole('tooltip')).toHaveText(preferLegacyFormatDescription);
+      await expect(preferLegacyFormatCheckbox).toHaveAccessibleDescription(preferLegacyFormatDescription);
+    });
+  });
+
+  test.describe('When the merge section is shown', () => {
+    test('should align the edge of the legacy format checkbox with the edge of the save inputs', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+
+      // Act
+      const saveAInputLeft = (await page.getByLabel('Save A:').boundingBox())!.x;
+      const saveBInputLeft = (await page.getByLabel('Save B:').boundingBox())!.x;
+      const checkboxLeft = (await page.getByRole('checkbox', {name: preferLegacyFormatLabel}).boundingBox())!.x;
+
+      // Assert
+      expect(saveBInputLeft).toBeCloseTo(saveAInputLeft, 0);
+      expect(checkboxLeft).toBeCloseTo(saveAInputLeft, 0);
+    });
+
+    test('should align the label and the input of the save to visualize with those of the saves to merge', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+
+      // Act
+      const saveALabelLeft = (await page.getByText('Save A:', {exact: true}).boundingBox())!.x;
+      const saveAInputLeft = (await page.getByLabel('Save A:').boundingBox())!.x;
+      const saveFileLabelLeft = (await page.getByText('Save file:', {exact: true}).boundingBox())!.x;
+      const saveFileInputLeft = (await page.getByLabel('Save file:').boundingBox())!.x;
+
+      // Assert
+      expect(saveFileLabelLeft).toBeCloseTo(saveALabelLeft, 0);
+      expect(saveFileInputLeft).toBeCloseTo(saveAInputLeft, 0);
     });
   });
 });

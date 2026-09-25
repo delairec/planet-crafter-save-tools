@@ -22,12 +22,18 @@ import Spinner from "~/components/structure/Spinner";
 import HomeDisclaimer from "~/components/HomeDisclaimer";
 import {useLoadSaveFile} from "~/lib/useLoadSaveFile";
 import {useSectionViewModels} from "~/lib/useSectionViewModels";
+import DropZone from "~/components/structure/DropZone";
+import SaveFileField from "~/components/structure/SaveFileField";
+import {selectFileInInput} from "~/lib/selectFileInInput";
+import {preventDropOutsideAreas} from "~/lib/preventDropOutsideAreas";
+import {tooManyFilesForOneSaveMessage} from "~/messages/dropZoneMessages";
 
 export default function Home() {
   let fileInputElement!: HTMLInputElement;
 
   const [isReady, setIsReady] = createSignal<boolean>(false);
   onMount(() => setIsReady(true));
+  preventDropOutsideAreas();
 
   const {
     file,
@@ -55,13 +61,15 @@ export default function Home() {
 
         <HomeDisclaimer/>
 
-        <h2>{displayRouteDisplayTitle}</h2>
-        <p>
-          <label>{displayRouteFileInputLabel}<input ref={fileInputElement} type="file"
-                                                    accept="application/json"
-                                                    onChange={handleFileChange}/></label>
-          <button onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
-        </p>
+        <DropZone label={displayRouteDisplayTitle} maximumFileCount={1}
+                  tooManyFilesMessage={tooManyFilesForOneSaveMessage}
+                  onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
+          <h2>{displayRouteDisplayTitle}</h2>
+          <p class="save-file-row">
+            <SaveFileField label={displayRouteFileInputLabel} ref={fileInputElement} onChange={handleFileChange}/>
+            <button onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
+          </p>
+        </DropZone>
 
         <Show when={isLoading()}>
           <Spinner/>

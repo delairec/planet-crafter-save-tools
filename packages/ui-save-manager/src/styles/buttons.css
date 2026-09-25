@@ -30,6 +30,46 @@ button:focus-visible {
     box-shadow: 0 0 0 2px var(--neon-pink), 0 0 0 4px var(--neon-pink);
 }
 
+.tooltip-anchor {
+    position: relative;
+    display: inline-flex;
+}
+
+.icon-button button {
+    padding: 0.25rem 0.375rem;
+    border: 1px solid var(--border);
+    background-color: transparent;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.icon-button button:hover:not(:disabled) {
+    background-color: var(--elevated);
+    color: var(--content);
+}
+
+.tooltip {
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 0.5rem);
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    background-color: var(--elevated);
+    color: var(--content);
+    font-size: 0.875rem;
+    width: max-content;
+    max-width: min(24rem, calc(100vw - 2rem));
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.tooltip-anchor:hover .tooltip,
+.tooltip-anchor:focus-within .tooltip {
+    visibility: visible;
+}
+
 .button-link {
     display: inline-flex;
     align-items: center;

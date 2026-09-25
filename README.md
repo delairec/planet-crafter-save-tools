@@ -63,7 +63,9 @@ and the <a href="docs/assets/display-page-light.png">save view in the light them
     * On Linux eh... try something like
       `~/.steam/steam/steamapps/compatdata/1234567/pfx/drive_c/users/steamuser/AppData/LocalLow/MijuGames/Planet Crafter/`
       if you installed the game from Steam with Proton.
-2. In the [Save Manager](https://planet-crafter-save-manager.netlify.app/), pick the two files and press **Merge**.
+2. In the [Save Manager](https://planet-crafter-save-manager.netlify.app/), drop the two files on the merge section,
+   or pick them, and press **Merge**. Dropped together, they become save A and save B in the alphabetical order of
+   their names; the swap button between the two reverses them.
 3. Download the merged save, copy it next to the others, and pick it in the game.
 
 The original saves are never modified.

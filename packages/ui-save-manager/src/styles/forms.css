@@ -66,3 +66,66 @@ select:focus {
     color: var(--neon-purple);
     font-weight: var(--bold);
 }
+
+:root {
+    --save-file-field-label-width: 6rem;
+    --merge-slots-swap-column-width: 1.75rem;
+    --merge-slots-column-gap: 0.5rem;
+    --save-file-row-inset: calc(var(--merge-slots-swap-column-width) + var(--merge-slots-column-gap));
+}
+
+.drop-zone {
+    outline: 2px dashed transparent;
+    outline-offset: -2px;
+    border-radius: 0.375rem;
+    transition: outline-color 0.2s;
+}
+
+.drop-zone-active {
+    outline-color: var(--neon-pink);
+}
+
+.save-file-field-label {
+    display: inline-block;
+    min-width: var(--save-file-field-label-width);
+}
+
+.merge-slots {
+    display: grid;
+    grid-template-columns: var(--merge-slots-swap-column-width) auto;
+    gap: 1rem var(--merge-slots-column-gap);
+    align-items: center;
+    width: fit-content;
+    margin-block: 1rem;
+}
+
+.merge-slots p {
+    margin: 0;
+}
+
+.merge-slots-swap {
+    grid-column: 1;
+    justify-self: start;
+    grid-row: 1 / span 2;
+}
+
+.merge-slots > .drop-zone {
+    grid-column: 2;
+}
+
+.save-file-row {
+    padding-inline-start: var(--save-file-row-inset);
+}
+
+.merge-option {
+    padding-inline-start: calc(var(--save-file-row-inset) + var(--save-file-field-label-width));
+}
+
+.checkbox-field input {
+    margin: 0 0.5rem 0 0;
+}
+
+.checkbox-field .tooltip {
+    top: calc(100% + 0.5rem);
+    bottom: auto;
+}
