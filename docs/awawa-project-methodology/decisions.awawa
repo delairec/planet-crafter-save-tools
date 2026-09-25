@@ -1821,4 +1821,6 @@ DECISION AChangelogEntryListsOnlyUserFacingCommits
 		+ "chore, docs, refactor, ci, test and build subjects say nothing to that reader, while a !"
 		+ "announces a change they must know of whatever its type"
 		REF @LIMITATION.AVersionTagCreatesNoGitHubRelease
-	SOURCE "Owner request after reading the 0.1.0 changelog entries, delivered by FEAT120"
+	SOURCE "Owner request after reading the 0.1.0 changelog entries, ruled while delivering FEAT120"
+		PR 165
+		PR 171
