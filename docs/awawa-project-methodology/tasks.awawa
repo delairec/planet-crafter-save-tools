@@ -1017,3 +1017,22 @@ TASK TEST122
 		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
+
+TASK TEST123
+	TITLE "Bring every module a unit test loads to full line and function coverage"
+	STATUS draft
+	SPEC "bun test --coverage reports 100 % of lines and of functions for every module it lists"
+	SPEC "the coverageThreshold of bunfig.toml is raised to 1.0 for lines and for functions"
+	AFTER @TASK.CHORE105
+	RATIONALE "Asked by the owner on the review of CHORE105, which gates coverage at the floor it"
+		+ "measured. On 2026-09-25, after the rebase of #173 on master, the suite totals 96.59 % of"
+		+ "lines and 94.34 % of functions, and 42 modules sit under 100 %. The lowest are the"
+		+ "command-line entry blocks of scripts/ and of core-mapping/scripts/, whose main body runs"
+		+ "only when the script is launched, generate-scenario-fixtures.ts at 29.63 % of lines and"
+		+ "0 % of functions; then the controllers of core-mapping at 66.67 % of functions, and"
+		+ "sectionValidators.generated.js, a generated file. Whether a launched entry block is"
+		+ "reached by a spawned process test, moved out of the measured module or exempted is the"
+		+ "ruling this refinement has to make"
+		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
+	SOURCE "Owner request on the review of CHORE105"
+		PR 173
