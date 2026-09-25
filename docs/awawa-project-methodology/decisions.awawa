@@ -1269,7 +1269,6 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 			+ "by the format it carries"
 		IMPL "packages/core-mapping/src/presentation/formatSaveWarning.spec.ts::should name the"
 			+ "declared version, its release and the release whose format the save carries"
-	APPLIES_TO_TASK @TASK.FEAT89
 	REJECTED "Reading a save by its declared version alone: a hand-edited save contradicts its"
 		+ "version"
 	REJECTED "Ignoring the declared version: a contradiction would pass without a word"
@@ -1350,7 +1349,6 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 			+ "charge for the world objects without a known energy level"
 		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT66
 	ASSUMES @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 	RATIONALE "The eleven-machine limitation is believed to actually cost power in-game, so"
 		+ "excluding those machines underestimates consumption; the hypothesis states the opposite"
@@ -1460,7 +1458,6 @@ DECISION ADeprecatedGroupIdIsCarriedThroughUnchanged
 		+ "happens, and the release table of FEAT89 already carries what the code tells apart"
 	RESTS_ON @RULE.TheGameKeepsDeprecatedPhytoplanktonGroupIds
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST68
 	RATIONALE "The same ground as the format: the tool returns the save the user gave it, and"
 		+ "rewriting a value the game itself keeps would be a conversion nobody asked for"
 		REF @DECISION.ASaveKeepsTheFormatItWasWrittenIn
@@ -1627,7 +1624,6 @@ DECISION ConsumerVersionsAreComputedByARepositoryScript
 	REJECTED "Starting the consumers at 1.0.0: much of the product is not settled yet"
 	RATIONALE "A version exists so that a bug report names what ran; what runs is a consumer and"
 		+ "every workspace package it bundles, and only the paths a commit changes say which"
-	APPLIES_TO_TASK @TASK.CHORE83
 	SOURCE "Ruled with the user on 2026-09-23 after the comparison CHORE83 asks for"
 		PR 135
 
@@ -1645,7 +1641,6 @@ DECISION ProductionIsPublishedByHandFromAReleaseTag
 	RATIONALE "Netlify cannot build a git tag, and the owner wants to control what reaches"
 		+ "production; the squash commit of a release pull request is both the tagged commit and a"
 		+ "deploy Netlify built from master"
-	APPLIES_TO_TASK @TASK.CHORE83
 	SOURCE "Ruled with the user on 2026-09-23 during CHORE83"
 		PR 135
 
@@ -1660,7 +1655,6 @@ DECISION BothCliEntryFilesRunThroughOneSharedFunction
 	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
 	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
 	APPLIES_TO_PACKAGE @PACKAGE.shared_platforms
-	APPLIES_TO_TASK @TASK.CHORE83
 	SOURCE "Pull request review, the owner asking for the fallow warnings to be resolved"
 		PR 135
 

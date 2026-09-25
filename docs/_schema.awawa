@@ -115,7 +115,7 @@ SCHEMA DECISION
 	FIELD APPLIES_TO_TASK @TASK
 		REPEATABLE
 		CONVERSE GOVERNED_BY
-		DESC "the task that builds it; purged with the task"
+		DESC "the task that builds it; removed once the task is archived"
 	FIELD RESTS_ON @RULE
 		REPEATABLE
 		CONVERSE GROUNDS
