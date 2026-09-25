@@ -34,25 +34,34 @@ TASK FEAT47
 		+ "status, show and refs in JSON"
 
 TASK DOCS50
-	TITLE "the five points the corpus migration left in its pull request body are ruled in the"
-		+ "corpus"
-	STATUS draft
-	DESC "to be refined with the user in a session: give context and use tables if it helps clarity"
-	SPEC "the decision BothMessageListsShareOneRendering and ValidationMessagesList.tsx agree on"
-		+ "whether severity is a parameter of the component"
-	SPEC "the decision NoSaveIsCommittedToThePublicRepository says whether the generated fixtures"
-		+ "of packages/ui-save-manager/e2e/fixtures/ are saves it forbids"
-	SPEC "the decision MockIsolationIsAGlobalPreload names the packages that carry the preload,"
-		+ "ui-save-manager running no bun test"
-	SPEC "SCHEMA PROCESS carries APPLIES_TO_PACKAGE and APPLIES_TO_TASK, or the loss of the two"
-		+ "edges of the process ATestTaskChangesTheUiOnlyForItsOwnSake is recorded as accepted"
-	SPEC "the language of AGENTS.md is ruled by a decision, or the absence of such a decision is"
-		+ "recorded as accepted"
-	RATIONALE "each point is a ruling of the owner, by rewriting the decision in place or by"
-		+ "changing the code; left in the pull request body, none of them reaches a session"
+	TITLE "the points the corpus migration left in its pull request body are ruled in the corpus"
+	STATUS todo
+	SPEC "the decision BothMessageListsShareOneRendering states that the rendering of the two"
+		+ "lists, foldable and monospace, is never a parameter of the component, and that severity"
+		+ "sets the colour of the title alone"
+	SPEC "the decision MockIsolationIsAGlobalPreload names the root and every package that runs bun"
+		+ "test as carrying the preload, one IMPL per bunfig.toml"
+	SPEC "a decision rules that AGENTS.md and the files of agents/ are written in French, and"
+		+ "AGENTS.md cites it"
+	RATIONALE "The migration left five points in the body of its pull request, where no session"
+		+ "reads them; the owner ruled them while refining this task on 2026-09-25. The severity"
+		+ "prop of ValidationMessagesList.tsx only colours the title: the review of pull request 37"
+		+ "refused the foldable and monospaced parameters, and the decision generalised that"
+		+ "refusal to every parameter, so the decision is rewritten and the code stays."
+		+ "ui-save-manager has no bunfig.toml and no bun test script; its three spec files use no"
+		+ "double and run from the root, under the root preload. The committed scenario saves go to"
+		+ "TEST122: they are generated when the scenarios run and the anchors move onto the"
+		+ "generators, which is test code. PROCESS keeps no APPLIES_TO_PACKAGE nor APPLIES_TO_TASK:"
+		+ "the only process that lost edges pointed at ui_save_manager, the one package with an"
+		+ "interface, and at TEST40, archived since, so neither edge said anything the process does"
+		+ "not. The decision that kept AGENTS.md in French was not carried over; only its prose"
+		+ "holds it, against the general rule that committed documentation is in English, and its"
+		+ "reason stands: these files are agent instructions read by one owner who works in French"
+		REF @USAGE_REPORT.PR95
 		REF @DECISION.BothMessageListsShareOneRendering
-		REF @DECISION.NoSaveIsCommittedToThePublicRepository
 		REF @DECISION.MockIsolationIsAGlobalPreload
+		REF @TASK.TEST122
+		REF @DECISION.NoSaveIsCommittedToThePublicRepository
 		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
 	SOURCE "Usage report of the corpus migration, part A remediation 1"
 		REF @USAGE_REPORT.PR95
@@ -942,3 +951,22 @@ TASK FEAT120
 		REF @LIMITATION.AVersionTagCreatesNoGitHubRelease
 	SOURCE "Owner request after reading the 0.1.0 changelog entries"
 		PR 165
+
+TASK TEST122
+	TITLE "the scenario saves are generated when the scenarios run, never committed"
+	STATUS draft
+	DESC "to be refined with the user in a session: give context and use tables if it helps clarity"
+	SPEC "no save is tracked under packages/ui-save-manager/e2e/fixtures/, and bun run test:ui"
+		+ "passes in a fresh clone"
+	SPEC "every ATTESTED_BY and IMPL anchor naming a scenario save names the generator that writes"
+		+ "the attested content instead"
+	SPEC "the decisions NoSaveIsCommittedToThePublicRepository,"
+		+ "ScenarioFixturesAreGeneratedAndReplayedByAGuard and AnAnchorNamesAFileTrackedByGit state"
+		+ "what the repository does once the saves are no longer committed"
+	RATIONALE "The owner ruled that the generated saves need not be committed and that the anchors"
+		+ "move onto the generators; six ATTESTED_BY of the specification and two IMPL of the"
+		+ "methodology name those files today, and the guard replays the generator against them"
+		REF @DECISION.NoSaveIsCommittedToThePublicRepository
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+		REF @DECISION.AnAnchorNamesAFileTrackedByGit
+	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
