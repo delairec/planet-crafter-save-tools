@@ -204,7 +204,7 @@ TASK FEAT69
 		+ "file the draft was opened from is never written"
 	SPEC "a draft is validated before it is serialized, by the validator the display and the merge"
 		+ "already run, and an invalid draft produces no save"
-	WAVE 6
+	WAVE @WAVE.6
 	RATIONALE "The display flow keeps the loaded save as its raw text and re-parses it once per"
 		+ "section, so nothing holds a save an edit could reach; the serializer is reachable from"
 		+ "the merge alone, and every domain entity is read-only. An editable draft is therefore a"
@@ -240,7 +240,7 @@ TASK FEAT70
 	SPEC "the merge result offers its merged save through that same path, under the name it carries"
 		+ "today"
 	SPEC "offering a second content releases the link of the first"
-	WAVE 6
+	WAVE @WAVE.6
 	RATIONALE "The merge result is the one place a save built in the browser reaches the user, as a"
 		+ "blob behind a download link whose object URL is revoked on every new result, and the"
 		+ "display flow has no such path. The edit mode of wave 6 and the save repair of wave 7"
@@ -271,7 +271,7 @@ TASK FEAT71
 		+ "validator produced"
 	AFTER @TASK.FEAT69
 	AFTER @TASK.FEAT70
-	WAVE 6
+	WAVE @WAVE.6
 	RATIONALE "The display flow shows a loaded save read-only and holds no state for a pending"
 		+ "edit. The edit mode adds that state in the user interface, core-mapping holding the"
 		+ "draft, and exports through the download path extracted from the merge result rather than"
@@ -297,7 +297,7 @@ TASK FEAT72
 	SPEC "a value the section schema refuses is refused on the field that carries it, before the"
 		+ "export is offered"
 	AFTER @TASK.FEAT71
-	WAVE 6
+	WAVE @WAVE.6
 	RATIONALE "The two sections display eight values, seven of them raw fields of the save"
 		+ "configuration and of the global metadata, the eighth being the crafted object count,"
 		+ "which the statistics section carries and this section only borrows. The game mode has no"
@@ -323,7 +323,7 @@ TASK FEAT73
 	SPEC "the purification level accepts the minus one that means not unlocked, and refuses every"
 		+ "other negative value"
 	AFTER @TASK.FEAT71
-	WAVE 6
+	WAVE @WAVE.6
 	RATIONALE "The section displays nine values for a planet: seven unit levels the save carries"
 		+ "and two sums it does not, the index over oxygen, heat, pressure, purification and"
 		+ "biomass, and the biomass over plants, insects and animals. A save has no field to write"
@@ -347,7 +347,7 @@ TASK FEAT74
 	SPEC "picking a row yields the world object name the save carries, the label never being"
 		+ "written to the save"
 	AFTER @TASK.FEAT71
-	WAVE 6
+	WAVE @WAVE.6
 	RATIONALE "The label table is the only catalogue the repository holds: a label for each world"
 		+ "object name, with no category, no craft cost, no stack size and no statement of which"
 		+ "names are items an inventory may hold. The catalogue therefore offers the whole table,"
@@ -379,7 +379,7 @@ TASK FEAT75
 	SPEC "the player name is edited and carries its new value into the exported save"
 	AFTER @TASK.FEAT69
 	AFTER @TASK.FEAT74
-	WAVE 6
+	WAVE @WAVE.6
 	RATIONALE "An inventory names its items by identifier and declares a size nothing checks, so a"
 		+ "free list would let a save be written with more items than the inventory holds; a grid"
 		+ "of exactly size cells makes that save unrepresentable rather than refused after the"
@@ -411,7 +411,7 @@ TASK TEST76
 	AFTER @TASK.FEAT72
 	AFTER @TASK.FEAT73
 	AFTER @TASK.FEAT75
-	WAVE 6
+	WAVE @WAVE.6
 	RATIONALE "The package has no component layer, so the edit mode is covered by an end-to-end"
 		+ "scenario on the three engines, where a blob and a download diverge most. The fixture is"
 		+ "declared in the generator and replayed byte for byte by the guard, never copied from a"
@@ -441,7 +441,7 @@ TASK FEAT77
 		+ "where today they name nothing"
 	SPEC "the sentences the command line and the save manager display for an invalid save are"
 		+ "unchanged"
-	WAVE 7
+	WAVE @WAVE.7
 	RATIONALE "A fix the user ticks has to be applied to one entry of one section, and today an"
 		+ "issue cannot say which. The two codes that carry an entryIndex do not count in the same"
 		+ "space: the unreadable line carries its rank among the lines of the section, the schema"
@@ -484,7 +484,7 @@ TASK FEAT78
 	SPEC "a save whose section count is unsupported yields a plan saying so and saying that no"
 		+ "other defect could be looked for"
 	AFTER @TASK.FEAT77
-	WAVE 7
+	WAVE @WAVE.7
 	RATIONALE "The table the user confirms is this plan, so the plan is built before any UI exists"
 		+ "and is tested without one. Building it needs the sections of a save the validator"
 		+ "rejects, which no use case exposes today: display and merge both return before calling"
@@ -528,7 +528,7 @@ TASK FEAT79
 	SPEC "a save carrying the legacy twelve part format comes out in the eleven section format, and"
 		+ "the result says that the terrain layers are not carried over"
 	AFTER @TASK.FEAT78
-	WAVE 7
+	WAVE @WAVE.7
 	RATIONALE "This is where the repair writes. The whole result is produced by parsing the"
 		+ "rejected save, applying the selected fixes to the parsed sections and serializing them"
 		+ "again, so the two defects the round trip already mends cost no fix code and the third,"
@@ -574,7 +574,7 @@ TASK FEAT80
 		+ "to confirm"
 	AFTER @TASK.FEAT79
 	AFTER @TASK.FEAT70
-	WAVE 7
+	WAVE @WAVE.7
 	RATIONALE "Today a rejected save ends the page: the route shows the list of validation messages"
 		+ "and nothing else, and the visualization area stays empty. The repair view takes that"
 		+ "dead end and turns it into the table the user acts on, reusing the export path the wave"
@@ -614,7 +614,7 @@ TASK TEST81
 	SPEC "a scenario fixture is generated whose section count is unsupported, and the save manager"
 		+ "shows it as not repairable"
 	AFTER @TASK.FEAT80
-	WAVE 7
+	WAVE @WAVE.7
 	RATIONALE "The repair is a flow across three engines, files, blobs and downloads, where the"
 		+ "package has no layer below end to end; the scenario is what covers it. The fixtures are"
 		+ "declared in the generator and replayed byte for byte by the guard, never copied from a"
@@ -643,7 +643,7 @@ TASK TEST81
 TASK FEAT82
 	TITLE "Detect the links between the objects of a save that lead nowhere"
 	STATUS draft
-	WAVE 7
+	WAVE @WAVE.7
 	DESC "drafted for memory, no research done: which links a save carries, which of them the game"
 		+ "tolerates broken and what fix each defect calls for are established when the task is"
 		+ "refined"
@@ -829,19 +829,33 @@ TASK FEAT114
 
 TASK CHORE116
 	TITLE "declare a wave as an entity carrying its milestone and its integration branch"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 170
 	SPEC "the schema declares a WAVE type, one entity per wave, named by its number"
+		IMPL "docs/_schema.awawa::SCHEMA WAVE"
 	SPEC "a WAVE entity requires MILESTONE, the title of the GitHub milestone every pull request of"
 		+ "the wave carries"
+		IMPL "docs/_schema.awawa::FIELD MILESTONE string"
 	SPEC "a WAVE entity requires BRANCH, the integration branch every task pull request of the wave"
 		+ "targets"
+		IMPL "docs/_schema.awawa::FIELD BRANCH string"
 	SPEC "the WAVE field of TASK is a reference to a WAVE entity, and every task carrying a wave"
 		+ "resolves to one"
+		IMPL "docs/_schema.awawa::FIELD WAVE @WAVE"
 	SPEC "wave 5 carries milestone skeo and branch integration/save-format-preserved"
+		IMPL "docs/awawa-project-methodology/waves.awawa::MILESTONE \"skeo\""
+		IMPL "docs/awawa-project-methodology/waves.awawa::BRANCH"
+			+ "\"integration/save-format-preserved\""
 	SPEC "wave 6 carries milestone save-edition and branch integration/save-edition"
+		IMPL "docs/awawa-project-methodology/waves.awawa::MILESTONE \"save-edition\""
+		IMPL "docs/awawa-project-methodology/waves.awawa::BRANCH \"integration/save-edition\""
 	SPEC "wave 7 carries milestone fix-corrupted-save and branch integration/fix-corrupted-save"
+		IMPL "docs/awawa-project-methodology/waves.awawa::MILESTONE \"fix-corrupted-save\""
+		IMPL "docs/awawa-project-methodology/waves.awawa::BRANCH \"integration/fix-corrupted-save\""
 	SPEC "AGENTS.md and the files of agents/ name no integration branch: the base of a task is the"
 		+ "BRANCH of its wave, master for a task with no wave"
+		IMPL "AGENTS.md::La base d'une tâche est le `BRANCH` de sa wave"
+		IMPL "agents/worktree.md::c'est le `BRANCH` de sa wave"
 	RATIONALE "WAVE is a bare uint today: an agent launched on a task learns its number, not the"
 		+ "branch to cut from nor the milestone to set on the pull request, so it asks, or reads"
 		+ "the base from AGENTS.md, which names it in prose and drifts — on 2026-09-24 it still"

@@ -1,0 +1,15 @@
+WAVE 5
+	MILESTONE "skeo"
+	BRANCH "integration/save-format-preserved"
+
+WAVE 6
+	MILESTONE "save-edition"
+	BRANCH "integration/save-edition"
+
+WAVE 7
+	MILESTONE "fix-corrupted-save"
+	BRANCH "integration/fix-corrupted-save"
+
+WAVE 8
+	MILESTONE "release-and-hardening"
+	BRANCH "integration/release-and-hardening"
