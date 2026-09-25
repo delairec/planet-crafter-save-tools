@@ -71,6 +71,7 @@ select:focus {
     --save-file-field-label-width: 6rem;
     --merge-slots-swap-column-width: 1.75rem;
     --merge-slots-column-gap: 0.5rem;
+    --save-file-row-inset: calc(var(--merge-slots-swap-column-width) + var(--merge-slots-column-gap));
 }
 
 .drop-zone {
@@ -112,8 +113,12 @@ select:focus {
     grid-column: 2;
 }
 
+.save-file-row {
+    padding-inline-start: var(--save-file-row-inset);
+}
+
 .merge-option {
-    padding-inline-start: calc(var(--merge-slots-swap-column-width) + var(--merge-slots-column-gap) + var(--save-file-field-label-width));
+    padding-inline-start: calc(var(--save-file-row-inset) + var(--save-file-field-label-width));
 }
 
 .checkbox-field input {

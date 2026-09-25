@@ -65,7 +65,7 @@ export default function Home() {
                   tooManyFilesMessage={tooManyFilesForOneSaveMessage}
                   onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
           <h2>{displayRouteDisplayTitle}</h2>
-          <p>
+          <p class="save-file-row">
             <SaveFileField label={displayRouteFileInputLabel} ref={fileInputElement} onChange={handleFileChange}/>
             <button onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
           </p>

@@ -180,5 +180,20 @@ test.describe('Save merge', () => {
       expect(saveBInputLeft).toBeCloseTo(saveAInputLeft, 0);
       expect(checkboxLeft).toBeCloseTo(saveAInputLeft, 0);
     });
+
+    test('should align the label and the input of the save to visualize with those of the saves to merge', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+
+      // Act
+      const saveALabelLeft = (await page.getByText('Save A:', {exact: true}).boundingBox())!.x;
+      const saveAInputLeft = (await page.getByLabel('Save A:').boundingBox())!.x;
+      const saveFileLabelLeft = (await page.getByText('Save file:', {exact: true}).boundingBox())!.x;
+      const saveFileInputLeft = (await page.getByLabel('Save file:').boundingBox())!.x;
+
+      // Assert
+      expect(saveFileLabelLeft).toBeCloseTo(saveALabelLeft, 0);
+      expect(saveFileInputLeft).toBeCloseTo(saveAInputLeft, 0);
+    });
   });
 });
