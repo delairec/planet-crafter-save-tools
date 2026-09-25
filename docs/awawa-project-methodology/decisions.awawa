@@ -1788,3 +1788,4 @@ DECISION AWaveIsAnEntityThatOutlivesItsTasks
 		+ "integration/save-format-preserved while release-and-hardening was open"
 	APPLIES_TO_TASK @TASK.CHORE116
 	SOURCE "Owner request and refinement of the task, session of 2026-09-24"
+		PR 170
