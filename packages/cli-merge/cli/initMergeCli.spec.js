@@ -233,7 +233,7 @@ describe('Merge CLI', () => {
       expect(exitProcess).toHaveBeenCalledWith(0);
     });
 
-    it('should print the merged output path to stdout', async () => {
+    it('should print the merged output path to stdout, behind a tick', async () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
@@ -243,7 +243,7 @@ describe('Merge CLI', () => {
       await main();
 
       // Assert
-      expect(consoleLogSpy).toHaveBeenCalledWith(MERGED_SAVE_OUTPUT_PATH);
+      expect(consoleLogSpy).toHaveBeenCalledWith(`✓ ${MERGED_SAVE_OUTPUT_PATH}`);
     });
 
     it('should report nothing about a merged save that passes validation', async () => {
@@ -525,7 +525,7 @@ describe('Merge CLI', () => {
       await main();
 
       // Assert
-      expect(consoleLogSpy.mock.calls).toEqual([[MERGED_SAVE_OUTPUT_PATH]]);
+      expect(consoleLogSpy.mock.calls).toEqual([[`✓ ${MERGED_SAVE_OUTPUT_PATH}`]]);
     });
 
     describe('When the legacy format is asked for', () => {
@@ -697,7 +697,7 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(writeTextFile.mock.calls[0][0]).toBe(MERGED_SAVE_PATH);
-      expect(consoleLogSpy).toHaveBeenCalledWith(MERGED_SAVE_PATH);
+      expect(consoleLogSpy).toHaveBeenCalledWith(`✓ ${MERGED_SAVE_PATH}`);
     });
 
     it('should exit successfully', async () => {
@@ -785,7 +785,7 @@ describe('Merge CLI', () => {
     });
 
     describe('When the input directory lists its folders out of name order', () => {
-      it('should report the folders in name order, each under a line naming it', async () => {
+      it('should report the folders in name order, each under an empty line and a line naming it', async () => {
         // Arrange
         serveDirectories({
           input: [FOLDER_BETA, INPUT_SUBFOLDER_ALPHA],
@@ -799,10 +799,12 @@ describe('Merge CLI', () => {
         // Assert
         expect(printedLines).toEqual([
           ['stderr', 'Found 2 folder(s) to process.'],
+          ['stderr', ''],
           ['stderr', 'Processing "Alpha"...'],
-          ['stdout', 'output/Alpha/Standard-1-Standard-2-merged.json'],
+          ['stdout', '✓ output/Alpha/Standard-1-Standard-2-merged.json'],
+          ['stderr', ''],
           ['stderr', 'Processing "Beta"...'],
-          ['stdout', 'output/Beta/Standard-1-Standard-2-merged.json'],
+          ['stdout', '✓ output/Beta/Standard-1-Standard-2-merged.json'],
           ['stderr', 'Done.']
         ]);
       });
@@ -824,12 +826,15 @@ describe('Merge CLI', () => {
         // Assert
         expect(printedLines).toEqual([
           ['stderr', 'Found 2 folder(s) to process.'],
+          ['stderr', ''],
           ['stderr', 'Processing "Alpha"...'],
-          ['stdout', 'output/Alpha/Standard-1-Standard-2-merged.json'],
+          ['stdout', '✓ output/Alpha/Standard-1-Standard-2-merged.json'],
+          ['stderr', ''],
           ['stderr', 'Processing "Beta"...'],
           ['stderr', '⚠ Folder "Beta" was skipped: it holds 1 JSON save file(s), exactly two are required.'],
+          ['stderr', ''],
           ['stderr', 'Processing "Gamma"...'],
-          ['stdout', 'output/Gamma/Standard-1-Standard-2-merged.json'],
+          ['stdout', '✓ output/Gamma/Standard-1-Standard-2-merged.json'],
           ['stderr', 'Done.']
         ]);
       });
@@ -845,6 +850,7 @@ describe('Merge CLI', () => {
 
         // Assert
         expect(printedLines).toEqual([
+          ['stderr', ''],
           ['stderr', 'Processing "Alpha"...'],
           ['stderr', '⚠ Folder "Alpha" was skipped: it holds 1 JSON save file(s), exactly two are required.'],
           ['stderr', 'No folder in "input" contains exactly two JSON save files to merge.']
@@ -864,6 +870,7 @@ describe('Merge CLI', () => {
         // Assert
         expect(printedLines).toEqual([
           ['stderr', 'Found 1 folder(s) to process.'],
+          ['stderr', ''],
           ['stderr', 'Processing "Alpha"...'],
           ['stderr', '⚠ Folder "Alpha" has warnings on its save files:'],
           ['stderr', '  [save A] This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.'],
@@ -872,7 +879,7 @@ describe('Merge CLI', () => {
           ['stderr', '  Writing that format dropped the Terrain layers section.'],
           ['stderr', KEEP_LEGACY_FORMAT_REMINDER],
           ['stderr', ''],
-          ['stdout', 'output/Alpha/Standard-1-Standard-2-merged.json'],
+          ['stdout', '✓ output/Alpha/Standard-1-Standard-2-merged.json'],
           ['stderr', 'Done.']
         ]);
       });

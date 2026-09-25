@@ -27,6 +27,7 @@ export function renderFoldersFound(count) {
 
 /** @param {string} folder */
 export function renderProcessingFolder(folder) {
+  console.error('');
   console.error(`Processing "${folder}"...`);
 }
 
@@ -36,7 +37,7 @@ export function renderReportSeparator() {
 
 /** @param {string} outputPath */
 export function renderMergeSucceeded(outputPath) {
-  console.log(outputPath);
+  console.log(`✓ ${outputPath}`);
 }
 
 /**

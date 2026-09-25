@@ -11,9 +11,10 @@ bun merge
 
 Generates the merged saves in output directory, by processing all subfolders from input folder.
 
-The folders are processed in name order, the same under Bun and Node, and each is reported as one block under a
-`Processing "<folder>"...` line, a skipped folder included. In the block of a merged folder, the path of the save
-written comes last, on stdout, after every warning and separated from them by an empty line.
+The folders are processed in name order, the same under Bun and Node, and each is reported as one block opening on
+an empty line and a `Processing "<folder>"...` line, a skipped folder included. In the block of a merged folder, the
+path of the save written comes last, on stdout behind a `✓`, after every warning and separated from them by an empty
+line.
 
 A folder holding a save file the validation refuses is reported and skipped, the remaining folders are still
 processed, and the command exits with code `0`. A merge that runs and produces no usable save file, or a merged save
