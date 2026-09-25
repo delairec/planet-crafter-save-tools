@@ -75,8 +75,10 @@ test.describe('Save display', () => {
       await expect(page.getByText('Drone logistics')).toBeVisible();
       await expect(page.getByText('Paused', {exact: true})).toBeVisible();
     });
+  });
 
-    test('should name no game release when its version resolves to the current one', async ({page}) => {
+  test.describe('When a save file of the current game release is visualized', () => {
+    test('should name no game release', async ({page}) => {
       // Arrange
       await page.goto('/');
       await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
@@ -91,7 +93,7 @@ test.describe('Save display', () => {
   });
 
   test.describe('When a save file of a legacy game release is visualized', () => {
-    test('should name in a disclaimer, under the submerged machines one, the legacy game release its version resolves to', async ({page}) => {
+    test('should name that game release in a disclaimer, under the submerged machines one', async ({page}) => {
       // Arrange
       await page.goto('/');
       await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);

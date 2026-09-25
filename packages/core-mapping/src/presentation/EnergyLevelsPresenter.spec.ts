@@ -131,26 +131,30 @@ describe('EnergyLevelsPresenter', () => {
     expect(presenter.viewModel.submergedMachinesDisclaimer).toBe('Submerged machines may distort the computed available energy.');
   });
 
-  it('should name in a disclaimer the legacy game release whose values it presents', () => {
-    // Arrange
-    const presenter = new EnergyLevelsPresenter();
+  describe('When it presents the values of a legacy game release', () => {
+    it('should name that game release in a disclaimer', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
 
-    // Act
-    presenter.displayEnergyLevels({gameRelease: '2.004', planets: []});
+      // Act
+      presenter.displayEnergyLevels({gameRelease: '2.004', planets: []});
 
-    // Assert
-    expect(presenter.viewModel.gameReleaseNote).toBe('Values of game release 2.004');
+      // Assert
+      expect(presenter.viewModel.gameReleaseNote).toBe('Values of game release 2.004');
+    });
   });
 
-  it('should name no game release when it presents the values of the current one', () => {
-    // Arrange
-    const presenter = new EnergyLevelsPresenter();
+  describe('When it presents the values of the current game release', () => {
+    it('should name no game release', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
 
-    // Act
-    presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, planets: []});
+      // Act
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, planets: []});
 
-    // Assert
-    expect(presenter.viewModel.gameReleaseNote).toBeUndefined();
+      // Assert
+      expect(presenter.viewModel.gameReleaseNote).toBeUndefined();
+    });
   });
 
   it('should present the production and consumption breakdowns as rows', () => {
