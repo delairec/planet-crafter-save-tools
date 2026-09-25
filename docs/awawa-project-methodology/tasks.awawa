@@ -753,7 +753,10 @@ TASK CHORE99
 
 TASK FIX111
 	TITLE "every section name shown to a user is the LABEL of its SECTION"
-	STATUS draft
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
+	DESC "archived undone: the code labels already equal the SECTION LABELs, and the headings of"
+		+ "docs/save-format.md keep their longer names by owner ruling"
 	SPEC "the section named in the location of a validation message equals the LABEL of the SECTION"
 		+ "entity of that index"
 	SPEC "a SECTION LABEL the code does not follow fails a check of the repository"

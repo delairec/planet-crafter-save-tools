@@ -44,6 +44,8 @@ LIMITATION TheHydrationFallbackHasNoScenario
 LIMITATION SectionLabelsDivergeFromTheFormatDocument
 	SYMPTOM "The short section labels used in the location of an error do not match the section"
 		+ "headings of the save format document"
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
 	UNTIL @TASK.FIX111
 	SEEN_IN "packages/core-mapping/src/presentation/messages/saveSectionLabels.js::'Mailbox"
 		+ "messages'"
