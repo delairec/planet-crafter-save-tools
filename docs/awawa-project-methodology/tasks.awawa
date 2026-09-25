@@ -954,18 +954,37 @@ TASK FEAT120
 
 TASK TEST122
 	TITLE "the scenario saves are generated when the scenarios run, never committed"
-	STATUS draft
-	DESC "to be refined with the user in a session: give context and use tables if it helps clarity"
-	SPEC "no save is tracked under packages/ui-save-manager/e2e/fixtures/, and bun run test:ui"
-		+ "passes in a fresh clone"
-	SPEC "every ATTESTED_BY and IMPL anchor naming a scenario save names the generator that writes"
-		+ "the attested content instead"
+	STATUS todo
+	SPEC "no save is tracked under packages/ui-save-manager/e2e/fixtures/, the README there stays"
+	SPEC "in a fresh clone, bun run check:guards, bun run test:ui and playwright test launched from"
+		+ "packages/ui-save-manager pass, and leave git status clean"
+	SPEC "check:scenario-fixtures no longer compares a generated save with a file of the"
+		+ "repository, and still refuses a scenario file naming the input directory in a path"
+	SPEC "every ATTESTED_BY and IMPL anchor naming a scenario save names instead a file git tracks"
+		+ "whose text contains the fragment the anchor cites, the fragment rewritten where the"
+		+ "saved form appears in no source"
 	SPEC "the decisions NoSaveIsCommittedToThePublicRepository,"
-		+ "ScenarioFixturesAreGeneratedAndReplayedByAGuard and AnAnchorNamesAFileTrackedByGit state"
-		+ "what the repository does once the saves are no longer committed"
-	RATIONALE "The owner ruled that the generated saves need not be committed and that the anchors"
-		+ "move onto the generators; six ATTESTED_BY of the specification and two IMPL of the"
-		+ "methodology name those files today, and the guard replays the generator against them"
+		+ "ScenarioFixturesAreGeneratedAndReplayedByAGuard and AnAnchorNamesAFileTrackedByGit,"
+		+ "agents/corpus-ecrire.md and the README of the fixtures state what the repository does"
+		+ "once the saves are no longer committed"
+	RATIONALE "The owner ruled while refining DOCS50 that the generated saves need not be committed"
+		+ "and that the anchors move off them; six ATTESTED_BY of the specification, five on rules"
+		+ "and one on the section TerrainLayers, and one IMPL of"
+		+ "AUiScenarioAssertsWhatTheScreenShows name those files today, while the IMPL naming the"
+		+ "README of the fixtures stays valid. The design was settled while refining this task on"
+		+ "2026-09-25: a Playwright global setup writes the saves into the same directory, ignored"
+		+ "by git, so no scenario path changes, the scenario FEAT119 adds included, and a direct"
+		+ "playwright test run gets them too; that setup runs under Node, where Bun.write does not"
+		+ "exist. The byte replay is dropped, since the scenarios read what the generator has just"
+		+ "written, and the refusal of the input directory stays. An anchor points at the tracked"
+		+ "file holding the cited text, whether the generator script, the save factories of"
+		+ "shared-save-processing or a test asserting a serialised line: most fragments live in the"
+		+ "factories, not in the script, and check:anchors checks the path alone, never the"
+		+ "fragment"
+		REF @TASK.DOCS50
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+		REF @SECTION.TerrainLayers
+		REF @TASK.FEAT119
 		REF @DECISION.NoSaveIsCommittedToThePublicRepository
 		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
