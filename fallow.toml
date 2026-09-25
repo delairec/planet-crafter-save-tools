@@ -30,6 +30,11 @@ entry = [
     "testIsolation.spec.ts",
 ]
 
+# The modules exempt from coverage-gaps, each with its reason, all in this one file: fallow reads no
+# coverage-gaps severity from [[overrides]] nor from ignoreFindings, so each is declared a test root there
+# (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
+plugins = ["fallow-coverage-gaps.toml"]
+
 # packages/ui-save-manager/** is a gap of this project, not a ruling (@LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager).
 ignorePatterns = [
     "output/**",
@@ -83,10 +88,5 @@ unused-files = "error"
 unused-exports = "warn"
 unused-types = "warn"
 unresolved-imports = "error"
-# A source file or export outside ui-save-manager that no test reaches statically fails the run (@DECISION.ACoverageGapExemptionIsAFileDirectiveWithItsReason).
+# A source file or export outside ui-save-manager that no test reaches statically fails the run (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
 coverage-gaps = "error"
-
-# Only a module a test runs as a spawned process, or a type declaration file, is exempt from coverage-gaps,
-# by a `// fallow-ignore-file coverage-gaps -- <reason>` directive at its top: fallow reads no coverage-gaps
-# severity from [[overrides]] (@DECISION.ACoverageGapExemptionIsAFileDirectiveWithItsReason).
-# `fallow suppressions` lists every exemption with its reason.
