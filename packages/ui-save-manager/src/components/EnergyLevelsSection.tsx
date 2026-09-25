@@ -2,6 +2,7 @@ import {For, Resource} from "solid-js";
 import FieldsGroup from "./structure/FieldsGroup";
 import FieldsGroupGrid from "./structure/FieldsGroupGrid";
 import SectionState from "./structure/SectionState";
+import Disclaimer from "./structure/Disclaimer";
 import Icon from "~/components/Icon";
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {
@@ -29,7 +30,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
       {(energyLevels) => (
         <div>
           <h3>{energyLevelsSectionTitle}</h3>
-          <p>{energyLevels().submergedMachinesDisclaimer}</p>
+          <Disclaimer>{energyLevels().submergedMachinesDisclaimer}</Disclaimer>
           <For each={energyLevels().planets}>
             {(planet) => (
               <div>
