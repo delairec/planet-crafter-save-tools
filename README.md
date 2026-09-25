@@ -18,7 +18,7 @@
 
 <!-- TOC -->
 
-### [What you can do](#what-you-can-do) | [Coming next](#coming-next) | [How to merge two saves](#how-to-merge-two-saves) | [Prefer the command line?](#prefer-the-command-line) | [Going further](#going-further)
+#### [What you can do](#what-you-can-do) | [Coming next](#coming-next) | [How to merge two saves](#how-to-merge-two-saves) | [Prefer the command line?](#prefer-the-command-line) | [Going further](#going-further)
 
 <!-- TOC -->
 
