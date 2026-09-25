@@ -1154,3 +1154,55 @@ TASK FEAT127
 		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
 	SOURCE "Owner request of 2026-09-25 opening the wave: every machine that consumes energy is"
 		+ "taken into account"
+
+TASK FEAT129
+	TITLE "Compute the energy of a save with the values of its game release"
+	STATUS draft
+	SPEC "a row of the energy table may name the game release from which its value holds, a world"
+		+ "object carrying one row per release that changed its value"
+	SPEC "the energy of a displayed save takes, for each world object, the row of the last release"
+		+ "not later than the release its declared version resolves to"
+	SPEC "the energy of a merged save takes the rows of the release of the format the merge writes"
+	SPEC "the energy section names the game release whose values it applies"
+	SPEC "OreBreaker1 draws 2.6 kW in a save of a release before 2.100 and 0.6 kW from 2.100"
+		REF @URL.SteamPatchNotesV2100
+	WAVE @WAVE.9
+	RATIONALE "The energy values of the game change between releases: v2.100 lowered the draw of"
+		+ "the T1 ore crusher, and the tool applies the 2.103 values to every save, so a save of"
+		+ "2.008 is computed with a draw its game never had. The save carries no energy value, so"
+		+ "its declared version is the only sign of which values apply; the releases table is"
+		+ "already where a declared version is resolved, and the decision that forbids reading a"
+		+ "save by its version alone rejected a list of versions of its own for each later check"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+		REF @DATATABLE.EnergyLevels
+		REF @URL.SteamPatchNotesSkeoLive
+	RATIONALE "To refine: whether 2.100 joins the releases table, which today names only releases"
+		+ "that change the format, and which release a merge of two saves of the same format"
+		+ "applies, the merged save declaring the version of save A whatever the release of save B"
+		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
+	SOURCE "Owner request of 2026-09-25, after the patch notes showed an energy value changing"
+		+ "between releases: a displayed save shows the values of its version, a merge the values"
+		+ "of the version of the format it writes"
+
+TASK FIX130
+	TITLE "Establish the energy values of each supported game release"
+	STATUS draft
+	SPEC "every change of an energy value between 1.618 and the latest release that a patch note or"
+		+ "a reading in game establishes gets its row, naming the release it holds from and citing"
+		+ "its source"
+	SPEC "the 1.2 kW and 48 kW the wiki printed from 2026-03-02 for ToxicWaterCollector1 and"
+		+ "ToxicWaterCollector2, against 0.8 kW and 60 kW read in game 2.103, are tied to a release"
+		+ "or dismissed as a wiki error"
+		REF @URL.WikiToxicWaterCollectorsCreated
+		REF @URL.WikiToxicWaterCollectorsEdited
+	SPEC "docs/energy-levels.md records the patch notes and wiki histories read, with the date of"
+		+ "the reading, and the releases no source covers"
+	AFTER @TASK.FEAT129
+	WAVE @WAVE.9
+	RATIONALE "A search of 2026-09-25 read the 265 Steam announcements of the game and the revision"
+		+ "history of the 36 wiki pages carrying a machine infobox. Within the supported releases"
+		+ "only the T1 ore crusher change is established; the fusion generator and T3 tree spreader"
+		+ "changes of 2022 predate 1.618, and the wiki edits to the drone station, the ecosystem"
+		+ "and the T3 ore extractor carry no patch note that dates them"
+		REF @URL.SteamPatchNotesV2100
+	SOURCE "Owner request of 2026-09-25 opening the work on energy values per release"
