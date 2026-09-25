@@ -171,3 +171,7 @@ URL CompanionAppGameDataV2103
 	SOURCE "Read on 2026-09-25 for FEAT124, the 541 names of the group without a known energy level"
 		+ "looked up in it"
 		PR 178
+
+URL WikiOreCrushersBeforeV2100
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=16833&prop=wikitext&format=json"
+	DESC "fandom wiki page Ore Crushers, revision of 2025-10-11, before v2.100: T1 -2.6 kW"
