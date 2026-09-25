@@ -6,6 +6,13 @@ The walk built an awawa corpus from scratch for the global instructions given to
 instruction files, 478 statements, replaced by 237 entities. Addressed to the authors of the tool and of the starter;
 the `Step` column names the starter's step the defect was found in.
 
+| Field                      | Value                                                                    |
+|----------------------------|--------------------------------------------------------------------------|
+| **Documents under review** | `awawa-specification-starter-v2.md` (version 2); awawa 2.7.0             |
+| **Walk**                   | Flow S, global AI agent instructions, `delairec/.ai`                     |
+| **Steps observed**         | S1 to S8, in walk order S1–S6, S9, S7, S10, S8; 2026-09-24 to 2026-09-25 |
+| **Author of this report**  | `Claude Opus 5.5`, effort `medium`                                       |
+
 | Step | Subject | Defect | Evidence |
 |------|---------|--------|----------|
 | S1 | starter | W4 and W5 ask for a count of « statements » and a coverage row per statement, but the starter defines no statement: list item, sentence, paragraph and table row each give a different figure, and each walk invents its own | this walk had to define it (list item + paragraph + table row → 478 for the replaced documents, against 111 rule identifiers) |
