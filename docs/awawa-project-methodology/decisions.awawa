@@ -130,17 +130,25 @@ DECISION ALocationIsABusinessLabelFollowedByTheIndex
 
 DECISION BothMessageListsShareOneRendering
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	SPEC "A single component renders both lists; errors and warnings are told apart by the"
-		+ "separation of the two lists, never by a parameter"
-		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx"
+	APPLIES_TO_TASK @TASK.DOCS50
+	SPEC "A single component renders both lists, foldable and monospace; that rendering is never a"
+		+ "parameter of the component"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::<details>"
+	SPEC "The severity of a list sets the colour of its title alone"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::text-color-${props.severity}"
 	SPEC "A validation message reads as a stack frame: monospace, the message first, its origin"
 		+ "below, prefixed and indented"
 		IMPL "packages/ui-save-manager/src/messages/validationMessages.js::validationMessageLocationPrefix"
-	REJECTED "Parameterizing the list component by severity"
+	REJECTED "Parameterizing the folding or the typeface of the list: errors and warnings are told"
+		+ "apart by the separation of the two lists"
+	REJECTED "Refusing every parameter, severity included: a title coloured by severity changes"
+		+ "nothing of the rendering the review kept common"
 	REJECTED "Placing the location before the message: refused on a screenshot, two typefaces on"
 		+ "one line"
 	SOURCE "Review"
 		PR 37
+	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
+		PR 179
 
 DECISION UiSaveManagerHasOneUiErrorIdiom
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -935,12 +943,23 @@ DECISION EveryPublishedCommandHasARealProcessTest
 
 DECISION MockIsolationIsAGlobalPreload
 	REJECTED "A cleanup block per spec file"
+	APPLIES_TO_TASK @TASK.DOCS50
 	SPEC "A test runner preload restores and clears the doubles after every test, declared at the"
-		+ "root and in every package"
+		+ "root and in every package whose test script runs bun test: cli-merge, cli-validate,"
+		+ "core-mapping, shared-platforms, shared-save-processing and util-types"
 		IMPL "testing/testIsolation.ts::enforceTestIsolation"
 		IMPL "bunfig.toml::preload"
+		IMPL "packages/cli-merge/bunfig.toml::preload"
+		IMPL "packages/cli-validate/bunfig.toml::preload"
 		IMPL "packages/core-mapping/bunfig.toml::preload"
+		IMPL "packages/shared-platforms/bunfig.toml::preload"
+		IMPL "packages/shared-save-processing/bunfig.toml::preload"
+		IMPL "packages/util-types/bunfig.toml::preload"
 		ENFORCED_BY "testIsolation.spec.ts"
+	SPEC "ui-save-manager carries no bunfig.toml and no bun test script: its spec files run from"
+		+ "the root, under the root preload"
+		IMPL "packages/ui-save-manager/package.json::\"test:ui\": \"playwright test\""
+	REJECTED "A bunfig.toml in ui-save-manager: no script runs bun test from that directory"
 	SPEC "Tests run from a directory with no bunfig.toml load the preload through BUN_OPTIONS by"
 		+ "absolute path"
 		IMPL "docs/wiki/development.md::BUN_OPTIONS=--preload=<absolute path>/testSetup.ts"
@@ -948,6 +967,8 @@ DECISION MockIsolationIsAGlobalPreload
 		+ "fails silently"
 	SOURCE "Review of T9"
 		PR 61
+	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
+		PR 179
 
 DECISION NoSaveIsCommittedToThePublicRepository
 	REJECTED "Committing a reference save: the saves carry the real names of the players"
@@ -1985,3 +2006,15 @@ DECISION ALabelledControlIsDescribedByItsTooltip
 		REF @DECISION.AnIconOnlyButtonIsNamedByItsTooltip
 	SOURCE "Owner review of the merge section, round 4"
 		PR 172
+
+DECISION AgentInstructionsAreWrittenInFrench
+	APPLIES_TO_TASK @TASK.DOCS50
+	SPEC "AGENTS.md and the files of agents/ are written in French, and AGENTS.md cites this"
+		+ "decision where it states the language of the repository"
+		IMPL "AGENTS.md::Ce fichier et ceux d'`agents/` restent en français"
+	REJECTED "Translating them into English with the rest of the committed documentation: they are"
+		+ "agent instructions read by one owner who works in French"
+	RATIONALE "The general rule puts committed documentation in English; these files are the one"
+		+ "exception, and without a decision only their own prose held it"
+	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
+		PR 179

@@ -70,9 +70,9 @@ satellite privé `delairec/.do-not-commit`, branche `planet-crafter-save-tools`,
 (git-ignoré ici) et ne porte plus que ce qui ne peut pas être public
 (@DECISION.ThePrivateContextHoldsOnlySavesAndPlans).
 
-**Langue** : le corpus est en anglais, noms d'entités compris. Ce fichier et ceux d'`agents/` restent en français ; le reste du dépôt
-public — `README.md`, les `.md` de `docs/`, commentaires de code — est en anglais, et les messages de commit le sont
-dans tous les dépôts.
+**Langue** : le corpus est en anglais, noms d'entités compris. Ce fichier et ceux d'`agents/` restent en français
+(@DECISION.AgentInstructionsAreWrittenInFrench) ; le reste du dépôt public — `README.md`, les `.md` de `docs/`,
+commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts.
 
 ## Commandes
 
