@@ -106,7 +106,7 @@ describe('Merge CLI run as a Node process', () => {
       const {exitCode, stdout} = await runMergeCliUnderNode(inputDirectory, outputDirectory);
 
       // Assert
-      expect(stdout).toBe(`${mergedSavePath}\n`);
+      expect(stdout).toBe(`✓ ${mergedSavePath}\n`);
       expect(exitCode).toBe(0);
     });
 

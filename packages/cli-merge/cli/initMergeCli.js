@@ -1,3 +1,5 @@
+/** @import { MergeResultViewModel } from 'core-mapping/presentation/viewModels/MergeResultViewModel' */
+
 import {MergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesController';
 import {hasJsonExtension} from 'shared-save-processing/jsonExtension.js';
 import {parseMergeCliArguments} from './parseMergeCliArguments.js';
@@ -14,6 +16,7 @@ import {
   renderNoValidFolders,
   renderOutputWriteFailed,
   renderProcessingFolder,
+  renderReportSeparator,
   renderSkippedFolder,
   renderUnknownArguments,
   renderVersion
@@ -26,31 +29,42 @@ const SUCCESS_EXIT_CODE = 0;
 
 export const UNEXPECTED_ERROR_EXIT_CODE = 1;
 
+/** @param {string[]} saveFileNames */
+function isMergeable(saveFileNames) {
+  return saveFileNames.length === MERGEABLE_SAVE_FILES_COUNT;
+}
+
+/** @param {MergeResultViewModel} viewModel */
+function hasReport({saveAWarnings, saveBWarnings, mergeErrors, mergeWarnings}) {
+  return [saveAWarnings, saveBWarnings, mergeErrors, mergeWarnings].some(messages => messages.length > 0);
+}
+
 export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = [], release) {
   const {inputDir, outputDir, preferLegacyFormat, isVersionAsked, isHelpAsked, unknownArguments} = parseMergeCliArguments(argv);
 
   /**
    * @param {string[]} folders
-   * @returns {Promise<{folder: string, fileNameA: string, fileNameB: string}[]>}
+   * @returns {Promise<{folder: string, saveFileNames: string[]}[]>}
    */
-  async function findMergeableFolders(folders) {
-    const mergeableFolders = [];
+  async function readSaveFolders(folders) {
+    const saveFolders = [];
     for (const folder of folders) {
       const saveFileNames = (await readDirectory(joinPath(inputDir, folder))).filter(hasJsonExtension).sort();
-
-      if (saveFileNames.length === MERGEABLE_SAVE_FILES_COUNT) {
-        const [fileNameA, fileNameB] = saveFileNames;
-        mergeableFolders.push({folder, fileNameA, fileNameB});
-      } else {
-        renderSkippedFolder(folder, saveFileNames.length);
-      }
+      saveFolders.push({folder, saveFileNames});
     }
-    return mergeableFolders;
+    return saveFolders;
   }
 
-  /** @returns {Promise<boolean>} whether the run may go on. */
-  async function processFolder({folder, fileNameA, fileNameB}) {
+  /** @returns {Promise<boolean>} */
+  async function processFolder({folder, saveFileNames}) {
     renderProcessingFolder(folder);
+
+    if (!isMergeable(saveFileNames)) {
+      renderSkippedFolder(folder, saveFileNames.length);
+      return true;
+    }
+
+    const [fileNameA, fileNameB] = saveFileNames;
     const folderPath = joinPath(inputDir, folder);
 
     const viewModel = await MergeSaveFilesController.mergeSaveFiles({
@@ -74,20 +88,23 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
       return false;
     }
 
-    const mergedSaveWasWritten = await writeOutput(folder, viewModel.fileName, viewModel.content);
+    const outputPath = joinPath(outputDir, folder, viewModel.fileName);
+    const mergedSaveWasWritten = await writeOutput(folder, outputPath, viewModel.content);
 
     if (mergedSaveWasWritten) {
       renderMergedSaveIssues(folder, viewModel.mergeErrors);
       renderMergeReport(folder, viewModel.mergeWarnings, viewModel.legacyFormatCouldBeKept);
+      if (hasReport(viewModel)) {
+        renderReportSeparator();
+      }
+      renderMergeSucceeded(outputPath);
     }
 
     return mergedSaveWasWritten;
   }
 
-  /** @returns {Promise<boolean>} whether the merged save reached the output directory. */
-  async function writeOutput(folder, outputFileName, content) {
-    const outputPath = joinPath(outputDir, folder, outputFileName);
-
+  /** @returns {Promise<boolean>} */
+  async function writeOutput(folder, outputPath, content) {
     try {
       await writeTextFile(outputPath, content);
     } catch (error) {
@@ -95,7 +112,6 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
       return false;
     }
 
-    renderMergeSucceeded(outputPath);
     return true;
   }
 
@@ -118,23 +134,27 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
       return;
     }
 
-    const inputFolders = await readDirectory(inputDir);
-    const mergeableFolders = await findMergeableFolders(inputFolders);
+    const inputFolders = (await readDirectory(inputDir)).sort();
+    const saveFolders = await readSaveFolders(inputFolders);
+    const mergeableFoldersCount = saveFolders.filter(({saveFileNames}) => isMergeable(saveFileNames)).length;
 
-    if (mergeableFolders.length === 0) {
-      renderNoValidFolders(inputDir);
-      exitProcess(NO_VALID_FOLDERS_EXIT_CODE);
-      return;
+    if (mergeableFoldersCount > 0) {
+      renderFoldersFound(mergeableFoldersCount);
     }
-
-    renderFoldersFound(mergeableFolders.length);
-    for (const mergeableFolder of mergeableFolders) {
-      const runCanGoOn = await processFolder(mergeableFolder);
+    for (const saveFolder of saveFolders) {
+      const runCanGoOn = await processFolder(saveFolder);
       if (!runCanGoOn) {
         exitProcess(UNEXPECTED_ERROR_EXIT_CODE);
         return;
       }
     }
+
+    if (mergeableFoldersCount === 0) {
+      renderNoValidFolders(inputDir);
+      exitProcess(NO_VALID_FOLDERS_EXIT_CODE);
+      return;
+    }
+
     renderDone();
     exitProcess(SUCCESS_EXIT_CODE);
   }

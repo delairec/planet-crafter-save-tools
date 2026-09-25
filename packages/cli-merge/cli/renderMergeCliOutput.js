@@ -3,10 +3,6 @@
 import {formatHelp} from 'shared-platforms/cliArguments.js';
 import {MERGE_CLI_ARGUMENTS} from './parseMergeCliArguments.js';
 
-/**
- * Rendering for the merge CLI. Diagnostics go to stderr, the merge result (output file paths) goes to stdout.
- */
-
 const KEEP_LEGACY_FORMAT_REMINDER = 'Run the merge again with --prefer-legacy to write the legacy format instead.';
 
 export function renderHelp() {
@@ -31,12 +27,17 @@ export function renderFoldersFound(count) {
 
 /** @param {string} folder */
 export function renderProcessingFolder(folder) {
+  console.error('');
   console.error(`Processing "${folder}"...`);
+}
+
+export function renderReportSeparator() {
+  console.error('');
 }
 
 /** @param {string} outputPath */
 export function renderMergeSucceeded(outputPath) {
-  console.log(outputPath);
+  console.log(`✓ ${outputPath}`);
 }
 
 /**
@@ -116,7 +117,6 @@ export function renderMergeReport(folder, mergeWarnings, legacyFormatCouldBeKept
 }
 
 /**
- * Reports a folder left out of the merge because it does not hold the two save files a merge takes.
  * @param {string} folder
  * @param {number} jsonFileCount
  */

@@ -25,7 +25,9 @@ describe('Validate CLI version', () => {
   describe('When the version is asked', () => {
     it.each([
       ['Bun', ['bun', VALIDATE_CLI_PATH, '--version']],
-      ['Node', ['node', '--import', NODE_LOADER_PATH, VALIDATE_CLI_PATH, '--platform=node', '--version']]
+      ['Node', ['node', '--import', NODE_LOADER_PATH, VALIDATE_CLI_PATH, '--platform=node', '--version']],
+      ['the root script of Bun', ['bun', 'run', 'validate', '--version']],
+      ['the root script of Node', ['bun', 'run', 'node:validate', '--version']]
     ])('should print the version of its package under %s', async (_interpreterName, command) => {
       // Act
       const {exitCode, stdout} = await runCommand(command);
