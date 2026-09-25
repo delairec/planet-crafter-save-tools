@@ -164,6 +164,8 @@ PROCESS ATestTaskChangesTheUiOnlyForItsOwnSake
 PROCESS AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
 	SPEC "An entity that stops binding is archived in the pull request that ends it: STATUS"
 		+ "archived and ARCHIVED_ON that day, never deleted there"
+	SPEC "The archive is kept for an entity that existed on master: an entity that did not, such as"
+		+ "one added and ended in the same pull request, is deleted with every reference to it"
 	SPEC "A ruling replaced on the same subject is rewritten in place under its name, the previous"
 		+ "form becoming a REJECTED line when it teaches something"
 	REJECTED "Keeping history in the corpus with superseded entities, SUPERSEDES and CLOSES edges"
@@ -175,6 +177,10 @@ PROCESS AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
 		+ "CLOSES and 44 :v2 written by hand, and 41 closed questions and 12 superseded decisions"
 		+ "loaded by context; an archived entity is suppressed by the schema gate, named in the"
 		+ "context footer and deleted by the cleanup pass once its delay has run"
+	REJECTED "Archiving an open question added and ruled in the same pull request: its archive"
+		+ "would say it once bound on master, where it never was"
+	SOURCE "Owner review of pull request 178, on an open question added and archived there"
+		PR 178
 
 PROCESS WhatShouldNeverHaveBeenRecordedIsDeletedAtOnce
 	SPEC "An entity that should never have been recorded is deleted by hand at once, with every"
