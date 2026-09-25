@@ -91,7 +91,23 @@ these three neither drawing nor producing power, not as an undocumented cost
 level, the same way an undocumented-cost machine does, but are not counted among the machines this document lists
 above, whose consumption the tool underestimates
 (`@DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine`). The hypothesis stands until observed
-otherwise in game.
+otherwise in game. The game data search below prices `TreePlanter3` at 85 kW and `TreePlanter` at 40 kW, so the
+hypothesis now holds for `PodUnderground` and `RocketAnimals2` only; whether it is narrowed accordingly is
+`@OPEN_QUESTION.TheGameDataPriceOfTreePlanter3NarrowsTheNoPowerHypothesis`.
+
+**Game data search: 2026-09-25**, against game version 2.103. Every name of the group without a known energy level,
+placed in a reference save or not, was looked up in a community export of the game's own item data
+(`@URL.CompanionAppGameDataV2103`), whose `stats.energy` field carries the `unitGenerationEnergy` value the game
+reads, negative for a consumer; the 110 rows already in the table were not checked again, but the export matches 107
+of them to the kilowatt, which is what makes it a source rather than a guess. Eight names are priced by it and moved
+to the consuming group: `TradePlatform1` (425 kW), `Megadome1` (250), `TreePlanter3` (85), `HologramGenerator` (75),
+`PlanetViewer1` (75), `TreePlanter` (40), `LightBoxMedium` (30) and `FountainBig` (25), each row carrying the export
+in its `source` field. The export prints 0 for 458 other names and omits 75 more; a zero is not a price, since the
+export writes the same 0 for a resource, a seed or a structural part that has no energy field at all, so these names
+stay in the group without a known energy level (`@DECISION.AZeroInTheGameDataExportIsNotAPrice`). Among the placed
+machines the 2026-09-09 cross-check left unpriced, `ButterflyDisplayer1`, `FishDisplayer1`, `FrogDisplayer1`,
+`Server1` and `CookingStation1` remain so, and only they are listed by
+`@LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel`.
 
 **Source registry.** Each value the 2026-09-07/09 cross-check added carries, in the `source` field of its row, the
 wiki page it was read from (game v2.102). Earlier values are sourced by the wiki pages listed in EN-BASE-2 above.

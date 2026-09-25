@@ -109,5 +109,13 @@
   {"worldObjectName": "DeparturePlatform", "role": "consumption", "kilowatts": 265, "source": "https://planet-crafter.fandom.com/wiki/Extraction_Platform"},
   {"worldObjectName": "DeparturePlatformHumble", "role": "consumption", "kilowatts": 265, "source": "https://planet-crafter.fandom.com/wiki/Extraction_Platform"},
   {"worldObjectName": "Optimizer1", "role": "consumption", "kilowatts": 50},
-  {"worldObjectName": "Optimizer2", "role": "consumption", "kilowatts": 150}
+  {"worldObjectName": "Optimizer2", "role": "consumption", "kilowatts": 150},
+  {"worldObjectName": "TradePlatform1", "role": "consumption", "kilowatts": 425, "source": "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"},
+  {"worldObjectName": "LightBoxMedium", "role": "consumption", "kilowatts": 30, "source": "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"},
+  {"worldObjectName": "FountainBig", "role": "consumption", "kilowatts": 25, "source": "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"},
+  {"worldObjectName": "TreePlanter", "role": "consumption", "kilowatts": 40, "source": "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"},
+  {"worldObjectName": "HologramGenerator", "role": "consumption", "kilowatts": 75, "source": "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"},
+  {"worldObjectName": "PlanetViewer1", "role": "consumption", "kilowatts": 75, "source": "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"},
+  {"worldObjectName": "Megadome1", "role": "consumption", "kilowatts": 250, "source": "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"},
+  {"worldObjectName": "TreePlanter3", "role": "consumption", "kilowatts": 85, "source": "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"}
 ]

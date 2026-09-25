@@ -1,26 +1,32 @@
 LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
-	SYMPTOM "Eleven placed machines have no known energy level, among them TradePlatform1 (29"
-		+ "placed), LightBoxMedium (28), ButterflyDisplayer1 (18), Megadome1 (7),"
-		+ "HologramGenerator, Server1, PlanetViewer1, FishDisplayer1, CookingStation1,"
-		+ "FrogDisplayer1 and the related displays and furniture; the displayed consumption of a"
-		+ "game placing Megadome1 or LightBoxMedium, the two that probably consume, is"
-		+ "underestimated"
-	UNTIL "a game data source giving the energy values of these machines is available"
+	SYMPTOM "Five placed machines have no known energy level: ButterflyDisplayer1 (14 placed),"
+		+ "FishDisplayer1 (3), FrogDisplayer1 (2), Server1 (2) and CookingStation1 (2); the"
+		+ "displayed consumption of a game placing one of them is underestimated if the machine"
+		+ "draws power in game"
+	UNTIL "a source prices these machines, or a reading in game shows they draw no power"
 	SEEN_IN "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
 	SEEN_IN "packages/core-mapping/src/domain/energyLevels.json::GeneticManipulator1"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RATIONALE "The wiki is the only source of values and it is silent on these machines, and no"
-		+ "task can lift the limitation without a game data source the project does not have. Pull"
-		+ "request 43 closed most of the gap: 23 candidates priced or excluded with a reason, six"
-		+ "*T* variants removed, fourteen placed gId added under an attestation rule, Incubator2"
-		+ "and InsideLamp2 sourced. GeneticManipulator1 carries a suspect value too: its 117.5 kW"
-		+ "predate the wiki cross-check of that pull request, no page attests them, and the gId"
-		+ "changed name on that occasion"
+	RATIONALE "The wiki prints no energy field for these machines, and the game data export prints"
+		+ "0 for them, a value it writes for any world object without an energy field, so neither"
+		+ "source prices them. The game data search of 2026-09-25 priced the six other placed"
+		+ "machines the limitation used to list, TradePlatform1, LightBoxMedium, Megadome1,"
+		+ "HologramGenerator, PlanetViewer1 and FountainBig, which is why the name counts eleven"
+		+ "and the list five. Pull request 43 closed most of the earlier gap: 23 candidates priced"
+		+ "or excluded with a reason, six *T* variants removed, fourteen placed gId added under an"
+		+ "attestation rule, Incubator2 and InsideLamp2 sourced. GeneticManipulator1 carries a"
+		+ "suspect value too: its 117.5 kW predate the wiki cross-check of that pull request, no"
+		+ "page attests them, and the gId changed name on that occasion"
+		REF @URL.CompanionAppGameDataV2103
+		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Private context file known-issues/tables-d-energie-incompletes.md, at tag"
 		+ "pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Found on 2026-09-06, reduced at the merge of pull request 43"
 		PR 43
+	SOURCE "Reduced to the placed machines no source prices by the game data search of 2026-09-25,"
+		+ "placed counts read in the six reference saves"
+		REF @URL.CompanionAppGameDataV2103
 
 LIMITATION TheHydrationFallbackHasNoScenario
 	SYMPTOM "Of the three loading states of the page, the hydration fallback alone has no"
