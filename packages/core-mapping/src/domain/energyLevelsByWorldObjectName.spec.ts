@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {CURRENT_FORMAT_RELEASE, compareGameReleases, resolveGameRelease} from 'shared-save-processing/gameReleases.js';
 import {divergingEnergyLevelsByRelease, selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
-import energyLevels from './energyLevels.json' with {type: 'json'};
+import {WorldObjectName} from './worldObjectNames';
 
 describe('selectEnergyLevelsOfDeclaredVersion', () => {
 
@@ -60,19 +60,21 @@ describe('divergingEnergyLevelsByRelease', () => {
     expect(compareGameReleases(release, CURRENT_FORMAT_RELEASE)).toBeLessThan(0);
   });
 
-  it.each(releasesOfATable)('should hold in the table of %s only values that differ from the last release', (release) => {
+  it.each(releasesOfATable)('should hold in the table of %s only values that differ from the next newer table, or from the energy table for the newest', (release) => {
     // Arrange
     const rows = divergingEnergyLevelsByRelease[release] ?? [];
+    const nextNewerRelease = releasesOfATable
+      .filter((tableRelease) => compareGameReleases(tableRelease, release) > 0)
+      .sort(compareGameReleases)[0] ?? CURRENT_FORMAT_RELEASE;
 
     // Act
-    const lastReleaseRows = rows.map((row) => energyLevels.find(
-      (lastReleaseRow) => lastReleaseRow.worldObjectName === row.worldObjectName && lastReleaseRow.role === row.role
-    ));
+    const nextNewerEnergyLevels = selectEnergyLevelsOfDeclaredVersion(nextNewerRelease);
 
     // Assert
-    lastReleaseRows.forEach((lastReleaseRow, index) => {
-      expect(lastReleaseRow).toBeDefined();
-      expect(lastReleaseRow?.kilowatts).not.toBe(rows[index]?.kilowatts);
+    rows.forEach((row) => {
+      const nextNewerKilowatts = nextNewerEnergyLevels[row.role as 'production' | 'consumption'][row.worldObjectName as WorldObjectName];
+      expect(nextNewerKilowatts).toBeDefined();
+      expect(nextNewerKilowatts).not.toBe(row.kilowatts);
     });
   });
 });
