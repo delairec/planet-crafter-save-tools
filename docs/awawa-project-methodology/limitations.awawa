@@ -100,7 +100,8 @@ LIMITATION TheFallowAuditReadsNoFileOfUiSaveManager
 		+ "an unused file, a duplicate or a complex function of the web UI fails no quality gate"
 	WORKAROUND "run fallow by hand on a copy of fallow.toml without the ui-save-manager ignore"
 		+ "pattern and with src/app.tsx and src/routes/*.tsx as entries"
-	UNTIL @TASK.CHORE112
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
 	SEEN_IN "fallow.toml::packages/ui-save-manager/**"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "The exclusion was written at the migration as a decision with no reasoning, and"

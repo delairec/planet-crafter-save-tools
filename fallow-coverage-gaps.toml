@@ -17,6 +17,15 @@ entryPoints = [
     "scripts/release/release.ts",
     # Spawned as a real process by release-tag.spec.ts, which no static import reaches.
     "scripts/release/release-tag.ts",
+    # Loaded by the production build the Playwright scenarios spawn through the webServer of playwright.config.ts,
+    # which no static import reaches: SolidStart reaches the entries, the application and its file routes by virtual modules.
+    # Declared here alone: an entry of fallow.toml would also make their default exports runtime exports no test reaches.
+    "packages/ui-save-manager/src/entry-client.tsx",
+    "packages/ui-save-manager/src/entry-server.tsx",
+    "packages/ui-save-manager/src/app.tsx",
+    "packages/ui-save-manager/src/routes/*.tsx",
+    # Spawned as a real process by check-site.spec.ts, which no static import reaches.
+    "packages/ui-save-manager/scripts/check-site.ts",
     # Type declarations only, no runtime code for a test to reach.
     "packages/shared-save-processing/jsonSourceTextAccess.d.ts",
 ]

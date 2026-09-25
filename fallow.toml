@@ -21,8 +21,6 @@ entry = [
     "scripts/release/release.ts",
     "scripts/release/release-tag.ts",
     "scripts/release/*.spec.ts",
-    "packages/ui-save-manager/src/entry-client.tsx",
-    "packages/ui-save-manager/src/entry-server.tsx",
     "packages/**/*.spec.js",
     "packages/**/*.spec.ts",
     "testSetup.ts",
@@ -35,18 +33,15 @@ entry = [
 # (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
 plugins = ["fallow-coverage-gaps.toml"]
 
-# packages/ui-save-manager/** is a gap of this project, not a ruling (@LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager).
 ignorePatterns = [
     "output/**",
     "input/**",
-    "packages/ui-save-manager/**",
 ]
 
 ignoreDependencies = [
     "bun",
     "@types/bun",
     "typescript",
-    "ui-save-manager"
 ]
 
 # One entry per schema imported this way, and nothing wider: the CI runs fallow on a bare checkout,
@@ -88,5 +83,5 @@ unused-files = "error"
 unused-exports = "warn"
 unused-types = "warn"
 unresolved-imports = "error"
-# A source file or export outside ui-save-manager that no test reaches statically fails the run (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
+# A source file or export that no test reaches statically fails the run (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
 coverage-gaps = "error"
