@@ -1111,8 +1111,9 @@ TASK TEST125
 		+ "the game offers"
 	SPEC "the consumption formula is written as RULE entities of domain game, each obligation"
 		+ "attested by the fixture and by a test pinning the value read in game"
-	SPEC "the hypothesis that TreePlanter3, PodUnderground and RocketAnimals2 draw no power is"
-		+ "turned into a rule or archived, as the reading decides"
+	SPEC "the hypothesis that PodUnderground and RocketAnimals2 draw no power is turned into a rule"
+		+ "or archived, as the reading decides, and the 85 kW the game data export prints for"
+		+ "TreePlanter3 is confirmed or corrected"
 	AFTER @TASK.FEAT124
 	WAVE @WAVE.9
 	RATIONALE "The production formula is confirmed by in-game readings; the consumption formula"
@@ -1122,7 +1123,7 @@ TASK TEST125
 		+ "fuse changes the draw of a machine is unknown. A public fixture is the only save a"
 		+ "reading in game can attest in CI, the reference saves being private"
 		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
-		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
+		REF @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
 		REF @SECTION.SaveConfiguration
 		REF @GAME_RELEASE.2.103
 	SOURCE "Owner request of 2026-09-25 opening the wave, and the owner's agreement the same day to"

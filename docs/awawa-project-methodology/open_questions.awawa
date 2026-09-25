@@ -21,18 +21,20 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		REF @GAME_RELEASE.2.102
 
 OPEN_QUESTION TheGameDataPriceOfTreePlanter3NarrowsTheNoPowerHypothesis
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DESC "The game data export prices TreePlanter3 at 85 kW and TreePlanter at 40 kW, which FEAT124"
 		+ "stores as rows; is the no-power hypothesis narrowed to PodUnderground and"
 		+ "RocketAnimals2, or does TEST125 keep TreePlanter3 in it until the reading in game?"
-		REF @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
+		REF @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
 		REF @DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 		REF @URL.CompanionAppGameDataV2103
 		REF @TASK.TEST125
-	BLOCKS @TASK.FEAT124
+	BLOCKS @TASK.TEST125
 	RATIONALE "The task SPEC prices every machine a source prices, and the export matches 107"
 		+ "existing rows; the hypothesis and TEST125 are another task's to rewrite, so FEAT124"
-		+ "prices the two pots and leaves the hypothesis text as it stands. Recommended answer:"
-		+ "narrow the hypothesis to the two machines the export does not price, TEST125 keeping"
-		+ "TreePlanter3 in its fixture to check the 85 kW in game"
+		+ "prices the two pots and leaves the hypothesis text as it stands. Ruled on 2026-09-25 as"
+		+ "recommended: the hypothesis is narrowed to the two machines the export does not price,"
+		+ "TEST125 keeping TreePlanter3 in its fixture to check the 85 kW in game"
 	SOURCE "Raised while delivering FEAT124"
 		PR 178

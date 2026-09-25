@@ -87,13 +87,13 @@ living compartment) and `RocketAnimals2` (T2 Animals spreader rocket) also print
 infoboxes, but they are handled differently from the machines above: their predecessors with a similar label
 (`TreePlanter`, `TreePlanter2`, `RocketAnimals1`) carry no energy value either, so the missing field is read as
 these three neither drawing nor producing power, not as an undocumented cost
-(`@HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower`). They stay in the group without a known energy
+(`@HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower`). They stay in the group without a known energy
 level, the same way an undocumented-cost machine does, but are not counted among the machines this document lists
 above, whose consumption the tool underestimates
 (`@DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine`). The hypothesis stands until observed
 otherwise in game. The game data search below prices `TreePlanter3` at 85 kW and `TreePlanter` at 40 kW, so the
-hypothesis now holds for `PodUnderground` and `RocketAnimals2` only; whether it is narrowed accordingly is
-`@OPEN_QUESTION.TheGameDataPriceOfTreePlanter3NarrowsTheNoPowerHypothesis`.
+hypothesis is narrowed to `PodUnderground` and `RocketAnimals2`, `TreePlanter3` moving to the consuming group;
+the fixture of `@TASK.TEST125` keeps it, to check the 85 kW in game.
 
 **Game data search: 2026-09-25**, against game version 2.103. Every name of the group without a known energy level,
 placed in a reference save or not, was looked up in a community export of the game's own item data

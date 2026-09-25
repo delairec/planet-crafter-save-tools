@@ -1355,10 +1355,10 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 			+ "charge for the world objects without a known energy level"
 		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	ASSUMES @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
+	ASSUMES @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
 	RATIONALE "The eleven-machine limitation is believed to actually cost power in-game, so"
 		+ "excluding those machines underestimates consumption; the hypothesis states the opposite"
-		+ "for these three, so excluding them is not a limitation"
+		+ "for the machines it names, so excluding them is not a limitation"
 		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
