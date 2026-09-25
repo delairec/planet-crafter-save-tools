@@ -632,7 +632,6 @@ DECISION AnUnknownCliFlagIsAUsageError
 		+ "it is described as reserved to the node:* scripts instead"
 	REJECTED "A help text written by hand beside the parser's list of names: the two diverge"
 		+ "without a test failing"
-	APPLIES_TO_TASK @TASK.FEAT107
 	SOURCE "T34"
 		PR 60
 	SOURCE "Rewritten in place by the task pull request of FEAT107"
@@ -877,7 +876,6 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 		IMPL ".github/workflows/ui-tests.yml::workflow_dispatch"
 		IMPL ".github/workflows/ui-tests.yml::the run the README badge shows"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.DOCS108
 	SOURCE "T23"
 		PR 38
 	SOURCE "Push trigger added for the README badge"
@@ -1231,7 +1229,6 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "together"
 	REJECTED "A TypeScript literal with satisfies: a second home for the rows"
 	REJECTED "A markdown source registry of the energy values: the source is a column of the row"
-	APPLIES_TO_TASK @TASK.CHORE52
 
 DECISION APullRequestIsCitedByItsNumberNeverByAnEntity
 	SPEC "A SOURCE born in a pull request carries its number in a PR field beside the prose; REF"
@@ -1514,7 +1511,6 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 	REJECTED "Naming a dropped section by its index: the index depends on the format, and the label"
 		+ "belongs to the presentation"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT94
 	RATIONALE "The report exists to tell a user what the merge changed in the format of a save; two"
 		+ "saves of one format lose nothing, and a report there would be noise on every ordinary"
 		+ "merge"
@@ -1586,7 +1582,6 @@ DECISION AReleaseIsVerifiedOnATagHoldingAVersionNumber
 	REJECTED "every tag: the before-awawa rollback tag would run a release check"
 	REJECTED "a release copy of the fallow scripts on --base origin/master: two copies to keep in"
 		+ "step"
-	APPLIES_TO_TASK @TASK.CHORE100
 	RATIONALE "The tag form of a version is CHORE83's to pick; both patterns cover the forms its"
 		+ "candidates write, cli-merge-v1.2.0 and cli-merge@1.2.0, and a tag checkout leaves only"
 		+ "tracking references, on which --base master exits 2"
@@ -1688,7 +1683,6 @@ DECISION TheSiteHeadersReachTheDocumentThroughTheServer
 		+ "measured, the route-rule header is neither visible nor overridable from the SolidStart"
 		+ "handler, and the nonce never reached the response"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FIX101
 	SOURCE "Measured while implementing FIX101 on 2026-09-23"
 		PR 134
 
@@ -1705,7 +1699,6 @@ DECISION TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
 		+ "js/request-forgery query treats as sanitised; a URL that only passed a host check does"
 		+ "not clear it"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FIX110
 	SOURCE "Ruled with the user on 2026-09-23 on CodeQL alert #2 of PR 132"
 		PR 139
 
@@ -1721,7 +1714,6 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 		+ "carries"
 	RATIONALE "a badge reports the product the owner publishes, so a task pull request or a deploy"
 		+ "preview must not move it"
-	APPLIES_TO_TASK @TASK.DOCS108
 	SOURCE "Set of badges ruled with the user on 2026-09-24"
 		PR 144
 
@@ -1760,7 +1752,6 @@ DECISION ADependencyVersionIsHeldBackForSevenDays
 		+ "targets; an urgent install passes --minimum-release-age=0 once instead"
 	REJECTED "Per-bump semver cooldown days: github-actions ignores them, and the risk does not"
 		+ "depend on the size of the bump"
-	APPLIES_TO_TASK @TASK.CHORE117
 	SOURCE "Owner request, security review of 2026-09-24"
 		PR 161
 		PR 162
@@ -1783,7 +1774,6 @@ DECISION EveryActionIsPinnedOnACommitSha
 		+ "cannot"
 	REJECTED "A SHA without its version comment: the pin reads as an opaque hash, and Dependabot"
 		+ "has no version to rewrite beside it"
-	APPLIES_TO_TASK @TASK.CHORE118
 	SOURCE "Owner request, security review of 2026-09-24; the two Claude workflows pinned on master"
 		+ "first, the rest in the task pull request"
 		PR 162
