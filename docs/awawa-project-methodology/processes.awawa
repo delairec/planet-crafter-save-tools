@@ -186,6 +186,9 @@ PROCESS AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
 		+ "instructions_corpus_archiving"
 		PR 49
 		REF @PROJECT.AI
+	SOURCE "Owner decision that the project process relies on the general rule, applied in pull"
+		+ "request 185"
+		PR 185
 
 PROCESS WhatShouldNeverHaveBeenRecordedIsDeletedAtOnce
 	SPEC "An entity that should never have been recorded is deleted by hand at once, with every"
