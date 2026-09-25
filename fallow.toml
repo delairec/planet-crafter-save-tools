@@ -28,9 +28,8 @@ entry = [
     "testIsolation.spec.ts",
 ]
 
-# The modules exempt from coverage-gaps, each with its reason, all in this one file: fallow reads no
-# coverage-gaps severity from [[overrides]] nor from ignoreFindings, so each is declared a test root there
-# (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
+# The modules exempt from coverage-gaps, declared test roots in this one file
+# (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile, @LIMITATION.ARuntimeReachedModuleEscapesTheStaticCoverageGate).
 plugins = ["fallow-coverage-gaps.toml"]
 
 ignorePatterns = [

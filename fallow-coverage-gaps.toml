@@ -1,30 +1,26 @@
-# Every module exempt from the coverage-gaps rule of fallow.toml, one entry per module with its reason
-# (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
-# Only a module a test runs as a spawned process, or a type declaration file, belongs here: declaring it a test
-# root makes it, and what it imports, reachable from a test. A module a unit test could import does not.
+# Every module exempt from the coverage-gaps rule of fallow.toml, one entry per module with the test that reaches it
+# (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile, @LIMITATION.ARuntimeReachedModuleEscapesTheStaticCoverageGate).
 name = "coverage-gap-exemptions"
 # A plugin with no enabler is never active; fallow is the one dependency every run of it has.
 enablers = ["fallow"]
 entryPointRole = "test"
 entryPoints = [
-    # Spawned as a real process by merge-cli.node.spec.js, which no static import reaches.
+    # Spawned as a real process by merge-cli.node.spec.js.
     "packages/cli-merge/cli/merge-cli.js",
-    # Spawned as a real process by validate-cli.node.spec.js, which no static import reaches.
+    # Spawned as a real process by validate-cli.node.spec.js.
     "packages/cli-validate/cli/validate-cli.js",
-    # Loaded by node --import in the processes the node:* command specs spawn, which no static import reaches.
+    # Loaded by node --import in the processes the node:* command specs spawn.
     "scripts/node/register.js",
-    # Spawned as a real process by release.spec.ts, which no static import reaches.
+    # Spawned as a real process by release.spec.ts.
     "scripts/release/release.ts",
-    # Spawned as a real process by release-tag.spec.ts, which no static import reaches.
+    # Spawned as a real process by release-tag.spec.ts.
     "scripts/release/release-tag.ts",
-    # Loaded by the production build the Playwright scenarios spawn through the webServer of playwright.config.ts,
-    # which no static import reaches: SolidStart reaches the entries, the application and its file routes by virtual modules.
-    # Declared here alone: an entry of fallow.toml would also make their default exports runtime exports no test reaches.
+    # Loaded by the production build the Playwright scenarios spawn through the webServer of playwright.config.ts.
     "packages/ui-save-manager/src/entry-client.tsx",
     "packages/ui-save-manager/src/entry-server.tsx",
     "packages/ui-save-manager/src/app.tsx",
     "packages/ui-save-manager/src/routes/*.tsx",
-    # Spawned as a real process by check-site.spec.ts, which no static import reaches.
+    # Spawned as a real process by check-site.spec.ts.
     "packages/ui-save-manager/scripts/check-site.ts",
     # Type declarations only, no runtime code for a test to reach.
     "packages/shared-save-processing/jsonSourceTextAccess.d.ts",
