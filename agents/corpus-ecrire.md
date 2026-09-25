@@ -17,8 +17,13 @@ vers ces fichiers, et une règle qui fait autorité sur ces valeurs la nomme par
 
 **Une ancre nomme un fichier suivi par git.** `L016` ne teste que l'existence du chemin sur le disque et ne consulte
 jamais git : une ancre vers `input/`, `output/` ou `.do-not-commit/` est propre chez son auteur et casse en clone
-neuf. Les témoins commités sont les fixtures de `packages/ui-save-manager/e2e/fixtures/`, les JSON Schemas de
-`packages/shared-save-processing/schemas/`, les tests et les documents de `docs/`. `bun run check:anchors` refuse
+neuf. Les témoins commités sont les JSON Schemas de `packages/shared-save-processing/schemas/`, les tests, les
+fabriques de saves de `packages/shared-save-processing/testing/`, le générateur
+`scripts/generate-scenario-fixtures.ts` et les documents de `docs/`. Les saves des scénarios ne le sont pas : le
+setup global de Playwright les écrit à chaque lancement dans `packages/ui-save-manager/e2e/fixtures/`, que git
+ignore ; une ancre qui en cite un fragment nomme le fichier suivi qui porte ce texte — la fabrique, le générateur ou
+un test qui affirme la ligne sérialisée —, le fragment réécrit quand la forme sauvegardée n'apparaît dans aucune
+source. `bun run check:anchors` refuse
 une ancre vers un chemin que git ne suit pas, et ignore celles d'une entité archivée : une décision que sa tâche
 retire s'archive donc même quand la tâche supprime le module que son `IMPL` nomme
 (@DECISION.AnAnchorNamesAFileTrackedByGit).

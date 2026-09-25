@@ -12,6 +12,7 @@ output/
 playwright-report/
 test-results/
 blob-report/
+packages/ui-save-manager/e2e/fixtures/*.json
 
 # user input: no trailing slash, so the rule also covers the symlink a linked worktree points
 # at the folder of the main checkout

@@ -11,6 +11,8 @@ entryPoints = [
     "packages/cli-validate/cli/validate-cli.js",
     # Loaded by node --import in the processes the node:* command specs spawn.
     "scripts/node/register.js",
+    # Run by the Playwright global setup of ui-save-manager before every scenario.
+    "scripts/generate-scenario-fixtures.ts",
     # Spawned as a real process by release.spec.ts.
     "scripts/release/release.ts",
     # Spawned as a real process by release-tag.spec.ts.

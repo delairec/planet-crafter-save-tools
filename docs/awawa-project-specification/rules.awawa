@@ -16,7 +16,7 @@ RULE ASectionLineIsOneJsonEntry
 	HOLDS_FOR all
 	DOMAIN format
 	SPEC "each line of a section is one JSON entry, lines being separated by a pipe"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::{\"id\":44,\"woIds\":\"79111656,58524136\",\"size\":20}|"
+		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::{\"id\":1,\"gId\":\"Iron\"}|"
 		ATTESTED_BY "packages/shared-save-processing/parseSaveSections.js::return JSON.parse(line);"
 	SOURCE "Extracted from the ruling on the single save parser, pull request 47, recorded on"
 		+ "2026-09-18"
@@ -40,7 +40,7 @@ RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 	DOMAIN format
 	SPEC "the float fields of a save carry a .0 suffix when their value is whole, and the records"
 		+ "of the format are flat"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::\"playerGaugeToxic\":0.0"
+		ATTESTED_BY "packages/shared-save-processing/stringifyEntry.spec.js::\"playerGaugeToxic\":0.0"
 		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::should preserve decimal"
 			+ "notation for known float fields in world objects"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
@@ -433,7 +433,7 @@ RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 		+ "shifts World Events to index 10"
 		ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 			+ "= 9"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json::PC-Toxicity-Layer2"
+		ATTESTED_BY "packages/shared-save-processing/testing/createSaveRecords.js::PC-Toxicity-Layer2"
 	SPEC "the game writes the six properties of the table in every Terrain Layers entry it writes,"
 		+ "and no other"
 		ATTESTED_BY "packages/shared-save-processing/legacyTerrainLayerProperties.json::colorCustomLerp"
@@ -452,8 +452,8 @@ RULE TheGameKeepsDeprecatedPhytoplanktonGroupIds
 	DOMAIN format
 	SPEC "a world object or an item whose group id is Phytoplankton2 or Phytoplankton3 loads as"
 		+ "that phytoplankton in play and is written back under the same group id"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/other-player_valid.json::Phytoplankton2"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/baseline_valid.json::Phytoplankton3"
+		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::Phytoplankton2"
+		ATTESTED_BY "packages/shared-save-processing/testing/createFakeSaveContent.js::Phytoplankton3"
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	RATIONALE "Release 2.102 replaced Phytoplankton B and C with one variant in recipes and"
 		+ "generators, yet the game still knows both ids: a save carrying them loads them as they"

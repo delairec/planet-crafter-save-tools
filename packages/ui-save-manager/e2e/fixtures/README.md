@@ -1,17 +1,18 @@
 # End-to-end fixtures
 
 Save files used by the scenarios. They are generated, never copied from a real game save: `input/` is not versioned,
-so the suite has to run on a machine — and on a CI runner — that has no real save at hand.
+so the suite has to run on a machine — and on a CI runner — that has no real save at hand. They are not committed
+either: git ignores every `.json` of this directory, and this README is the only file of it the repository tracks.
 
-## Regenerating them
-
-```
-bun run generate:scenario-fixtures
-```
+## Generating them
 
 `scripts/generate-scenario-fixtures.ts` declares every fixture of this directory and is the only place that says
-how each one is built. `bun run check:scenario-fixtures`, part of `bun run check:guards`, replays that generator and
-fails on any difference with the files committed here, as well as on any scenario reaching into `input/`.
+how each one is built. It is the global setup of `playwright.config.ts`, so every run of the scenarios — `bun run
+test:ui` from the root, `playwright test` from `packages/ui-save-manager` — writes them here, under Node, before the
+first scenario starts. `bun run generate:scenario-fixtures` writes the same files without running the scenarios, to
+open a fixture or check it with `bun validate`.
+
+`bun run check:scenario-fixtures`, part of `bun run check:guards`, refuses any scenario reaching into `input/`.
 
 Every fixture is the output of `createFakeSaveContent()`, from
 `packages/shared-save-processing/testing/createFakeSaveContent.js` (a wrapper around `createFakeSaveString.js`, the

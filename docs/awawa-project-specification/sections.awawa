@@ -147,7 +147,7 @@ SECTION TerrainLayers
 		+ "into entries like any other section"
 	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
-	ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/legacy-format_valid.json::PC-Toxicity-Layer2"
+	ATTESTED_BY "packages/shared-save-processing/testing/createSaveRecords.js::PC-Toxicity-Layer2"
 	ATTESTED_BY "packages/shared-save-processing/schemas/legacy-save-file.schema.json::Section 9 —"
 		+ "Terrain layers"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"

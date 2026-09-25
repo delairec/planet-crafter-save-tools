@@ -876,8 +876,8 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 	SPEC "A scenario is a plain Playwright spec, run on chromium, firefox and webkit"
 		IMPL "packages/ui-save-manager/playwright.config.ts::{name: 'webkit'"
 		IMPL ".github/workflows/ui-tests.yml::chromium firefox webkit"
-	SPEC "Scenarios and their versioned fixtures live in the e2e directory, under a suffix the unit"
-		+ "test runner does not collect"
+	SPEC "Scenarios and the fixtures their global setup generates live in the e2e directory, under"
+		+ "a suffix the unit test runner does not collect"
 		IMPL "packages/ui-save-manager/playwright.config.ts::testMatch: '**/*.e2e.ts'"
 	SPEC "The suite runs in CI on pull requests targeting the default branch, on each push to it"
 		+ "and on demand, and is not a required check"
@@ -974,11 +974,23 @@ DECISION NoSaveIsCommittedToThePublicRepository
 	REJECTED "Committing a reference save: the saves carry the real names of the players"
 	REJECTED "A temporary directory registry shared between the tests of a file: it left a spy on"
 		+ "the global object"
+	REJECTED "Committing the generated scenario saves: they carry no real name, yet a guard had to"
+		+ "replay the generator byte for byte to keep them in step with it, and six anchors of the"
+		+ "specification cited files a change of a save factory rewrote"
 	SPEC "Specs needing a save generate it at run time in a temporary directory each test creates"
 		+ "and removes"
 		IMPL "packages/shared-platforms/platform.fs.adapters.spec.js::fs.mkdtemp"
+	SPEC "The scenario saves are generated when the scenarios run and are ignored by git, the"
+		+ "README of their directory being its only tracked file"
+		IMPL ".gitignore::packages/ui-save-manager/e2e/fixtures/*.json"
+		IMPL "packages/ui-save-manager/e2e/fixtures/README.md::this README is the only file of it"
+			+ "the repository tracks"
+	APPLIES_TO_TASK @TASK.TEST122
 	SOURCE "T22"
 		PR 45
+	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25: the generated scenario saves need not"
+		+ "be committed"
+		PR 183
 
 DECISION AScenarioReadsTheDownloadThroughTheNodeFileApi
 	REJECTED "Settling for the presence of the link and its file name"
@@ -1008,7 +1020,7 @@ DECISION AUiScenarioAssertsWhatTheScreenShows
 		+ "location and that it is a sentence, never the text the rule produced"
 		IMPL "packages/ui-save-manager/e2e/validation-errors.e2e.ts::toContainText(errorLocationInTheSave)"
 	SPEC "An invalid fixture carries a single violation, on one record"
-		IMPL "packages/ui-save-manager/e2e/fixtures/negative-gauge_invalid.json"
+		IMPL "scripts/generate-scenario-fixtures.ts::createPlayer({playerGaugeToxic: -1})"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	SOURCE "T40"
 		PR 78
@@ -1034,17 +1046,34 @@ DECISION ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		+ "contract"
 	REJECTED "Versioning a fingerprint per fixture: the guard would not say where the defect is"
 	REJECTED "Merging this guard with check:fixtures: two reasons to change"
+	REJECTED "Replaying the generator in memory and failing on any byte difference with the"
+		+ "versioned file, the previous form of this ruling: once the saves are no longer"
+		+ "committed, the scenarios read what the generator has just written and there is nothing"
+		+ "to compare"
+	REJECTED "Writing the saves from the test:ui script: playwright test launched from the package"
+		+ "would find none"
+	REJECTED "Writing the saves with Bun.write: the global setup runs under Node, where Bun is not"
+		+ "defined"
+	REJECTED "Keeping the generator in the entry list of fallow.toml: the default export Playwright"
+		+ "requires of a global setup then counts as a runtime export no test reaches"
 	SPEC "A script declares every scenario fixture and how it is built"
 		IMPL "scripts/generate-scenario-fixtures.ts::SCENARIO_FIXTURES"
-	SPEC "The guard replays the generator in memory and fails on any byte difference with the"
-		+ "versioned file"
-		IMPL "scripts/check-scenario-fixtures.ts"
-		ENFORCED_BY "scripts/check-scenario-fixtures.spec.ts"
-	SPEC "The same guard refuses a scenario file naming the input directory in a path"
+	SPEC "The Playwright global setup runs that script under Node, which writes every fixture into"
+		+ "the directory the scenarios read before the first of them starts"
+		IMPL "packages/ui-save-manager/playwright.config.ts::globalSetup:"
+			+ "'../../scripts/generate-scenario-fixtures.ts'"
+		IMPL "scripts/generate-scenario-fixtures.ts::export default async function"
+			+ "writeScenarioFixtures"
+		IMPL "fallow-coverage-gaps.toml::scripts/generate-scenario-fixtures.ts"
+	SPEC "A guard refuses a scenario file naming the input directory in a path"
 		IMPL "scripts/check-scenario-fixtures.ts::INPUT_DIRECTORY_PATH"
+		ENFORCED_BY "scripts/check-scenario-fixtures.spec.ts"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.TEST122
 	SOURCE "T41"
 		PR 81
+	SOURCE "Design settled while refining TEST122 on 2026-09-25"
+		PR 183
 
 DECISION AGuardRefusesLocatorsTheScreenDoesNotShow
 	REJECTED "Recognising a CSS selector by the shape of its literal: getByRole('button', {name:"
@@ -1119,18 +1148,30 @@ DECISION AnAnchorNamesAFileTrackedByGit
 		IMPL "scripts/check-corpus-anchors.ts::ARCHIVED_STATUS"
 		ENFORCED_BY "scripts/check-corpus-anchors.spec.ts::When an entity is archived after the"
 			+ "anchors it writes"
+	SPEC "An anchor citing what a scenario save carries names the tracked file whose text holds the"
+		+ "fragment, the generator, a save factory or a test asserting a serialised line, the"
+		+ "fragment rewritten where the saved form appears in no source"
+		IMPL "agents/corpus-ecrire.md::la fabrique, le générateur ou"
+		ENFORCED_BY "scripts/check-corpus-anchors.ts"
 	REJECTED "Anchoring an attestation on a reference save: the anchor resolves for its author"
 		+ "alone"
 	REJECTED "Checking the anchors of an archived entity too: its IMPL may name the module the pull"
 		+ "request retiring it deleted, and the entity would have to be deleted rather than"
 		+ "archived to pass the guard"
+	REJECTED "Anchoring an attestation on a generated scenario save: git ignores it, and it exists"
+		+ "only on a machine where the scenarios have run"
 	RATIONALE "L016 tests existence on disk and never consults git; awawa suppresses every check of"
-		+ "an archived entity, and the guard follows it"
+		+ "an archived entity, and the guard follows it. check:anchors checks the path of an anchor"
+		+ "alone, never its fragment, so a fragment moved with its file is the author's to verify"
 		REF @DECISION.TheEraIsNotTheArchive
+	APPLIES_TO_TASK @TASK.TEST122
 	SOURCE "Review of the target schema"
 	SOURCE "Review of FEAT93: a decision retired by the task was deleted because the guard refused"
 		+ "its archived IMPL"
 		PR 146
+	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25: the anchors move off the generated"
+		+ "scenario saves"
+		PR 183
 
 DECISION AGameReleaseIsCitedAsASource
 	SPEC "What was observed in the game is sourced by a GAME_RELEASE entity named by the version"
