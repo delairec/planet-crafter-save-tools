@@ -1906,6 +1906,9 @@ DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
 	REJECTED "A component test layer to reach the web UI statically: the scenarios already cover it"
 		+ "on three engines"
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+	REJECTED "Splitting Home in src/routes/index.tsx to bring its CRAP score under the health"
+		+ "threshold: fallow estimates CRAP from what the test roots reach, and with the routes"
+		+ "declared test roots Home is estimated covered, as the scenarios cover it"
 	SPEC "A source file or export that no test reaches statically fails the fallow job, over the"
 		+ "whole project, ui-save-manager included"
 		IMPL "fallow.toml::coverage-gaps ="
