@@ -1,3 +1,4 @@
+// fallow-ignore-file coverage-gaps -- loaded only by release.ts and release-tag.ts, in the processes release.spec.ts and release-tag.spec.ts spawn
 import {Glob} from 'bun';
 import {dirname, join} from 'node:path';
 import type {WorkspaceManifest} from './resolveConsumerPaths.ts';

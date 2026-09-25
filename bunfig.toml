@@ -7,3 +7,8 @@ minimumReleaseAge = 604800
 
 [test]
 preload = ["./testSetup.ts"]
+# Measured by `bun test --coverage` (the CI test job, `bun run test:coverage`), never by every `bun test`: Bun
+# applies the threshold to each module it reports, so a filtered run would fail on the modules it left out.
+# The threshold is the floor measured on the delivering branch, rounded down to the unit, and only rises
+# (@DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule).
+coverageThreshold = { lines = 0.29, functions = 0.0 }

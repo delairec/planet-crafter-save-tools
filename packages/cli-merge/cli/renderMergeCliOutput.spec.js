@@ -1,5 +1,5 @@
-import {beforeEach, describe, expect, it, spyOn} from 'bun:test';
-import {renderMergedSaveIssues} from './renderMergeCliOutput.js';
+import {afterEach, beforeEach, describe, expect, it, spyOn} from 'bun:test';
+import {renderMergedSaveIssues, renderUnexpectedError} from './renderMergeCliOutput.js';
 
 describe('renderMergedSaveIssues', () => {
   let consoleErrorSpy;
@@ -35,6 +35,44 @@ describe('renderMergedSaveIssues', () => {
         ['  [Save configuration (section 8), entry 0] Invalid JSON: {"saveDisplayName":"Alpha'],
         ['  Expected exactly one host player, found 2']
       ]);
+    });
+  });
+});
+
+describe('renderUnexpectedError', () => {
+  let consoleErrorSpy;
+
+  beforeEach(() => {
+    consoleErrorSpy = spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
+  describe('When the failure is an error', () => {
+    it('should print its message on stderr', () => {
+      // Arrange
+      const failure = new Error('EACCES: permission denied');
+
+      // Act
+      renderUnexpectedError(failure);
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error: EACCES: permission denied');
+    });
+  });
+
+  describe('When the failure is not an error', () => {
+    it('should print it as text on stderr', () => {
+      // Arrange
+      const failure = 'disk full';
+
+      // Act
+      renderUnexpectedError(failure);
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error: disk full');
     });
   });
 });

@@ -1,3 +1,4 @@
+// fallow-ignore-file coverage-gaps -- spawned as a real process by validate-cli.node.spec.js, which no static import reaches
 import {getCliArguments} from 'shared-platforms/platform.common.js';
 import {extractPlatformParameter} from 'shared-platforms/extractPlatformParameter.js';
 import {createPlatform} from 'shared-platforms/platform.js';

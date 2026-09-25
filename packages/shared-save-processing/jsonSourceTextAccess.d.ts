@@ -1,3 +1,4 @@
+// fallow-ignore-file coverage-gaps -- type declarations only, no runtime code for a test to reach
 /**
  * Source text access of `JSON.parse` (ES2025): the reviver receives, in a third parameter, the
  * exact text the document holds for the value being revived. Node 24, Bun 1.3, Chromium, Firefox

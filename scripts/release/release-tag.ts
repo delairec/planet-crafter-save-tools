@@ -1,3 +1,4 @@
+// fallow-ignore-file coverage-gaps -- spawned as a real process by release-tag.spec.ts, which no static import reaches
 import {findVersionCommit} from './findVersionCommit.ts';
 import {composeTag, findVersionsToTag} from './findVersionsToTag.ts';
 import {readWorkspace, REPOSITORY_ROOT, runGit} from './readWorkspace.ts';

@@ -1,3 +1,4 @@
+// fallow-ignore-file coverage-gaps -- spawned as a real process by release.spec.ts, which no static import reaches
 import {join} from 'node:path';
 import {addChangelogEntry} from './addChangelogEntry.ts';
 import {planRelease, type PlannedRelease} from './planRelease.ts';

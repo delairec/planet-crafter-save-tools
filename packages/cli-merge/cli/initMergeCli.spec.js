@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, mock, spyOn} from 'bun:test';
-import {initMergeCli} from './initMergeCli.js';
+import {initMergeCli, UNEXPECTED_ERROR_EXIT_CODE} from './initMergeCli.js';
 import {
   FAKE_SAVE_STRING_A,
   FAKE_SAVE_STRING_A_WITHOUT_GLOBAL_METADATA,
@@ -740,7 +740,7 @@ describe('Merge CLI', () => {
       await main();
 
       // Assert
-      expect(exitProcess).toHaveBeenCalledWith(1);
+      expect(exitProcess).toHaveBeenCalledWith(UNEXPECTED_ERROR_EXIT_CODE);
     });
   });
 
