@@ -34,25 +34,34 @@ TASK FEAT47
 		+ "status, show and refs in JSON"
 
 TASK DOCS50
-	TITLE "the five points the corpus migration left in its pull request body are ruled in the"
-		+ "corpus"
-	STATUS draft
-	DESC "to be refined with the user in a session: give context and use tables if it helps clarity"
-	SPEC "the decision BothMessageListsShareOneRendering and ValidationMessagesList.tsx agree on"
-		+ "whether severity is a parameter of the component"
-	SPEC "the decision NoSaveIsCommittedToThePublicRepository says whether the generated fixtures"
-		+ "of packages/ui-save-manager/e2e/fixtures/ are saves it forbids"
-	SPEC "the decision MockIsolationIsAGlobalPreload names the packages that carry the preload,"
-		+ "ui-save-manager running no bun test"
-	SPEC "SCHEMA PROCESS carries APPLIES_TO_PACKAGE and APPLIES_TO_TASK, or the loss of the two"
-		+ "edges of the process ATestTaskChangesTheUiOnlyForItsOwnSake is recorded as accepted"
-	SPEC "the language of AGENTS.md is ruled by a decision, or the absence of such a decision is"
-		+ "recorded as accepted"
-	RATIONALE "each point is a ruling of the owner, by rewriting the decision in place or by"
-		+ "changing the code; left in the pull request body, none of them reaches a session"
+	TITLE "the points the corpus migration left in its pull request body are ruled in the corpus"
+	STATUS todo
+	SPEC "the decision BothMessageListsShareOneRendering states that the rendering of the two"
+		+ "lists, foldable and monospace, is never a parameter of the component, and that severity"
+		+ "sets the colour of the title alone"
+	SPEC "the decision MockIsolationIsAGlobalPreload names the root and every package that runs bun"
+		+ "test as carrying the preload, one IMPL per bunfig.toml"
+	SPEC "a decision rules that AGENTS.md and the files of agents/ are written in French, and"
+		+ "AGENTS.md cites it"
+	RATIONALE "The migration left five points in the body of its pull request, where no session"
+		+ "reads them; the owner ruled them while refining this task on 2026-09-25. The severity"
+		+ "prop of ValidationMessagesList.tsx only colours the title: the review of pull request 37"
+		+ "refused the foldable and monospaced parameters, and the decision generalised that"
+		+ "refusal to every parameter, so the decision is rewritten and the code stays."
+		+ "ui-save-manager has no bunfig.toml and no bun test script; its three spec files use no"
+		+ "double and run from the root, under the root preload. The committed scenario saves go to"
+		+ "TEST122: they are generated when the scenarios run and the anchors move onto the"
+		+ "generators, which is test code. PROCESS keeps no APPLIES_TO_PACKAGE nor APPLIES_TO_TASK:"
+		+ "the only process that lost edges pointed at ui_save_manager, the one package with an"
+		+ "interface, and at TEST40, archived since, so neither edge said anything the process does"
+		+ "not. The decision that kept AGENTS.md in French was not carried over; only its prose"
+		+ "holds it, against the general rule that committed documentation is in English, and its"
+		+ "reason stands: these files are agent instructions read by one owner who works in French"
+		REF @USAGE_REPORT.PR95
 		REF @DECISION.BothMessageListsShareOneRendering
-		REF @DECISION.NoSaveIsCommittedToThePublicRepository
 		REF @DECISION.MockIsolationIsAGlobalPreload
+		REF @TASK.TEST122
+		REF @DECISION.NoSaveIsCommittedToThePublicRepository
 		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
 	SOURCE "Usage report of the corpus migration, part A remediation 1"
 		REF @USAGE_REPORT.PR95
@@ -753,7 +762,10 @@ TASK CHORE99
 
 TASK FIX111
 	TITLE "every section name shown to a user is the LABEL of its SECTION"
-	STATUS draft
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
+	DESC "archived undone: the code labels already equal the SECTION LABELs, and the headings of"
+		+ "docs/save-format.md keep their longer names by owner ruling"
 	SPEC "the section named in the location of a validation message equals the LABEL of the SECTION"
 		+ "entity of that index"
 	SPEC "a SECTION LABEL the code does not follow fails a check of the repository"
@@ -762,22 +774,36 @@ TASK FIX111
 
 TASK CHORE112
 	TITLE "the fallow audit and health report cover ui-save-manager"
-	STATUS draft
-	SPEC "fallow.toml ignores no file of packages/ui-save-manager/src"
-	SPEC "bun run audit:quality exits 0 with ui-save-manager in the fallow perimeter"
-	RATIONALE "Measured on 2026-09-24 with ui-save-manager brought in, app.tsx and routes/*.tsx as"
-		+ "entries: no dead code, five more clone groups (e2e scenarios and buttons.css), one"
-		+ "function above the complexity threshold in routes/index.tsx"
+	STATUS todo
+	SPEC "fallow.toml ignores no file of packages/ui-save-manager"
+	SPEC "fallow health run on the whole repository, without --base, exits 0 with ui-save-manager"
+		+ "in the fallow perimeter"
+	RATIONALE "Measured on 2026-09-25 with the whole package brought in, src/app.tsx,"
+		+ "src/routes/*.tsx, e2e/*.e2e.ts and scripts/*.ts as entries: dead-code reports no issue;"
+		+ "fallow health on the whole repository exits 1 on one function, Home in"
+		+ "src/routes/index.tsx (cyclomatic 7, estimated CRAP 56, its Show blocks), which is"
+		+ "brought under the threshold; the clone groups of the e2e scenarios and buttons.css fail"
+		+ "no gate, even with --gate all, and are left alone. bun run audit:quality is not the"
+		+ "criterion: its fallow commands take --base master and exit 0 on a pull request that only"
+		+ "changes fallow.toml, while fallow health --base exits 1 on the first later pull request"
+		+ "that touches src/routes/index.tsx"
 	SOURCE "Picked in the review of the accepted limitations, CHORE102"
 		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
 
-TASK FIX113
-	TITLE "the production breakdown by machine counts the boost of optimizers once"
-	STATUS draft
-	SPEC "with energy fuses in play, the totalLevel of the production breakdown entries sums to the"
-		+ "production of the planet"
-	SPEC "the productionRatio shares of the production breakdown sum to 1"
-	SPEC "the boost of an optimizer is counted once in the production of the planet"
+TASK TEST113
+	TITLE "a test pins that the machine breakdown and the optimizer contributions share the"
+		+ "production of a planet"
+	STATUS todo
+	SPEC "with several optimizers holding energy fuses and a producer reached by two of them, the"
+		+ "totalLevel of the production breakdown entries plus the contributions of the optimizers"
+		+ "equals the production of the planet"
+	SPEC "on the same planet, the productionRatio shares of the breakdown entries and of the"
+		+ "optimizers sum to 1"
+	RATIONALE "The draft took the base-only breakdown for a defect; it is the design. The boost is"
+		+ "counted once, in the optimizer contribution, so the shares tell whether a machine or an"
+		+ "optimizer yields more. No spec pins the two tables together: the existing specs check"
+		+ "each share alone. No behaviour changes: the production formula is confirmed in game"
+		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
 	SOURCE "Picked in the review of the accepted limitations, CHORE102"
 		REF @LIMITATION.TheMachineBreakdownIgnoresOptimizerBoost
 
@@ -814,18 +840,34 @@ TASK CHORE105
 	SOURCE "Owner request, refinement session of 2026-09-23"
 
 TASK FEAT114
-	TITLE "make the output of the merge and validate commands easy to read"
-	STATUS draft
-	DESC "drafted for memory, no research done: the form the output takes is settled when the task"
-		+ "is refined"
-	SPEC "the output of the merge and validate commands is judged readable by the owner on the"
-		+ "manual test plan of PR 127"
-	RATIONALE "Seen on the manual test of PR 127: every line carries the bun filter prefix, output"
-		+ "paths are printed in full, and the warnings of a folder are interleaved with those of"
-		+ "the other folders the same run processes"
+	TITLE "bun merge and bun validate print only their own lines, and the merge reports each folder"
+		+ "as one block"
+	STATUS todo
+	SPEC "bun merge and bun validate print exactly the lines of their node: counterparts: no"
+		+ "workspace prefix, no line echoing the script and no exit-code line added by the package"
+		+ "manager"
+	SPEC "bun validate prints no empty line between the error count and the errors"
+	SPEC "the merge reports each folder of the input directory as one contiguous block under a line"
+		+ "naming the folder, a skipped folder included"
+	SPEC "the merge reports the folders in name order, the same under Bun and Node"
+	SPEC "in the block of a merged folder, the line naming the written save comes last, after every"
+		+ "warning, separated from them by an empty line"
+	RATIONALE "Seen on the manual test of PR 127, measured on the public fixtures on 2026-09-25:"
+		+ "the root scripts run bun run --filter, which prefixes every line with the package and"
+		+ "script names and adds its own echo and exit-code lines that the node: scripts do not"
+		+ "print; no line of one folder falls among those of another, but the report of a folder is"
+		+ "split in three around the path written, and the folders come in directory order, which"
+		+ "differs between Bun and Node. The path of the merged save stays as the output directory"
+		+ "given joins it: stdout announces where the file is written, and the path is short with"
+		+ "the default output directory. The line naming the save comes last as the save manager"
+		+ "shows the merge report above its success message since the review of PR 127"
+		REF @COMMAND.MergeSaves
+		REF @COMMAND.ValidateSave
 	SOURCE "Owner review, 2026-09-24: the output of the two commands is hard to read, a draft task"
 		+ "with no wave"
 		PR 127
+	SOURCE "Refined with the owner on 2026-09-25: the output of the node: scripts as the reference,"
+		+ "the path unchanged, one block per folder in name order, the saved file last"
 
 TASK CHORE116
 	TITLE "declare a wave as an entity carrying its milestone and its integration branch"
@@ -925,3 +967,41 @@ TASK FEAT120
 		REF @LIMITATION.AVersionTagCreatesNoGitHubRelease
 	SOURCE "Owner request after reading the 0.1.0 changelog entries"
 		PR 165
+
+TASK TEST122
+	TITLE "the scenario saves are generated when the scenarios run, never committed"
+	STATUS todo
+	SPEC "no save is tracked under packages/ui-save-manager/e2e/fixtures/, the README there stays"
+	SPEC "in a fresh clone, bun run check:guards, bun run test:ui and playwright test launched from"
+		+ "packages/ui-save-manager pass, and leave git status clean"
+	SPEC "check:scenario-fixtures no longer compares a generated save with a file of the"
+		+ "repository, and still refuses a scenario file naming the input directory in a path"
+	SPEC "every ATTESTED_BY and IMPL anchor naming a scenario save names instead a file git tracks"
+		+ "whose text contains the fragment the anchor cites, the fragment rewritten where the"
+		+ "saved form appears in no source"
+	SPEC "the decisions NoSaveIsCommittedToThePublicRepository,"
+		+ "ScenarioFixturesAreGeneratedAndReplayedByAGuard and AnAnchorNamesAFileTrackedByGit,"
+		+ "agents/corpus-ecrire.md and the README of the fixtures state what the repository does"
+		+ "once the saves are no longer committed"
+	RATIONALE "The owner ruled while refining DOCS50 that the generated saves need not be committed"
+		+ "and that the anchors move off them; six ATTESTED_BY of the specification, five on rules"
+		+ "and one on the section TerrainLayers, and one IMPL of"
+		+ "AUiScenarioAssertsWhatTheScreenShows name those files today, while the IMPL naming the"
+		+ "README of the fixtures stays valid. The design was settled while refining this task on"
+		+ "2026-09-25: a Playwright global setup writes the saves into the same directory, ignored"
+		+ "by git, so no scenario path changes, the scenario FEAT119 adds included, and a direct"
+		+ "playwright test run gets them too; that setup runs under Node, where Bun.write does not"
+		+ "exist. The byte replay is dropped, since the scenarios read what the generator has just"
+		+ "written, and the refusal of the input directory stays. An anchor points at the tracked"
+		+ "file holding the cited text, whether the generator script, the save factories of"
+		+ "shared-save-processing or a test asserting a serialised line: most fragments live in the"
+		+ "factories, not in the script, and check:anchors checks the path alone, never the"
+		+ "fragment"
+		REF @TASK.DOCS50
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+		REF @SECTION.TerrainLayers
+		REF @TASK.FEAT119
+		REF @DECISION.NoSaveIsCommittedToThePublicRepository
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
+		REF @DECISION.AnAnchorNamesAFileTrackedByGit
+	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"

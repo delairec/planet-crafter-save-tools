@@ -44,7 +44,8 @@ LIMITATION TheHydrationFallbackHasNoScenario
 LIMITATION SectionLabelsDivergeFromTheFormatDocument
 	SYMPTOM "The short section labels used in the location of an error do not match the section"
 		+ "headings of the save format document"
-	UNTIL @TASK.FIX111
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
 	SEEN_IN "packages/core-mapping/src/presentation/messages/saveSectionLabels.js::'Mailbox"
 		+ "messages'"
 	SEEN_IN "docs/save-format.md::#0 — Player Progression (tokens & unlocked groups)"
@@ -58,7 +59,8 @@ LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
 	SYMPTOM "The production breakdown by machine uses base levels only, without the boost of"
 		+ "optimizers and fuses: once a fuse is in play the totalLevel of the entries sums below"
 		+ "production, and their productionRatio shares do not sum to 1"
-	UNTIL @TASK.FIX113
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
 	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private"
 		+ "productionBreakdown(production: number)"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
