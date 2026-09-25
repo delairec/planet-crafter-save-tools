@@ -49,11 +49,13 @@ export function findTableViolations(table: string, rows: unknown, schema: object
   }));
 }
 
-export async function validateTables(tableStems: string[], schemaDirectory: string): Promise<number> {
+/** A table is named by its path without `.json`, followed by `:<schema>` when its schema is not named after it. */
+export async function validateTables(tables: string[], schemaDirectory: string): Promise<number> {
   let exitCode = 0;
-  for (const stem of tableStems) {
+  for (const table of tables) {
+    const [stem = table, schemaName = path.basename(stem)] = table.split(':');
     const rowsContent = await fs.readFile(`${stem}.json`, 'utf8');
-    const schemaContent = await fs.readFile(path.join(schemaDirectory, `${path.basename(stem)}.schema.json`), 'utf8');
+    const schemaContent = await fs.readFile(path.join(schemaDirectory, `${schemaName}.schema.json`), 'utf8');
     const rows = JSON.parse(rowsContent);
     const schema = JSON.parse(schemaContent);
     const violations = findTableViolations(stem, rows, schema);

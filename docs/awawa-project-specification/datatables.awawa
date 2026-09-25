@@ -2,8 +2,8 @@ DATATABLE EnergyLevels
 	TABLE "packages/core-mapping/src/domain/energyLevels.json"
 	KEY worldObjectName
 	JSON_SCHEMA "scripts/validate-tables/schemas/energyLevels.schema.json"
-	DESC "base kW a positioned world object produces or consumes, before any optimizer bonus, one"
-		+ "row per world object and release from which the value holds under fromRelease"
+	DESC "base kW a positioned world object produces or consumes, before any optimizer bonus, in"
+		+ "the last release of the releases table"
 
 DATATABLE WorldObjectLabels
 	TABLE "packages/core-mapping/src/presentation/worldObjectLabels.json"
@@ -35,3 +35,19 @@ DATATABLE GameReleases
 	JSON_SCHEMA "scripts/validate-tables/schemas/gameReleases.schema.json"
 	DESC "the game releases HOLDS_FOR names, in release order, with the number of parts the saves"
 		+ "each writes split into"
+
+DATATABLE EnergyLevelsOfRelease1618
+	TABLE "packages/core-mapping/src/domain/energyLevelsByRelease/1.618.json"
+	KEY worldObjectName
+	JSON_SCHEMA "scripts/validate-tables/schemas/energyLevelsOfRelease.schema.json"
+	DESC "base kW of the world objects whose value in release 1.618 differs from the energy levels"
+		+ "table"
+		REF @DATATABLE.EnergyLevels
+
+DATATABLE EnergyLevelsOfRelease2004
+	TABLE "packages/core-mapping/src/domain/energyLevelsByRelease/2.004.json"
+	KEY worldObjectName
+	JSON_SCHEMA "scripts/validate-tables/schemas/energyLevelsOfRelease.schema.json"
+	DESC "base kW of the world objects whose value in release 2.004 differs from the energy levels"
+		+ "table"
+		REF @DATATABLE.EnergyLevels

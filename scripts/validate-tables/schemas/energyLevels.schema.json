@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "energyLevels.schema.json",
   "title": "Energy levels",
-  "description": "Base power, in kW, a positioned world object produces or consumes before any Optimizer bonus; one row per world object name and release from which the value holds, a row without fromRelease holding from the first release.",
+  "description": "Base power, in kW, a positioned world object produces or consumes before any Optimizer bonus; one row per world object name.",
   "type": "array",
   "items": {
     "type": "object",
@@ -12,7 +12,6 @@
       "worldObjectName": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"},
       "role": {"enum": ["production", "consumption"]},
       "kilowatts": {"type": "number", "exclusiveMinimum": 0},
-      "fromRelease": {"type": "string", "valueOfTable": {"table": "packages/shared-save-processing/gameReleases.json", "column": "release"}},
       "source": {"type": "string", "pattern": "^https://"}
     }
   }

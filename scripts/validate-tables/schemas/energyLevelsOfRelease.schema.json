@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "energyLevelsOfRelease.schema.json",
+  "title": "Energy levels of a release",
+  "description": "Base power, in kW, of the world objects whose value in one earlier release differs from the energy levels table, which holds the values of the last release; one row per world object name.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["worldObjectName", "role", "kilowatts", "source"],
+    "additionalProperties": false,
+    "properties": {
+      "worldObjectName": {"type": "string", "valueOfTable": {"table": "packages/core-mapping/src/domain/energyLevels.json", "column": "worldObjectName"}},
+      "role": {"enum": ["production", "consumption"]},
+      "kilowatts": {"type": "number", "exclusiveMinimum": 0},
+      "source": {"type": "string", "pattern": "^https://"}
+    }
+  }
+}
