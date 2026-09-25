@@ -13,27 +13,6 @@ TASK DOCS1
 		+ "is never delivered work and is never purged"
 		REF @DECISION.AgentsMdNamesOneModelEntityPerType
 
-TASK CHORE46
-	TITLE "the repository security alerts are enabled"
-	STATUS archived
-	ARCHIVED_ON "2026-09-23"
-	PURGE false
-	SPEC "The security alerts are enabled in the repository security settings, a gesture left to"
-		+ "the user outside the repository, and the API no longer refuses them"
-	RATIONALE "The repository security alerts are disabled: the API refuses them, and without them"
-		+ "dependency tracking only yields version updates. Vulnerability advisories today appear"
-		+ "only in the audit job, on a pull request, never on a schedule. The other way out is to"
-		+ "schedule the audit job, which the repository does not do: it runs only on a pull request"
-		+ "and on the default branch. Archived rather than implemented on 2026-09-23: the SPEC is a"
-		+ "setting of the GitHub repository, which no IMPL anchor of this workspace can prove, and"
-		+ "WHEN STATUS implemented requires one per SPEC. Done that day with the account of the"
-		+ "owner, whose token carries the repo scope the endpoints accept: PUT vulnerability-alerts"
-		+ "and PUT automated-security-fixes both answered 204, and PATCH of the repository enabled"
-		+ "secret scanning and its push protection; the API never refused them, the token the"
-		+ "earlier attempt used did"
-	SOURCE "Observed while checking the weekly Dependabot updates after their merge"
-		PR 53
-
 TASK FEAT47
 	TITLE "a cleanup pass archives the delivered tasks and purges what has been archived for a"
 		+ "delay to be defined"
@@ -145,7 +124,8 @@ TASK CHORE54
 
 TASK FEAT55
 	TITLE "Validate and merge the logisticsPaused a save written by the Skeo update carries"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	SPEC "a save whose global metadata carries logisticsPaused passes validation, and a save"
 		+ "without it still does"
 		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::written by the"
@@ -399,7 +379,8 @@ TASK CHORE63
 
 TASK FEAT65
 	TITLE "Place the world objects and world events of Skeo on Skeo"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	SPEC "a world object or a world event carrying the planet numeric id -440810600 is placed on"
 		+ "Skeo"
 		IMPL "packages/core-mapping/src/domain/planetNamesByNumericId.json::-440810600"
@@ -425,7 +406,8 @@ TASK FEAT65
 
 TASK FEAT66
 	TITLE "Give TreePlanter3, PodUnderground and RocketAnimals2 their energy"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	AFTER @TASK.DOCS86
 	SPEC "TreePlanter3, PodUnderground and RocketAnimals2 are named among the world object names"
 		+ "without a known energy level, on the recorded hypothesis that they neither draw nor"
@@ -465,7 +447,8 @@ TASK FEAT66
 
 TASK TEST67
 	TITLE "Display a save written by the Skeo update in the save manager"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	AFTER @TASK.DOCS86
 	SPEC "a scenario fixture generated with logisticsPaused in its global metadata and a placed"
 		+ "world object carrying the planet numeric id -440810600 passes validation"
@@ -494,7 +477,8 @@ TASK TEST67
 
 TASK TEST68
 	TITLE "Attest that a deprecated group id survives a read, a validation and a merge unchanged"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 140
 	AFTER @TASK.DOCS86
 	AFTER @TASK.FEAT89
@@ -998,7 +982,8 @@ TASK FEAT82
 TASK CHORE83
 	TITLE "each consumer of core-mapping carries its own version, investigated then delivered in"
 		+ "the same pull request with the mechanism the user picks"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 135
 	SPEC "the pull request body compares, for ui-save-manager, cli-merge and cli-validate, a script"
 		+ "over the Conventional Commits titles, changesets and release-please in manifest mode:"
@@ -1051,44 +1036,10 @@ TASK CHORE83
 		REF @TASK.CHORE58
 	SOURCE "Refinement with the user on 2026-09-23 of a task drafted for memory"
 
-TASK FEAT84
-	TITLE "Display the logisticsPaused of a save written by the Skeo update in the save manager"
-	STATUS implemented
-	SPEC "the global progression section displays whether the drone logistics are paused when the"
-		+ "global metadata carries logisticsPaused"
-		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts::should"
-			+ "present the drone logistics as $logisticsState"
-		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
-			+ "extract logisticsPaused alongside the terra tokens"
-		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should display the drone logistics as"
-			+ "paused"
-	SPEC "a save whose global metadata carries no logisticsPaused displays the section as before"
-		+ "the task"
-		IMPL "packages/core-mapping/src/presentation/GlobalProgressionPresenter.spec.ts::should"
-			+ "present all GlobalProgression"
-		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.spec.ts::should"
-			+ "extract global metadata"
-	AFTER @TASK.FEAT55
-	DELIVERED_BY 125
-	WAVE 5
-	RATIONALE "FEAT55 validates and merges logisticsPaused but displays nothing: the global"
-		+ "progression section shows the all time terra tokens alone. TEST67 asserts that a Skeo"
-		+ "save displays without a validation error, not that the key is shown, and FEAT72 edits"
-		+ "the eight values the save manager displays today, of which logisticsPaused is not one."
-		+ "Once displayed, the value falls under the owner ruling that every displayed field"
-		+ "becomes editable"
-		REF @TASK.FEAT55
-		REF @TASK.TEST67
-		REF @TASK.FEAT72
-		REF @SECTION.GlobalMetadata
-		REF @RULE.TheGlobalMetadataEntryCarriesLogisticsPaused
-	SOURCE "Review of pull request 111 by the owner, 2026-09-22: the field should be displayed and"
-		+ "no task plans it"
-		PR 111
-
 TASK DOCS86
 	TITLE "Type the era of a rule and a section by game release"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 115
 	WAVE 5
 	DESC "The decisions taken here must anticipate the next tasks of wave 5 and especially"
@@ -1182,7 +1133,8 @@ TASK DOCS88
 
 TASK FEAT89
 	TITLE "Warn when a save contradicts the game release it declares"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 124
 	WAVE 5
 	AFTER @TASK.DOCS86
@@ -1249,7 +1201,8 @@ TASK CHORE91
 
 TASK FEAT92
 	TITLE "Keep the format a save carries in shared-save-processing and name which one it is"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 141
 	WAVE 5
 	AFTER @TASK.FEAT89
@@ -1309,7 +1262,8 @@ TASK FEAT92
 
 TASK FEAT93
 	TITLE "Read and validate a save of either format in core-mapping"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 146
 	WAVE 5
 	AFTER @TASK.FEAT92
@@ -1381,7 +1335,8 @@ TASK FEAT93
 
 TASK FEAT94
 	TITLE "Write the merged save in the format the merge was asked for"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 151
 	WAVE 5
 	AFTER @TASK.FEAT93
@@ -1437,7 +1392,8 @@ TASK FEAT94
 TASK FEAT95
 	TITLE "Offer the legacy format option and the merge report in the command and in the save"
 		+ "manager"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 153
 	WAVE 5
 	AFTER @TASK.FEAT94
@@ -1501,7 +1457,8 @@ TASK FEAT95
 
 TASK TEST96
 	TITLE "Cover both formats and the mixed merge with save manager scenarios"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 155
 	WAVE 5
 	AFTER @TASK.FEAT95
@@ -1575,7 +1532,8 @@ TASK FEAT97
 
 TASK CHORE98
 	TITLE "Guard the single production reader of a save line"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	WAVE 5
 	DELIVERED_BY 137
 	SPEC "a JSON.parse call in the production code of any package fails the guard, unless it sits"
@@ -1654,7 +1612,8 @@ TASK CHORE99
 TASK CHORE100
 	TITLE "a release is refused while a quality or security check fails on the commit it tags, and"
 		+ "an advisory published against an unchanged lockfile is reported within a month"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	SPEC "a root package.json script, run by hand and by CI on every version tag, exits non-zero"
 		+ "when lint:types, check:guards, bun test, test:ui, the fallow audit or the dependency"
 		+ "audit fails on that commit"
@@ -1694,7 +1653,8 @@ TASK CHORE100
 TASK FIX101
 	TITLE "the production web UI serves its security headers on every response, is checked every"
 		+ "week and on demand after each publication, and the README gives its address"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	SPEC "every response of the production site, the HTML document included, carries the"
 		+ "Content-Security-Policy, Referrer-Policy and Permissions-Policy of"
 		+ "packages/ui-save-manager/public/_headers"
@@ -1731,41 +1691,10 @@ TASK FIX101
 		REF @LIMITATION.TheContentSecurityPolicyAllowsInlineScript
 	SOURCE "Refinement of CHORE83 with the user on 2026-09-23"
 
-TASK CHORE102
-	TITLE "review the accepted limitations, lifting those the user picks in the same pull request"
-		+ "or giving them a draft task"
-	STATUS implemented
-	SPEC "the pull request body carries one row per active LIMITATION that no other task of the"
-		+ "wave retires or frames: whether its UNTIL condition is already met, verified by a"
-		+ "command, and what lifting it costs"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::Picked in the review of the accepted"
-			+ "limitations, CHORE102"
-	SPEC "each limitation the user picks is lifted in the same pull request and archived with"
-		+ "ARCHIVED_ON, or gets a draft TASK its UNTIL names, as the user rules limitation by"
-		+ "limitation"
-		IMPL "docs/awawa-project-methodology/limitations.awawa::ARCHIVED_ON 2026-09-24"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FIX113"
-	SPEC "the review leaves the pull request body once the picked changes are in"
-		IMPL "packages/core-mapping/src/application/sanitizeSaveDisplayName.ts::replaceAll"
-		IMPL "packages/ui-save-manager/src/components/structure/FieldsGroup.tsx::<Icon"
-			+ "content={annotation().icon}/>"
-	AFTER @TASK.CHORE109
-	DELIVERED_BY 152
-	WAVE 8
-	RATIONALE "Nine limitations were active on 2026-09-23, each accepted when it was written and"
-		+ "none reread since. FIX101 retires TheContentSecurityPolicyAllowsInlineScript and"
-		+ "TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader, and CHORE100 frames"
-		+ "TheSecurityAuditIgnoresTwoTransitiveAdvisories, which leaves the others to this review."
-		+ "Ruled with the user on 2026-09-23: a cheap lift lands in the same pull request, a costly"
-		+ "one becomes a draft task; the task runs in an interactive session like CHORE58"
-		REF @TASK.FIX101
-		REF @TASK.CHORE100
-		REF @TASK.CHORE58
-	SOURCE "Refinement of CHORE83 with the user on 2026-09-23"
-
 TASK FIX106
 	TITLE "the dependency audit ignores no advisory"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	SPEC "the audit script of the root package.json carries no --ignore"
 		IMPL "package.json::bun audit --audit-level=moderate"
 	SPEC "bun run audit exits 0 on the delivering branch"
@@ -1792,7 +1721,8 @@ TASK FIX106
 
 TASK FEAT107
 	TITLE "both CLIs print their help on --help and on an unknown argument"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	DELIVERED_BY 148
 	SPEC "--help prints the help of the CLI on standard output and exits 0 without reading"
 		+ "anything, whatever other argument accompanies it"
@@ -1843,44 +1773,10 @@ TASK FEAT107
 	SOURCE "Owner request, refinement session of 2026-09-23"
 		PR 135
 
-TASK FIX104
-	TITLE "the content security policy of the web UI allows no 'unsafe-eval'"
-	DESC "start once PR 127 is merged into master and master into integration/release-and-hardening"
-	STATUS implemented
-	SPEC "the Content-Security-Policy of packages/ui-save-manager/public/_headers carries no"
-		+ "'unsafe-eval'"
-		IMPL "packages/ui-save-manager/public/_headers::script-src 'self';"
-	SPEC "loading, viewing and merging a save raise no securitypolicyviolation event on the three"
-		+ "engines"
-		IMPL "packages/ui-save-manager/e2e/security.e2e.ts::should meet no refusal of the content"
-			+ "security policy"
-		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::SECTION_VALIDATORS_BY_SCHEMA_ID"
-	SPEC "a guard of check:guards fails when the versioned section validators differ from what the"
-		+ "JSON Schemas of shared-save-processing produce"
-		IMPL "packages/core-mapping/scripts/check-section-validators.ts::findSectionValidatorsDivergence"
-		IMPL "packages/core-mapping/scripts/check-section-validators.spec.ts"
-		IMPL "package.json::bun run check:section-validators"
-	RATIONALE "Ajv compiles the section validators with new Function, the only eval of the client"
-		+ "bundle measured on 2026-09-23; its standalone ESM output for the ten section schemas"
-		+ "holds no eval and imports nothing from Ajv. Ruled with the user on 2026-09-24: the"
-		+ "validators are generated into core-mapping, versioned and replayed by a guard, as the"
-		+ "scenario fixtures are, so that the CLI and the web UI validate through the same module."
-		+ "A Vite plugin was refused, the CLI keeping a second path compiled at run time; an"
-		+ "unversioned generation was refused, bun test and the CLI then depending on a step having"
-		+ "run. PR 127 rewrites validateSchemas.js and adds the legacy schemas, hence the wait. The"
-		+ "scenario of security.e2e.ts already listens for policy violations and bites once the"
-		+ "source is gone"
-		REF @LIMITATION.TheContentSecurityPolicyAllowsEval
-		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
-	SOURCE "Measured while implementing FIX101 on 2026-09-23"
-		PR 134
-	SOURCE "Refinement with the user on 2026-09-24"
-	DELIVERED_BY 156
-	WAVE 8
-
 TASK DOCS108
 	TITLE "the README shows the state of the project in badges under its title"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	SPEC "the README carries under its title, next to the Netlify badge, one badge for each of the"
 		+ "Quality, Dependencies, UI tests and Site check workflows, showing the state of its last"
 		+ "run on master and linking to the runs of that workflow on master"
@@ -1911,36 +1807,10 @@ TASK DOCS108
 		+ "before the task branch is cut from it"
 	SOURCE "Request of the user on 2026-09-23; set of badges ruled with the user on 2026-09-24"
 
-TASK CHORE109
-	TITLE "every active decision that records a defect left in place is rewritten as a limitation"
-	STATUS implemented
-	DELIVERED_BY 145
-	SPEC "every DECISION whose ruling is a workaround of a defect of this project, kept until a"
-		+ "fix, is replaced by a LIMITATION carrying its SYMPTOM, WORKAROUND and UNTIL"
-		IMPL "docs/awawa-project-methodology/limitations.awawa::LIMITATION"
-			+ "TheFallowAuditReadsNoFileOfUiSaveManager"
-	SPEC "every reference to a replaced DECISION points at its LIMITATION"
-		IMPL "fallow.toml::a gap of this project, not a ruling"
-	SPEC "the pull request lists each DECISION reviewed and kept, with the reason it is a ruling"
-		IMPL "docs/awawa-project-methodology/limitations.awawa::Rewritten from a decision by the"
-			+ "review of CHORE109"
-	WAVE 8
-	RATIONALE "the user suspects that some of the 96 active decisions describe a defect left in"
-		+ "place rather than a choice; a defect of an external tool stays a DECISION with UNTIL,"
-		+ "only a defect of this project is a LIMITATION. The review stays in the pull request,"
-		+ "ruled with the user on 2026-09-24. A first pass during the refinement found one"
-		+ "candidate, the exclusion of ui-save-manager from the fallow perimeter, now"
-		+ "TheFallowAuditReadsNoFileOfUiSaveManager: no reasoning recorded, and fallow run on"
-		+ "ui-save-manager with app.tsx and routes as entries reports no unused code and one"
-		+ "high-complexity function, so the exclusion is a gap of this project, not of fallow."
-		+ "CHORE102 runs after this task, so that the limitations it writes enter that review"
-		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
-		REF @TASK.CHORE102
-	SOURCE "Request of the user on 2026-09-23; scope ruled with the user on 2026-09-24"
-
 TASK FIX110
 	TITLE "the site check fetches only the production site or one of its deploy previews"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	SPEC "check:site refuses, with an error and a non-zero exit before any request, a --url= that"
 		+ "is not https, carries userinfo, a port, a path, a query or a fragment, or names a host"
 		+ "other than planet-crafter-save-manager.netlify.app or"
@@ -2036,51 +1906,10 @@ TASK FEAT114
 		+ "with no wave"
 		PR 127
 
-TASK FEAT115
-	TITLE "a README badge shows the version production serves"
-	STATUS implemented
-	SPEC "the build of ui-save-manager emits a static version.json at the site root, carrying the"
-		+ "package version and the commit Netlify built from its COMMIT_REF, without writing into"
-		+ "the versioned public directory"
-		IMPL "packages/ui-save-manager/vite.config.ts::emitVersionDocument"
-		IMPL "packages/ui-save-manager/versionDocument.spec.ts::should carry the version and that"
-			+ "commit"
-	SPEC "a build without COMMIT_REF succeeds and writes a null commit into version.json"
-		IMPL "packages/ui-save-manager/e2e/version.e2e.ts::should serve the version of the web"
-			+ "application and a null commit"
-		IMPL "packages/ui-save-manager/versionDocument.spec.ts::should carry the version and a null"
-			+ "commit"
-	SPEC "a README badge labelled production shows the version alone, read from the production"
-		+ "version.json through the shields.io dynamic JSON endpoint"
-		IMPL "README.md::query=%24.version&label=production"
-	SPEC "the Netlify status badge stays in the README, next to the production badge, with the alt"
-		+ "text Netlify build of master"
-		IMPL "README.md::[![Netlify build of master]"
-	SPEC "the site check prints the version and the commit production serves, names the latest"
-		+ "ui-save-manager-v* tag when production does not serve it, and fails on neither"
-		IMPL "packages/ui-save-manager/scripts/check-site.ts::describeServedVersion"
-		IMPL "packages/ui-save-manager/scripts/servedVersion.spec.ts"
-	WAVE 8
-	DELIVERED_BY 158
-	RATIONALE "With publishing locked, Netlify's status badge and its 'Deployed' label report the"
-		+ "build of master, not what production serves: after PR 127 both read as deployed while"
-		+ "production still served the release before it. The image of the Netlify badge cannot be"
-		+ "relabelled, hence its alt text and its place next to the production badge. Production is"
-		+ "always the commit of a release tag, so the badge shows the version and the site check"
-		+ "compares with the latest tag, not with master, which also moves on commits that leave"
-		+ "the web UI untouched. An unpublished tag is the owner's call, so it is reported and"
-		+ "never fails a run. version.json is read under the production root check:site already"
-		+ "rebuilds from constants; the badge reads an error until the release carrying this task"
-		+ "is published"
-		REF @DECISION.ProductionIsPublishedByHandFromAReleaseTag
-		REF @LIMITATION.TheSiteCheckCannotTellWhichCommitProductionServes
-		REF @DECISION.TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
-	SOURCE "Asked by the owner on 2026-09-24, after PR 127 was built but not published"
-	SOURCE "Refinement with the user on 2026-09-24"
-
 TASK CHORE118
 	TITLE "pin every action the workflows use on a commit SHA"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	WAVE 8
 	DELIVERED_BY 163
 	SPEC "every uses: of .github/workflows names a full 40-character commit SHA followed by a"
@@ -2107,7 +1936,8 @@ TASK CHORE118
 
 TASK CHORE117
 	TITLE "hold back a dependency version until it is seven days old"
-	STATUS implemented
+	STATUS archived
+	ARCHIVED_ON "2026-09-25"
 	WAVE 8
 	DELIVERED_BY 161
 	SPEC "bunfig.toml declares a minimum release age of seven days for bun install and bun add"

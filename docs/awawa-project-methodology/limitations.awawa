@@ -1,35 +1,3 @@
-LIMITATION LateWorldObjectParseErrorsWouldNeverReachTheScreen
-	STATUS archived
-	ARCHIVED_ON 2026-09-24
-	SYMPTOM "Nothing today: the path is dead, but the day validation stops draining the world"
-		+ "objects section before reading the parse errors, a save whose unreadable lines sit only"
-		+ "in that section is shown without those errors, and no test fails"
-	UNTIL "an optimization stops draining the world objects section, a caller uses the parser"
-		+ "without the validator, the section is displayed progressively, or the two lines of"
-		+ "validateSaveContent swap"
-	WORKAROUND "The cheapest move, the day it comes, is a spec pinning the guard: validation"
-		+ "refuses a save whose only unreadable line is in the world objects section"
-	SEEN_IN "packages/core-mapping/src/infrastructure/validateSaveContent.js::const"
-		+ "worldObjectIssues = validateWorldObjectsSection("
-	SEEN_IN "packages/shared-save-processing/parseSaveSections.js::return () =>"
-		+ "createSectionEntriesGenerator(sectionReading);"
-	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RATIONALE "parseSaveSections returns a shared, mutable errors array; the ten ordinary sections"
-		+ "are materialized at once, while the world objects section is returned as a generator"
-		+ "factory not yet iterated, since a reference save carries up to 28425 objects there and"
-		+ "only one is kept in memory. Its errors are pushed only on iteration, yet the use case"
-		+ "hands the array to the presenter at once and the presenter freezes it with a map: the"
-		+ "ViewModel is a snapshot taken before anyone read that section. It has no effect today"
-		+ "because validateSaveContent drains the generator before reading parseErrors; the order"
-		+ "of those two lines is load-bearing and nothing says so in place. Fixing ahead is refused"
-		+ "while the path is dead, and making the ViewModel stop being a snapshot, with errors read"
-		+ "on demand or the section parsed eagerly, is ruled out by its size"
-	SOURCE "Private context file known-issues/erreurs-tardives-des-objets-du-monde-perdues.md, at"
-		+ "tag pcst/before-awawa"
-		REF @PROJECT.DNC
-	SOURCE "Found on 2026-09-11 in the review of pull request 58"
-		PR 58
-
 LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
 	SYMPTOM "Eleven placed machines have no known energy level, among them TradePlatform1 (29"
 		+ "placed), LightBoxMedium (28), ButterflyDisplayer1 (18), Megadome1 (7),"
@@ -72,36 +40,6 @@ LIMITATION TheHydrationFallbackHasNoScenario
 		REF @DECISION.ALoadingStateIsObservedByHoldingTheFileRead
 	SOURCE "Found on 2026-09-14 and ruled by the user in the review of pull request 78"
 		PR 78
-
-LIMITATION AnAtSignInAFolderNameCorruptsTheMergedSave
-	STATUS archived
-	ARCHIVED_ON 2026-09-24
-	SYMPTOM "A folder name containing @ makes bun merge write a save that bun validate rejects; the"
-		+ "file is still written, the exit code stays 0 and the errors are printed on stderr"
-	UNTIL "the merge sanitizes the display name at the boundary that receives it, or refuses a name"
-		+ "the save format cannot carry"
-	SEEN_IN "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.ts::return"
-		+ "{...saveConfiguration, saveDisplayName,"
-	SEEN_IN "packages/cli-merge/cli/initMergeCli.spec.js::When the merged save does not pass"
-		+ "validation"
-	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RATIONALE "@ is the section separator of the format, and mergeSaveConfigurations copies as is"
-		+ "the saveDisplayName both callers take from the folder name or from the user input."
-		+ "buildMergedFileName sanitizes the file name, but nothing sanitizes the display name of"
-		+ "section 8: one more @ takes the split from 11 to 12 parts, verifySectionCount accepts 12"
-		+ "as a legitimate older format, and section 8 is read truncated. The pinning test is the"
-		+ "only live reproduction of an invalid merged output: sanitizing the @ fails its header"
-		+ "assertion and that one alone, the three other cases of the block holding with or without"
-		+ "the defect, so a fix must rewrite that end-to-end spec and find it another producer of"
-		+ "invalid output"
-	SOURCE "Private context file"
-		+ "known-issues/merge/nom-de-dossier-qui-corrompt-la-save-produite.md, at tag"
-		+ "pcst/before-awawa"
-		REF @PROJECT.DNC
-	SOURCE "Found on 2026-09-10 while making the merge CLI report an invalid merged save"
-		PR 61
-	SOURCE "Pinning test verified in the review of pull request 59"
-		PR 59
 
 LIMITATION SectionLabelsDivergeFromTheFormatDocument
 	SYMPTOM "The short section labels used in the location of an error do not match the section"
@@ -159,30 +97,6 @@ LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
 	SOURCE "Found on 2026-09-13 while moving the energy rules into PlanetEnergyGrid"
 		PR 72
 
-LIMITATION ADecorativeIconInAViewModelValueIsReadAloud
-	STATUS archived
-	ARCHIVED_ON 2026-09-24
-	SYMPTOM "A screen reader announces the name of the construction icon in every consumption and"
-		+ "available cell, and in the title of the consumption grid"
-	UNTIL "the icon is taken out of the work-in-progress label in both message modules"
-	SEEN_IN "packages/core-mapping/src/presentation/messages/energyLevelsSectionMessages.js::export"
-		+ "const energyLevelsSectionWorkInProgressLabel"
-	SEEN_IN "packages/ui-save-manager/src/messages/energyLevelsSectionMessages.js::export const"
-		+ "energyLevelsSectionWorkInProgressLabel"
-	SEEN_IN "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::${energyLevelsSectionKilowattUnit}"
-		+ "${energyLevelsSectionWorkInProgressLabel}"
-	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RATIONALE "energyLevelsSectionWorkInProgressLabel carries the icon in the string itself and"
-		+ "EnergyLevelsPresenter sews it into ViewModel values the UI renders as text, out of reach"
-		+ "of the Icon component. The ruling on decorative characters does not cover this case: it"
-		+ "assumes the character is a JSX node, which a ViewModel value is not. The label is"
-		+ "declared twice, in the messages of core-mapping and in those of the UI, so both change"
-		+ "together"
-		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
-	SOURCE "Found on 2026-09-14 in the review of pull request 71"
-		PR 71
-
 LIMITATION TheHtmlDocumentOfTheSiteCarriesNoSecurityHeader
 	STATUS archived
 	ARCHIVED_ON 2026-09-23
@@ -219,41 +133,6 @@ LIMITATION EachCliDuplicatesItsVersionAndUnknownArgumentRendering
 	SOURCE "Pull request review, the owner asking for the fallow warnings to be resolved, then for"
 		+ "the kept duplication to be recorded as a limitation rather than a decision"
 		PR 135
-
-LIMITATION TheContentSecurityPolicyAllowsEval
-	STATUS archived
-	ARCHIVED_ON 2026-09-24
-	SYMPTOM "the content security policy of the web UI allows 'unsafe-eval' in script-src: a string"
-		+ "an injected script hands to eval or new Function runs despite it"
-	UNTIL @TASK.FIX104
-	SEEN_IN "packages/ui-save-manager/public/_headers::'unsafe-eval'"
-	SEEN_IN "packages/core-mapping/src/infrastructure/validateSchemas.js::getSchema(sectionSchemaId)"
-	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	RATIONALE "Ajv compiles each section validator with new Function in the browser: measured in"
-		+ "chromium on 2026-09-23, without 'unsafe-eval' the validation throws an EvalError and the"
-		+ "web UI cannot load a save. FIX101 removed 'unsafe-inline' and kept this source"
-		REF @TASK.FIX101
-	SOURCE "Measured while implementing FIX101 on 2026-09-23"
-		PR 134
-
-LIMITATION TheSiteCheckCannotTellWhichCommitProductionServes
-	STATUS archived
-	ARCHIVED_ON 2026-09-24
-	SYMPTOM "the site check passes on the headers production serves today, even when master carries"
-		+ "a header change that no published deployment carries yet: nothing says which commit is"
-		+ "live"
-	UNTIL @TASK.FEAT115
-	SEEN_IN ".github/workflows/site-check.yml::fails on neither"
-	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	RATIONALE "Netlify builds master on each push but publishes by hand, and production lags master"
-		+ "until its owner publishes. An X-Build-Commit header from Netlify's COMMIT_REF, awaited"
-		+ "by a run on each push, was dropped because that run would wait for a commit never"
-		+ "published. A weekly run failing when the last master commit touching the web UI build"
-		+ "inputs is not an ancestor of the live commit was dropped because it would fail on a lag"
-		+ "that is the owner's call. Both become sound once publication follows the push"
-		REF @TASK.FIX101
-	SOURCE "Owner's ruling in the review of FIX101, 2026-09-23"
-		PR 134
 
 LIMITATION TheFallowAuditReadsNoFileOfUiSaveManager
 	SYMPTOM "fallow audit and fallow health skip every file of ui-save-manager: an unused export,"
