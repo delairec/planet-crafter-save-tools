@@ -35,14 +35,21 @@ TASK FEAT47
 
 TASK DOCS50
 	TITLE "the points the corpus migration left in its pull request body are ruled in the corpus"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 179
 	SPEC "the decision BothMessageListsShareOneRendering states that the rendering of the two"
 		+ "lists, foldable and monospace, is never a parameter of the component, and that severity"
 		+ "sets the colour of the title alone"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "BothMessageListsShareOneRendering"
 	SPEC "the decision MockIsolationIsAGlobalPreload names the root and every package that runs bun"
 		+ "test as carrying the preload, one IMPL per bunfig.toml"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "MockIsolationIsAGlobalPreload"
 	SPEC "a decision rules that AGENTS.md and the files of agents/ are written in French, and"
 		+ "AGENTS.md cites it"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AgentInstructionsAreWrittenInFrench"
 	RATIONALE "The migration left five points in the body of its pull request, where no session"
 		+ "reads them; the owner ruled them while refining this task on 2026-09-25. The severity"
 		+ "prop of ValidationMessagesList.tsx only colours the title: the review of pull request 37"

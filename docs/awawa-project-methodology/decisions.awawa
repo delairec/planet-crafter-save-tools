@@ -148,6 +148,7 @@ DECISION BothMessageListsShareOneRendering
 	SOURCE "Review"
 		PR 37
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
+		PR 179
 
 DECISION UiSaveManagerHasOneUiErrorIdiom
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -967,6 +968,7 @@ DECISION MockIsolationIsAGlobalPreload
 	SOURCE "Review of T9"
 		PR 61
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
+		PR 179
 
 DECISION NoSaveIsCommittedToThePublicRepository
 	REJECTED "Committing a reference save: the saves carry the real names of the players"
@@ -2015,3 +2017,4 @@ DECISION AgentInstructionsAreWrittenInFrench
 	RATIONALE "The general rule puts committed documentation in English; these files are the one"
 		+ "exception, and without a decision only their own prose held it"
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
+		PR 179
