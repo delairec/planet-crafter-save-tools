@@ -1864,6 +1864,7 @@ DECISION UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
 		+ "that one"
 		REF @DECISION.ACoverageGapExemptionIsAFileDirectiveWithItsReason
 	SOURCE "Delivery of CHORE105, measured with Bun 1.4.2 on 2026-09-25"
+		PR 173
 
 DECISION ACoverageGapExemptionIsAFileDirectiveWithItsReason
 	REJECTED "A coverage-gaps severity in a fallow.toml [[overrides]] entry: fallow 3.27 and 3.28"
@@ -1891,3 +1892,4 @@ DECISION ACoverageGapExemptionIsAFileDirectiveWithItsReason
 		+ "untested module fail. A spawned module is reached by a test fallow cannot see"
 		REF @DECISION.EveryPublishedCommandHasARealProcessTest
 	SOURCE "Delivery of CHORE105, fallow 3.27.0 and 3.28.0 tried on 2026-09-25"
+		PR 173

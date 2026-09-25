@@ -809,17 +809,30 @@ TASK TEST113
 
 TASK CHORE105
 	TITLE "measure the unit test coverage and fail the CI when it drops"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun test reports line and function coverage of every module a unit test loads"
+		IMPL "package.json::\"test:coverage\": \"bun test --coverage\""
+		IMPL ".github/workflows/quality.yml::bun test --coverage"
 	SPEC "the CI test job fails when line or function coverage falls under the threshold declared"
 		+ "in bunfig.toml"
+		IMPL ".github/workflows/quality.yml::bun test --coverage"
+		IMPL "bunfig.toml::coverageThreshold"
 	SPEC "the declared threshold equals the floor measured on the delivering branch, rounded down"
 		+ "to the unit"
+		IMPL "bunfig.toml::coverageThreshold = { lines = 0.29, functions = 0.0 }"
 	SPEC "the coverage report of the CI test job appears in the run summary"
+		IMPL ".github/workflows/quality.yml::GITHUB_STEP_SUMMARY"
 	SPEC "the fallow job fails on a source file or export outside ui-save-manager that no test"
 		+ "reaches statically"
+		IMPL "fallow.toml::coverage-gaps ="
+		IMPL ".github/workflows/quality.yml::args: --coverage-gaps"
 	SPEC "only a module a test runs as a spawned process, or a type declaration file, is exempt"
 		+ "from that check, declared in fallow.toml with its reason"
+		IMPL "fallow.toml::fallow-ignore-file coverage-gaps -- <reason>"
+		IMPL "packages/cli-merge/cli/merge-cli.js::fallow-ignore-file coverage-gaps --"
+		IMPL "scripts/release/release.ts::fallow-ignore-file coverage-gaps --"
+		IMPL "packages/shared-save-processing/jsonSourceTextAccess.d.ts::coverage-gaps --"
+	DELIVERED_BY 173
 	RATIONALE "Nothing measures coverage today: the CI test job runs plain bun test. Measured on"
 		+ "2026-09-23 with Bun 1.4.2: 94.72 % of functions and 97.36 % of lines over the 155"
 		+ "modules the 858 unit tests load, scripts/ the lowest (generate-scenario-fixtures.ts at"
