@@ -21,8 +21,10 @@ bun run release
 ```
 
 Run on a branch cut from an up-to-date `master`. For each tool that changed, it raises the `version` of its
-`package.json`, adds an entry listing the commits it carries to its `CHANGELOG.md`, and refreshes `bun.lock`. Open
-the pull request it names, `chore(release): …`, against `master`.
+`package.json`, adds an entry to its `CHANGELOG.md`, and refreshes `bun.lock`. Open the pull request it names,
+`chore(release): …`, against `master`. The version counts every commit the tool carries, but its entry lists only the
+`feat` and `fix` commits and those whose subject carries a `!`; a version with none of them reads
+`- Maintenance changes only`.
 
 ```
 bun run release:tag
