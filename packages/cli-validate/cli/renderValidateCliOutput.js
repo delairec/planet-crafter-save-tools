@@ -3,10 +3,6 @@
 import {formatHelp} from 'shared-platforms/cliArguments.js';
 import {VALIDATE_CLI_ARGUMENTS} from './parseValidateCliArguments.js';
 
-/**
- * Rendering for the validate CLI. The verdict of a valid save goes to stdout, every diagnostic to stderr.
- */
-
 export function renderHelp() {
   console.log(formatHelp(VALIDATE_CLI_ARGUMENTS));
 }
@@ -43,7 +39,7 @@ export function renderSaveIsValid(filePath) {
  * @param {SaveValidationMessageViewModel[]} errors
  */
 export function renderSaveErrors(filePath, errors) {
-  console.error(`✖ ${filePath} has ${errors.length} error(s):\n`);
+  console.error(`✖ ${filePath} has ${errors.length} error(s):`);
   for (const error of errors) {
     console.error(`  ${formatMessageLine(error)}`);
   }

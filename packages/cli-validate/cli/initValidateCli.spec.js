@@ -289,7 +289,7 @@ describe('Validate CLI', () => {
       await main();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ ${SAVE_FILE_PATH} has 1 error(s):\n`);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ ${SAVE_FILE_PATH} has 1 error(s):`);
     });
 
     it('should tell where in the save file each error was found', async () => {
