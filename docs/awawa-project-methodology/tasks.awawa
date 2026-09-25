@@ -761,10 +761,13 @@ TASK FIX111
 
 TASK CHORE112
 	TITLE "the fallow audit and health report cover ui-save-manager"
-	STATUS todo
+	STATUS implemented
 	SPEC "fallow.toml ignores no file of packages/ui-save-manager"
+		IMPL "fallow.toml::ignorePatterns ="
 	SPEC "fallow health run on the whole repository, without --base, exits 0 with ui-save-manager"
 		+ "in the fallow perimeter"
+		IMPL "fallow-coverage-gaps.toml::packages/ui-save-manager/src/routes/*.tsx"
+	DELIVERED_BY 181
 	RATIONALE "Measured on 2026-09-25 with the whole package brought in, src/app.tsx,"
 		+ "src/routes/*.tsx, e2e/*.e2e.ts and scripts/*.ts as entries: dead-code reports no issue;"
 		+ "fallow health on the whole repository exits 1 on one function, Home in"

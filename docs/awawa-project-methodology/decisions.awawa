@@ -1933,6 +1933,8 @@ DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
 		REF @DECISION.EveryPublishedCommandHasARealProcessTest
 	SOURCE "Delivery of CHORE105 and its review, fallow 3.27.0 and 3.28.0 tried on 2026-09-25"
 		PR 173
+	SOURCE "Extended to ui-save-manager by the delivery of CHORE112, measured on 2026-09-25"
+		PR 181
 
 DECISION ADroppedSaveIsSelectedThroughItsFileInput
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
