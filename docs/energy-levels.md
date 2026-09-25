@@ -120,23 +120,6 @@ added, `TreePlanter3` included, and shows that `ButterflyDisplayer1`, `FishDispl
 energy level until `@TASK.FEAT127` declares the machines that draw none apart from it; the underestimate the
 unpriced five were feared to cause does not exist.
 
-**Values per game release: search of 2026-09-25.** The energy values of the game change between releases, and a
-save carries none: its declared version, resolved against the releases table
-(`packages/shared-save-processing/gameReleases.json`), is the only sign of which values apply. A row of the energy
-table may therefore name, under `fromRelease`, the release from which its value holds; a row without it holds from
-the first release, and `bun run validate:tables` refuses a `fromRelease` the releases table does not name. The
-search read the 265 Steam announcements of the game and the revision history of the 36 wiki pages carrying a machine
-infobox. Within the supported releases it established one change: v2.100 (Steam announcement of 2026-07-15,
-repeated by the Skeo launch announcement of 2026-09-01) lowered the draw of `OreBreaker1`, so the 2.6 kW the wiki
-printed on 2025-10-11 holds before 2.100 and 0.6 kW from 2.100, and 2.100 joins the releases table. The "was 2.6"
-above was wrong for 2.103 only. The fusion generator and T3 tree spreader changes of 2022 predate 1.618; the wiki
-edits to the drone station, the ecosystem and the T3 ore extractor carry no patch note that dates them. The wiki
-printed 1.2 kW and 48 kW for `ToxicWaterCollector1` and `ToxicWaterCollector2` from 2026-03-02, after 0.8 kW and
-60 kW at the page's creation on 2025-11-20; no patch note dates that edit and game 2.103 reads 0.8 kW and 60 kW, so
-the two keep a single row each. The Power section names the game release whose values it applies. No surface shows
-the energy of a merged save: loaded afterwards, it is a displayed save declaring the version of the save whose
-format it writes.
-
 **Source registry.** Each value the 2026-09-07/09 cross-check added carries, in the `source` field of its row, the
 wiki page it was read from (game v2.102). Earlier values are sourced by the wiki pages listed in EN-BASE-2 above.
 
