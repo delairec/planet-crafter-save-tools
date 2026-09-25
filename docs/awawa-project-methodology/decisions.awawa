@@ -1944,10 +1944,16 @@ DECISION AnIconOnlyButtonIsNamedByItsTooltip
 		IMPL "packages/ui-save-manager/src/components/structure/IconButton.tsx::aria-labelledby={tooltipId}"
 		IMPL "packages/ui-save-manager/src/styles/buttons.css::.icon-button:focus-within .tooltip"
 		ENFORCED_BY "packages/ui-save-manager/e2e/drop.e2e.ts::should show its label as a tooltip"
+	SPEC "An icon-only button is drawn without a fill, in the muted text color and at the size of"
+		+ "its icon, so that it stays secondary to the filled buttons that run an action"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::.icon-button button {"
 	REJECTED "The title attribute: it never shows on keyboard focus nor on touch"
 	REJECTED "An aria-label beside a separate tooltip text: the two copies of one label drift apart"
 		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
 	REJECTED "The label printed next to the icon: the owner wants the swap button to show only its"
 		+ "icon"
+	REJECTED "The filled primary style of the other buttons: at the height of two file inputs it"
+		+ "reads as the main action and breaks the harmony of the merge section, in the owner's"
+		+ "words"
 	SOURCE "Owner review of the swap button"
 		PR 172
