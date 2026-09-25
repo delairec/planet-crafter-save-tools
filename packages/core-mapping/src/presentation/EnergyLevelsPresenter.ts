@@ -17,9 +17,7 @@ import {
   energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
   energyLevelsSectionSubmergedMachinesDisclaimer,
-  resolveEnergyLevelsSectionUnnamedPlanetName,
-  energyLevelsSectionWorkInProgressIcon,
-  energyLevelsSectionWorkInProgressLabel
+  resolveEnergyLevelsSectionUnnamedPlanetName
 } from "./messages/energyLevelsSectionMessages.js";
 
 export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
@@ -54,13 +52,11 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
           },
           {
             header: energyLevelsSectionConsumptionTitle,
-            values: [formatNumber(planet.consumption) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`],
-            annotation: {icon: energyLevelsSectionWorkInProgressIcon, label: energyLevelsSectionWorkInProgressLabel}
+            values: [formatNumber(planet.consumption) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`]
           },
           {
             header: energyLevelsSectionAvailableTitle,
-            values: [formatNumber(planet.available) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`],
-            annotation: {icon: energyLevelsSectionWorkInProgressIcon, label: energyLevelsSectionWorkInProgressLabel}
+            values: [formatNumber(planet.available) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`]
           }
         ]
       },

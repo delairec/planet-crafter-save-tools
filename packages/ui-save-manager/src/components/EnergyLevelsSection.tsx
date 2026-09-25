@@ -3,7 +3,6 @@ import FieldsGroup from "./structure/FieldsGroup";
 import FieldsGroupGrid from "./structure/FieldsGroupGrid";
 import SectionState from "./structure/SectionState";
 import Disclaimer from "./structure/Disclaimer";
-import Icon from "~/components/Icon";
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {
   energyLevelsSectionBoostedMachinesLabel,
@@ -15,9 +14,7 @@ import {
   energyLevelsSectionQuantityLabel,
   energyLevelsSectionTitle,
   energyLevelsSectionTotalLabel,
-  energyLevelsSectionUnitLabel,
-  energyLevelsSectionWorkInProgressIcon,
-  energyLevelsSectionWorkInProgressLabel
+  energyLevelsSectionUnitLabel
 } from "~/messages/energyLevelsSectionMessages";
 
 interface EnergyLevelsProps {
@@ -62,7 +59,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
                 />
 
                 <FieldsGroupGrid
-                  title={<>{energyLevelsSectionConsumptionTitle} <Icon content={energyLevelsSectionWorkInProgressIcon}/> {energyLevelsSectionWorkInProgressLabel}</>}
+                  title={energyLevelsSectionConsumptionTitle}
                   items={planet.consumptionBreakdown}
                   itemLabel={(row) => row.label}
                   columns={(row) => [
