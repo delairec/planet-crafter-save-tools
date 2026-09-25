@@ -30,8 +30,7 @@ COMMAND MergeSaves
 
 COMMAND ValidateSave
 	INVOCATION "bun run validate"
-	DESC "reads every save of the input directory and reports, located, what does not meet the"
-		+ "format"
+	DESC "reads the one save named by --file and reports, located, what does not meet the format"
 	IMPL "packages/cli-validate/cli/validate-cli.js::initValidateCli(platform, cliArguments,"
 		+ "cliManifest)"
 	APPLIES @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
