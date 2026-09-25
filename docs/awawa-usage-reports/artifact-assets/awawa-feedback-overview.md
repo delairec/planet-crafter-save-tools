@@ -1,19 +1,19 @@
-*Feedback for the awawa dev team · awawa 2.7.0 · 2026-09-22*
+*Feedback for the awawa dev team · awawa 2.7.0 · 2026-09-25*
 
 # awawa feedback: the overview
 
 One project — a seven-package monorepo worked daily by AI agents — moved its specification into an awawa corpus and
-reported what it met, six times in under two weeks. This page gathers the six reports into one list: **one proposed
+reported what it met, seven times in two weeks. This page gathers the seven reports into one list: **one proposed
 remediation per row, and facing it every defect or gap it would close**, whatever report raised it. Only what is
 yours to handle is kept — the binary, the schema language, the manual, the skills and the distribution. What was
 ours — our method, our starter, our conduct — stays in the reports.
 
-- **6** — reports, 2026-09-12 to 2026-09-22, all on awawa 2.7.0
-- **73** — defects or gaps raised about the tool, 7 of them with nothing asked
-- **50** — remediations once the repetitions are merged
-- **16** — remediations raised by two reports or more
+- **7** — reports, 2026-09-12 to 2026-09-25, all on awawa 2.7.0
+- **80** — defects or gaps raised about the tool, 7 of them with nothing asked
+- **53** — remediations once the repetitions are merged
+- **18** — remediations raised by two reports or more
 
-## The six reports
+## The seven reports
 
 | Code | Report | Date | What it measured |
 |---|---|---|---|
@@ -23,10 +23,11 @@ ours — our method, our starter, our conduct — stays in the reports.
 | IDE | IDE plugins report | 2026-09-16 | a read-only table view built on the `--json` replies, under the rule that the plugin holds no logic |
 | M3 | Migration 3 | 2026-09-18 | a product specification added as a second area of the same workspace: 12 sessions, 60 probe lines, 404 `awawa` calls |
 | CTX | Context savings example | 2026-09-22 | what one session loaded into the agent's context by reading the corpus and its instructions, in lines of output, and the levers that would lower it |
+| M4 | Migration 4 | 2026-09-25 | the second walk of the starter, on its version 2: a corpus built from scratch for 23 files of agent instructions, 478 statements replaced by 237 entities |
 
 A reference reads « report · number »: `F·02` is defect 02 of the field report, `M3·5` defect 5 of section 5 of
-Migration 3. Migration 1 and the context report number nothing; `M1·6` is the sixth row of the « What went wrong »
-table of Migration 1, `CTX·1` the first row of the « Additional levers » table of the context report.
+Migration 3. Migration 1, the context report and Migration 4 number nothing; `M1·6` is the sixth row of the « What went wrong »
+table of Migration 1, `CTX·1` the first row of the « Additional levers » table of the context report, `M4·11` the eleventh row of the defect table of Migration 4.
 
 ## Where to start
 
@@ -38,8 +39,8 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
    tool is the one that most often reads wrong.
 3. **Give a type its file, and `new` a destination** (R16, R17) — the last routine reason an agent opens a corpus
    file with a text tool: 4 of 11 field reports, 3 entities misfiled, and still 5 `tail` reads in the last walk.
-4. **Let listings read what the schema resolves** (R6, R7) — a `DEFAULT` is honoured by gating and by no listing:
-   256 of 275 entities are counted under `(none)`, and « the active ones » cannot be selected.
+4. **Let listings read what the schema resolves** (R6, R7) — three reports. A `DEFAULT` is honoured by gating and
+   by no listing: 256 of 275 entities are counted under `(none)`, and `--where STATUS==active` selects 0 of 16 rules.
 5. **Let a slot take several types** (R23) — two reports. Today it leaves a provenance field untyped or split in
    two, and makes the 11 to 13 rules about the game unwritable under a required `anchor`.
 
@@ -51,12 +52,12 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R2 | The incoming footer splits its count by gating — `BLOCKED_BY (root, 0 live, 4 archived)` | `F·01` closed referrers are counted with the live ones, 10 / 11 · `M2·21` a todo task reads as blocked by a question already ruled | F, M2 |
 | R3 | `context` prints the `STATUS` and the archive date of a suppressed target, or expands it on request | `M3·4` an active entity citing an archived one gets `// suppressed: @X` and loses its body, with no reason and no date | M3 |
 | R4 | `context` opens on a one-line summary: edges in, edges out, anchors | `F·14` a package of twelve lines for a disconnected entity looks like any other; a whole area stayed disconnected for days | F |
-| R5 | The `skipped` footer prints counts; the enumeration moves to `--json` | `M3·13` three `skipped` lines are 20.7 % of the largest package of the corpus, 3 559 of 17 154 characters | M3 |
-| R6 | `--where` reads nested fields, fields declared only in a `WHEN` block, and `DEFAULT` values | `M2·2` a default cannot be selected on · `M2·9` a nested field is « not a field of » its type · `M2·19` a `WHEN`-only field is unknown until one entity writes it · `M2·17` an edge defaulted by `DEFAULT @X` is invisible to `refs`, `status` and `--where` | M2 |
-| R7 | `status` counts a defaulted `STATUS` under its default | `M2·2` `status` prints `(none)` for an entity that omits a defaulted `STATUS` · `M3·12` the `active` column is 0 on every row, 256 of 275 entities under `(none)` | M2, M3 |
+| R5 | The `skipped` and `not expanded` footers print counts, never a name the body already printed; the enumeration moves to `--json` | `M3·13` three `skipped` lines are 20.7 % of the largest package of the corpus, 3 559 of 17 154 characters · `M4·18` at `--depth 1` the `not expanded` footer names again the 155 rules and 5 packages the body printed, 22 518 bytes for the entry package · `M4·19` `--skip` on a reference field saves 24 % of the package, its footer still naming the 160 skipped targets | M3, M4 |
+| R6 | `--where` reads nested fields, fields declared only in a `WHEN` block, and `DEFAULT` values | `M2·2` a default cannot be selected on · `M2·9` a nested field is « not a field of » its type · `M2·19` a `WHEN`-only field is unknown until one entity writes it · `M2·17` an edge defaulted by `DEFAULT @X` is invisible to `refs`, `status` and `--where` · `M4·11` `--where STATUS==active` selects 0 of 16 rules whose `STATUS` is the default, while `WHEN STATUS active` fires on them | M2, M4 |
+| R7 | `status` counts a defaulted `STATUS` under its default | `M2·2` `status` prints `(none)` for an entity that omits a defaulted `STATUS` · `M3·12` the `active` column is 0 on every row, 256 of 275 entities under `(none)` · `M4·11` `status .` prints `active 0` and `(none) 10` | M2, M3, M4 |
 | R8 | `--where` matches a substring and the identity — `FIELD~=text`, `NAME~=text` | `F·11` equality alone cannot query a free-text field · `M1·8` four grammars of `SOURCE` in two days, none selectable · `M2·13` no listing by name prefix | M1, F, M2 |
 | R9 | `status TYPE --by FIELD` prints one count per declared value, zero included | `M3·11` a declared enum value carried by 0 of 21 entities read like a value in use through four steps and four reviews | M3 |
-| R10 | `status TYPE --json --fields` returns the field values of every entity of a type; `show` takes several targets | `IDE·01` a table of 232 entities costs 232 walks of the workspace, 4.4 s · `M3` usage: 35 `show` invocations in one audit session | IDE, M3 |
+| R10 | `status TYPE --json --fields` returns the field values of every entity of a type; `show` takes several targets | `IDE·01` a table of 232 entities costs 232 walks of the workspace, 4.4 s · `M3` usage: 35 `show` invocations in one audit session · `M4·4` an audit of 220 entities needs one `show --json` per entity from a script | IDE, M3, M4 |
 | R11 | `show TYPE --json --resolved` returns the schema of a type as resolved — `INCLUDE`, `WHEN` and wildcard fields | `IDE·02` the resolved schema is reachable only through an entity of the type, so a type at zero entities has no columns | IDE |
 | R12 | A reachable target for the wildcard entry — a bare `show SCHEMA`, or a documented escape for `*` | `F·12` `@SCHEMA.*` is listed and no target reaches it: the one entry that can only be read by opening the file | F |
 | R13 | `show TARGET --json` returns typed atoms — kind, text, unescaped value, resolved target | `IDE·03` atoms come back as source text, so a view must carry the token rules itself | IDE |
@@ -90,6 +91,8 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R30 | `WHEN` inside a `FIELDSET`, or the limit documented next to `L023` | `M1·4` a ladder shared by three types cannot be declared once with its `GATE` blocks | M1 |
 | R31 | A `NAME` shape may depend on the entity's fields — under a `WHEN`, or built from fields (`NAME {PROJECT}{NUMBER}`) | `M1·5` a name prefix cannot follow a field, so `KIND` ↔ prefix stays a discipline · `M2·14` a name repeats two fields and nothing checks that the three agree | M1, M2 |
 | R33 | An `EXTERNAL` type keeps `refs`, `show` and its `NAME` shape on references | `M2·16` a source type cannot be external without losing its hub role | M2 |
+| R52 | A type-level `FIELD` redeclaring a field of `SCHEMA *` raises `L013`, or the shadowing is documented beside that of `GATE` and `NAME` | `M4·10` `FIELD DESC` redeclared `REQUIRED` on one type lints clean and replaces the wildcard's declaration, against the guide's « a field arriving twice, however it arrives, is L013 » | M4 |
+| R53 | A string can be marked literal — an escape, or a field option — so `L025` skips an entity mention it shows as text | `M4·24` an `EXAMPLE` of a commit subject citing `@RULE.x` is `L025`; only a placeholder `@RULE.<name>` passes | M4 |
 
 ## Anchors, archive, consistency
 
@@ -99,6 +102,7 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R35 | A lint option resolves anchors against the files git tracks | `M3·8` an anchor into a gitignored file lints clean for its author and is `L016` in CI and in a fresh clone | M3 |
 | R36 | A lint mode reads through `GATE suppressed`; failing that, the manual says what archiving silences | `M3·3` an archived entity is checked for nothing but its archive block: `L006`, `L007`, `L004` and `L016` all silent, so an entity archived unclean is never reported again | M3 |
 | R37 | A mechanical proxy for contradiction: warn when the anchor of a non-implemented `SPEC` intersects the anchor of an implemented one and no reference ties the two | `F·04` two entities in force contradict each other and `lint --strict` exits 0 — the most expensive consequences observed, 4 / 11 | F |
+| R54 | A type that narrows `STATUS` refuses a value it leaves out, the wildcard's suppressing value included: the wildcard's `WHEN` block for that value does not fire on it | `M4·16` `SCHEMA SESSION` › `FIELD STATUS active` refuses `STATUS foo` and accepts `STATUS archived` in silence, its `GATE suppressed` silencing the `L007` | M4 |
 
 ## The workspace
 
@@ -143,13 +147,13 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 ## What holds
 
 Every report lists what worked on the same footing as what did not: 8 mechanisms in Migration 1, 18 in the field
-report, 25 in Migration 2, 6 in the IDE report, 24 in Migration 3. Three held in all eleven reports of the field
+report, 25 in Migration 2, 6 in the IDE report, 24 in Migration 3; Migration 4 lists defects only. Three held in all eleven reports of the field
 report: anchor and reference integrity, a required `REJECTED` on a decision, and closure integrity. The remediations
-above are asked of a tool that carried the method through three migrations.
+above are asked of a tool that carried the method through four migrations.
 
 ---
 
-*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example,
+*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example and on 2026-09-25 with Migration 4,
 all written on awawa 2.7.0. One defect was probed again for this
 page and withdrawn, `M2·15`; every other figure keeps the perimeter of the report it comes from, and a claim wrong
 at the source is wrong here.*
