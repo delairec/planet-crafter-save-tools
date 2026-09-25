@@ -1933,3 +1933,19 @@ DECISION AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Ruling taken while delivering FEAT124 on 2026-09-25, from the owner ruling that only a"
 		+ "price found is stored"
 		PR 178
+
+DECISION TheSubmergedMachineWarningIsAStaticLabelOfThePowerSection
+	SPEC "The submerged machine warning is a constant of the ui-save-manager messages, printed"
+		+ "unconditionally under the Power title, once for the whole section and never per planet"
+		IMPL "packages/ui-save-manager/src/messages/energyLevelsSectionMessages.js::energyLevelsSectionSubmergedMachinesWarning"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<p>{energyLevelsSectionSubmergedMachinesWarning}</p>"
+	REJECTED "A sentence built by the core-mapping presentation and carried by the ViewModel: no"
+		+ "code of the save is translated, the warning holds whatever the save says"
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+	REJECTED "One warning per planet heading: the same sentence repeated under every planet"
+	REJECTED "Printing the warning only when a planet carries a machine that may be submerged: the"
+		+ "save cannot tell a submerged machine from one on dry ground"
+		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT128
+	SOURCE "Ruled by the FEAT128 agent while delivering the task"

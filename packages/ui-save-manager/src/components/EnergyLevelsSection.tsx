@@ -12,6 +12,7 @@ import {
   energyLevelsSectionOptimizersTitle,
   energyLevelsSectionProductionTitle,
   energyLevelsSectionQuantityLabel,
+  energyLevelsSectionSubmergedMachinesWarning,
   energyLevelsSectionTitle,
   energyLevelsSectionTotalLabel,
   energyLevelsSectionUnitLabel,
@@ -29,6 +30,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
       {(energyLevels) => (
         <div>
           <h3>{energyLevelsSectionTitle}</h3>
+          <p>{energyLevelsSectionSubmergedMachinesWarning}</p>
           <For each={energyLevels().planets}>
             {(planet) => (
               <div>

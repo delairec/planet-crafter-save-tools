@@ -10,3 +10,4 @@ export const energyLevelsSectionContributionLabel = 'Contribution';
 export const energyLevelsSectionQuantityLabel = 'Quantity';
 export const energyLevelsSectionUnitLabel = 'Unit';
 export const energyLevelsSectionTotalLabel = 'Total';
+export const energyLevelsSectionSubmergedMachinesWarning = 'Submerged machines may distort the computed available energy.';
