@@ -990,6 +990,7 @@ DECISION NoSaveIsCommittedToThePublicRepository
 		PR 45
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25: the generated scenario saves need not"
 		+ "be committed"
+		PR 183
 
 DECISION AScenarioReadsTheDownloadThroughTheNodeFileApi
 	REJECTED "Settling for the presence of the link and its file name"
@@ -1072,6 +1073,7 @@ DECISION ScenarioFixturesAreGeneratedAndReplayedByAGuard
 	SOURCE "T41"
 		PR 81
 	SOURCE "Design settled while refining TEST122 on 2026-09-25"
+		PR 183
 
 DECISION AGuardRefusesLocatorsTheScreenDoesNotShow
 	REJECTED "Recognising a CSS selector by the shape of its literal: getByRole('button', {name:"
@@ -1169,6 +1171,7 @@ DECISION AnAnchorNamesAFileTrackedByGit
 		PR 146
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25: the anchors move off the generated"
 		+ "scenario saves"
+		PR 183
 
 DECISION AGameReleaseIsCitedAsASource
 	SPEC "What was observed in the game is sourced by a GAME_RELEASE entity named by the version"
