@@ -162,3 +162,12 @@ URL WikiToxicWaterCollectorsEdited
 	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=18222&prop=wikitext&format=json"
 	DESC "fandom wiki page Toxic Water Collectors, revision of 2026-03-02 changing T1 to -1.2 kW"
 		+ "and T2 to -48 kW without a comment"
+
+URL CompanionAppGameDataV2103
+	LOCATION "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"
+	DESC "item data of The Planet Crafter v2.103 exported from the game for a community companion"
+		+ "app, commit of 2026-09-22; stats.energy is the unitGenerationEnergy of each group, in"
+		+ "kW, negative for a consumer"
+	SOURCE "Read on 2026-09-25 for FEAT124, the 541 names of the group without a known energy level"
+		+ "looked up in it"
+		PR 178
