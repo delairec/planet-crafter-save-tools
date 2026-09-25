@@ -71,15 +71,16 @@ HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 		REF @URL.SteamNewsOfThePlanetCrafter
 		REF @GAME_RELEASE.2.102
 
-HYPOTHESIS TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
-	DESC "TreePlanter3, PodUnderground and RocketAnimals2 neither draw nor produce power in game"
-		+ "2.103"
+HYPOTHESIS PodUndergroundAndRocketAnimals2DrawNoPower
+	DESC "PodUnderground and RocketAnimals2 neither draw nor produce power in game 2.103"
 		REF @GAME_RELEASE.2.103
 	UNTIL "the observation in game"
-	RATIONALE "Their predecessors have no row in the energy table either: TreePlanter, TreePlanter2"
-		+ "and RocketAnimals1 carry no energy value, and the three infoboxes of TreePlanter3,"
-		+ "PodUnderground and RocketAnimals2 print no energy field, so the missing value is read as"
-		+ "these machines drawing or producing none rather than as an undocumented cost"
+	RATIONALE "RocketAnimals1, the predecessor of RocketAnimals2, carries no energy value either,"
+		+ "and the infoboxes of PodUnderground and RocketAnimals2 print no energy field, so the"
+		+ "missing value is read as these machines drawing or producing none rather than as an"
+		+ "undocumented cost. TreePlanter3 left the hypothesis once the game data export priced it"
+		+ "at 85 kW and its predecessor TreePlanter at 40 kW"
+		REF @URL.CompanionAppGameDataV2103
 		REF @DATATABLE.EnergyLevels
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement, a hypothesis of no power is recorded instead"
@@ -88,6 +89,16 @@ HYPOTHESIS TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
 		REF @URL.WikiFurniture
 		REF @URL.WikiRockets
 		REF @URL.WikiBaseBuilding
+	SOURCE "Owner's ruling of 2026-09-25 on the question the game data export raised: the"
+		+ "hypothesis is narrowed to the two machines the export does not price, TEST125 keeping"
+		+ "TreePlanter3 in its fixture"
+		PR 178
+	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save: the HUD of Skeo and of"
+		+ "Toxicity matches the computed consumption with PodUnderground and RocketAnimals2 counted"
+		+ "at 0 kW; the hypothesis becomes a rule once TEST125 attests it on a public fixture"
+		PR 178
+		REF @GAME_RELEASE.2.103
+		REF @PROJECT.DNC
 
 HYPOTHESIS TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
 	UNTIL "a save carrying Phytoplankton2 or Phytoplankton3 is loaded in 2.102 or later and saved"

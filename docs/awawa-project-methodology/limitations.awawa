@@ -1,26 +1,39 @@
 LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
-	SYMPTOM "Eleven placed machines have no known energy level, among them TradePlatform1 (29"
-		+ "placed), LightBoxMedium (28), ButterflyDisplayer1 (18), Megadome1 (7),"
-		+ "HologramGenerator, Server1, PlanetViewer1, FishDisplayer1, CookingStation1,"
-		+ "FrogDisplayer1 and the related displays and furniture; the displayed consumption of a"
-		+ "game placing Megadome1 or LightBoxMedium, the two that probably consume, is"
-		+ "underestimated"
-	UNTIL "a game data source giving the energy values of these machines is available"
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
+	SYMPTOM "Five placed machines have no known energy level: ButterflyDisplayer1 (14 placed),"
+		+ "FishDisplayer1 (3), FrogDisplayer1 (2), Server1 (2) and CookingStation1 (2); the"
+		+ "displayed consumption of a game placing one of them is underestimated if the machine"
+		+ "draws power in game"
+	UNTIL "a source prices these machines, or a reading in game shows they draw no power"
 	SEEN_IN "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
 	SEEN_IN "packages/core-mapping/src/domain/energyLevels.json::GeneticManipulator1"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RATIONALE "The wiki is the only source of values and it is silent on these machines, and no"
-		+ "task can lift the limitation without a game data source the project does not have. Pull"
-		+ "request 43 closed most of the gap: 23 candidates priced or excluded with a reason, six"
-		+ "*T* variants removed, fourteen placed gId added under an attestation rule, Incubator2"
-		+ "and InsideLamp2 sourced. GeneticManipulator1 carries a suspect value too: its 117.5 kW"
-		+ "predate the wiki cross-check of that pull request, no page attests them, and the gId"
-		+ "changed name on that occasion"
+	RATIONALE "The wiki prints no energy field for these machines, and the game data export prints"
+		+ "0 for them, a value it writes for any world object without an energy field, so neither"
+		+ "source prices them. The game data search of 2026-09-25 priced the six other placed"
+		+ "machines the limitation used to list, TradePlatform1, LightBoxMedium, Megadome1,"
+		+ "HologramGenerator, PlanetViewer1 and FountainBig, which is why the name counts eleven"
+		+ "and the list five. Pull request 43 closed most of the earlier gap: 23 candidates priced"
+		+ "or excluded with a reason, six *T* variants removed, fourteen placed gId added under an"
+		+ "attestation rule, Incubator2 and InsideLamp2 sourced. GeneticManipulator1 carries a"
+		+ "suspect value too: its 117.5 kW predate the wiki cross-check of that pull request, no"
+		+ "page attests them, and the gId changed name on that occasion"
+		REF @URL.CompanionAppGameDataV2103
+		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Private context file known-issues/tables-d-energie-incompletes.md, at tag"
 		+ "pcst/before-awawa"
 		REF @PROJECT.DNC
 	SOURCE "Found on 2026-09-06, reduced at the merge of pull request 43"
 		PR 43
+	SOURCE "Reduced to the placed machines no source prices by the game data search of 2026-09-25,"
+		+ "placed counts read in the six reference saves"
+		REF @URL.CompanionAppGameDataV2103
+	SOURCE "Archived on the owner's reading in game 2.103 of 2026-09-25: the five machines draw no"
+		+ "power, so the consumption of a game placing them is not underestimated"
+		PR 178
+		REF @GAME_RELEASE.2.103
+		REF @PROJECT.DNC
 
 LIMITATION TheHydrationFallbackHasNoScenario
 	SYMPTOM "Of the three loading states of the page, the hydration fallback alone has no"
@@ -128,3 +141,25 @@ LIMITATION AVersionTagCreatesNoGitHubRelease
 	SOURCE "Asked by the owner after the first release, 0.1.0, and kept as a limitation so the"
 		+ "question can be reopened when the need appears"
 		PR 165
+
+LIMITATION SubmergedMachinesAreCountedAsDrawingPower
+	SYMPTOM "a machine placed under water draws no power in game, but the displayed consumption"
+		+ "counts it at its base level, so the available energy is underestimated"
+	WORKAROUND "a warning in the energy section that submerged machines may distort the computed"
+		+ "available energy"
+		REF @TASK.FEAT128
+	UNTIL "the save records whether a machine is under water or running"
+	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private consumption()"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "The save stores the position of a machine but neither the water level nor whether"
+		+ "the machine runs. The water level differs from lake to lake and rises with the"
+		+ "terraformation, so no rule on the height tells a submerged machine from one on dry"
+		+ "ground: on Prime, machines standing 14 to 20 meters high on dry ground draw their full"
+		+ "level while the submerged drills stand at 13"
+	SOURCE "Owner's reading in game on 2026-09-25 of the private save Custom-2-max-data: on Prime"
+		+ "the HUD prints a consumption of 19146.3 kW where the tool computes 19311.8 kW, and the"
+		+ "165.5 kW gap is exactly one OreExtractor2 and three Drill0 placed under a lake, which"
+		+ "the owner found submerged; the production matched to the kilowatt"
+		PR 178
+		REF @GAME_RELEASE.2.103
+		REF @PROJECT.DNC
