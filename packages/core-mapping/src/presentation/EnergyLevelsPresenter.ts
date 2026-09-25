@@ -17,6 +17,7 @@ import {
   energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
   energyLevelsSectionSubmergedMachinesDisclaimer,
+  resolveEnergyLevelsSectionGameReleaseNote,
   resolveEnergyLevelsSectionUnnamedPlanetName
 } from "./messages/energyLevelsSectionMessages.js";
 
@@ -37,6 +38,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
   displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void {
     this._viewModel = {
       submergedMachinesDisclaimer: energyLevelsSectionSubmergedMachinesDisclaimer,
+      gameReleaseNote: resolveEnergyLevelsSectionGameReleaseNote(energyLevels.gameRelease),
       planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
     };
   }

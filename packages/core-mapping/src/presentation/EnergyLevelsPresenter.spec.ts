@@ -22,6 +22,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [{
         planetId: 1,
         production: 80_000,
@@ -37,6 +38,7 @@ describe('EnergyLevelsPresenter', () => {
     expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>(
       {
         submergedMachinesDisclaimer: 'Submerged machines may distort the computed available energy.',
+        gameReleaseNote: 'Values of game release 2.102',
         planets: [{
           planetId: 'Planet 1',
           energyLevels: {
@@ -69,6 +71,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [
         {
           planetId: 1,
@@ -101,6 +104,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [
         {
           planetId: 1,
@@ -133,6 +137,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [{
         planetId: 1,
         production: 590,
@@ -176,6 +181,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [{
         planetId: 1,
         production: 590,

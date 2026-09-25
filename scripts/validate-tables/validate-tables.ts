@@ -1,6 +1,19 @@
 import Ajv from 'ajv';
+import {readFileSync} from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+
+const REPOSITORY_ROOT = path.join(import.meta.dir, '..', '..');
+
+interface TableColumn {
+  table: string;
+  column: string;
+}
+
+function readTableColumn({table, column}: TableColumn): unknown[] {
+  const rows: Record<string, unknown>[] = JSON.parse(readFileSync(path.join(REPOSITORY_ROOT, table), 'utf8'));
+  return rows.map((row) => row[column]);
+}
 
 export interface TableViolation {
   table: string;
@@ -18,6 +31,11 @@ function parseRowIndex(instancePath: string): number {
 
 export function findTableViolations(table: string, rows: unknown, schema: object): TableViolation[] {
   const ajv = new Ajv({allErrors: true});
+  ajv.addKeyword({
+    keyword: 'valueOfTable',
+    schemaType: 'object',
+    validate: (tableColumn: TableColumn, value: unknown) => readTableColumn(tableColumn).includes(value)
+  });
   const validate = ajv.compile(schema);
   const valid = validate(rows);
   if (valid) {

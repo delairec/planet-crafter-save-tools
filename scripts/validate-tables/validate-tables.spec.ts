@@ -58,6 +58,41 @@ describe('findTableViolations', () => {
       expect(violations).toMatchObject([{table: 'planetNamesByNumericId', row: -1}]);
     });
   });
+
+  describe('When a property names its values by a column of another table', () => {
+    const energySchema = {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          fromRelease: {valueOfTable: {table: 'packages/shared-save-processing/gameReleases.json', column: 'release'}}
+        }
+      }
+    };
+
+    it('should report no violation for a value that column holds', () => {
+      // Arrange
+      const rows = [{fromRelease: '1.618'}];
+      const noViolation: TableViolation[] = [];
+
+      // Act
+      const violations = findTableViolations('energyLevels', rows, energySchema);
+
+      // Assert
+      expect<TableViolation[]>(violations).toEqual(noViolation);
+    });
+
+    it('should report the row whose value that column does not hold', () => {
+      // Arrange
+      const rows = [{fromRelease: '1.618'}, {fromRelease: '9.999'}];
+
+      // Act
+      const violations = findTableViolations('energyLevels', rows, energySchema);
+
+      // Assert
+      expect(violations).toMatchObject([{table: 'energyLevels', row: 1}]);
+    });
+  });
 });
 
 describe('validateTables', () => {

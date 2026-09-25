@@ -1,3 +1,4 @@
+import {selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
 import {describe, expect, it} from 'bun:test';
 import {PlanetEnergyGrid} from './PlanetEnergyGrid';
 import {PlacedWorldObjectEntity} from './entities/PlacedWorldObjectEntity';
@@ -31,7 +32,8 @@ function gridOf(
   return new PlanetEnergyGrid(
     createPlanetWorldObjectsValueObject({planetId: PLANET_ID, planetName, placedWorldObjects}),
     allWorldObjects,
-    inventories
+    inventories,
+    selectEnergyLevelsOfDeclaredVersion('2.103')
   );
 }
 

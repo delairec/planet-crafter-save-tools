@@ -71,6 +71,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
               </div>
             )}
           </For>
+          <p>{energyLevels().gameReleaseNote}</p>
         </div>
       )}
     </SectionState>
