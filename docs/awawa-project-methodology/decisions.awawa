@@ -1942,7 +1942,8 @@ DECISION AnIconOnlyButtonIsNamedByItsTooltip
 	SPEC "A button that shows only its icon takes its accessible name from a tooltip element it"
 		+ "points at with aria-labelledby; the tooltip shows on hover and on keyboard focus"
 		IMPL "packages/ui-save-manager/src/components/structure/IconButton.tsx::aria-labelledby={tooltipId}"
-		IMPL "packages/ui-save-manager/src/styles/buttons.css::.icon-button:focus-within .tooltip"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::.tooltip-anchor:focus-within"
+			+ ".tooltip"
 		ENFORCED_BY "packages/ui-save-manager/e2e/drop.e2e.ts::should show its label as a tooltip"
 	SPEC "An icon-only button is drawn without a fill, in the muted text color and at the size of"
 		+ "its icon, so that it stays secondary to the filled buttons that run an action"
@@ -1956,4 +1957,31 @@ DECISION AnIconOnlyButtonIsNamedByItsTooltip
 		+ "reads as the main action and breaks the harmony of the merge section, in the owner's"
 		+ "words"
 	SOURCE "Owner review of the swap button"
+		PR 172
+
+DECISION ALabelledControlIsDescribedByItsTooltip
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	SPEC "A control that shows its own label and needs a longer explanation points at a tooltip"
+		+ "element with aria-describedby: the visible label stays its accessible name, and the"
+		+ "tooltip is read as its description"
+		IMPL "packages/ui-save-manager/src/components/structure/CheckboxField.tsx::aria-describedby={tooltipId}"
+		ENFORCED_BY "packages/ui-save-manager/e2e/merge.e2e.ts::read by a screen reader as its"
+			+ "description"
+	SPEC "The tooltip shows while the pointer rests on the control or its label and while the"
+		+ "control holds the keyboard focus, like the tooltip of an icon-only button"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::.tooltip-anchor:focus-within"
+			+ ".tooltip"
+	SPEC "The prefer-legacy checkbox of the merge section reads \"Prefer legacy format\" and its"
+		+ "tooltip says what ticking it does"
+		IMPL "packages/ui-save-manager/src/messages/mergeSectionMessages.js::mergeSectionPreferLegacyFormatDescription"
+	REJECTED "The tooltip as the accessible name, with aria-labelledby: a screen reader would read"
+		+ "the long sentence in place of the short label the page shows"
+	REJECTED "The title attribute: it never shows on keyboard focus nor on touch"
+	REJECTED "The explanation written in the label itself, as \"Write the legacy format of 1.618\""
+		+ "was: the owner wants a short label, the detail on demand"
+	RATIONALE "A sighted user reads the short label and asks for the detail; a screen reader user"
+		+ "hears the name then the description, the order the page shows them in. One tooltip"
+		+ "element serves both, as for an icon-only button, so the two never drift apart"
+		REF @DECISION.AnIconOnlyButtonIsNamedByItsTooltip
+	SOURCE "Owner review of the merge section, round 4"
 		PR 172

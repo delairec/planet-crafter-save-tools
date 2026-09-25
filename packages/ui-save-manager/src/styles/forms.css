@@ -67,6 +67,12 @@ select:focus {
     font-weight: var(--bold);
 }
 
+:root {
+    --save-file-field-label-width: 6rem;
+    --merge-slots-swap-column-width: 1.75rem;
+    --merge-slots-column-gap: 0.5rem;
+}
+
 .drop-zone {
     outline: 2px dashed transparent;
     outline-offset: -2px;
@@ -80,13 +86,13 @@ select:focus {
 
 .save-file-field-label {
     display: inline-block;
-    min-width: 6rem;
+    min-width: var(--save-file-field-label-width);
 }
 
 .merge-slots {
     display: grid;
-    grid-template-columns: auto auto;
-    gap: 1rem 0.5rem;
+    grid-template-columns: var(--merge-slots-swap-column-width) auto;
+    gap: 1rem var(--merge-slots-column-gap);
     align-items: center;
     width: fit-content;
     margin-block: 1rem;
@@ -98,9 +104,23 @@ select:focus {
 
 .merge-slots-swap {
     grid-column: 1;
+    justify-self: start;
     grid-row: 1 / span 2;
 }
 
 .merge-slots > .drop-zone {
     grid-column: 2;
+}
+
+.merge-option {
+    padding-inline-start: calc(var(--merge-slots-swap-column-width) + var(--merge-slots-column-gap) + var(--save-file-field-label-width));
+}
+
+.checkbox-field input {
+    margin: 0 0.5rem 0 0;
+}
+
+.checkbox-field .tooltip {
+    top: calc(100% + 0.5rem);
+    bottom: auto;
 }

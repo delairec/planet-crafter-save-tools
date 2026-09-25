@@ -12,7 +12,7 @@ interface IconButtonProps {
 export default function IconButton(props: IconButtonProps) {
   const tooltipId = createUniqueId();
   return (
-    <span class={`icon-button ${props.class ?? ''}`}>
+    <span class={`tooltip-anchor icon-button ${props.class ?? ''}`}>
       <button aria-labelledby={tooltipId} onClick={() => props.onClick()} disabled={props.disabled}>
         <Icon content={props.icon}/>
       </button>

@@ -30,7 +30,7 @@ button:focus-visible {
     box-shadow: 0 0 0 2px var(--neon-pink), 0 0 0 4px var(--neon-pink);
 }
 
-.icon-button {
+.tooltip-anchor {
     position: relative;
     display: inline-flex;
 }
@@ -59,13 +59,14 @@ button:focus-visible {
     background-color: var(--elevated);
     color: var(--content);
     font-size: 0.875rem;
-    white-space: nowrap;
+    width: max-content;
+    max-width: min(24rem, calc(100vw - 2rem));
     visibility: hidden;
     pointer-events: none;
 }
 
-.icon-button:hover .tooltip,
-.icon-button:focus-within .tooltip {
+.tooltip-anchor:hover .tooltip,
+.tooltip-anchor:focus-within .tooltip {
     visibility: visible;
 }
 

@@ -3,6 +3,7 @@ import {MergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesC
 import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeResultViewModel';
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';
+import CheckboxField from '~/components/structure/CheckboxField';
 import IconButton from '~/components/structure/IconButton';
 import SaveFileField from '~/components/structure/SaveFileField';
 import {yieldToPaint} from '~/lib/yieldToPaint';
@@ -11,6 +12,7 @@ import {orderDroppedSaves} from '~/lib/orderDroppedSaves';
 import {
   mergeButtonLabel,
   mergeSectionCallFailedMessage,
+  mergeSectionPreferLegacyFormatDescription,
   mergeSectionPreferLegacyFormatLabel,
   mergeSectionSaveAAreaLabel,
   mergeSectionSaveALabel,
@@ -105,8 +107,10 @@ export default function MergeSection(props: MergeSectionProps) {
                               onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/></p>
           </DropZone>
         </div>
-        <p><label><input type="checkbox" checked={preferLegacyFormat()}
-                         onChange={(event) => setPreferLegacyFormat(event.currentTarget.checked)}/>{mergeSectionPreferLegacyFormatLabel}</label>
+        <p class="merge-option">
+          <CheckboxField label={mergeSectionPreferLegacyFormatLabel}
+                         description={mergeSectionPreferLegacyFormatDescription}
+                         checked={preferLegacyFormat()} onChange={setPreferLegacyFormat}/>
         </p>
       </div>
       <button onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
