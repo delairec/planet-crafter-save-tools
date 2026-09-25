@@ -100,7 +100,8 @@ LIMITATION TheFallowAuditReadsNoFileOfUiSaveManager
 		+ "an unused file, a duplicate or a complex function of the web UI fails no quality gate"
 	WORKAROUND "run fallow by hand on a copy of fallow.toml without the ui-save-manager ignore"
 		+ "pattern and with src/app.tsx and src/routes/*.tsx as entries"
-	UNTIL @TASK.CHORE112
+	STATUS archived
+	ARCHIVED_ON 2026-09-25
 	SEEN_IN "fallow.toml::packages/ui-save-manager/**"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "The exclusion was written at the migration as a decision with no reasoning, and"
@@ -128,3 +129,29 @@ LIMITATION AVersionTagCreatesNoGitHubRelease
 	SOURCE "Asked by the owner after the first release, 0.1.0, and kept as a limitation so the"
 		+ "question can be reopened when the need appears"
 		PR 165
+
+LIMITATION ARuntimeReachedModuleEscapesTheStaticCoverageGate
+	SYMPTOM "A module a test reaches only at run time, as a process the test spawns or as the"
+		+ "production build the Playwright scenarios serve, is exempt from the coverage-gaps rule:"
+		+ "deleting the test that reaches it fails no quality gate, and fallow health estimates its"
+		+ "functions covered, Home in src/routes/index.tsx and handleDrop in DropZone.tsx included"
+	WORKAROUND "Each such module is a test root of fallow-coverage-gaps.toml, with a comment naming"
+		+ "the test that reaches it, so the modules outside the gate read as one list"
+		REF @DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile
+	UNTIL "the coverage-gaps rule of fallow takes the runtime coverage of what a test spawns;"
+		+ "fallow 3.27 applies --coverage to CRAP scores only"
+	SEEN_IN "fallow-coverage-gaps.toml::entryPoints ="
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "fallow follows static imports from the test roots, and a spawned process or"
+		+ "SolidStart, which reaches the entries, the application and the file routes through"
+		+ "virtual modules, is no import. Reaching these modules statically costs more than the"
+		+ "gap: exporting the body of a release script for a spec to import widens the script the"
+		+ "process test already reaches, a component test layer repeats the scenarios that cover"
+		+ "the web UI on three engines, and splitting Home lowers an estimate, not a defect"
+		REF @DECISION.EveryPublishedCommandHasARealProcessTest
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+	SOURCE "The review of CHORE112, the owner asking for the exemption reasons to be a limitation"
+		+ "the configuration refers to rather than comments and a decision"
+		PR 181
