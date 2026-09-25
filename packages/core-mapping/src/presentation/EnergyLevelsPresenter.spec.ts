@@ -11,6 +11,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Assert
     expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>({
+      submergedMachinesDisclaimer: 'Submerged machines may distort the computed available energy.',
       planets: []
     });
   });
@@ -35,6 +36,7 @@ describe('EnergyLevelsPresenter', () => {
     // Assert
     expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>(
       {
+        submergedMachinesDisclaimer: 'Submerged machines may distort the computed available energy.',
         planets: [{
           planetId: 'Planet 1',
           energyLevels: {
@@ -93,6 +95,38 @@ describe('EnergyLevelsPresenter', () => {
 
     // Assert
     expect(presenter.viewModel.planets.map((planet) => planet.planetId)).toEqual(['Planet 1', 'Planet 2']);
+  });
+
+  it('should present the submerged machines disclaimer once for the whole section, whatever the number of planets', () => {
+    // Arrange
+    const presenter = new EnergyLevelsPresenter();
+
+    // Act
+    presenter.displayEnergyLevels({
+      planets: [
+        {
+          planetId: 1,
+          production: 100,
+          consumption: 0,
+          available: 100,
+          productionBreakdown: [],
+          consumptionBreakdown: [],
+          optimizers: []
+        },
+        {
+          planetId: 2,
+          production: 200,
+          consumption: 0,
+          available: 200,
+          productionBreakdown: [],
+          consumptionBreakdown: [],
+          optimizers: []
+        }
+      ]
+    });
+
+    // Assert
+    expect(presenter.viewModel.submergedMachinesDisclaimer).toBe('Submerged machines may distort the computed available energy.');
   });
 
   it('should present the production and consumption breakdowns as rows', () => {

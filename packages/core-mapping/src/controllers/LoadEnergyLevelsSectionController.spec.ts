@@ -15,6 +15,7 @@ describe('LoadEnergyLevelsSectionController', () => {
 
     // Assert
     expect(viewModel).toEqual<EnergyLevelsViewModel>({
+      submergedMachinesDisclaimer: 'Submerged machines may distort the computed available energy.',
       planets: [{
         planetId: 'Planet 1',
         energyLevels: {

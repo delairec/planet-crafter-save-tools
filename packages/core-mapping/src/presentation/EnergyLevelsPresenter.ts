@@ -16,6 +16,7 @@ import {
   energyLevelsSectionConsumptionTitle,
   energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
+  energyLevelsSectionSubmergedMachinesDisclaimer,
   resolveEnergyLevelsSectionUnnamedPlanetName,
   energyLevelsSectionWorkInProgressIcon,
   energyLevelsSectionWorkInProgressLabel
@@ -26,6 +27,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
 
   constructor() {
     this._viewModel = {
+      submergedMachinesDisclaimer: energyLevelsSectionSubmergedMachinesDisclaimer,
       planets: []
     };
   }
@@ -36,6 +38,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
 
   displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void {
     this._viewModel = {
+      submergedMachinesDisclaimer: energyLevelsSectionSubmergedMachinesDisclaimer,
       planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
     };
   }
