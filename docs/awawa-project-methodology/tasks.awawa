@@ -840,18 +840,34 @@ TASK CHORE105
 	SOURCE "Owner request, refinement session of 2026-09-23"
 
 TASK FEAT114
-	TITLE "make the output of the merge and validate commands easy to read"
-	STATUS draft
-	DESC "drafted for memory, no research done: the form the output takes is settled when the task"
-		+ "is refined"
-	SPEC "the output of the merge and validate commands is judged readable by the owner on the"
-		+ "manual test plan of PR 127"
-	RATIONALE "Seen on the manual test of PR 127: every line carries the bun filter prefix, output"
-		+ "paths are printed in full, and the warnings of a folder are interleaved with those of"
-		+ "the other folders the same run processes"
+	TITLE "bun merge and bun validate print only their own lines, and the merge reports each folder"
+		+ "as one block"
+	STATUS todo
+	SPEC "bun merge and bun validate print exactly the lines of their node: counterparts: no"
+		+ "workspace prefix, no line echoing the script and no exit-code line added by the package"
+		+ "manager"
+	SPEC "bun validate prints no empty line between the error count and the errors"
+	SPEC "the merge reports each folder of the input directory as one contiguous block under a line"
+		+ "naming the folder, a skipped folder included"
+	SPEC "the merge reports the folders in name order, the same under Bun and Node"
+	SPEC "in the block of a merged folder, the line naming the written save comes last, after every"
+		+ "warning, separated from them by an empty line"
+	RATIONALE "Seen on the manual test of PR 127, measured on the public fixtures on 2026-09-25:"
+		+ "the root scripts run bun run --filter, which prefixes every line with the package and"
+		+ "script names and adds its own echo and exit-code lines that the node: scripts do not"
+		+ "print; no line of one folder falls among those of another, but the report of a folder is"
+		+ "split in three around the path written, and the folders come in directory order, which"
+		+ "differs between Bun and Node. The path of the merged save stays as the output directory"
+		+ "given joins it: stdout announces where the file is written, and the path is short with"
+		+ "the default output directory. The line naming the save comes last as the save manager"
+		+ "shows the merge report above its success message since the review of PR 127"
+		REF @COMMAND.MergeSaves
+		REF @COMMAND.ValidateSave
 	SOURCE "Owner review, 2026-09-24: the output of the two commands is hard to read, a draft task"
 		+ "with no wave"
 		PR 127
+	SOURCE "Refined with the owner on 2026-09-25: the output of the node: scripts as the reference,"
+		+ "the path unchanged, one block per folder in name order, the saved file last"
 
 TASK CHORE116
 	TITLE "declare a wave as an entity carrying its milestone and its integration branch"
