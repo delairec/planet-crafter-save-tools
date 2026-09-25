@@ -76,7 +76,7 @@ test.describe('Save display', () => {
       await expect(page.getByText('Paused', {exact: true})).toBeVisible();
     });
 
-    test('should name in the Power section the game release its version resolves to', async ({page}) => {
+    test('should name no game release when its version resolves to the current one', async ({page}) => {
       // Arrange
       await page.goto('/');
       await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
@@ -85,7 +85,27 @@ test.describe('Save display', () => {
       await page.getByRole('button', {name: 'Visualize'}).click();
 
       // Assert
-      await expect(page.getByText('Values of game release 2.102')).toBeVisible();
+      await expect(page.getByRole('heading', {name: 'Power', level: 3})).toBeVisible();
+      await expect(page.getByText('Values of game release')).toHaveCount(0);
+    });
+  });
+
+  test.describe('When a save file of a legacy game release is visualized', () => {
+    test('should name in a disclaimer, under the submerged machines one, the legacy game release its version resolves to', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
+
+      // Act
+      await page.getByRole('button', {name: 'Visualize'}).click();
+
+      // Assert
+      await expect(page.getByText('Values of game release 2.004')).toBeVisible();
+      const submergedMachinesDisclaimerTop = (await page.getByText('Submerged machines may distort the computed available energy').boundingBox())!.y;
+      const gameReleaseDisclaimerTop = (await page.getByText('Values of game release 2.004').boundingBox())!.y;
+      const firstPlanetTop = (await page.getByRole('heading', {name: 'Planet 1', level: 4}).boundingBox())!.y;
+      expect(gameReleaseDisclaimerTop).toBeGreaterThan(submergedMachinesDisclaimerTop);
+      expect(gameReleaseDisclaimerTop).toBeLessThan(firstPlanetTop);
     });
   });
 

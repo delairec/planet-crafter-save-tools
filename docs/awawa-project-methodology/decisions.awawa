@@ -2006,9 +2006,23 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	REJECTED "A fromRelease column in the energy table, one row per world object and release from"
 		+ "which its value holds: the table stops holding the values of one release, and reading it"
 		+ "sorts rows by release where overwriting one table by another is enough"
+	SPEC "the Power section names in a disclaimer, under the submerged machines one, the release"
+		+ "whose values it applies when that release is earlier than the last of the releases"
+		+ "table, and names none for the last"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::buildGameReleaseNote"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Show"
+			+ "when={energyLevels().gameReleaseNote}>"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name in a disclaimer the legacy game release whose values it presents"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name no game release when it presents the values of the current one"
+		ENFORCED_BY "packages/ui-save-manager/e2e/display.e2e.ts::should name in a disclaimer,"
+			+ "under the submerged machines one, the legacy game release its version resolves to"
 	REJECTED "Showing no energy for a save whose version resolves to no release: the values of the"
-		+ "last release are the ones the tool applied to every save until now, and the Power"
-		+ "section names the release it applied"
+		+ "last release are the ones the tool applied to every save until now"
+	REJECTED "Naming the release in the Power section for every save, the last release included, in"
+		+ "a paragraph closing the section: the values of the last release are the ones the reader"
+		+ "expects, and only an earlier release needs a warning"
 	REJECTED "A release list of its own for the energy values: the releases table is where a"
 		+ "declared version is resolved"
 		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
@@ -2021,6 +2035,7 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 		+ "and a later change adds a row to every earlier table; 1.618 and 2.004 both carried"
 		+ "OreBreaker1 at 2.6 kW"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT129
 	RATIONALE "The save carries no energy value, so its declared version is the only sign of which"
 		+ "values apply"
@@ -2031,4 +2046,8 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SOURCE "Owner ruling of 2026-09-26, in chat, in reply to r4109337238: \"On applique en cascade."
 		+ "Donc pour le cas présent une seule table\"; the tables cascade, and 2.004, the newest"
 		+ "release where OreBreaker1 still drew 2.6 kW, carries the only one"
+		PR 189
+	SOURCE "Owner review of 2026-09-26, issue comment 5841144930: \"On devrait afficher"
+		+ "gameReleaseNote dans un disclaimer sous celui des submerged machines, et uniquement"
+		+ "lorsque la release est legacy, pour la current, pas de disclaimer\""
 		PR 189

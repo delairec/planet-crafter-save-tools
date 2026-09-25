@@ -11,6 +11,7 @@ import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStra
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
 import {worldObjectLabels} from "./worldObjectLabels";
+import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
 import {
   energyLevelsSectionAvailableTitle,
   energyLevelsSectionConsumptionTitle,
@@ -38,9 +39,17 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
   displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void {
     this._viewModel = {
       submergedMachinesDisclaimer: energyLevelsSectionSubmergedMachinesDisclaimer,
-      gameReleaseNote: resolveEnergyLevelsSectionGameReleaseNote(energyLevels.gameRelease),
+      gameReleaseNote: this.buildGameReleaseNote(energyLevels.gameRelease),
       planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
     };
+  }
+
+  private buildGameReleaseNote(gameRelease: string): string | undefined {
+    if (gameRelease === CURRENT_FORMAT_RELEASE) {
+      return undefined;
+    }
+
+    return resolveEnergyLevelsSectionGameReleaseNote(gameRelease);
   }
 
   private buildPlanet(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsViewModel {
