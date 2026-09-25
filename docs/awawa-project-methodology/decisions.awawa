@@ -1922,3 +1922,4 @@ DECISION ADroppedSaveIsSelectedThroughItsFileInput
 	REJECTED "localeCompare for the order: it differs from the command's sort on case and accents,"
 		+ "so the web UI and the command would merge a pair differently"
 	SOURCE "Ruled while delivering the drop of save files"
+		PR 172
