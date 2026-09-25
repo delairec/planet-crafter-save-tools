@@ -809,17 +809,29 @@ TASK TEST113
 
 TASK CHORE105
 	TITLE "measure the unit test coverage and fail the CI when it drops"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun test reports line and function coverage of every module a unit test loads"
+		IMPL "package.json::\"test:coverage\": \"bun test --coverage\""
+		IMPL ".github/workflows/quality.yml::bun test --coverage"
 	SPEC "the CI test job fails when line or function coverage falls under the threshold declared"
 		+ "in bunfig.toml"
+		IMPL ".github/workflows/quality.yml::bun test --coverage"
+		IMPL "bunfig.toml::coverageThreshold"
 	SPEC "the declared threshold equals the floor measured on the delivering branch, rounded down"
 		+ "to the unit"
+		IMPL "bunfig.toml::coverageThreshold = { lines = 0.29, functions = 0.0 }"
 	SPEC "the coverage report of the CI test job appears in the run summary"
+		IMPL ".github/workflows/quality.yml::GITHUB_STEP_SUMMARY"
 	SPEC "the fallow job fails on a source file or export outside ui-save-manager that no test"
 		+ "reaches statically"
+		IMPL "fallow.toml::coverage-gaps ="
+		IMPL ".github/workflows/quality.yml::args: --coverage-gaps"
 	SPEC "only a module a test runs as a spawned process, or a type declaration file, is exempt"
-		+ "from that check, declared in fallow.toml with its reason"
+		+ "from that check, declared with its reason in the one file of exemptions fallow.toml"
+		+ "loads"
+		IMPL "fallow.toml::plugins ="
+		IMPL "fallow-coverage-gaps.toml::entryPointRole ="
+	DELIVERED_BY 173
 	RATIONALE "Nothing measures coverage today: the CI test job runs plain bun test. Measured on"
 		+ "2026-09-23 with Bun 1.4.2: 94.72 % of functions and 97.36 % of lines over the 155"
 		+ "modules the 858 unit tests load, scripts/ the lowest (generate-scenario-fixtures.ts at"
@@ -1005,3 +1017,33 @@ TASK TEST122
 		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		REF @DECISION.AnAnchorNamesAFileTrackedByGit
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
+
+TASK TEST123
+	TITLE "Cover every use case of the modules a unit test loads, the coverage report finding the"
+		+ "ones missed"
+	STATUS draft
+	SPEC "every line or function bun test --coverage reports unexecuted is traced to the use case"
+		+ "it serves, and that use case gets a test asserting its observable outcome"
+	SPEC "no test the task adds exists only to execute a line: each names the use case it covers"
+		+ "and asserts what that use case produces"
+	SPEC "the coverageThreshold of bunfig.toml is raised to the floor measured once those use cases"
+		+ "are covered"
+	AFTER @TASK.CHORE105
+	RATIONALE "Asked by the owner on the review of CHORE105, which gates coverage at the floor it"
+		+ "measured. The aim is every use case covered, which no tool can check; 100 % of lines"
+		+ "only says the code ran under a test, so the report serves to find use cases left"
+		+ "untested, and a figure reached by tests asserting nothing would satisfy the tool and"
+		+ "cover nothing. On 2026-09-25, after the rebase of #173 on master, the suite totals 96.59"
+		+ "% of lines and 94.34 % of functions, and 42 modules sit under 100 %. The lowest are the"
+		+ "command-line entry blocks of scripts/ and of core-mapping/scripts/, whose main body runs"
+		+ "only when the script is launched, generate-scenario-fixtures.ts at 29.63 % of lines and"
+		+ "0 % of functions; then the controllers of core-mapping at 66.67 % of functions, and"
+		+ "sectionValidators.generated.js, a generated file. Whether a launched entry block is"
+		+ "reached by a spawned process test, moved out of the measured module or exempted, and"
+		+ "what becomes of a line that serves no use case, are the rulings this refinement has to"
+		+ "make"
+		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
+		REF @DECISION.AControllerSpecCoversWiringNotBranches
+	SOURCE "Owner request on the review of CHORE105, and the owner's ruling on its intent in the"
+		+ "same review"
+		PR 173

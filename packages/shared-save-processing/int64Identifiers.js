@@ -9,7 +9,7 @@
  * `Inventory.id` share the field name, are numbers, and stay numbers.
  * @see @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
  */
-export const RAW_INTEGER_FIELDS = Object.freeze(new Set(['id']));
+const RAW_INTEGER_FIELDS = Object.freeze(new Set(['id']));
 
 const DECIMAL_INTEGER = /^-?\d+$/;
 

@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {type ConsumerVersion, findSinceTag, findVersionsToTag} from './findVersionsToTag.ts';
+import {composeTag, type ConsumerVersion, findSinceTag, findVersionsToTag} from './findVersionsToTag.ts';
 
 describe('findVersionsToTag', () => {
 
@@ -74,6 +74,22 @@ describe('findSinceTag', () => {
 
       // Assert
       expect(readSinceTag).toThrow('no tag ui-save-manager-v0.1.0 exists');
+    });
+  });
+});
+
+describe('composeTag', () => {
+
+  describe('When a consumer declares a version', () => {
+    it('should name the tag after the consumer, then the version prefixed with v', () => {
+      // Arrange
+      const consumer = {name: 'ui-save-manager', version: '1.2.0'};
+
+      // Act
+      const tag = composeTag(consumer);
+
+      // Assert
+      expect(tag).toBe('ui-save-manager-v1.2.0');
     });
   });
 });

@@ -23,6 +23,14 @@ jobs:
         with:
           command: health
           format: github-summary
+      # Over the whole project, not the files the pull request changed: a test removed from a changed
+      # spec leaves the module it reached untested without changing that module.
+      - uses: fallow-rs/fallow@bd8fca5af5df4ccfd94c7a835d17bd93c31a7cef # v3.28.0
+        with:
+          command: health
+          format: github-summary
+          auto-changed-since: 'false'
+          args: --coverage-gaps
 
   lint:
     runs-on: ubuntu-latest
@@ -56,8 +64,22 @@ jobs:
         with:
           node-version-file: package.json
       - run: bun install --frozen-lockfile
-      - name: Run the test suite, which spawns the node:* commands as real Node processes
-        run: bun test
+      - name: Run the test suite with coverage, which spawns the node:* commands as real Node processes
+        shell: bash
+        run: bun test --coverage 2>&1 | tee "$RUNNER_TEMP/bun-test-output.txt"
+      - name: Publish the coverage report in the run summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## Unit test coverage'
+            echo
+            echo 'Every module a unit test loads; `coverageThreshold` in bunfig.toml applies to each one.'
+            echo
+            echo '```'
+            grep '|' "$RUNNER_TEMP/bun-test-output.txt" || echo 'No coverage report: the test run stopped before printing it.'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   build:
     runs-on: ubuntu-latest

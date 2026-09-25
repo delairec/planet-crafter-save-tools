@@ -1,0 +1,22 @@
+# Every module exempt from the coverage-gaps rule of fallow.toml, one entry per module with its reason
+# (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
+# Only a module a test runs as a spawned process, or a type declaration file, belongs here: declaring it a test
+# root makes it, and what it imports, reachable from a test. A module a unit test could import does not.
+name = "coverage-gap-exemptions"
+# A plugin with no enabler is never active; fallow is the one dependency every run of it has.
+enablers = ["fallow"]
+entryPointRole = "test"
+entryPoints = [
+    # Spawned as a real process by merge-cli.node.spec.js, which no static import reaches.
+    "packages/cli-merge/cli/merge-cli.js",
+    # Spawned as a real process by validate-cli.node.spec.js, which no static import reaches.
+    "packages/cli-validate/cli/validate-cli.js",
+    # Loaded by node --import in the processes the node:* command specs spawn, which no static import reaches.
+    "scripts/node/register.js",
+    # Spawned as a real process by release.spec.ts, which no static import reaches.
+    "scripts/release/release.ts",
+    # Spawned as a real process by release-tag.spec.ts, which no static import reaches.
+    "scripts/release/release-tag.ts",
+    # Type declarations only, no runtime code for a test to reach.
+    "packages/shared-save-processing/jsonSourceTextAccess.d.ts",
+]
