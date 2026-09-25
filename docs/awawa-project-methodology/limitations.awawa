@@ -134,3 +134,25 @@ LIMITATION AVersionTagCreatesNoGitHubRelease
 	SOURCE "Asked by the owner after the first release, 0.1.0, and kept as a limitation so the"
 		+ "question can be reopened when the need appears"
 		PR 165
+
+LIMITATION SubmergedMachinesAreCountedAsDrawingPower
+	SYMPTOM "a machine placed under water draws no power in game, but the displayed consumption"
+		+ "counts it at its base level, so the available energy is underestimated"
+	WORKAROUND "a warning in the energy section that submerged machines may distort the computed"
+		+ "available energy"
+		REF @TASK.FEAT128
+	UNTIL "the save records whether a machine is under water or running"
+	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private consumption()"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "The save stores the position of a machine but neither the water level nor whether"
+		+ "the machine runs. The water level differs from lake to lake and rises with the"
+		+ "terraformation, so no rule on the height tells a submerged machine from one on dry"
+		+ "ground: on Prime, machines standing 14 to 20 meters high on dry ground draw their full"
+		+ "level while the submerged drills stand at 13"
+	SOURCE "Owner's reading in game on 2026-09-25 of the private save Custom-2-max-data: on Prime"
+		+ "the HUD prints a consumption of 19146.3 kW where the tool computes 19311.8 kW, and the"
+		+ "165.5 kW gap is exactly one OreExtractor2 and three Drill0 placed under a lake, which"
+		+ "the owner found submerged; the production matched to the kilowatt"
+		PR 178
+		REF @GAME_RELEASE.2.103
+		REF @PROJECT.DNC

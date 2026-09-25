@@ -1219,3 +1219,16 @@ TASK FIX130
 		+ "and the T3 ore extractor carry no patch note that dates them"
 		REF @URL.SteamPatchNotesV2100
 	SOURCE "Owner request of 2026-09-25 opening the work on energy values per release"
+
+TASK FEAT128
+	TITLE "Warn that submerged machines may distort the available energy"
+	STATUS draft
+	SPEC "the energy section of a planet prints a warning that machines placed under water draw no"
+		+ "power in game and may distort the computed available energy"
+	RATIONALE "The save cannot tell a submerged machine from one on dry ground, so the tool keeps"
+		+ "counting it; the warning tells the reader why the available energy may be higher in game"
+		+ "than displayed"
+		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
+	SOURCE "Owner request of 2026-09-25, after the in-game reading that found submerged machines on"
+		+ "Prime, to record the warning as a draft task in this pull request"
+		PR 178
