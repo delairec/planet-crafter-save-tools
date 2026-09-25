@@ -26,7 +26,7 @@ modification ou réponse qu'il gouverne. Ne charger rien d'autre.
 La spécification du projet est le corpus awawa de `docs/`, rédigé en anglais, noms
 d'entités compris : `docs/_schema.awawa` déclare tous les types pour l'ensemble du workspace, puis un fichier
 par type dans l'aire qui le porte — `docs/awawa-project-methodology/` pour la méthodologie (`decisions.awawa`,
-`processes.awawa`, `limitations.awawa`, `tasks.awawa`, `packages.awawa`, `open_questions.awawa` quand
+`processes.awawa`, `limitations.awawa`, `tasks.awawa`, `waves.awawa`, `packages.awawa`, `open_questions.awawa` quand
 une question existe) et `sources.awawa` pour les sources ; `docs/awawa-project-specification/` pour la
 spécification produit (`sections.awawa`, `rules.awawa`, `commands.awawa`, `hypotheses.awawa`,
 `datatables.awawa`). Une entité nouvelle s'ajoute **à la fin** du fichier de son
@@ -133,15 +133,11 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 
 ## Branches
 
-**Base des tâches, aujourd'hui, par wave :**
-
-| Wave | Base | PR d'intégration |
-|------|------|------------------|
-| 8 | `integration/release-and-hardening` | #132 |
-| hors wave | `master` | — |
+**La base d'une tâche est le `BRANCH` de sa wave, `master` pour une tâche sans wave.** Chaque wave est une entité
+`WAVE` du corpus, écrite une fois et jamais réécrite, qui porte aussi le `MILESTONE` à poser sur chaque pull request
+de la wave : `awawa show @TASK.<id> .` donne la wave d'une tâche, `awawa show @WAVE.<n> .` sa base et son milestone,
+`awawa status WAVE .` la liste des waves (@DECISION.AWaveIsAnEntityThatOutlivesItsTasks).
 
 Une branche d'intégration part de `master`, porte le corpus de sa wave et n'est fusionnée qu'une fois la wave
 terminée. Un numéro de tâche se lit sur toutes les branches ouvertes, pas seulement sur la base : la wave 5 tenait
-92 à 99 quand la wave 8 a été numérotée. Le nom de la base
-reste ici et non dans le corpus parce qu'il change à chaque chantier : une entité dont le `DESC` se réécrit tous les
-mois ne gagne rien à être une entité.
+92 à 99 quand la wave 8 a été numérotée.

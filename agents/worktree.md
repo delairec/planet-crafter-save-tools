@@ -7,7 +7,8 @@ que rien ne rappelle et dont l'oubli ne produit aucune erreur, seulement un verd
    workspace via le `node_modules` du dépôt principal : les tests s'exécutent sur les sources d'une autre branche et
    passent au vert sans rien dire. C'est le piège le plus coûteux des trois, parce qu'il rend un verdict, et le mauvais.
 2. **Vérifier la branche de base.** Un worktree créé par l'outillage part de la branche par défaut du dépôt, qui
-   n'est pas forcément la base des tâches — la section « Branches » d'`AGENTS.md` nomme celle en vigueur, et elle seule.
+   n'est pas forcément la base de la tâche — c'est le `BRANCH` de sa wave (`awawa show @WAVE.<n> .`), `master` pour
+   une tâche sans wave.
    Avant tout travail, `git merge-base --is-ancestor origin/<base> HEAD` doit sortir en 0 ; sinon, recréer la
    branche depuis la base avant d'écrire une ligne.
 3. **`input/` n'est pas versionné et n'existe donc pas dans un worktree neuf.** Les tâches qui vérifient une sortie de

@@ -79,6 +79,10 @@ SHAPE json_key
 	DESC "a property name of a JSON row, camelCase"
 	MATCH "[a-z][A-Za-z0-9]*"
 
+SHAPE wave_number
+	DESC "the number of a wave of the plan, digits only"
+	MATCH "[0-9]+"
+
 FIELDSET Ruling
 	DESC "the fields shared by the ruling types"
 	FIELD REJECTED string
@@ -196,7 +200,8 @@ SCHEMA TASK
 		REPEATABLE
 		CONVERSE BEFORE
 		DESC "the task that must merge before this one"
-	FIELD WAVE uint
+	FIELD WAVE @WAVE
+		CONVERSE COMPRISES
 		DESC "the wave of the plan the task belongs to"
 	FIELD DELIVERED_BY uint
 		DESC "the number of the pull request that delivers it, in @PROJECT.PCST"
@@ -374,3 +379,13 @@ SCHEMA DATATABLE
 	FIELD JSON_SCHEMA anchor
 		REQUIRED
 		DESC "the JSON Schema the rows of the table validate against"
+
+SCHEMA WAVE
+	DESC "a wave of the plan, one entity per wave, named by its number"
+	NAME wave_number
+	FIELD MILESTONE string
+		REQUIRED
+		DESC "the title of the GitHub milestone every pull request of the wave carries"
+	FIELD BRANCH string
+		REQUIRED
+		DESC "the integration branch every task pull request of the wave targets"

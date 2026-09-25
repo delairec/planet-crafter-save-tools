@@ -1773,3 +1773,18 @@ DECISION EveryActionIsPinnedOnACommitSha
 	SOURCE "Dependabot reference, read on 2026-09-24: it updates actions referenced as"
 		+ "actions/checkout@<commit>, and the version comment when it sits on the same line"
 		REF @URL.DependabotSupportedEcosystemsGithubActions
+
+DECISION AWaveIsAnEntityThatOutlivesItsTasks
+	SPEC "every wave of the plan is a WAVE entity on master, carrying its MILESTONE and its BRANCH,"
+		+ "and stays there once its tasks are archived and purged"
+		IMPL "docs/awawa-project-methodology/waves.awawa::WAVE 8"
+	SPEC "AGENTS.md and the files of agents/ name no integration branch: the base of a task is read"
+		+ "from its wave"
+		IMPL "AGENTS.md::La base d'une tâche est le `BRANCH` de sa wave"
+		IMPL "agents/worktree.md::c'est le `BRANCH` de sa wave"
+	REJECTED "declaring a wave on its integration branch only: once the branch merges and its tasks"
+		+ "are purged, master keeps no trace of its milestone nor of its branch"
+	REJECTED "naming the base in an AGENTS.md table: the prose drifted, still naming"
+		+ "integration/save-format-preserved while release-and-hardening was open"
+	APPLIES_TO_TASK @TASK.CHORE116
+	SOURCE "Owner request and refinement of the task, session of 2026-09-24"
