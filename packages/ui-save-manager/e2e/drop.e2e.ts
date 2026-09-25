@@ -88,6 +88,20 @@ test.describe('Save file drop', () => {
     });
   });
 
+  test.describe('When the pointer rests on the swap button', () => {
+    test('should show its label as a tooltip', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+      await page.getByLabel('Save A:').setInputFiles(baselineSaveFixturePath);
+
+      // Act
+      await page.getByRole('button', {name: 'Swap save A and save B'}).hover();
+
+      // Assert
+      await expect(page.getByRole('tooltip')).toHaveText('Swap save A and save B');
+    });
+  });
+
   test.describe('When a file that is not JSON is dropped on a save area', () => {
     test('should select nothing and say why next to the area', async ({page}) => {
       // Arrange

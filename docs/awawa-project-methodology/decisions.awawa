@@ -1923,3 +1923,19 @@ DECISION ADroppedSaveIsSelectedThroughItsFileInput
 		+ "so the web UI and the command would merge a pair differently"
 	SOURCE "Ruled while delivering the drop of save files"
 		PR 172
+
+DECISION AnIconOnlyButtonIsNamedByItsTooltip
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT119
+	SPEC "A button that shows only its icon takes its accessible name from a tooltip element it"
+		+ "points at with aria-labelledby; the tooltip shows on hover and on keyboard focus"
+		IMPL "packages/ui-save-manager/src/components/structure/IconButton.tsx::aria-labelledby={tooltipId}"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::.icon-button:focus-within .tooltip"
+		ENFORCED_BY "packages/ui-save-manager/e2e/drop.e2e.ts::should show its label as a tooltip"
+	REJECTED "The title attribute: it never shows on keyboard focus nor on touch"
+	REJECTED "An aria-label beside a separate tooltip text: the two copies of one label drift apart"
+		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
+	REJECTED "The label printed next to the icon: the owner wants the swap button to show only its"
+		+ "icon"
+	SOURCE "Owner review of the swap button"
+		PR 172

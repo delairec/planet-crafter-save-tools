@@ -56,6 +56,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'elevated'
   },
   {
+    description: 'the tooltip that names an icon-only button, on its panel',
+    file: 'packages/ui-save-manager/src/styles/buttons.css',
+    selector: '.tooltip',
+    foreground: 'content',
+    background: 'elevated'
+  },
+  {
     description: 'a validation message origin, nested inside the code panel above',
     file: 'packages/ui-save-manager/src/styles/layout.css',
     selector: '.validation-message-location',

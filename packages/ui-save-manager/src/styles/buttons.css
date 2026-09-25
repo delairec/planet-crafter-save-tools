@@ -30,6 +30,32 @@ button:focus-visible {
     box-shadow: 0 0 0 2px var(--neon-pink), 0 0 0 4px var(--neon-pink);
 }
 
+.icon-button {
+    position: relative;
+    display: inline-flex;
+}
+
+.tooltip {
+    position: absolute;
+    left: calc(100% + 0.5rem);
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    background-color: var(--elevated);
+    color: var(--content);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.icon-button:hover .tooltip,
+.icon-button:focus-within .tooltip {
+    visibility: visible;
+}
+
 .button-link {
     display: inline-flex;
     align-items: center;

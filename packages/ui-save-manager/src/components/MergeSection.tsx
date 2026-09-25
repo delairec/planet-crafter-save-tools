@@ -3,7 +3,8 @@ import {MergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesC
 import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeResultViewModel';
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';
-import Icon from '~/components/Icon';
+import IconButton from '~/components/structure/IconButton';
+import SaveFileField from '~/components/structure/SaveFileField';
 import {yieldToPaint} from '~/lib/yieldToPaint';
 import {selectFileInInput} from '~/lib/selectFileInInput';
 import {orderDroppedSaves} from '~/lib/orderDroppedSaves';
@@ -88,25 +89,22 @@ export default function MergeSection(props: MergeSectionProps) {
               onFilesDropped={handleSavesDropped}>
       <div class="inline-block">
         <h2>{mergeSectionTitle}</h2>
-        <DropZone label={mergeSectionSaveAAreaLabel} maximumFileCount={1}
-                  tooManyFilesMessage={tooManyFilesForOneSaveMessage}
-                  onFilesDropped={(files) => selectFileInInput(saveAInput, files[0])}>
-          <p><label>{mergeSectionSaveALabel}<input ref={saveAInput} type="file" accept="application/json"
-                                                   onChange={(event) => setFileA(event.currentTarget.files?.[0] ?? null)}/></label>
-          </p>
-        </DropZone>
-        <p>
-          <button onClick={handleSwap} disabled={!fileA() && !fileB()}>
-            <Icon content={mergeSectionSwapIcon}/> {mergeSectionSwapButtonLabel}
-          </button>
-        </p>
-        <DropZone label={mergeSectionSaveBAreaLabel} maximumFileCount={1}
-                  tooManyFilesMessage={tooManyFilesForOneSaveMessage}
-                  onFilesDropped={(files) => selectFileInInput(saveBInput, files[0])}>
-          <p><label>{mergeSectionSaveBLabel}<input ref={saveBInput} type="file" accept="application/json"
-                                                   onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/></label>
-          </p>
-        </DropZone>
+        <div class="merge-slots">
+          <DropZone label={mergeSectionSaveAAreaLabel} maximumFileCount={1}
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage}
+                    onFilesDropped={(files) => selectFileInInput(saveAInput, files[0])}>
+            <p><SaveFileField label={mergeSectionSaveALabel} ref={saveAInput}
+                              onChange={(event) => setFileA(event.currentTarget.files?.[0] ?? null)}/></p>
+          </DropZone>
+          <DropZone label={mergeSectionSaveBAreaLabel} maximumFileCount={1}
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage}
+                    onFilesDropped={(files) => selectFileInInput(saveBInput, files[0])}>
+            <p><SaveFileField label={mergeSectionSaveBLabel} ref={saveBInput}
+                              onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/></p>
+          </DropZone>
+          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel}
+                      onClick={handleSwap} disabled={!fileA() && !fileB()}/>
+        </div>
         <p><label><input type="checkbox" checked={preferLegacyFormat()}
                          onChange={(event) => setPreferLegacyFormat(event.currentTarget.checked)}/>{mergeSectionPreferLegacyFormatLabel}</label>
         </p>
