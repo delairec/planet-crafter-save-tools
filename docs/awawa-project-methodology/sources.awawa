@@ -175,3 +175,6 @@ URL CompanionAppGameDataV2103
 URL WikiOreCrushersBeforeV2100
 	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=16833&prop=wikitext&format=json"
 	DESC "fandom wiki page Ore Crushers, revision of 2025-10-11, before v2.100: T1 -2.6 kW"
+
+GAME_RELEASE 2.100
+	DESC "Development Branch update, lowering the draw of the T1 ore crusher"

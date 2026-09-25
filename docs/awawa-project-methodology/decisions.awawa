@@ -1972,3 +1972,33 @@ DECISION ADisclaimerIsRenderedByTheDisclaimerComponent
 	APPLIES_TO_TASK @TASK.FEAT128
 	SOURCE "Owner review of the FEAT128 pull request"
 		PR 187
+
+DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
+	SPEC "the energy of a displayed save takes, for each world object, the row of the last release"
+		+ "not later than the release its declared version resolves to"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::holdsInRelease"
+		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
+			+ "take for a save declaring %s the values of %s"
+	SPEC "a save declaring no version, or a version resolving to no release, takes the values of"
+		+ "the last release of the releases table"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::??"
+			+ "CURRENT_FORMAT_RELEASE"
+		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
+			+ "take the values of the last release of the table"
+	SPEC "a fromRelease the releases table does not name is refused by bun run validate:tables"
+		IMPL "scripts/validate-tables/schemas/energyLevels.schema.json::valueOfTable"
+		ENFORCED_BY "scripts/validate-tables/validate-tables.spec.ts::should report the row whose"
+			+ "value that column does not hold"
+	REJECTED "Showing no energy for a save whose version resolves to no release: the values of the"
+		+ "last release are the ones the tool applied to every save until now, and the Power"
+		+ "section names the release it applied"
+	REJECTED "A release list of its own in the energy table: the releases table is where a declared"
+		+ "version is resolved"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+	REJECTED "An enum of releases in the JSON Schema of the energy table: it would repeat the"
+		+ "releases table and drift from it"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT129
+	RATIONALE "The save carries no energy value, so its declared version is the only sign of which"
+		+ "values apply"
+	SOURCE "Ruling taken on delivery of the task, 2026-09-26"
