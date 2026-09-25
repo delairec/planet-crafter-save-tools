@@ -11,6 +11,11 @@ bun merge
 
 Generates the merged saves in output directory, by processing all subfolders from input folder.
 
+The folders are processed in name order, the same under Bun and Node, and each is reported as one block opening on
+an empty line and a `Processing "<folder>"...` line, a skipped folder included. In the block of a merged folder, the
+path of the save written comes last, on stdout behind a `✓`, after every warning and separated from them by an empty
+line.
+
 A folder holding a save file the validation refuses is reported and skipped, the remaining folders are still
 processed, and the command exits with code `0`. A merge that runs and produces no usable save file, or a merged save
 the output directory refuses, is a different matter: the command names the folder, stops there and exits with a
@@ -76,6 +81,9 @@ npm run node:validate -- --file=<filepath>
 ```
 
 Node.js counterpart of `bun validate`.
+
+Each command prints the same lines under both runtimes: the Bun scripts run their entry point straight from the
+root manifest, as the Node scripts do, so the package manager adds no workspace prefix to their output.
 
 `npm install` works without Bun: the workspace declares nothing npm cannot read. Run it once, then the two
 commands only need Node. A `package-lock.json` is yours to keep: the repository ignores it and maintains `bun.lock`

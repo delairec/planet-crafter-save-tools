@@ -233,7 +233,7 @@ describe('Merge CLI', () => {
       expect(exitProcess).toHaveBeenCalledWith(0);
     });
 
-    it('should print the merged output path to stdout', async () => {
+    it('should print the merged output path to stdout, behind a tick', async () => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
@@ -243,7 +243,7 @@ describe('Merge CLI', () => {
       await main();
 
       // Assert
-      expect(consoleLogSpy).toHaveBeenCalledWith(MERGED_SAVE_OUTPUT_PATH);
+      expect(consoleLogSpy).toHaveBeenCalledWith(`✓ ${MERGED_SAVE_OUTPUT_PATH}`);
     });
 
     it('should report nothing about a merged save that passes validation', async () => {
@@ -525,7 +525,7 @@ describe('Merge CLI', () => {
       await main();
 
       // Assert
-      expect(consoleLogSpy.mock.calls).toEqual([[MERGED_SAVE_OUTPUT_PATH]]);
+      expect(consoleLogSpy.mock.calls).toEqual([[`✓ ${MERGED_SAVE_OUTPUT_PATH}`]]);
     });
 
     describe('When the legacy format is asked for', () => {
@@ -697,7 +697,7 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(writeTextFile.mock.calls[0][0]).toBe(MERGED_SAVE_PATH);
-      expect(consoleLogSpy).toHaveBeenCalledWith(MERGED_SAVE_PATH);
+      expect(consoleLogSpy).toHaveBeenCalledWith(`✓ ${MERGED_SAVE_PATH}`);
     });
 
     it('should exit successfully', async () => {
@@ -765,6 +765,124 @@ describe('Merge CLI', () => {
       const writtenContent = writeTextFile.mock.calls[0][1];
       expect(writtenContent).toContain('{"id":79111656,"gId":"Phytoplankton2"}');
       expect(writtenContent).toContain('{"id":79111657,"gId":"Phytoplankton3"}');
+    });
+  });
+
+  describe('When the run is reported', () => {
+    const FOLDER_BETA = 'Beta';
+    const FOLDER_GAMMA = 'Gamma';
+    let printedLines;
+
+    function serveDirectories(entriesByPath) {
+      readDirectory.mockImplementation(path => Promise.resolve(entriesByPath[path]));
+    }
+
+    beforeEach(() => {
+      printedLines = [];
+      consoleLogSpy.mockImplementation(line => printedLines.push(['stdout', line]));
+      consoleErrorSpy.mockImplementation(line => printedLines.push(['stderr', line]));
+      readTextFile.mockImplementation(path => Promise.resolve(path.endsWith(SAVE_A_FILENAME) ? FAKE_SAVE_STRING_A : FAKE_SAVE_STRING_B));
+    });
+
+    describe('When the input directory lists its folders out of name order', () => {
+      it('should report the folders in name order, each under an empty line and a line naming it', async () => {
+        // Arrange
+        serveDirectories({
+          input: [FOLDER_BETA, INPUT_SUBFOLDER_ALPHA],
+          'input/Alpha': [SAVE_A_FILENAME, SAVE_B_FILENAME],
+          'input/Beta': [SAVE_A_FILENAME, SAVE_B_FILENAME]
+        });
+
+        // Act
+        await main();
+
+        // Assert
+        expect(printedLines).toEqual([
+          ['stderr', 'Found 2 folder(s) to process.'],
+          ['stderr', ''],
+          ['stderr', 'Processing "Alpha"...'],
+          ['stdout', '✓ output/Alpha/Standard-1-Standard-2-merged.json'],
+          ['stderr', ''],
+          ['stderr', 'Processing "Beta"...'],
+          ['stdout', '✓ output/Beta/Standard-1-Standard-2-merged.json'],
+          ['stderr', 'Done.']
+        ]);
+      });
+    });
+
+    describe('When a folder between two merged folders is skipped', () => {
+      it('should report the skipped folder in its own block, under a line naming it', async () => {
+        // Arrange
+        serveDirectories({
+          input: [INPUT_SUBFOLDER_ALPHA, FOLDER_BETA, FOLDER_GAMMA],
+          'input/Alpha': [SAVE_A_FILENAME, SAVE_B_FILENAME],
+          'input/Beta': [SINGLE_SAVE_FILENAME],
+          'input/Gamma': [SAVE_A_FILENAME, SAVE_B_FILENAME]
+        });
+
+        // Act
+        await main();
+
+        // Assert
+        expect(printedLines).toEqual([
+          ['stderr', 'Found 2 folder(s) to process.'],
+          ['stderr', ''],
+          ['stderr', 'Processing "Alpha"...'],
+          ['stdout', '✓ output/Alpha/Standard-1-Standard-2-merged.json'],
+          ['stderr', ''],
+          ['stderr', 'Processing "Beta"...'],
+          ['stderr', '⚠ Folder "Beta" was skipped: it holds 1 JSON save file(s), exactly two are required.'],
+          ['stderr', ''],
+          ['stderr', 'Processing "Gamma"...'],
+          ['stdout', '✓ output/Gamma/Standard-1-Standard-2-merged.json'],
+          ['stderr', 'Done.']
+        ]);
+      });
+    });
+
+    describe('When no folder can be merged', () => {
+      it('should report each skipped folder under a line naming it before the verdict', async () => {
+        // Arrange
+        serveDirectories({input: [INPUT_SUBFOLDER_ALPHA], 'input/Alpha': [SINGLE_SAVE_FILENAME]});
+
+        // Act
+        await main();
+
+        // Assert
+        expect(printedLines).toEqual([
+          ['stderr', ''],
+          ['stderr', 'Processing "Alpha"...'],
+          ['stderr', '⚠ Folder "Alpha" was skipped: it holds 1 JSON save file(s), exactly two are required.'],
+          ['stderr', 'No folder in "input" contains exactly two JSON save files to merge.']
+        ]);
+      });
+    });
+
+    describe('When a merged folder carries warnings', () => {
+      it('should announce the written save last, separated from the warnings by an empty line', async () => {
+        // Arrange
+        serveDirectories({input: [INPUT_SUBFOLDER_ALPHA], 'input/Alpha': [SAVE_A_FILENAME, SAVE_B_FILENAME]});
+        serveSaves({[SAVE_A_INPUT_PATH]: LEGACY_FAKE_SAVE_STRING_A, [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B});
+
+        // Act
+        await main();
+
+        // Assert
+        expect(printedLines).toEqual([
+          ['stderr', 'Found 1 folder(s) to process.'],
+          ['stderr', ''],
+          ['stderr', 'Processing "Alpha"...'],
+          ['stderr', '⚠ Folder "Alpha" has warnings on its save files:'],
+          ['stderr', '  [save A] This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.'],
+          ['stderr', '⚠ Folder "Alpha" was merged with warnings:'],
+          ['stderr', '  The two saves carry different formats; the merged save is written in the format of release 2.004.'],
+          ['stderr', '  Writing that format dropped the Terrain layers section.'],
+          ['stderr', KEEP_LEGACY_FORMAT_REMINDER],
+          ['stderr', ''],
+          ['stdout', '✓ output/Alpha/Standard-1-Standard-2-merged.json'],
+          ['stderr', 'Done.']
+        ]);
+      });
     });
   });
 });

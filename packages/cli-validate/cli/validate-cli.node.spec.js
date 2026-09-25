@@ -96,7 +96,7 @@ describe('Validate CLI run as a Node process', () => {
       const {exitCode, stderr} = await runValidateCliUnderNode(saveFilePath);
 
       // Assert
-      expect(stderr).toBe(`✖ ${saveFilePath} has 1 error(s):\n\n  [Players (section 2), entry 1] Invalid JSON: { broken entry\n`);
+      expect(stderr).toBe(`✖ ${saveFilePath} has 1 error(s):\n  [Players (section 2), entry 1] Invalid JSON: { broken entry\n`);
       expect(exitCode).toBe(1);
     });
   });

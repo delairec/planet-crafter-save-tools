@@ -25,7 +25,9 @@ describe('Merge CLI version', () => {
   describe('When the version is asked', () => {
     it.each([
       ['Bun', ['bun', MERGE_CLI_PATH, '--version']],
-      ['Node', ['node', '--import', NODE_LOADER_PATH, MERGE_CLI_PATH, '--platform=node', '--version']]
+      ['Node', ['node', '--import', NODE_LOADER_PATH, MERGE_CLI_PATH, '--platform=node', '--version']],
+      ['the root script of Bun', ['bun', 'run', 'merge', '--version']],
+      ['the root script of Node', ['bun', 'run', 'node:merge', '--version']]
     ])('should print the version of its package under %s', async (_interpreterName, command) => {
       // Act
       const {exitCode, stdout} = await runCommand(command);

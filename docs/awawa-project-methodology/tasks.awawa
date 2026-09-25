@@ -761,19 +761,25 @@ TASK FIX111
 
 TASK CHORE112
 	TITLE "the fallow audit and health report cover ui-save-manager"
-	STATUS todo
+	STATUS implemented
 	SPEC "fallow.toml ignores no file of packages/ui-save-manager"
+		IMPL "fallow.toml::ignorePatterns ="
 	SPEC "fallow health run on the whole repository, without --base, exits 0 with ui-save-manager"
 		+ "in the fallow perimeter"
+		IMPL "fallow-coverage-gaps.toml::packages/ui-save-manager/src/routes/*.tsx"
+	DELIVERED_BY 181
 	RATIONALE "Measured on 2026-09-25 with the whole package brought in, src/app.tsx,"
 		+ "src/routes/*.tsx, e2e/*.e2e.ts and scripts/*.ts as entries: dead-code reports no issue;"
 		+ "fallow health on the whole repository exits 1 on one function, Home in"
 		+ "src/routes/index.tsx (cyclomatic 7, estimated CRAP 56, its Show blocks), which is"
-		+ "brought under the threshold; the clone groups of the e2e scenarios and buttons.css fail"
-		+ "no gate, even with --gate all, and are left alone. bun run audit:quality is not the"
-		+ "criterion: its fallow commands take --base master and exit 0 on a pull request that only"
-		+ "changes fallow.toml, while fallow health --base exits 1 on the first later pull request"
-		+ "that touches src/routes/index.tsx"
+		+ "brought under the threshold. Retaken at delivery: with the entries, the application and"
+		+ "the routes declared test roots of the coverage-gaps plugin instead, Home and handleDrop"
+		+ "of DropZone.tsx are estimated covered and the whole-repository run exits 0; declared as"
+		+ "entries of fallow.toml, both exit 1 at estimated CRAP 56. The clone groups of the e2e"
+		+ "scenarios and buttons.css fail no gate, even with --gate all, and are left alone. bun"
+		+ "run audit:quality is not the criterion: its fallow commands take --base master and exit"
+		+ "0 on a pull request that only changes fallow.toml, while fallow health --base exits 1 on"
+		+ "the first later pull request that touches src/routes/index.tsx"
 	SOURCE "Picked in the review of the accepted limitations, CHORE102"
 		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
 
@@ -841,16 +847,33 @@ TASK CHORE105
 TASK FEAT114
 	TITLE "bun merge and bun validate print only their own lines, and the merge reports each folder"
 		+ "as one block"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun merge and bun validate print exactly the lines of their node: counterparts: no"
 		+ "workspace prefix, no line echoing the script and no exit-code line added by the package"
 		+ "manager"
+		IMPL "packages/cli-merge/cli/merge-cli.version.spec.js::the root script of Bun"
+		IMPL "packages/cli-validate/cli/validate-cli.version.spec.js::the root script of Bun"
 	SPEC "bun validate prints no empty line between the error count and the errors"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::should head the report with the"
+			+ "file and how many errors it holds"
 	SPEC "the merge reports each folder of the input directory as one contiguous block under a line"
 		+ "naming the folder, a skipped folder included"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should report the skipped folder in its"
+			+ "own block, under a line naming it"
 	SPEC "the merge reports the folders in name order, the same under Bun and Node"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should report the folders in name order,"
+			+ "each under an empty line and a line naming it"
+	SPEC "the block of each folder opens on an empty line, before the line naming the folder"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should report the folders in name order,"
+			+ "each under an empty line and a line naming it"
 	SPEC "in the block of a merged folder, the line naming the written save comes last, after every"
 		+ "warning, separated from them by an empty line"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should announce the written save last,"
+			+ "separated from the warnings by an empty line"
+	SPEC "the line naming the written save shows its path behind a tick"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should print the merged output path to"
+			+ "stdout, behind a tick"
+	DELIVERED_BY 182
 	RATIONALE "Seen on the manual test of PR 127, measured on the public fixtures on 2026-09-25:"
 		+ "the root scripts run bun run --filter, which prefixes every line with the package and"
 		+ "script names and adds its own echo and exit-code lines that the node: scripts do not"
