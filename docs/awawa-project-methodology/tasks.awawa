@@ -762,12 +762,19 @@ TASK FIX111
 
 TASK CHORE112
 	TITLE "the fallow audit and health report cover ui-save-manager"
-	STATUS draft
-	SPEC "fallow.toml ignores no file of packages/ui-save-manager/src"
-	SPEC "bun run audit:quality exits 0 with ui-save-manager in the fallow perimeter"
-	RATIONALE "Measured on 2026-09-24 with ui-save-manager brought in, app.tsx and routes/*.tsx as"
-		+ "entries: no dead code, five more clone groups (e2e scenarios and buttons.css), one"
-		+ "function above the complexity threshold in routes/index.tsx"
+	STATUS todo
+	SPEC "fallow.toml ignores no file of packages/ui-save-manager"
+	SPEC "fallow health run on the whole repository, without --base, exits 0 with ui-save-manager"
+		+ "in the fallow perimeter"
+	RATIONALE "Measured on 2026-09-25 with the whole package brought in, src/app.tsx,"
+		+ "src/routes/*.tsx, e2e/*.e2e.ts and scripts/*.ts as entries: dead-code reports no issue;"
+		+ "fallow health on the whole repository exits 1 on one function, Home in"
+		+ "src/routes/index.tsx (cyclomatic 7, estimated CRAP 56, its Show blocks), which is"
+		+ "brought under the threshold; the clone groups of the e2e scenarios and buttons.css fail"
+		+ "no gate, even with --gate all, and are left alone. bun run audit:quality is not the"
+		+ "criterion: its fallow commands take --base master and exit 0 on a pull request that only"
+		+ "changes fallow.toml, while fallow health --base exits 1 on the first later pull request"
+		+ "that touches src/routes/index.tsx"
 	SOURCE "Picked in the review of the accepted limitations, CHORE102"
 		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
 
