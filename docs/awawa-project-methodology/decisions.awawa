@@ -368,15 +368,22 @@ DECISION AnEmptyMetadataSectionIsRefusedByValidation
 		PR 15
 
 DECISION AnUnprintedEnergyValueIsNeitherInferredNorZero
-	SPEC "A machine whose wiki page prints no energy value stays out of the energy tables, in the"
-		+ "group without a known energy level"
+	SPEC "A machine that neither its wiki page nor the game data export prices stays out of the"
+		+ "energy tables, in the group without a known energy level"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
 	REJECTED "Deducing the values from the regularity between tiers"
 	REJECTED "Setting zero for a value the wiki does not print"
+	REJECTED "The wiki as the only source of values, its previous form: the game data export prices"
+		+ "machines the wiki leaves silent and matches 107 stored rows to the kilowatt"
+		REF @URL.CompanionAppGameDataV2103
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RATIONALE "The wiki is the only source of values"
+	RATIONALE "The wiki and the game data export are the sources of values; a value neither prints"
+		+ "is undocumented, and the export's 0 is no price either"
+		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Pull request"
 		PR 43
+	SOURCE "Widened to the game data export by the delivery of FEAT124"
+		PR 178
 
 DECISION TheByteOrderMarkIsNotPreserved
 	SPEC "Both platform adapters strip the byte order mark on reading and write none"
@@ -1399,10 +1406,9 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		PR 150
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
-	REJECTED "Moving TreePlanter3, PodUnderground and RocketAnimals2 into the machines the"
-		+ "eleven-machine limitation lists: that limitation is about a cost the sources leave"
-		+ "undecided, not about a hypothesis of no cost"
-		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"
+		+ "whose energy is unknown: those have a cost the sources leave undecided, not a hypothesis"
+		+ "of no cost"
 	REJECTED "Adding a zero-kilowatt row for the three machines to the energy table: a hypothesis"
 		+ "is not an observed value, and an unprinted value is already never inferred as zero"
 		REF @DATATABLE.EnergyLevels
@@ -1415,11 +1421,10 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 			+ "charge for the world objects without a known energy level"
 		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	ASSUMES @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
-	RATIONALE "The eleven-machine limitation is believed to actually cost power in-game, so"
-		+ "excluding those machines underestimates consumption; the hypothesis states the opposite"
-		+ "for these three, so excluding them is not a limitation"
-		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	ASSUMES @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
+	RATIONALE "A placed machine whose cost the sources leave undecided may draw power in game, so"
+		+ "excluding it may underestimate consumption; the hypothesis states the opposite for the"
+		+ "machines it names, so excluding them is not a limitation"
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
 		PR 120
@@ -2139,3 +2144,28 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 		+ "left is the real adapter, too thin to hold a use case"
 		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
 	SOURCE "Owner ruling while refining TEST123 on 2026-09-26"
+
+DECISION AZeroInTheGameDataExportIsNotAPrice
+	SPEC "A world object the game data export prints at 0 kW, or omits, stays in the group without"
+		+ "a known energy level, with no row in the energy table"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
+	SPEC "A world object the game data export prints at a negative energy gets a consumption row at"
+		+ "that value, the export in the source field of the row"
+		IMPL "packages/core-mapping/src/domain/energyLevels.json::TradePlatform1"
+	REJECTED "Reading the 0 of the export as a price of no power and recording it: the export"
+		+ "writes the same 0 for a resource, a seed or a foundation that has no energy field at"
+		+ "all, so the 0 does not tell a machine that draws nothing from a world object the game"
+		+ "never asks"
+	REJECTED "A zero-kilowatt row or a group of machines known to draw nothing: the energy table"
+		+ "holds only prices found, and a zero is not one"
+		REF @DATATABLE.EnergyLevels
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT124
+	RATIONALE "The export prints 0 for 458 of the 541 names searched, among them Iron, Algae1Seed"
+		+ "and Foundation, next to the 107 existing rows it matches to the kilowatt; a price is"
+		+ "therefore only a non-zero value"
+		REF @URL.CompanionAppGameDataV2103
+		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+	SOURCE "Ruling taken while delivering FEAT124 on 2026-09-25, from the owner ruling that only a"
+		+ "price found is stored"
+		PR 178
