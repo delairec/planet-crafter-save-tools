@@ -215,6 +215,9 @@ PROCESS TheArchiveIsPurgedWithoutAScript
 	RATIONALE "P9 of the corpus starter asks for a cleanup pass or for a conscious skip. The pass"
 		+ "exists without a script: the awawa-ui plugin deletes archived entities from the IDE, and"
 		+ "an agent reading status, show and refs does the rest on request"
+	SOURCE "Owner ruling of 2026-09-25 dropping FEAT47: the awawa-ui plugin or an agent runs the"
+		+ "cleanup pass"
+		PR 180
 
 PROCESS ACorpusCorrectionBelongsToTheTaskThatFalsifiesIt
 	SPEC "A task whose delivery makes an entity of the corpus false carries the correction of that"
