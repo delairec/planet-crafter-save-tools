@@ -2002,3 +2002,4 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	RATIONALE "The save carries no energy value, so its declared version is the only sign of which"
 		+ "values apply"
 	SOURCE "Ruling taken on delivery of the task, 2026-09-26"
+		PR 189

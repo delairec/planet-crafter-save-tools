@@ -1180,20 +1180,37 @@ TASK FEAT127
 
 TASK FEAT129
 	TITLE "Compute the energy of a save with the values of its game release"
-	STATUS todo
+	STATUS implemented
 	SPEC "the releases table names 2.100, from which the draw of the T1 ore crusher changes"
+		IMPL "packages/shared-save-processing/gameReleases.json::2.100"
 	SPEC "a row of the energy table may name, under fromRelease, the release of the releases table"
 		+ "from which its value holds, a row without it holding from the first release; bun run"
 		+ "validate:tables refuses a fromRelease the releases table does not name"
+		IMPL "scripts/validate-tables/schemas/energyLevels.schema.json::fromRelease"
+		IMPL "scripts/validate-tables/validate-tables.ts::valueOfTable"
+		IMPL "scripts/validate-tables/validate-tables.spec.ts::should report the row whose value"
+			+ "that column does not hold"
 	SPEC "the energy of a displayed save takes, for each world object, the row of the last release"
 		+ "not later than the release its declared version resolves to"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::selectEnergyLevelsOfDeclaredVersion"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts::selectEnergyLevelsOfDeclaredVersion"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts::declaredVersion"
 	SPEC "the Power section names the game release whose values it applies"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionGameReleaseNote"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::gameReleaseNote"
+		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should name in the Power section the"
+			+ "game release its version resolves to"
 	SPEC "OreBreaker1 draws 2.6 kW in a save of a release before 2.100 and 0.6 kW from 2.100"
+		IMPL "packages/core-mapping/src/domain/energyLevels.json::fromRelease"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::OreBreaker1"
+			+ "drawing"
 	SPEC "docs/energy-levels.md records the search of 2026-09-25 with its date: the sources read,"
 		+ "the one change it established within the supported releases, and the 1.2 kW and 48 kW"
 		+ "the wiki printed from 2026-03-02 for ToxicWaterCollector1 and ToxicWaterCollector2 left"
 		+ "without a row, no patch note dating them and game 2.103 reading 0.8 kW and 60 kW"
+		IMPL "docs/energy-levels.md::Values per game release: search of 2026-09-25"
 	WAVE @WAVE.9
+	DELIVERED_BY 189
 	RATIONALE "The energy values of the game change between releases: v2.100 lowered the draw of"
 		+ "the T1 ore crusher, and the tool applies the 2.103 values to every save, so a save of"
 		+ "2.008 is computed with a draw its game never had. The save carries no energy value, so"

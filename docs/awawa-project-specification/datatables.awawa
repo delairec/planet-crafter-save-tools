@@ -2,7 +2,8 @@ DATATABLE EnergyLevels
 	TABLE "packages/core-mapping/src/domain/energyLevels.json"
 	KEY worldObjectName
 	JSON_SCHEMA "scripts/validate-tables/schemas/energyLevels.schema.json"
-	DESC "base kW a positioned world object produces or consumes, before any optimizer bonus"
+	DESC "base kW a positioned world object produces or consumes, before any optimizer bonus, one"
+		+ "row per world object and release from which the value holds under fromRelease"
 
 DATATABLE WorldObjectLabels
 	TABLE "packages/core-mapping/src/presentation/worldObjectLabels.json"
