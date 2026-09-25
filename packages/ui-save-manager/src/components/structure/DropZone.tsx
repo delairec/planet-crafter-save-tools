@@ -24,16 +24,33 @@ export default function DropZone(props: DropZoneProps) {
     return notJsonFile ? resolveNotJsonFileMessage(notJsonFile.name) : null;
   };
 
-  const handleDragOver = (event: DragEvent) => {
+  const takeTheFilesAsACopy = (event: DragEvent) => {
     event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'copy';
+    }
+  };
+
+  const handleDragEnter = (event: DragEvent) => {
+    takeTheFilesAsACopy(event);
+    setDragEnterDepth((depth) => depth + 1);
+  };
+
+  const handleDragOver = (event: DragEvent) => {
+    takeTheFilesAsACopy(event);
     event.stopPropagation();
   };
 
-  const handleDrop = (event: DragEvent) => {
+  const isInsideAnotherArea = (area: HTMLElement): boolean => !!area.parentElement?.closest('.drop-zone');
+
+  const handleDrop = (event: DragEvent & {currentTarget: HTMLDivElement}) => {
     event.preventDefault();
-    event.stopPropagation();
     setDragEnterDepth(0);
     const files = Array.from(event.dataTransfer?.files ?? []);
+    if (files.length > props.maximumFileCount && isInsideAnotherArea(event.currentTarget)) {
+      return;
+    }
+    event.stopPropagation();
     if (!files.length) {
       return;
     }
@@ -48,7 +65,7 @@ export default function DropZone(props: DropZoneProps) {
     <div role="group" aria-label={props.label}
          class={`drop-zone ${props.class ?? ''}`}
          classList={{'drop-zone-active': dragEnterDepth() > 0}}
-         onDragEnter={() => setDragEnterDepth((depth) => depth + 1)}
+         onDragEnter={handleDragEnter}
          onDragLeave={() => setDragEnterDepth((depth) => Math.max(depth - 1, 0))}
          onDragOver={handleDragOver}
          onDrop={handleDrop}>

@@ -23,6 +23,35 @@ async function dropTheFiles(page: Page, area: Locator, droppedFiles: DroppedFile
   await area.dispatchEvent('drop', {dataTransfer});
 }
 
+/** A file manager proposes to move what it drags; the browser starts every drag event from that effect. */
+const effectProposedByTheFileManager = 'move';
+
+type DragEventType = 'dragenter' | 'dragover';
+
+async function dispatchTheDrag(page: Page, element: Locator, type: DragEventType, droppedFiles: DroppedFile[]) {
+  const dataTransfer = await page.evaluateHandle(([files, proposedEffect]) => {
+    const transfer = new DataTransfer();
+    files.forEach((file) => transfer.items.add(new File([file.content], file.name)));
+    transfer.dropEffect = proposedEffect;
+    return transfer;
+  }, [droppedFiles, effectProposedByTheFileManager] as const);
+  return element.evaluate((target, [eventType, transfer]) => {
+    const event = new DragEvent(eventType, {bubbles: true, cancelable: true, dataTransfer: transfer});
+    target.dispatchEvent(event);
+    return {isTaken: event.defaultPrevented, announcedEffect: transfer.dropEffect};
+  }, [type, dataTransfer] as const);
+}
+
+async function isTakenByThePage(page: Page, element: Locator, type: DragEventType, droppedFiles: DroppedFile[]): Promise<boolean> {
+  return (await dispatchTheDrag(page, element, type, droppedFiles)).isTaken;
+}
+
+async function effectAnnouncedByThePage(page: Page, element: Locator, droppedFiles: DroppedFile[]): Promise<string> {
+  return (await dispatchTheDrag(page, element, 'dragover', droppedFiles)).announcedEffect;
+}
+
+const scriptBuiltTransferKeepsNoEffect = 'Chromium and WebKit ignore a drop effect set on a script-built DataTransfer';
+
 test.describe('Save file drop', () => {
   test.describe('When a save file is dropped on the display area', () => {
     test('should display that file as if it had been picked', async ({page}) => {
@@ -99,6 +128,79 @@ test.describe('Save file drop', () => {
 
       // Assert
       await expect(page.getByRole('tooltip')).toHaveText('Swap save A and save B');
+    });
+  });
+
+  test.describe('When save files enter a save area', () => {
+    test('should take them, so that the browser lets them be dropped without a further move', async ({page}) => {
+      // Arrange
+      const baselineSave = await readTheFixture(baselineSaveFixturePath);
+      const otherPlayerSave = await readTheFixture(otherPlayerSaveFixturePath);
+      await page.goto('/');
+
+      // Act
+      const isTaken = await isTakenByThePage(page, page.getByLabel('Save A:'), 'dragenter', [baselineSave, otherPlayerSave]);
+
+      // Assert
+      expect<boolean>(isTaken).toBe(true);
+    });
+  });
+
+  test.describe('When save files move over a save area', () => {
+    test('should announce a copy to the browser', async ({page, browserName}) => {
+      test.skip(browserName !== 'firefox', scriptBuiltTransferKeepsNoEffect);
+      // Arrange
+      const baselineSave = await readTheFixture(baselineSaveFixturePath);
+      await page.goto('/');
+
+      // Act
+      const effect = await effectAnnouncedByThePage(page, page.getByLabel('Save file:'), [baselineSave]);
+
+      // Assert
+      expect<string>(effect).toBe('copy');
+    });
+  });
+
+  test.describe('When save files move over the page outside every area', () => {
+    test('should announce to the browser that nothing can be dropped there', async ({page, browserName}) => {
+      test.skip(browserName !== 'firefox', scriptBuiltTransferKeepsNoEffect);
+      // Arrange
+      const baselineSave = await readTheFixture(baselineSaveFixturePath);
+      await page.goto('/');
+
+      // Act
+      const effect = await effectAnnouncedByThePage(page, page.getByRole('heading', {name: 'Visualization'}), [baselineSave]);
+
+      // Assert
+      expect<string>(effect).toBe('none');
+    });
+
+    test('should keep the browser from opening them', async ({page}) => {
+      // Arrange
+      const baselineSave = await readTheFixture(baselineSaveFixturePath);
+      await page.goto('/');
+
+      // Act
+      const isTaken = await isTakenByThePage(page, page.getByRole('heading', {name: 'Visualization'}), 'dragover', [baselineSave]);
+
+      // Assert
+      expect<boolean>(isTaken).toBe(true);
+    });
+  });
+
+  test.describe('When two save files are dropped on the save A area', () => {
+    test('should hand them to the merge section, which selects them as save A and save B', async ({page}) => {
+      // Arrange
+      const otherPlayerSave = await readTheFixture(otherPlayerSaveFixturePath);
+      const baselineSave = await readTheFixture(baselineSaveFixturePath);
+      await page.goto('/');
+
+      // Act
+      await dropTheFiles(page, page.getByRole('group', {name: 'Save A'}), [otherPlayerSave, baselineSave]);
+
+      // Assert
+      await expect(page.getByLabel('Save A:')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByLabel('Save B:')).toHaveValue(/other-player_valid\.json$/);
     });
   });
 

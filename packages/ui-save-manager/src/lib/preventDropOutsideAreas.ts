@@ -1,13 +1,18 @@
 import {onCleanup, onMount} from 'solid-js';
 
 export function preventDropOutsideAreas(): void {
-  const keepThePage = (event: DragEvent) => event.preventDefault();
+  const refuseWithoutOpening = (event: DragEvent) => {
+    if (event.defaultPrevented) {
+      return;
+    }
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'none';
+    }
+  };
+  const eventTypes = ['dragenter', 'dragover', 'drop'] as const;
   onMount(() => {
-    window.addEventListener('dragover', keepThePage);
-    window.addEventListener('drop', keepThePage);
-    onCleanup(() => {
-      window.removeEventListener('dragover', keepThePage);
-      window.removeEventListener('drop', keepThePage);
-    });
+    eventTypes.forEach((type) => window.addEventListener(type, refuseWithoutOpening));
+    onCleanup(() => eventTypes.forEach((type) => window.removeEventListener(type, refuseWithoutOpening)));
   });
 }
