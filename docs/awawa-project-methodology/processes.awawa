@@ -162,10 +162,9 @@ PROCESS ATestTaskChangesTheUiOnlyForItsOwnSake
 		PR 38
 
 PROCESS AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
-	SPEC "An entity that stops binding is archived in the pull request that ends it: STATUS"
-		+ "archived and ARCHIVED_ON that day, never deleted there"
-	SPEC "The archive is kept for an entity that existed on master: an entity that did not, such as"
-		+ "one added and ended in the same pull request, is deleted with every reference to it"
+	SPEC "An entity that stops binding is archived or deleted in the pull request that ends it as"
+		+ "the instructions rule instructions_corpus_archiving says, master being the default"
+		+ "branch it names"
 	SPEC "A ruling replaced on the same subject is rewritten in place under its name, the previous"
 		+ "form becoming a REJECTED line when it teaches something"
 	REJECTED "Keeping history in the corpus with superseded entities, SUPERSEDES and CLOSES edges"
@@ -177,10 +176,19 @@ PROCESS AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
 		+ "CLOSES and 44 :v2 written by hand, and 41 closed questions and 12 superseded decisions"
 		+ "loaded by context; an archived entity is suppressed by the schema gate, named in the"
 		+ "context footer and deleted by the cleanup pass once its delay has run"
-	REJECTED "Archiving an open question added and ruled in the same pull request: its archive"
-		+ "would say it once bound on master, where it never was"
+	REJECTED "Stating here that an entity is never deleted in the pull request that ends it, with"
+		+ "its own exception for one added and ended in the same pull request: project instructions"
+		+ "prevail over the general ones, so the copy forbade the deletion the general rule asks"
+		+ "for and had to be kept in step with it by hand"
 	SOURCE "Owner review of pull request 178, on an open question added and archived there"
 		PR 178
+	SOURCE "Pull request 49 of the instructions, which moved the same-pull-request deletion into"
+		+ "instructions_corpus_archiving"
+		PR 49
+		REF @PROJECT.AI
+	SOURCE "Owner decision that the project process relies on the general rule, applied in pull"
+		+ "request 185"
+		PR 185
 
 PROCESS WhatShouldNeverHaveBeenRecordedIsDeletedAtOnce
 	SPEC "An entity that should never have been recorded is deleted by hand at once, with every"
