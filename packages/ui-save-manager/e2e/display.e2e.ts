@@ -49,6 +49,20 @@ test.describe('Save display', () => {
       await expect(page.getByText('Wind turbine T2')).toBeVisible();
     });
 
+    test('should warn once, under the Power title, that submerged machines may distort the computed available energy', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+      await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
+
+      // Act
+      await page.getByRole('button', {name: 'Visualize'}).click();
+
+      // Assert
+      await expect(page.getByRole('heading', {name: 'Power', level: 3})).toBeVisible();
+      await expect(page.getByText('Submerged machines may distort the computed available energy')).toHaveCount(1);
+      await expect(page.getByText('Submerged machines may distort the computed available energy')).toBeVisible();
+    });
+
     test('should display the drone logistics as paused', async ({page}) => {
       // Arrange
       await page.goto('/');

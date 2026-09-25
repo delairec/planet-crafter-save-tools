@@ -51,6 +51,13 @@ details:open summary::marker {
     background-color: var(--disclaimer);
 }
 
+.disclaimer {
+    padding: 0.5rem 0.75rem;
+    border-left: 0.375rem solid var(--warning);
+    border-radius: 0 0.25rem 0.25rem 0;
+    background-color: var(--disclaimer);
+}
+
 .inline-block {
     display: inline-block;
 }
