@@ -851,13 +851,18 @@ TASK CHORE112
 TASK TEST113
 	TITLE "a test pins that the machine breakdown and the optimizer contributions share the"
 		+ "production of a planet"
-	STATUS todo
+	STATUS implemented
 	SPEC "with several optimizers holding energy fuses and a producer reached by two of them, the"
 		+ "totalLevel of the production breakdown entries plus the contributions of the optimizers"
 		+ "equals the production of the planet"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should add the machine"
+			+ "levels and the optimizer contributions up to the production of the planet"
 	SPEC "on the same planet, the productionRatio shares of the breakdown entries and of the"
 		+ "optimizers sum to 1"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should share the"
+			+ "production of the planet between the machines and the optimizers"
 	WAVE @WAVE.9
+	DELIVERED_BY 177
 	RATIONALE "The draft took the base-only breakdown for a defect; it is the design. The boost is"
 		+ "counted once, in the optimizer contribution, so the shares tell whether a machine or an"
 		+ "optimizer yields more. No spec pins the two tables together: the existing specs check"

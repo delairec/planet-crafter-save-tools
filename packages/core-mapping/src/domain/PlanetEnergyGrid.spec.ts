@@ -409,6 +409,71 @@ describe('PlanetEnergyGrid', () => {
         expect(levels.optimizers[0]?.productionRatio).toBeUndefined();
       });
     });
+
+    describe('When several optimizers holding energy fuses share a producer', () => {
+      function createGridWithTwoOptimizersSharingAProducer(): PlanetEnergyGrid {
+        const optimizerWithOneFuse = placedWorldObject('opt-a', 'Optimizer1', [0, 0, 0], PLANET_ID, 99);
+        const optimizerWithThreeFuses = placedWorldObject('opt-b', 'Optimizer2', [200, 0, 0], PLANET_ID, 98);
+        const producerReachedByBothOptimizers = placedWorldObject('prod-1', 'WindTurbine1', [100, 0, 0]);
+        const producerReachedByOneOptimizer = placedWorldObject('prod-2', 'EnergyGenerator5', [400, 0, 0]);
+        const producerReachedByNoOptimizer = placedWorldObject('prod-3', 'EnergyGenerator3', [-500, 0, 0]);
+        const placedWorldObjects = [
+          optimizerWithOneFuse,
+          optimizerWithThreeFuses,
+          producerReachedByBothOptimizers,
+          producerReachedByOneOptimizer,
+          producerReachedByNoOptimizer
+        ];
+
+        return gridOf(
+          placedWorldObjects,
+          [
+            ...placedWorldObjects,
+            energyFuse('fuse-a'),
+            energyFuse('fuse-b1'),
+            energyFuse('fuse-b2'),
+            energyFuse('fuse-b3')
+          ],
+          [
+            new InventoryEntity({id: 99, worldObjectIds: ['fuse-a'], size: 1}),
+            new InventoryEntity({id: 98, worldObjectIds: ['fuse-b1', 'fuse-b2', 'fuse-b3'], size: 3})
+          ]
+        );
+      }
+
+      it('should add the machine levels and the optimizer contributions up to the production of the planet', () => {
+        // Arrange
+        const grid = createGridWithTwoOptimizersSharingAProducer();
+
+        // Act
+        const levels = grid.levels();
+
+        // Assert
+        const [generators5, windTurbines, generators3] = levels.productionBreakdown;
+        const [optimizerWithOneFuse, optimizerWithThreeFuses] = levels.optimizers;
+        expect(levels.production).toBe(3251.25);
+        expect(
+          generators5.totalLevel + windTurbines.totalLevel + generators3.totalLevel
+          + optimizerWithOneFuse.contribution + optimizerWithThreeFuses.contribution
+        ).toBe(3251.25);
+      });
+
+      it('should share the production of the planet between the machines and the optimizers', () => {
+        // Arrange
+        const grid = createGridWithTwoOptimizersSharingAProducer();
+
+        // Act
+        const levels = grid.levels();
+
+        // Assert
+        const [generators5, windTurbines, generators3] = levels.productionBreakdown;
+        const [optimizerWithOneFuse, optimizerWithThreeFuses] = levels.optimizers;
+        expect(
+          generators5.productionRatio! + windTurbines.productionRatio! + generators3.productionRatio!
+          + optimizerWithOneFuse.productionRatio! + optimizerWithThreeFuses.productionRatio!
+        ).toBeCloseTo(1, 12);
+      });
+    });
   });
 
   it('should draw production and consumption from the planet alone, not from the whole save', () => {
