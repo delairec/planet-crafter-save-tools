@@ -90,6 +90,8 @@ export default function MergeSection(props: MergeSectionProps) {
       <div class="inline-block">
         <h2>{mergeSectionTitle}</h2>
         <div class="merge-slots">
+          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel}
+                      onClick={handleSwap} disabled={!fileA() && !fileB()}/>
           <DropZone label={mergeSectionSaveAAreaLabel} maximumFileCount={1}
                     tooManyFilesMessage={tooManyFilesForOneSaveMessage}
                     onFilesDropped={(files) => selectFileInInput(saveAInput, files[0])}>
@@ -102,8 +104,6 @@ export default function MergeSection(props: MergeSectionProps) {
             <p><SaveFileField label={mergeSectionSaveBLabel} ref={saveBInput}
                               onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/></p>
           </DropZone>
-          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel}
-                      onClick={handleSwap} disabled={!fileA() && !fileB()}/>
         </div>
         <p><label><input type="checkbox" checked={preferLegacyFormat()}
                          onChange={(event) => setPreferLegacyFormat(event.currentTarget.checked)}/>{mergeSectionPreferLegacyFormatLabel}</label>

@@ -37,9 +37,8 @@ button:focus-visible {
 
 .tooltip {
     position: absolute;
-    left: calc(100% + 0.5rem);
-    top: 50%;
-    transform: translateY(-50%);
+    left: 0;
+    bottom: calc(100% + 0.5rem);
     padding: 0.25rem 0.5rem;
     border: 1px solid var(--border);
     border-radius: 0.25rem;
