@@ -1,34 +1,28 @@
-<div align="center" width="100%">
-<div>
-  
-# Planet Crafter Save Tools
-</div>
-</div>
-
-<div align="center" width="100%">
-<div>
-
-  
-  [![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fplanet-crafter-save-manager.netlify.app%2Fversion.json&query=%24.version&label=production)](https://planet-crafter-save-manager.netlify.app/)
-[![Netlify build of master](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status?branch=master)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
-[![Site check](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml?query=branch%3Amaster)
-[![License: GPL-3.0](https://img.shields.io/github/license/delairec/planet-crafter-save-tools)](LICENSE)
-
-  [![Quality](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml?query=branch%3Amaster)
-[![Dependencies](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependencies.yml?query=branch%3Amaster)
-[![Dependabot](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates?query=branch%3Amaster)
-[![UI tests](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml?query=branch%3Amaster)
-[![Release](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/release.yml/badge.svg)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/release.yml)
-</div>
-</div>
-
 > ❗ I’m not actively maintaining this project (or only minimally). If you’d like to add improvements or fix bugs,
 > feel free to fork it 😃
 
 <div align="center" width="100%">
 <div>
 
-  ## [Open the Save Manager in browser](https://planet-crafter-save-manager.netlify.app/) — nothing to install
+# Planet Crafter Save Tools
+
+[![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fplanet-crafter-save-manager.netlify.app%2Fversion.json&query=%24.version&label=production)](https://planet-crafter-save-manager.netlify.app/)
+[![Netlify build of master](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status?branch=master)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
+[![License: GPL-3.0](https://img.shields.io/github/license/delairec/planet-crafter-save-tools)](LICENSE)
+
+[![Site check](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml?query=branch%3Amaster)
+[![Dependabot](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates?query=branch%3Amaster)
+[![Quality](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml?query=branch%3Amaster)
+[![UI tests](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml?query=branch%3Amaster)
+
+
+<!-- TOC -->
+
+### [What you can do](#what-you-can-do) | [Coming next](#coming-next) | [How to merge two saves](#how-to-merge-two-saves) | [Prefer the command line?](#prefer-the-command-line) | [Going further](#going-further)
+
+<!-- TOC -->
+
+## [Open the Save Manager in browser](https://planet-crafter-save-manager.netlify.app/) — nothing to install
 
 <p>
   <a href="docs/assets/welcome-page-dark.png"><picture>
@@ -50,7 +44,8 @@ and the <a href="docs/assets/display-page-light.png">save view in the light them
 - **Merge two saves** into one new file, ready to load in the game — pick which format to write when the two saves
   come from different game versions.
 - **Visualize**: progression, terraformation levels, players, energy balance, world settings - still a work in progress
-- **Check a save** against the game's format, and see exactly which part is wrong, thanks to a validator running against your save before it is displayed.
+- **Check a save** against the game's format, and see exactly which part is wrong, thanks to a validator running against
+  your save before it is displayed.
 
 **Your saves stay on your computer.** Everything runs in your browser: the page never sends a save anywhere.
 
@@ -63,11 +58,12 @@ and the <a href="docs/assets/display-page-light.png">save view in the light them
 
 > Tips: press F1 on the game main screen to open the save folder.
 
-1. Find your saves.  
-   * On Windows they sit in `%APPDATA%\..\LocalLow\MijuGames\Planet Crafter\`.  
-   * On Linux eh... try something like `~/.steam/steam/steamapps/compatdata/1234567/pfx/drive_c/users/steamuser/AppData/LocalLow/MijuGames/Planet Crafter/` if you installed the game from Steam with Proton. 
-2. In the [Save Manager](https://planet-crafter-save-manager.netlify.app/), pick the two files and press
-   **Merge**.
+1. Find your saves.
+    * On Windows they sit in `%APPDATA%\..\LocalLow\MijuGames\Planet Crafter\`.
+    * On Linux eh... try something like
+      `~/.steam/steam/steamapps/compatdata/1234567/pfx/drive_c/users/steamuser/AppData/LocalLow/MijuGames/Planet Crafter/`
+      if you installed the game from Steam with Proton.
+2. In the [Save Manager](https://planet-crafter-save-manager.netlify.app/), pick the two files and press **Merge**.
 3. Download the merged save, copy it next to the others, and pick it in the game.
 
 The original saves are never modified.
@@ -96,14 +92,14 @@ Arguments, exit codes and Node.js support are described in [Command-line tools](
 
 ## Going further
 
-| Page                                             | For                                                                             |
-|--------------------------------------------------|---------------------------------------------------------------------------------|
-| [Command-line tools](docs/wiki/command-line.md)  | every argument, exit code and output of `bun merge` and `bun validate`          |
-| [Save format](docs/save-format.md)               | the curious: how the game writes a save, section by section                     |
-| [Energy levels](docs/energy-levels.md)           | how the Save Manager computes the energy balance                                |
-| [Architecture](docs/wiki/architecture.md)        | contributors: the packages of the workspace and what each may depend on         |
-| [Development](docs/wiki/development.md)          | contributors: tests, type checks, audits, quality gate, UI commands             |
-| [Releases and production](docs/wiki/releases.md) | maintainers: versions, cutting a release, publishing the web UI                 |
+| Page                                             | For                                                                     |
+|--------------------------------------------------|-------------------------------------------------------------------------|
+| [Command-line tools](docs/wiki/command-line.md)  | every argument, exit code and output of `bun merge` and `bun validate`  |
+| [Save format](docs/save-format.md)               | the curious: how the game writes a save, section by section             |
+| [Energy levels](docs/energy-levels.md)           | how the Save Manager computes the energy balance                        |
+| [Architecture](docs/wiki/architecture.md)        | contributors: the packages of the workspace and what each may depend on |
+| [Development](docs/wiki/development.md)          | contributors: tests, type checks, audits, quality gate, UI commands     |
+| [Releases and production](docs/wiki/releases.md) | maintainers: versions, cutting a release, publishing the web UI         |
 
 Each tool carries its own version, listed in its `CHANGELOG.md`. Netlify publishes no production deploy by itself:
 production is published by hand from a `ui-save-manager-v*` tag, and the deploy previews stay public.

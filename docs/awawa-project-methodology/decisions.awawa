@@ -1737,8 +1737,6 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 		IMPL "README.md::quality.yml/badge.svg?branch=master"
 		IMPL "README.md::dependabot-updates/badge.svg?branch=master"
 		IMPL "README.md::site-check.yml?query=branch%3Amaster"
-	SPEC "The Release badge carries no branch filter"
-		IMPL "README.md::release.yml/badge.svg)"
 	REJECTED "The Netlify badge with no branch: a deploy preview turns it to canceled"
 	REJECTED "A Release badge filtered on master: a release runs on a tag push, which no branch"
 		+ "carries"
