@@ -62,4 +62,17 @@ describe('findVersionCommit', () => {
       expect(readVersionCommit).toThrow(`No first-parent commit writes version 0.3.0 into ${MANIFEST_PATH}.`);
     });
   });
+
+  describe('When the branch the release reads carries no commit yet', () => {
+    it('should refuse with the reason git gives', () => {
+      // Arrange
+      runGit(['update-ref', '-d', 'HEAD']);
+
+      // Act
+      const readVersionCommit = () => findVersionCommit({repositoryRoot, manifestPath: MANIFEST_PATH, version: '0.0.0'});
+
+      // Assert
+      expect(readVersionCommit).toThrow("'master'");
+    });
+  });
 });

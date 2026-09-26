@@ -153,6 +153,26 @@ describe('findViolations', () => {
         message: 'package name save-tools carries no prefix of the dependency matrix'
       }]);
     });
+
+    it('should report its manifest alone, no import of it being judged against the matrix', () => {
+      // Arrange
+      const packages: WorkspacePackage[] = [
+        {name: 'save-tools', manifestPath: 'packages/save-tools/package.json', declaredDependencies: ['util-types']},
+        {name: 'util-types', manifestPath: 'packages/util-types/package.json', declaredDependencies: noDependencies}
+      ];
+      const imports: PackageImport[] = [
+        {packageName: 'save-tools', filePath: 'packages/save-tools/src/index.ts', line: 1, specifier: 'util-types'}
+      ];
+
+      // Act
+      const violations = findViolations(packages, imports, matrix);
+
+      // Assert
+      expect(violations).toEqual([{
+        location: 'packages/save-tools/package.json',
+        message: 'package name save-tools carries no prefix of the dependency matrix'
+      }]);
+    });
   });
 
   describe('When a source imports its own package by name', () => {

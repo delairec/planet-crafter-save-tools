@@ -81,10 +81,13 @@ describe('Merge terraformation levels', () => {
   });
 
   describe('When only one save has unitPurificationLevel at -1', () => {
-    it('should take the non-negative value of the other save', () => {
+    it.each([
+      {unlockedIn: 'save B', purificationLevelA: -1.0, purificationLevelB: 500.0},
+      {unlockedIn: 'save A', purificationLevelA: 500.0, purificationLevelB: -1.0}
+    ])('should take the non-negative value of the other save, the one of $unlockedIn', ({purificationLevelA, purificationLevelB}) => {
       // Arrange
-      const levelsFromSaveA = [{...baseTerraformationLevel, unitPurificationLevel: -1.0}];
-      const levelsFromSaveB = [{...baseTerraformationLevel, unitPurificationLevel: 500.0}];
+      const levelsFromSaveA = [{...baseTerraformationLevel, unitPurificationLevel: purificationLevelA}];
+      const levelsFromSaveB = [{...baseTerraformationLevel, unitPurificationLevel: purificationLevelB}];
 
       // Act
       const result = mergeTerraformationLevels(levelsFromSaveA, levelsFromSaveB);
