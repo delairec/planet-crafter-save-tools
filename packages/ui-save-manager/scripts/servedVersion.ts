@@ -26,14 +26,9 @@ function parseReleaseTag(listingLine: string): ReleaseTag[] {
 }
 
 function compareReleaseTags(first: ReleaseTag, second: ReleaseTag): number {
-  for (const [index, versionNumber] of first.versionNumbers.entries()) {
-    const difference = versionNumber - (second.versionNumbers[index] ?? 0);
-    if (difference !== 0) {
-      return difference;
-    }
-  }
-
-  return 0;
+  return first.versionNumbers
+    .map((versionNumber, index) => versionNumber - (second.versionNumbers[index] ?? 0))
+    .find(difference => difference !== 0) ?? 0;
 }
 
 export function findLatestReleaseTag(remoteTagListing: string): string | undefined {

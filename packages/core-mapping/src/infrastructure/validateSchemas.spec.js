@@ -9,12 +9,15 @@ import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-pr
 import {createPlayer, createTerrainLayer, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 
+/** @returns {Generator<never>} the world objects section of a fake save that holds none */
+const NO_WORLD_OBJECTS = function* () {};
+
 describe('validateSchemas', () => {
 
   describe('When a section entry matches its schema', () => {
     it('should return no issue', () => {
       // Arrange
-      const {sections, formatRelease} = createFakeParsedSave({players: [createPlayer()]});
+      const {sections, formatRelease} = createFakeParsedSave({worldObjects: NO_WORLD_OBJECTS, players: [createPlayer()]});
 
       // Act
       const issues = validateSchemas(sections, formatRelease);
@@ -29,7 +32,7 @@ describe('validateSchemas', () => {
       // Arrange
       const {name: _, ...playerWithoutName} = createPlayer();
       // @ts-expect-error intentionally missing the required name to test validation
-      const {sections} = createFakeParsedSave({players: [playerWithoutName]});
+      const {sections} = createFakeParsedSave({worldObjects: NO_WORLD_OBJECTS, players: [playerWithoutName]});
 
       // Act
       const issues = validateSchemas(sections, '2.004');
@@ -70,7 +73,7 @@ describe('validateSchemas', () => {
   describe('When a section holding entries did not reach it as a list', () => {
     it('should fail instead of reading it as a section without a single entry', () => {
       // Arrange
-      const {sections, formatRelease} = createFakeParsedSave();
+      const {sections, formatRelease} = createFakeParsedSave({worldObjects: NO_WORLD_OBJECTS});
       // @ts-expect-error a section the reader always fills, emptied on purpose to reach the guard
       sections[STATISTICS_SECTION_INDEX] = undefined;
 

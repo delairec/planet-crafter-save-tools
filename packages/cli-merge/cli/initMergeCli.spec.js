@@ -54,7 +54,7 @@ describe('Merge CLI', () => {
     });
   }
 
-  function initCli(argv) {
+  function initCli(argv, mergeSaveFiles) {
     const fakePlatform = {
       readDirectory,
       readTextFile,
@@ -63,7 +63,7 @@ describe('Merge CLI', () => {
       exitProcess,
     };
 
-    return initMergeCli(fakePlatform, argv, CLI_RELEASE);
+    return initMergeCli(fakePlatform, argv, CLI_RELEASE, mergeSaveFiles);
   }
 
   beforeEach(() => {
@@ -733,6 +733,54 @@ describe('Merge CLI', () => {
 
       // Assert
       expect(consoleLogSpy).not.toHaveBeenCalled();
+    });
+
+    it('should exit with the failure code', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(exitProcess).toHaveBeenCalledWith(UNEXPECTED_ERROR_EXIT_CODE);
+    });
+  });
+
+  describe('When the merge controller answers that no usable save can be produced', () => {
+    const MERGE_FAILURE_MESSAGE = 'The saves passed validation but could not be read.';
+
+    beforeEach(() => {
+      readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
+      readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
+      readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
+      const mergeSaveFiles = mock(() => Promise.resolve({
+        status: 'mergeFailed',
+        fileName: '',
+        content: '',
+        mergeFailureMessage: MERGE_FAILURE_MESSAGE,
+        mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
+        saveAErrors: [],
+        saveBErrors: [],
+        saveAWarnings: [],
+        saveBWarnings: []
+      }));
+      ({main} = initCli([], mergeSaveFiles));
+    });
+
+    it('should name the folder and the reason no save was produced', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`✖ Folder "${INPUT_SUBFOLDER_ALPHA}" was not merged: ${MERGE_FAILURE_MESSAGE}`);
+    });
+
+    it('should write no merged file', async () => {
+      // Act
+      await main();
+
+      // Assert
+      expect(writeTextFile).not.toHaveBeenCalled();
     });
 
     it('should exit with the failure code', async () => {
