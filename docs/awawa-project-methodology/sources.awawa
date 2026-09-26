@@ -182,8 +182,9 @@ GAME_RELEASE 2.100
 URL SaveManagerRedesignMockup
 	LOCATION "https://claude.ai/artifact/8BdPxmk8kVLoWBa6KYiKJM"
 	DESC "mockup of the save manager redesign published on 2026-09-26 on sample data, no"
-		+ "computation: page E is the final version the redesign implements, pages A to C the"
-		+ "proposals it was chosen from and D the version before the owner's review; the details of"
-		+ "E may still be adjusted during the implementation, accessibility and phone-width display"
+		+ "computation: page F is the final version the redesign implements, the neon theme of the"
+		+ "current application over the structure of page E; pages A to C are the proposals it was"
+		+ "chosen from, D and E the working versions before the owner's reviews; the details of F"
+		+ "may still be adjusted during the implementation, accessibility and phone-width display"
 		+ "among the reasons, and the disclaimer block with the astronaut stays unchanged at the"
 		+ "top of the page"

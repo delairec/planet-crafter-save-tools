@@ -1618,7 +1618,7 @@ TASK FEAT133
 TASK FEAT134
 	TITLE "Lay out the save manager as a shell with a left menu and one page per section"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification: how a page is"
+	DESC "drafted from page F of the mockup, to be refined before ratification: how a page is"
 		+ "addressed while the save lives in memory, and what the menu shows before a save is"
 		+ "loaded, are settled at refinement"
 	SPEC "the page opens on the disclaimer block of today, unchanged, above the content of every"
@@ -1648,14 +1648,14 @@ TASK FEAT134
 		REF @PACKAGE.ui_save_manager
 		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
-	SOURCE "Owner ruling of 2026-09-26 on the mockup: page E is the final version, its details"
+	SOURCE "Owner ruling of 2026-09-26 on the mockup: page F is the final version, its details"
 		+ "adjustable during the implementation, the disclaimer block unchanged"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT135
 	TITLE "Open the loaded save on an overview page of figures and planet cards"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification: the common scale of"
+	DESC "drafted from page F of the mockup, to be refined before ratification: the common scale of"
 		+ "the power bars and the figures the tiles hold are settled at refinement"
 	SPEC "the Overview page names the save (display name, mode, game release, file size) and shows"
 		+ "the notifications of the save under it"
@@ -1682,14 +1682,14 @@ TASK FEAT135
 		REF @TASK.FEAT132
 		REF @PACKAGE.ui_save_manager
 		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
-	SOURCE "Owner ruling of 2026-09-26 on the mockup: page E is the final version, its details"
+	SOURCE "Owner ruling of 2026-09-26 on the mockup: page F is the final version, its details"
 		+ "adjustable during the implementation"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT136
 	TITLE "Give each planet a page with a Power tab and a Terraformation tab"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification"
+	DESC "drafted from page F of the mockup, to be refined before ratification"
 	SPEC "the Details button of a planet card opens the page of that planet, whose breadcrumb reads"
 		+ "Save, Overview, then the planet name, Overview leading back to the overview"
 	SPEC "the planet page carries two tabs, Power first and Terraformation second, opening on Power"
@@ -1712,7 +1712,7 @@ TASK FEAT136
 TASK FEAT137
 	TITLE "Move the merge of two saves and the loading of another save under the Tools group"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification: what Load another"
+	DESC "drafted from page F of the mockup, to be refined before ratification: what Load another"
 		+ "save does to the save in memory, and where the merge result and its warnings appear, are"
 		+ "settled at refinement"
 	SPEC "the Tools group of the menu holds Merge two saves and Load another save, in this order"
@@ -1740,7 +1740,7 @@ TASK FEAT137
 TASK FEAT138
 	TITLE "Give the save manager the shared presentation pieces the redesigned pages are built from"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification: the list of pieces"
+	DESC "drafted from page F of the mockup, to be refined before ratification: the list of pieces"
 		+ "is closed at refinement against the pages of the mockup"
 	SPEC "a page title is a section title with an accent mark, larger and heavier than the running"
 		+ "text; a card has a header on the elevated surface holding its title and a summary"
@@ -1753,7 +1753,10 @@ TASK FEAT138
 		+ "tab strip mark the selected tab; a selector is a labelled select with a visible border"
 	SPEC "a notification is a bordered line whose severity, limitation or warning, is named by a"
 		+ "pill before the message"
-	SPEC "every piece renders in the light and in the dark theme from the palette of the package"
+	SPEC "every piece renders in the light and in the dark theme and wears the neon theme of the"
+		+ "package as page F of the mockup shows: section titles in neon pink, underlined; card"
+		+ "headers as neon-cyan pills; cards with a neon-purple border; the active menu item, the"
+		+ "primary buttons and the Host badge on a neon fill"
 	WAVE @WAVE.10
 	RATIONALE "The pages of the mockup share a small vocabulary of pieces, and building them once"
 		+ "is what keeps the four redesigned pages of the next wave consistent. The package has no"
@@ -1771,7 +1774,7 @@ TASK FEAT138
 TASK FEAT139
 	TITLE "Redesign the Configuration page, global progression first and modifiers in tones"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification: which modifiers are"
+	DESC "drafted from page F of the mockup, to be refined before ratification: which modifiers are"
 		+ "percentages and which are coefficients is checked against the save format at refinement"
 	SPEC "the Configuration page shows the global progression first, the modifiers next and the"
 		+ "unlock flags of the save last"
@@ -1802,7 +1805,7 @@ TASK FEAT139
 TASK FEAT140
 	TITLE "Redesign the Power page, figures first, optimizers next, breakdown as tables"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification: the threshold"
+	DESC "drafted from page F of the mockup, to be refined before ratification: the threshold"
 		+ "between a tight and a surplus balance is settled at refinement"
 	SPEC "the Power page keeps its notifications under the title, then shows three figure tiles,"
 		+ "production, consumption and available, the available one carrying a status pill and a"
@@ -1830,7 +1833,7 @@ TASK FEAT140
 TASK FEAT141
 	TITLE "Chart the production and the consumption of a planet, with a selector of the form"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification: the colours of the"
+	DESC "drafted from page F of the mockup, to be refined before ratification: the colours of the"
 		+ "series are validated for colour vision deficiency on both surfaces at refinement"
 	SPEC "above the breakdown, a Display as selector offers Bars by machine, Share of each machine"
 		+ "type, and Table, and the chosen form stays chosen across planets and pages"
@@ -1842,8 +1845,10 @@ TASK FEAT141
 		+ "the eight largest types and the rest folded, the share written inside a segment when it"
 		+ "fits, and a legend naming each type"
 	SPEC "production, consumption and the optimizer boost each keep one colour across the three"
-		+ "forms and the legend, and the two series stay distinguishable under colour vision"
-		+ "deficiency on the light and on the dark surface"
+		+ "forms and the legend, production in cyan, consumption in pink and the boost in purple as"
+		+ "page F of the mockup shows, each stepped from the neon token where that token fails the"
+		+ "check, and the two series stay distinguishable under colour vision deficiency on the"
+		+ "light and on the dark surface"
 	SPEC "hovering or focusing a bar or a segment names the type, its quantity, its unit, its total"
 		+ "and its share"
 	SPEC "Table shows the two breakdown tables of the page; no balance form exists"
@@ -1864,7 +1869,7 @@ TASK FEAT141
 TASK FEAT142
 	TITLE "Redesign the Terraformation page with hero figures and bar-aligned tables"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification"
+	DESC "drafted from page F of the mockup, to be refined before ratification"
 	SPEC "the Terraformation page of a planet opens on two hero figures, the Terraformation Index"
 		+ "and the biomass, the biomass one naming the shares of plants and insects"
 	SPEC "two tables follow, O2, heat, pressure and purification, then plants, insects and animals;"
@@ -1891,7 +1896,7 @@ TASK FEAT142
 TASK FEAT143
 	TITLE "Redesign the Players page with vital gauges, equipment slots and a grouped inventory"
 	STATUS draft
-	DESC "drafted from page E of the mockup, to be refined before ratification: where the maximum"
+	DESC "drafted from page F of the mockup, to be refined before ratification: where the maximum"
 		+ "of each gauge and the capacity of the inventory come from, the save or the equipment"
 		+ "tables, is researched at refinement"
 	SPEC "each player card shows three flat gauges filled by percentage, an oxygen tank for oxygen,"
