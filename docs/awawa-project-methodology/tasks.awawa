@@ -91,14 +91,30 @@ TASK CHORE54
 		+ "the owner on 2026-09-26"
 
 TASK CHORE56
-	TITLE "the repository guards are run by an orchestrator rather than a chain of scripts"
-	STATUS draft
-	DESC "Raised in the review of pull request 101: check:guards chains eight bun run calls in"
-		+ "package.json and grows by one with each guard; the shape of the orchestrator, one file"
-		+ "or several, is to be decided when the task is refined"
-	SPEC "check:guards runs every guard without its list being restated in package.json"
-	SPEC "each guard stays runnable alone"
-	SPEC "a failing guard does not stop the others, and the run reports every guard that failed"
+	TITLE "bun run guards runs every repository guard, a failing one not stopping the others"
+	STATUS todo
+	SPEC "bun run guards runs every check: script of the root package.json and validate:tables, no"
+		+ "list of the guards being written anywhere"
+	SPEC "each guard stays runnable alone as bun run check:<name>"
+	SPEC "a failing guard does not stop the others; the run names every guard that failed and exits"
+		+ "non-zero"
+	SPEC "no script, workflow, AGENTS.md, file of agents/, page of docs/wiki, README or active"
+		+ "DECISION or PROCESS names check:guards any more; the dated usage reports keep it"
+	SPEC "the decision on the repository guards states that a guard is a check: script of the root"
+		+ "package.json, that the script running them all bears a name outside check:, and that a"
+		+ "failing guard does not stop the others"
+	RATIONALE "The guards decision names check:guards as its implementation. check:guards chains"
+		+ "fourteen bun run calls with &&, grows by one with each guard and stops at the first"
+		+ "failure. Bun 1.4.2 runs the scripts matching a pattern itself: bun run --sequential"
+		+ "--no-exit-on-error \"check:*\" validate:tables runs them all, prints Exited with code N"
+		+ "for each one that fails and exits non-zero, so no orchestrator file is written. An"
+		+ "aggregate named check:guards matches its own pattern and runs itself without end, hence"
+		+ "the name guards; renaming the thirteen guards under a guard: prefix was set aside for"
+		+ "touching more names, and a TypeScript orchestrator for redoing what Bun does. --parallel"
+		+ "is not used: the whole chain takes half a second, and sequential output stays in order"
+		REF @DECISION.RepositoryGuardsAreGroupedScripts
+	SOURCE "Raised in the review of pull request 101; refined with the owner on 2026-09-26"
+		PR 101
 
 TASK CHORE58
 	TITLE "investigate running awawa in CI, then deliver in the same pull request the change the"
