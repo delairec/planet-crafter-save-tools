@@ -2182,7 +2182,10 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 			+ "SectionValidatorsFileIo"
 	SPEC "The entry of a script hands its main function and import.meta.main to runAsEntryPoint,"
 		+ "which alone gives it the input and output of the process"
-		IMPL "scripts/scriptIo.ts::export async function runAsEntryPoint"
+		IMPL "scripts/runAsEntryPointWith.ts::export async function runAsEntryPointWith"
+		IMPL "scripts/scriptIo.ts::export function runAsEntryPoint"
+		IMPL "scripts/generate-scenario-fixtures.ts::await runAsEntryPointWith(import.meta.main,"
+			+ "generateScenarioFixtures, console.log)"
 		IMPL "packages/core-mapping/scripts/sectionValidatorsFile.ts::export async function"
 			+ "runAsEntryPoint"
 	SPEC "Only a module holding the real input and output is ignored by the coverage, listed in the"
@@ -2191,8 +2194,12 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 	APPLIES_TO_TASK @TASK.TEST123
 	RATIONALE "Bun measures only what runs in the test process: the script body that runs under"
 		+ "import.meta.main is reached in-process through its injected dependencies, and what is"
-		+ "left is the real adapter, too thin to hold a use case"
+		+ "left is the real adapter, too thin to hold a use case. The hand-off itself lives in"
+		+ "scripts/runAsEntryPointWith.ts, free of the Bun API, because the Playwright global setup"
+		+ "imports generate-scenario-fixtures.ts under Node, where the Glob of scriptIo.ts is not"
+		+ "defined"
 		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
+		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
 	SOURCE "Owner ruling while refining TEST123 on 2026-09-26"
 	SOURCE "Delivery of TEST123, the entry handed to the adapter"
 		PR 197

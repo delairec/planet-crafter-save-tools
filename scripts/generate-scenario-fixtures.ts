@@ -1,4 +1,5 @@
 import {writeFile} from 'node:fs/promises';
+import {runAsEntryPointWith} from './runAsEntryPointWith.ts';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from '../packages/shared-save-processing/testing/createFakeSaveContent.js';
 import {
   createEquipment,
@@ -108,17 +109,23 @@ export const SCENARIO_FIXTURES: ScenarioFixture[] = [
   {fileName: 'energy-consumption_valid.json', generateContent: generateEnergyConsumptionContent}
 ];
 
-function resolveScenarioFixturePath(fileName: string): string {
+export function resolveScenarioFixturePath(fileName: string): string {
   return new URL(`../${SCENARIO_FIXTURES_DIRECTORY}/${fileName}`, import.meta.url).pathname;
 }
 
+// The Playwright global setup: called with the run configuration, which the writer ignores.
 export default async function writeScenarioFixtures(): Promise<void> {
   for (const {fileName, generateContent} of SCENARIO_FIXTURES) {
     await writeFile(resolveScenarioFixturePath(fileName), generateContent());
   }
 }
 
-if (import.meta.main) {
+/**
+ * @param print the console the summary of bun run generate:scenario-fixtures is printed on
+ */
+export async function generateScenarioFixtures(print: (line: string) => void): Promise<void> {
   await writeScenarioFixtures();
-  console.log(`generate:scenario-fixtures: ${SCENARIO_FIXTURES.length} fixture(s) written to ${SCENARIO_FIXTURES_DIRECTORY}.`);
+  print(`generate:scenario-fixtures: ${SCENARIO_FIXTURES.length} fixture(s) written to ${SCENARIO_FIXTURES_DIRECTORY}.`);
 }
+
+await runAsEntryPointWith(import.meta.main, generateScenarioFixtures, console.log);

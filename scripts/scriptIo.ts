@@ -1,4 +1,5 @@
 import {Glob} from 'bun';
+import {runAsEntryPointWith} from './runAsEntryPointWith.ts';
 
 export interface ScriptIo {
   commandLineArguments: string[];
@@ -28,8 +29,6 @@ const PROCESS_IO: ScriptIo = {
   exit: code => process.exit(code)
 };
 
-export async function runAsEntryPoint(isEntryPoint: boolean, main: (io: ScriptIo) => Promise<void>): Promise<void> {
-  if (isEntryPoint) {
-    await main(PROCESS_IO);
-  }
+export function runAsEntryPoint(isEntryPoint: boolean, main: (io: ScriptIo) => Promise<void>): Promise<void> {
+  return runAsEntryPointWith(isEntryPoint, main, PROCESS_IO);
 }

@@ -19,4 +19,4 @@ preload = ["./testSetup.ts"]
 coverageThreshold = { lines = 1.0, functions = 0.0 }
 # Only a module holding the real input and output of a script is left out: its main function receives that input and
 # output and is tested on a fake (@DECISION.AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter).
-coveragePathIgnorePatterns = ["scripts/scriptIo.ts", "packages/core-mapping/scripts/sectionValidatorsFile.ts"]
+coveragePathIgnorePatterns = ["scripts/runAsEntryPointWith.ts", "scripts/scriptIo.ts", "packages/core-mapping/scripts/sectionValidatorsFile.ts"]
