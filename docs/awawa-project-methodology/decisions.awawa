@@ -917,9 +917,21 @@ DECISION RepositoryGuardsAreGroupedScripts
 	REJECTED "Joining lines until parentheses balance to lift the line-by-line limit"
 	REJECTED "A helper package for the guards: every consumer lives in scripts/, which is no"
 		+ "package"
-	SPEC "Repository guards are scripts that read no git history, answer in a fraction of a second,"
-		+ "are grouped behind check:guards and stay runnable alone"
-		IMPL "package.json::check:guards"
+	REJECTED "An aggregate script chaining every guard with &&: its list grows by one with each"
+		+ "guard and it stops at the first failure"
+	REJECTED "An aggregate named under check:: it matches the check:* pattern and runs itself"
+		+ "without end"
+	REJECTED "Renaming the guards under a guard: prefix: more names touched for the same result"
+	REJECTED "A TypeScript orchestrator for the guards: it redoes what bun run does with a pattern"
+	SPEC "A repository guard is a check: script of the root package.json that reads no git history,"
+		+ "answers in a fraction of a second and stays runnable alone as bun run check:<name>"
+		IMPL "package.json::\"check:assertions\""
+	SPEC "The script running every guard matches them by the check:* pattern, validate:tables"
+		+ "added, and bears a name outside check:"
+		IMPL "package.json::\"guards\""
+	SPEC "A failing guard does not stop the others: the run names every guard that failed and exits"
+		+ "non-zero"
+		IMPL "package.json::--no-exit-on-error"
 	SPEC "What guards share, the file walk taking its pattern as a parameter, the masking of string"
 		+ "literals and the report shape, is declared once in a common module"
 		IMPL "scripts/specSources.ts::readOwnSourceFiles"
@@ -928,11 +940,14 @@ DECISION RepositoryGuardsAreGroupedScripts
 	SPEC "The line-by-line limit of a guard is pinned by a test that names it"
 		IMPL "scripts/check-test-assertions.spec.ts::When an assertion is spread over several lines"
 	APPLIES_TO_TASK @TASK.REFACTOR59
+	APPLIES_TO_TASK @TASK.CHORE56
 	SOURCE "T12"
 		PR 40
 		PR 46
 	SOURCE "Helper package refused while refining REFACTOR59 with the owner on 2026-09-26"
 		PR 101
+	SOURCE "Guards run by Bun's pattern matching, ruled in the pull request delivering CHORE56"
+		PR 195
 
 DECISION EveryPublishedCommandHasARealProcessTest
 	REJECTED "A dedicated CI job instead of a test: it does not cover the workstation"
@@ -1287,9 +1302,9 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "script that validates them"
 		IMPL "scripts/validate-tables/validate-tables.ts::path.join(import.meta.dir, 'schemas')"
 	SPEC "bun run validate:tables validates every table, each package naming its own tables, and"
-		+ "check:guards runs it"
+		+ "bun run guards runs it"
 		IMPL "scripts/validate-tables/validate-tables.ts::findTableViolations"
-		IMPL "package.json::bun run validate:tables"
+		IMPL "package.json::--no-exit-on-error \\\"check:*\\\" validate:tables"
 		ENFORCED_BY "scripts/validate-tables/validate-tables.spec.ts"
 	REJECTED "One directory of tables at the root: each package would read outside its perimeter"
 	REJECTED "Each JSON Schema beside its table: read by the script alone, and not reviewable"
@@ -1582,17 +1597,17 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 		PR 151
 
 DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
-	SPEC "A task branch runs bun test, bun run lint:types, bun run check:guards, bun run"
-		+ "audit:quality, awawa fmt --check . and awawa lint --strict . green before its pull"
-		+ "request is opened or updated"
+	SPEC "A task branch runs bun test, bun run lint:types, bun run guards, bun run audit:quality,"
+		+ "awawa fmt --check . and awawa lint --strict . green before its pull request is opened or"
+		+ "updated"
 		IMPL "agents/worktree.md::- `bun run audit:quality`"
 	SPEC "A wave launch prompt quotes the acceptance list of agents/worktree.md rather than a list"
 		+ "of its own"
 		IMPL "agents/worktree.md::C'est cette liste que cite le prompt de lancement d'une vague"
 	REJECTED "An acceptance list held by the wave launch prompt: it omitted bun run audit:quality"
 		+ "and drifted unreported"
-	REJECTED "bun run check:guards as the whole local gate: the fallow audit it leaves out is a CI"
-		+ "job of its own"
+	REJECTED "bun run guards as the whole local gate: the fallow audit it leaves out is a CI job of"
+		+ "its own"
 	APPLIES_TO_TASK @TASK.CHORE60
 	RATIONALE "Two of the three pull requests of the wave of 2026-09-18 arrived red on the fallow"
 		+ "CI job, the acceptance list of their prompt lacking bun run audit:quality"
@@ -1782,7 +1797,7 @@ DECISION TheSectionValidatorsAreGeneratedAndVersioned
 		+ "through that module, and no schema is compiled at run time"
 		IMPL "packages/core-mapping/scripts/generate-section-validators.ts::standaloneCode"
 		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::./sectionValidators.generated.js"
-	SPEC "check:guards fails when the versioned module differs from what the generator writes"
+	SPEC "bun run guards fails when the versioned module differs from what the generator writes"
 		IMPL "packages/core-mapping/scripts/check-section-validators.ts"
 		ENFORCED_BY "packages/core-mapping/scripts/check-section-validators.spec.ts"
 	REJECTED "A Vite plugin generating the validators at build time: the CLI would keep a second"
@@ -1821,7 +1836,7 @@ DECISION EveryActionIsPinnedOnACommitSha
 		IMPL ".github/workflows/quality.yml::fallow-rs/fallow@bd8fca5af5df4ccfd94c7a835d17bd93c31a7cef"
 			+ "# v3.28.0"
 		IMPL "scripts/check-action-pins.ts::findUnpinnedActions"
-		ENFORCED_BY "package.json::bun run check:action-pins"
+		ENFORCED_BY "package.json::\"check:action-pins\""
 		ENFORCED_BY "scripts/check-action-pins.spec.ts::When a uses: names something other than a"
 			+ "full commit SHA"
 	SPEC "Dependabot updates a pinned action by rewriting its SHA and its same-line version comment"

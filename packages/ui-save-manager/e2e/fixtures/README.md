@@ -12,7 +12,7 @@ test:ui` from the root, `playwright test` from `packages/ui-save-manager` — wr
 first scenario starts. `bun run generate:scenario-fixtures` writes the same files without running the scenarios, to
 open a fixture or check it with `bun validate`.
 
-`bun run check:scenario-fixtures`, part of `bun run check:guards`, refuses any scenario reaching into `input/`.
+`bun run check:scenario-fixtures`, part of `bun run guards`, refuses any scenario reaching into `input/`.
 
 Every fixture is the output of `createFakeSaveContent()`, from
 `packages/shared-save-processing/testing/createFakeSaveContent.js` (a wrapper around `createFakeSaveString.js`, the

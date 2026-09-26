@@ -82,9 +82,9 @@ which has no secrets available on such a run.
 bun run audit:quality
 ```
 
-Runs `check:guards`, then the [Fallow](https://github.com/fallow-rs/fallow) audit and health reports (dead files,
+Runs `guards`, then the [Fallow](https://github.com/fallow-rs/fallow) audit and health reports (dead files,
 unused exports, unresolved imports) against `master`. This is the whole gate in one command, for a working copy. The
-CI covers the same ground in two jobs, each running the half it is equipped for: `guards` runs `check:guards`, and
+CI covers the same ground in two jobs, each running the half it is equipped for: `guards` runs `bun run guards`, and
 `fallow` runs the audit and the health report through the Fallow action, which scopes them to the base of the pull
 request and renders them into the run summary.
 
@@ -100,11 +100,13 @@ browsers of `test:ui:install`.
 ## Guard scripts
 
 ```
-bun run check:guards
+bun run guards
 ```
 
 Runs the guard scripts of this repository — every `check:*` script of `package.json`, plus `validate:tables` — which
-enforce conventions no off-the-shelf linter knows about. They read no git history and take a fraction of a second, so
+enforce conventions no off-the-shelf linter knows about. Bun runs them one after the other; a failing guard does not
+stop the next ones, each failure prints `Exited with code N` under the guard's name, and the command exits non-zero.
+Each guard stays runnable alone, as `bun run check:<name>`. They read no git history and take a fraction of a second, so
 they are the half of `audit:quality` to run while writing code.
 
 ```
