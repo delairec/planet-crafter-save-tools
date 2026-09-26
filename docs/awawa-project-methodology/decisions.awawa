@@ -1421,10 +1421,10 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 			+ "charge for the world objects without a known energy level"
 		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	ASSUMES @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
 	RATIONALE "A placed machine whose cost the sources leave undecided may draw power in game, so"
-		+ "excluding it may underestimate consumption; the hypothesis states the opposite for the"
-		+ "machines it names, so excluding them is not a limitation"
+		+ "excluding it may underestimate consumption; the reading in game shows the machines it"
+		+ "names drawing none, so excluding them is not a limitation"
+		REF @RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
 		PR 120

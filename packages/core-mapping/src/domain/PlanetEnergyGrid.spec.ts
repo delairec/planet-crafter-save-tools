@@ -161,6 +161,30 @@ describe('PlanetEnergyGrid', () => {
         expect(levels.consumption).toBe(85);
       });
     });
+
+    describe('When optimizers holding fuses join the machines of the energy consumption fixture', () => {
+      it('should charge each optimizer its base level, the fuses it holds changing no consumption', () => {
+        // Arrange
+        const treePlanter = placedWorldObject('1', 'TreePlanter3');
+        const energyFuseOptimizer = placedWorldObject('2', 'Optimizer1', [5, 0, 0], PLANET_ID, 98);
+        const otherFuseOptimizer = placedWorldObject('3', 'Optimizer2', [10, 0, 0], PLANET_ID, 99);
+        const productionFuse = new WorldObjectEntity({id: 'fuse-2', name: 'FuseProduction1' as WorldObjectName});
+        const grid = gridOf(
+          [treePlanter, energyFuseOptimizer, otherFuseOptimizer],
+          [treePlanter, energyFuseOptimizer, otherFuseOptimizer, energyFuse('fuse-1'), productionFuse],
+          [
+            new InventoryEntity({id: 98, worldObjectIds: ['fuse-1'], size: 1}),
+            new InventoryEntity({id: 99, worldObjectIds: ['fuse-2'], size: 1})
+          ]
+        );
+
+        // Act
+        const levels = grid.levels();
+
+        // Assert
+        expect(levels.consumption).toBe(285);
+      });
+    });
   });
 
   it('should report available energy as production minus consumption', () => {
