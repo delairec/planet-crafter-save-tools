@@ -3,6 +3,7 @@ import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergy
 import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
 import {OptimizerValueObject} from "../domain/valueObjects/OptimizerValueObject";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
+import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {PlanetEnergyLevelsViewModel} from "./viewModels/PlanetEnergyLevelsViewModel";
 import {EnergyBreakdownRowViewModel} from "./viewModels/EnergyBreakdownRowViewModel";
 import {OptimizerViewModel} from "./viewModels/OptimizerViewModel";
@@ -18,18 +19,23 @@ import {
   energyLevelsSectionConsumptionTitle,
   energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
-  energyLevelsSectionSubmergedMachinesDisclaimer,
-  resolveEnergyLevelsSectionGameReleaseNote,
-  resolveEnergyLevelsSectionPowerConsumptionModifierNote,
+  energyLevelsSectionSubmergedMachinesNotification,
+  resolveEnergyLevelsSectionGameReleaseNotification,
+  resolveEnergyLevelsSectionPowerConsumptionModifierNotification,
   resolveEnergyLevelsSectionUnnamedPlanetName
 } from "./messages/energyLevelsSectionMessages.js";
+
+const submergedMachinesNotification: NotificationViewModel = {
+  severity: 'limitation',
+  message: energyLevelsSectionSubmergedMachinesNotification
+};
 
 export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
   private _viewModel: EnergyLevelsViewModel;
 
   constructor() {
     this._viewModel = {
-      submergedMachinesDisclaimer: energyLevelsSectionSubmergedMachinesDisclaimer,
+      notifications: [submergedMachinesNotification],
       planets: []
     };
   }
@@ -40,29 +46,31 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
 
   displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void {
     this._viewModel = {
-      submergedMachinesDisclaimer: energyLevelsSectionSubmergedMachinesDisclaimer,
-      gameReleaseNote: this.buildGameReleaseNote(energyLevels.gameRelease),
-      powerConsumptionModifierNote: this.buildPowerConsumptionModifierNote(energyLevels.powerConsumptionModifier),
+      notifications: this.buildNotifications(energyLevels),
       planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
     };
   }
 
-  private buildGameReleaseNote(gameRelease: string): string | undefined {
-    if (gameRelease === CURRENT_FORMAT_RELEASE) {
-      return undefined;
+  private buildNotifications(energyLevels: EnergyLevelsValueObject): NotificationViewModel[] {
+    const notifications: NotificationViewModel[] = [submergedMachinesNotification];
+
+    if (energyLevels.gameRelease !== CURRENT_FORMAT_RELEASE) {
+      notifications.push({
+        severity: 'warning',
+        message: resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)
+      });
     }
 
-    return resolveEnergyLevelsSectionGameReleaseNote(gameRelease);
-  }
-
-  private buildPowerConsumptionModifierNote(powerConsumptionModifier: number): string | undefined {
-    if (powerConsumptionModifier === UNMODIFIED_POWER_CONSUMPTION_MODIFIER) {
-      return undefined;
+    if (energyLevels.powerConsumptionModifier !== UNMODIFIED_POWER_CONSUMPTION_MODIFIER) {
+      notifications.push({
+        severity: 'limitation',
+        message: resolveEnergyLevelsSectionPowerConsumptionModifierNotification(
+          formatNumber(energyLevels.powerConsumptionModifier, FormatNumberStrategies.PERCENTAGE)
+        )
+      });
     }
 
-    return resolveEnergyLevelsSectionPowerConsumptionModifierNote(
-      formatNumber(powerConsumptionModifier, FormatNumberStrategies.PERCENTAGE)
-    );
+    return notifications;
   }
 
   private buildPlanet(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsViewModel {

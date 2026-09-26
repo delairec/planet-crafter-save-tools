@@ -77,6 +77,20 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'elevated'
   },
   {
+    description: 'the text of a limitation notification, inherited from the body, on its surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-limitation',
+    foreground: 'content',
+    background: 'limitation-surface'
+  },
+  {
+    description: 'the text of a warning notification, inherited from the body, on its surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-warning',
+    foreground: 'content',
+    background: 'warning-surface'
+  },
+  {
     description: 'a validation message origin, nested inside the code panel above',
     file: 'packages/ui-save-manager/src/styles/layout.css',
     selector: '.validation-message-location',

@@ -1,8 +1,8 @@
-import {For, Resource, Show} from "solid-js";
+import {For, Resource} from "solid-js";
 import FieldsGroup from "./structure/FieldsGroup";
 import FieldsGroupGrid from "./structure/FieldsGroupGrid";
 import SectionState from "./structure/SectionState";
-import Disclaimer from "./structure/Disclaimer";
+import Notification from "./structure/Notification";
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {
   energyLevelsSectionBoostedMachinesLabel,
@@ -27,13 +27,9 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
       {(energyLevels) => (
         <div>
           <h3>{energyLevelsSectionTitle}</h3>
-          <Disclaimer>{energyLevels().submergedMachinesDisclaimer}</Disclaimer>
-          <Show when={energyLevels().gameReleaseNote}>
-            {(gameReleaseNote) => <Disclaimer>{gameReleaseNote()}</Disclaimer>}
-          </Show>
-          <Show when={energyLevels().powerConsumptionModifierNote}>
-            {(powerConsumptionModifierNote) => <Disclaimer>{powerConsumptionModifierNote()}</Disclaimer>}
-          </Show>
+          <For each={energyLevels().notifications}>
+            {(notification) => <Notification severity={notification.severity}>{notification.message}</Notification>}
+          </For>
           <For each={energyLevels().planets}>
             {(planet) => (
               <div>
