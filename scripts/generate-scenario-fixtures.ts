@@ -70,7 +70,7 @@ function generateEnergyConsumptionContent(): string {
   });
 
   return createFakeSaveContent({
-    saveConfiguration: createSaveConfiguration({version: MEASURED_GAME_RELEASE, modifierPowerConsumption: 0.0}),
+    saveConfiguration: createSaveConfiguration({version: MEASURED_GAME_RELEASE, modifierPowerConsumption: 1.0}),
     inventories: [
       createInventory(),
       createEquipment(),

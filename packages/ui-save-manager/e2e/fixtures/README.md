@@ -61,5 +61,6 @@ rest on a save CI can read. On Toxicity, in a row east of the player: one `Energ
 and one of each machine the in-game reading of 2026-09-25 found drawing no power (`ButterflyDisplayer1`,
 `FishDisplayer1`, `FrogDisplayer1`, `Server1`, `CookingStation1`, `PodUnderground`, `RocketAnimals2`); west of the
 player, an `Optimizer1` holding one `FuseEnergy1` and an `Optimizer2` holding one `FuseProduction1`, a fuse of
-another kind. `modifierPowerConsumption` is `0.0`, the value a private reference save carries; the other readings
-edit that field only. No scenario uses it.
+another kind. `modifierPowerConsumption` is `1.0`, the value that leaves the base consumption levels unchanged: the game multiplies
+every consumption by it, so at `0.0` the HUD would read no consumption at all. The readings at other values edit that
+field only. No scenario uses it.

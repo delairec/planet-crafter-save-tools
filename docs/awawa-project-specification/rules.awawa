@@ -490,8 +490,8 @@ RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 	HOLDS_FOR all
 	DOMAIN game
-	SPEC "the consumption the HUD prints for a planet whose machines stand on dry ground is the sum"
-		+ "of their base consumption levels"
+	SPEC "the consumption the HUD prints for a planet whose machines stand on dry ground, in a save"
+		+ "whose modifierPowerConsumption is 1, is the sum of their base consumption levels"
 		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::TreePlanter3"
 		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should sum the"
 			+ "consumption of the placed world objects with known consumption levels"
@@ -499,13 +499,34 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 			+ "85 kW the game shows, TreePlanter3 being the only one drawing power"
 	VALUES_FROM @DATATABLE.EnergyLevels
 	RATIONALE "A machine under water draws nothing, which the save cannot tell. Whether an"
-		+ "optimizer, the fuse it holds or modifierPowerConsumption changes the sum is what the"
-		+ "readings of TEST125 on the fixture settle; until then the rule names neither"
+		+ "optimizer or the fuse it holds changes the sum is what the readings of TEST125 on the"
+		+ "fixture settle; until then the rule names neither. Any other modifierPowerConsumption"
+		+ "multiplies the sum"
 		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
 		REF @TASK.TEST125
+		REF @RULE.ThePowerConsumptionModifierMultipliesTheConsumptionOfEveryMachine
 	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save: the HUD of Skeo and of"
 		+ "Toxicity matches the computed consumption, and on Prime the only gap is the 165.5 kW of"
 		+ "four machines under a lake; TreePlanter3 draws 85 kW"
 		PR 178
 		REF @GAME_RELEASE.2.103
 		REF @PROJECT.DNC
+
+RULE ThePowerConsumptionModifierMultipliesTheConsumptionOfEveryMachine
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the game multiplies the consumption of every machine by modifierPowerConsumption: at 1"
+		+ "the HUD prints the base consumption levels, at 1.5 a machine drawing 0.4 kW draws 0.6 kW"
+		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::modifierPowerConsumption"
+	SPEC "a player sets modifierPowerConsumption between 0 and 2"
+		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::modifierPowerConsumption"
+	APPLIES_TO_SECTION @SECTION.SaveConfiguration
+	RATIONALE "A save carrying 0 therefore draws nothing, which is why the fixture carries 1, the"
+		+ "value every standard reference save carries. Applying the modifier to the computed"
+		+ "consumption is FEAT126; a test pins the multiplied value once that task computes it"
+		REF @TASK.FEAT126
+		REF @TASK.TEST125
+	SOURCE "Owner's reading in game of 2026-09-26: at modifierPowerConsumption 1 the consumption is"
+		+ "the default one, at 1.5 a consumption of 0.4 becomes 0.6, and the game offers values"
+		+ "from 0 to 2"
+		PR 188

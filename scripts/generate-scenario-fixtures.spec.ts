@@ -28,12 +28,12 @@ describe('SCENARIO_FIXTURES', () => {
       expect(content).toContain('{"id":41000102,"gId":"FuseProduction1"}');
     });
 
-    it('should write a game 2.103 save with no power consumption modifier', () => {
+    it('should write a game 2.103 save whose power consumption modifier leaves the base levels unchanged', () => {
       // Act
       const content = energyConsumptionFixture?.generateContent();
 
       // Assert
-      expect(content).toContain('"modifierPowerConsumption":0,');
+      expect(content).toContain('"modifierPowerConsumption":1,');
       expect(content).toContain('"version":"2.103"');
     });
   });
