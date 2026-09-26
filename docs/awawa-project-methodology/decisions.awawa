@@ -946,6 +946,8 @@ DECISION RepositoryGuardsAreGroupedScripts
 		PR 46
 	SOURCE "Helper package refused while refining REFACTOR59 with the owner on 2026-09-26"
 		PR 101
+	SOURCE "Guards run by Bun's pattern matching, ruled in the pull request delivering CHORE56"
+		PR 195
 
 DECISION EveryPublishedCommandHasARealProcessTest
 	REJECTED "A dedicated CI job instead of a test: it does not cover the workstation"
