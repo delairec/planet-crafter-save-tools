@@ -2435,3 +2435,87 @@ DECISION AnArgumentOfAnExportedFunctionMakesALineReachable
 		PR 197
 	SOURCE "Ratified with its frontier by the owner on the review of that pull request, 2026-09-26"
 		PR 197
+
+DECISION AViewModelServesOneView
+	SPEC "a view model of core-mapping is built for one view of the save manager, a page or a zone"
+		+ "of a page; a page view model composes the view models of its zones, and a zone view"
+		+ "model is the type its zone component receives"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT136"
+	SPEC "a zone rendered by one component on several pages is one view: each page view model holds"
+		+ "its own instance of it, built by a presentation helper the presenters of those pages"
+		+ "call; what two views share is that helper, a pure mapping from value objects to the"
+		+ "zone, never one view model read by two views"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT143"
+	SPEC "a controller serves one view and a presenter builds one view model; a use case is one"
+		+ "meaningful action of the save manager, load one page or one zone, and orchestrates the"
+		+ "sections that view needs"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT135"
+	SPEC "a section controller, one per section of the save, is retired once no page reads its view"
+		+ "model, in the pull request of the page that stops reading it"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT145"
+	REJECTED "one view model per section of the save, assembled by the UI: the page then joins,"
+		+ "folds and formats what the presentation should have decided, and the figures of two"
+		+ "zones showing the same planet can disagree"
+	REJECTED "one view model for the whole save: every page pays the parse of every section and"
+		+ "every zone change touches one type"
+	REJECTED "one zone view model read by the Power page and the planet page: the type then belongs"
+		+ "to no view, and a change for one page reaches the other unnoticed"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT135
+	APPLIES_TO_TASK @TASK.FEAT136
+	APPLIES_TO_TASK @TASK.FEAT139
+	APPLIES_TO_TASK @TASK.FEAT141
+	APPLIES_TO_TASK @TASK.FEAT142
+	APPLIES_TO_TASK @TASK.FEAT143
+	APPLIES_TO_TASK @TASK.FEAT144
+	APPLIES_TO_TASK @TASK.FEAT145
+	RATIONALE "Today core-mapping exposes one controller and one view model per section of the"
+		+ "save, every value a formatted string in a generic table, and the page renders the five"
+		+ "results one under the other. The redesign shows the save by pages and zones whose"
+		+ "figures cross the sections: a planet card joins terraformation and energy, the menu"
+		+ "joins the configuration and the players. Cutting the presentation by view keeps the UI"
+		+ "free of joining and formatting, which the layer rules place in presentation, and lets"
+		+ "each wave migrate the views it delivers while the others still read the section view"
+		+ "models. A helper shared by presenters is the same device as the formatters of a warning:"
+		+ "a mapping, not a decision"
+		REF @DECISION.CoreMappingExportsOnlyControllersAndViewModels
+		REF @DECISION.SectionControllersReceiveTheValidatedText
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+	SOURCE "Owner ruling of 2026-09-27 on the redesign plan: one view model per view, a view being"
+		+ "a page or a zone of a page; use cases and controllers are cut the same way, some"
+		+ "migrated and some created; each wave carries a piece of the transition"
+		REF @URL.SaveManagerRedesignMockup
+
+DECISION TheModulesTheClisImportKeepTheirContract
+	SPEC "the modules a CLI reaches keep their contract through the redesign of the save manager:"
+		+ "MergeSaveFilesController and MergeResultViewModel for cli-merge,"
+		+ "ValidateSaveFileController and SaveFileValidationViewModel for cli-validate,"
+		+ "SaveValidationMessageViewModel for both; behind them formatValidationError,"
+		+ "formatValidationIssue, formatErrorLocation, formatSaveWarning, formatMergeWarning, the"
+		+ "saveWarning, mergeWarning, mergeFailure and saveSectionLabels messages, the validator,"
+		+ "parser and serializer services and shared-save-processing"
+		IMPL "packages/cli-merge/cli/initMergeCli.js::MergeSaveFilesController"
+		IMPL "packages/cli-validate/cli/initValidateCli.js::ValidateSaveFileController"
+		ENFORCED_BY "packages/cli-merge/cli/initMergeCli.spec.js"
+		ENFORCED_BY "packages/cli-validate/cli/initValidateCli.spec.js"
+	SPEC "the number formatters and the section presenters, presenter ports and view models serve"
+		+ "the save manager only and may change; a task of the redesign that touches core-mapping"
+		+ "leaves the specs of cli-merge and cli-validate unchanged and green"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT145"
+	REJECTED "reshaping the merge result view model for the merge page: cli-merge renders the same"
+		+ "view model, and the page shows it as the merge section does today"
+	REJECTED "freezing every formatter and message of the presentation: the number formatters reach"
+		+ "no CLI, and the coefficient strategy of the Configuration page needs one"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
+	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
+	RATIONALE "The CLIs and the save manager share core-mapping. The merge, the validation and the"
+		+ "messages that turn a code into a sentence serve both; the section controllers, their"
+		+ "view models and the number formatters serve the save manager only. The redesign cuts the"
+		+ "second group by view and leaves the first as it is"
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+		REF @DECISION.AMergeProducesAnOrdinarySave
+	SOURCE "Owner ruling of 2026-09-27 on the redesign plan: the parts of core-mapping the CLIs use"
+		+ "must not move"
+		REF @URL.SaveManagerRedesignMockup

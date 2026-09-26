@@ -17,3 +17,29 @@ WAVE 8
 WAVE 9
 	MILESTONE "power-consumption"
 	BRANCH "integration/power-consumption"
+
+WAVE 10
+	MILESTONE "save-manager-navigation"
+	BRANCH "integration/save-manager-navigation"
+	DESC "the save manager is navigated by pages from a left menu, its shell fed by the first view"
+		+ "models cut by view: the save identity, the players menu and the Configuration page; the"
+		+ "other pages still read the section view models, and the merge notice joins the wave"
+		REF @URL.SaveManagerRedesignMockup
+		REF @DECISION.AViewModelServesOneView
+
+WAVE 11
+	MILESTONE "save-manager-planets"
+	BRANCH "integration/save-manager-planets"
+	DESC "the Power, Terraformation and Overview pages and the planet page read view models of"
+		+ "their own, figures and statuses decided by the domain and rendered by the presenters,"
+		+ "the power chart and the SysTi included"
+		REF @URL.SaveManagerRedesignMockup
+		REF @DECISION.AViewModelServesOneView
+
+WAVE 12
+	MILESTONE "save-manager-players"
+	BRANCH "integration/save-manager-players"
+	DESC "the Players page reads a view model of its own, the section controllers no page reads are"
+		+ "retired, and the whole save manager is usable at phone width and by keyboard"
+		REF @URL.SaveManagerRedesignMockup
+		REF @DECISION.AViewModelServesOneView
