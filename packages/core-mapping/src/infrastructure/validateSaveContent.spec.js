@@ -281,21 +281,26 @@ describe('validateSaveContent', () => {
       });
     });
 
-    describe('When a world object names a position without naming its planet', () => {
-      it('should reject the save', () => {
+    describe.each([
+      {description: 'the planet of a linked inventory without that inventory', worldObject: createWorldObject({id: 95585241, gId: 'EnergyGenerator1', liPlanet: 1}), missingProperty: 'liId'},
+      {description: 'a position without its planet', worldObject: createWorldObject({id: 95585241, gId: 'EnergyGenerator1', pos: '0,0,0'}), missingProperty: 'planet'},
+      {description: 'a terraformation contribution without the stage it contributes to', worldObject: createWorldObject({id: 95585241, gId: 'EnergyGenerator1', trtVal: 1}), missingProperty: 'trtInd'}
+    ])('When a world object carries $description', ({worldObject, missingProperty}) => {
+      it('should reject the save, naming the property it lacks', () => {
         // Arrange
-        const save = createFakeSaveContent({
-          worldObjects: [createWorldObject({id: 95585241, gId: 'EnergyGenerator1', pos: '0,0,0'})]
-        });
+        const save = createFakeSaveContent({worldObjects: [worldObject]});
 
         // Act
         const result = validateSaveContent(save);
 
         // Assert
         expect(result.isValid).toBe(false);
-        expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 0}
-        ]);
+        expect(result.errors).toMatchObject([{
+          code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
+          section: WORLD_OBJECTS_SECTION_INDEX,
+          entryIndex: 0,
+          detail: expect.stringContaining(`must have property ${missingProperty}`)
+        }]);
       });
     });
   });

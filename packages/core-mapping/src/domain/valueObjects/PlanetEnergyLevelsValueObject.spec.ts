@@ -41,4 +41,25 @@ describe('PlanetEnergyLevelsValueObject', () => {
     // Assert
     expect(buildPlanetEnergyLevels).toThrow(InvalidSaveDataError);
   });
+
+  it('should reject a planet name that is not text, naming the field', () => {
+    // Arrange
+    const input = {
+      planetId: 1,
+      planetName: 110910045,
+      production: 100,
+      consumption: 40,
+      available: 60,
+      productionBreakdown: [],
+      consumptionBreakdown: [],
+      optimizers: []
+    };
+
+    // Act
+    // @ts-expect-error a planet name that is not text is the invalid input under test
+    const buildPlanetEnergyLevels = () => createPlanetEnergyLevelsValueObject(input);
+
+    // Assert
+    expect(buildPlanetEnergyLevels).toThrow(new InvalidSaveDataError('PlanetEnergyLevelsValueObject.planetName must be a string, received 110910045'));
+  });
 });

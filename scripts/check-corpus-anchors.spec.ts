@@ -53,6 +53,23 @@ describe('readAnchorFields', () => {
     });
   });
 
+  describe('When a type includes a fieldset the corpus does not declare', () => {
+    it('should give the anchor fields the type declares itself, the inclusion adding none', () => {
+      // Arrange
+      const schema = [
+        'SCHEMA SECTION',
+        '\tINCLUDE @FIELDSET.Era',
+        '\tFIELD WITNESS anchor'
+      ].join('\n');
+
+      // Act
+      const anchorFields = readAnchorFields(schema);
+
+      // Assert
+      expect(anchorFields).toEqual(new Map([['SECTION', new Set(['WITNESS'])]]));
+    });
+  });
+
   describe('When the anchor field is declared inside a WHEN block', () => {
     it('should give it as if the block were not there', () => {
       // Arrange

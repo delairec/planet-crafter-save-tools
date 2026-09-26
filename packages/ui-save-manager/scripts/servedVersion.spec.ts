@@ -32,6 +32,23 @@ describe('findLatestReleaseTag', () => {
     });
   });
 
+  describe('When the listing names the tag of the highest version twice', () => {
+    it('should name that tag, two equal versions ranking alike', () => {
+      // Arrange
+      const remoteTagListing = [
+        'eafc7003\trefs/tags/ui-save-manager-v0.10.0',
+        '1f44e72d\trefs/tags/ui-save-manager-v0.9.4',
+        'eafc7003\trefs/tags/ui-save-manager-v0.10.0'
+      ].join('\n');
+
+      // Act
+      const latestReleaseTag = findLatestReleaseTag(remoteTagListing);
+
+      // Assert
+      expect(latestReleaseTag).toBe('ui-save-manager-v0.10.0');
+    });
+  });
+
   describe('When the remote carries no release tag', () => {
     it('should name no tag', () => {
       // Arrange
