@@ -2318,3 +2318,4 @@ DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 	RATIONALE "The game multiplies the draw of each machine, so a breakdown entry shows what the"
 		+ "machine draws in that save; the energy table keeps the base levels the HUD prints at 1"
 	SOURCE "Ruling taken on delivery of the task, 2026-09-26"
+		PR 193
