@@ -905,7 +905,7 @@ TASK CHORE105
 		IMPL "bunfig.toml::coverageThreshold"
 	SPEC "the declared threshold equals the floor measured on the delivering branch, rounded down"
 		+ "to the unit"
-		IMPL "bunfig.toml::coverageThreshold = { lines = 0.29, functions = 0.0 }"
+		IMPL "bunfig.toml::coverageThreshold = { lines = 0.98, functions = 0.33 }"
 	SPEC "the coverage report of the CI test job appears in the run summary"
 		IMPL ".github/workflows/quality.yml::GITHUB_STEP_SUMMARY"
 	SPEC "the fallow job fails on a source file or export outside ui-save-manager that no test"

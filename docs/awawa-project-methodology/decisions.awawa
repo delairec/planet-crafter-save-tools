@@ -1939,7 +1939,7 @@ DECISION UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
 		IMPL "bunfig.toml::coverageThreshold"
 	SPEC "The threshold is the lowest line and function coverage measured on a module, rounded down"
 		+ "to the unit, and only rises"
-		IMPL "bunfig.toml::coverageThreshold = { lines = 0.29, functions = 0.0 }"
+		IMPL "bunfig.toml::coverageThreshold = { lines = 0.98, functions = 0.33 }"
 	SPEC "The coverage report of the CI test job is written to the run summary"
 		IMPL ".github/workflows/quality.yml::GITHUB_STEP_SUMMARY"
 	SPEC "A module under the threshold is brought back by a test asserting the outcome of the use"
