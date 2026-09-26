@@ -68,13 +68,27 @@ TASK FIX53
 	DELIVERED_BY 121
 
 TASK CHORE54
-	TITLE "Simplify commands in sub-packages"
-	STATUS draft
-	DESC "Proposition is to expose cli through bin and remove the need to run commands using --cwd"
-	SPEC "investigate different solutions and select the best approach to aim for efficiency and"
-		+ "simplicity"
-	SPEC "the new setup doesn't break existing bun commands"
-	SPEC "the new setup doesn't break existing node commands (compatibility)"
+	TITLE "The cli- packages declare no script running their command, the root scripts being its"
+		+ "only entry"
+	STATUS todo
+	SPEC "packages/cli-merge/package.json declares no merge or node:merge script"
+	SPEC "packages/cli-validate/package.json declares no validate or node:validate script"
+	SPEC "no package.json of the repository runs bun with --cwd"
+	SPEC "the real-process tests of bun merge, bun validate, bun run node:merge and bun run"
+		+ "node:validate pass unchanged"
+	RATIONALE "The package scripts duplicate the root ones and nothing invokes them: no document,"
+		+ "workflow or script of the repository names them. The Bun ones reach the root through"
+		+ "--cwd ../.., a root-relative path in a package script; the Node ones run from the"
+		+ "package directory, so the merge defaults to packages/cli-merge/input where bun merge"
+		+ "reads input/. The root scripts already run the entry points directly, bun run --filter"
+		+ "being rejected for the prefixes it adds to every line. Exposing the commands through a"
+		+ "package bin was examined and set aside: Bun links the bin of a workspace package at the"
+		+ "root only when the root depends on it, the entry point carries no shebang, and a bin"
+		+ "cannot pass the --import of the Node module hooks"
+		REF @DECISION.TheRootCliScriptsRunTheirEntryPointDirectly
+		REF @DECISION.NodeCommandsRunSourcesThroughModuleHooks
+	SOURCE "Owner's draft of 2026-09-20, commit 4aeee6d pushed without a pull request; refined with"
+		+ "the owner on 2026-09-26"
 
 TASK CHORE56
 	TITLE "the repository guards are run by an orchestrator rather than a chain of scripts"
