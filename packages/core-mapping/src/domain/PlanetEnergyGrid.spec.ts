@@ -139,6 +139,28 @@ describe('PlanetEnergyGrid', () => {
       // Assert
       expect(levels.consumption).toBe(0.5);
     });
+
+    describe('When the planet holds the machines of the energy consumption fixture alone', () => {
+      it('should charge the 85 kW the game shows, TreePlanter3 being the only one drawing power', () => {
+        // Arrange
+        const grid = gridOf([
+          placedWorldObject('1', 'TreePlanter3'),
+          placedWorldObject('2', 'ButterflyDisplayer1', [5, 0, 0]),
+          placedWorldObject('3', 'FishDisplayer1', [10, 0, 0]),
+          placedWorldObject('4', 'FrogDisplayer1', [15, 0, 0]),
+          placedWorldObject('5', 'Server1', [20, 0, 0]),
+          placedWorldObject('6', 'CookingStation1', [25, 0, 0]),
+          placedWorldObject('7', 'PodUnderground', [30, 0, 0]),
+          placedWorldObject('8', 'RocketAnimals2', [35, 0, 0])
+        ]);
+
+        // Act
+        const levels = grid.levels();
+
+        // Assert
+        expect(levels.consumption).toBe(85);
+      });
+    });
   });
 
   it('should report available energy as production minus consumption', () => {

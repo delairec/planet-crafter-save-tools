@@ -54,12 +54,58 @@ function generateSkeoUpdateContent(): string {
   });
 }
 
-const SCENARIO_FIXTURES: ScenarioFixture[] = [
+const TOXICITY_PLANET_NUMERIC_ID = 110910045;
+const MEASURED_GAME_RELEASE = '2.103';
+const ENERGY_FUSE_OPTIMIZER_INVENTORY_ID = 244;
+const OTHER_FUSE_OPTIMIZER_INVENTORY_ID = 245;
+
+function generateEnergyConsumptionContent(): string {
+  const placedOnToxicity = (id: number, gId: string, eastOffset: number, liId?: number) => createWorldObject({
+    id,
+    gId,
+    pos: `${1751.865 + eastOffset},472.58,-1106.104`,
+    rot: '0,0,0,1',
+    planet: TOXICITY_PLANET_NUMERIC_ID,
+    ...(liId === undefined ? {} : {liId})
+  });
+
+  return createFakeSaveContent({
+    saveConfiguration: createSaveConfiguration({version: MEASURED_GAME_RELEASE, modifierPowerConsumption: 1.0}),
+    inventories: [
+      createInventory(),
+      createEquipment(),
+      createInventory({id: ENERGY_FUSE_OPTIMIZER_INVENTORY_ID, woIds: '41000101', size: 1}),
+      createInventory({id: OTHER_FUSE_OPTIMIZER_INVENTORY_ID, woIds: '41000102', size: 3})
+    ],
+    worldObjects: [
+      createWorldObject({id: 79111656, gId: 'Phytoplankton'}),
+      createWorldObject({id: 58524136, gId: 'MagnetarQuartz'}),
+      createWorldObject({id: 85274195, gId: 'Backpack4'}),
+      createWorldObject({id: 48456321, gId: 'OxygenTank5'}),
+      createWorldObject({id: 41000101, gId: 'FuseEnergy1'}),
+      createWorldObject({id: 41000102, gId: 'FuseProduction1'}),
+      placedOnToxicity(41000001, 'EnergyGenerator5', 5),
+      placedOnToxicity(41000002, 'TreePlanter3', 10),
+      placedOnToxicity(41000003, 'ButterflyDisplayer1', 15),
+      placedOnToxicity(41000004, 'FishDisplayer1', 20),
+      placedOnToxicity(41000005, 'FrogDisplayer1', 25),
+      placedOnToxicity(41000006, 'Server1', 30),
+      placedOnToxicity(41000007, 'CookingStation1', 35),
+      placedOnToxicity(41000008, 'PodUnderground', 40),
+      placedOnToxicity(41000009, 'RocketAnimals2', 45),
+      placedOnToxicity(41000010, 'Optimizer1', -5, ENERGY_FUSE_OPTIMIZER_INVENTORY_ID),
+      placedOnToxicity(41000011, 'Optimizer2', -10, OTHER_FUSE_OPTIMIZER_INVENTORY_ID)
+    ]
+  });
+}
+
+export const SCENARIO_FIXTURES: ScenarioFixture[] = [
   {fileName: 'baseline_valid.json', generateContent: () => createFakeSaveContent()},
   {fileName: 'other-player_valid.json', generateContent: generateOtherPlayerContent},
   {fileName: 'negative-gauge_invalid.json', generateContent: () => createFakeSaveContent({players: [createPlayer({playerGaugeToxic: -1})]})},
   {fileName: 'legacy-format_valid.json', generateContent: () => createLegacyFakeSaveContent()},
-  {fileName: 'skeo-update_valid.json', generateContent: generateSkeoUpdateContent}
+  {fileName: 'skeo-update_valid.json', generateContent: generateSkeoUpdateContent},
+  {fileName: 'energy-consumption_valid.json', generateContent: generateEnergyConsumptionContent}
 ];
 
 function resolveScenarioFixturePath(fileName: string): string {

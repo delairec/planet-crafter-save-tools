@@ -1162,8 +1162,6 @@ TASK TEST125
 		+ "with the machines alone, then as each optimizer is added, each reading recorded as a"
 		+ "SOURCE citing the game release read; the machines the reading of 2026-09-25 priced are"
 		+ "not read one by one again"
-	SPEC "the same fixture is read with modifierPowerConsumption at 0, at 1 and at one more value"
-		+ "the game offers"
 	SPEC "the consumption formula is written as RULE entities of domain game, each obligation"
 		+ "attested by the fixture and by a test pinning the value read in game"
 	SPEC "the hypothesis that PodUnderground and RocketAnimals2 draw no power, which the reading of"
@@ -1189,14 +1187,19 @@ TASK TEST125
 		PR 178
 		REF @GAME_RELEASE.2.103
 		REF @PROJECT.DNC
+	SOURCE "Owner's answer of 2026-09-26 on PR 188: modifierPowerConsumption multiplies every"
+		+ "consumption in every game release, at 0 included, so the fixture is no longer read at"
+		+ "several modifier values"
+		PR 188
+		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 
 TASK FEAT126
 	TITLE "The consumption of a planet applies the power consumption modifier of its save"
 	STATUS todo
 	SPEC "the consumption, the available energy and the consumption breakdown of every planet"
 		+ "follow the effect of modifierPowerConsumption the rules of TEST125 state"
-	SPEC "a unit test pins the consumption computed on the measurement fixture at each modifier"
-		+ "value read in game"
+	SPEC "a unit test pins the consumption computed on the measurement fixture at"
+		+ "modifierPowerConsumption 0, 1 and 1.5"
 	SPEC "the Power card names the modifier its figures apply when it is not 1"
 	AFTER @TASK.TEST125
 	WAVE @WAVE.9
