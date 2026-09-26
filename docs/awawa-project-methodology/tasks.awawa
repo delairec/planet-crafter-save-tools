@@ -142,7 +142,10 @@ TASK CHORE56
 TASK CHORE58
 	TITLE "investigate running awawa in CI, then deliver in the same pull request the change the"
 		+ "user picks from the findings"
-	STATUS todo
+	STATUS archived
+	ARCHIVED_ON 2026-09-26
+	DESC "archived undone: awawa runs on ubuntu-latest but has no public install source, and the"
+		+ "owner ruled after reading the investigation to keep it out of CI"
 	SPEC "the pull request body reports whether awawa can be installed in a GitHub Actions runner,"
 		+ "from which source and at which cost per run"
 	SPEC "the pull request body reports, for each place named in the rationale, the lines awawa in"
@@ -166,6 +169,8 @@ TASK CHORE58
 		REF @TASK.CHORE63
 	SOURCE "Review of pull request 101"
 		PR 101
+	SOURCE "Owner ruling on the investigation report: no awawa in CI, the task abandoned"
+		PR 190
 
 TASK REFACTOR59
 	TITLE "the repository guards read files, import specifiers and corpus lines through shared"
