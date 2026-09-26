@@ -1577,6 +1577,7 @@ TASK FEAT131
 		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
 		+ "mockup of three proposals, to draft for memory outside any wave"
+		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT132
 	TITLE "Display the SysTi, the Terraformation Index accumulated over every planet of the save"
@@ -1593,6 +1594,7 @@ TASK FEAT132
 		REF @SECTION.TerraformationLevels
 	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
 		+ "mockup of three proposals, to draft for memory outside any wave"
+		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT133
 	TITLE "Tell on the merge page that save A wins over save B where their common data conflicts"
@@ -1611,3 +1613,336 @@ TASK FEAT133
 		REF @COMMAND.MergeSaves
 	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
 		+ "mockup of three proposals, to draft for memory outside any wave"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT134
+	TITLE "Lay out the save manager as a shell with a left menu and one page per section"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification: how a page is"
+		+ "addressed while the save lives in memory, and what the menu shows before a save is"
+		+ "loaded, are settled at refinement"
+	SPEC "the page opens on the disclaimer block of today, unchanged, above the content of every"
+		+ "page"
+	SPEC "a left menu carries three groups in this order: Tools, Save, Players; Save lists"
+		+ "Overview, Configuration, Power and Terraformation, and the summary of the loaded file"
+		+ "(file name, display name, mode, game release) sits above the groups"
+	SPEC "the Players group lists the players of the save, each with the planet they stand on and a"
+		+ "Host badge for the host, and ends on a See more button that opens the Players page"
+	SPEC "the Configuration, Power, Terraformation and Players sections shown today become one page"
+		+ "each, reached from the menu, with the content they have today; the Power and"
+		+ "Terraformation pages show one planet at a time, chosen by planet tabs"
+	SPEC "every page but the overview opens on a breadcrumb naming its group, its page and, on the"
+		+ "Power and Terraformation pages, the planet shown"
+	SPEC "switching page keeps the loaded save: no file is read again and no page reload happens"
+	SPEC "before a save is loaded, the Save and Players groups are absent and the Overview page"
+		+ "carries the file input, the drop zone and the Visualize button as today"
+	WAVE @WAVE.10
+	RATIONALE "The save manager renders every section on one page, 41 000 pixels high and 213 cards"
+		+ "on the largest reference save, with the merge form above the data. The redesign chosen"
+		+ "on the mockup keeps a single client-side application and cuts the page into a shell and"
+		+ "pages, proposal B being the base and the left menu absorbing the Players and Tools"
+		+ "groups of proposal C. The disclaimer block is the one element of today's page the owner"
+		+ "keeps as it is. The scenarios of the package assert what the screen shows, so each page"
+		+ "moved carries its scenarios with it"
+		REF @URL.SaveManagerRedesignMockup
+		REF @PACKAGE.ui_save_manager
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+	SOURCE "Owner ruling of 2026-09-26 on the mockup: page E is the final version, its details"
+		+ "adjustable during the implementation, the disclaimer block unchanged"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT135
+	TITLE "Open the loaded save on an overview page of figures and planet cards"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification: the common scale of"
+		+ "the power bars and the figures the tiles hold are settled at refinement"
+	SPEC "the Overview page names the save (display name, mode, game release, file size) and shows"
+		+ "the notifications of the save under it"
+	SPEC "a row of tiles shows the all-time Terra Tokens, the total crafted objects and the drone"
+		+ "logistics, the latter as a badge, Paused in the danger tone and Running in the positive"
+		+ "tone"
+	SPEC "one card per planet of the save shows, in this order, the planet name, its Terraformation"
+		+ "Index, then O2, heat, pressure, purification when unlocked, and biomass"
+	SPEC "the foot of each card shows the production and the consumption of the planet as two bars"
+		+ "on a scale common to every card, the share of production consumed, the available power,"
+		+ "and a Details button that opens the planet page"
+	SPEC "the card carries no surplus, tight or deficit badge; the place of the terraformation"
+		+ "stage badge stays free for it"
+	AFTER @TASK.FEAT134
+	AFTER @TASK.FEAT138
+	WAVE @WAVE.10
+	RATIONALE "The overview is the page the save opens on and the one the owner shaped most on the"
+		+ "mockup: the terraformation of a planet comes first, the power stays in the foot, and the"
+		+ "only link is the Details button because Power and Terraformation are already in the"
+		+ "menu. The stage badge and the SysTi tile are drafted apart, outside the waves, and take"
+		+ "their place on this page when they land"
+		REF @URL.SaveManagerRedesignMockup
+		REF @TASK.FEAT131
+		REF @TASK.FEAT132
+		REF @PACKAGE.ui_save_manager
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+	SOURCE "Owner ruling of 2026-09-26 on the mockup: page E is the final version, its details"
+		+ "adjustable during the implementation"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT136
+	TITLE "Give each planet a page with a Power tab and a Terraformation tab"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification"
+	SPEC "the Details button of a planet card opens the page of that planet, whose breadcrumb reads"
+		+ "Save, Overview, then the planet name, Overview leading back to the overview"
+	SPEC "the planet page carries two tabs, Power first and Terraformation second, opening on Power"
+	SPEC "the Power tab shows what the Power page shows for that planet, the Terraformation tab"
+		+ "what the Terraformation page shows for it, so that a change to either page reaches the"
+		+ "planet page"
+	AFTER @TASK.FEAT135
+	WAVE @WAVE.10
+	RATIONALE "Proposal C opened the detail of a planet in a side drawer over the comparison; the"
+		+ "owner kept the detail and made it a page of its own, reached from the overview card. The"
+		+ "two tabs reuse the content of the Power and Terraformation pages rather than a copy of"
+		+ "it, so the redesign of those pages in the next wave reaches the planet page without a"
+		+ "second task"
+		REF @URL.SaveManagerRedesignMockup
+		REF @PACKAGE.ui_save_manager
+	SOURCE "Owner ruling of 2026-09-26 on the mockup: the side panel of C becomes a full page"
+		+ "opened from a planet card of the overview"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT137
+	TITLE "Move the merge of two saves and the loading of another save under the Tools group"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification: what Load another"
+		+ "save does to the save in memory, and where the merge result and its warnings appear, are"
+		+ "settled at refinement"
+	SPEC "the Tools group of the menu holds Merge two saves and Load another save, in this order"
+	SPEC "the Merge two saves page carries the merge form of today, save A and save B drop zones,"
+		+ "the swap control, the legacy format box and the Merge button, and shows the result and"
+		+ "the warnings of a merge where the form is"
+	SPEC "Load another save lets the user pick or drop a save; the new save replaces the loaded one"
+		+ "and the Overview page opens on it"
+	SPEC "the drop, merge and loading-state scenarios of today pass on the new pages"
+	AFTER @TASK.FEAT134
+	WAVE @WAVE.10
+	RATIONALE "The merge form sits above the visualization today and is the first thing the page"
+		+ "shows; on the mockup it is a tool, reached from the menu, and the display flow opens on"
+		+ "the data. The drop behaviours outside the areas, the alphabetical order of two dropped"
+		+ "files and the swap tooltip are scenarios the move must keep green. The info notice"
+		+ "saying that save A prevails is drafted apart, outside the waves"
+		REF @URL.SaveManagerRedesignMockup
+		REF @TASK.FEAT133
+		REF @PACKAGE.ui_save_manager
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+	SOURCE "Owner ruling of 2026-09-26 on the mockup: the Tools group comes first in the menu and"
+		+ "holds the merge and the loading of another save"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT138
+	TITLE "Give the save manager the shared presentation pieces the redesigned pages are built from"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification: the list of pieces"
+		+ "is closed at refinement against the pages of the mockup"
+	SPEC "a page title is a section title with an accent mark, larger and heavier than the running"
+		+ "text; a card has a header on the elevated surface holding its title and a summary"
+		+ "figure, and a body"
+	SPEC "a figure tile shows a label, a large value with its unit and an optional line under it; a"
+		+ "status pill carries a dot and a word in the good, warning or critical tone; a tone badge"
+		+ "shows a value in the neutral, positive or danger tone"
+	SPEC "a table has uppercase muted headers, right-aligned tabular figures, an optional total"
+		+ "row, and an optional bar cell whose bar is aligned across rows; a tab strip and a planet"
+		+ "tab strip mark the selected tab; a selector is a labelled select with a visible border"
+	SPEC "a notification is a bordered line whose severity, limitation or warning, is named by a"
+		+ "pill before the message"
+	SPEC "every piece renders in the light and in the dark theme from the palette of the package"
+	WAVE @WAVE.10
+	RATIONALE "The pages of the mockup share a small vocabulary of pieces, and building them once"
+		+ "is what keeps the four redesigned pages of the next wave consistent. The package has no"
+		+ "component test layer: the pieces are proven through the scenarios of the pages that use"
+		+ "them, and this task proves them on the pages the shell already moved. The owner asked"
+		+ "for titles more visible than on the first working version, and for the selector of the"
+		+ "power chart to stand out"
+		REF @URL.SaveManagerRedesignMockup
+		REF @PACKAGE.ui_save_manager
+		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
+	SOURCE "Owner review of 2026-09-26 of the first working version: titles not visible enough,"
+		+ "selector not visible enough"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT139
+	TITLE "Redesign the Configuration page, global progression first and modifiers in tones"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification: which modifiers are"
+		+ "percentages and which are coefficients is checked against the save format at refinement"
+	SPEC "the Configuration page shows the global progression first, the modifiers next and the"
+		+ "unlock flags of the save last"
+	SPEC "the drone logistics is a badge, Paused in the danger tone and Running in the positive"
+		+ "tone"
+	SPEC "a modifier expressed as a percentage shows 100 % in the neutral tone, above 100 % in the"
+		+ "danger tone and below 100 % in the positive tone"
+	SPEC "the gauge drain and the multiplayer factor are coefficients, shown as ×n and no longer as"
+		+ "a percentage: ×1 in the neutral tone, below 1 in the danger tone, above 1 in the"
+		+ "positive tone"
+	SPEC "each unlock flag of the save configuration is listed with an on or off pill"
+	AFTER @TASK.FEAT134
+	AFTER @TASK.FEAT138
+	WAVE @WAVE.11
+	RATIONALE "Today every modifier is formatted as a percentage and read as a bare number. The"
+		+ "owner ruled the tones on the mockup: the game's default is neutral, and the direction"
+		+ "that penalises the player is the danger tone, which is above 100 % for a percentage and"
+		+ "below 1 for a coefficient. The unlock flags are in the save configuration entry and"
+		+ "shown nowhere today"
+		REF @URL.SaveManagerRedesignMockup
+		REF @SECTION.SaveConfiguration
+		REF @PACKAGE.ui_save_manager
+		REF @PACKAGE.core_mapping
+	SOURCE "Owner review of 2026-09-26 of the first working version: global progression first,"
+		+ "colours on the modifiers with 100 % and 1 neutral, drone logistics as a badge"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT140
+	TITLE "Redesign the Power page, figures first, optimizers next, breakdown as tables"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification: the threshold"
+		+ "between a tight and a surplus balance is settled at refinement"
+	SPEC "the Power page keeps its notifications under the title, then shows three figure tiles,"
+		+ "production, consumption and available, the available one carrying a status pill and a"
+		+ "load meter showing the share of production consumed"
+	SPEC "the status reads Deficit when the available power is negative, Tight when it is below a"
+		+ "tenth of the production, Surplus otherwise"
+	SPEC "the optimizers come before the breakdown, as a table of optimizer, energy fuses held over"
+		+ "the slots of its tier, boosted machines and contribution with its share of production"
+	SPEC "the producers and the consumers are two tables, machine, quantity, unit, total and share,"
+		+ "largest total first, ending on a total row; the cards of today disappear"
+	AFTER @TASK.FEAT134
+	AFTER @TASK.FEAT138
+	WAVE @WAVE.11
+	RATIONALE "The Power section is the largest of the page on a real save, one card per machine"
+		+ "type and fifty types on Prime; tables make it scannable and the optimizers, always fewer"
+		+ "than the machines, come first as the owner ruled. The figures and the status are what"
+		+ "the planet cards of the overview summarise, so the two agree by construction"
+		REF @URL.SaveManagerRedesignMockup
+		REF @PACKAGE.ui_save_manager
+		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
+	SOURCE "Owner ruling of 2026-09-26 on the mockup: the optimizers are shown before the machines"
+		+ "because there are always fewer of them"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT141
+	TITLE "Chart the production and the consumption of a planet, with a selector of the form"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification: the colours of the"
+		+ "series are validated for colour vision deficiency on both surfaces at refinement"
+	SPEC "above the breakdown, a Display as selector offers Bars by machine, Share of each machine"
+		+ "type, and Table, and the chosen form stays chosen across planets and pages"
+	SPEC "Bars by machine shows production and consumption side by side, one horizontal bar per"
+		+ "machine type, largest first, the twelve largest kept and the rest folded into one Other"
+		+ "bar naming how many types it holds, the value at the end of each bar and ticks under the"
+		+ "bars; the optimizer boost is one bar of its own"
+	SPEC "Share of each machine type shows one stacked bar for production and one for consumption,"
+		+ "the eight largest types and the rest folded, the share written inside a segment when it"
+		+ "fits, and a legend naming each type"
+	SPEC "production, consumption and the optimizer boost each keep one colour across the three"
+		+ "forms and the legend, and the two series stay distinguishable under colour vision"
+		+ "deficiency on the light and on the dark surface"
+	SPEC "hovering or focusing a bar or a segment names the type, its quantity, its unit, its total"
+		+ "and its share"
+	SPEC "Table shows the two breakdown tables of the page; no balance form exists"
+	AFTER @TASK.FEAT140
+	WAVE @WAVE.11
+	RATIONALE "A histogram of the power was the owner's first wish for the redesign, with a select"
+		+ "to switch between forms. The balance form of the proposals was dropped: hard to fit on a"
+		+ "phone and adding nothing the share form does not show. The first working version"
+		+ "coloured the optimizer boost like the producers in the bars and like the largest"
+		+ "producer in the shares; the colour follows the entity"
+		REF @URL.SaveManagerRedesignMockup
+		REF @PACKAGE.ui_save_manager
+	SOURCE "Owner request of 2026-09-26 for the redesign: productions and consumptions as a"
+		+ "histogram, several forms behind a select; review of the same day: no balance form, the"
+		+ "boost in the colour of its legend"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT142
+	TITLE "Redesign the Terraformation page with hero figures and bar-aligned tables"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification"
+	SPEC "the Terraformation page of a planet opens on two hero figures, the Terraformation Index"
+		+ "and the biomass, the biomass one naming the shares of plants and insects"
+	SPEC "two tables follow, O2, heat, pressure and purification, then plants, insects and animals;"
+		+ "each row carries a bar in a column of its own, scaled to the largest row of its table"
+		+ "and aligned with the other rows, and its value right-aligned"
+	SPEC "a value of zero and a purification not unlocked show a dash"
+	AFTER @TASK.FEAT134
+	AFTER @TASK.FEAT138
+	WAVE @WAVE.11
+	RATIONALE "The section shows today six cards of key and value pairs; the mockup keeps the two"
+		+ "groups of values and adds a bar per row so the reader sees which value carries the"
+		+ "index. The first working version drew the bars inside the value cell, unaligned; the"
+		+ "owner asked for aligned bars. The share of the SysTi under the hero figure comes with"
+		+ "the SysTi task"
+		REF @URL.SaveManagerRedesignMockup
+		REF @TASK.FEAT132
+		REF @SECTION.TerraformationLevels
+		REF @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+		REF @PACKAGE.ui_save_manager
+	SOURCE "Owner review of 2026-09-26 of the first working version: the bars are not aligned,"
+		+ "otherwise good"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT143
+	TITLE "Redesign the Players page with vital gauges, equipment slots and a grouped inventory"
+	STATUS draft
+	DESC "drafted from page E of the mockup, to be refined before ratification: where the maximum"
+		+ "of each gauge and the capacity of the inventory come from, the save or the equipment"
+		+ "tables, is researched at refinement"
+	SPEC "each player card shows three flat gauges filled by percentage, an oxygen tank for oxygen,"
+		+ "a sandwich for health and a flask for thirst, with a clear outline and a visible empty"
+		+ "part, the percentage next to the label and the value over its maximum under the gauge"
+	SPEC "the host carries a Host badge in the neon pink of the palette, on the card and in the"
+		+ "Players group of the menu"
+	SPEC "the equipment shows every slot, an empty slot named by its kind and marked Empty"
+	SPEC "the inventory groups the items by kind with their count, and ends on an Empty slots chip"
+		+ "counting the free slots"
+	AFTER @TASK.FEAT134
+	AFTER @TASK.FEAT138
+	WAVE @WAVE.11
+	RATIONALE "The Players section lists today the equipment and the inventory item by item, in"
+		+ "save order, without quantities, and shows no gauge. The owner asked for more graphics on"
+		+ "the vitals, for a visible host, for empty equipment slots, and for the inventory to stay"
+		+ "grouped since the game does not stack items. The first working version drew the gauges"
+		+ "without a clear outline, health at 70 % reading like 100 %"
+		REF @URL.SaveManagerRedesignMockup
+		REF @SECTION.Players
+		REF @SECTION.Inventories
+		REF @PACKAGE.ui_save_manager
+		REF @PACKAGE.core_mapping
+	SOURCE "Owner review of 2026-09-26 of the first working version: gauges with a clearer outline,"
+		+ "a clearer symbol for health, Host without a star on a neon colour of the project"
+		REF @URL.SaveManagerRedesignMockup
+
+TASK FEAT144
+	TITLE "Make the redesigned save manager usable at phone width and by keyboard"
+	STATUS draft
+	DESC "drafted for memory, no research done: the phone width to hold, the contrast to reach and"
+		+ "the engines the scenarios run on are settled at refinement"
+	SPEC "at phone width the menu, the pages, the cards and the charts fit the screen without a"
+		+ "horizontal scroll of the page; a wide table scrolls inside its own container"
+	SPEC "the menu, the tabs, the selector, the Details buttons and the chart marks are reached and"
+		+ "operated by keyboard, with a visible focus"
+	SPEC "text meets the contrast of the accessibility guidelines on the light and on the dark"
+		+ "surface, and the animations respect the reduced motion preference"
+	AFTER @TASK.FEAT139
+	AFTER @TASK.FEAT140
+	AFTER @TASK.FEAT141
+	AFTER @TASK.FEAT142
+	AFTER @TASK.FEAT143
+	WAVE @WAVE.11
+	RATIONALE "The owner named accessibility and the phone display as the reasons the details of"
+		+ "the mockup may move during the implementation; this task is the pass that checks both"
+		+ "once every page is redesigned, so that each page task does not carry its own partial"
+		+ "version of the same criteria"
+		REF @URL.SaveManagerRedesignMockup
+		REF @PACKAGE.ui_save_manager
+		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
+	SOURCE "Owner ruling of 2026-09-26 on the mockup: the details may be adjusted during the"
+		+ "implementation for accessibility and the phone display"
+		REF @URL.SaveManagerRedesignMockup

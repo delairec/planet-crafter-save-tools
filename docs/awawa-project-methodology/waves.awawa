@@ -17,3 +17,17 @@ WAVE 8
 WAVE 9
 	MILESTONE "power-consumption"
 	BRANCH "integration/power-consumption"
+
+WAVE 10
+	MILESTONE "save-manager-navigation"
+	BRANCH "integration/save-manager-navigation"
+	DESC "the save manager is navigated by pages from a left menu: shell, overview, planet page,"
+		+ "tools, and the shared presentation pieces the pages are built from"
+		REF @URL.SaveManagerRedesignMockup
+
+WAVE 11
+	MILESTONE "save-manager-pages"
+	BRANCH "integration/save-manager-pages"
+	DESC "every page of the save manager shows its redesigned content, usable at phone width and by"
+		+ "keyboard"
+		REF @URL.SaveManagerRedesignMockup

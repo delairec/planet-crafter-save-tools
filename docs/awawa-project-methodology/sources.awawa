@@ -178,3 +178,12 @@ URL WikiOreCrushersBeforeV2100
 
 GAME_RELEASE 2.100
 	DESC "Development Branch update, lowering the draw of the T1 ore crusher"
+
+URL SaveManagerRedesignMockup
+	LOCATION "https://claude.ai/artifact/8BdPxmk8kVLoWBa6KYiKJM"
+	DESC "mockup of the save manager redesign published on 2026-09-26 on sample data, no"
+		+ "computation: page E is the final version the redesign implements, pages A to C the"
+		+ "proposals it was chosen from and D the version before the owner's review; the details of"
+		+ "E may still be adjusted during the implementation, accessibility and phone-width display"
+		+ "among the reasons, and the disclaimer block with the astronaut stays unchanged at the"
+		+ "top of the page"
