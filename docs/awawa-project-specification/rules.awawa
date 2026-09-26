@@ -520,6 +520,7 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 		REF @PROJECT.DNC
 	SOURCE "Owner's answer of 2026-09-26 while promoting TEST125: fuses have never changed the"
 		+ "consumption, in any game release"
+		PR 191
 
 RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 	HOLDS_FOR all

@@ -1203,6 +1203,7 @@ TASK TEST125
 	SOURCE "Owner's answer of 2026-09-26 while promoting the task: the readings of 2026-09-25 cover"
 		+ "every relevant machine and fuses have never changed the consumption, so the fixture is"
 		+ "not read in game again, machines alone or with each optimizer"
+		PR 191
 		REF @RULE.APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 
 TASK FEAT126
