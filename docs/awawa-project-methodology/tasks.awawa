@@ -68,23 +68,53 @@ TASK FIX53
 	DELIVERED_BY 121
 
 TASK CHORE54
-	TITLE "Simplify commands in sub-packages"
-	STATUS draft
-	DESC "Proposition is to expose cli through bin and remove the need to run commands using --cwd"
-	SPEC "investigate different solutions and select the best approach to aim for efficiency and"
-		+ "simplicity"
-	SPEC "the new setup doesn't break existing bun commands"
-	SPEC "the new setup doesn't break existing node commands (compatibility)"
+	TITLE "The cli- packages declare no script running their command, the root scripts being its"
+		+ "only entry"
+	STATUS todo
+	SPEC "packages/cli-merge/package.json declares no merge or node:merge script"
+	SPEC "packages/cli-validate/package.json declares no validate or node:validate script"
+	SPEC "no package.json of the repository runs bun with --cwd"
+	SPEC "the real-process tests of bun merge, bun validate, bun run node:merge and bun run"
+		+ "node:validate pass unchanged"
+	RATIONALE "The package scripts duplicate the root ones and nothing invokes them: no document,"
+		+ "workflow or script of the repository names them. The Bun ones reach the root through"
+		+ "--cwd ../.., a root-relative path in a package script; the Node ones run from the"
+		+ "package directory, so the merge defaults to packages/cli-merge/input where bun merge"
+		+ "reads input/. The root scripts already run the entry points directly, bun run --filter"
+		+ "being rejected for the prefixes it adds to every line. Exposing the commands through a"
+		+ "package bin was examined and set aside: Bun links the bin of a workspace package at the"
+		+ "root only when the root depends on it, the entry point carries no shebang, and a bin"
+		+ "cannot pass the --import of the Node module hooks"
+		REF @DECISION.TheRootCliScriptsRunTheirEntryPointDirectly
+		REF @DECISION.NodeCommandsRunSourcesThroughModuleHooks
+	SOURCE "Owner's draft of 2026-09-20, commit 4aeee6d pushed without a pull request; refined with"
+		+ "the owner on 2026-09-26"
 
 TASK CHORE56
-	TITLE "the repository guards are run by an orchestrator rather than a chain of scripts"
-	STATUS draft
-	DESC "Raised in the review of pull request 101: check:guards chains eight bun run calls in"
-		+ "package.json and grows by one with each guard; the shape of the orchestrator, one file"
-		+ "or several, is to be decided when the task is refined"
-	SPEC "check:guards runs every guard without its list being restated in package.json"
-	SPEC "each guard stays runnable alone"
-	SPEC "a failing guard does not stop the others, and the run reports every guard that failed"
+	TITLE "bun run guards runs every repository guard, a failing one not stopping the others"
+	STATUS todo
+	SPEC "bun run guards runs every check: script of the root package.json and validate:tables, no"
+		+ "list of the guards being written anywhere"
+	SPEC "each guard stays runnable alone as bun run check:<name>"
+	SPEC "a failing guard does not stop the others; the run names every guard that failed and exits"
+		+ "non-zero"
+	SPEC "no script, workflow, AGENTS.md, file of agents/, page of docs/wiki, README or active"
+		+ "DECISION or PROCESS names check:guards any more; the dated usage reports keep it"
+	SPEC "the decision on the repository guards states that a guard is a check: script of the root"
+		+ "package.json, that the script running them all bears a name outside check:, and that a"
+		+ "failing guard does not stop the others"
+	RATIONALE "The guards decision names check:guards as its implementation. check:guards chains"
+		+ "fourteen bun run calls with &&, grows by one with each guard and stops at the first"
+		+ "failure. Bun 1.4.2 runs the scripts matching a pattern itself: bun run --sequential"
+		+ "--no-exit-on-error \"check:*\" validate:tables runs them all, prints Exited with code N"
+		+ "for each one that fails and exits non-zero, so no orchestrator file is written. An"
+		+ "aggregate named check:guards matches its own pattern and runs itself without end, hence"
+		+ "the name guards; renaming the thirteen guards under a guard: prefix was set aside for"
+		+ "touching more names, and a TypeScript orchestrator for redoing what Bun does. --parallel"
+		+ "is not used: the whole chain takes half a second, and sequential output stays in order"
+		REF @DECISION.RepositoryGuardsAreGroupedScripts
+	SOURCE "Raised in the review of pull request 101; refined with the owner on 2026-09-26"
+		PR 101
 
 TASK CHORE58
 	TITLE "investigate running awawa in CI, then deliver in the same pull request the change the"
@@ -114,25 +144,44 @@ TASK CHORE58
 	SOURCE "Review of pull request 101"
 		PR 101
 
-TASK CHORE59
-	TITLE "investigate whether the repository guards need a shared helper package"
-	STATUS draft
-	DESC "Raised in the review of pull request 101: find out whether other guards share needs with"
-		+ "check:anchors, and centralise their common functions in a helper package if the need is"
-		+ "proven; distinct from CHORE56, which is about how the guards are run, not the code they"
-		+ "share"
+TASK REFACTOR59
+	TITLE "the repository guards read files, import specifiers and corpus lines through shared"
+		+ "modules"
+	STATUS todo
+	SPEC "no guard of scripts/ scans the repository with its own Glob or readdir: every one reads"
+		+ "its files through the shared file walk, which takes the root it scans from"
+	SPEC "the reading of import specifiers, static and dynamic, is declared once and used by"
+		+ "check:presentation and check:dependencies"
+	SPEC "no guard imports from another guard: the reading of corpus lines used by check:anchors"
+		+ "and check:audit-ignores lives in a shared module"
+	SPEC "every guard of scripts/ prints its outcome through reportViolations, check:dependencies"
+		+ "included"
+	SPEC "a guard fails when a check-*.ts file of scripts/ imports Glob or readdir"
+	SPEC "the helpers the guards share live in scripts/helpers/, one file per responsibility, and"
+		+ "scripts/specSources.ts no longer exists"
+	SPEC "the guards decision names scripts/helpers/ as the place of the shared helpers, its IMPL"
+		+ "anchors following them"
+	SPEC "on the repository at the base commit, every guard reports the same violations and exits"
+		+ "with the same code as before the task"
+	RATIONALE "The guards decision requires what guards share to be declared once in a common"
+		+ "module, and the repository breaks it: seven guards (check-audit-ignores,"
+		+ "check-color-contrast, check-corpus-anchors, check-package-dependencies,"
+		+ "check-presentation-entities, check-save-line-reader, check-solid-idioms) walk the"
+		+ "repository with their own Glob and Bun.file, check-action-pins with readdir,"
+		+ "check-save-line-reader redeclares the generated-directory filter, the import specifier"
+		+ "patterns are copied between check-presentation-entities and check-package-dependencies,"
+		+ "check-audit-ignores imports readCorpusLines and removeQuotes from check-corpus-anchors,"
+		+ "and check-package-dependencies prints its own report. readOwnSourceFiles scans"
+		+ "process.cwd(), while three of these guards take the root as a parameter. No helper"
+		+ "package is created: every consumer lives in scripts/, which is no package. The name"
+		+ "specSources dates from pull request 15, when the module served only the guards reading"
+		+ "spec files; it now gathers unrelated helpers, hence one file per responsibility."
+		+ "check:section-validators and validate:tables are package scripts and stay out. Distinct"
+		+ "from CHORE56, which changes how the guards are run, not the code they share"
+		REF @DECISION.RepositoryGuardsAreGroupedScripts
 		REF @TASK.CHORE56
-	SPEC "the task lists every function two guards or more implement or could share, with the files"
-		+ "that carry it"
-	SPEC "the task records whether that list justifies a helper package, and under which prefix of"
-		+ "the package matrix, or why scripts/specSources.ts is enough"
-	SPEC "when the need is proven, a todo task carries the move; otherwise the reason is written in"
-		+ "this task"
-	RATIONALE "scripts/specSources.ts already serves seven of the eight guards with"
-		+ "reportViolations, maskStringLiterals, readOwnSourceFiles and isOwnSourceFile;"
-		+ "check-solid-idioms, check-presentation-entities, check-package-dependencies and"
-		+ "check-corpus-anchors scan the repository with their own Glob rather than"
-		+ "readOwnSourceFiles, and check-package-dependencies imports nothing from specSources"
+	SOURCE "Raised in the review of pull request 101; refined with the owner on 2026-09-26"
+		PR 101
 
 TASK REFACTOR62
 	TITLE "shared-save-processing exposes a function selecting one section of a save string"
@@ -687,27 +736,43 @@ TASK DOCS88
 	DELIVERED_BY 122
 
 TASK CHORE91
-	TITLE "investigate axe-core in the ui-save-manager Playwright suite for a general accessibility"
-		+ "check"
-	STATUS draft
-	DESC "FIX53 added check:contrast, a static, catalog-driven WCAG contrast check limited to the"
-		+ "declared CSS custom properties of packages/ui-save-manager/src/styles/; it verifies"
-		+ "nothing else (non-text contrast, labels, roles, landmarks, focus order) and nothing"
-		+ "about how the DOM actually renders. Investigate whether @axe-core/playwright, run"
-		+ "against the existing e2e scenarios in both color schemes, is worth adding, without"
-		+ "opening a new test layer"
+	TITLE "investigate axe-core in the ui-save-manager scenarios, then deliver in the same pull"
+		+ "request the change the user picks from the findings"
+	STATUS todo
+	SPEC "the pull request body reports the violations @axe-core/playwright finds on the screens"
+		+ "the scenarios end on: every WCAG 2.0 and 2.1 A and AA rule in the light color scheme,"
+		+ "and the rules of its color category, color-contrast and link-in-text-block, in the dark"
+		+ "one"
+	SPEC "the pull request body reports what those rules check that check:contrast does not, and"
+		+ "the time they add to the scenario suite on each of the three engines"
+	SPEC "the change the user picks after reading that report is delivered in the same pull"
+		+ "request, and the report leaves the body once the change is in"
+	RATIONALE "check:contrast is static: it reads the stylesheets of packages/ui-save-manager/src"
+		+ "against a catalog of token pairs and sees nothing of the rendered DOM, so it cannot"
+		+ "check an accessible name, a label, an ARIA role, a landmark or the contrast actually"
+		+ "rendered; it stays whatever the finding, being the only check that sees a class no"
+		+ "markup uses. axe-core checks neither non-text contrast nor focus order."
+		+ "@axe-core/playwright 4.13.0 declares playwright-core >= 1.0 as its peer, the repository"
+		+ "carries @playwright/test ^1.63, and axe-core 4.13.0 counts 69 rules under the tags"
+		+ "wcag2a, wcag2aa, wcag21a and wcag21aa. The scenarios never set a color scheme and the"
+		+ "dark theme is only the prefers-color-scheme: dark block of colors.css, so no scenario"
+		+ "renders it today. Ruled with the user on 2026-09-26: the rules are WCAG 2.0 and 2.1 A"
+		+ "and AA, the floor of the catalog; the dark scheme replays only the rules tied to color,"
+		+ "the others not depending on the theme; a violation found on the current UI is fixed in"
+		+ "the same pull request, none excluded; the scans run inside the existing scenarios, never"
+		+ "in a new test layer. The findings go to the pull request body and the user picks the"
+		+ "change after reading them, so the task runs in an interactive session, never as an"
+		+ "unattended wave agent, like CHORE58"
 		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
 		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
-	SPEC "the task records whether @axe-core/playwright can run inside the existing"
-		+ "playwright.config.ts scenario suite"
-	SPEC "the task records which WCAG rules axe-core would add over check:contrast, and at what"
-		+ "run-time cost across the three engines"
-	SPEC "when the gain is worth it, a todo task carries the change; otherwise the reason is"
-		+ "written in this task"
+		REF @TASK.CHORE99
+		REF @TASK.CHORE58
 	SOURCE "FIX53's task DESC, PR 121"
 		PR 121
 		REF @TASK.FIX53
+	SOURCE "Owner ruling, 2026-09-26, refining CHORE91: investigation reported in the pull request"
+		+ "body, WCAG A and AA rules, color rules only in the dark scheme, violations fixed"
 
 TASK CHORE99
 	TITLE "Close the three gaps of the check:contrast guard"
@@ -1074,11 +1139,19 @@ TASK TEST122
 TASK TEST123
 	TITLE "Cover every use case of the modules a unit test loads, the coverage report finding the"
 		+ "ones missed"
-	STATUS draft
-	SPEC "every line or function bun test --coverage reports unexecuted is traced to the use case"
-		+ "it serves, and that use case gets a test asserting its observable outcome"
+	STATUS todo
+	SPEC "every line bun test --coverage reports unexecuted is traced to the use case it serves,"
+		+ "and that use case gets a test asserting its observable outcome"
 	SPEC "no test the task adds exists only to execute a line: each names the use case it covers"
 		+ "and asserts what that use case produces"
+	SPEC "the main function of every script with a command-line entry block is tested in-process on"
+		+ "a run that passes and on a run that fails, asserting the report it prints and the exit"
+		+ "code it returns, its file system, console and exit received as a fake"
+	SPEC "the coveragePathIgnorePatterns of bunfig.toml lists only modules holding the real input"
+		+ "and output a test replaces with a fake"
+	SPEC "an entry carrying liPlanet without liId, and one carrying pos without planet, are refused"
+		+ "by the validation of a save, each naming the property it lacks"
+	SPEC "a line no input can reach is deleted, never tested nor exempted"
 	SPEC "the coverageThreshold of bunfig.toml is raised to the floor measured once those use cases"
 		+ "are covered"
 	AFTER @TASK.CHORE105
@@ -1086,17 +1159,24 @@ TASK TEST123
 		+ "measured. The aim is every use case covered, which no tool can check; 100 % of lines"
 		+ "only says the code ran under a test, so the report serves to find use cases left"
 		+ "untested, and a figure reached by tests asserting nothing would satisfy the tool and"
-		+ "cover nothing. On 2026-09-25, after the rebase of #173 on master, the suite totals 96.59"
-		+ "% of lines and 94.34 % of functions, and 42 modules sit under 100 %. The lowest are the"
-		+ "command-line entry blocks of scripts/ and of core-mapping/scripts/, whose main body runs"
-		+ "only when the script is launched, generate-scenario-fixtures.ts at 29.63 % of lines and"
-		+ "0 % of functions; then the controllers of core-mapping at 66.67 % of functions, and"
-		+ "sectionValidators.generated.js, a generated file. Whether a launched entry block is"
-		+ "reached by a spawned process test, moved out of the measured module or exempted, and"
-		+ "what becomes of a line that serves no use case, are the rulings this refinement has to"
-		+ "make"
+		+ "cover nothing. Measured on 2026-09-26 on master with Bun 1.4.2: 96.96 % of lines and"
+		+ "94.91 % of functions, 38 modules under 100 %; generate-scenario-fixtures.ts no longer"
+		+ "enters the report since #183. The lowest are the sixteen scripts of scripts/ and of"
+		+ "core-mapping/scripts/ whose body runs only under import.meta.main,"
+		+ "check-scenario-fixtures.ts and specSources.ts at 41.67 % of lines,"
+		+ "generate-section-validators.ts at 0 % of functions: a test spawning them fails to raise"
+		+ "the figure, as Bun never reports a spawned module, release.ts and check-site.ts"
+		+ "included, so their input and output is injected and the real adapter alone ignored. The"
+		+ "unexecuted lines of sectionValidators.generated.js are two field dependencies of the"
+		+ "save schema, a validation rule no test asserts. Bun counts a class as a function no call"
+		+ "reaches, even once instantiated: a one-method class sits at 50 % of functions and 100 %"
+		+ "of lines, which is why the controllers of core-mapping read 66.67 %; a function gap"
+		+ "naming no line is no use case missed, and the function threshold is taken as measured"
 		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
 		REF @DECISION.AControllerSpecCoversWiringNotBranches
+		REF @DECISION.EveryPublishedCommandHasARealProcessTest
+		REF @DECISION.AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 	SOURCE "Owner request on the review of CHORE105, and the owner's ruling on its intent in the"
 		+ "same review"
 		PR 173
+	SOURCE "Owner rulings, refinement session of 2026-09-26"

@@ -915,6 +915,8 @@ DECISION RepositoryGuardsAreGroupedScripts
 	REJECTED "Merging two guards into a single script: two reasons to change"
 	REJECTED "A configured linter instead of a dedicated script"
 	REJECTED "Joining lines until parentheses balance to lift the line-by-line limit"
+	REJECTED "A helper package for the guards: every consumer lives in scripts/, which is no"
+		+ "package"
 	SPEC "Repository guards are scripts that read no git history, answer in a fraction of a second,"
 		+ "are grouped behind check:guards and stay runnable alone"
 		IMPL "package.json::check:guards"
@@ -925,9 +927,12 @@ DECISION RepositoryGuardsAreGroupedScripts
 		IMPL "scripts/specSources.ts::reportViolations"
 	SPEC "The line-by-line limit of a guard is pinned by a test that names it"
 		IMPL "scripts/check-test-assertions.spec.ts::When an assertion is spread over several lines"
+	APPLIES_TO_TASK @TASK.REFACTOR59
 	SOURCE "T12"
 		PR 40
 		PR 46
+	SOURCE "Helper package refused while refining REFACTOR59 with the owner on 2026-09-26"
+		PR 101
 
 DECISION EveryPublishedCommandHasARealProcessTest
 	REJECTED "A dedicated CI job instead of a test: it does not cover the workstation"
@@ -2111,3 +2116,22 @@ DECISION TheRootCliScriptsRunTheirEntryPointDirectly
 	SOURCE "Agent ruling while implementing FEAT114, 2026-09-25, amended by the owner's review of"
 		+ "the pull request for the tick and the empty line opening each block"
 		PR 182
+
+DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
+	REJECTED "A test spawning the script: Bun never reports a spawned module, so the figure stays"
+		+ "where it was"
+	REJECTED "Ignoring the whole script in coverage: the logic it holds would leave the report with"
+		+ "the input and output"
+	SPEC "The input and output a unit test cannot run in-process (file system scan, file read,"
+		+ "console, process exit) reaches the code of a script as a dependency its main function"
+		+ "receives, and the test passes a fake"
+		IMPL "scripts/specSources.ts::readOwnSourceFiles"
+	SPEC "Only a module holding the real input and output is ignored by the coverage, listed in the"
+		+ "coveragePathIgnorePatterns of bunfig.toml"
+		IMPL "bunfig.toml::[test]"
+	APPLIES_TO_TASK @TASK.TEST123
+	RATIONALE "Bun measures only what runs in the test process: the script body that runs under"
+		+ "import.meta.main is reached in-process through its injected dependencies, and what is"
+		+ "left is the real adapter, too thin to hold a use case"
+		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
+	SOURCE "Owner ruling while refining TEST123 on 2026-09-26"
