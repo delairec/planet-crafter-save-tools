@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
+import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
 
 const nbsp = '\u00A0';
 
@@ -22,6 +23,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: CURRENT_FORMAT_RELEASE,
       planets: [{
         planetId: 1,
         production: 80_000,
@@ -69,6 +71,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [
         {
           planetId: 1,
@@ -101,6 +104,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [
         {
           planetId: 1,
@@ -127,12 +131,39 @@ describe('EnergyLevelsPresenter', () => {
     expect(presenter.viewModel.submergedMachinesDisclaimer).toBe('Submerged machines may distort the computed available energy.');
   });
 
+  describe('When it presents the values of a legacy game release', () => {
+    it('should name that game release in a disclaimer', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
+
+      // Act
+      presenter.displayEnergyLevels({gameRelease: '2.004', planets: []});
+
+      // Assert
+      expect(presenter.viewModel.gameReleaseNote).toBe('Values of game release 2.004');
+    });
+  });
+
+  describe('When it presents the values of the current game release', () => {
+    it('should name no game release', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
+
+      // Act
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, planets: []});
+
+      // Assert
+      expect(presenter.viewModel.gameReleaseNote).toBeUndefined();
+    });
+  });
+
   it('should present the production and consumption breakdowns as rows', () => {
     // Arrange
     const presenter = new EnergyLevelsPresenter();
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [{
         planetId: 1,
         production: 590,
@@ -176,6 +207,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Act
     presenter.displayEnergyLevels({
+      gameRelease: '2.102',
       planets: [{
         planetId: 1,
         production: 590,

@@ -24,7 +24,8 @@ export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
         planetId: 1,
         planetName: undefined,
         placedWorldObjects: [producer, consumer]
-      })]
+      })],
+      declaredVersion: '2.008'
     });
   }
 
