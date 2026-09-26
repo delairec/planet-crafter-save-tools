@@ -471,13 +471,13 @@ RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 	SPEC "ButterflyDisplayer1, FishDisplayer1, FrogDisplayer1, Server1, CookingStation1,"
 		+ "PodUnderground and RocketAnimals2 placed on a planet add nothing to the consumption the"
 		+ "HUD prints"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::PodUnderground"
+		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000008, 'PodUnderground', 40)"
 		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge the"
 			+ "85 kW the game shows, TreePlanter3 being the only one drawing power"
 	RATIONALE "The seven machines stay in the group without a known energy level, where nothing is"
 		+ "charged, so the computed consumption matches the HUD without a zero-kilowatt row. The"
 		+ "fixture holds one of each so that the reading on it, which TEST125 still awaits, attests"
-		+ "the rule on a save CI can read"
+		+ "the rule on a save CI generates"
 		REF @TASK.TEST125
 		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save placing nearly every"
@@ -492,7 +492,7 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 	DOMAIN game
 	SPEC "the consumption the HUD prints for a planet whose machines stand on dry ground, in a save"
 		+ "whose modifierPowerConsumption is 1, is the sum of their base consumption levels"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::TreePlanter3"
+		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000002, 'TreePlanter3', 10)"
 		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should sum the"
 			+ "consumption of the placed world objects with known consumption levels"
 		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge the"
@@ -517,9 +517,9 @@ RULE ThePowerConsumptionModifierMultipliesTheConsumptionOfEveryMachine
 	DOMAIN game
 	SPEC "the game multiplies the consumption of every machine by modifierPowerConsumption: at 1"
 		+ "the HUD prints the base consumption levels, at 1.5 a machine drawing 0.4 kW draws 0.6 kW"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::modifierPowerConsumption"
+		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
 	SPEC "a player sets modifierPowerConsumption between 0 and 2"
-		ATTESTED_BY "packages/ui-save-manager/e2e/fixtures/energy-consumption_valid.json::modifierPowerConsumption"
+		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
 	RATIONALE "A save carrying 0 therefore draws nothing, which is why the fixture carries 1, the"
 		+ "value every standard reference save carries. Applying the modifier to the computed"
