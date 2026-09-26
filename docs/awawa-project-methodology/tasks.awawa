@@ -1583,44 +1583,66 @@ TASK FEAT132
 	TITLE "Display the SysTi, the Terraformation Index accumulated over every planet of the save"
 	STATUS draft
 	DESC "drafted for memory, no research done: whether the SysTi is the plain sum of the planets'"
-		+ "Ti or weighs them, and where the save manager shows it, are established when the task is"
-		+ "refined"
-	SPEC "the save manager displays the SysTi of a save, computed from the accumulation of the"
-		+ "Terraformation Index of each of its planets"
+		+ "Ti or weighs them is established when the task is refined"
+	SPEC "the Overview page shows the SysTi of the save in a tile of its own, computed from the"
+		+ "accumulation of the Terraformation Index of each of its planets, and the hero figure of"
+		+ "the Terraformation page names the share of the SysTi the planet holds"
+	SPEC "the SysTi is computed by the domain and carried by the overview and terraformation view"
+		+ "models"
+	AFTER @TASK.FEAT141
+	AFTER @TASK.FEAT142
+	WAVE @WAVE.11
 	RATIONALE "The game sums the terraformation of the planets of a save into one system-wide"
 		+ "index, the SysTi, that the save manager does not compute: it prints one Terraformation"
-		+ "Index per planet and nothing for the save as a whole. The redesign opens on a summary of"
-		+ "the save, where that figure belongs"
+		+ "Index per planet and nothing for the save as a whole. Page F shows it in the overview"
+		+ "tiles and under the hero figure of a planet, so the wave that delivers those two pages"
+		+ "delivers it"
 		REF @SECTION.TerraformationLevels
+		REF @DECISION.AViewModelServesOneView
 	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
-		+ "mockup of three proposals, to draft for memory outside any wave"
+		+ "mockup of three proposals, to draft for memory; owner ruling of 2026-09-27 to deliver it"
+		+ "in wave 11"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT133
 	TITLE "Tell on the merge page that save A wins over save B where their common data conflicts"
 	STATUS draft
-	DESC "drafted for memory, no research done: the wording and the place of the notice on the"
-		+ "merge page are established when the task is refined"
-	SPEC "the merge page of the save manager carries a notice, of severity info, saying that save A"
-		+ "prevails over save B for the common data the two saves hold in conflict"
-	SPEC "info joins the severities a notification of the save manager may carry"
+	DESC "drafted for memory, no research done: the wording of the notice is established when the"
+		+ "task is refined"
+	SPEC "the merge page carries, above the form, a notice saying that save A prevails over save B"
+		+ "for the common data the two saves hold in conflict, and that swapping them changes which"
+		+ "one wins"
+	SPEC "the notice is a static message of the UI package, rendered in the notification style with"
+		+ "an info severity the Notification component accepts; it qualifies no figure of a section"
+		+ "and enters no view model of core-mapping"
+	SPEC "the token pair of the info severity is catalogued by the contrast guard"
+	AFTER @TASK.FEAT137
+	AFTER @TASK.FEAT138
+	WAVE @WAVE.10
 	RATIONALE "Several merge rules resolve a conflict in favour of save A, the configuration among"
 		+ "them, and the swap control exists to choose which save is A; nothing on the page says"
-		+ "so, and the reader learns it from the result or never. The notifications of the save"
-		+ "manager know a limitation and a warning; a rule of the tool is neither"
+		+ "so, and the reader learns it from the result or never. A notification of core-mapping"
+		+ "qualifies the figures of a section and takes its severity from the presenter; this"
+		+ "notice qualifies a rule of the tool, so the owner ruled it a message of the UI, which"
+		+ "leaves the merge result view model the CLI reads untouched"
 		REF @RULE.SaveConfigurationComesFromSaveA
 		REF @RULE.TheSaveOnPrimeBecomesSaveA
 		REF @COMMAND.MergeSaves
+		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
+		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
-		+ "mockup of three proposals, to draft for memory outside any wave"
+		+ "mockup of three proposals, to draft for memory; owner ruling of 2026-09-27: a static"
+		+ "message on the UI side, delivered in wave 10"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT134
 	TITLE "Lay out the save manager as a shell with a left menu and one page per section"
 	STATUS draft
 	DESC "drafted from page F of the mockup, to be refined before ratification: how a page is"
-		+ "addressed while the save lives in memory, and what a merge does to the save in memory,"
-		+ "are settled at refinement"
+		+ "addressed while the save lives in memory is settled at refinement, the route files the"
+		+ "shell adds being declared test roots of the coverage-gaps plugin or the pages being"
+		+ "components of the one route"
 	SPEC "the page opens on the disclaimer block of today, unchanged, above the content of every"
 		+ "page, under the title of today and above the version footer of today"
 	SPEC "a left menu carries three groups in this order: Tools, Save, Players; Tools holds Merge"
@@ -1628,10 +1650,13 @@ TASK FEAT134
 		+ "Terraformation; Players ends on a See more button that opens the Players page"
 	SPEC "the Configuration, Power, Terraformation and Players sections of today become one page"
 		+ "each, reached from the menu, rendered by the components and the view models they have"
-		+ "today; the Power and Terraformation pages show one planet at a time, chosen by planet"
-		+ "tabs; every page but the Overview opens on a breadcrumb naming its group, its page and,"
-		+ "where a planet is shown, the planet"
-	SPEC "switching page keeps the loaded save: no file is read again and no page reload happens"
+		+ "today, the Global progression section on the Configuration page; every page but the"
+		+ "Overview opens on a breadcrumb naming its group and its page"
+	SPEC "switching page keeps the loaded save: no file is read again, which the scenario proves by"
+		+ "holding the read of the file, and no page reload happens; the view model of a page is"
+		+ "computed once per loaded save"
+	SPEC "a page whose view model is loading shows the busy indicator of today, and a page whose"
+		+ "controller rejects shows the failure sentence of today"
 	SPEC "before a save is loaded, the Save and Players groups are absent and the Overview page"
 		+ "carries the file input, the drop zone, the Visualize button, the busy indicator and the"
 		+ "failure sentence of today; once loaded, the Overview page names the file and offers the"
@@ -1642,7 +1667,8 @@ TASK FEAT134
 	SPEC "the 404 route and its link back home stay; the security, version and drop scenarios of"
 		+ "today pass on the shell"
 	SPEC "the display scenarios are one file per page, so that the page tasks of the next waves"
-		+ "edit distinct files"
+		+ "edit distinct files, and the anchors and the wording of the decisions naming a moved"
+		+ "scenario or module are rewritten"
 	WAVE @WAVE.10
 	RATIONALE "The save manager renders every section on one page, 41 000 pixels high and 213 cards"
 		+ "on the largest reference save, with the merge form above the data. The redesign keeps a"
@@ -1650,9 +1676,12 @@ TASK FEAT134
 		+ "being the base and the left menu absorbing the Players and Tools groups of proposal C."
 		+ "This task moves the existing views into pages without changing what they read, so that"
 		+ "the transition of the presentation to one view model per view proceeds page by page in"
-		+ "the tasks that follow. The disclaimer block is the one element of today's page the owner"
-		+ "keeps as it is. Twenty-two scenarios click Visualize on one page today and follow the"
-		+ "sections to their pages"
+		+ "the tasks that follow; the planet tabs come with the pages that are rebuilt, so as not"
+		+ "to build them twice on the section view models. The disclaimer block is the one element"
+		+ "of today's page the owner keeps as it is. Twenty-two scenarios click Visualize on one"
+		+ "page today and follow the sections to their pages; the coverage-gaps plugin exempts the"
+		+ "route files of today only, and the anchors guard refuses a decision naming a file that"
+		+ "moved"
 		REF @URL.SaveManagerRedesignMockup
 		REF @PACKAGE.ui_save_manager
 		REF @DECISION.AViewModelServesOneView
@@ -1661,6 +1690,7 @@ TASK FEAT134
 		REF @DECISION.BothMessageListsShareOneRendering
 		REF @DECISION.UiSaveManagerHasOneUiErrorIdiom
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
+		REF @DECISION.ALoadingStateIsObservedByHoldingTheFileRead
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: page F is the final version, its details"
 		+ "adjustable during the implementation, the disclaimer block unchanged; owner ruling of"
 		+ "2026-09-27: each wave carries a piece of the transition to one view model per view"
@@ -1669,19 +1699,19 @@ TASK FEAT134
 TASK FEAT135
 	TITLE "Feed the menu with the save identity and the players list, two zone view models"
 	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: where the file size"
-		+ "comes from, and the exact fields of the save the identity names, are settled at"
+	DESC "drafted from page F of the mockup, to be refined before ratification: whether the game"
+		+ "release shown is the declared version or the resolved release, what a save without a"
+		+ "version shows, and what a player whose planet is empty or legacy shows, are settled at"
 		+ "refinement"
-	SPEC "a save identity zone shows the file name, the display name, the mode, the game release"
-		+ "and the file size of the loaded save; it is rendered above the groups of the menu and at"
-		+ "the top of the Overview page"
+	SPEC "the save identity zone of the menu shows the file name, the display name, the mode and"
+		+ "the game release of the loaded save, above the groups of the menu; a save without a"
+		+ "configuration entry shows the file name alone"
 	SPEC "the Players group of the menu lists the players of the save, each with the planet they"
 		+ "stand on and a Host badge for the host"
 	SPEC "the save identity and the players menu are two view models of core-mapping, each built by"
 		+ "a presenter of its own from a use case of its own, reached by a controller of its own"
-		+ "that takes the validated text; the file name and size enter through the request"
-	SPEC "the player entity carries the planet and the host flag of its entry, and the players menu"
-		+ "view model carries the planet name, not its identifier"
+		+ "that takes the validated text; the file name enters through the request"
+	SPEC "the player entity carries the planet and the host flag of its entry"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT134
 	WAVE @WAVE.10
@@ -1689,7 +1719,9 @@ TASK FEAT135
 		+ "whose display name and mode sit in the configuration view model beside the modifiers,"
 		+ "and the planet and host of each player, which the player entity does not read. These two"
 		+ "zones are the first views cut by the new rule, small enough to set the pattern: one use"
-		+ "case, one presenter, one view model, one controller per view"
+		+ "case, one presenter, one view model, one controller per view. The Overview page shows an"
+		+ "identity of its own, with the file size, composed by its own view model through the"
+		+ "helper this task writes"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
@@ -1709,23 +1741,26 @@ TASK FEAT136
 		+ "percentages and which are coefficients, and which unlock flags of the eleven the entry"
 		+ "carries are listed, are checked against the save format at refinement"
 	SPEC "the Configuration page shows the global progression first, the modifiers next and the"
-		+ "unlock flags of the save last"
+		+ "unlock flags of the save last; a save without statistics shows the progression without"
+		+ "them, as today"
 	SPEC "the drone logistics is a badge, Paused in the danger tone and Running in the positive"
 		+ "tone; a modifier expressed as a percentage shows 100 % in the neutral tone, above 100 %"
 		+ "in the danger tone and below 100 % in the positive tone; the gauge drain and the"
 		+ "multiplayer factor are coefficients shown as ×n, ×1 in the neutral tone, below 1 in the"
 		+ "danger tone, above 1 in the positive tone; each unlock flag is listed with an on or off"
 		+ "pill"
-	SPEC "the tone of each value is decided by the presenter and carried by the view model, and the"
-		+ "tone rules are recorded as a RULE of the specification area"
+	SPEC "whether a modifier is at the game's default, penalises or helps the player is a rule of"
+		+ "the domain, recorded as a RULE of the specification area; the presenter maps it to a"
+		+ "tone, and a tone is also carried by a text or an accessible name, never by colour alone"
 	SPEC "the Configuration page reads one view model composed of three zones, progression,"
 		+ "modifiers and unlocks, built by one presenter from one use case that reads the"
 		+ "configuration, the global progression and the statistics; the configuration value object"
 		+ "carries the unlock flags"
 	SPEC "the Configuration and Global progression section controllers, presenters and view models"
-		+ "of today are retired, no page reading them any more"
+		+ "of today are retired, and every module the task leaves without an importer is deleted in"
+		+ "the same pull request"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.FEAT134
+	AFTER @TASK.FEAT135
 	AFTER @TASK.FEAT138
 	WAVE @WAVE.10
 	RATIONALE "The Configuration page is the first page cut by the new rule: two sections of today"
@@ -1733,7 +1768,10 @@ TASK FEAT136
 		+ "Today every modifier is formatted as a percentage and read as a bare number. The owner"
 		+ "ruled the tones on the mockup: the game's default is neutral, and the direction that"
 		+ "penalises the player is the danger tone, above 100 % for a percentage and below 1 for a"
-		+ "coefficient. The unlock flags are in the configuration entry and shown nowhere today"
+		+ "coefficient; that direction is a fact about the game, so it is a domain rule the"
+		+ "presenter renders. The unlock flags are in the configuration entry and shown nowhere"
+		+ "today. The task follows the menu task because both extend the sections reader and its"
+		+ "fake"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 		REF @DECISION.UserTextLivesInCoreMappingPresentation
@@ -1749,27 +1787,31 @@ TASK FEAT136
 TASK FEAT137
 	TITLE "Move the merge of two saves and the loading of another save under the Tools group"
 	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: what a merge and"
-		+ "Load another save do to the save in memory are settled at refinement"
+	DESC "drafted from page F of the mockup, to be refined before ratification: what Load another"
+		+ "save does to an unsaved merge result is settled at refinement"
 	SPEC "the Merge two saves page carries the merge form of today, save A and save B drop zones,"
 		+ "the swap control, the legacy format box and the Merge button, and shows the result, the"
 		+ "download and the warnings of a merge where the form is"
+	SPEC "a merge leaves the loaded save in memory untouched: the scenario of today that expects a"
+		+ "merge to leave no save to visualize is rewritten to that, and the scenario aligning the"
+		+ "labels of the merge form with the file input of the display is retired, the two forms no"
+		+ "longer sharing a page"
 	SPEC "Load another save lets the user pick or drop a save; the new save replaces the loaded one"
 		+ "and the Overview page opens on it"
 	SPEC "the merge page reads the merge result view model of today, unchanged; the drop, merge and"
 		+ "loading-state scenarios of today pass on the new pages"
-	AFTER @TASK.FEAT134
+	AFTER @TASK.FEAT135
 	WAVE @WAVE.10
 	RATIONALE "The merge form sits above the visualization today and is the first thing the page"
 		+ "shows; on the mockup it is a tool, reached from the menu, and the display flow opens on"
 		+ "the data. The merge controller and its view model serve cli-merge as well and do not"
-		+ "move: the page is a new home for the same result. The drop behaviours outside the areas,"
-		+ "the alphabetical order of two dropped files and the swap tooltip are scenarios the move"
-		+ "must keep green. The info notice saying that save A prevails is drafted apart, outside"
-		+ "the waves"
+		+ "move: the page is a new home for the same result. A merge clears the displayed save"
+		+ "today because both share one page; on a page of its own it has no reason to. The drop"
+		+ "behaviours outside the areas, the alphabetical order of two dropped files and the swap"
+		+ "tooltip are scenarios the move must keep green. The task follows the menu task because"
+		+ "both edit the menu and the load hook"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.TheModulesTheClisImportKeepTheirContract
-		REF @TASK.FEAT133
 		REF @PACKAGE.ui_save_manager
 		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: the Tools group comes first in the menu and"
@@ -1777,35 +1819,36 @@ TASK FEAT137
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT138
-	TITLE "Give the save manager the shared presentation pieces the redesigned pages are built from"
+	TITLE "Give the save manager the presentation pieces the pages of the navigation wave render"
 	STATUS draft
 	DESC "drafted from page F of the mockup, to be refined before ratification: the list of pieces"
-		+ "is closed at refinement against the pages of the mockup"
+		+ "is closed at refinement against the pages of wave 10"
 	SPEC "a page opens on a section title; a card has a header holding its title and a summary"
-		+ "figure, and a body; a figure tile shows a label, a value with its unit and an optional"
-		+ "line under it"
-	SPEC "a status pill carries a dot and a word; a tone badge shows a value; a notification is a"
-		+ "line whose severity is named by a pill before the message"
-	SPEC "a table has headers, right-aligned figures, an optional total row and an optional bar"
-		+ "cell whose bar is aligned across rows; a tab strip marks the selected tab; a selector is"
-		+ "a labelled select"
+		+ "figure, and a body; a notification is a line whose severity is named by a pill before"
+		+ "the message; a tone badge shows a value with a text naming its tone; an on or off pill"
+		+ "names its state; the Host badge names the host"
 	SPEC "every piece takes its colours from the tokens of the package's palette, in the light and"
-		+ "in the dark theme"
+		+ "in the dark theme, and every token pair it composes is catalogued by the contrast guard"
+	SPEC "a piece is delivered with the first page that renders it: the figure tile, the status"
+		+ "pill, the tab strip and the bar cell come with the Power and Terraformation pages, the"
+		+ "selector with the chart"
 	AFTER @TASK.FEAT134
 	WAVE @WAVE.10
-	RATIONALE "The pages of the mockup share a small vocabulary of pieces, and building them once"
-		+ "is what keeps the redesigned pages consistent. The pieces wear the neon theme of the"
+	RATIONALE "The pages of the mockup share a small vocabulary of pieces, and building each once"
+		+ "is what keeps the redesigned pages consistent; but the quality gate refuses a file no"
+		+ "module imports, so a piece lands with its first consumer and this task carries only"
+		+ "those the Configuration page and the shell render. The pieces wear the neon theme of the"
 		+ "current application as page F shows: section titles in neon pink, underlined; card"
 		+ "headers as neon-cyan pills with inverted text; cards with a neon-purple border; the"
-		+ "active menu item, the primary buttons and the Host badge on a neon fill; the selector"
-		+ "with a visible border. A scenario cannot assert a colour, so the palette is recorded"
-		+ "here and proven by the tokens of colors.css; the scenarios of the pages that use the"
-		+ "pieces assert their structure. The package has no component test layer"
+		+ "active menu item, the primary buttons and the Host badge on a neon fill. A scenario"
+		+ "cannot assert a colour, so the palette is recorded here and proven by the tokens of"
+		+ "colors.css and the contrast catalog; the scenarios of the pages assert the structure"
 		REF @URL.SaveManagerRedesignMockup
 		REF @PACKAGE.ui_save_manager
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
 		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
+		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "Owner review of 2026-09-26 of the first working version: titles and selector not"
 		+ "visible enough; owner choice of 2026-09-26 of page F, the neon colours"
 		REF @URL.SaveManagerRedesignMockup
@@ -1814,36 +1857,49 @@ TASK FEAT139
 	TITLE "Give the Power page its view model: figures with a status, optimizers first, tables"
 	STATUS draft
 	DESC "drafted from page F of the mockup, to be refined before ratification: the threshold"
-		+ "between a tight and a surplus balance is settled at refinement"
-	SPEC "the Power page keeps its notifications under the title, then shows for the planet of the"
-		+ "selected tab three figure tiles, production, consumption and available, the available"
-		+ "one carrying a status pill and a load meter with the share of production consumed"
-	SPEC "the status reads Deficit when the available power is negative, Tight when it is below a"
-		+ "tenth of the production, Surplus otherwise; the threshold is recorded as a RULE of the"
-		+ "specification area, and the status word, the load share and the tone are decided by the"
-		+ "presenter and carried by the view model"
-	SPEC "the optimizers come before the breakdown, as a table of optimizer, energy fuses held over"
-		+ "the fuse slots of its tier, boosted machines and contribution with its share of"
-		+ "production"
+		+ "between a tight and a surplus balance is settled at refinement; the task shares small"
+		+ "hunks of the section hook and the fixture generator with the Terraformation page task of"
+		+ "the same wave"
+	SPEC "the Power page shows planet tabs and, for the planet of the selected tab, a title"
+		+ "carrying the status pill, the notifications under it, then three figure tiles,"
+		+ "production, consumption and available, the available one carrying the status pill and a"
+		+ "load meter with the share of production consumed; the breadcrumb names the planet"
+	SPEC "the balance of a planet is a rule of the domain, recorded as a RULE of the specification"
+		+ "area: deficit when the available power is negative, tight when it is below a tenth of"
+		+ "the production, surplus otherwise, a planet producing nothing being in deficit when it"
+		+ "consumes and balanced otherwise; the presenter maps it to a word and a tone, the word"
+		+ "being shown"
+	SPEC "the optimizers come before the breakdown, under a header counting them and their boost"
+		+ "with its share of production, as a table of optimizer, energy fuses held over the fuse"
+		+ "slots of its tier, boosted machines and contribution with its share of production"
 	SPEC "the producers and the consumers are two tables, machine, quantity, unit, total and share,"
-		+ "largest total first, ending on a total row; the cards of today disappear"
+		+ "largest total first, ending on a total row, under a line counting the producers, the"
+		+ "consumers and the optimizers; the cards of today disappear"
 	SPEC "the Power page reads one view model, the notifications and one zone per planet, built by"
-		+ "one presenter from one use case; the Power section controller, presenter and view model"
-		+ "of today are retired"
+		+ "one presenter from one use case; the planet zone is built by a presentation helper the"
+		+ "planet page and the overview reuse"
+	SPEC "the Power section controller, presenter and view model of today are retired, every module"
+		+ "left without an importer is deleted, and the anchors and the wording of the decisions"
+		+ "naming them are rewritten"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT136
 	WAVE @WAVE.11
 	RATIONALE "The Power section is the largest of the page on a real save, one card per machine"
 		+ "type and fifty types on Prime; tables make it scannable and the optimizers, always fewer"
-		+ "than the machines, come first as the owner ruled. The planet zone of this view model is"
-		+ "what the planet page shows in its Power tab and what the overview cards summarise, so"
-		+ "the presentation helper that builds it is shared by the three views. The fuse slots of a"
-		+ "tier are in the optimizer configuration table and reach no view model today"
+		+ "than the machines, come first as the owner ruled. The balance of a planet is a fact"
+		+ "about the game, so the domain decides it on the planet energy grid and the presenter"
+		+ "only renders it. The planet zone of this view model is what the planet page shows in its"
+		+ "Power tab and what the overview cards summarise, so the helper that builds it is shared"
+		+ "by the three views. The fuse slots of a tier are in the optimizer configuration table"
+		+ "and reach no view model today. Three decisions anchor the energy section component and"
+		+ "presenter this task removes"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
 		REF @DECISION.TheSubmergedMachinesLimitationIsCarriedByTheEnergyViewModel
+		REF @DECISION.TheEnergyOfASaveTakesTheValuesOfItsRelease
 		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
 		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
 		REF @PACKAGE.core_mapping
 		REF @PACKAGE.ui_save_manager
@@ -1854,36 +1910,39 @@ TASK FEAT139
 TASK FEAT140
 	TITLE "Chart the production and the consumption of a planet, with a selector of the form"
 	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: the colours of the"
-		+ "series are validated for colour vision deficiency on both surfaces at refinement"
+	DESC "drafted from page F of the mockup, to be refined before ratification"
 	SPEC "above the breakdown tables, a Display as selector offers Bars by machine, Share of each"
-		+ "machine type, and Table; Bars by machine is the default, and the chosen form stays"
-		+ "chosen across planets and pages"
+		+ "machine type, and Table; Bars by machine is the default on every page, and the chosen"
+		+ "form stays chosen across planets and pages"
 	SPEC "Bars by machine shows production and consumption side by side, one horizontal bar per"
-		+ "machine type, largest first, the twelve largest kept and the rest folded into one Other"
+		+ "machine type, largest first, the eleven largest kept and the rest folded into one Other"
 		+ "bar naming how many types it holds, the value at the end of each bar and ticks under the"
-		+ "bars; the optimizer boost is one bar of its own"
+		+ "bars; the optimizer boost is one bar of its own and never folds into Other"
 	SPEC "Share of each machine type shows one stacked bar for production and one for consumption,"
 		+ "the eight largest types and the rest folded, the share written inside a segment when it"
 		+ "fits, and a legend naming each type; Table shows the two breakdown tables of the page"
 	SPEC "hovering or focusing a bar or a segment names the type, its quantity, its unit, its total"
 		+ "and its share"
 	SPEC "the bars, the segments, their widths, their labels and the folded tail are a chart zone"
-		+ "of the planet view model, built by the presenter; the page draws them without a charting"
-		+ "dependency"
+		+ "of the planet view model, in a module of its own, built by the presenter; the page draws"
+		+ "them without a charting dependency"
 	SPEC "production, consumption and the optimizer boost each keep one colour across the three"
-		+ "forms and the legend, cyan, pink and purple as page F shows, and the two series stay"
-		+ "distinguishable under colour vision deficiency on the light and on the dark surface"
+		+ "forms and the legend, cyan, pink and purple as page F shows; the tokens are the pair"
+		+ "measured on the mockup, catalogued by the contrast guard"
 	AFTER @TASK.FEAT139
 	WAVE @WAVE.11
 	RATIONALE "A histogram of the power was the owner's first wish for the redesign, with a select"
 		+ "to switch between forms. The balance form of the proposals was dropped: hard to fit on a"
 		+ "phone and adding nothing the share form does not show. Folding the tail and naming it"
 		+ "are presentation, so the chart data is a zone of the view model and the component only"
-		+ "draws. The pure neon tokens fail the lightness band of the colour-vision check on the"
-		+ "dark surface; the mockup steps them and records the pair that passes"
+		+ "draws; the zone sits in its own module so the overview task can run beside this one. The"
+		+ "pure neon tokens fail the lightness band of the colour-vision check on the dark surface;"
+		+ "the mockup measured the pair that passes on both surfaces, light #0891b2, #d9007d and"
+		+ "#7f4af5, dark #06a6c4, #d9007d and #9061f9, and the contrast guard covers the pairs the"
+		+ "page composes"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
+		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 		REF @PACKAGE.core_mapping
 		REF @PACKAGE.ui_save_manager
 	SOURCE "Owner request of 2026-09-26 for the redesign: productions and consumptions as a"
@@ -1894,25 +1953,29 @@ TASK FEAT140
 TASK FEAT141
 	TITLE "Give the Terraformation page its view model: hero figures and bar-aligned tables"
 	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification"
-	SPEC "the Terraformation page shows for the planet of the selected tab two hero figures, the"
-		+ "Terraformation Index and the biomass, the biomass one naming the shares of plants and"
-		+ "insects"
+	DESC "drafted from page F of the mockup, to be refined before ratification; the task shares"
+		+ "small hunks of the section hook and the fixture generator with the Power page task of"
+		+ "the same wave"
+	SPEC "the Terraformation page shows planet tabs and, for the planet of the selected tab, two"
+		+ "hero figures, the Terraformation Index and the biomass, the biomass one naming the"
+		+ "shares of plants and insects; the breadcrumb names the planet"
 	SPEC "two tables follow, O2, heat, pressure and purification, then plants, insects and animals;"
 		+ "each row carries a bar in a column of its own, scaled to the largest row of its table"
 		+ "and aligned with the other rows, and its value right-aligned; a value of zero and a"
 		+ "purification not unlocked show a dash"
 	SPEC "the Terraformation page reads one view model, one zone per planet with its hero figures,"
-		+ "its rows and the width of each bar, built by one presenter from one use case; the"
-		+ "Terraformation section controller, presenter and view model of today are retired"
+		+ "its rows and the width of each bar, built by one presenter from one use case; the planet"
+		+ "zone is built by a presentation helper the planet page and the overview reuse"
+	SPEC "the Terraformation section controller, presenter and view model of today are retired and"
+		+ "every module left without an importer is deleted"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT136
 	WAVE @WAVE.11
 	RATIONALE "The section shows today six cards of key and value pairs; the mockup keeps the two"
 		+ "groups of values and adds a bar per row so the reader sees which value carries the"
 		+ "index. The planet zone of this view model is what the planet page shows in its"
-		+ "Terraformation tab, built by the same presentation helper. The share of the SysTi under"
-		+ "the hero figure comes with the SysTi task"
+		+ "Terraformation tab, built by the same helper. The share of the SysTi under the hero"
+		+ "figure comes with the SysTi task"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 		REF @TASK.FEAT132
@@ -1925,34 +1988,39 @@ TASK FEAT141
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT142
-	TITLE "Give the Overview page its view model: progression tiles and planet cards"
+	TITLE "Give the Overview page its view model: identity, progression tiles and planet cards"
 	STATUS draft
 	DESC "drafted from page F of the mockup, to be refined before ratification: the common scale of"
-		+ "the power bars is settled at refinement"
-	SPEC "once a save is loaded, the Overview page shows the save identity, the notifications of"
-		+ "the save, then a row of tiles with the all-time Terra Tokens, the total crafted objects"
-		+ "and the drone logistics as a badge"
+		+ "the power bars, and what a planet present in the terraformation levels only or in the"
+		+ "energy only shows, are settled at refinement"
+	SPEC "once a save is loaded, the Overview page shows an identity zone of its own, the display"
+		+ "name, the mode, the game release and the file size, the notifications of the save, then"
+		+ "a row of tiles with the all-time Terra Tokens, the total crafted objects and the drone"
+		+ "logistics as a badge; a save without statistics shows the tiles it can"
 	SPEC "one card per planet shows, in this order, the planet name, its Terraformation Index, then"
 		+ "O2, heat, pressure, purification when unlocked, and biomass; the foot of the card shows"
 		+ "the production and the consumption as two bars on a scale common to every card, the"
 		+ "share of production consumed, the available power, and a Details button"
-	SPEC "the card carries no surplus, tight or deficit badge; the place of the terraformation"
-		+ "stage badge stays free for it"
-	SPEC "the Overview page reads one view model, tiles and cards with the width of each bar, built"
-		+ "by one presenter from one use case that reads the progression, the terraformation levels"
-		+ "and the energy of every planet; the figures of a card and of the Power and"
-		+ "Terraformation pages come from the same presentation helpers"
+	SPEC "a card joins the terraformation levels and the energy of a planet by the planet"
+		+ "identifier the terraformation entry carries, the energy planets being resolved to that"
+		+ "identifier; the card carries no surplus, tight or deficit badge, and the place of the"
+		+ "terraformation stage badge stays free for it"
+	SPEC "the Overview page reads one view model, identity, tiles and cards with the width of each"
+		+ "bar, built by one presenter from one use case that reads the configuration, the"
+		+ "progression, the terraformation levels and the energy of every planet; the figures of a"
+		+ "card and of the Power and Terraformation pages come from the same presentation helpers"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.FEAT139
+	AFTER @TASK.FEAT140
 	AFTER @TASK.FEAT141
 	WAVE @WAVE.11
 	RATIONALE "The overview is the page the save opens on and the one the owner shaped most on the"
 		+ "mockup: the terraformation of a planet comes first, the power stays in the foot, and the"
 		+ "only link is the Details button because Power and Terraformation are already in the"
 		+ "menu. Its use case is the first to join terraformation and energy for one view, which"
-		+ "the section view models of today cannot do without the page adding figures. The stage"
-		+ "badge and the SysTi tile are drafted apart, outside the waves, and take their place on"
-		+ "this page when they land"
+		+ "the section view models of today cannot do without the page adding figures. The energy"
+		+ "planets are keyed by a numeric identifier resolved to a name, the terraformation entries"
+		+ "by a textual one; the card is where the two meet. The stage badge is drafted apart and"
+		+ "takes its place on the card when it lands; the SysTi tile follows in this wave"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 		REF @TASK.FEAT131
@@ -1967,21 +2035,24 @@ TASK FEAT143
 	TITLE "Give each planet a page with a Power tab and a Terraformation tab"
 	STATUS draft
 	DESC "drafted from page F of the mockup, to be refined before ratification"
-	SPEC "the Details button of a planet card opens the page of that planet, whose breadcrumb reads"
-		+ "Save, Overview, then the planet name, Overview leading back to the overview"
+	SPEC "the Details button of a planet card opens the page of that planet, the request carrying"
+		+ "the planet identifier the card holds, stable for a planet without a name; the breadcrumb"
+		+ "reads Save, Overview, then the planet name, Overview leading back"
 	SPEC "the planet page carries two tabs, Power first and Terraformation second, opening on"
-		+ "Power; the Power tab shows the figures, the optimizers, the chart and the tables the"
-		+ "Power page shows for that planet, the Terraformation tab the hero figures and the tables"
-		+ "the Terraformation page shows for it"
-	SPEC "the planet page reads one view model composed of the power zone and the terraformation"
-		+ "zone of that planet, built by one presenter through the presentation helpers of the"
-		+ "Power and Terraformation pages, from one use case that takes the planet"
+		+ "Power; the Power tab shows the notifications, the figures, the optimizers, the chart and"
+		+ "the tables the Power page shows for that planet, the Terraformation tab the hero figures"
+		+ "and the tables the Terraformation page shows for it"
+	SPEC "the planet page reads one view model composed of its own instance of the power zone and"
+		+ "of the terraformation zone of that planet, built by one presenter through the"
+		+ "presentation helpers of the Power and Terraformation pages, from one use case that takes"
+		+ "the planet"
 	AFTER @TASK.FEAT142
 	WAVE @WAVE.11
 	RATIONALE "Proposal C opened the detail of a planet in a side drawer over the comparison; the"
 		+ "owner kept the detail and made it a page of its own, reached from the overview card. Its"
 		+ "view model composes the two planet zones already built for the Power and Terraformation"
-		+ "pages, so the three views agree by construction"
+		+ "pages, so the three views agree by construction; the notifications qualify the power"
+		+ "figures, so the Power tab repeats them"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 		REF @PACKAGE.core_mapping
@@ -1993,19 +2064,25 @@ TASK FEAT143
 TASK FEAT144
 	TITLE "Give the Players page its view model: vital gauges, equipment slots, grouped inventory"
 	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: where the maximum"
-		+ "of each gauge and the capacity of the inventory come from, the save or the equipment"
-		+ "tables, and whether the toxicity gauge is shown, are researched at refinement"
-	SPEC "each player card shows three flat gauges filled by percentage, an oxygen tank for oxygen,"
-		+ "a sandwich for health and a flask for thirst, with a clear outline and a visible empty"
-		+ "part, the percentage next to the label and the value over its maximum under the gauge"
-	SPEC "the host carries a Host badge on the card as in the menu; the equipment shows every slot,"
-		+ "an empty slot named by its kind and marked Empty; the inventory groups the items by kind"
-		+ "with their count and ends on an Empty slots chip counting the free slots"
-	SPEC "the Players page reads one view model, one card per player with its gauges, its slots and"
-		+ "its groups, built by one presenter from one use case; the percentages, the slot kinds"
-		+ "and the counts are decided by the presenter; the Players section controller, presenter"
-		+ "and view model of today are retired"
+	DESC "drafted from page F of the mockup, to be refined before ratification: the maximum of each"
+		+ "gauge, whether the inventory size the save carries includes the backpack slots, the"
+		+ "value table naming the kind of each equipment slot and of each worn item, and whether"
+		+ "the toxicity gauge is shown, are researched at refinement"
+	SPEC "each player card names the player and the planet they stand on, carries the Host badge"
+		+ "for the host, and shows three flat gauges filled by percentage, an oxygen tank for"
+		+ "oxygen, a sandwich for health and a flask for thirst, with a clear outline and a visible"
+		+ "empty part, the percentage next to the label and the value over its maximum under the"
+		+ "gauge"
+	SPEC "the equipment shows every slot under a caption counting the worn ones, an empty slot"
+		+ "named by its kind and marked Empty; the inventory groups the items by kind with their"
+		+ "count, under a caption counting the items, the slots and the kinds, and ends on an Empty"
+		+ "slots chip counting the free slots"
+	SPEC "the kind of each slot is a value table of the domain, the counts and the percentages are"
+		+ "computed by the use case from domain values, and the presenter renders them"
+	SPEC "the Players page reads one view model, one card per player, built by one presenter from"
+		+ "one use case; the Players section controller, presenter and view model of today are"
+		+ "retired, every module left without an importer is deleted, and the anchors and the"
+		+ "wording of the decisions naming them are rewritten"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT135
 	AFTER @TASK.FEAT138
@@ -2013,11 +2090,14 @@ TASK FEAT144
 	RATIONALE "The Players section lists today the equipment and the inventory item by item, in"
 		+ "save order, without quantities, and shows no gauge. The owner asked for more graphics on"
 		+ "the vitals, for a visible host, for empty equipment slots, and for the inventory to stay"
-		+ "grouped since the game does not stack items. The gauge maxima and the inventory capacity"
-		+ "depend on the equipment worn, a table the package does not hold; this page is last"
-		+ "because it needs that research"
+		+ "grouped since the game does not stack items. The inventory size is in the save; the"
+		+ "gauge maxima and the slot kinds depend on the equipment worn, a table the package does"
+		+ "not hold, which is why this page comes last. The decision on presenters receiving value"
+		+ "objects anchors the players use case and port this task rewrites"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
+		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		REF @SECTION.Players
 		REF @SECTION.Inventories
 		REF @PACKAGE.core_mapping
@@ -2027,26 +2107,28 @@ TASK FEAT144
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT145
-	TITLE "Retire the section view models, presenters and controllers no page reads any more"
+	TITLE "Close the transition: no section controller exported, the export boundary guarded"
 	STATUS draft
-	DESC "drafted for memory, to be refined before ratification: the list of modules to remove is"
-		+ "read from the exports of core-mapping and the imports of the UI at refinement"
+	DESC "drafted for memory, to be refined before ratification: the guard is a check of the"
+		+ "dependencies script or a rule of the package manifest, chosen at refinement"
 	SPEC "core-mapping exports no section controller and no section view model: every exported"
-		+ "controller serves one page or one zone of the save manager, or a CLI"
+		+ "controller serves one page or one zone of the save manager, or a CLI, and a guard of the"
+		+ "repository refuses a new Load*SectionController"
 	SPEC "the generic table view model and the field group components of today are gone from"
-		+ "core-mapping and from the UI, no page reading them"
+		+ "core-mapping and from the UI, and the coverage gates of the repository stay green"
 	SPEC "the controllers and view models the CLIs import are unchanged, and the specs of cli-merge"
-		+ "and cli-validate pass unchanged; the coverage gates of the repository stay green"
+		+ "and cli-validate pass unchanged"
 	AFTER @TASK.FEAT136
 	AFTER @TASK.FEAT139
 	AFTER @TASK.FEAT141
 	AFTER @TASK.FEAT142
 	AFTER @TASK.FEAT144
 	WAVE @WAVE.12
-	RATIONALE "Each page task retires the section it replaces, but the shared pieces of the old"
-		+ "presentation, the table view model, the field group components and the section state,"
-		+ "outlive the last page that reads them. This task is the cleanup that closes the"
-		+ "transition and proves the export boundary"
+	RATIONALE "Each page task retires the section it replaces and deletes what it orphans, the"
+		+ "quality gate refusing a file without an importer. What remains at the end is to prove"
+		+ "the boundary once: no section controller left, no generic table piece left, and a guard"
+		+ "so that the next feature does not bring one back. Naming the end of the transition as a"
+		+ "deliverable is what makes the wave complete"
 		REF @DECISION.AViewModelServesOneView
 		REF @DECISION.TheModulesTheClisImportKeepTheirContract
 		REF @DECISION.CoreMappingExportsOnlyControllersAndViewModels
@@ -2059,26 +2141,28 @@ TASK FEAT145
 TASK FEAT146
 	TITLE "Make the redesigned save manager usable at phone width and by keyboard"
 	STATUS draft
-	DESC "drafted for memory, no research done: the phone width to hold, the contrast gate to adopt"
-		+ "and the viewport the scenarios run at are settled at refinement"
+	DESC "drafted for memory, no research done: the phone width to hold and the viewport the"
+		+ "scenarios run at are settled at refinement"
 	SPEC "at phone width the menu, the pages, the cards and the charts fit the screen without a"
 		+ "horizontal scroll of the page; a wide table scrolls inside its own container"
 	SPEC "the menu, the tabs, the selector, the Details buttons and the chart marks are reached and"
 		+ "operated by keyboard, with a visible focus"
-	SPEC "text meets the contrast of the accessibility guidelines on the light and on the dark"
-		+ "surface, proven by a guard on the tokens of the palette, and the animations respect the"
-		+ "reduced motion preference"
+	SPEC "every token pair the redesign added is catalogued by the contrast guard, every tone and"
+		+ "status is carried by a text or an accessible name and never by colour alone, and the"
+		+ "animations respect the reduced motion preference"
 	AFTER @TASK.FEAT143
 	AFTER @TASK.FEAT145
 	WAVE @WAVE.12
 	RATIONALE "The owner named accessibility and the phone display as the reasons the details of"
 		+ "the mockup may move during the implementation; this task is the pass that checks both"
 		+ "once every page is redesigned, so that each page task does not carry its own partial"
-		+ "version of the same criteria. The scenarios run on three engines; the phone-width checks"
-		+ "live in one scenario file so the run does not double"
+		+ "version of the same criteria. The contrast guard exists and holds 4.5:1 by catalog; the"
+		+ "scenarios run on three engines, so the phone-width checks live in one scenario file and"
+		+ "the run does not double"
 		REF @URL.SaveManagerRedesignMockup
 		REF @PACKAGE.ui_save_manager
 		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
+		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: the details may be adjusted during the"
 		+ "implementation for accessibility and the phone display"
 		REF @URL.SaveManagerRedesignMockup

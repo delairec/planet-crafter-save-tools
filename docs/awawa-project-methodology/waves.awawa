@@ -23,7 +23,7 @@ WAVE 10
 	BRANCH "integration/save-manager-navigation"
 	DESC "the save manager is navigated by pages from a left menu, its shell fed by the first view"
 		+ "models cut by view: the save identity, the players menu and the Configuration page; the"
-		+ "other pages still read the section view models"
+		+ "other pages still read the section view models, and the merge notice joins the wave"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 
@@ -31,7 +31,8 @@ WAVE 11
 	MILESTONE "save-manager-planets"
 	BRANCH "integration/save-manager-planets"
 	DESC "the Power, Terraformation and Overview pages and the planet page read view models of"
-		+ "their own, figures and statuses decided by the presenters, the power chart included"
+		+ "their own, figures and statuses decided by the domain and rendered by the presenters,"
+		+ "the power chart and the SysTi included"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 
