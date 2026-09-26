@@ -1638,7 +1638,8 @@ TASK FEAT133
 
 TASK FEAT134
 	TITLE "Lay out the save manager as a shell with a left menu and one page per section"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 202
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; each page is a"
 		+ "route of its own, the loaded save held in a store above the routes"
 		REF @DECISION.EachPageOfTheSaveManagerIsARoute

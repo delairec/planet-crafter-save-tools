@@ -2577,3 +2577,4 @@ DECISION EachPageOfTheSaveManagerIsARoute
 		REF @DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile
 	SOURCE "Owner ruling of 2026-09-27, when FEAT134 started: one route per page, the loaded save"
 		+ "in a store above the routes"
+		PR 202
