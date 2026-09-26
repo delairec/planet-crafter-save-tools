@@ -88,14 +88,15 @@ Depuis la racine du dépôt (workspace Bun) :
 - `bun merge` — lance `cli-merge` (traite `input/` vers `output/`, surchargeables via `--input=`/`--output=`).
 - `bun validate -- --file=<chemin>` — lance `cli-validate` sur une save.
 - `bun run node:merge` / `bun run node:validate -- --file=<chemin>` — les mêmes outils sous Node au lieu de Bun.
-- `bun run audit:quality` — `check:guards` puis `fallow audit` et `fallow health` (porte qualité entière, pour une
+- `bun run audit:quality` — `guards` puis `fallow audit` et `fallow health` (porte qualité entière, pour une
   copie de travail). La CI couvre le même terrain en deux jobs plutôt qu'en une commande : `guards` lance
-  `check:guards`, `fallow` lance l'audit et le rapport de santé via l'action, qui les cadre sur la base de la pull
+  `bun run guards`, `fallow` lance l'audit et le rapport de santé via l'action, qui les cadre sur la base de la pull
   request et les rend dans le résumé du run. Ne pas rebrancher `audit:quality` tel quel dans un job : ses scripts
   fallow passent `--base master`, et un `actions/checkout` ne laisse que des références de suivi — mesuré,
   `--base master` y sort en 2, `--base origin/master` en 0.
-- `bun run check:guards` — les gardes du dépôt, enchaînées ; leur liste est celle des scripts `check:*` du `package.json`, plus `validate:tables`.
-  Aucune ne lit l'historique git, elles répondent en une fraction de seconde : c'est la moitié d'`audit:quality` à
+- `bun run guards` — les gardes du dépôt : chaque script `check:*` du `package.json`, plus `validate:tables`, lancés
+  par Bun lui-même ; une garde qui échoue n'arrête pas les suivantes, et la commande sort non nulle. Chaque garde se
+  lance seule par `bun run check:<nom>`. Aucune ne lit l'historique git, elles répondent en une fraction de seconde : c'est la moitié d'`audit:quality` à
   lancer en cours d'écriture.
 - `bun run check:dependencies` — vérifie la matrice de dépendances par préfixe (manifestes et imports, imports
   type-only et directives JSDoc `@import` compris). La matrice est documentée dans `docs/wiki/architecture.md`.

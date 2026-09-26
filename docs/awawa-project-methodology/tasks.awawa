@@ -105,17 +105,26 @@ TASK CHORE54
 
 TASK CHORE56
 	TITLE "bun run guards runs every repository guard, a failing one not stopping the others"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun run guards runs every check: script of the root package.json and validate:tables, no"
 		+ "list of the guards being written anywhere"
+		IMPL "package.json::\"guards\""
 	SPEC "each guard stays runnable alone as bun run check:<name>"
+		IMPL "package.json::\"check:anchors\": \"bun scripts/check-corpus-anchors.ts\""
 	SPEC "a failing guard does not stop the others; the run names every guard that failed and exits"
 		+ "non-zero"
+		IMPL "package.json::--no-exit-on-error"
 	SPEC "no script, workflow, AGENTS.md, file of agents/, page of docs/wiki, README or active"
 		+ "DECISION or PROCESS names check:guards any more; the dated usage reports keep it"
+		IMPL ".github/workflows/quality.yml::- run: bun run guards"
+		IMPL "AGENTS.md::- `bun run guards`"
+		IMPL "agents/worktree.md::- `bun run guards`"
+		IMPL "docs/wiki/development.md::bun run guards"
 	SPEC "the decision on the repository guards states that a guard is a check: script of the root"
 		+ "package.json, that the script running them all bears a name outside check:, and that a"
 		+ "failing guard does not stop the others"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::A failing guard does not stop the"
+			+ "others"
 	RATIONALE "The guards decision names check:guards as its implementation. check:guards chains"
 		+ "fourteen bun run calls with &&, grows by one with each guard and stops at the first"
 		+ "failure. Bun 1.4.2 runs the scripts matching a pattern itself: bun run --sequential"
@@ -128,6 +137,7 @@ TASK CHORE56
 		REF @DECISION.RepositoryGuardsAreGroupedScripts
 	SOURCE "Raised in the review of pull request 101; refined with the owner on 2026-09-26"
 		PR 101
+	DELIVERED_BY 195
 
 TASK CHORE58
 	TITLE "investigate running awawa in CI, then deliver in the same pull request the change the"
