@@ -1305,7 +1305,16 @@ TASK FEAT126
 
 TASK FEAT127
 	TITLE "Price the machines whose consumption the reading in game established"
-	STATUS todo
+	STATUS archived
+	ARCHIVED_ON 2026-09-26
+	DESC "archived undone: TreePlanter3, the only machine read at a price, already has its 85 kW"
+		+ "row, and the fixture consumption at modifier 1 is pinned by TEST125 in PR 188"
+	DESC "the declaration of machines drawing none is refused by"
+		+ "@DECISION.AZeroInTheGameDataExportIsNotAPrice; the seven machines read at none stay"
+		+ "without a known level, per"
+		+ "@RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption"
+		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
+		REF @RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 	SPEC "each machine TEST125 read in game gets its row in the energy table, its source naming the"
 		+ "game release read, and moves to the producing or the consuming group"
 	SPEC "a machine the reading shows drawing no power is declared as drawing none, apart from the"
