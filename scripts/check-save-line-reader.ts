@@ -1,4 +1,4 @@
-import {Glob} from 'bun';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {reportViolations} from './specSources.ts';
 
 const PACKAGE_FILES_PATTERN = 'packages/**';
@@ -43,16 +43,16 @@ export function findUnadmittedJsonParseCalls({filePath, source}: ProductionSourc
     .flatMap((code, lineIndex) => JSON_PARSE_CALL.test(code) ? [lineIndex + 1] : []);
 }
 
-async function checkSaveLineReader(): Promise<number> {
+export async function checkSaveLineReader(io: ScriptIo): Promise<void> {
   const violations: string[] = [];
-  for await (const filePath of new Glob(PACKAGE_FILES_PATTERN).scan({cwd: process.cwd()})) {
+  for await (const filePath of io.scanFiles(PACKAGE_FILES_PATTERN)) {
     if (!isProductionSourceFile(filePath)) {
       continue;
     }
-    findUnadmittedJsonParseCalls({filePath, source: await Bun.file(filePath).text()})
+    findUnadmittedJsonParseCalls({filePath, source: await io.readText(filePath)})
       .forEach(line => violations.push(`${filePath}:${line}\n  ${UNADMITTED_CALL_REASON}`));
   }
-  return reportViolations({
+  reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
     nothingFound: `no production module calls JSON.parse outside ${ADMITTED_PARSER_MODULE}.`,
@@ -60,6 +60,4 @@ async function checkSaveLineReader(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkSaveLineReader());
-}
+await runAsEntryPoint(import.meta.main, checkSaveLineReader);

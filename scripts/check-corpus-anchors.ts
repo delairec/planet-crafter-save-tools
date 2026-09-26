@@ -1,5 +1,4 @@
-import {Glob} from 'bun';
-import {join} from 'node:path';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {isOwnSourceFile, reportViolations} from './specSources.ts';
 
 // Parses the corpus text rather than calling the awawa binary: the guards CI job does not install awawa.
@@ -24,7 +23,7 @@ export interface CorpusAnchor {
   line: number;
 }
 
-export interface UntrackedAnchor extends CorpusAnchor {
+interface UntrackedAnchor extends CorpusAnchor {
   file: string;
 }
 
@@ -211,18 +210,6 @@ export function findCorpusAnchors(source: string, anchorFields: AnchorFields): C
 }
 
 /**
- * @param {string} workspaceRoot the root git lists the files of
- * @returns every file git tracks, relative to that root
- */
-function listTrackedFiles(workspaceRoot: string): string[] {
-  const listing = Bun.spawnSync(['git', 'ls-files', '-z'], {cwd: workspaceRoot});
-  if (listing.exitCode !== 0) {
-    throw new Error(listing.stderr.toString());
-  }
-  return listing.stdout.toString().split('\0').filter(trackedFile => trackedFile !== '');
-}
-
-/**
  * @param {string} anchorPath the path an anchor names
  * @param {string[]} trackedFiles every file git tracks
  * @returns whether that path is a tracked file or a directory holding one
@@ -233,18 +220,18 @@ function isTracked(anchorPath: string, trackedFiles: string[]): boolean {
 }
 
 /**
- * @param {string} workspaceRoot the root the anchors of the corpus resolve from
+ * @param {ScriptIo} io the file system and the index of tracked files the anchors of the corpus resolve against
  * @returns every anchor of the corpus naming a path git does not track
  */
-export async function findUntrackedCorpusAnchors(workspaceRoot: string): Promise<UntrackedAnchor[]> {
+async function findUntrackedCorpusAnchors(io: ScriptIo): Promise<UntrackedAnchor[]> {
   const corpusFiles: {file: string, source: string}[] = [];
-  for await (const file of new Glob(CORPUS_FILES_PATTERN).scan({cwd: workspaceRoot})) {
+  for await (const file of io.scanFiles(CORPUS_FILES_PATTERN)) {
     if (isOwnSourceFile(file)) {
-      corpusFiles.push({file, source: await Bun.file(join(workspaceRoot, file)).text()});
+      corpusFiles.push({file, source: await io.readText(file)});
     }
   }
   const anchorFields = readAnchorFields(corpusFiles.map(({source}) => source).join('\n'));
-  const trackedFiles = listTrackedFiles(workspaceRoot);
+  const trackedFiles = io.listTrackedFiles();
   return corpusFiles
     .flatMap(({file, source}) => findCorpusAnchors(source, anchorFields)
       .filter(anchor => !isTracked(anchor.path, trackedFiles))
@@ -253,11 +240,11 @@ export async function findUntrackedCorpusAnchors(workspaceRoot: string): Promise
 }
 
 /**
- * @returns the exit code of the guard, once its report is printed
+ * @param {ScriptIo} io the input and output of the guard
  */
-async function checkCorpusAnchors(): Promise<number> {
-  const untrackedAnchors = await findUntrackedCorpusAnchors(process.cwd());
-  return reportViolations({
+export async function checkCorpusAnchors(io: ScriptIo): Promise<void> {
+  const untrackedAnchors = await findUntrackedCorpusAnchors(io);
+  reportViolations(io, {
     checkName: CHECK_NAME,
     violations: untrackedAnchors.map(({file, line, entity, field, path}) =>
       `${file}:${line}\n  ${entity} ${field} names ${path}, a path git does not track`),
@@ -266,6 +253,4 @@ async function checkCorpusAnchors(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkCorpusAnchors());
-}
+await runAsEntryPoint(import.meta.main, checkCorpusAnchors);

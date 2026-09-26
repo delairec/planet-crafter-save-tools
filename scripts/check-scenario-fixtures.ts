@@ -1,3 +1,4 @@
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {readOwnSourceFiles, reportViolations} from './specSources.ts';
 
 const SCENARIO_FILES_PATTERN = '**/*.e2e.{ts,tsx}';
@@ -16,9 +17,9 @@ export function findInputDirectoryReferences(source: string): InputDirectoryRefe
     .filter(({text}) => INPUT_DIRECTORY_PATH.test(text));
 }
 
-async function collectInputDirectoryReferences(): Promise<string[]> {
+async function collectInputDirectoryReferences(io: ScriptIo): Promise<string[]> {
   const violations: string[] = [];
-  for await (const {filePath, source} of readOwnSourceFiles(SCENARIO_FILES_PATTERN)) {
+  for await (const {filePath, source} of readOwnSourceFiles(io, SCENARIO_FILES_PATTERN)) {
     findInputDirectoryReferences(source)
       .forEach(({line, text}) => violations.push(`${filePath}:${line}: ${text}\n  ${INPUT_DIRECTORY_REASON}`));
   }
@@ -26,15 +27,13 @@ async function collectInputDirectoryReferences(): Promise<string[]> {
   return violations;
 }
 
-async function checkScenarioFixtures(): Promise<number> {
-  return reportViolations({
+export async function checkScenarioFixtures(io: ScriptIo): Promise<void> {
+  reportViolations(io, {
     checkName: 'check:scenario-fixtures',
-    violations: await collectInputDirectoryReferences(),
+    violations: await collectInputDirectoryReferences(io),
     nothingFound: 'no scenario reads the input directory.',
     summarize: count => `${count} input directory reference(s) to settle.`
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkScenarioFixtures());
-}
+await runAsEntryPoint(import.meta.main, checkScenarioFixtures);

@@ -1,15 +1,16 @@
-import {afterEach, beforeEach, describe, expect, it} from 'bun:test';
-import {mkdir, mkdtemp, rm, writeFile} from 'node:fs/promises';
-import {tmpdir} from 'node:os';
-import {dirname, join} from 'node:path';
+import {describe, expect, it} from 'bun:test';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
 import {
+  checkColorContrast,
   contrastRatio,
   findContrastViolations,
-  findForegroundViolationsInStylesheets,
   findUncataloguedForegroundDeclarations,
   parseColorTokens,
   type TokenPair
 } from './check-color-contrast.ts';
+
+const COLORS_FILE_PATH = 'packages/ui-save-manager/src/styles/colors.css';
+const palette = await Bun.file(new URL(`../${COLORS_FILE_PATH}`, import.meta.url)).text();
 
 describe('parseColorTokens', () => {
 
@@ -289,33 +290,50 @@ describe('findUncataloguedForegroundDeclarations', () => {
   });
 });
 
-describe('findForegroundViolationsInStylesheets', () => {
+describe('checkColorContrast', () => {
 
-  let workspaceRoot: string;
-
-  const writeWorkspaceFile = async (path: string, content: string) => {
-    await mkdir(dirname(join(workspaceRoot, path)), {recursive: true});
-    await writeFile(join(workspaceRoot, path), content);
-  };
-
-  beforeEach(async () => {
-    workspaceRoot = await mkdtemp(join(tmpdir(), 'check-color-contrast-'));
-  });
-
-  afterEach(async () => {
-    await rm(workspaceRoot, {recursive: true, force: true});
-  });
-
-  describe('When a stylesheet of the package sits outside styles/, app.css included', () => {
-    it('should scan it like the stylesheets of styles/', async () => {
+  describe('When every catalogued pair meets the floor and every text color of the stylesheets is catalogued', () => {
+    it('should print that every pair meets WCAG 2.1 AA and exit with zero', async () => {
       // Arrange
-      await writeWorkspaceFile('packages/ui-save-manager/src/app.css', '#app {\n    color: #ffffff;\n}');
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          [COLORS_FILE_PATH]: palette,
+          'packages/ui-save-manager/src/styles/layout.css': 'body {\n    color: var(--content);\n}'
+        }
+      });
 
       // Act
-      const violations = await findForegroundViolationsInStylesheets(workspaceRoot);
+      await checkColorContrast(io);
 
       // Assert
-      expect(violations).toEqual(["packages/ui-save-manager/src/app.css:2: '#app { color: #ffffff }' names no color token; write it var(--token) from colors.css"]);
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:contrast: every catalogued text/background pair meets WCAG 2.1 AA (4.5:1) in both themes.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a stylesheet of the package sits outside styles/, app.css included, and names a literal color', () => {
+    it('should print the declaration it scanned like those of styles/, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          [COLORS_FILE_PATH]: palette,
+          'packages/ui-save-manager/src/app.css': '#app {\n    color: #ffffff;\n}'
+        }
+      });
+
+      // Act
+      await checkColorContrast(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          "packages/ui-save-manager/src/app.css:2: '#app { color: #ffffff }' names no color token; write it var(--token) from colors.css",
+          'check:contrast: 1 color contrast violation(s); see @DECISION.ColorTokenPairsMeetWcagAaByCatalog.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });
