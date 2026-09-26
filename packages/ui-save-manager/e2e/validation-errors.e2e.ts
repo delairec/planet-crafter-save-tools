@@ -1,23 +1,10 @@
-import {expect, test, type Page} from '@playwright/test';
+import {expect, test} from '@playwright/test';
+import {locateTheFixture, mergeAndRevealTheMessages, visualizeAndRevealTheMessages} from './scenarioSteps';
 
-const invalidSaveFixturePath = new URL('./fixtures/negative-gauge_invalid.json', import.meta.url).pathname;
-const validSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
+const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
+const validSaveFixturePath = locateTheFixture('baseline_valid.json');
 
 const errorLocationInTheSave = 'at Players (section 2), entry 0';
-const revealMessagesLabel = 'Show details';
-
-async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string): Promise<void> {
-  await page.getByLabel('Save file:').setInputFiles(saveFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
-  await page.getByText(revealMessagesLabel).click();
-}
-
-async function mergeAndRevealTheMessages(page: Page, saveAFixturePath: string, saveBFixturePath: string): Promise<void> {
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await page.getByText(revealMessagesLabel).click();
-}
 
 test.describe('Save validation errors', () => {
   test.describe('When an invalid save file is visualized', () => {

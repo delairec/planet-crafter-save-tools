@@ -1,9 +1,9 @@
 import {expect, test} from '@playwright/test';
-import {findTheMenu, visualizeTheSave} from './saveManagerShell';
+import {findTheMenu, locateTheFixture, visualizeTheSave} from './scenarioSteps';
 
-const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
-const invalidSaveFixturePath = new URL('./fixtures/negative-gauge_invalid.json', import.meta.url).pathname;
+const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
+const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
+const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
 
 test.describe('Overview page', () => {
   test.describe('When no save is loaded', () => {

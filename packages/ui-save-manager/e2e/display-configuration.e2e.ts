@@ -1,8 +1,8 @@
 import {expect, test} from '@playwright/test';
-import {findTheBreadcrumbSteps, openThePageOfTheMenu, visualizeTheSave} from './saveManagerShell';
+import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
-const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const skeoUpdateSaveFixturePath = new URL('./fixtures/skeo-update_valid.json', import.meta.url).pathname;
+const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
+const skeoUpdateSaveFixturePath = locateTheFixture('skeo-update_valid.json');
 
 test.describe('Configuration page', () => {
   test.describe('When the Configuration page of a visualized save is opened', () => {

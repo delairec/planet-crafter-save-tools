@@ -1,9 +1,10 @@
 import {readFile} from 'node:fs/promises';
 import {basename} from 'node:path';
 import {expect, test, type Locator, type Page} from '@playwright/test';
+import {chooseTheTwoSavesToMerge, locateTheFixture} from './scenarioSteps';
 
-const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const otherPlayerSaveFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
+const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
+const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
 
 interface DroppedFile {
   name: string;
@@ -12,6 +13,13 @@ interface DroppedFile {
 
 async function readTheFixture(fixturePath: string): Promise<DroppedFile> {
   return {name: basename(fixturePath), content: await readFile(fixturePath, 'utf8')};
+}
+
+async function readTheFixturesAndOpenThePage(page: Page, fixturePaths: string[]): Promise<DroppedFile[]> {
+  const droppedFiles = await Promise.all(fixturePaths.map(readTheFixture));
+  await page.goto('/');
+
+  return droppedFiles;
 }
 
 async function dropTheFiles(page: Page, area: Locator, droppedFiles: DroppedFile[]): Promise<void> {
@@ -46,8 +54,15 @@ async function isTakenByThePage(page: Page, element: Locator, type: DragEventTyp
   return (await dispatchTheDrag(page, element, type, droppedFiles)).isTaken;
 }
 
-async function effectAnnouncedByThePage(page: Page, element: Locator, droppedFiles: DroppedFile[]): Promise<string> {
-  return (await dispatchTheDrag(page, element, 'dragover', droppedFiles)).announcedEffect;
+async function openThePageAndReadTheEffectAnnouncedOver(page: Page, findTheElement: (openedPage: Page) => Locator): Promise<string> {
+  const [baselineSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath]);
+
+  return (await dispatchTheDrag(page, findTheElement(page), 'dragover', [baselineSave])).announcedEffect;
+}
+
+async function expectTheSavesChosenForTheMerge(page: Page, chosenSaves: {saveA: RegExp; saveB: RegExp}): Promise<void> {
+  await expect(page.getByLabel('Save A:')).toHaveValue(chosenSaves.saveA);
+  await expect(page.getByLabel('Save B:')).toHaveValue(chosenSaves.saveB);
 }
 
 const scriptBuiltTransferKeepsNoEffect = 'Chromium and WebKit ignore a drop effect set on a script-built DataTransfer';
@@ -56,8 +71,7 @@ test.describe('Save file drop', () => {
   test.describe('When a save file is dropped on the display area', () => {
     test('should display that file as if it had been picked', async ({page}) => {
       // Arrange
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      await page.goto('/');
+      const [baselineSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath]);
       await dropTheFiles(page, page.getByRole('group', {name: 'Display a save\'s data'}), [baselineSave]);
 
       // Act
@@ -72,8 +86,7 @@ test.describe('Save file drop', () => {
   test.describe('When a save file is dropped on the save B area', () => {
     test('should select it as save B only', async ({page}) => {
       // Arrange
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      await page.goto('/');
+      const [baselineSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath]);
 
       // Act
       await dropTheFiles(page, page.getByRole('group', {name: 'Save B'}), [baselineSave]);
@@ -87,16 +100,13 @@ test.describe('Save file drop', () => {
   test.describe('When two save files are dropped together on the merge section', () => {
     test('should select them as save A and save B in the alphabetical order of their names', async ({page}) => {
       // Arrange
-      const otherPlayerSave = await readTheFixture(otherPlayerSaveFixturePath);
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      await page.goto('/');
+      const [otherPlayerSave, baselineSave] = await readTheFixturesAndOpenThePage(page, [otherPlayerSaveFixturePath, baselineSaveFixturePath]);
 
       // Act
       await dropTheFiles(page, page.getByRole('group', {name: 'Merge two saves'}), [otherPlayerSave, baselineSave]);
 
       // Assert
-      await expect(page.getByLabel('Save A:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByLabel('Save B:')).toHaveValue(/other-player_valid\.json$/);
+      await expectTheSavesChosenForTheMerge(page, {saveA: /baseline_valid\.json$/, saveB: /other-player_valid\.json$/});
       await expect(page.getByRole('button', {name: 'Merge'})).toBeEnabled();
     });
   });
@@ -105,15 +115,13 @@ test.describe('Save file drop', () => {
     test('should select save A as save B and save B as save A', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save A:').setInputFiles(baselineSaveFixturePath);
-      await page.getByLabel('Save B:').setInputFiles(otherPlayerSaveFixturePath);
+      await chooseTheTwoSavesToMerge(page, baselineSaveFixturePath, otherPlayerSaveFixturePath);
 
       // Act
       await page.getByRole('button', {name: 'Swap save A and save B'}).click();
 
       // Assert
-      await expect(page.getByLabel('Save A:')).toHaveValue(/other-player_valid\.json$/);
-      await expect(page.getByLabel('Save B:')).toHaveValue(/baseline_valid\.json$/);
+      await expectTheSavesChosenForTheMerge(page, {saveA: /other-player_valid\.json$/, saveB: /baseline_valid\.json$/});
     });
   });
 
@@ -134,9 +142,7 @@ test.describe('Save file drop', () => {
   test.describe('When save files enter a save area', () => {
     test('should take them, so that the browser lets them be dropped without a further move', async ({page}) => {
       // Arrange
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      const otherPlayerSave = await readTheFixture(otherPlayerSaveFixturePath);
-      await page.goto('/');
+      const [baselineSave, otherPlayerSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath, otherPlayerSaveFixturePath]);
 
       // Act
       const isTaken = await isTakenByThePage(page, page.getByLabel('Save A:'), 'dragenter', [baselineSave, otherPlayerSave]);
@@ -149,12 +155,8 @@ test.describe('Save file drop', () => {
   test.describe('When save files move over a save area', () => {
     test('should announce a copy to the browser', async ({page, browserName}) => {
       test.skip(browserName !== 'firefox', scriptBuiltTransferKeepsNoEffect);
-      // Arrange
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      await page.goto('/');
-
       // Act
-      const effect = await effectAnnouncedByThePage(page, page.getByLabel('Save file:'), [baselineSave]);
+      const effect = await openThePageAndReadTheEffectAnnouncedOver(page, (openedPage) => openedPage.getByLabel('Save file:'));
 
       // Assert
       expect<string>(effect).toBe('copy');
@@ -164,12 +166,8 @@ test.describe('Save file drop', () => {
   test.describe('When save files move over the page outside every area', () => {
     test('should announce to the browser that nothing can be dropped there', async ({page, browserName}) => {
       test.skip(browserName !== 'firefox', scriptBuiltTransferKeepsNoEffect);
-      // Arrange
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      await page.goto('/');
-
       // Act
-      const effect = await effectAnnouncedByThePage(page, page.getByRole('heading', {name: 'Visualization'}), [baselineSave]);
+      const effect = await openThePageAndReadTheEffectAnnouncedOver(page, (openedPage) => openedPage.getByRole('heading', {name: 'Visualization'}));
 
       // Assert
       expect<string>(effect).toBe('none');
@@ -177,8 +175,7 @@ test.describe('Save file drop', () => {
 
     test('should keep the browser from opening them', async ({page}) => {
       // Arrange
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      await page.goto('/');
+      const [baselineSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath]);
 
       // Act
       const isTaken = await isTakenByThePage(page, page.getByRole('heading', {name: 'Visualization'}), 'dragover', [baselineSave]);
@@ -191,16 +188,13 @@ test.describe('Save file drop', () => {
   test.describe('When two save files are dropped on the save A area', () => {
     test('should hand them to the merge section, which selects them as save A and save B', async ({page}) => {
       // Arrange
-      const otherPlayerSave = await readTheFixture(otherPlayerSaveFixturePath);
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      await page.goto('/');
+      const [otherPlayerSave, baselineSave] = await readTheFixturesAndOpenThePage(page, [otherPlayerSaveFixturePath, baselineSaveFixturePath]);
 
       // Act
       await dropTheFiles(page, page.getByRole('group', {name: 'Save A'}), [otherPlayerSave, baselineSave]);
 
       // Assert
-      await expect(page.getByLabel('Save A:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByLabel('Save B:')).toHaveValue(/other-player_valid\.json$/);
+      await expectTheSavesChosenForTheMerge(page, {saveA: /baseline_valid\.json$/, saveB: /other-player_valid\.json$/});
     });
   });
 
@@ -222,9 +216,7 @@ test.describe('Save file drop', () => {
   test.describe('When two save files are dropped on a single-file area', () => {
     test('should select nothing and say why next to the area', async ({page}) => {
       // Arrange
-      const baselineSave = await readTheFixture(baselineSaveFixturePath);
-      const otherPlayerSave = await readTheFixture(otherPlayerSaveFixturePath);
-      await page.goto('/');
+      const [baselineSave, otherPlayerSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath, otherPlayerSaveFixturePath]);
 
       // Act
       await dropTheFiles(page, page.getByRole('group', {name: 'Display a save\'s data'}), [baselineSave, otherPlayerSave]);

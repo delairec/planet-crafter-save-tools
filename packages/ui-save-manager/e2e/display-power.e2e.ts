@@ -1,8 +1,8 @@
 import {expect, test} from '@playwright/test';
-import {findTheBreadcrumbSteps, openThePageOfTheMenu, visualizeTheSave} from './saveManagerShell';
+import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
-const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const skeoUpdateSaveFixturePath = new URL('./fixtures/skeo-update_valid.json', import.meta.url).pathname;
+const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
+const skeoUpdateSaveFixturePath = locateTheFixture('skeo-update_valid.json');
 
 test.describe('Power page', () => {
   test.describe('When the Power page of a visualized save is opened', () => {
@@ -54,7 +54,7 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Power', level: 3})).toBeVisible();
+      await expect(page.getByText('Submerged machines may distort the computed available energy')).toBeVisible();
       await expect(page.getByText('Values of game release')).toHaveCount(0);
     });
   });

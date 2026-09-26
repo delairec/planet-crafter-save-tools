@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
-import {findTheBreadcrumbSteps, findTheMenu, visualizeTheSave} from './saveManagerShell';
+import {findTheBreadcrumbSteps, findTheMenu, locateTheFixture, visualizeTheSave} from './scenarioSteps';
 
-const otherPlayerSaveFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
+const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
 
 test.describe('Players page', () => {
   test.describe('When the See more button of the Players group is pressed', () => {

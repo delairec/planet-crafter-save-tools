@@ -1,24 +1,22 @@
-import {expect, test, type Page} from '@playwright/test';
-import {findTheBreadcrumbSteps, findTheMenu, openThePageOfTheMenu, visualizeTheSave} from './saveManagerShell';
+import {expect, test, type Locator, type Page} from '@playwright/test';
+import {findTheBreadcrumbSteps, findTheMenu, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
-const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
+const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 
 const disclaimersSummary = 'Click here to show privacy, security and file safety disclaimers';
 
-interface VerticalOrder {
-  titleTop: number;
-  disclaimersTop: number;
-  pageTop: number;
-  footerTop: number;
-}
+type ShellPart = 'title' | 'disclaimers' | 'page' | 'footer';
 
-async function measureTheVerticalOrder(page: Page, pageContentHeading: string): Promise<VerticalOrder> {
-  return {
-    titleTop: (await page.getByRole('heading', {name: 'Planet Crafter Save Manager', level: 1}).boundingBox())!.y,
-    disclaimersTop: (await page.getByText(disclaimersSummary).boundingBox())!.y,
-    pageTop: (await page.getByRole('heading', {name: pageContentHeading}).boundingBox())!.y,
-    footerTop: (await page.getByRole('contentinfo').boundingBox())!.y
-  };
+async function readTheShellPartsFromTopToBottom(page: Page, pageContentHeading: string): Promise<ShellPart[]> {
+  const partLocators: [ShellPart, Locator][] = [
+    ['title', page.getByRole('heading', {name: 'Planet Crafter Save Manager', level: 1})],
+    ['disclaimers', page.getByText(disclaimersSummary)],
+    ['page', page.getByRole('heading', {name: pageContentHeading})],
+    ['footer', page.getByRole('contentinfo')]
+  ];
+  const partTops = await Promise.all(partLocators.map(async ([part, locator]) => ({part, top: (await locator.boundingBox())!.y})));
+
+  return partTops.sort((first, second) => first.top - second.top).map(({part}) => part);
 }
 
 async function holdEveryFurtherFileRead(page: Page): Promise<void> {
@@ -44,12 +42,10 @@ test.describe('Save manager shell', () => {
       await page.goto('/');
 
       // Act
-      const verticalOrder = await measureTheVerticalOrder(page, 'Display a save\'s data');
+      const shellParts = await readTheShellPartsFromTopToBottom(page, 'Display a save\'s data');
 
       // Assert
-      expect(verticalOrder.disclaimersTop).toBeGreaterThan(verticalOrder.titleTop);
-      expect(verticalOrder.pageTop).toBeGreaterThan(verticalOrder.disclaimersTop);
-      expect(verticalOrder.footerTop).toBeGreaterThan(verticalOrder.pageTop);
+      expect(shellParts).toEqual(['title', 'disclaimers', 'page', 'footer']);
     });
 
     test('should offer the Tools group alone, holding Merge two saves and Load another save', async ({page}) => {
@@ -98,12 +94,10 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Act
-      const verticalOrder = await measureTheVerticalOrder(page, 'Global progression');
+      const shellParts = await readTheShellPartsFromTopToBottom(page, 'Global progression');
 
       // Assert
-      expect(verticalOrder.disclaimersTop).toBeGreaterThan(verticalOrder.titleTop);
-      expect(verticalOrder.pageTop).toBeGreaterThan(verticalOrder.disclaimersTop);
-      expect(verticalOrder.footerTop).toBeGreaterThan(verticalOrder.pageTop);
+      expect(shellParts).toEqual(['title', 'disclaimers', 'page', 'footer']);
     });
   });
 
