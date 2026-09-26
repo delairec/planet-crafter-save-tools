@@ -915,6 +915,8 @@ DECISION RepositoryGuardsAreGroupedScripts
 	REJECTED "Merging two guards into a single script: two reasons to change"
 	REJECTED "A configured linter instead of a dedicated script"
 	REJECTED "Joining lines until parentheses balance to lift the line-by-line limit"
+	REJECTED "A helper package for the guards: every consumer lives in scripts/, which is no"
+		+ "package"
 	SPEC "Repository guards are scripts that read no git history, answer in a fraction of a second,"
 		+ "are grouped behind check:guards and stay runnable alone"
 		IMPL "package.json::check:guards"
@@ -925,9 +927,12 @@ DECISION RepositoryGuardsAreGroupedScripts
 		IMPL "scripts/specSources.ts::reportViolations"
 	SPEC "The line-by-line limit of a guard is pinned by a test that names it"
 		IMPL "scripts/check-test-assertions.spec.ts::When an assertion is spread over several lines"
+	APPLIES_TO_TASK @TASK.REFACTOR59
 	SOURCE "T12"
 		PR 40
 		PR 46
+	SOURCE "Helper package refused while refining REFACTOR59 with the owner on 2026-09-26"
+		PR 101
 
 DECISION EveryPublishedCommandHasARealProcessTest
 	REJECTED "A dedicated CI job instead of a test: it does not cover the workstation"

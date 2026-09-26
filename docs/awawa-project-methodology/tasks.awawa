@@ -144,25 +144,44 @@ TASK CHORE58
 	SOURCE "Review of pull request 101"
 		PR 101
 
-TASK CHORE59
-	TITLE "investigate whether the repository guards need a shared helper package"
-	STATUS draft
-	DESC "Raised in the review of pull request 101: find out whether other guards share needs with"
-		+ "check:anchors, and centralise their common functions in a helper package if the need is"
-		+ "proven; distinct from CHORE56, which is about how the guards are run, not the code they"
-		+ "share"
+TASK REFACTOR59
+	TITLE "the repository guards read files, import specifiers and corpus lines through shared"
+		+ "modules"
+	STATUS todo
+	SPEC "no guard of scripts/ scans the repository with its own Glob or readdir: every one reads"
+		+ "its files through the shared file walk, which takes the root it scans from"
+	SPEC "the reading of import specifiers, static and dynamic, is declared once and used by"
+		+ "check:presentation and check:dependencies"
+	SPEC "no guard imports from another guard: the reading of corpus lines used by check:anchors"
+		+ "and check:audit-ignores lives in a shared module"
+	SPEC "every guard of scripts/ prints its outcome through reportViolations, check:dependencies"
+		+ "included"
+	SPEC "a guard fails when a check-*.ts file of scripts/ imports Glob or readdir"
+	SPEC "the helpers the guards share live in scripts/helpers/, one file per responsibility, and"
+		+ "scripts/specSources.ts no longer exists"
+	SPEC "the guards decision names scripts/helpers/ as the place of the shared helpers, its IMPL"
+		+ "anchors following them"
+	SPEC "on the repository at the base commit, every guard reports the same violations and exits"
+		+ "with the same code as before the task"
+	RATIONALE "The guards decision requires what guards share to be declared once in a common"
+		+ "module, and the repository breaks it: seven guards (check-audit-ignores,"
+		+ "check-color-contrast, check-corpus-anchors, check-package-dependencies,"
+		+ "check-presentation-entities, check-save-line-reader, check-solid-idioms) walk the"
+		+ "repository with their own Glob and Bun.file, check-action-pins with readdir,"
+		+ "check-save-line-reader redeclares the generated-directory filter, the import specifier"
+		+ "patterns are copied between check-presentation-entities and check-package-dependencies,"
+		+ "check-audit-ignores imports readCorpusLines and removeQuotes from check-corpus-anchors,"
+		+ "and check-package-dependencies prints its own report. readOwnSourceFiles scans"
+		+ "process.cwd(), while three of these guards take the root as a parameter. No helper"
+		+ "package is created: every consumer lives in scripts/, which is no package. The name"
+		+ "specSources dates from pull request 15, when the module served only the guards reading"
+		+ "spec files; it now gathers unrelated helpers, hence one file per responsibility."
+		+ "check:section-validators and validate:tables are package scripts and stay out. Distinct"
+		+ "from CHORE56, which changes how the guards are run, not the code they share"
+		REF @DECISION.RepositoryGuardsAreGroupedScripts
 		REF @TASK.CHORE56
-	SPEC "the task lists every function two guards or more implement or could share, with the files"
-		+ "that carry it"
-	SPEC "the task records whether that list justifies a helper package, and under which prefix of"
-		+ "the package matrix, or why scripts/specSources.ts is enough"
-	SPEC "when the need is proven, a todo task carries the move; otherwise the reason is written in"
-		+ "this task"
-	RATIONALE "scripts/specSources.ts already serves seven of the eight guards with"
-		+ "reportViolations, maskStringLiterals, readOwnSourceFiles and isOwnSourceFile;"
-		+ "check-solid-idioms, check-presentation-entities, check-package-dependencies and"
-		+ "check-corpus-anchors scan the repository with their own Glob rather than"
-		+ "readOwnSourceFiles, and check-package-dependencies imports nothing from specSources"
+	SOURCE "Raised in the review of pull request 101; refined with the owner on 2026-09-26"
+		PR 101
 
 TASK REFACTOR62
 	TITLE "shared-save-processing exposes a function selecting one section of a save string"
