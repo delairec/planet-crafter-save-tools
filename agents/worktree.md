@@ -20,9 +20,9 @@ que rien ne rappelle et dont l'oubli ne produit aucune erreur, seulement un verd
    Les lignes `SPEC` de la tâche, puis, depuis la racine du worktree :
    - `bun test`
    - `bun run lint:types`
-   - `bun run check:guards`
+   - `bun run guards`
    - `bun run audit:quality` — la porte qualité entière, dont l'audit `fallow` que le job du même nom rejoue en CI ;
-     `check:guards` seul n'en est que la moitié rapide
+     `guards` seul n'en est que la moitié rapide
    - `awawa fmt --check .`
    - `awawa lint --strict .`
 
