@@ -58,6 +58,41 @@ describe('findTableViolations', () => {
       expect(violations).toMatchObject([{table: 'planetNamesByNumericId', row: -1}]);
     });
   });
+
+  describe('When a property names its values by a column of another table', () => {
+    const releaseSchema = {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          release: {valueOfTable: {table: 'packages/shared-save-processing/gameReleases.json', column: 'release'}}
+        }
+      }
+    };
+
+    it('should report no violation for a value that column holds', () => {
+      // Arrange
+      const rows = [{release: '1.618'}];
+      const noViolation: TableViolation[] = [];
+
+      // Act
+      const violations = findTableViolations('releases', rows, releaseSchema);
+
+      // Assert
+      expect<TableViolation[]>(violations).toEqual(noViolation);
+    });
+
+    it('should report the row whose value that column does not hold', () => {
+      // Arrange
+      const rows = [{release: '1.618'}, {release: '9.999'}];
+
+      // Act
+      const violations = findTableViolations('releases', rows, releaseSchema);
+
+      // Assert
+      expect(violations).toMatchObject([{table: 'releases', row: 1}]);
+    });
+  });
 });
 
 describe('validateTables', () => {
@@ -95,6 +130,19 @@ describe('validateTables', () => {
 
       // Act
       const exitCode = await validateTables([path.join(directory, 'planets')], schemaDirectory);
+
+      // Assert
+      expect(exitCode).toBe(1);
+    });
+  });
+
+  describe('When the table is followed by the name of a schema of another name', () => {
+    it('should validate its rows against that schema', async () => {
+      // Arrange
+      await fs.writeFile(path.join(directory, '2.004.json'), JSON.stringify([{numericId: 'one', planetName: 'Prime'}]));
+
+      // Act
+      const exitCode = await validateTables([`${path.join(directory, '2.004')}:planets`], schemaDirectory);
 
       // Assert
       expect(exitCode).toBe(1);

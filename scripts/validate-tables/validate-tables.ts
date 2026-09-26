@@ -1,6 +1,19 @@
 import Ajv from 'ajv';
+import {readFileSync} from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+
+const REPOSITORY_ROOT = path.join(import.meta.dir, '..', '..');
+
+interface TableColumn {
+  table: string;
+  column: string;
+}
+
+function readTableColumn({table, column}: TableColumn): unknown[] {
+  const rows: Record<string, unknown>[] = JSON.parse(readFileSync(path.join(REPOSITORY_ROOT, table), 'utf8'));
+  return rows.map((row) => row[column]);
+}
 
 export interface TableViolation {
   table: string;
@@ -18,6 +31,11 @@ function parseRowIndex(instancePath: string): number {
 
 export function findTableViolations(table: string, rows: unknown, schema: object): TableViolation[] {
   const ajv = new Ajv({allErrors: true});
+  ajv.addKeyword({
+    keyword: 'valueOfTable',
+    schemaType: 'object',
+    validate: (tableColumn: TableColumn, value: unknown) => readTableColumn(tableColumn).includes(value)
+  });
   const validate = ajv.compile(schema);
   const valid = validate(rows);
   if (valid) {
@@ -31,11 +49,13 @@ export function findTableViolations(table: string, rows: unknown, schema: object
   }));
 }
 
-export async function validateTables(tableStems: string[], schemaDirectory: string): Promise<number> {
+/** A table is named by its path without `.json`, followed by `:<schema>` when its schema is not named after it. */
+export async function validateTables(tables: string[], schemaDirectory: string): Promise<number> {
   let exitCode = 0;
-  for (const stem of tableStems) {
+  for (const table of tables) {
+    const [stem = table, schemaName = path.basename(stem)] = table.split(':');
     const rowsContent = await fs.readFile(`${stem}.json`, 'utf8');
-    const schemaContent = await fs.readFile(path.join(schemaDirectory, `${path.basename(stem)}.schema.json`), 'utf8');
+    const schemaContent = await fs.readFile(path.join(schemaDirectory, `${schemaName}.schema.json`), 'utf8');
     const rows = JSON.parse(rowsContent);
     const schema = JSON.parse(schemaContent);
     const violations = findTableViolations(stem, rows, schema);

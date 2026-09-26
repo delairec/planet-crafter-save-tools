@@ -87,11 +87,38 @@ living compartment) and `RocketAnimals2` (T2 Animals spreader rocket) also print
 infoboxes, but they are handled differently from the machines above: their predecessors with a similar label
 (`TreePlanter`, `TreePlanter2`, `RocketAnimals1`) carry no energy value either, so the missing field is read as
 these three neither drawing nor producing power, not as an undocumented cost
-(`@HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower`). They stay in the group without a known energy
+(`@HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower`). They stay in the group without a known energy
 level, the same way an undocumented-cost machine does, but are not counted among the machines this document lists
 above, whose consumption the tool underestimates
 (`@DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine`). The hypothesis stands until observed
-otherwise in game.
+otherwise in game. The game data search below prices `TreePlanter3` at 85 kW and `TreePlanter` at 40 kW, so the
+hypothesis is narrowed to `PodUnderground` and `RocketAnimals2`, `TreePlanter3` moving to the consuming group;
+the fixture of `@TASK.TEST125` keeps it, to check the 85 kW in game.
+
+**Game data search: 2026-09-25**, against game version 2.103. Every name of the group without a known energy level,
+placed in a reference save or not, was looked up in a community export of the game's own item data
+(`@URL.CompanionAppGameDataV2103`), whose `stats.energy` field carries the `unitGenerationEnergy` value the game
+reads, negative for a consumer; the 110 rows already in the table were not checked again, but the export matches 107
+of them to the kilowatt, which is what makes it a source rather than a guess. Eight names are priced by it and moved
+to the consuming group: `TradePlatform1` (425 kW), `Megadome1` (250), `TreePlanter3` (85), `HologramGenerator` (75),
+`PlanetViewer1` (75), `TreePlanter` (40), `LightBoxMedium` (30) and `FountainBig` (25), each row carrying the export
+in its `source` field. The export prints 0 for 458 other names and omits 75 more; a zero is not a price, since the
+export writes the same 0 for a resource, a seed or a structural part that has no energy field at all, so these names
+stay in the group without a known energy level (`@DECISION.AZeroInTheGameDataExportIsNotAPrice`). Among the placed
+machines the 2026-09-09 cross-check left unpriced, `ButterflyDisplayer1`, `FishDisplayer1`, `FrogDisplayer1`,
+`Server1` and `CookingStation1` remain so; the in-game reading below shows that they draw no power.
+
+**In-game reading: 2026-09-25**, game version 2.103, by the owner on a private save placing, over six planets, nearly
+every machine of the game, at a power consumption modifier of 1. The HUD matches the computed production of every
+planet to the kilowatt, and its consumption once four corrections are made. Three rows the game data search left
+alone were wrong and follow the export: `ToxicWaterCollector1` 0.8 kW (was 1.2), `ToxicWaterCollector2` 60 kW (was
+48) and `OreBreaker1` 0.6 kW (was 2.6), each read machine by machine; the last gap, 165.5 kW on Prime, is one
+`OreExtractor2` and three `Drill0` standing under a lake, which draw no power in game
+(`@LIMITATION.SubmergedMachinesAreCountedAsDrawingPower`). The reading confirms the eight values the game data search
+added, `TreePlanter3` included, and shows that `ButterflyDisplayer1`, `FishDisplayer1`, `FrogDisplayer1`, `Server1`,
+`CookingStation1`, `PodUnderground` and `RocketAnimals2` draw no power. These seven stay in the group without a known
+energy level until `@TASK.FEAT127` declares the machines that draw none apart from it; the underestimate the
+unpriced five were feared to cause does not exist.
 
 **Source registry.** Each value the 2026-09-07/09 cross-check added carries, in the `source` field of its row, the
 wiki page it was read from (game v2.102). Earlier values are sourced by the wiki pages listed in EN-BASE-2 above.

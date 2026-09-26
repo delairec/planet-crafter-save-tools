@@ -1,10 +1,7 @@
 import {WorldObjectName} from "../worldObjectNames";
 import {assertFiniteNumber, assertOptionalFiniteNumber} from "../errors/assertions";
 import {WorldObjectEntity, WorldObjectEntityInput} from "./WorldObjectEntity";
-import {
-  energyConsumptionLevelsByWorldObjectName,
-  energyProductionLevelsByWorldObjectName
-} from "../energyLevelsByWorldObjectName";
+import {energyProductionLevelsByWorldObjectName} from "../energyLevelsByWorldObjectName";
 import {OPTIMIZER_CONFIG_BY_NAME} from "../energyOptimizerConfig";
 
 export interface PlacedWorldObjectEntityInput extends WorldObjectEntityInput {
@@ -46,10 +43,6 @@ export class PlacedWorldObjectEntity extends WorldObjectEntity {
 
   get energyProductionLevel(): number | undefined {
     return energyProductionLevelsByWorldObjectName[this.name];
-  }
-
-  get energyConsumptionLevel(): number | undefined {
-    return energyConsumptionLevelsByWorldObjectName[this.name];
   }
 
   isOptimizer(): boolean {

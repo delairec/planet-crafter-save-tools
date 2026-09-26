@@ -4,6 +4,8 @@
     --surface: #ffffff;
     --elevated: #f1f4ff;
     --disclaimer: #cccfdc;
+    --warning-surface: #f5ead6;
+    --limitation-surface: #ebe4fd;
 
     /* TEXTE */
     --content: #0f1226;
@@ -27,6 +29,7 @@
     /* ÉTATS */
     --success: #16813e;
     --warning: #9c6406;
+    --limitation: #7f4af5;
     --danger: #e01313;
 }
 
@@ -36,6 +39,8 @@
         --surface: #11152b;
         --elevated: #161b36;
         --disclaimer: #293055;
+        --warning-surface: #33290f;
+        --limitation-surface: #2a2352;
 
         --content: #f1f3ff;
         --muted: #a4a9d4;
@@ -54,6 +59,7 @@
 
         --success: #4ade80;
         --warning: #fbbf24;
+        --limitation: #a78bfa;
         --danger: #f87171;
     }
 }

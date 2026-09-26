@@ -57,4 +57,15 @@ describe('EnergyLevelsRawDataValueObject', () => {
     // Assert
     expect(buildEnergyLevelsRawData).toThrow(InvalidSaveDataError);
   });
+
+  it('should reject a non-finite power consumption modifier', () => {
+    // Arrange
+    const input = {allWorldObjects: [], inventories: [], planets: [], powerConsumptionModifier: NaN};
+
+    // Act
+    const buildEnergyLevelsRawData = () => createEnergyLevelsRawDataValueObject(input);
+
+    // Assert
+    expect(buildEnergyLevelsRawData).toThrow(InvalidSaveDataError);
+  });
 });

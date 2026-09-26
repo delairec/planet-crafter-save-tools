@@ -142,3 +142,39 @@ GAME_RELEASE 2.004
 URL DependabotSupportedEcosystemsGithubActions
 	LOCATION "https://docs.github.com/en/code-security/reference/supply-chain-security/supported-ecosystems-and-repositories#github-actions"
 	DESC "Dependabot caveats for actions: a same-line version comment is rewritten with the pin"
+
+URL SteamPatchNotesV2100
+	LOCATION "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/1838407329254125"
+	DESC "Steam announcement Development Branch update - v2.100 of 2026-07-15: OreBreaker T1"
+		+ "consumes less energy"
+
+URL SteamPatchNotesSkeoLive
+	LOCATION "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/1842212951312440"
+	DESC "Steam announcement The new Free Moon Skeo is now LIVE of 2026-09-01, repeating the v2.100"
+		+ "change: OreBreaker T1 consumes less energy"
+
+URL WikiToxicWaterCollectorsCreated
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=17215&prop=wikitext&format=json"
+	DESC "fandom wiki page Toxic Water Collectors, first revision of 2025-11-20: T1 -0,8 kW, T2 -60"
+		+ "kW"
+
+URL WikiToxicWaterCollectorsEdited
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=18222&prop=wikitext&format=json"
+	DESC "fandom wiki page Toxic Water Collectors, revision of 2026-03-02 changing T1 to -1.2 kW"
+		+ "and T2 to -48 kW without a comment"
+
+URL CompanionAppGameDataV2103
+	LOCATION "https://raw.githubusercontent.com/rizeabovedataworks/planetcraftercompaniondata/fc773247f9efc6e67fabcffa4912bf0197f9976b/data_v1.json"
+	DESC "item data of The Planet Crafter v2.103 exported from the game for a community companion"
+		+ "app, commit of 2026-09-22; stats.energy is the unitGenerationEnergy of each group, in"
+		+ "kW, negative for a consumer"
+	SOURCE "Read on 2026-09-25 for FEAT124, the 541 names of the group without a known energy level"
+		+ "looked up in it"
+		PR 178
+
+URL WikiOreCrushersBeforeV2100
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=16833&prop=wikitext&format=json"
+	DESC "fandom wiki page Ore Crushers, revision of 2025-10-11, before v2.100: T1 -2.6 kW"
+
+GAME_RELEASE 2.100
+	DESC "Development Branch update, lowering the draw of the T1 ore crusher"

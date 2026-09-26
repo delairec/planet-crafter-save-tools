@@ -205,6 +205,20 @@ describe('SaveSectionsReaderService', () => {
   });
 
   describe('When reading energy levels raw data', () => {
+    it('should carry the power consumption modifier of the save configuration', () => {
+      // Arrange
+      const sections = createSaveSections({
+        saveConfigurations: [createSaveConfiguration({modifierPowerConsumption: 1.5})]
+      });
+      const service = new SaveSectionsReaderService(sections);
+
+      // Act
+      const rawData = service.getEnergyLevelsRawData();
+
+      // Assert
+      expect(rawData.powerConsumptionModifier).toBe(1.5);
+    });
+
     it('should keep every world object but place only those with a position and a planet', () => {
       // Arrange
       const sections = createSaveSections({

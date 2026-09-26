@@ -1,7 +1,7 @@
 import {WorldObjectEntity} from "../entities/WorldObjectEntity";
 import {PlacedWorldObjectEntity} from "../entities/PlacedWorldObjectEntity";
 import {InventoryEntity} from "../entities/InventoryEntity";
-import {assertArray, assertFiniteNumber, assertOptionalString} from "../errors/assertions";
+import {assertArray, assertFiniteNumber, assertOptionalFiniteNumber, assertOptionalString} from "../errors/assertions";
 
 export interface PlanetWorldObjectsValueObject {
   readonly planetId: number;
@@ -21,12 +21,16 @@ export interface EnergyLevelsRawDataValueObject {
   readonly allWorldObjects: readonly WorldObjectEntity[];
   readonly inventories: readonly InventoryEntity[];
   readonly planets: readonly PlanetWorldObjectsValueObject[];
+  readonly declaredVersion?: string;
+  readonly powerConsumptionModifier?: number;
 }
 
 export function createEnergyLevelsRawDataValueObject(input: EnergyLevelsRawDataValueObject): EnergyLevelsRawDataValueObject {
   return {
     allWorldObjects: assertArray<WorldObjectEntity>(input.allWorldObjects, 'EnergyLevelsRawDataValueObject.allWorldObjects'),
     inventories: assertArray<InventoryEntity>(input.inventories, 'EnergyLevelsRawDataValueObject.inventories'),
-    planets: assertArray<PlanetWorldObjectsValueObject>(input.planets, 'EnergyLevelsRawDataValueObject.planets')
+    planets: assertArray<PlanetWorldObjectsValueObject>(input.planets, 'EnergyLevelsRawDataValueObject.planets'),
+    declaredVersion: assertOptionalString(input.declaredVersion, 'EnergyLevelsRawDataValueObject.declaredVersion'),
+    powerConsumptionModifier: assertOptionalFiniteNumber(input.powerConsumptionModifier, 'EnergyLevelsRawDataValueObject.powerConsumptionModifier')
   };
 }
