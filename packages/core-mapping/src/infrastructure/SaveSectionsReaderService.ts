@@ -141,7 +141,8 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
       allWorldObjects: allWorldObjectEntities,
       inventories,
       planets,
-      declaredVersion: this.sections.saveConfigurations[0]?.version
+      declaredVersion: this.sections.saveConfigurations[0]?.version,
+      powerConsumptionModifier: this.sections.saveConfigurations[0]?.modifierPowerConsumption
     });
   }
 

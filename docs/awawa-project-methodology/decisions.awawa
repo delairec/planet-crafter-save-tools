@@ -2170,44 +2170,66 @@ DECISION AZeroInTheGameDataExportIsNotAPrice
 		+ "price found is stored"
 		PR 178
 
-DECISION TheSubmergedMachinesDisclaimerIsCarriedByTheEnergyViewModel
-	SPEC "The submerged machines disclaimer is a message of the core-mapping energy section,"
-		+ "exposed by the energy ViewModel as submergedMachinesDisclaimer, once for the whole"
+DECISION TheSubmergedMachinesLimitationIsCarriedByTheEnergyViewModel
+	SPEC "The submerged machines message is a limitation notification of the core-mapping energy"
+		+ "section, the first of the notifications of the energy ViewModel, once for the whole"
 		+ "section and never per planet"
-		IMPL "packages/core-mapping/src/presentation/messages/energyLevelsSectionMessages.js::energyLevelsSectionSubmergedMachinesDisclaimer"
-		IMPL "packages/core-mapping/src/presentation/viewModels/EnergyLevelsViewModel.ts::submergedMachinesDisclaimer"
+		IMPL "packages/core-mapping/src/presentation/messages/energyLevelsSectionMessages.js::energyLevelsSectionSubmergedMachinesNotification"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::submergedMachinesNotification"
 		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "present the submerged machines disclaimer once for the whole section, whatever the"
+			+ "present the submerged machines limitation once for the whole section, whatever the"
 			+ "number of planets"
-	SPEC "The Power section prints the disclaimer unconditionally, under its title"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Disclaimer>{energyLevels().submergedMachinesDisclaimer}</Disclaimer>"
-	REJECTED "A constant of the ui-save-manager messages: the disclaimer qualifies the computed"
+	SPEC "The Power section prints it unconditionally, under its title"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
+			+ "each={energyLevels().notifications}>"
+	REJECTED "A constant of the ui-save-manager messages: the message qualifies the computed"
 		+ "energy, it is a message of the section and not a technical label of the page"
-	REJECTED "One disclaimer per planet heading: the same sentence repeated under every planet"
-	REJECTED "Printing the disclaimer only when a planet carries a machine that may be submerged:"
-		+ "the save cannot tell a submerged machine from one on dry ground"
+	REJECTED "One notification per planet heading: the same sentence repeated under every planet"
+	REJECTED "Printing it only when a planet carries a machine that may be submerged: the save"
+		+ "cannot tell a submerged machine from one on dry ground"
 		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT128
 	SOURCE "Owner review of the FEAT128 pull request"
 		PR 187
+	SOURCE "Owner review of 2026-09-26, comment r4111099239: the disclaimer becomes a limitation"
+		+ "notification"
+		PR 193
 
-DECISION ADisclaimerIsRenderedByTheDisclaimerComponent
-	SPEC "A disclaimer printed in a section of the page is rendered by the Disclaimer component,"
-		+ "never by a bare paragraph"
-		IMPL "packages/ui-save-manager/src/components/structure/Disclaimer.tsx"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Disclaimer>"
-	SPEC "The Disclaimer block takes its colours from the tokens of colors.css: a thick left border"
-		+ "in the --warning severity colour on the --disclaimer surface"
-		IMPL "packages/ui-save-manager/src/styles/layout.css::.disclaimer"
+DECISION ANotificationIsRenderedByTheNotificationComponent
+	SPEC "A message qualifying the figures of a section of the page is a notification, rendered by"
+		+ "the Notification component, never by a bare paragraph nor by a component of its own"
+		IMPL "packages/ui-save-manager/src/components/structure/Notification.tsx"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
+			+ "severity={notification.severity}>"
+	SPEC "The severity of a notification is decided by the presenter and carried by its ViewModel:"
+		+ "limitation for a limit of the tool, warning for a potential gap between the figures and"
+		+ "the game"
+		IMPL "packages/core-mapping/src/presentation/viewModels/NotificationViewModel.ts::NotificationSeverity"
+	SPEC "The Notification component takes the severity as a prop and draws its thick left border"
+		+ "and its surface from the tokens of colors.css: --limitation on --limitation-surface for"
+		+ "a limitation, --warning on --warning-surface for a warning"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification-limitation"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification-warning"
+	REJECTED "A Disclaimer component rendering every note alike in the warning colour: a limit of"
+		+ "the tool and a potential gap read the same"
 	REJECTED "A bare paragraph under the section title: it reads as ordinary text of the section"
-	REJECTED "A colour literal in the disclaimer rule: it escapes the light and dark themes of"
+	REJECTED "A colour literal in the notification rule: it escapes the light and dark themes of"
 		+ "colors.css"
+	REJECTED "The severity chosen by the UI: the core-mapping presentation owns the message and"
+		+ "what it qualifies"
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT128
+	APPLIES_TO_TASK @TASK.FEAT126
 	SOURCE "Owner review of the FEAT128 pull request"
 		PR 187
+	SOURCE "Owner review of 2026-09-26, comment r4111099239: the disclaimer and the notes become"
+		+ "notifications of a generic component, severity limitation (purple) or warning set by the"
+		+ "ViewModel; two limitations and one warning, the game release, in the Power section"
+		PR 193
 
 DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SPEC "the energy table holds the values of the last release of the releases table, one row per"
@@ -2242,18 +2264,19 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	REJECTED "A fromRelease column in the energy table, one row per world object and release from"
 		+ "which its value holds: the table stops holding the values of one release, and reading it"
 		+ "sorts rows by release where overwriting one table by another is enough"
-	SPEC "the Power section names in a disclaimer, under the submerged machines one, the release"
-		+ "whose values it applies when that release is earlier than the last of the releases"
-		+ "table, and names none for the last"
-		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::buildGameReleaseNote"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Show"
-			+ "when={energyLevels().gameReleaseNote}>"
+	SPEC "the Power section names in a warning notification, under the submerged machines one, the"
+		+ "release whose values it applies when that release is earlier than the last of the"
+		+ "releases table, and names none for the last"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
+			+ "each={energyLevels().notifications}>"
 		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "name that game release in a disclaimer"
+			+ "warn, under the submerged machines limitation, that the values are those of that"
+			+ "game release"
 		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
 			+ "name no game release"
 		ENFORCED_BY "packages/ui-save-manager/e2e/display.e2e.ts::should name that game release in"
-			+ "a disclaimer, under the submerged machines one"
+			+ "a notification, under the submerged machines one"
 	REJECTED "Showing no energy for a save whose version resolves to no release: the values of the"
 		+ "last release are the ones the tool applied to every save until now"
 	REJECTED "Naming the release in the Power section for every save, the last release included, in"
@@ -2287,3 +2310,38 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 		+ "gameReleaseNote dans un disclaimer sous celui des submerged machines, et uniquement"
 		+ "lorsque la release est legacy, pour la current, pas de disclaimer\""
 		PR 189
+
+DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
+	SPEC "PlanetEnergyGrid multiplies each base consumption level by modifierPowerConsumption once,"
+		+ "and draws the consumption, the available energy and the consumption breakdown, unit and"
+		+ "total levels included, from the multiplied levels"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::consumptionLevels"
+		ENFORCED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should multiply the"
+			+ "unit and total level of each consumption breakdown entry"
+	SPEC "a save with no save configuration section consumes at modifier 1"
+		IMPL "packages/core-mapping/src/domain/powerConsumptionModifier.ts::UNMODIFIED_POWER_CONSUMPTION_MODIFIER"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadEnergyLevelsSection.spec.ts::should"
+			+ "charge the base consumption levels, the modifier being 1"
+	SPEC "the Power section names the modifier in a limitation notification, under the game release"
+		+ "one, when it is not 1, and names none at 1"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionPowerConsumptionModifierNotification("
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
+			+ "each={energyLevels().notifications}>"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name that modifier in a limitation, under the submerged machines one"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name that modifier under the game release warning"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name no modifier"
+	REJECTED "Multiplying the planet total alone, the breakdown keeping the base levels: its"
+		+ "entries would stop summing to the consumption shown above them"
+	REJECTED "Applying the modifier in the presenter: the available energy is computed in the"
+		+ "domain, and would stay on base levels"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT126
+	RESTS_ON @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
+	RATIONALE "The game multiplies the draw of each machine, so a breakdown entry shows what the"
+		+ "machine draws in that save; the energy table keeps the base levels the HUD prints at 1"
+	SOURCE "Ruling taken on delivery of the task, 2026-09-26"
+		PR 193

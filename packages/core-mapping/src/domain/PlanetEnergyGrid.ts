@@ -25,15 +25,20 @@ export class PlanetEnergyGrid {
   private readonly boosts: readonly OptimizerBoost[];
   private readonly fuseCountByProducerId: Map<string, number>;
   private readonly energyLevels: EnergyLevelsOfRelease;
+  private readonly consumptionLevels: EnergyLevelsOfRelease["consumption"];
 
   constructor(
     planet: PlanetWorldObjectsValueObject,
     allWorldObjects: readonly WorldObjectEntity[],
     inventories: readonly InventoryEntity[],
-    energyLevels: EnergyLevelsOfRelease
+    energyLevels: EnergyLevelsOfRelease,
+    powerConsumptionModifier: number
   ) {
     this.planet = planet;
     this.energyLevels = energyLevels;
+    this.consumptionLevels = Object.fromEntries(
+      Object.entries(energyLevels.consumption).map(([name, level]) => [name, level * powerConsumptionModifier])
+    );
     this.boosts = PlanetEnergyGrid.collectBoosts(planet.placedWorldObjects, allWorldObjects, inventories);
     this.fuseCountByProducerId = PlanetEnergyGrid.countFusesByProducerId(this.boosts);
   }
@@ -49,7 +54,7 @@ export class PlanetEnergyGrid {
       consumption,
       available: production - consumption,
       productionBreakdown: this.productionBreakdown(production),
-      consumptionBreakdown: computeEnergyBreakdown(this.planet.placedWorldObjects, this.energyLevels.consumption),
+      consumptionBreakdown: computeEnergyBreakdown(this.planet.placedWorldObjects, this.consumptionLevels),
       optimizers: this.optimizers(production)
     });
   }
@@ -107,7 +112,7 @@ export class PlanetEnergyGrid {
 
   private consumption(): number {
     return this.planet.placedWorldObjects
-      .reduce((total, worldObject) => total + (this.energyLevels.consumption[worldObject.name] ?? 0), 0);
+      .reduce((total, worldObject) => total + (this.consumptionLevels[worldObject.name] ?? 0), 0);
   }
 
   private productionBreakdown(production: number) {

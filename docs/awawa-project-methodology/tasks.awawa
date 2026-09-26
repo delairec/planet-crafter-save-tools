@@ -1288,14 +1288,26 @@ TASK TEST125
 
 TASK FEAT126
 	TITLE "The consumption of a planet applies the power consumption modifier of its save"
-	STATUS todo
+	STATUS implemented
 	SPEC "the consumption, the available energy and the consumption breakdown of every planet"
 		+ "follow the effect of modifierPowerConsumption the rules of TEST125 state"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::consumptionLevels"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should multiply the unit"
+			+ "and total level of each consumption breakdown entry"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should leave the"
+			+ "production whole and subtract the multiplied consumption from it"
 	SPEC "a unit test pins the consumption computed on the measurement fixture at"
 		+ "modifierPowerConsumption 0, 1 and 1.5"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge the machines"
+			+ "of the energy consumption fixture, at modifier %p, %p kW"
 	SPEC "the Power card names the modifier its figures apply when it is not 1"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should name"
+			+ "that modifier in a limitation, under the submerged machines one"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
+			+ "each={energyLevels().notifications}>"
 	AFTER @TASK.TEST125
 	WAVE @WAVE.9
+	DELIVERED_BY 193
 	RATIONALE "The save configuration presenter already shows the modifier, while PlanetEnergyGrid"
 		+ "sums base levels alone: on a save whose modifier is not 1 the displayed consumption and"
 		+ "available energy disagree with the HUD, whatever the completeness of the energy table"
@@ -1361,11 +1373,11 @@ TASK FEAT129
 	SPEC "the Power section names in a disclaimer, under the submerged machines one, the game"
 		+ "release whose values it applies when that release is earlier than the last of the"
 		+ "releases table, and names none for the last"
-		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::buildGameReleaseNote"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Show"
-			+ "when={energyLevels().gameReleaseNote}>"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
+			+ "each={energyLevels().notifications}>"
 		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should name that game release in a"
-			+ "disclaimer, under the submerged machines one"
+			+ "notification, under the submerged machines one"
 		IMPL "packages/ui-save-manager/e2e/display.e2e.ts::should name no game release"
 	SPEC "OreBreaker1 draws 2.6 kW in a save of 1.618 or 2.004 and 0.6 kW from 2.100"
 		IMPL "packages/core-mapping/src/domain/energyLevelsByRelease/2.004.json::OreBreaker1"

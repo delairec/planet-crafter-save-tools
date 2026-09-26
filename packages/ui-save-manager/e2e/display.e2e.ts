@@ -93,7 +93,7 @@ test.describe('Save display', () => {
   });
 
   test.describe('When a save file of a legacy game release is visualized', () => {
-    test('should name that game release in a disclaimer, under the submerged machines one', async ({page}) => {
+    test('should name that game release in a notification, under the submerged machines one', async ({page}) => {
       // Arrange
       await page.goto('/');
       await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
@@ -103,11 +103,11 @@ test.describe('Save display', () => {
 
       // Assert
       await expect(page.getByText('Values of game release 2.004')).toBeVisible();
-      const submergedMachinesDisclaimerTop = (await page.getByText('Submerged machines may distort the computed available energy').boundingBox())!.y;
-      const gameReleaseDisclaimerTop = (await page.getByText('Values of game release 2.004').boundingBox())!.y;
+      const submergedMachinesNotificationTop = (await page.getByText('Submerged machines may distort the computed available energy').boundingBox())!.y;
+      const gameReleaseNotificationTop = (await page.getByText('Values of game release 2.004').boundingBox())!.y;
       const firstPlanetTop = (await page.getByRole('heading', {name: 'Planet 1', level: 4}).boundingBox())!.y;
-      expect(gameReleaseDisclaimerTop).toBeGreaterThan(submergedMachinesDisclaimerTop);
-      expect(gameReleaseDisclaimerTop).toBeLessThan(firstPlanetTop);
+      expect(gameReleaseNotificationTop).toBeGreaterThan(submergedMachinesNotificationTop);
+      expect(gameReleaseNotificationTop).toBeLessThan(firstPlanetTop);
     });
   });
 

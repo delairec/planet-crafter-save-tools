@@ -33,7 +33,21 @@ function gridOf(
     createPlanetWorldObjectsValueObject({planetId: PLANET_ID, planetName, placedWorldObjects}),
     allWorldObjects,
     inventories,
-    selectEnergyLevelsOfDeclaredVersion('2.103')
+    selectEnergyLevelsOfDeclaredVersion('2.103'),
+    1
+  );
+}
+
+function gridOfSaveWithPowerConsumptionModifier(
+  placedWorldObjects: readonly PlacedWorldObjectEntity[],
+  powerConsumptionModifier: number
+): PlanetEnergyGrid {
+  return new PlanetEnergyGrid(
+    createPlanetWorldObjectsValueObject({planetId: PLANET_ID, placedWorldObjects}),
+    placedWorldObjects,
+    [],
+    selectEnergyLevelsOfDeclaredVersion('2.103'),
+    powerConsumptionModifier
   );
 }
 
@@ -184,6 +198,62 @@ describe('PlanetEnergyGrid', () => {
         // Assert
         expect(levels.consumption).toBe(285);
       });
+    });
+  });
+
+  describe('When the save sets a power consumption modifier', () => {
+    it.each([
+      [0, 0],
+      [1, 85],
+      [1.5, 127.5]
+    ])('should charge the machines of the energy consumption fixture, at modifier %p, %p kW', (powerConsumptionModifier, expectedConsumption) => {
+      // Arrange
+      const grid = gridOfSaveWithPowerConsumptionModifier([
+        placedWorldObject('1', 'TreePlanter3'),
+        placedWorldObject('2', 'ButterflyDisplayer1', [5, 0, 0]),
+        placedWorldObject('3', 'FishDisplayer1', [10, 0, 0]),
+        placedWorldObject('4', 'FrogDisplayer1', [15, 0, 0]),
+        placedWorldObject('5', 'Server1', [20, 0, 0]),
+        placedWorldObject('6', 'CookingStation1', [25, 0, 0]),
+        placedWorldObject('7', 'PodUnderground', [30, 0, 0]),
+        placedWorldObject('8', 'RocketAnimals2', [35, 0, 0])
+      ], powerConsumptionModifier);
+
+      // Act
+      const levels = grid.levels();
+
+      // Assert
+      expect(levels.consumption).toBe(expectedConsumption);
+    });
+
+    it('should multiply the unit and total level of each consumption breakdown entry', () => {
+      // Arrange
+      const grid = gridOfSaveWithPowerConsumptionModifier([
+        placedWorldObject('1', 'Drill0'),
+        placedWorldObject('2', 'Drill0', [1, 0, 0])
+      ], 1.5);
+
+      // Act
+      const levels = grid.levels();
+
+      // Assert
+      expect(levels.consumptionBreakdown).toEqual([{name: 'Drill0', quantity: 2, unitLevel: 0.75, totalLevel: 1.5}]);
+    });
+
+    it('should leave the production whole and subtract the multiplied consumption from it', () => {
+      // Arrange
+      const grid = gridOfSaveWithPowerConsumptionModifier([
+        placedWorldObject('1', 'EnergyGenerator1'),
+        placedWorldObject('2', 'Drill0', [0, 10, 0])
+      ], 0);
+
+      // Act
+      const levels = grid.levels();
+
+      // Assert
+      expect(levels.production).toBe(1.2);
+      expect(levels.consumption).toBe(0);
+      expect(levels.available).toBe(1.2);
     });
   });
 

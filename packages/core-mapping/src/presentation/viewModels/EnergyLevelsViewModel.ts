@@ -1,7 +1,7 @@
+import {NotificationViewModel} from "./NotificationViewModel";
 import {PlanetEnergyLevelsViewModel} from "./PlanetEnergyLevelsViewModel";
 
 export interface EnergyLevelsViewModel {
-  submergedMachinesDisclaimer: string;
-  gameReleaseNote?: string;
+  notifications: NotificationViewModel[];
   planets: PlanetEnergyLevelsViewModel[];
 }

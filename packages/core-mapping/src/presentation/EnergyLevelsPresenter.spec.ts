@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
+import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
 
 const nbsp = '\u00A0';
@@ -12,7 +13,7 @@ describe('EnergyLevelsPresenter', () => {
 
     // Assert
     expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>({
-      submergedMachinesDisclaimer: 'Submerged machines may distort the computed available energy.',
+      notifications: [{severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'}],
       planets: []
     });
   });
@@ -24,6 +25,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: CURRENT_FORMAT_RELEASE,
+      powerConsumptionModifier: 1,
       planets: [{
         planetId: 1,
         production: 80_000,
@@ -38,7 +40,7 @@ describe('EnergyLevelsPresenter', () => {
     // Assert
     expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>(
       {
-        submergedMachinesDisclaimer: 'Submerged machines may distort the computed available energy.',
+        notifications: [{severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'}],
         planets: [{
           planetId: 'Planet 1',
           energyLevels: {
@@ -72,6 +74,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
+      powerConsumptionModifier: 1,
       planets: [
         {
           planetId: 1,
@@ -98,13 +101,14 @@ describe('EnergyLevelsPresenter', () => {
     expect(presenter.viewModel.planets.map((planet) => planet.planetId)).toEqual(['Planet 1', 'Planet 2']);
   });
 
-  it('should present the submerged machines disclaimer once for the whole section, whatever the number of planets', () => {
+  it('should present the submerged machines limitation once for the whole section, whatever the number of planets', () => {
     // Arrange
     const presenter = new EnergyLevelsPresenter();
 
     // Act
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
+      powerConsumptionModifier: 1,
       planets: [
         {
           planetId: 1,
@@ -128,19 +132,24 @@ describe('EnergyLevelsPresenter', () => {
     });
 
     // Assert
-    expect(presenter.viewModel.submergedMachinesDisclaimer).toBe('Submerged machines may distort the computed available energy.');
+    expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
+      {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'}
+    ]);
   });
 
   describe('When it presents the values of a legacy game release', () => {
-    it('should name that game release in a disclaimer', () => {
+    it('should warn, under the submerged machines limitation, that the values are those of that game release', () => {
       // Arrange
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.004', planets: []});
+      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1, planets: []});
 
       // Assert
-      expect(presenter.viewModel.gameReleaseNote).toBe('Values of game release 2.004');
+      expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
+        {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'},
+        {severity: 'warning', message: 'Values of game release 2.004'}
+      ]);
     });
   });
 
@@ -150,10 +159,61 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, planets: []});
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1, planets: []});
 
       // Assert
-      expect(presenter.viewModel.gameReleaseNote).toBeUndefined();
+      expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
+        {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'}
+      ]);
+    });
+  });
+
+  describe('When the save multiplies the consumption by a power consumption modifier other than 1', () => {
+    it('should name that modifier in a limitation, under the submerged machines one', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
+
+      // Act
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1.5, planets: []});
+
+      // Assert
+      expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
+        {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'},
+        {severity: 'limitation', message: "Consumption applies the save's Power Consumption modifier: 150%"}
+      ]);
+    });
+  });
+
+  describe('When the save of a legacy game release multiplies the consumption by a power consumption modifier other than 1', () => {
+    it('should name that modifier under the game release warning', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
+
+      // Act
+      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1.5, planets: []});
+
+      // Assert
+      expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
+        {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'},
+        {severity: 'warning', message: 'Values of game release 2.004'},
+        {severity: 'limitation', message: "Consumption applies the save's Power Consumption modifier: 150%"}
+      ]);
+    });
+  });
+
+  describe('When the power consumption modifier of the save is 1', () => {
+    it('should name no modifier', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
+
+      // Act
+      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1, planets: []});
+
+      // Assert
+      expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
+        {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'},
+        {severity: 'warning', message: 'Values of game release 2.004'}
+      ]);
     });
   });
 
@@ -164,6 +224,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
+      powerConsumptionModifier: 1,
       planets: [{
         planetId: 1,
         production: 590,
@@ -208,6 +269,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
+      powerConsumptionModifier: 1,
       planets: [{
         planetId: 1,
         production: 590,
