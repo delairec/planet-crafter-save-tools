@@ -2116,3 +2116,22 @@ DECISION TheRootCliScriptsRunTheirEntryPointDirectly
 	SOURCE "Agent ruling while implementing FEAT114, 2026-09-25, amended by the owner's review of"
 		+ "the pull request for the tick and the empty line opening each block"
 		PR 182
+
+DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
+	REJECTED "A test spawning the script: Bun never reports a spawned module, so the figure stays"
+		+ "where it was"
+	REJECTED "Ignoring the whole script in coverage: the logic it holds would leave the report with"
+		+ "the input and output"
+	SPEC "The input and output a unit test cannot run in-process (file system scan, file read,"
+		+ "console, process exit) reaches the code of a script as a dependency its main function"
+		+ "receives, and the test passes a fake"
+		IMPL "scripts/specSources.ts::readOwnSourceFiles"
+	SPEC "Only a module holding the real input and output is ignored by the coverage, listed in the"
+		+ "coveragePathIgnorePatterns of bunfig.toml"
+		IMPL "bunfig.toml::[test]"
+	APPLIES_TO_TASK @TASK.TEST123
+	RATIONALE "Bun measures only what runs in the test process: the script body that runs under"
+		+ "import.meta.main is reached in-process through its injected dependencies, and what is"
+		+ "left is the real adapter, too thin to hold a use case"
+		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
+	SOURCE "Owner ruling while refining TEST123 on 2026-09-26"

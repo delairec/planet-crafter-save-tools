@@ -1123,11 +1123,19 @@ TASK TEST122
 TASK TEST123
 	TITLE "Cover every use case of the modules a unit test loads, the coverage report finding the"
 		+ "ones missed"
-	STATUS draft
-	SPEC "every line or function bun test --coverage reports unexecuted is traced to the use case"
-		+ "it serves, and that use case gets a test asserting its observable outcome"
+	STATUS todo
+	SPEC "every line bun test --coverage reports unexecuted is traced to the use case it serves,"
+		+ "and that use case gets a test asserting its observable outcome"
 	SPEC "no test the task adds exists only to execute a line: each names the use case it covers"
 		+ "and asserts what that use case produces"
+	SPEC "the main function of every script with a command-line entry block is tested in-process on"
+		+ "a run that passes and on a run that fails, asserting the report it prints and the exit"
+		+ "code it returns, its file system, console and exit received as a fake"
+	SPEC "the coveragePathIgnorePatterns of bunfig.toml lists only modules holding the real input"
+		+ "and output a test replaces with a fake"
+	SPEC "an entry carrying liPlanet without liId, and one carrying pos without planet, are refused"
+		+ "by the validation of a save, each naming the property it lacks"
+	SPEC "a line no input can reach is deleted, never tested nor exempted"
 	SPEC "the coverageThreshold of bunfig.toml is raised to the floor measured once those use cases"
 		+ "are covered"
 	AFTER @TASK.CHORE105
@@ -1135,17 +1143,24 @@ TASK TEST123
 		+ "measured. The aim is every use case covered, which no tool can check; 100 % of lines"
 		+ "only says the code ran under a test, so the report serves to find use cases left"
 		+ "untested, and a figure reached by tests asserting nothing would satisfy the tool and"
-		+ "cover nothing. On 2026-09-25, after the rebase of #173 on master, the suite totals 96.59"
-		+ "% of lines and 94.34 % of functions, and 42 modules sit under 100 %. The lowest are the"
-		+ "command-line entry blocks of scripts/ and of core-mapping/scripts/, whose main body runs"
-		+ "only when the script is launched, generate-scenario-fixtures.ts at 29.63 % of lines and"
-		+ "0 % of functions; then the controllers of core-mapping at 66.67 % of functions, and"
-		+ "sectionValidators.generated.js, a generated file. Whether a launched entry block is"
-		+ "reached by a spawned process test, moved out of the measured module or exempted, and"
-		+ "what becomes of a line that serves no use case, are the rulings this refinement has to"
-		+ "make"
+		+ "cover nothing. Measured on 2026-09-26 on master with Bun 1.4.2: 96.96 % of lines and"
+		+ "94.91 % of functions, 38 modules under 100 %; generate-scenario-fixtures.ts no longer"
+		+ "enters the report since #183. The lowest are the sixteen scripts of scripts/ and of"
+		+ "core-mapping/scripts/ whose body runs only under import.meta.main,"
+		+ "check-scenario-fixtures.ts and specSources.ts at 41.67 % of lines,"
+		+ "generate-section-validators.ts at 0 % of functions: a test spawning them fails to raise"
+		+ "the figure, as Bun never reports a spawned module, release.ts and check-site.ts"
+		+ "included, so their input and output is injected and the real adapter alone ignored. The"
+		+ "unexecuted lines of sectionValidators.generated.js are two field dependencies of the"
+		+ "save schema, a validation rule no test asserts. Bun counts a class as a function no call"
+		+ "reaches, even once instantiated: a one-method class sits at 50 % of functions and 100 %"
+		+ "of lines, which is why the controllers of core-mapping read 66.67 %; a function gap"
+		+ "naming no line is no use case missed, and the function threshold is taken as measured"
 		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
 		REF @DECISION.AControllerSpecCoversWiringNotBranches
+		REF @DECISION.EveryPublishedCommandHasARealProcessTest
+		REF @DECISION.AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 	SOURCE "Owner request on the review of CHORE105, and the owner's ruling on its intent in the"
 		+ "same review"
 		PR 173
+	SOURCE "Owner rulings, refinement session of 2026-09-26"
