@@ -1562,9 +1562,9 @@ TASK CHORE130
 
 TASK FEAT131
 	TITLE "Show the terraformation stage of each planet as a badge on its overview card"
-	STATUS draft
-	DESC "drafted for memory, no research done: the stages of the game, their thresholds and the"
-		+ "value they are read from are established when the task is refined"
+	STATUS todo
+	DESC "ratified on the reviewed plan on 2026-09-27 without research; the stages of the game,"
+		+ "their thresholds and the value they are read from are established when the task starts"
 	SPEC "the overview card of a planet carries a badge naming the terraformation stage the planet"
 		+ "has reached, read from its terraformation levels"
 	SPEC "the stages and their thresholds are a value table, one row per stage"
@@ -1581,9 +1581,9 @@ TASK FEAT131
 
 TASK FEAT132
 	TITLE "Display the SysTi, the Terraformation Index accumulated over every planet of the save"
-	STATUS draft
-	DESC "drafted for memory, no research done: whether the SysTi is the plain sum of the planets'"
-		+ "Ti or weighs them is established when the task is refined"
+	STATUS todo
+	DESC "ratified on the reviewed plan on 2026-09-27 without research; whether the SysTi is the"
+		+ "plain sum of the planets' Ti or weighs them is established when the task starts"
 	SPEC "the Overview page shows the SysTi of the save in a tile of its own, computed from the"
 		+ "accumulation of the Terraformation Index of each of its planets, and the hero figure of"
 		+ "the Terraformation page names the share of the SysTi the planet holds"
@@ -1606,9 +1606,9 @@ TASK FEAT132
 
 TASK FEAT133
 	TITLE "Tell on the merge page that save A wins over save B where their common data conflicts"
-	STATUS draft
-	DESC "drafted for memory, no research done: the wording of the notice is established when the"
-		+ "task is refined"
+	STATUS todo
+	DESC "ratified on the reviewed plan on 2026-09-27 without research; the wording of the notice"
+		+ "is established when the task starts"
 	SPEC "the merge page carries, above the form, a notice saying that save A prevails over save B"
 		+ "for the common data the two saves hold in conflict, and that swapping them changes which"
 		+ "one wins"
@@ -1638,11 +1638,11 @@ TASK FEAT133
 
 TASK FEAT134
 	TITLE "Lay out the save manager as a shell with a left menu and one page per section"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: how a page is"
-		+ "addressed while the save lives in memory is settled at refinement, the route files the"
-		+ "shell adds being declared test roots of the coverage-gaps plugin or the pages being"
-		+ "components of the one route"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; how a page is"
+		+ "addressed while the save lives in memory is settled with the owner when the task starts,"
+		+ "the route files the shell adds being declared test roots of the coverage-gaps plugin or"
+		+ "the pages being components of the one route"
 	SPEC "the page opens on the disclaimer block of today, unchanged, above the content of every"
 		+ "page, under the title of today and above the version footer of today"
 	SPEC "a left menu carries three groups in this order: Tools, Save, Players; Tools holds Merge"
@@ -1698,11 +1698,11 @@ TASK FEAT134
 
 TASK FEAT135
 	TITLE "Feed the menu with the save identity and the players list, two zone view models"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: whether the game"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; whether the game"
 		+ "release shown is the declared version or the resolved release, what a save without a"
-		+ "version shows, and what a player whose planet is empty or legacy shows, are settled at"
-		+ "refinement"
+		+ "version shows, and what a player whose planet is empty or legacy shows, are settled with"
+		+ "the owner when the task starts"
 	SPEC "the save identity zone of the menu shows the file name, the display name, the mode and"
 		+ "the game release of the loaded save, above the groups of the menu; a save without a"
 		+ "configuration entry shows the file name alone"
@@ -1736,10 +1736,10 @@ TASK FEAT135
 
 TASK FEAT136
 	TITLE "Give the Configuration page its view model, progression first and modifiers in tones"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: which modifiers are"
-		+ "percentages and which are coefficients, and which unlock flags of the eleven the entry"
-		+ "carries are listed, are checked against the save format at refinement"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; which modifiers"
+		+ "are percentages and which are coefficients, and which unlock flags of the eleven the"
+		+ "entry carries are listed, are checked against the save format when the task starts"
 	SPEC "the Configuration page shows the global progression first, the modifiers next and the"
 		+ "unlock flags of the save last; a save without statistics shows the progression without"
 		+ "them, as today"
@@ -1786,9 +1786,9 @@ TASK FEAT136
 
 TASK FEAT137
 	TITLE "Move the merge of two saves and the loading of another save under the Tools group"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: what Load another"
-		+ "save does to an unsaved merge result is settled at refinement"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; what Load another"
+		+ "save does to an unsaved merge result is settled with the owner when the task starts"
 	SPEC "the Merge two saves page carries the merge form of today, save A and save B drop zones,"
 		+ "the swap control, the legacy format box and the Merge button, and shows the result, the"
 		+ "download and the warnings of a merge where the form is"
@@ -1820,9 +1820,9 @@ TASK FEAT137
 
 TASK FEAT138
 	TITLE "Give the save manager the presentation pieces the pages of the navigation wave render"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: the list of pieces"
-		+ "is closed at refinement against the pages of wave 10"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the list of"
+		+ "pieces is closed when the task starts against the pages of wave 10"
 	SPEC "a page opens on a section title; a card has a header holding its title and a summary"
 		+ "figure, and a body; a notification is a line whose severity is named by a pill before"
 		+ "the message; a tone badge shows a value with a text naming its tone; an on or off pill"
@@ -1855,11 +1855,11 @@ TASK FEAT138
 
 TASK FEAT139
 	TITLE "Give the Power page its view model: figures with a status, optimizers first, tables"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: the threshold"
-		+ "between a tight and a surplus balance is settled at refinement; the task shares small"
-		+ "hunks of the section hook and the fixture generator with the Terraformation page task of"
-		+ "the same wave"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the threshold"
+		+ "between a tight and a surplus balance is settled with the owner when the task starts;"
+		+ "the task shares small hunks of the section hook and the fixture generator with the"
+		+ "Terraformation page task of the same wave"
 	SPEC "the Power page shows planet tabs and, for the planet of the selected tab, a title"
 		+ "carrying the status pill, the notifications under it, then three figure tiles,"
 		+ "production, consumption and available, the available one carrying the status pill and a"
@@ -1909,8 +1909,8 @@ TASK FEAT139
 
 TASK FEAT140
 	TITLE "Chart the production and the consumption of a planet, with a selector of the form"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27"
 	SPEC "above the breakdown tables, a Display as selector offers Bars by machine, Share of each"
 		+ "machine type, and Table; Bars by machine is the default on every page, and the chosen"
 		+ "form stays chosen across planets and pages"
@@ -1952,8 +1952,8 @@ TASK FEAT140
 
 TASK FEAT141
 	TITLE "Give the Terraformation page its view model: hero figures and bar-aligned tables"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification; the task shares"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the task shares"
 		+ "small hunks of the section hook and the fixture generator with the Power page task of"
 		+ "the same wave"
 	SPEC "the Terraformation page shows planet tabs and, for the planet of the selected tab, two"
@@ -1989,10 +1989,10 @@ TASK FEAT141
 
 TASK FEAT142
 	TITLE "Give the Overview page its view model: identity, progression tiles and planet cards"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: the common scale of"
-		+ "the power bars, and what a planet present in the terraformation levels only or in the"
-		+ "energy only shows, are settled at refinement"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the common scale"
+		+ "of the power bars, and what a planet present in the terraformation levels only or in the"
+		+ "energy only shows, are settled with the owner when the task starts"
 	SPEC "once a save is loaded, the Overview page shows an identity zone of its own, the display"
 		+ "name, the mode, the game release and the file size, the notifications of the save, then"
 		+ "a row of tiles with the all-time Terra Tokens, the total crafted objects and the drone"
@@ -2033,8 +2033,8 @@ TASK FEAT142
 
 TASK FEAT143
 	TITLE "Give each planet a page with a Power tab and a Terraformation tab"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27"
 	SPEC "the Details button of a planet card opens the page of that planet, the request carrying"
 		+ "the planet identifier the card holds, stable for a planet without a name; the breadcrumb"
 		+ "reads Save, Overview, then the planet name, Overview leading back"
@@ -2063,11 +2063,11 @@ TASK FEAT143
 
 TASK FEAT144
 	TITLE "Give the Players page its view model: vital gauges, equipment slots, grouped inventory"
-	STATUS draft
-	DESC "drafted from page F of the mockup, to be refined before ratification: the maximum of each"
-		+ "gauge, whether the inventory size the save carries includes the backpack slots, the"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the maximum of"
+		+ "each gauge, whether the inventory size the save carries includes the backpack slots, the"
 		+ "value table naming the kind of each equipment slot and of each worn item, and whether"
-		+ "the toxicity gauge is shown, are researched at refinement"
+		+ "the toxicity gauge is shown, are researched when the task starts"
 	SPEC "each player card names the player and the planet they stand on, carries the Host badge"
 		+ "for the host, and shows three flat gauges filled by percentage, an oxygen tank for"
 		+ "oxygen, a sandwich for health and a flask for thirst, with a clear outline and a visible"
@@ -2108,9 +2108,9 @@ TASK FEAT144
 
 TASK FEAT145
 	TITLE "Close the transition: no section controller exported, the export boundary guarded"
-	STATUS draft
-	DESC "drafted for memory, to be refined before ratification: the guard is a check of the"
-		+ "dependencies script or a rule of the package manifest, chosen at refinement"
+	STATUS todo
+	DESC "ratified on the reviewed plan on 2026-09-27 without refinement; the guard is a check of"
+		+ "the dependencies script or a rule of the package manifest, chosen when the task starts"
 	SPEC "core-mapping exports no section controller and no section view model: every exported"
 		+ "controller serves one page or one zone of the save manager, or a CLI, and a guard of the"
 		+ "repository refuses a new Load*SectionController"
@@ -2140,9 +2140,9 @@ TASK FEAT145
 
 TASK FEAT146
 	TITLE "Make the redesigned save manager usable at phone width and by keyboard"
-	STATUS draft
-	DESC "drafted for memory, no research done: the phone width to hold and the viewport the"
-		+ "scenarios run at are settled at refinement"
+	STATUS todo
+	DESC "ratified on the reviewed plan on 2026-09-27 without research; the phone width to hold and"
+		+ "the viewport the scenarios run at are settled with the owner when the task starts"
 	SPEC "at phone width the menu, the pages, the cards and the charts fit the screen without a"
 		+ "horizontal scroll of the page; a wide table scrolls inside its own container"
 	SPEC "the menu, the tabs, the selector, the Details buttons and the chart marks are reached and"
