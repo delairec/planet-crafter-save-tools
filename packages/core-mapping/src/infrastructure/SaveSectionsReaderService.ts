@@ -137,7 +137,13 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
         });
       });
 
-    return createEnergyLevelsRawDataValueObject({allWorldObjects: allWorldObjectEntities, inventories, planets});
+    return createEnergyLevelsRawDataValueObject({
+      allWorldObjects: allWorldObjectEntities,
+      inventories,
+      planets,
+      declaredVersion: this.sections.saveConfigurations[0]?.version,
+      powerConsumptionModifier: this.sections.saveConfigurations[0]?.modifierPowerConsumption
+    });
   }
 
   private toPlacedWorldObjectEntity(worldObject: WorldObjectEntry): PlacedWorldObjectEntity {

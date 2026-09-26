@@ -3,6 +3,7 @@ import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergy
 import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
 import {OptimizerValueObject} from "../domain/valueObjects/OptimizerValueObject";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
+import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {PlanetEnergyLevelsViewModel} from "./viewModels/PlanetEnergyLevelsViewModel";
 import {EnergyBreakdownRowViewModel} from "./viewModels/EnergyBreakdownRowViewModel";
 import {OptimizerViewModel} from "./viewModels/OptimizerViewModel";
@@ -11,21 +12,30 @@ import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStra
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
 import {worldObjectLabels} from "./worldObjectLabels";
+import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
+import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
 import {
   energyLevelsSectionAvailableTitle,
   energyLevelsSectionConsumptionTitle,
   energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
-  resolveEnergyLevelsSectionUnnamedPlanetName,
-  energyLevelsSectionWorkInProgressIcon,
-  energyLevelsSectionWorkInProgressLabel
+  energyLevelsSectionSubmergedMachinesNotification,
+  resolveEnergyLevelsSectionGameReleaseNotification,
+  resolveEnergyLevelsSectionPowerConsumptionModifierNotification,
+  resolveEnergyLevelsSectionUnnamedPlanetName
 } from "./messages/energyLevelsSectionMessages.js";
+
+const submergedMachinesNotification: NotificationViewModel = {
+  severity: 'limitation',
+  message: energyLevelsSectionSubmergedMachinesNotification
+};
 
 export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
   private _viewModel: EnergyLevelsViewModel;
 
   constructor() {
     this._viewModel = {
+      notifications: [submergedMachinesNotification],
       planets: []
     };
   }
@@ -36,8 +46,31 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
 
   displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void {
     this._viewModel = {
+      notifications: this.buildNotifications(energyLevels),
       planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
     };
+  }
+
+  private buildNotifications(energyLevels: EnergyLevelsValueObject): NotificationViewModel[] {
+    const notifications: NotificationViewModel[] = [submergedMachinesNotification];
+
+    if (energyLevels.gameRelease !== CURRENT_FORMAT_RELEASE) {
+      notifications.push({
+        severity: 'warning',
+        message: resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)
+      });
+    }
+
+    if (energyLevels.powerConsumptionModifier !== UNMODIFIED_POWER_CONSUMPTION_MODIFIER) {
+      notifications.push({
+        severity: 'limitation',
+        message: resolveEnergyLevelsSectionPowerConsumptionModifierNotification(
+          formatNumber(energyLevels.powerConsumptionModifier, FormatNumberStrategies.PERCENTAGE)
+        )
+      });
+    }
+
+    return notifications;
   }
 
   private buildPlanet(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsViewModel {
@@ -51,13 +84,11 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
           },
           {
             header: energyLevelsSectionConsumptionTitle,
-            values: [formatNumber(planet.consumption) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`],
-            annotation: {icon: energyLevelsSectionWorkInProgressIcon, label: energyLevelsSectionWorkInProgressLabel}
+            values: [formatNumber(planet.consumption) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`]
           },
           {
             header: energyLevelsSectionAvailableTitle,
-            values: [formatNumber(planet.available) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`],
-            annotation: {icon: energyLevelsSectionWorkInProgressIcon, label: energyLevelsSectionWorkInProgressLabel}
+            values: [formatNumber(planet.available) + `${NON_BREAKING_SPACE}${energyLevelsSectionKilowattUnit}`]
           }
         ]
       },

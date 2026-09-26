@@ -13,3 +13,7 @@ WAVE 7
 WAVE 8
 	MILESTONE "release-and-hardening"
 	BRANCH "integration/release-and-hardening"
+
+WAVE 9
+	MILESTONE "power-consumption"
+	BRANCH "integration/power-consumption"

@@ -1,3 +1,4 @@
+import {selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
 import {describe, expect, it} from 'bun:test';
 import {PlanetEnergyGrid} from './PlanetEnergyGrid';
 import {PlacedWorldObjectEntity} from './entities/PlacedWorldObjectEntity';
@@ -31,7 +32,22 @@ function gridOf(
   return new PlanetEnergyGrid(
     createPlanetWorldObjectsValueObject({planetId: PLANET_ID, planetName, placedWorldObjects}),
     allWorldObjects,
-    inventories
+    inventories,
+    selectEnergyLevelsOfDeclaredVersion('2.103'),
+    1
+  );
+}
+
+function gridOfSaveWithPowerConsumptionModifier(
+  placedWorldObjects: readonly PlacedWorldObjectEntity[],
+  powerConsumptionModifier: number
+): PlanetEnergyGrid {
+  return new PlanetEnergyGrid(
+    createPlanetWorldObjectsValueObject({planetId: PLANET_ID, placedWorldObjects}),
+    placedWorldObjects,
+    [],
+    selectEnergyLevelsOfDeclaredVersion('2.103'),
+    powerConsumptionModifier
   );
 }
 
@@ -136,6 +152,108 @@ describe('PlanetEnergyGrid', () => {
 
       // Assert
       expect(levels.consumption).toBe(0.5);
+    });
+
+    describe('When the planet holds the machines of the energy consumption fixture alone', () => {
+      it('should charge the 85 kW the game shows, TreePlanter3 being the only one drawing power', () => {
+        // Arrange
+        const grid = gridOf([
+          placedWorldObject('1', 'TreePlanter3'),
+          placedWorldObject('2', 'ButterflyDisplayer1', [5, 0, 0]),
+          placedWorldObject('3', 'FishDisplayer1', [10, 0, 0]),
+          placedWorldObject('4', 'FrogDisplayer1', [15, 0, 0]),
+          placedWorldObject('5', 'Server1', [20, 0, 0]),
+          placedWorldObject('6', 'CookingStation1', [25, 0, 0]),
+          placedWorldObject('7', 'PodUnderground', [30, 0, 0]),
+          placedWorldObject('8', 'RocketAnimals2', [35, 0, 0])
+        ]);
+
+        // Act
+        const levels = grid.levels();
+
+        // Assert
+        expect(levels.consumption).toBe(85);
+      });
+    });
+
+    describe('When optimizers holding fuses join the machines of the energy consumption fixture', () => {
+      it('should charge each optimizer its base level, the fuses it holds changing no consumption', () => {
+        // Arrange
+        const treePlanter = placedWorldObject('1', 'TreePlanter3');
+        const energyFuseOptimizer = placedWorldObject('2', 'Optimizer1', [5, 0, 0], PLANET_ID, 98);
+        const otherFuseOptimizer = placedWorldObject('3', 'Optimizer2', [10, 0, 0], PLANET_ID, 99);
+        const productionFuse = new WorldObjectEntity({id: 'fuse-2', name: 'FuseProduction1' as WorldObjectName});
+        const grid = gridOf(
+          [treePlanter, energyFuseOptimizer, otherFuseOptimizer],
+          [treePlanter, energyFuseOptimizer, otherFuseOptimizer, energyFuse('fuse-1'), productionFuse],
+          [
+            new InventoryEntity({id: 98, worldObjectIds: ['fuse-1'], size: 1}),
+            new InventoryEntity({id: 99, worldObjectIds: ['fuse-2'], size: 1})
+          ]
+        );
+
+        // Act
+        const levels = grid.levels();
+
+        // Assert
+        expect(levels.consumption).toBe(285);
+      });
+    });
+  });
+
+  describe('When the save sets a power consumption modifier', () => {
+    it.each([
+      [0, 0],
+      [1, 85],
+      [1.5, 127.5]
+    ])('should charge the machines of the energy consumption fixture, at modifier %p, %p kW', (powerConsumptionModifier, expectedConsumption) => {
+      // Arrange
+      const grid = gridOfSaveWithPowerConsumptionModifier([
+        placedWorldObject('1', 'TreePlanter3'),
+        placedWorldObject('2', 'ButterflyDisplayer1', [5, 0, 0]),
+        placedWorldObject('3', 'FishDisplayer1', [10, 0, 0]),
+        placedWorldObject('4', 'FrogDisplayer1', [15, 0, 0]),
+        placedWorldObject('5', 'Server1', [20, 0, 0]),
+        placedWorldObject('6', 'CookingStation1', [25, 0, 0]),
+        placedWorldObject('7', 'PodUnderground', [30, 0, 0]),
+        placedWorldObject('8', 'RocketAnimals2', [35, 0, 0])
+      ], powerConsumptionModifier);
+
+      // Act
+      const levels = grid.levels();
+
+      // Assert
+      expect(levels.consumption).toBe(expectedConsumption);
+    });
+
+    it('should multiply the unit and total level of each consumption breakdown entry', () => {
+      // Arrange
+      const grid = gridOfSaveWithPowerConsumptionModifier([
+        placedWorldObject('1', 'Drill0'),
+        placedWorldObject('2', 'Drill0', [1, 0, 0])
+      ], 1.5);
+
+      // Act
+      const levels = grid.levels();
+
+      // Assert
+      expect(levels.consumptionBreakdown).toEqual([{name: 'Drill0', quantity: 2, unitLevel: 0.75, totalLevel: 1.5}]);
+    });
+
+    it('should leave the production whole and subtract the multiplied consumption from it', () => {
+      // Arrange
+      const grid = gridOfSaveWithPowerConsumptionModifier([
+        placedWorldObject('1', 'EnergyGenerator1'),
+        placedWorldObject('2', 'Drill0', [0, 10, 0])
+      ], 0);
+
+      // Act
+      const levels = grid.levels();
+
+      // Assert
+      expect(levels.production).toBe(1.2);
+      expect(levels.consumption).toBe(0);
+      expect(levels.available).toBe(1.2);
     });
   });
 
@@ -407,6 +525,71 @@ describe('PlanetEnergyGrid', () => {
         // Assert
         expect(levels.production).toBe(0);
         expect(levels.optimizers[0]?.productionRatio).toBeUndefined();
+      });
+    });
+
+    describe('When several optimizers holding energy fuses share a producer', () => {
+      function createGridWithTwoOptimizersSharingAProducer(): PlanetEnergyGrid {
+        const optimizerWithOneFuse = placedWorldObject('opt-a', 'Optimizer1', [0, 0, 0], PLANET_ID, 99);
+        const optimizerWithThreeFuses = placedWorldObject('opt-b', 'Optimizer2', [200, 0, 0], PLANET_ID, 98);
+        const producerReachedByBothOptimizers = placedWorldObject('prod-1', 'WindTurbine1', [100, 0, 0]);
+        const producerReachedByOneOptimizer = placedWorldObject('prod-2', 'EnergyGenerator5', [400, 0, 0]);
+        const producerReachedByNoOptimizer = placedWorldObject('prod-3', 'EnergyGenerator3', [-500, 0, 0]);
+        const placedWorldObjects = [
+          optimizerWithOneFuse,
+          optimizerWithThreeFuses,
+          producerReachedByBothOptimizers,
+          producerReachedByOneOptimizer,
+          producerReachedByNoOptimizer
+        ];
+
+        return gridOf(
+          placedWorldObjects,
+          [
+            ...placedWorldObjects,
+            energyFuse('fuse-a'),
+            energyFuse('fuse-b1'),
+            energyFuse('fuse-b2'),
+            energyFuse('fuse-b3')
+          ],
+          [
+            new InventoryEntity({id: 99, worldObjectIds: ['fuse-a'], size: 1}),
+            new InventoryEntity({id: 98, worldObjectIds: ['fuse-b1', 'fuse-b2', 'fuse-b3'], size: 3})
+          ]
+        );
+      }
+
+      it('should add the machine levels and the optimizer contributions up to the production of the planet', () => {
+        // Arrange
+        const grid = createGridWithTwoOptimizersSharingAProducer();
+
+        // Act
+        const levels = grid.levels();
+
+        // Assert
+        const [generators5, windTurbines, generators3] = levels.productionBreakdown;
+        const [optimizerWithOneFuse, optimizerWithThreeFuses] = levels.optimizers;
+        expect(levels.production).toBe(3251.25);
+        expect(
+          generators5.totalLevel + windTurbines.totalLevel + generators3.totalLevel
+          + optimizerWithOneFuse.contribution + optimizerWithThreeFuses.contribution
+        ).toBe(3251.25);
+      });
+
+      it('should share the production of the planet between the machines and the optimizers', () => {
+        // Arrange
+        const grid = createGridWithTwoOptimizersSharingAProducer();
+
+        // Act
+        const levels = grid.levels();
+
+        // Assert
+        const [generators5, windTurbines, generators3] = levels.productionBreakdown;
+        const [optimizerWithOneFuse, optimizerWithThreeFuses] = levels.optimizers;
+        expect(
+          generators5.productionRatio! + windTurbines.productionRatio! + generators3.productionRatio!
+          + optimizerWithOneFuse.productionRatio! + optimizerWithThreeFuses.productionRatio!
+        ).toBeCloseTo(1, 12);
       });
     });
   });

@@ -368,15 +368,22 @@ DECISION AnEmptyMetadataSectionIsRefusedByValidation
 		PR 15
 
 DECISION AnUnprintedEnergyValueIsNeitherInferredNorZero
-	SPEC "A machine whose wiki page prints no energy value stays out of the energy tables, in the"
-		+ "group without a known energy level"
+	SPEC "A machine that neither its wiki page nor the game data export prices stays out of the"
+		+ "energy tables, in the group without a known energy level"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
 	REJECTED "Deducing the values from the regularity between tiers"
 	REJECTED "Setting zero for a value the wiki does not print"
+	REJECTED "The wiki as the only source of values, its previous form: the game data export prices"
+		+ "machines the wiki leaves silent and matches 107 stored rows to the kilowatt"
+		REF @URL.CompanionAppGameDataV2103
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	RATIONALE "The wiki is the only source of values"
+	RATIONALE "The wiki and the game data export are the sources of values; a value neither prints"
+		+ "is undocumented, and the export's 0 is no price either"
+		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Pull request"
 		PR 43
+	SOURCE "Widened to the game data export by the delivery of FEAT124"
+		PR 178
 
 DECISION TheByteOrderMarkIsNotPreserved
 	SPEC "Both platform adapters strip the byte order mark on reading and write none"
@@ -1399,10 +1406,9 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		PR 150
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
-	REJECTED "Moving TreePlanter3, PodUnderground and RocketAnimals2 into the machines the"
-		+ "eleven-machine limitation lists: that limitation is about a cost the sources leave"
-		+ "undecided, not about a hypothesis of no cost"
-		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"
+		+ "whose energy is unknown: those have a cost the sources leave undecided, not a hypothesis"
+		+ "of no cost"
 	REJECTED "Adding a zero-kilowatt row for the three machines to the energy table: a hypothesis"
 		+ "is not an observed value, and an unprinted value is already never inferred as zero"
 		REF @DATATABLE.EnergyLevels
@@ -1415,11 +1421,10 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 			+ "charge for the world objects without a known energy level"
 		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	ASSUMES @HYPOTHESIS.TreePlanter3PodUndergroundRocketAnimals2DrawNoPower
-	RATIONALE "The eleven-machine limitation is believed to actually cost power in-game, so"
-		+ "excluding those machines underestimates consumption; the hypothesis states the opposite"
-		+ "for these three, so excluding them is not a limitation"
-		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
+	RATIONALE "A placed machine whose cost the sources leave undecided may draw power in game, so"
+		+ "excluding it may underestimate consumption; the reading in game shows the machines it"
+		+ "names drawing none, so excluding them is not a limitation"
+		REF @RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 	SOURCE "Owner's ruling relayed to the wave, 2026-09-22: the task does not wait for the in-game"
 		+ "measurement"
 		PR 120
@@ -1899,9 +1904,13 @@ DECISION TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
 		+ "energy fuses"
 		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private"
 			+ "productionBreakdown(production: number)"
+		ENFORCED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should add the"
+			+ "machine levels and the optimizer contributions up to the production of the planet"
 	SPEC "The boost of energy fuses is counted once, in the contribution of the optimizers that"
 		+ "hold them, shared by fuse count when several reach one producer"
 		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::contribution += totalBoost"
+		ENFORCED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should add the"
+			+ "machine levels and the optimizer contributions up to the production of the planet"
 	REJECTED "The boost in the breakdown entries so that they alone sum to production: it would be"
 		+ "counted twice, or the optimizer share would go, and with it the comparison between"
 		+ "adding a machine and adding an optimizer"
@@ -2135,3 +2144,204 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 		+ "left is the real adapter, too thin to hold a use case"
 		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
 	SOURCE "Owner ruling while refining TEST123 on 2026-09-26"
+
+DECISION AZeroInTheGameDataExportIsNotAPrice
+	SPEC "A world object the game data export prints at 0 kW, or omits, stays in the group without"
+		+ "a known energy level, with no row in the energy table"
+		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
+	SPEC "A world object the game data export prints at a negative energy gets a consumption row at"
+		+ "that value, the export in the source field of the row"
+		IMPL "packages/core-mapping/src/domain/energyLevels.json::TradePlatform1"
+	REJECTED "Reading the 0 of the export as a price of no power and recording it: the export"
+		+ "writes the same 0 for a resource, a seed or a foundation that has no energy field at"
+		+ "all, so the 0 does not tell a machine that draws nothing from a world object the game"
+		+ "never asks"
+	REJECTED "A zero-kilowatt row or a group of machines known to draw nothing: the energy table"
+		+ "holds only prices found, and a zero is not one"
+		REF @DATATABLE.EnergyLevels
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT124
+	RATIONALE "The export prints 0 for 458 of the 541 names searched, among them Iron, Algae1Seed"
+		+ "and Foundation, next to the 107 existing rows it matches to the kilowatt; a price is"
+		+ "therefore only a non-zero value"
+		REF @URL.CompanionAppGameDataV2103
+		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+	SOURCE "Ruling taken while delivering FEAT124 on 2026-09-25, from the owner ruling that only a"
+		+ "price found is stored"
+		PR 178
+
+DECISION TheSubmergedMachinesLimitationIsCarriedByTheEnergyViewModel
+	SPEC "The submerged machines message is a limitation notification of the core-mapping energy"
+		+ "section, the first of the notifications of the energy ViewModel, once for the whole"
+		+ "section and never per planet"
+		IMPL "packages/core-mapping/src/presentation/messages/energyLevelsSectionMessages.js::energyLevelsSectionSubmergedMachinesNotification"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::submergedMachinesNotification"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "present the submerged machines limitation once for the whole section, whatever the"
+			+ "number of planets"
+	SPEC "The Power section prints it unconditionally, under its title"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
+			+ "each={energyLevels().notifications}>"
+	REJECTED "A constant of the ui-save-manager messages: the message qualifies the computed"
+		+ "energy, it is a message of the section and not a technical label of the page"
+	REJECTED "One notification per planet heading: the same sentence repeated under every planet"
+	REJECTED "Printing it only when a planet carries a machine that may be submerged: the save"
+		+ "cannot tell a submerged machine from one on dry ground"
+		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT128
+	SOURCE "Owner review of the FEAT128 pull request"
+		PR 187
+	SOURCE "Owner review of 2026-09-26, comment r4111099239: the disclaimer becomes a limitation"
+		+ "notification"
+		PR 193
+
+DECISION ANotificationIsRenderedByTheNotificationComponent
+	SPEC "A message qualifying the figures of a section of the page is a notification, rendered by"
+		+ "the Notification component, never by a bare paragraph nor by a component of its own"
+		IMPL "packages/ui-save-manager/src/components/structure/Notification.tsx"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
+			+ "severity={notification.severity}>"
+	SPEC "The severity of a notification is decided by the presenter and carried by its ViewModel:"
+		+ "limitation for a limit of the tool, warning for a potential gap between the figures and"
+		+ "the game"
+		IMPL "packages/core-mapping/src/presentation/viewModels/NotificationViewModel.ts::NotificationSeverity"
+	SPEC "The Notification component takes the severity as a prop and draws its thick left border"
+		+ "and its surface from the tokens of colors.css: --limitation on --limitation-surface for"
+		+ "a limitation, --warning on --warning-surface for a warning"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification-limitation"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification-warning"
+	REJECTED "A Disclaimer component rendering every note alike in the warning colour: a limit of"
+		+ "the tool and a potential gap read the same"
+	REJECTED "A bare paragraph under the section title: it reads as ordinary text of the section"
+	REJECTED "A colour literal in the notification rule: it escapes the light and dark themes of"
+		+ "colors.css"
+	REJECTED "The severity chosen by the UI: the core-mapping presentation owns the message and"
+		+ "what it qualifies"
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT128
+	APPLIES_TO_TASK @TASK.FEAT126
+	SOURCE "Owner review of the FEAT128 pull request"
+		PR 187
+	SOURCE "Owner review of 2026-09-26, comment r4111099239: the disclaimer and the notes become"
+		+ "notifications of a generic component, severity limitation (purple) or warning set by the"
+		+ "ViewModel; two limitations and one warning, the game release, in the Power section"
+		PR 193
+
+DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
+	SPEC "the energy table holds the values of the last release of the releases table, one row per"
+		+ "world object"
+		IMPL "packages/core-mapping/src/domain/energyLevels.json"
+	SPEC "an earlier release whose values differ from those of the next newer table, or from the"
+		+ "energy table for the newest, has a table of its own, named by that release and holding"
+		+ "only the rows that differ; the table applies to its release and to every earlier one"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::divergingEnergyLevelsByRelease"
+		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
+			+ "hold in the table of %s only values that differ from the next newer table, or from"
+			+ "the energy table for the newest"
+		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
+			+ "name by %s a release of the releases table earlier than the last one"
+	SPEC "the energy of a displayed save takes the energy table, overwritten in cascade by every"
+		+ "table of a release no earlier than the one its declared version resolves to, from the"
+		+ "newest table to the oldest"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::selectRowsOfRelease"
+		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
+			+ "take for a save declaring %s the values of %s"
+	SPEC "a save declaring no version, or a version resolving to no release, takes the values of"
+		+ "the last release of the releases table"
+		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::??"
+			+ "CURRENT_FORMAT_RELEASE"
+		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
+			+ "take the values of the last release of the table"
+	SPEC "a row of the table of a release naming a world object the energy table does not hold is"
+		+ "refused by bun run validate:tables"
+		IMPL "scripts/validate-tables/schemas/energyLevelsOfRelease.schema.json::valueOfTable"
+		ENFORCED_BY "scripts/validate-tables/validate-tables.spec.ts::should report the row whose"
+			+ "value that column does not hold"
+	REJECTED "A fromRelease column in the energy table, one row per world object and release from"
+		+ "which its value holds: the table stops holding the values of one release, and reading it"
+		+ "sorts rows by release where overwriting one table by another is enough"
+	SPEC "the Power section names in a warning notification, under the submerged machines one, the"
+		+ "release whose values it applies when that release is earlier than the last of the"
+		+ "releases table, and names none for the last"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
+			+ "each={energyLevels().notifications}>"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "warn, under the submerged machines limitation, that the values are those of that"
+			+ "game release"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name no game release"
+		ENFORCED_BY "packages/ui-save-manager/e2e/display.e2e.ts::should name that game release in"
+			+ "a notification, under the submerged machines one"
+	REJECTED "Showing no energy for a save whose version resolves to no release: the values of the"
+		+ "last release are the ones the tool applied to every save until now"
+	REJECTED "Naming the release in the Power section for every save, the last release included, in"
+		+ "a paragraph closing the section: the values of the last release are the ones the reader"
+		+ "expects, and only an earlier release needs a warning"
+	REJECTED "A release list of its own for the energy values: the releases table is where a"
+		+ "declared version is resolved"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+	REJECTED "Recording in docs/energy-levels.md the search that dated the values: the values are"
+		+ "rows of JSON tables so that the document stops growing, each row carries its source, and"
+		+ "the search is the rationale of the task that made it"
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+	REJECTED "A table applying to its own release only, holding what that release diverges from the"
+		+ "energy table: a value that held over several releases is repeated in the table of each,"
+		+ "and a later change adds a row to every earlier table; 1.618 and 2.004 both carried"
+		+ "OreBreaker1 at 2.6 kW"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT129
+	RATIONALE "The save carries no energy value, so its declared version is the only sign of which"
+		+ "values apply"
+	SOURCE "Ruling taken on delivery of the task, 2026-09-26, then rewritten on the owner review of"
+		+ "2026-09-26: tables of the diverging values of a release instead of fromRelease, and"
+		+ "nothing more recorded in docs/energy-levels.md"
+		PR 189
+	SOURCE "Owner ruling of 2026-09-26, in chat, in reply to r4109337238: \"On applique en cascade."
+		+ "Donc pour le cas présent une seule table\"; the tables cascade, and 2.004, the newest"
+		+ "release where OreBreaker1 still drew 2.6 kW, carries the only one"
+		PR 189
+	SOURCE "Owner review of 2026-09-26, issue comment 5841144930: \"On devrait afficher"
+		+ "gameReleaseNote dans un disclaimer sous celui des submerged machines, et uniquement"
+		+ "lorsque la release est legacy, pour la current, pas de disclaimer\""
+		PR 189
+
+DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
+	SPEC "PlanetEnergyGrid multiplies each base consumption level by modifierPowerConsumption once,"
+		+ "and draws the consumption, the available energy and the consumption breakdown, unit and"
+		+ "total levels included, from the multiplied levels"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::consumptionLevels"
+		ENFORCED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should multiply the"
+			+ "unit and total level of each consumption breakdown entry"
+	SPEC "a save with no save configuration section consumes at modifier 1"
+		IMPL "packages/core-mapping/src/domain/powerConsumptionModifier.ts::UNMODIFIED_POWER_CONSUMPTION_MODIFIER"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadEnergyLevelsSection.spec.ts::should"
+			+ "charge the base consumption levels, the modifier being 1"
+	SPEC "the Power section names the modifier in a limitation notification, under the game release"
+		+ "one, when it is not 1, and names none at 1"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionPowerConsumptionModifierNotification("
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
+			+ "each={energyLevels().notifications}>"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name that modifier in a limitation, under the submerged machines one"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name that modifier under the game release warning"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name no modifier"
+	REJECTED "Multiplying the planet total alone, the breakdown keeping the base levels: its"
+		+ "entries would stop summing to the consumption shown above them"
+	REJECTED "Applying the modifier in the presenter: the available energy is computed in the"
+		+ "domain, and would stay on base levels"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT126
+	RESTS_ON @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
+	RATIONALE "The game multiplies the draw of each machine, so a breakdown entry shows what the"
+		+ "machine draws in that save; the energy table keeps the base levels the HUD prints at 1"
+	SOURCE "Ruling taken on delivery of the task, 2026-09-26"
+		PR 193

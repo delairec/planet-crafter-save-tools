@@ -10,10 +10,7 @@ import {
 import {createEnergyBreakdownEntryValueObject} from "./valueObjects/EnergyBreakdownEntryValueObject";
 import {createOptimizerValueObject, OptimizerValueObject} from "./valueObjects/OptimizerValueObject";
 import {createOptimizerBoostedMachineValueObject} from "./valueObjects/OptimizerBoostedMachineValueObject";
-import {
-  energyConsumptionLevelsByWorldObjectName,
-  energyProductionLevelsByWorldObjectName
-} from "./energyLevelsByWorldObjectName";
+import {EnergyLevelsOfRelease} from "./energyLevelsByWorldObjectName";
 import {ENERGY_FUSE_MULTIPLIER_PER_FUSE} from "./energyOptimizerConfig";
 import {computeEnergyBreakdown} from "./rules/computeEnergyBreakdown";
 
@@ -27,13 +24,21 @@ export class PlanetEnergyGrid {
   private readonly planet: PlanetWorldObjectsValueObject;
   private readonly boosts: readonly OptimizerBoost[];
   private readonly fuseCountByProducerId: Map<string, number>;
+  private readonly energyLevels: EnergyLevelsOfRelease;
+  private readonly consumptionLevels: EnergyLevelsOfRelease["consumption"];
 
   constructor(
     planet: PlanetWorldObjectsValueObject,
     allWorldObjects: readonly WorldObjectEntity[],
-    inventories: readonly InventoryEntity[]
+    inventories: readonly InventoryEntity[],
+    energyLevels: EnergyLevelsOfRelease,
+    powerConsumptionModifier: number
   ) {
     this.planet = planet;
+    this.energyLevels = energyLevels;
+    this.consumptionLevels = Object.fromEntries(
+      Object.entries(energyLevels.consumption).map(([name, level]) => [name, level * powerConsumptionModifier])
+    );
     this.boosts = PlanetEnergyGrid.collectBoosts(planet.placedWorldObjects, allWorldObjects, inventories);
     this.fuseCountByProducerId = PlanetEnergyGrid.countFusesByProducerId(this.boosts);
   }
@@ -49,7 +54,7 @@ export class PlanetEnergyGrid {
       consumption,
       available: production - consumption,
       productionBreakdown: this.productionBreakdown(production),
-      consumptionBreakdown: computeEnergyBreakdown(this.planet.placedWorldObjects, energyConsumptionLevelsByWorldObjectName),
+      consumptionBreakdown: computeEnergyBreakdown(this.planet.placedWorldObjects, this.consumptionLevels),
       optimizers: this.optimizers(production)
     });
   }
@@ -94,7 +99,7 @@ export class PlanetEnergyGrid {
 
   private production(): number {
     return this.planet.placedWorldObjects.reduce((total, worldObject) => {
-      const baseLevel = worldObject.energyProductionLevel;
+      const baseLevel = this.energyLevels.production[worldObject.name];
       if (baseLevel === undefined) {
         return total;
       }
@@ -107,11 +112,11 @@ export class PlanetEnergyGrid {
 
   private consumption(): number {
     return this.planet.placedWorldObjects
-      .reduce((total, worldObject) => total + (worldObject.energyConsumptionLevel ?? 0), 0);
+      .reduce((total, worldObject) => total + (this.consumptionLevels[worldObject.name] ?? 0), 0);
   }
 
   private productionBreakdown(production: number) {
-    return computeEnergyBreakdown(this.planet.placedWorldObjects, energyProductionLevelsByWorldObjectName)
+    return computeEnergyBreakdown(this.planet.placedWorldObjects, this.energyLevels.production)
       .map((entry) => createEnergyBreakdownEntryValueObject({
         name: entry.name,
         quantity: entry.quantity,
@@ -134,7 +139,7 @@ export class PlanetEnergyGrid {
           continue;
         }
 
-        const baseLevel = producer.energyProductionLevel ?? 0;
+        const baseLevel = this.energyLevels.production[producer.name] ?? 0;
         const totalBoost = baseLevel * (totalFuseCount * ENERGY_FUSE_MULTIPLIER_PER_FUSE - 1);
         contribution += totalBoost * (fuseCount / totalFuseCount);
       }
