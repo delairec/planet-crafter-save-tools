@@ -736,27 +736,43 @@ TASK DOCS88
 	DELIVERED_BY 122
 
 TASK CHORE91
-	TITLE "investigate axe-core in the ui-save-manager Playwright suite for a general accessibility"
-		+ "check"
-	STATUS draft
-	DESC "FIX53 added check:contrast, a static, catalog-driven WCAG contrast check limited to the"
-		+ "declared CSS custom properties of packages/ui-save-manager/src/styles/; it verifies"
-		+ "nothing else (non-text contrast, labels, roles, landmarks, focus order) and nothing"
-		+ "about how the DOM actually renders. Investigate whether @axe-core/playwright, run"
-		+ "against the existing e2e scenarios in both color schemes, is worth adding, without"
-		+ "opening a new test layer"
+	TITLE "investigate axe-core in the ui-save-manager scenarios, then deliver in the same pull"
+		+ "request the change the user picks from the findings"
+	STATUS todo
+	SPEC "the pull request body reports the violations @axe-core/playwright finds on the screens"
+		+ "the scenarios end on: every WCAG 2.0 and 2.1 A and AA rule in the light color scheme,"
+		+ "and the rules of its color category, color-contrast and link-in-text-block, in the dark"
+		+ "one"
+	SPEC "the pull request body reports what those rules check that check:contrast does not, and"
+		+ "the time they add to the scenario suite on each of the three engines"
+	SPEC "the change the user picks after reading that report is delivered in the same pull"
+		+ "request, and the report leaves the body once the change is in"
+	RATIONALE "check:contrast is static: it reads the stylesheets of packages/ui-save-manager/src"
+		+ "against a catalog of token pairs and sees nothing of the rendered DOM, so it cannot"
+		+ "check an accessible name, a label, an ARIA role, a landmark or the contrast actually"
+		+ "rendered; it stays whatever the finding, being the only check that sees a class no"
+		+ "markup uses. axe-core checks neither non-text contrast nor focus order."
+		+ "@axe-core/playwright 4.13.0 declares playwright-core >= 1.0 as its peer, the repository"
+		+ "carries @playwright/test ^1.63, and axe-core 4.13.0 counts 69 rules under the tags"
+		+ "wcag2a, wcag2aa, wcag21a and wcag21aa. The scenarios never set a color scheme and the"
+		+ "dark theme is only the prefers-color-scheme: dark block of colors.css, so no scenario"
+		+ "renders it today. Ruled with the user on 2026-09-26: the rules are WCAG 2.0 and 2.1 A"
+		+ "and AA, the floor of the catalog; the dark scheme replays only the rules tied to color,"
+		+ "the others not depending on the theme; a violation found on the current UI is fixed in"
+		+ "the same pull request, none excluded; the scans run inside the existing scenarios, never"
+		+ "in a new test layer. The findings go to the pull request body and the user picks the"
+		+ "change after reading them, so the task runs in an interactive session, never as an"
+		+ "unattended wave agent, like CHORE58"
 		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
 		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
-	SPEC "the task records whether @axe-core/playwright can run inside the existing"
-		+ "playwright.config.ts scenario suite"
-	SPEC "the task records which WCAG rules axe-core would add over check:contrast, and at what"
-		+ "run-time cost across the three engines"
-	SPEC "when the gain is worth it, a todo task carries the change; otherwise the reason is"
-		+ "written in this task"
+		REF @TASK.CHORE99
+		REF @TASK.CHORE58
 	SOURCE "FIX53's task DESC, PR 121"
 		PR 121
 		REF @TASK.FIX53
+	SOURCE "Owner ruling, 2026-09-26, refining CHORE91: investigation reported in the pull request"
+		+ "body, WCAG A and AA rules, color rules only in the dark scheme, violations fixed"
 
 TASK CHORE99
 	TITLE "Close the three gaps of the check:contrast guard"
