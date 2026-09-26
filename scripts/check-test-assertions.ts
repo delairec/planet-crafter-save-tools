@@ -1,3 +1,4 @@
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {maskStringLiterals, readOwnSpecFiles, reportViolations} from './specSources.ts';
 
 const EXPECT_CALL = 'expect(';
@@ -109,13 +110,13 @@ export function findFabricatedBooleanAssertions(source: string): FabricatedBoole
     .filter(({text}) => hasFabricatedBooleanAssertion(maskStringLiterals(text)));
 }
 
-async function checkSpecFiles(): Promise<number> {
+export async function checkSpecFiles(io: ScriptIo): Promise<void> {
   const violations: string[] = [];
-  for await (const {filePath, source} of readOwnSpecFiles()) {
+  for await (const {filePath, source} of readOwnSpecFiles(io)) {
     findFabricatedBooleanAssertions(source)
       .forEach(({line, text}) => violations.push(`${filePath}:${line}: ${text}`));
   }
-  return reportViolations({
+  reportViolations(io, {
     checkName: 'check:assertions',
     violations,
     nothingFound: 'no fabricated boolean assertion found.',
@@ -123,6 +124,4 @@ async function checkSpecFiles(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkSpecFiles());
-}
+await runAsEntryPoint(import.meta.main, checkSpecFiles);

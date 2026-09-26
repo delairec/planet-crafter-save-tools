@@ -19,3 +19,16 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog
 		REF @GAME_RELEASE.2.102
+
+OPEN_QUESTION TheUnusableMergedSaveOutcomeIsReachedByNoSave
+	DESC "whether the unusable merged save outcome, which MergeSaveFiles presents when a save that"
+		+ "passed validation still carries a parse error, is deleted from the use case, the"
+		+ "presenter, the view model, the UI and the CLI, every parse error being a validation"
+		+ "error already"
+	BLOCKS @TASK.TEST123
+	RATIONALE "initMergeCli.js lines 87-88 and renderMergeCliOutput.js line 145 are the only lines"
+		+ "bun test --coverage reports unexecuted once TEST123 is delivered; deleting them alone"
+		+ "would let the CLI write the empty content of a failed merge, and deleting the outcome"
+		+ "changes core-mapping beyond a test task"
+	SOURCE "Delivery of TEST123"
+		PR 197

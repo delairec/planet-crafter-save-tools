@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {findIdiomViolations, isSolidComponentFile} from './check-solid-idioms.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
+import {checkSolidIdioms, findIdiomViolations, isSolidComponentFile} from './check-solid-idioms.ts';
 
 const DESTRUCTURED_PROPS_REASON = 'a component reads its props through the props object, never destructured in its signature';
 const ASSERTED_ACCESSOR_REASON = 'an accessor is bound by the callback form of Show, never asserted non-null';
@@ -163,6 +164,52 @@ describe('findIdiomViolations', () => {
 
       // Assert
       expect(violations).toEqual([]);
+    });
+  });
+});
+
+describe('checkSolidIdioms', () => {
+
+  describe('When every component reads its props through the props object', () => {
+    it('should print that nothing was found and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/ui-save-manager/src/components/FieldsGroup.tsx': 'export default function FieldsGroup(props: FieldsGroupProps) {'
+        }
+      });
+
+      // Act
+      await checkSolidIdioms(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:idioms: no component breaks a Solid idiom a line reading can tell apart.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a component destructures its props in its signature', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/ui-save-manager/src/components/FieldsGroup.tsx': 'export default function FieldsGroup({columns}: FieldsGroupProps) {'
+        }
+      });
+
+      // Act
+      await checkSolidIdioms(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'packages/ui-save-manager/src/components/FieldsGroup.tsx:1\n  a component reads its props through the props object, never destructured in its signature',
+          'check:idioms: 1 line(s) breaking a Solid idiom.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

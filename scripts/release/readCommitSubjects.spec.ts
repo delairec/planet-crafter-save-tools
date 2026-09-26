@@ -61,6 +61,16 @@ describe('readCommitSubjects', () => {
     });
   });
 
+  describe('When the version tag of the consumer is missing from the repository', () => {
+    it('should refuse with the reason git gives', () => {
+      // Act
+      const reading = () => readCommitSubjects({repositoryRoot, sinceTag: 'cli-merge-v1.0.0', paths: CONSUMER_PATHS});
+
+      // Assert
+      expect(reading).toThrow('cli-merge-v1.0.0..HEAD');
+    });
+  });
+
   describe('When a branch was merged into master', () => {
     it('should give the merge commit, not the commits of the branch', async () => {
       // Arrange

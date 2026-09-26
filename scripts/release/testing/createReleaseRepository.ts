@@ -1,3 +1,4 @@
+import {execFileSync} from 'node:child_process';
 import {copyFile, mkdir, mkdtemp, readdir, readFile, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {dirname, join} from 'node:path';
@@ -34,12 +35,7 @@ export async function createReleaseRepository(): Promise<ReleaseRepository> {
   const root = join(sandbox, 'work');
 
   function runGitIn(cwd: string, gitArguments: string[]): string {
-    const result = Bun.spawnSync(['git', ...gitArguments], {cwd});
-
-    if (result.exitCode !== 0) {
-      throw new Error(`git ${gitArguments.join(' ')} failed: ${result.stderr.toString().trim()}`);
-    }
-    return result.stdout.toString().trim();
+    return execFileSync('git', gitArguments, {cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']}).trim();
   }
 
   const runGit = (gitArguments: string[]) => runGitIn(root, gitArguments);

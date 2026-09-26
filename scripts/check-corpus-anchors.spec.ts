@@ -1,14 +1,11 @@
-import {afterEach, beforeEach, describe, expect, it} from 'bun:test';
-import {mkdir, mkdtemp, rm, writeFile} from 'node:fs/promises';
-import {tmpdir} from 'node:os';
-import {dirname, join} from 'node:path';
+import {beforeEach, describe, expect, it} from 'bun:test';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
 import {
   type AnchorFields,
+  checkCorpusAnchors,
   type CorpusAnchor,
   findCorpusAnchors,
-  findUntrackedCorpusAnchors,
-  readAnchorFields,
-  type UntrackedAnchor
+  readAnchorFields
 } from './check-corpus-anchors.ts';
 
 const TASK_SCHEMA = [
@@ -53,6 +50,23 @@ describe('readAnchorFields', () => {
 
       // Assert
       expect(anchorFields).toEqual(new Map([['SECTION', new Set(['ATTESTED_BY', 'SPEC > ATTESTED_BY'])]]));
+    });
+  });
+
+  describe('When a type includes a fieldset the corpus does not declare', () => {
+    it('should give the anchor fields the type declares itself, the inclusion adding none', () => {
+      // Arrange
+      const schema = [
+        'SCHEMA SECTION',
+        '\tINCLUDE @FIELDSET.Era',
+        '\tFIELD WITNESS anchor'
+      ].join('\n');
+
+      // Act
+      const anchorFields = readAnchorFields(schema);
+
+      // Assert
+      expect(anchorFields).toEqual(new Map([['SECTION', new Set(['WITNESS'])]]));
     });
   });
 
@@ -195,82 +209,78 @@ describe('findCorpusAnchors', () => {
   });
 });
 
-describe('findUntrackedCorpusAnchors', () => {
-  let workspaceRoot: string;
-
-  const writeWorkspaceFile = async (path: string, content: string) => {
-    await mkdir(dirname(join(workspaceRoot, path)), {recursive: true});
-    await writeFile(join(workspaceRoot, path), content);
-  };
-
-  const trackInGit = (...paths: string[]) => {
-    Bun.spawnSync(['git', 'add', '--', ...paths], {cwd: workspaceRoot});
-  };
-
-  beforeEach(async () => {
-    workspaceRoot = await mkdtemp(join(tmpdir(), 'check-corpus-anchors-'));
-    Bun.spawnSync(['git', 'init', '--quiet'], {cwd: workspaceRoot});
-    await writeWorkspaceFile('docs/_schema.awawa', TASK_SCHEMA);
-    await writeWorkspaceFile('src/merge.spec.ts', 'export {};');
-    await writeWorkspaceFile('input/Test/save.json', '{}');
-  });
-
-  afterEach(async () => {
-    await rm(workspaceRoot, {recursive: true, force: true});
-  });
+describe('checkCorpusAnchors', () => {
 
   describe('When every anchor names a file or a directory git tracks', () => {
-    it('should report nothing', async () => {
+    it('should print that every anchor names a tracked path and exit with zero', async () => {
       // Arrange
-      await writeWorkspaceFile('docs/tasks.awawa', [
-        'TASK FIX45',
-        '\tSPEC "a criterion"',
-        '\t\tIMPL "src/merge.spec.ts::describe"',
-        '\t\tIMPL "src"'
-      ].join('\n'));
-      trackInGit('docs', 'src');
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'docs/_schema.awawa': TASK_SCHEMA,
+          'docs/tasks.awawa': 'TASK FIX45\n\tSPEC "a criterion"\n\t\tIMPL "src/merge.spec.ts::describe"\n\t\tIMPL "src"'
+        },
+        trackedFiles: ['docs/_schema.awawa', 'docs/tasks.awawa', 'src/merge.spec.ts']
+      });
 
       // Act
-      const untrackedAnchors = await findUntrackedCorpusAnchors(workspaceRoot);
+      await checkCorpusAnchors(io);
 
       // Assert
-      expect<UntrackedAnchor[]>(untrackedAnchors).toEqual([]);
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:anchors: every anchor of the corpus names a path git tracks.'],
+        exitCodes: [0]
+      });
     });
   });
 
   describe('When an anchor names a file that exists on disk but that git does not track', () => {
-    it('should report it with its file, its entity, its field and its path', async () => {
+    it('should print its file, its line, its entity, its field and its path, then the count, and exit with one', async () => {
       // Arrange
-      await writeWorkspaceFile('docs/tasks.awawa', [
-        'TASK FIX45',
-        '\tSPEC "a criterion"',
-        '\t\tIMPL "input/Test/save.json"'
-      ].join('\n'));
-      trackInGit('docs', 'src');
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'docs/_schema.awawa': TASK_SCHEMA,
+          'docs/tasks.awawa': 'TASK FIX45\n\tSPEC "a criterion"\n\t\tIMPL "input/Test/save.json"',
+          'input/Test/save.json': '{}'
+        },
+        trackedFiles: ['docs/_schema.awawa', 'docs/tasks.awawa']
+      });
 
       // Act
-      const untrackedAnchors = await findUntrackedCorpusAnchors(workspaceRoot);
+      await checkCorpusAnchors(io);
 
       // Assert
-      expect<UntrackedAnchor[]>(untrackedAnchors).toEqual([
-        {file: 'docs/tasks.awawa', entity: '@TASK.FIX45', field: 'SPEC > IMPL', path: 'input/Test/save.json', line: 3}
-      ]);
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'docs/tasks.awawa:3\n  @TASK.FIX45 SPEC > IMPL names input/Test/save.json, a path git does not track',
+          'check:anchors: 1 anchor(s) naming a path git does not track.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 
   describe('When an anchor names a path that does not exist at all', () => {
-    it('should report it the same way', async () => {
+    it('should print it the same way', async () => {
       // Arrange
-      await writeWorkspaceFile('docs/tasks.awawa', ['TASK FIX45', '\tMANIFEST "missing/package.json"'].join('\n'));
-      trackInGit('docs', 'src');
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'docs/_schema.awawa': TASK_SCHEMA,
+          'docs/tasks.awawa': 'TASK FIX45\n\tMANIFEST "missing/package.json"'
+        },
+        trackedFiles: ['docs/_schema.awawa', 'docs/tasks.awawa']
+      });
 
       // Act
-      const untrackedAnchors = await findUntrackedCorpusAnchors(workspaceRoot);
+      await checkCorpusAnchors(io);
 
       // Assert
-      expect<UntrackedAnchor[]>(untrackedAnchors).toEqual([
-        {file: 'docs/tasks.awawa', entity: '@TASK.FIX45', field: 'MANIFEST', path: 'missing/package.json', line: 2}
-      ]);
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'docs/tasks.awawa:2\n  @TASK.FIX45 MANIFEST names missing/package.json, a path git does not track',
+          'check:anchors: 1 anchor(s) naming a path git does not track.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

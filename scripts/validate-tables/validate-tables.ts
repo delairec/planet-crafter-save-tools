@@ -1,6 +1,8 @@
 import Ajv from 'ajv';
-import fs from 'node:fs/promises';
 import path from 'node:path';
+import {runAsEntryPoint, type ScriptIo} from '../scriptIo.ts';
+
+export const TABLE_SCHEMAS_DIRECTORY = path.join(import.meta.dir, 'schemas');
 
 export interface TableViolation {
   table: string;
@@ -31,24 +33,22 @@ export function findTableViolations(table: string, rows: unknown, schema: object
   }));
 }
 
-export async function validateTables(tableStems: string[], schemaDirectory: string): Promise<number> {
+export async function validateTables(io: ScriptIo): Promise<void> {
   let exitCode = 0;
-  for (const stem of tableStems) {
-    const rowsContent = await fs.readFile(`${stem}.json`, 'utf8');
-    const schemaContent = await fs.readFile(path.join(schemaDirectory, `${path.basename(stem)}.schema.json`), 'utf8');
+  for (const stem of io.commandLineArguments) {
+    const rowsContent = await io.readText(`${stem}.json`);
+    const schemaContent = await io.readText(path.join(TABLE_SCHEMAS_DIRECTORY, `${path.basename(stem)}.schema.json`));
     const rows = JSON.parse(rowsContent);
     const schema = JSON.parse(schemaContent);
     const violations = findTableViolations(stem, rows, schema);
     for (const violation of violations) {
-      console.error(`${stem}.json row ${violation.row}: ${violation.message}`);
+      io.printError(`${stem}.json row ${violation.row}: ${violation.message}`);
     }
     if (violations.length > 0) {
       exitCode = 1;
     }
   }
-  return exitCode;
+  io.exit(exitCode);
 }
 
-if (import.meta.main) {
-  process.exit(await validateTables(process.argv.slice(2), path.join(import.meta.dir, 'schemas')));
-}
+await runAsEntryPoint(import.meta.main, validateTables);

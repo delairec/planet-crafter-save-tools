@@ -1,8 +1,6 @@
-import {afterEach, beforeEach, describe, expect, it} from 'bun:test';
-import fs from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
-import {findTableViolations, TableViolation, validateTables} from './validate-tables.ts';
+import {describe, expect, it} from 'bun:test';
+import {createFakeScriptIo} from '../testing/createFakeScriptIo.ts';
+import {findTableViolations, TABLE_SCHEMAS_DIRECTORY, TableViolation, validateTables} from './validate-tables.ts';
 
 const planetSchema = {
   type: 'array',
@@ -61,43 +59,45 @@ describe('findTableViolations', () => {
 });
 
 describe('validateTables', () => {
-  let directory: string;
-  let schemaDirectory: string;
-
-  beforeEach(async () => {
-    directory = await fs.mkdtemp(path.join(os.tmpdir(), 'validate-tables-'));
-    schemaDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'validate-tables-schemas-'));
-    await fs.writeFile(path.join(schemaDirectory, 'planets.schema.json'), JSON.stringify(planetSchema));
-  });
-
-  afterEach(async () => {
-    await fs.rm(directory, {recursive: true, force: true});
-    await fs.rm(schemaDirectory, {recursive: true, force: true});
-  });
 
   describe('When every row of the table meets the schema of its name in the schema directory', () => {
-    it('should exit with zero', async () => {
+    it('should print nothing and exit with zero', async () => {
       // Arrange
-      await fs.writeFile(path.join(directory, 'planets.json'), JSON.stringify([{numericId: 1, planetName: 'Prime'}]));
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
+        commandLineArguments: ['src/domain/planets'],
+        files: {
+          'src/domain/planets.json': '[{"numericId": 1, "planetName": "Prime"}]',
+          [`${TABLE_SCHEMAS_DIRECTORY}/planets.schema.json`]: JSON.stringify(planetSchema)
+        }
+      });
 
       // Act
-      const exitCode = await validateTables([path.join(directory, 'planets')], schemaDirectory);
+      await validateTables(io);
 
       // Assert
-      expect(exitCode).toBe(0);
+      expect({printedErrors, exitCodes}).toEqual({printedErrors: [], exitCodes: [0]});
     });
   });
 
   describe('When a row of the table breaks the schema of its name in the schema directory', () => {
-    it('should exit with a non-zero code', async () => {
+    it('should print the table, the row and the rule it breaks, and exit with one', async () => {
       // Arrange
-      await fs.writeFile(path.join(directory, 'planets.json'), JSON.stringify([{numericId: 'one', planetName: 'Prime'}]));
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
+        commandLineArguments: ['src/domain/planets'],
+        files: {
+          'src/domain/planets.json': '[{"numericId": "one", "planetName": "Prime"}]',
+          [`${TABLE_SCHEMAS_DIRECTORY}/planets.schema.json`]: JSON.stringify(planetSchema)
+        }
+      });
 
       // Act
-      const exitCode = await validateTables([path.join(directory, 'planets')], schemaDirectory);
+      await validateTables(io);
 
       // Assert
-      expect(exitCode).toBe(1);
+      expect({printedErrors, exitCodes}).toEqual({
+        printedErrors: [expect.stringContaining('src/domain/planets.json row 0: /0/numericId')],
+        exitCodes: [1]
+      });
     });
   });
 });

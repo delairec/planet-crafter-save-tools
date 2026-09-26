@@ -1,7 +1,8 @@
 import {describe, expect, it} from 'bun:test';
 import {displayRouteLoadingLabel} from '../packages/ui-save-manager/src/messages/displayRouteMessages.js';
 import {spinnerLoadingLabel} from '../packages/ui-save-manager/src/messages/spinnerMessages.js';
-import {AMBIGUOUS_BUSY_LABEL, findScenarioLocatorViolations, isScenarioFile} from './check-scenario-locators.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
+import {AMBIGUOUS_BUSY_LABEL, checkScenarioLocators, findScenarioLocatorViolations, isScenarioFile} from './check-scenario-locators.ts';
 
 const TEST_IDENTIFIER_REASON = 'a scenario designates an element by what the screen shows, never by a test identifier';
 const CSS_SELECTOR_REASON = 'a scenario designates an element by its role, its label or its text, never by a CSS selector';
@@ -261,6 +262,52 @@ describe('findScenarioLocatorViolations', () => {
 
       // Assert
       expect(violations).toEqual([]);
+    });
+  });
+});
+
+describe('checkScenarioLocators', () => {
+
+  describe('When every scenario designates an element by what the screen shows', () => {
+    it('should print that nothing was found and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/ui-save-manager/e2e/merge.e2e.ts': "await expect(page.getByRole('button', {name: 'Merge'})).toBeVisible();"
+        }
+      });
+
+      // Act
+      await checkScenarioLocators(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:locators: no scenario designates an element by something other than what the screen shows.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a scenario designates an element by a test identifier', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/ui-save-manager/e2e/merge.e2e.ts': "await expect(page.getByTestId('merge-button')).toBeVisible();"
+        }
+      });
+
+      // Act
+      await checkScenarioLocators(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'packages/ui-save-manager/e2e/merge.e2e.ts:1\n  a scenario designates an element by what the screen shows, never by a test identifier',
+          'check:locators: 1 line(s) designating an element by something other than what the screen shows.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

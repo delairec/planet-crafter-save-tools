@@ -1,5 +1,4 @@
-import {Glob} from 'bun';
-import {join} from 'node:path';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {isOwnSourceFile, reportViolations} from './specSources.ts';
 
 const COLORS_FILE_PATH = 'packages/ui-save-manager/src/styles/colors.css';
@@ -320,26 +319,26 @@ export function findUncataloguedForegroundDeclarations(source: string, filePath:
  * @returns every foreground violation of the stylesheets of `packages/ui-save-manager/src/`, generated ones excluded,
  * each cited by its path relative to the workspace root
  */
-export async function findForegroundViolationsInStylesheets(workspaceRoot: string): Promise<string[]> {
+async function findForegroundViolationsInStylesheets(io: ScriptIo): Promise<string[]> {
   const violations: string[] = [];
-  for await (const filePath of new Glob(STYLESHEET_FILES_PATTERN).scan({cwd: workspaceRoot})) {
+  for await (const filePath of io.scanFiles(STYLESHEET_FILES_PATTERN)) {
     if (!isOwnSourceFile(filePath)) {
       continue;
     }
-    const source = await Bun.file(join(workspaceRoot, filePath)).text();
+    const source = await io.readText(filePath);
     violations.push(...findUncataloguedForegroundDeclarations(source, filePath, TOKEN_PAIRS));
   }
   return violations;
 }
 
-async function checkColorContrast(): Promise<number> {
-  const tokens = parseColorTokens(await Bun.file(COLORS_FILE_PATH).text());
+export async function checkColorContrast(io: ScriptIo): Promise<void> {
+  const tokens = parseColorTokens(await io.readText(COLORS_FILE_PATH));
   const violations = [
     ...findContrastViolations(TOKEN_PAIRS, tokens, MINIMUM_CONTRAST_RATIO),
-    ...await findForegroundViolationsInStylesheets(process.cwd())
+    ...await findForegroundViolationsInStylesheets(io)
   ];
 
-  return reportViolations({
+  reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
     nothingFound: 'every catalogued text/background pair meets WCAG 2.1 AA (4.5:1) in both themes.',
@@ -347,6 +346,4 @@ async function checkColorContrast(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkColorContrast());
-}
+await runAsEntryPoint(import.meta.main, checkColorContrast);

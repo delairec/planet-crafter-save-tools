@@ -1,9 +1,7 @@
-import {readdir} from 'node:fs/promises';
-import {join} from 'node:path';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {reportViolations} from './specSources.ts';
 
-const WORKFLOWS_DIRECTORY = '.github/workflows';
-const WORKFLOW_FILE = /\.ya?ml$/;
+const WORKFLOW_FILES_PATTERN = '.github/workflows/*.{yml,yaml}';
 const USES_LINE = /^\s*(?:-\s+)?uses:\s*(['"]?)([^\s'"#]+)\1\s*(?:#\s*(\S.*))?$/;
 const LOCAL_ACTION = './';
 const PINNED_ON_COMMIT_SHA = /@[0-9a-f]{40}$/;
@@ -54,28 +52,27 @@ export function findUnpinnedActions(workflows: WorkflowFile[]): string[] {
 }
 
 /**
+ * @param {ScriptIo} io the file system the workflows are read from
  * @returns the path and the content of every workflow file of the repository
  */
-async function readWorkflowFiles(): Promise<WorkflowFile[]> {
-  const fileNames = (await readdir(WORKFLOWS_DIRECTORY)).filter(fileName => WORKFLOW_FILE.test(fileName)).sort();
-  return Promise.all(fileNames.map(async fileName => {
-    const filePath = join(WORKFLOWS_DIRECTORY, fileName);
-    return {filePath, source: await Bun.file(filePath).text()};
-  }));
+async function readWorkflowFiles(io: ScriptIo): Promise<WorkflowFile[]> {
+  const filePaths: string[] = [];
+  for await (const filePath of io.scanFiles(WORKFLOW_FILES_PATTERN)) {
+    filePaths.push(filePath);
+  }
+  return Promise.all(filePaths.sort().map(async filePath => ({filePath, source: await io.readText(filePath)})));
 }
 
 /**
- * @returns the exit code of the guard, once its report is printed
+ * @param {ScriptIo} io the input and output of the guard
  */
-async function checkActionPins(): Promise<number> {
-  return reportViolations({
+export async function checkActionPins(io: ScriptIo): Promise<void> {
+  reportViolations(io, {
     checkName: CHECK_NAME,
-    violations: findUnpinnedActions(await readWorkflowFiles()),
+    violations: findUnpinnedActions(await readWorkflowFiles(io)),
     nothingFound: 'every action the workflows use is pinned on a commit SHA with its version.',
     summarize: count => `${count} action reference(s) not pinned on a commit SHA with its version.`
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkActionPins());
-}
+await runAsEntryPoint(import.meta.main, checkActionPins);
