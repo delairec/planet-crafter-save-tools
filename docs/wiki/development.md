@@ -165,6 +165,16 @@ Fails on any `uses:` of `.github/workflows/` that names a tag, a branch or an ab
 included, and some of those actions receive secrets; a commit SHA cannot be moved. Dependabot keeps proposing their
 updates, rewriting the SHA and the version comment together. A local action (`./…`) names no ref and is not checked.
 
+```
+bun run check:package-scripts
+```
+
+Fails on any script of the root manifest or of a workspace package that runs `bun` with `--cwd`, and on any script of
+a `cli-` package that names the entry point its manifest declares under `main`. The root scripts are the only entry of
+a command: `bun merge`, `bun validate` and their `node:` forms run the entry point from the repository root, so a
+package script doing the same would duplicate them, and a path written relative to another directory than the one
+the script runs from breaks as soon as it is run from its own.
+
 ## Save Manager UI
 
 ```
