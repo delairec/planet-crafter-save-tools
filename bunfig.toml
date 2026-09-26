@@ -13,4 +13,10 @@ preload = ["./testSetup.ts"]
 # (@DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule).
 # The figure finds use cases no test covers, it is not the aim: a line under the threshold is brought back by a
 # test asserting the outcome of the use case it serves, never by a test that only executes it.
-coverageThreshold = { lines = 0.29, functions = 0.0 }
+# Lines alone: Bun counts a class as a function no call reaches, so a function threshold would gate an artefact,
+# and an uncalled function whose body holds a line already fails the line threshold. functions = 0.0 is that
+# absence of a gate, written out: a key left out of the table is gated by Bun at 0.9 (measured, Bun 1.4.2).
+coverageThreshold = { lines = 1.0, functions = 0.0 }
+# Only a module holding the real input and output of a script is left out: its main function receives that input and
+# output and is tested on a fake (@DECISION.AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter).
+coveragePathIgnorePatterns = ["scripts/runAsEntryPointWith.ts", "scripts/scriptIo.ts", "packages/core-mapping/scripts/sectionValidatorsFile.ts"]

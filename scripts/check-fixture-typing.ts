@@ -1,3 +1,4 @@
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {maskStringLiterals, readOwnSpecFiles, reportViolations} from './specSources.ts';
 
 const TYPE_ASSERTED_AWAY = /\bas\s+(?:unknown|never)\b/;
@@ -44,13 +45,13 @@ export function findFixtureTypingViolations(source: string): FixtureTypingViolat
     .filter((violation): violation is FixtureTypingViolation => violation.reason !== null);
 }
 
-async function checkSpecFiles(): Promise<number> {
+export async function checkSpecFiles(io: ScriptIo): Promise<void> {
   const violations: string[] = [];
-  for await (const {filePath, source} of readOwnSpecFiles()) {
+  for await (const {filePath, source} of readOwnSpecFiles(io)) {
     findFixtureTypingViolations(source)
       .forEach(({line, text, reason}) => violations.push(`${filePath}:${line}: ${text}\n  ${reason}`));
   }
-  return reportViolations({
+  reportViolations(io, {
     checkName: 'check:fixtures',
     violations,
     nothingFound: 'no untyped test fixture found.',
@@ -58,6 +59,4 @@ async function checkSpecFiles(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkSpecFiles());
-}
+await runAsEntryPoint(import.meta.main, checkSpecFiles);

@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {findUnadmittedJsonParseCalls, isProductionSourceFile} from './check-save-line-reader.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
+import {checkSaveLineReader, findUnadmittedJsonParseCalls, isProductionSourceFile} from './check-save-line-reader.ts';
 
 const PARSER_MODULE = 'packages/shared-save-processing/parseSaveSections.js';
 
@@ -185,6 +186,53 @@ describe('findUnadmittedJsonParseCalls', () => {
 
       // Assert
       expect(lines).toEqual([]);
+    });
+  });
+});
+
+describe('checkSaveLineReader', () => {
+
+  describe('When only the admitted parser module calls JSON.parse', () => {
+    it('should print that nothing was found and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/shared-save-processing/parseSaveSections.js': 'return JSON.parse(line, keepInt64IdentifierText);',
+          'packages/cli-validate/src/readPlayers.js': 'const players = parseSaveSections(content);'
+        }
+      });
+
+      // Act
+      await checkSaveLineReader(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:save-line-reader: no production module calls JSON.parse outside packages/shared-save-processing/parseSaveSections.js.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When another production module calls JSON.parse', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/cli-validate/src/readPlayers.js': 'const players = JSON.parse(line);'
+        }
+      });
+
+      // Act
+      await checkSaveLineReader(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'packages/cli-validate/src/readPlayers.js:1\n  a save line reaches JSON.parse through packages/shared-save-processing/parseSaveSections.js alone; parse through parseSaveSections instead',
+          'check:save-line-reader: 1 JSON.parse call(s) outside packages/shared-save-processing/parseSaveSections.js.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

@@ -1,4 +1,4 @@
-import {Glob} from 'bun';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {maskStringLiterals, reportViolations} from './specSources.ts';
 
 const COMPONENT_FILES_PATTERN = 'packages/*/**/*.tsx';
@@ -41,16 +41,16 @@ export function findIdiomViolations(source: string): IdiomViolation[] {
   });
 }
 
-async function checkSolidIdioms(): Promise<number> {
+export async function checkSolidIdioms(io: ScriptIo): Promise<void> {
   const violations: string[] = [];
-  for await (const filePath of new Glob(COMPONENT_FILES_PATTERN).scan({cwd: process.cwd()})) {
+  for await (const filePath of io.scanFiles(COMPONENT_FILES_PATTERN)) {
     if (!isSolidComponentFile(filePath)) {
       continue;
     }
-    findIdiomViolations(await Bun.file(filePath).text())
+    findIdiomViolations(await io.readText(filePath))
       .forEach(({line, reason}) => violations.push(`${filePath}:${line}\n  ${reason}`));
   }
-  return reportViolations({
+  reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
     nothingFound: 'no component breaks a Solid idiom a line reading can tell apart.',
@@ -58,6 +58,4 @@ async function checkSolidIdioms(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkSolidIdioms());
-}
+await runAsEntryPoint(import.meta.main, checkSolidIdioms);

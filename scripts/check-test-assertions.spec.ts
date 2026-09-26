@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {findFabricatedBooleanAssertions} from './check-test-assertions.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
+import {checkSpecFiles, findFabricatedBooleanAssertions} from './check-test-assertions.ts';
 
 describe('findFabricatedBooleanAssertions', () => {
 
@@ -233,3 +234,48 @@ describe('findFabricatedBooleanAssertions', () => {
   });
 });
 
+describe('checkSpecFiles', () => {
+
+  describe('When every spec of the repository applies its matcher to the value itself', () => {
+    it('should print that nothing was found and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/core-mapping/src/mergePlayers.spec.ts': 'expect(result.errors).toEqual([]);'
+        }
+      });
+
+      // Act
+      await checkSpecFiles(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:assertions: no fabricated boolean assertion found.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a spec applies its matcher to a boolean built from the value', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/core-mapping/src/mergePlayers.spec.ts': 'expect(result.errors).toEqual([]);\nexpect(result.errors.length > 0).toBeTruthy();'
+        }
+      });
+
+      // Act
+      await checkSpecFiles(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'packages/core-mapping/src/mergePlayers.spec.ts:2: expect(result.errors.length > 0).toBeTruthy();',
+          'check:assertions: 1 fabricated boolean assertion(s); apply the matcher to the value itself.'
+        ],
+        exitCodes: [1]
+      });
+    });
+  });
+});

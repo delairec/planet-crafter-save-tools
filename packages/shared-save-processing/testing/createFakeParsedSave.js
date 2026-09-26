@@ -3,16 +3,12 @@
 import {createGlobalMetadata} from './createSaveRecords.js';
 import {CURRENT_FORMAT_RELEASE} from '../gameReleases.js';
 
-/** @returns {Generator<never>} */
-function* createEmptyGenerator() {
-}
-
 /**
  * @typedef {Object} FakeParsedSaveOptions
  * @property {GlobalMetadata[]} [globalMetadata]
  * @property {TerraformationLevel[]} [terraformationLevels]
  * @property {Player[]} [players]
- * @property {() => Generator<WorldObject>} [worldObjects]
+ * @property {() => Generator<WorldObject>} worldObjects - the lazily read section, given by every caller
  * @property {Inventory[]} [inventories]
  * @property {Statistics[]} [statistics]
  * @property {MailboxMessage[]} [mailboxes]
@@ -26,14 +22,14 @@ function* createEmptyGenerator() {
 /**
  * Creates a fake parsed save (see `ParsedSave`) with one override per section, in business
  * language rather than raw section indexes.
- * @param {FakeParsedSaveOptions} [options]
+ * @param {FakeParsedSaveOptions} options
  * @returns {ParsedSave}
  */
 export function createFakeParsedSave({
   globalMetadata = [createGlobalMetadata()],
   terraformationLevels = [],
   players = [],
-  worldObjects = () => createEmptyGenerator(),
+  worldObjects,
   inventories = [],
   statistics = [],
   mailboxes = [],
@@ -42,7 +38,7 @@ export function createFakeParsedSave({
   worldEvents = [],
   errors = [],
   warnings = []
-} = {}) {
+}) {
   return {
     formatRelease: CURRENT_FORMAT_RELEASE,
     errors,

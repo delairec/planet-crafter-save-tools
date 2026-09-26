@@ -39,7 +39,8 @@ function hasReport({saveAWarnings, saveBWarnings, mergeErrors, mergeWarnings}) {
   return [saveAWarnings, saveBWarnings, mergeErrors, mergeWarnings].some(messages => messages.length > 0);
 }
 
-export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = [], release) {
+// The last parameter is the merge of two saves: the controller of core-mapping, unless a test hands its own.
+export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = [], release, mergeSaveFiles = MergeSaveFilesController.mergeSaveFiles) {
   const {inputDir, outputDir, preferLegacyFormat, isVersionAsked, isHelpAsked, unknownArguments} = parseMergeCliArguments(argv);
 
   /**
@@ -67,7 +68,7 @@ export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTex
     const [fileNameA, fileNameB] = saveFileNames;
     const folderPath = joinPath(inputDir, folder);
 
-    const viewModel = await MergeSaveFilesController.mergeSaveFiles({
+    const viewModel = await mergeSaveFiles({
       fileNameA,
       contentA: await readTextFile(joinPath(folderPath, fileNameA)),
       fileNameB,

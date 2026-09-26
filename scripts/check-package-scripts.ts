@@ -1,5 +1,5 @@
-import {Glob} from 'bun';
 import {basename, dirname} from 'node:path';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {reportViolations} from './specSources.ts';
 
 const ROOT_MANIFEST_PATH = 'package.json';
@@ -54,31 +54,30 @@ export function findPackageScriptViolations(manifests: ManifestScripts[]): strin
 }
 
 /**
+ * @param {ScriptIo} io the file system the manifests are read from
  * @returns the path, the entry point and the scripts of every manifest of the repository
  */
-async function readManifests(): Promise<ManifestScripts[]> {
+async function readManifests(io: ScriptIo): Promise<ManifestScripts[]> {
   const manifestPaths = [ROOT_MANIFEST_PATH];
-  for await (const manifestPath of new Glob(PACKAGE_MANIFESTS_PATTERN).scan({cwd: process.cwd()})) {
+  for await (const manifestPath of io.scanFiles(PACKAGE_MANIFESTS_PATTERN)) {
     manifestPaths.push(manifestPath);
   }
   return Promise.all(manifestPaths.sort().map(async manifestPath => {
-    const {main, scripts = {}} = await Bun.file(manifestPath).json();
+    const {main, scripts = {}} = JSON.parse(await io.readText(manifestPath));
     return {manifestPath, main, scripts};
   }));
 }
 
 /**
- * @returns the exit code of the guard, once its report is printed
+ * @param {ScriptIo} io the input and output of the guard
  */
-async function checkPackageScripts(): Promise<number> {
-  return reportViolations({
+export async function checkPackageScripts(io: ScriptIo): Promise<void> {
+  reportViolations(io, {
     checkName: CHECK_NAME,
-    violations: findPackageScriptViolations(await readManifests()),
+    violations: findPackageScriptViolations(await readManifests(io)),
     nothingFound: 'no script runs bun with --cwd, and no cli- package script runs its entry point.',
     summarize: count => `${count} script(s) breaking the rules of the package scripts.`
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkPackageScripts());
-}
+await runAsEntryPoint(import.meta.main, checkPackageScripts);

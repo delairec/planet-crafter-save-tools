@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {findPackageScriptViolations, type ManifestScripts} from './check-package-scripts.ts';
+import {checkPackageScripts, findPackageScriptViolations, type ManifestScripts} from './check-package-scripts.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
 
 describe('findPackageScriptViolations', () => {
 
@@ -83,6 +84,54 @@ describe('findPackageScriptViolations', () => {
 
       // Assert
       expect(violations).toEqual([]);
+    });
+  });
+});
+
+describe('checkPackageScripts', () => {
+
+  describe('When the root manifest runs the entry points and every package script runs from its own directory', () => {
+    it('should print that no script breaks the rules and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'package.json': '{"scripts": {"merge": "bun packages/cli-merge/cli/merge-cli.js"}}',
+          'packages/cli-merge/package.json': '{"main": "cli/merge-cli.js", "scripts": {"test": "bun test"}}'
+        }
+      });
+
+      // Act
+      await checkPackageScripts(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:package-scripts: no script runs bun with --cwd, and no cli- package script runs its entry point.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a cli- package script runs its own entry point', () => {
+    it('should print the script and the entry point, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'package.json': '{"scripts": {"merge": "bun packages/cli-merge/cli/merge-cli.js"}}',
+          'packages/cli-merge/package.json': '{"main": "cli/merge-cli.js", "scripts": {"merge": "bun cli/merge-cli.js"}}'
+        }
+      });
+
+      // Act
+      await checkPackageScripts(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'packages/cli-merge/package.json scripts.merge runs the entry point cli/merge-cli.js, which only the root scripts run',
+          'check:package-scripts: 1 script(s) breaking the rules of the package scripts.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

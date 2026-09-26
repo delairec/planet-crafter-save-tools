@@ -1,4 +1,5 @@
-import {Glob} from 'bun';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
+import {reportViolations} from './specSources.ts';
 
 const MANIFEST_FILES_PATTERN = 'packages/*/package.json';
 const SOURCE_FILES_PATTERN = 'packages/*/**/*.{js,ts,tsx}';
@@ -195,10 +196,10 @@ function extractPackageDirectory(filePath: string): string {
   return filePath.split('/').slice(0, 2).join('/');
 }
 
-async function readWorkspacePackages(): Promise<WorkspacePackage[]> {
+async function readWorkspacePackages(io: ScriptIo): Promise<WorkspacePackage[]> {
   const packages: WorkspacePackage[] = [];
-  for await (const manifestPath of new Glob(MANIFEST_FILES_PATTERN).scan({cwd: process.cwd()})) {
-    const manifest: PackageManifest = await Bun.file(manifestPath).json();
+  for await (const manifestPath of io.scanFiles(MANIFEST_FILES_PATTERN)) {
+    const manifest: PackageManifest = JSON.parse(await io.readText(manifestPath));
     packages.push({
       name: manifest.name,
       manifestPath,
@@ -209,35 +210,35 @@ async function readWorkspacePackages(): Promise<WorkspacePackage[]> {
 }
 
 /**
+ * @param {ScriptIo} io the file system the sources are read from
  * @param {WorkspacePackage[]} packages every workspace package with its declared dependencies
  */
-async function readPackageImports(packages: WorkspacePackage[]): Promise<PackageImport[]> {
+async function readPackageImports(io: ScriptIo, packages: WorkspacePackage[]): Promise<PackageImport[]> {
   const packageNameByDirectory = new Map(packages.map(workspacePackage => [extractPackageDirectory(workspacePackage.manifestPath), workspacePackage.name]));
   const imports: PackageImport[] = [];
-  for await (const filePath of new Glob(SOURCE_FILES_PATTERN).scan({cwd: process.cwd()})) {
+  for await (const filePath of io.scanFiles(SOURCE_FILES_PATTERN)) {
     const packageName = packageNameByDirectory.get(extractPackageDirectory(filePath));
     if (!packageName || GENERATED_DIRECTORY.test(filePath)) {
       continue;
     }
-    const source = await Bun.file(filePath).text();
+    const source = await io.readText(filePath);
     findImportedPackages(source).forEach(({line, specifier}) => imports.push({packageName, filePath, line, specifier}));
   }
   return imports.sort((first, second) => first.filePath.localeCompare(second.filePath) || first.line - second.line);
 }
 
-async function checkPackageDependencies(): Promise<number> {
-  const packages = await readWorkspacePackages();
-  const imports = await readPackageImports(packages);
-  const violations = findViolations(packages, imports, DEPENDENCY_MATRIX);
-  if (violations.length === 0) {
-    console.log('check:dependencies: no dependency matrix violation found.');
-    return 0;
-  }
-  violations.forEach(({location, message}) => console.log(`${location}: ${message}`));
-  console.log(`check:dependencies: ${violations.length} dependency matrix violation(s); see the dependency matrix in docs/wiki/architecture.md.`);
-  return 1;
+/**
+ * @param {ScriptIo} io the input and output of the guard
+ */
+export async function checkPackageDependencies(io: ScriptIo): Promise<void> {
+  const packages = await readWorkspacePackages(io);
+  const imports = await readPackageImports(io, packages);
+  reportViolations(io, {
+    checkName: 'check:dependencies',
+    violations: findViolations(packages, imports, DEPENDENCY_MATRIX).map(({location, message}) => `${location}: ${message}`),
+    nothingFound: 'no dependency matrix violation found.',
+    summarize: count => `${count} dependency matrix violation(s); see the dependency matrix in docs/wiki/architecture.md.`
+  });
 }
 
-if (import.meta.main) {
-  process.exit(await checkPackageDependencies());
-}
+await runAsEntryPoint(import.meta.main, checkPackageDependencies);
