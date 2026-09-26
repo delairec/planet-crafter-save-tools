@@ -2,8 +2,7 @@
 
 ## 0.1.1 — 2026-09-26
 
-- feat(cli-validate): print no empty line after the error count of an invalid save (#182)
-- feat(core-mapping): update the core engine shared by the tools (#176)
+- Core engine updated
 
 ## 0.1.0 — 2026-09-24
 
