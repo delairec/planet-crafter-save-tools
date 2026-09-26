@@ -1529,3 +1529,33 @@ TASK FEAT128
 	SOURCE "Owner request of 2026-09-25, after the in-game reading that found submerged machines on"
 		+ "Prime, to record the warning as a draft task in this pull request"
 		PR 178
+
+TASK CHORE130
+	TITLE "Write a generic changelog line for what a tool receives from its dependencies"
+	STATUS draft
+	DESC "drafted from the review of pull request 199, not yet refined: what counts as a commit of"
+		+ "the tool itself and how the generic line is worded are settled when the task is refined"
+	SPEC "a feat, fix or breaking commit that changes no path of the directory of a tool is never"
+		+ "listed in the changelog entry of that tool, whatever its subject says"
+	SPEC "an entry whose version received such a commit from a workspace package the tool depends"
+		+ "on reads a generic line in its place, as a version holding no feat, fix or breaking"
+		+ "commit reads the maintenance line"
+	RATIONALE "The release script lists on a tool every user-facing commit that touches a path the"
+		+ "tool reaches, and prints the subject of the commit as it stands. A commit that touches"
+		+ "only core-mapping therefore reaches cli-merge and cli-validate under a subject that"
+		+ "names the UI, which tells their reader nothing. The owner ruled on pull request 199 that"
+		+ "a commit is never reworded and none is invented: the line a tool has nothing to list"
+		+ "under is a generic sentence, as the maintenance line already is, the entry of"
+		+ "cli-validate of 0.1.1 reading Core engine updated. Three points are left to the"
+		+ "refinement: whether the generic line also joins the commits of a tool that has some of"
+		+ "its own, cli-merge 0.1.1 listing its own commit only; the case of a commit whose subject"
+		+ "names one tool while it changes the directory of another, the report of cli-validate"
+		+ "losing an empty line in the commit that carries the cli-merge scope; and the wording of"
+		+ "the line when the dependency is not the core engine. The second SPEC of"
+		+ "@DECISION.AChangelogEntryListsOnlyUserFacingCommits is rewritten in place by the task"
+		REF @DECISION.AChangelogEntryListsOnlyUserFacingCommits
+		REF @DECISION.ConsumerVersionsAreComputedByARepositoryScript
+	SOURCE "Owner review of pull request 199, the release of cli-merge, cli-validate and"
+		+ "ui-save-manager 0.1.1: the changelog entries listed commits of other tools, and the"
+		+ "owner asked for a generic sentence rather than a reworded or invented commit"
+		PR 199
