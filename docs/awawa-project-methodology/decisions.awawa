@@ -2128,6 +2128,9 @@ DECISION TheRootCliScriptsRunTheirEntryPointDirectly
 	SOURCE "Agent ruling while implementing FEAT114, 2026-09-25, amended by the owner's review of"
 		+ "the pull request for the tick and the empty line opening each block"
 		PR 182
+	SOURCE "Agent ruling while implementing CHORE54, 2026-09-26: a guard proves the package scripts"
+		+ "run neither bun with --cwd nor the entry point of a cli- package"
+		PR 196
 
 DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 	REJECTED "A test spawning the script: Bun never reports a spawned module, so the figure stays"
