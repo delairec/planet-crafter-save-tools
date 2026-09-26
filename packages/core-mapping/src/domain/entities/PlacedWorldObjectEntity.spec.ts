@@ -45,24 +45,22 @@ describe('PlacedWorldObjectEntity', () => {
       });
 
       // Act
-      const {energyProductionLevel, energyConsumptionLevel} = producer;
+      const {energyProductionLevel} = producer;
 
       // Assert
       expect(energyProductionLevel).toBe(1.2);
-      expect(energyConsumptionLevel).toBeUndefined();
     });
 
-    it('should report the consumption level of the machine it is', () => {
+    it('should report no production level for a machine that draws power', () => {
       // Arrange
       const consumer = new PlacedWorldObjectEntity({
         id: '1', name: 'Drill0' as WorldObjectName, position: [0, 0, 0], planetId: 1
       });
 
       // Act
-      const {energyConsumptionLevel, energyProductionLevel} = consumer;
+      const {energyProductionLevel} = consumer;
 
       // Assert
-      expect(energyConsumptionLevel).toBe(0.5);
       expect(energyProductionLevel).toBeUndefined();
     });
   });

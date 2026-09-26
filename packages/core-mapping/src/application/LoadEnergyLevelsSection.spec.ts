@@ -16,6 +16,7 @@ describe('LoadEnergyLevelsSection', () => {
     // Assert
     expect(presenter.displayEnergyLevels).toHaveBeenCalledTimes(1);
     expect(presenter.displayEnergyLevels).toHaveBeenCalledWith({
+      gameRelease: '2.004',
       planets: [{
         planetId: 1,
         planetName: undefined,
