@@ -12,6 +12,7 @@ import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
 import {worldObjectLabels} from "./worldObjectLabels";
 import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
+import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
 import {
   energyLevelsSectionAvailableTitle,
   energyLevelsSectionConsumptionTitle,
@@ -19,6 +20,7 @@ import {
   energyLevelsSectionProductionTitle,
   energyLevelsSectionSubmergedMachinesDisclaimer,
   resolveEnergyLevelsSectionGameReleaseNote,
+  resolveEnergyLevelsSectionPowerConsumptionModifierNote,
   resolveEnergyLevelsSectionUnnamedPlanetName
 } from "./messages/energyLevelsSectionMessages.js";
 
@@ -40,6 +42,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     this._viewModel = {
       submergedMachinesDisclaimer: energyLevelsSectionSubmergedMachinesDisclaimer,
       gameReleaseNote: this.buildGameReleaseNote(energyLevels.gameRelease),
+      powerConsumptionModifierNote: this.buildPowerConsumptionModifierNote(energyLevels.powerConsumptionModifier),
       planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
     };
   }
@@ -50,6 +53,16 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     }
 
     return resolveEnergyLevelsSectionGameReleaseNote(gameRelease);
+  }
+
+  private buildPowerConsumptionModifierNote(powerConsumptionModifier: number): string | undefined {
+    if (powerConsumptionModifier === UNMODIFIED_POWER_CONSUMPTION_MODIFIER) {
+      return undefined;
+    }
+
+    return resolveEnergyLevelsSectionPowerConsumptionModifierNote(
+      formatNumber(powerConsumptionModifier, FormatNumberStrategies.PERCENTAGE)
+    );
   }
 
   private buildPlanet(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsViewModel {

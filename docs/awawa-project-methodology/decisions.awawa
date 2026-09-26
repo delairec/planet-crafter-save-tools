@@ -2287,3 +2287,34 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 		+ "gameReleaseNote dans un disclaimer sous celui des submerged machines, et uniquement"
 		+ "lorsque la release est legacy, pour la current, pas de disclaimer\""
 		PR 189
+
+DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
+	SPEC "PlanetEnergyGrid multiplies each base consumption level by modifierPowerConsumption once,"
+		+ "and draws the consumption, the available energy and the consumption breakdown, unit and"
+		+ "total levels included, from the multiplied levels"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::consumptionLevels"
+		ENFORCED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should multiply the"
+			+ "unit and total level of each consumption breakdown entry"
+	SPEC "a save with no save configuration section consumes at modifier 1"
+		IMPL "packages/core-mapping/src/domain/powerConsumptionModifier.ts::UNMODIFIED_POWER_CONSUMPTION_MODIFIER"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadEnergyLevelsSection.spec.ts::should"
+			+ "charge the base consumption levels, the modifier being 1"
+	SPEC "the Power section names the modifier in a disclaimer, under the game release one, when it"
+		+ "is not 1, and names none at 1"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::buildPowerConsumptionModifierNote"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::powerConsumptionModifierNote"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name that modifier in a disclaimer"
+		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
+			+ "name no modifier"
+	REJECTED "Multiplying the planet total alone, the breakdown keeping the base levels: its"
+		+ "entries would stop summing to the consumption shown above them"
+	REJECTED "Applying the modifier in the presenter: the available energy is computed in the"
+		+ "domain, and would stay on base levels"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT126
+	RESTS_ON @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
+	RATIONALE "The game multiplies the draw of each machine, so a breakdown entry shows what the"
+		+ "machine draws in that save; the energy table keeps the base levels the HUD prints at 1"
+	SOURCE "Ruling taken on delivery of the task, 2026-09-26"

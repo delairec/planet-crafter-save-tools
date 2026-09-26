@@ -24,6 +24,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: CURRENT_FORMAT_RELEASE,
+      powerConsumptionModifier: 1,
       planets: [{
         planetId: 1,
         production: 80_000,
@@ -72,6 +73,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
+      powerConsumptionModifier: 1,
       planets: [
         {
           planetId: 1,
@@ -105,6 +107,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
+      powerConsumptionModifier: 1,
       planets: [
         {
           planetId: 1,
@@ -137,7 +140,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.004', planets: []});
+      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1, planets: []});
 
       // Assert
       expect(presenter.viewModel.gameReleaseNote).toBe('Values of game release 2.004');
@@ -150,10 +153,36 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, planets: []});
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1, planets: []});
 
       // Assert
       expect(presenter.viewModel.gameReleaseNote).toBeUndefined();
+    });
+  });
+
+  describe('When the save multiplies the consumption by a power consumption modifier other than 1', () => {
+    it('should name that modifier in a disclaimer', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
+
+      // Act
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1.5, planets: []});
+
+      // Assert
+      expect(presenter.viewModel.powerConsumptionModifierNote).toBe("Consumption applies the save's Power Consumption modifier: 150%");
+    });
+  });
+
+  describe('When the power consumption modifier of the save is 1', () => {
+    it('should name no modifier', () => {
+      // Arrange
+      const presenter = new EnergyLevelsPresenter();
+
+      // Act
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1, planets: []});
+
+      // Assert
+      expect(presenter.viewModel.powerConsumptionModifierNote).toBeUndefined();
     });
   });
 
@@ -164,6 +193,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
+      powerConsumptionModifier: 1,
       planets: [{
         planetId: 1,
         production: 590,
@@ -208,6 +238,7 @@ describe('EnergyLevelsPresenter', () => {
     // Act
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
+      powerConsumptionModifier: 1,
       planets: [{
         planetId: 1,
         production: 590,

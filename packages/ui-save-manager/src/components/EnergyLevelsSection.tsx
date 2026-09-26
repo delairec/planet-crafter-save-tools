@@ -31,6 +31,9 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
           <Show when={energyLevels().gameReleaseNote}>
             {(gameReleaseNote) => <Disclaimer>{gameReleaseNote()}</Disclaimer>}
           </Show>
+          <Show when={energyLevels().powerConsumptionModifierNote}>
+            {(powerConsumptionModifierNote) => <Disclaimer>{powerConsumptionModifierNote()}</Disclaimer>}
+          </Show>
           <For each={energyLevels().planets}>
             {(planet) => (
               <div>
