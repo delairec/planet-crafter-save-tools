@@ -506,39 +506,13 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 		+ "multiplies the sum"
 		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
 		REF @TASK.TEST125
-		REF @RULE.ThePowerConsumptionModifierMultipliesTheConsumptionOfEveryMachine
+		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save: the HUD of Skeo and of"
 		+ "Toxicity matches the computed consumption, and on Prime the only gap is the 165.5 kW of"
 		+ "four machines under a lake; TreePlanter3 draws 85 kW"
 		PR 178
 		REF @GAME_RELEASE.2.103
 		REF @PROJECT.DNC
-
-RULE ThePowerConsumptionModifierMultipliesTheConsumptionOfEveryMachine
-	HOLDS_FOR all
-	DOMAIN game
-	SPEC "the game multiplies the consumption of every machine by modifierPowerConsumption: at 1"
-		+ "the HUD prints the base consumption levels, at 1.5 a machine drawing 0.4 kW draws 0.6 kW"
-		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
-	SPEC "at modifierPowerConsumption 0 no machine draws power"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section8-save-config.schema.json::Energy"
-			+ "consumption multiplier"
-	SPEC "a player sets modifierPowerConsumption between 0 and 2"
-		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
-	APPLIES_TO_SECTION @SECTION.SaveConfiguration
-	RATIONALE "The fixture carries 1, the value every standard reference save carries, so that the"
-		+ "HUD reads the base levels. Applying the modifier to the computed consumption is FEAT126;"
-		+ "a test pins the multiplied value once that task computes it"
-		REF @TASK.FEAT126
-		REF @TASK.TEST125
-		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
-	SOURCE "Owner's reading in game of 2026-09-26: at modifierPowerConsumption 1 the consumption is"
-		+ "the default one, at 1.5 a consumption of 0.4 becomes 0.6, and the game offers values"
-		+ "from 0 to 2"
-		PR 188
-	SOURCE "Owner's answer of 2026-09-26 on PR 188: the reading holds for every game release, and"
-		+ "at 0 the modifier still multiplies, so machines consume nothing"
-		PR 188
 
 RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 	HOLDS_FOR all
@@ -558,13 +532,24 @@ RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 	SPEC "at 0 a modifier still multiplies: the quantity it applies to is zero"
 		ATTESTED_BY "packages/shared-save-processing/schemas/section8-save-config.schema.json::Energy"
 			+ "consumption multiplier"
+	SPEC "modifierPowerConsumption multiplies the consumption of every machine: at 1 the HUD prints"
+		+ "the base consumption levels, at 1.5 a machine drawing 0.4 kW draws 0.6 kW"
+		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
+	SPEC "a player sets modifierPowerConsumption between 0 and 2"
+		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
-	RATIONALE "The rule states only that each modifier is a plain factor; how the game derives the"
-		+ "quantity it multiplies is stated, for each modifier, by a rule of its own, as"
-		+ "ThePowerConsumptionModifierMultipliesTheConsumptionOfEveryMachine does for the"
-		+ "consumption. modifierMultiplayerTerraformationFactor is left out, the owner's answer not"
-		+ "naming it"
-		REF @RULE.ThePowerConsumptionModifierMultipliesTheConsumptionOfEveryMachine
+	RATIONALE "The rule states only that each modifier is a plain factor, with no formula for the"
+		+ "quantity it multiplies. modifierMultiplayerTerraformationFactor is left out, the owner's"
+		+ "answer not naming it. The energy fixture carries modifierPowerConsumption 1, the value"
+		+ "every standard reference save carries, so that the HUD reads the base levels. Applying"
+		+ "the modifier to the computed consumption is FEAT126; a test pins the multiplied value"
+		+ "once that task computes it"
+		REF @TASK.FEAT126
+		REF @TASK.TEST125
+	SOURCE "Owner's reading in game of 2026-09-26: at modifierPowerConsumption 1 the consumption is"
+		+ "the default one, at 1.5 a consumption of 0.4 becomes 0.6, and the game offers values"
+		+ "from 0 to 2"
+		PR 188
 	SOURCE "Owner's answer of 2026-09-26 on PR 188: every coefficient of the save works that way"
 		+ "(terraformationPace, meteo occurrences, vitals depletion...), for every game release; at"
 		+ "0 a coefficient remains a multiplier"

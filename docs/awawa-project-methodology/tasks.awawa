@@ -1191,7 +1191,7 @@ TASK TEST125
 		+ "consumption in every game release, at 0 included, so the fixture is no longer read at"
 		+ "several modifier values"
 		PR 188
-		REF @RULE.ThePowerConsumptionModifierMultipliesTheConsumptionOfEveryMachine
+		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 
 TASK FEAT126
 	TITLE "The consumption of a planet applies the power consumption modifier of its save"
