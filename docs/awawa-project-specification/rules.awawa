@@ -477,8 +477,8 @@ RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 			+ "85 kW the game shows, TreePlanter3 being the only one drawing power"
 	RATIONALE "The seven machines stay in the group without a known energy level, where nothing is"
 		+ "charged, so the computed consumption matches the HUD without a zero-kilowatt row. The"
-		+ "fixture holds one of each so that the reading on it, which TEST125 still awaits, attests"
-		+ "the rule on a save CI generates"
+		+ "fixture holds one of each so that the rule, read on a private save, is attested on a"
+		+ "save CI generates"
 		REF @TASK.TEST125
 		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
 	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save placing nearly every"
@@ -499,11 +499,16 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 			+ "consumption of the placed world objects with known consumption levels"
 		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge the"
 			+ "85 kW the game shows, TreePlanter3 being the only one drawing power"
+	SPEC "an optimizer adds its own base consumption level to the sum, and no fuse it holds changes"
+		+ "the consumption of any machine"
+		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000011,"
+			+ "'Optimizer2', -10, OTHER_FUSE_OPTIMIZER_INVENTORY_ID)"
+		ATTESTED_BY "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge each"
+			+ "optimizer its base level, the fuses it holds changing no consumption"
 	VALUES_FROM @DATATABLE.EnergyLevels
-	RATIONALE "A machine under water draws nothing, which the save cannot tell. Whether an"
-		+ "optimizer or the fuse it holds changes the sum is what the readings of TEST125 on the"
-		+ "fixture settle; until then the rule names neither. Any other modifierPowerConsumption"
-		+ "multiplies the sum"
+	RATIONALE "A machine under water draws nothing, which the save cannot tell. A fuse acts on"
+		+ "production alone, so the fuses an optimizer holds leave the sum as it is. Any other"
+		+ "modifierPowerConsumption multiplies the sum"
 		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
 		REF @TASK.TEST125
 		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
@@ -513,6 +518,8 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 		PR 178
 		REF @GAME_RELEASE.2.103
 		REF @PROJECT.DNC
+	SOURCE "Owner's answer of 2026-09-26 while promoting TEST125: fuses have never changed the"
+		+ "consumption, in any game release"
 
 RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 	HOLDS_FOR all

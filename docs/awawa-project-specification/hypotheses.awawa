@@ -99,6 +99,12 @@ HYPOTHESIS PodUndergroundAndRocketAnimals2DrawNoPower
 		PR 178
 		REF @GAME_RELEASE.2.103
 		REF @PROJECT.DNC
+	SOURCE "Confirmed by the owner's reading of 2026-09-25 and turned into a rule attested by the"
+		+ "energy consumption fixture"
+		PR 188
+		REF @RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
+	STATUS archived
+	ARCHIVED_ON 2026-09-26
 
 HYPOTHESIS TheGameConvertsDeprecatedPhytoplanktonGroupIdsOnLoad
 	UNTIL "a save carrying Phytoplankton2 or Phytoplankton3 is loaded in 2.102 or later and saved"

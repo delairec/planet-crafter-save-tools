@@ -1154,25 +1154,33 @@ TASK FEAT124
 TASK TEST125
 	TITLE "Measure in game the consumption the HUD prints and write the consumption formula as"
 		+ "rules"
-	STATUS todo
+	STATUS implemented
 	SPEC "a public fixture save built for the measurement holds, on one planet, one of each machine"
 		+ "the reading of 2026-09-25 found drawing no power, TreePlanter3, an optimizer holding"
 		+ "energy fuses and an optimizer holding a fuse of another kind"
-	SPEC "the owner loads the fixture in game 2.103 and reads the HUD consumption of the planet"
-		+ "with the machines alone, then as each optimizer is added, each reading recorded as a"
-		+ "SOURCE citing the game release read; the machines the reading of 2026-09-25 priced are"
-		+ "not read one by one again"
+		IMPL "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000011, 'Optimizer2', -10,"
+			+ "OTHER_FUSE_OPTIMIZER_INVENTORY_ID)"
+	SPEC "the owner's readings and answers in game the consumption formula rests on are recorded as"
+		+ "SOURCE entries of its rules, citing the game release read when they concern one"
+		IMPL "docs/awawa-project-specification/rules.awawa::Owner's reading in game 2.103 of"
+			+ "2026-09-25"
 	SPEC "the consumption formula is written as RULE entities of domain game, each obligation"
-		+ "attested by the fixture and by a test pinning the value read in game"
+		+ "attested by the fixture and by a test pinning the value it states"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
+			+ "APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines"
+		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge each"
+			+ "optimizer its base level, the fuses it holds changing no consumption"
 	SPEC "the hypothesis that PodUnderground and RocketAnimals2 draw no power, which the reading of"
 		+ "2026-09-25 confirmed on a private save, is turned into a rule attested by the fixture"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
+			+ "AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption"
 	AFTER @TASK.FEAT124
 	WAVE @WAVE.9
+	DELIVERED_BY 188
 	RATIONALE "The production formula is confirmed by in-game readings; the consumption formula"
 		+ "never was, and no RULE states either. Consumption is today the sum of base levels:"
 		+ "modifierPowerConsumption is read from the save configuration but applied nowhere,"
-		+ "although a private reference save carries 0.0, and whether a fuse other than the energy"
-		+ "fuse changes the draw of a machine is unknown. A public fixture is the only save a"
+		+ "although a private reference save carries 0.0. A public fixture is the only save a"
 		+ "reading in game can attest in CI, the reference saves being private"
 		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
 		REF @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
@@ -1192,6 +1200,10 @@ TASK TEST125
 		+ "several modifier values"
 		PR 188
 		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
+	SOURCE "Owner's answer of 2026-09-26 while promoting the task: the readings of 2026-09-25 cover"
+		+ "every relevant machine and fuses have never changed the consumption, so the fixture is"
+		+ "not read in game again, machines alone or with each optimizer"
+		REF @RULE.APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 
 TASK FEAT126
 	TITLE "The consumption of a planet applies the power consumption modifier of its save"
