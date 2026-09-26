@@ -1,6 +1,7 @@
 import {expect, test, type Page} from '@playwright/test';
 import {readSiteHeaders} from '../siteHeaders';
 import {removeScriptNonces} from '../src/lib/scriptNonce';
+import {openThePageOfTheMenu, visualizeTheSave} from './saveManagerShell';
 
 const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
@@ -31,10 +32,10 @@ function recordRequestedUrls(page: Page): string[] {
 }
 
 async function loadViewAndMergeASave(page: Page): Promise<void> {
-  await page.goto('/');
-  await page.getByLabel('Save file:').setInputFiles(saveAFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
+  await visualizeTheSave(page, saveAFixturePath);
+  await openThePageOfTheMenu(page, 'Configuration');
   await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+  await openThePageOfTheMenu(page, 'Merge two saves');
   await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
   await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
   await page.getByRole('button', {name: 'Merge'}).click();

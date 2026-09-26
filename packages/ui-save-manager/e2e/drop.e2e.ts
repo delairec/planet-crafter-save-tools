@@ -65,7 +65,7 @@ test.describe('Save file drop', () => {
 
       // Assert
       await expect(page.getByLabel('Save file:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+      await expect(page.getByRole('heading', {name: 'Loaded save: baseline_valid.json'})).toBeVisible();
     });
   });
 

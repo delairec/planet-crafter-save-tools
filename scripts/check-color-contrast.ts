@@ -186,6 +186,34 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.spinner-container',
     foreground: 'muted',
     background: 'canvas'
+  },
+  {
+    description: 'the title of a group of the menu, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell.css',
+    selector: '.menu-group-title',
+    foreground: 'neon-purple',
+    background: 'surface'
+  },
+  {
+    description: 'a link of the menu, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell.css',
+    selector: '.menu a',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the menu link of the open page, on its neon fill',
+    file: 'packages/ui-save-manager/src/styles/shell.css',
+    selector: '.menu a[aria-current="page"]',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'the open page of the breadcrumb, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell.css',
+    selector: '.breadcrumb li[aria-current="page"]',
+    foreground: 'content',
+    background: 'canvas'
   }
 ];
 

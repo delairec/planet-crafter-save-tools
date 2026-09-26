@@ -45,7 +45,7 @@ test.describe('Save warnings', () => {
 
       // Assert
       await expect(page.getByText('Warnings', {exact: true})).toBeVisible();
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+      await expect(page.getByRole('heading', {name: 'Loaded save: legacy-format_valid.json'})).toBeVisible();
     });
   });
 

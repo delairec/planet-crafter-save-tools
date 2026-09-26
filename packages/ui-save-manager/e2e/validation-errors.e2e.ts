@@ -43,7 +43,7 @@ test.describe('Save validation errors', () => {
 
       // Assert
       await expect(page.getByText('Errors', {exact: true})).toBeVisible();
-      await expect(page.getByRole('heading', {name: 'Save Configuration:'})).toBeHidden();
+      await expect(page.getByRole('heading', {name: 'Loaded save:'})).toBeHidden();
     });
   });
 
