@@ -1559,3 +1559,55 @@ TASK CHORE130
 		+ "ui-save-manager 0.1.1: the changelog entries listed commits of other tools, and the"
 		+ "owner asked for a generic sentence rather than a reworded or invented commit"
 		PR 199
+
+TASK FEAT131
+	TITLE "Show the terraformation stage of each planet as a badge on its overview card"
+	STATUS draft
+	DESC "drafted for memory, no research done: the stages of the game, their thresholds and the"
+		+ "value they are read from are established when the task is refined"
+	SPEC "the overview card of a planet carries a badge naming the terraformation stage the planet"
+		+ "has reached, read from its terraformation levels"
+	SPEC "the stages and their thresholds are a value table, one row per stage"
+	RATIONALE "The save manager knows no stage: it prints the Terraformation Index of a planet as a"
+		+ "number, and the reader has to know the thresholds of the game to tell where a planet"
+		+ "stands. The redesign puts the terraformation data first on the planet cards of the"
+		+ "overview, and the stage is the one word that sums it up; the badge slot on the card is"
+		+ "reserved for it"
+		REF @SECTION.TerraformationLevels
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
+		+ "mockup of three proposals, to draft for memory outside any wave"
+
+TASK FEAT132
+	TITLE "Display the SysTi, the Terraformation Index accumulated over every planet of the save"
+	STATUS draft
+	DESC "drafted for memory, no research done: whether the SysTi is the plain sum of the planets'"
+		+ "Ti or weighs them, and where the save manager shows it, are established when the task is"
+		+ "refined"
+	SPEC "the save manager displays the SysTi of a save, computed from the accumulation of the"
+		+ "Terraformation Index of each of its planets"
+	RATIONALE "The game sums the terraformation of the planets of a save into one system-wide"
+		+ "index, the SysTi, that the save manager does not compute: it prints one Terraformation"
+		+ "Index per planet and nothing for the save as a whole. The redesign opens on a summary of"
+		+ "the save, where that figure belongs"
+		REF @SECTION.TerraformationLevels
+	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
+		+ "mockup of three proposals, to draft for memory outside any wave"
+
+TASK FEAT133
+	TITLE "Tell on the merge page that save A wins over save B where their common data conflicts"
+	STATUS draft
+	DESC "drafted for memory, no research done: the wording and the place of the notice on the"
+		+ "merge page are established when the task is refined"
+	SPEC "the merge page of the save manager carries a notice, of severity info, saying that save A"
+		+ "prevails over save B for the common data the two saves hold in conflict"
+	SPEC "info joins the severities a notification of the save manager may carry"
+	RATIONALE "Several merge rules resolve a conflict in favour of save A, the configuration among"
+		+ "them, and the swap control exists to choose which save is A; nothing on the page says"
+		+ "so, and the reader learns it from the result or never. The notifications of the save"
+		+ "manager know a limitation and a warning; a rule of the tool is neither"
+		REF @RULE.SaveConfigurationComesFromSaveA
+		REF @RULE.TheSaveOnPrimeBecomesSaveA
+		REF @COMMAND.MergeSaves
+	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
+		+ "mockup of three proposals, to draft for memory outside any wave"
