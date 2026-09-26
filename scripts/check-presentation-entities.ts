@@ -1,4 +1,4 @@
-import {Glob} from 'bun';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {reportViolations} from './specSources.ts';
 
 const SOURCE_FILES_PATTERN = 'packages/*/**/*.{js,ts,tsx}';
@@ -38,16 +38,16 @@ export function findEntityImports(source: string): EntityImport[] {
     .map(specifier => ({line: lineIndex + 1, specifier})));
 }
 
-async function checkPresentationFiles(): Promise<number> {
+export async function checkPresentationFiles(io: ScriptIo): Promise<void> {
   const violations: string[] = [];
-  for await (const filePath of new Glob(SOURCE_FILES_PATTERN).scan({cwd: process.cwd()})) {
+  for await (const filePath of io.scanFiles(SOURCE_FILES_PATTERN)) {
     if (!isPresentationFile(filePath)) {
       continue;
     }
-    findEntityImports(await Bun.file(filePath).text())
+    findEntityImports(await io.readText(filePath))
       .forEach(({line, specifier}) => violations.push(`${filePath}:${line}: ${specifier}\n  ${VIOLATION_REASON}`));
   }
-  return reportViolations({
+  reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
     nothingFound: 'no domain entity reaches a presentation layer.',
@@ -55,6 +55,4 @@ async function checkPresentationFiles(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkPresentationFiles());
-}
+await runAsEntryPoint(import.meta.main, checkPresentationFiles);

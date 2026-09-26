@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {findEntityImports, isPresentationFile} from './check-presentation-entities.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
+import {checkPresentationFiles, findEntityImports, isPresentationFile} from './check-presentation-entities.ts';
 
 describe('isPresentationFile', () => {
 
@@ -101,6 +102,52 @@ describe('findEntityImports', () => {
 
       // Assert
       expect(entityImports).toEqual([]);
+    });
+  });
+});
+
+describe('checkPresentationFiles', () => {
+
+  describe('When every presentation layer imports value objects only', () => {
+    it('should print that nothing was found and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/core-mapping/src/presentation/PlayersPresenter.ts': "import {PlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';"
+        }
+      });
+
+      // Act
+      await checkPresentationFiles(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:presentation: no domain entity reaches a presentation layer.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a presentation layer imports a domain entity', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/core-mapping/src/presentation/PlayersPresenter.ts': "import type {PlayerEntity} from '../domain/entities/PlayerEntity';"
+        }
+      });
+
+      // Act
+      await checkPresentationFiles(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'packages/core-mapping/src/presentation/PlayersPresenter.ts:1: ../domain/entities/PlayerEntity\n  a presenter takes a value object, never a domain entity',
+          'check:presentation: 1 domain entity import(s) in a presentation layer.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

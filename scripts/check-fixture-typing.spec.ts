@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {FixtureTypingViolation, findFixtureTypingViolations} from './check-fixture-typing.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
+import {checkSpecFiles, FixtureTypingViolation, findFixtureTypingViolations} from './check-fixture-typing.ts';
 
 const PARTIAL_FIXTURE_REASON = 'a test fixture is fully typed: build it with its builder rather than assert the type away';
 const TS_IGNORE_REASON = 'an illegal input is declared with @ts-expect-error, which fails when the error disappears';
@@ -158,6 +159,52 @@ describe('findFixtureTypingViolations', () => {
 
       // Assert
       expect(violations.map(violation => violation.line)).toEqual([1, 3]);
+    });
+  });
+});
+
+describe('checkSpecFiles', () => {
+
+  describe('When every spec of the repository types its fixtures', () => {
+    it('should print that nothing was found and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/core-mapping/src/mergePlayers.spec.ts': "const players = [createPlayer({name: 'Salengor'})];"
+        }
+      });
+
+      // Act
+      await checkSpecFiles(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:fixtures: no untyped test fixture found.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a spec asserts the type of a fixture away', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/core-mapping/src/mergePlayers.spec.ts': "const players = [createPlayer({name: 'Salengor'})];\nconst save = {} as unknown as Save;"
+        }
+      });
+
+      // Act
+      await checkSpecFiles(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'packages/core-mapping/src/mergePlayers.spec.ts:2: const save = {} as unknown as Save;\n  a test fixture is fully typed: build it with its builder rather than assert the type away',
+          'check:fixtures: 1 untyped test fixture(s).'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

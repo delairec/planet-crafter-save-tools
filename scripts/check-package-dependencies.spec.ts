@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {findImportedPackages, findViolations} from './check-package-dependencies.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
+import {checkPackageDependencies, findImportedPackages, findViolations} from './check-package-dependencies.ts';
 import type {DependencyMatrix, PackageImport, WorkspacePackage} from './check-package-dependencies.ts';
 
 const matrix: DependencyMatrix = {
@@ -325,6 +326,57 @@ describe('findImportedPackages', () => {
         {line: 2, specifier: 'solid-js'},
         {line: 3, specifier: 'node:fs/promises'}
       ]);
+    });
+  });
+});
+
+describe('checkPackageDependencies', () => {
+
+  describe('When every package declares and imports only what the matrix allows', () => {
+    it('should print that no violation was found and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/core-mapping/package.json': '{"name": "core-mapping", "dependencies": {"shared-save-processing": "*"}}',
+          'packages/core-mapping/src/mergeSaves.ts': "import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';",
+          'packages/shared-save-processing/package.json': '{"name": "shared-save-processing"}'
+        }
+      });
+
+      // Act
+      await checkPackageDependencies(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:dependencies: no dependency matrix violation found.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a source imports a workspace package its manifest does not declare', () => {
+    it('should print the file, the line and the undeclared dependency, leaving out the files of installed dependencies, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/core-mapping/package.json': '{"name": "core-mapping"}',
+          'packages/core-mapping/src/mergeSaves.ts': "\nimport {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';",
+          'packages/core-mapping/node_modules/shared-save-processing/index.js': "import {keepInt64IdentifierText} from 'shared-save-processing/keepInt64IdentifierText.js';",
+          'packages/shared-save-processing/package.json': '{"name": "shared-save-processing"}'
+        }
+      });
+
+      // Act
+      await checkPackageDependencies(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          "packages/core-mapping/src/mergeSaves.ts:2: import of 'shared-save-processing/parseSaveSections.js': shared-save-processing is missing from the dependencies of packages/core-mapping/package.json",
+          'check:dependencies: 1 dependency matrix violation(s); see the dependency matrix in docs/wiki/architecture.md.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

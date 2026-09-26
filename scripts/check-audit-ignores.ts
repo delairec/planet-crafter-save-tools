@@ -1,6 +1,5 @@
-import {Glob} from 'bun';
-import {join} from 'node:path';
 import {readCorpusLines, removeQuotes} from './check-corpus-anchors.ts';
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {isOwnSourceFile, reportViolations} from './specSources.ts';
 
 const CORPUS_FILES_PATTERN = '**/*.awawa';
@@ -68,27 +67,27 @@ export function findUnacknowledgedAdvisories({auditScript, corpusSource}: AuditI
 }
 
 /**
- * @param {string} workspaceRoot the root the corpus and the manifest are read from
+ * @param {ScriptIo} io the file system the corpus and the manifest are read from
  * @returns every advisory the audit script ignores that no active LIMITATION names
  */
-async function findRepositoryUnacknowledgedAdvisories(workspaceRoot: string): Promise<string[]> {
-  const manifest = await Bun.file(join(workspaceRoot, 'package.json')).json();
+async function findRepositoryUnacknowledgedAdvisories(io: ScriptIo): Promise<string[]> {
+  const manifest = JSON.parse(await io.readText('package.json'));
   const auditScript = manifest.scripts.audit;
   const corpusSources: string[] = [];
-  for await (const file of new Glob(CORPUS_FILES_PATTERN).scan({cwd: workspaceRoot})) {
+  for await (const file of io.scanFiles(CORPUS_FILES_PATTERN)) {
     if (isOwnSourceFile(file)) {
-      corpusSources.push(await Bun.file(join(workspaceRoot, file)).text());
+      corpusSources.push(await io.readText(file));
     }
   }
   return findUnacknowledgedAdvisories({auditScript, corpusSource: corpusSources.join('\n')});
 }
 
 /**
- * @returns the exit code of the guard, once its report is printed
+ * @param {ScriptIo} io the input and output of the guard
  */
-async function checkAuditIgnores(): Promise<number> {
-  const unacknowledgedAdvisories = await findRepositoryUnacknowledgedAdvisories(process.cwd());
-  return reportViolations({
+export async function checkAuditIgnores(io: ScriptIo): Promise<void> {
+  const unacknowledgedAdvisories = await findRepositoryUnacknowledgedAdvisories(io);
+  reportViolations(io, {
     checkName: CHECK_NAME,
     violations: unacknowledgedAdvisories.map(advisory =>
       `package.json scripts.audit ignores ${advisory}, which no active LIMITATION names in a SEEN_IN`),
@@ -97,6 +96,4 @@ async function checkAuditIgnores(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkAuditIgnores());
-}
+await runAsEntryPoint(import.meta.main, checkAuditIgnores);

@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {findUnpinnedActions} from './check-action-pins.ts';
+import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
+import {checkActionPins, findUnpinnedActions} from './check-action-pins.ts';
 
 const WORKFLOW_PATH = '.github/workflows/quality.yml';
 
@@ -127,6 +128,53 @@ describe('findUnpinnedActions', () => {
         '.github/workflows/quality.yml:4 uses fallow-rs/fallow@v3, which names no commit SHA',
         '.github/workflows/claude-code-review.yml:6 uses anthropics/claude-code-action@v1, which names no commit SHA'
       ]);
+    });
+  });
+});
+
+describe('checkActionPins', () => {
+
+  describe('When every workflow pins its actions on a commit SHA with its version', () => {
+    it('should print that nothing was found and exit with zero', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          '.github/workflows/quality.yml': '      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1'
+        }
+      });
+
+      // Act
+      await checkActionPins(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:action-pins: every action the workflows use is pinned on a commit SHA with its version.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a workflow names an action by its tag', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          '.github/workflows/quality.yml': '      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1',
+          '.github/workflows/release.yaml': '      - uses: actions/checkout@v7'
+        }
+      });
+
+      // Act
+      await checkActionPins(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          '.github/workflows/release.yaml:1 uses actions/checkout@v7, which names no commit SHA',
+          'check:action-pins: 1 action reference(s) not pinned on a commit SHA with its version.'
+        ],
+        exitCodes: [1]
+      });
     });
   });
 });

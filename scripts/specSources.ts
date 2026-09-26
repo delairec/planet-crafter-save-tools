@@ -1,4 +1,4 @@
-import {Glob} from 'bun';
+import type {ScriptIo} from './scriptIo.ts';
 
 const SPEC_FILES_PATTERN = '**/*.spec.{js,ts,tsx}';
 const GENERATED_DIRECTORY = /(?:^|\/)(?:node_modules|dist|build|coverage)\//;
@@ -22,23 +22,25 @@ export function isOwnSourceFile(filePath: string): boolean {
 }
 
 /**
+ * @param {ScriptIo} io the file system the files are read from
  * @param {string} pattern a glob matched against the repository, from its root
  * @returns the path and the content of every file it matches, generated ones excluded
  */
-export async function* readOwnSourceFiles(pattern: string): AsyncGenerator<{filePath: string, source: string}> {
-  for await (const filePath of new Glob(pattern).scan({cwd: process.cwd()})) {
+export async function* readOwnSourceFiles(io: ScriptIo, pattern: string): AsyncGenerator<{filePath: string, source: string}> {
+  for await (const filePath of io.scanFiles(pattern)) {
     if (!isOwnSourceFile(filePath)) {
       continue;
     }
-    yield {filePath, source: await Bun.file(filePath).text()};
+    yield {filePath, source: await io.readText(filePath)};
   }
 }
 
 /**
+ * @param {ScriptIo} io the file system the files are read from
  * @returns the path and the content of every spec file of the repository, generated ones excluded
  */
-export function readOwnSpecFiles(): AsyncGenerator<{filePath: string, source: string}> {
-  return readOwnSourceFiles(SPEC_FILES_PATTERN);
+export function readOwnSpecFiles(io: ScriptIo): AsyncGenerator<{filePath: string, source: string}> {
+  return readOwnSourceFiles(io, SPEC_FILES_PATTERN);
 }
 
 export interface ViolationReport {
@@ -53,16 +55,18 @@ export interface ViolationReport {
 }
 
 /**
- * Prints what a guard found and gives the exit code it must return: the report is the whole
- * user interface of a guard, so both checks state their outcome the same way.
+ * Prints what a guard found and exits with the code it must return: the report is the whole
+ * user interface of a guard, so every check states its outcome the same way.
+ * @param {ScriptIo} io the console the report is printed on and the exit the code is given to
  * @param {ViolationReport} report
  */
-export function reportViolations({checkName, violations, nothingFound, summarize}: ViolationReport): number {
+export function reportViolations(io: ScriptIo, {checkName, violations, nothingFound, summarize}: ViolationReport): void {
   if (violations.length === 0) {
-    console.log(`${checkName}: ${nothingFound}`);
-    return 0;
+    io.print(`${checkName}: ${nothingFound}`);
+    io.exit(0);
+    return;
   }
-  violations.forEach(violation => console.log(violation));
-  console.log(`${checkName}: ${summarize(violations.length)}`);
-  return 1;
+  violations.forEach(violation => io.print(violation));
+  io.print(`${checkName}: ${summarize(violations.length)}`);
+  io.exit(1);
 }

@@ -1,3 +1,4 @@
+import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {maskStringLiterals, readOwnSourceFiles, reportViolations} from './specSources.ts';
 
 const SCENARIO_FILES_PATTERN = '**/*.e2e.ts';
@@ -59,16 +60,16 @@ export function findScenarioLocatorViolations(source: string): ScenarioLocatorVi
   });
 }
 
-async function checkScenarioLocators(): Promise<number> {
+export async function checkScenarioLocators(io: ScriptIo): Promise<void> {
   const violations: string[] = [];
-  for await (const {filePath, source} of readOwnSourceFiles(SCENARIO_FILES_PATTERN)) {
+  for await (const {filePath, source} of readOwnSourceFiles(io, SCENARIO_FILES_PATTERN)) {
     if (!isScenarioFile(filePath)) {
       continue;
     }
     findScenarioLocatorViolations(source)
       .forEach(({line, reason}) => violations.push(`${filePath}:${line}\n  ${reason}`));
   }
-  return reportViolations({
+  reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
     nothingFound: 'no scenario designates an element by something other than what the screen shows.',
@@ -76,6 +77,4 @@ async function checkScenarioLocators(): Promise<number> {
   });
 }
 
-if (import.meta.main) {
-  process.exit(await checkScenarioLocators());
-}
+await runAsEntryPoint(import.meta.main, checkScenarioLocators);
