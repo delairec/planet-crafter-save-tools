@@ -1,7 +1,7 @@
 import {JSX, Show} from 'solid-js';
 import {Navigate} from '@solidjs/router';
 import Breadcrumb from '~/components/shell/Breadcrumb';
-import {useLoadedSave} from '~/hooks/useLoadedSave.tsx';
+import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {overviewPath} from '~/lib/pagePaths';
 
 interface SavePageProps {

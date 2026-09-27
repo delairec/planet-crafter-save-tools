@@ -1,6 +1,6 @@
 import SavePage from '~/components/shell/SavePage';
 import EnergyLevelsSection from '~/components/EnergyLevelsSection';
-import {useLoadedSave} from '~/hooks/useLoadedSave.tsx';
+import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {powerPageTitle, saveGroupTitle} from '~/messages/shellMessages';
 
 export default function PowerPage() {
