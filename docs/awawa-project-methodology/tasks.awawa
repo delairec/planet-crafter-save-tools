@@ -2166,3 +2166,22 @@ TASK FEAT146
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: the details may be adjusted during the"
 		+ "implementation for accessibility and the phone display"
 		REF @URL.SaveManagerRedesignMockup
+
+TASK TEST147
+	TITLE "Locate the elements of the end-to-end scenarios by test id, not by the HTML structure"
+	STATUS draft
+	SPEC "the UI scenarios locate the elements they act on and assert by a data-testid attribute,"
+		+ "so that a change of the HTML structure alone breaks none of them"
+	RATIONALE "Asked by the owner on a review of the save manager redesign, where a warnings"
+		+ "scenario reaches the warning list through the main landmark and its list items, a"
+		+ "locator a change of layout breaks. Left open: this reverses the test id refusal of the"
+		+ "locator guard and the rule that a scenario designates what the screen shows, which the"
+		+ "task would rewrite in place; whether role and label locators remain allowed beside the"
+		+ "test id; and which elements carry one"
+		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+		REF @PACKAGE.ui_save_manager
+	SOURCE "Owner review comment on packages/ui-save-manager/e2e/warnings.e2e.ts line 21: add a"
+		+ "draft task on master, the end-to-end tests use data-testid so they no longer depend on"
+		+ "the HTML structure"
+		PR 205
