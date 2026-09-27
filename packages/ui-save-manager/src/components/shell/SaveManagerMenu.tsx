@@ -2,15 +2,7 @@ import {Show} from 'solid-js';
 import {A, useNavigate} from '@solidjs/router';
 import MenuGroup from '~/components/shell/MenuGroup';
 import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
-import {
-  configurationPath,
-  loadAnotherSavePath,
-  mergeTwoSavesPath,
-  overviewPath,
-  playersPath,
-  powerPath,
-  terraformationPath
-} from '~/lib/pagePaths';
+import {PAGE_PATHS} from '~/lib/pagePaths';
 import {
   configurationPageTitle,
   loadAnotherSavePageTitle,
@@ -32,18 +24,18 @@ export default function SaveManagerMenu() {
   return (
     <nav class="menu" aria-label={menuLabel}>
       <MenuGroup title={toolsGroupTitle}>
-        <a href={mergeTwoSavesPath}>{mergeTwoSavesPageTitle}</a>
-        <a href={loadAnotherSavePath}>{loadAnotherSavePageTitle}</a>
+        <a href={PAGE_PATHS.mergeTwoSavesPath}>{mergeTwoSavesPageTitle}</a>
+        <a href={PAGE_PATHS.loadAnotherSavePath}>{loadAnotherSavePageTitle}</a>
       </MenuGroup>
       <Show when={loadedSave.isSaveLoaded()}>
         <MenuGroup title={saveGroupTitle}>
-          <A href={overviewPath} end>{overviewPageTitle}</A>
-          <A href={configurationPath}>{configurationPageTitle}</A>
-          <A href={powerPath}>{powerPageTitle}</A>
-          <A href={terraformationPath}>{terraformationPageTitle}</A>
+          <A href={PAGE_PATHS.overviewPath} end>{overviewPageTitle}</A>
+          <A href={PAGE_PATHS.configurationPath}>{configurationPageTitle}</A>
+          <A href={PAGE_PATHS.powerPath}>{powerPageTitle}</A>
+          <A href={PAGE_PATHS.terraformationPath}>{terraformationPageTitle}</A>
         </MenuGroup>
         <MenuGroup title={playersGroupTitle}>
-          <button onClick={() => navigate(playersPath)}>{seeMorePlayersButtonLabel}</button>
+          <button onClick={() => navigate(PAGE_PATHS.playersPath)}>{seeMorePlayersButtonLabel}</button>
         </MenuGroup>
       </Show>
     </nav>

@@ -2557,7 +2557,7 @@ DECISION EachPageOfTheSaveManagerIsARoute
 			+ "reading its file again nor reloading the page"
 	SPEC "a page of the save requested while no save is loaded opens the Overview page"
 		IMPL "packages/ui-save-manager/src/components/shell/SavePage.tsx::<Navigate"
-			+ "href={overviewPath}/>"
+			+ "href={PAGE_PATHS.overviewPath}/>"
 		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should open the Overview page"
 	SPEC "the route files the shell adds are test roots of the coverage-gaps plugin, reached by the"
 		+ "production build the scenarios spawn"

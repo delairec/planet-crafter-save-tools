@@ -1,10 +1,22 @@
-export const loadASaveAnchor = 'load-a-save';
-export const mergeTwoSavesAnchor = 'merge-two-saves';
+const loadASaveAnchor = 'load-a-save';
+const mergeTwoSavesAnchor = 'merge-two-saves';
 
-export const overviewPath = '/';
-export const loadAnotherSavePath = `/#${loadASaveAnchor}`;
-export const mergeTwoSavesPath = `/#${mergeTwoSavesAnchor}`;
-export const configurationPath = '/configuration';
-export const powerPath = '/power';
-export const terraformationPath = '/terraformation';
-export const playersPath = '/players';
+const overviewPath = '/';
+const loadAnotherSavePath = `/#${loadASaveAnchor}`;
+const mergeTwoSavesPath = `/#${mergeTwoSavesAnchor}`;
+const configurationPath = '/configuration';
+const powerPath = '/power';
+const terraformationPath = '/terraformation';
+const playersPath = '/players';
+
+export const PAGE_PATHS = {
+  loadASaveAnchor,
+  mergeTwoSavesAnchor,
+  overviewPath,
+  loadAnotherSavePath,
+  mergeTwoSavesPath,
+  configurationPath,
+  powerPath,
+  terraformationPath,
+  playersPath
+};

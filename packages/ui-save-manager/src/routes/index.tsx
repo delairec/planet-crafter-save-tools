@@ -24,7 +24,7 @@ import Spinner from "~/components/structure/Spinner";
 import DropZone from "~/components/structure/DropZone";
 import SaveFileField from "~/components/structure/SaveFileField";
 import {useLoadedSave} from "~/hooks/useLoadedSave.ts";
-import {configurationPath, loadASaveAnchor, mergeTwoSavesAnchor, powerPath, terraformationPath} from "~/lib/pagePaths";
+import {PAGE_PATHS} from "~/lib/pagePaths";
 import {selectFileInInput} from "~/lib/selectFileInInput";
 import {tooManyFilesForOneSaveMessage} from "~/messages/dropZoneMessages";
 
@@ -55,7 +55,7 @@ export default function Home() {
 
   return (
     <Show when={isReady()} fallback={<p class="text-color-muted">{displayRouteLoadingLabel}</p>}>
-      <div id={loadASaveAnchor}>
+      <div id={PAGE_PATHS.loadASaveAnchor}>
         <DropZone label={displayRouteDisplayTitle} maximumFileCount={1}
                   tooManyFilesMessage={tooManyFilesForOneSaveMessage}
                   onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
@@ -74,7 +74,7 @@ export default function Home() {
         <p class="text-color-danger">{displayRouteCallFailedMessage}</p>
       </Show>
 
-      <div id={mergeTwoSavesAnchor}>
+      <div id={PAGE_PATHS.mergeTwoSavesAnchor}>
         <MergeSection onMergeStarted={handleMergeStarted} onMergeResult={handleMergeResult}/>
       </div>
 
@@ -101,9 +101,9 @@ export default function Home() {
           <>
             <h3>{resolveLoadedSaveTitle(loadedFile().name)}</h3>
             <p class="overview-pages">
-              <A href={configurationPath}>{configurationPageTitle}</A>
-              <A href={powerPath}>{powerPageTitle}</A>
-              <A href={terraformationPath}>{terraformationPageTitle}</A>
+              <A href={PAGE_PATHS.configurationPath}>{configurationPageTitle}</A>
+              <A href={PAGE_PATHS.powerPath}>{powerPageTitle}</A>
+              <A href={PAGE_PATHS.terraformationPath}>{terraformationPageTitle}</A>
             </p>
           </>
         )}
