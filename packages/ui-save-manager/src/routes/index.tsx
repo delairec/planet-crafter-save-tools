@@ -61,26 +61,26 @@ export default function Home() {
 
         <HomeDisclaimer/>
 
-        <DropZone label={displayRouteDisplayTitle} maximumFileCount={1}
+        <DropZone label={displayRouteDisplayTitle} testId="display-area" maximumFileCount={1}
                   tooManyFilesMessage={tooManyFilesForOneSaveMessage}
                   onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
           <h2>{displayRouteDisplayTitle}</h2>
           <p class="save-file-row">
-            <SaveFileField label={displayRouteFileInputLabel} ref={fileInputElement} onChange={handleFileChange}/>
-            <button onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
+            <SaveFileField label={displayRouteFileInputLabel} testId="save-file" ref={fileInputElement} onChange={handleFileChange}/>
+            <button data-testid="visualize-button" onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
           </p>
         </DropZone>
 
         <Show when={isLoading()}>
-          <Spinner/>
+          <Spinner testId="display-busy-indicator"/>
         </Show>
         <Show when={hasLoadCallFailed()}>
-          <p class="text-color-danger">{displayRouteCallFailedMessage}</p>
+          <p class="text-color-danger" data-testid="display-failure-message">{displayRouteCallFailedMessage}</p>
         </Show>
 
         <MergeSection onMergeStarted={handleMergeStarted} onMergeResult={handleMergeResult}/>
 
-        <h2>{displayRouteVisualizationTitle}</h2>
+        <h2 data-testid="visualization-title">{displayRouteVisualizationTitle}</h2>
 
         <Show when={!errors().length && !validatedContent() && !mergeResult()}>
           <p class="text-color-muted">{displayRouteParsedDataPlaceholder}</p>
@@ -90,12 +90,12 @@ export default function Home() {
 
         <Show when={errors().length}>
           <code>{file()?.name}</code>
-          <ValidationMessagesList title={displayRouteErrorsTitle} severity="danger" messages={errors()}/>
+          <ValidationMessagesList title={displayRouteErrorsTitle} testId="display-errors" severity="danger" messages={errors()}/>
         </Show>
 
         <Show when={warnings().length}>
           <code>{file()?.name}</code>
-          <ValidationMessagesList title={displayRouteWarningsTitle} severity="warning" messages={warnings()}/>
+          <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={warnings()}/>
         </Show>
 
         <Show when={validatedContent() && !errors().length}>

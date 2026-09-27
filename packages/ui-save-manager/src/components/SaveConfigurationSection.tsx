@@ -13,7 +13,7 @@ export default function SaveConfigurationSection(props: SaveConfigurationProps) 
     <SectionState title={saveConfigurationSectionTitleLabel} resource={props.viewModel}>
       {(saveConfiguration) => (
         <div>
-          <h3>{saveConfigurationSectionTitleLabel} {saveConfiguration().title} ({saveConfiguration().mode})</h3>
+          <h3 data-testid="save-configuration-title">{saveConfigurationSectionTitleLabel} {saveConfiguration().title} ({saveConfiguration().mode})</h3>
           <div class="fields-group-container">
             <FieldsGroup columns={() => saveConfiguration().modifiers.columns}/>
           </div>

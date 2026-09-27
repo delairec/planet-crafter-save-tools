@@ -6,6 +6,7 @@ interface FieldsGroupGridProps<T> {
   items: T[];
   itemLabel: (item: T) => string;
   columns: (item: T) => ColumnViewModel[];
+  testId?: string;
 }
 
 export default function FieldsGroupGrid<T>(props: FieldsGroupGridProps<T>) {
@@ -16,7 +17,7 @@ export default function FieldsGroupGrid<T>(props: FieldsGroupGridProps<T>) {
         <For each={props.items}>
           {(item) => (
             <div class="grid-item">
-              <h5>{props.itemLabel(item)}</h5>
+              <h5 data-testid={props.testId && `${props.testId}-item-label`}>{props.itemLabel(item)}</h5>
               <FieldsGroup columns={() => props.columns(item)}/>
             </div>
           )}

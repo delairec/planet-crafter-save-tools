@@ -9,18 +9,19 @@ import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewMode
 export default function ValidationMessagesList(props: {
   title: string,
   severity: 'danger' | 'warning',
-  messages: SaveValidationMessageViewModel[]
+  messages: SaveValidationMessageViewModel[],
+  testId: string
 }) {
 
   const [isOpen, setIsOpen] = createSignal<boolean>(false);
 
   return <>
-    <p class={`text-color-${props.severity}`}>{props.title}</p>
+    <p class={`text-color-${props.severity}`} data-testid={`${props.testId}-title`}>{props.title}</p>
     <details>
-      <summary onClick={() => setIsOpen((previous) => !previous)}>
+      <summary data-testid={`${props.testId}-details-toggle`} onClick={() => setIsOpen((previous) => !previous)}>
         {isOpen() ? hideValidationMessagesDetails : showValidationMessagesDetails}
       </summary>
-      <ul>
+      <ul data-testid={`${props.testId}-messages`}>
         <For each={props.messages}>
           {(validationMessage) => <li class="validation-message">
             <code>

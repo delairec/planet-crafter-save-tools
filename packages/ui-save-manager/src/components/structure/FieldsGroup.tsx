@@ -5,6 +5,7 @@ export type ColumnViewModel = TableViewModel['columns'][number];
 
 interface FieldsGroupProps {
   columns: Accessor<ColumnViewModel[]>,
+  testId?: string,
 }
 
 export default function FieldsGroup(props: FieldsGroupProps) {
@@ -13,11 +14,11 @@ export default function FieldsGroup(props: FieldsGroupProps) {
     <div class="fields-group readonly mb-2">
       <For each={props.columns()}>
         {(column) => (
-          <div class="field">
+          <div class="field" data-testid={props.testId && `${props.testId}-field`}>
             <div class="label">{column.header}</div>
             <For each={column.values}>
               {(value) => (
-                <div class="value">{value}</div>
+                <div class="value" data-testid={props.testId && `${props.testId}-field-value`}>{value}</div>
               )}
             </For>
           </div>

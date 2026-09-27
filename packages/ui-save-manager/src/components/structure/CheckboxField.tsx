@@ -3,6 +3,7 @@ import {createUniqueId} from 'solid-js';
 interface CheckboxFieldProps {
   label: string;
   description: string;
+  testId: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
 }
@@ -12,11 +13,11 @@ export default function CheckboxField(props: CheckboxFieldProps) {
   return (
     <span class="tooltip-anchor checkbox-field">
       <label>
-        <input type="checkbox" aria-describedby={tooltipId} checked={props.checked}
+        <input type="checkbox" aria-describedby={tooltipId} data-testid={props.testId} checked={props.checked}
                onChange={(event) => props.onChange(event.currentTarget.checked)}/>
         {props.label}
       </label>
-      <span id={tooltipId} role="tooltip" class="tooltip">{props.description}</span>
+      <span id={tooltipId} role="tooltip" class="tooltip" data-testid={`${props.testId}-tooltip`}>{props.description}</span>
     </span>
   );
 }

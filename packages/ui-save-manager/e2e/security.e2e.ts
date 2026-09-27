@@ -32,15 +32,15 @@ function recordRequestedUrls(page: Page): string[] {
 
 async function loadViewAndMergeASave(page: Page): Promise<void> {
   await page.goto('/');
-  await page.getByLabel('Save file:').setInputFiles(saveAFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
-  await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await expect(page.getByText('Merge successful!')).toBeVisible();
+  await page.getByTestId('save-file-input').setInputFiles(saveAFixturePath);
+  await page.getByTestId('visualize-button').click();
+  await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
+  await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);
+  await page.getByTestId('save-b-input').setInputFiles(saveBFixturePath);
+  await page.getByTestId('merge-button').click();
+  await expect(page.getByTestId('merge-success-message')).toBeVisible();
   const downloadStarted = page.waitForEvent('download');
-  await page.getByRole('link', {name: 'Download'}).click();
+  await page.getByTestId('download-link').click();
   await downloadStarted;
 }
 

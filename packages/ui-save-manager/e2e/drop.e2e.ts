@@ -58,14 +58,14 @@ test.describe('Save file drop', () => {
       // Arrange
       const baselineSave = await readTheFixture(baselineSaveFixturePath);
       await page.goto('/');
-      await dropTheFiles(page, page.getByRole('group', {name: 'Display a save\'s data'}), [baselineSave]);
+      await dropTheFiles(page, page.getByTestId('display-area'), [baselineSave]);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await page.getByTestId('visualize-button').click();
 
       // Assert
-      await expect(page.getByLabel('Save file:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+      await expect(page.getByTestId('save-file-input')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
     });
   });
 
@@ -76,11 +76,11 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      await dropTheFiles(page, page.getByRole('group', {name: 'Save B'}), [baselineSave]);
+      await dropTheFiles(page, page.getByTestId('save-b-area'), [baselineSave]);
 
       // Assert
-      await expect(page.getByLabel('Save B:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByLabel('Save A:')).toHaveValue('');
+      await expect(page.getByTestId('save-b-input')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('save-a-input')).toHaveValue('');
     });
   });
 
@@ -92,12 +92,12 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      await dropTheFiles(page, page.getByRole('group', {name: 'Merge two saves'}), [otherPlayerSave, baselineSave]);
+      await dropTheFiles(page, page.getByTestId('merge-area'), [otherPlayerSave, baselineSave]);
 
       // Assert
-      await expect(page.getByLabel('Save A:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByLabel('Save B:')).toHaveValue(/other-player_valid\.json$/);
-      await expect(page.getByRole('button', {name: 'Merge'})).toBeEnabled();
+      await expect(page.getByTestId('save-a-input')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('save-b-input')).toHaveValue(/other-player_valid\.json$/);
+      await expect(page.getByTestId('merge-button')).toBeEnabled();
     });
   });
 
@@ -105,15 +105,15 @@ test.describe('Save file drop', () => {
     test('should select save A as save B and save B as save A', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save A:').setInputFiles(baselineSaveFixturePath);
-      await page.getByLabel('Save B:').setInputFiles(otherPlayerSaveFixturePath);
+      await page.getByTestId('save-a-input').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-b-input').setInputFiles(otherPlayerSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Swap save A and save B'}).click();
+      await page.getByTestId('swap-button').click();
 
       // Assert
-      await expect(page.getByLabel('Save A:')).toHaveValue(/other-player_valid\.json$/);
-      await expect(page.getByLabel('Save B:')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('save-a-input')).toHaveValue(/other-player_valid\.json$/);
+      await expect(page.getByTestId('save-b-input')).toHaveValue(/baseline_valid\.json$/);
     });
   });
 
@@ -121,13 +121,13 @@ test.describe('Save file drop', () => {
     test('should show its label as a tooltip', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save A:').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-a-input').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Swap save A and save B'}).hover();
+      await page.getByTestId('swap-button').hover();
 
       // Assert
-      await expect(page.getByRole('tooltip')).toHaveText('Swap save A and save B');
+      await expect(page.getByTestId('swap-button-tooltip')).toHaveText('Swap save A and save B');
     });
   });
 
@@ -139,7 +139,7 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      const isTaken = await isTakenByThePage(page, page.getByLabel('Save A:'), 'dragenter', [baselineSave, otherPlayerSave]);
+      const isTaken = await isTakenByThePage(page, page.getByTestId('save-a-input'), 'dragenter', [baselineSave, otherPlayerSave]);
 
       // Assert
       expect<boolean>(isTaken).toBe(true);
@@ -154,7 +154,7 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      const effect = await effectAnnouncedByThePage(page, page.getByLabel('Save file:'), [baselineSave]);
+      const effect = await effectAnnouncedByThePage(page, page.getByTestId('save-file-input'), [baselineSave]);
 
       // Assert
       expect<string>(effect).toBe('copy');
@@ -169,7 +169,7 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      const effect = await effectAnnouncedByThePage(page, page.getByRole('heading', {name: 'Visualization'}), [baselineSave]);
+      const effect = await effectAnnouncedByThePage(page, page.getByTestId('visualization-title'), [baselineSave]);
 
       // Assert
       expect<string>(effect).toBe('none');
@@ -181,7 +181,7 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      const isTaken = await isTakenByThePage(page, page.getByRole('heading', {name: 'Visualization'}), 'dragover', [baselineSave]);
+      const isTaken = await isTakenByThePage(page, page.getByTestId('visualization-title'), 'dragover', [baselineSave]);
 
       // Assert
       expect<boolean>(isTaken).toBe(true);
@@ -196,11 +196,11 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      await dropTheFiles(page, page.getByRole('group', {name: 'Save A'}), [otherPlayerSave, baselineSave]);
+      await dropTheFiles(page, page.getByTestId('save-a-area'), [otherPlayerSave, baselineSave]);
 
       // Assert
-      await expect(page.getByLabel('Save A:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByLabel('Save B:')).toHaveValue(/other-player_valid\.json$/);
+      await expect(page.getByTestId('save-a-input')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('save-b-input')).toHaveValue(/other-player_valid\.json$/);
     });
   });
 
@@ -211,11 +211,11 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      await dropTheFiles(page, page.getByRole('group', {name: 'Save A'}), [textFile]);
+      await dropTheFiles(page, page.getByTestId('save-a-area'), [textFile]);
 
       // Assert
-      await expect(page.getByRole('group', {name: 'Save A'})).toContainText('notes.txt is not a JSON save file.');
-      await expect(page.getByLabel('Save A:')).toHaveValue('');
+      await expect(page.getByTestId('save-a-area')).toContainText('notes.txt is not a JSON save file.');
+      await expect(page.getByTestId('save-a-input')).toHaveValue('');
     });
   });
 
@@ -227,11 +227,11 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      await dropTheFiles(page, page.getByRole('group', {name: 'Display a save\'s data'}), [baselineSave, otherPlayerSave]);
+      await dropTheFiles(page, page.getByTestId('display-area'), [baselineSave, otherPlayerSave]);
 
       // Assert
-      await expect(page.getByRole('group', {name: 'Display a save\'s data'})).toContainText('Drop a single save file here.');
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeDisabled();
+      await expect(page.getByTestId('display-area')).toContainText('Drop a single save file here.');
+      await expect(page.getByTestId('visualize-button')).toBeDisabled();
     });
   });
 
@@ -244,11 +244,11 @@ test.describe('Save file drop', () => {
       await page.goto('/');
 
       // Act
-      await dropTheFiles(page, page.getByRole('group', {name: 'Merge two saves'}), [baselineSave, otherPlayerSave, thirdSave]);
+      await dropTheFiles(page, page.getByTestId('merge-area'), [baselineSave, otherPlayerSave, thirdSave]);
 
       // Assert
-      await expect(page.getByRole('group', {name: 'Merge two saves'})).toContainText('Drop two save files at most here.');
-      await expect(page.getByLabel('Save A:')).toHaveValue('');
+      await expect(page.getByTestId('merge-area')).toContainText('Drop two save files at most here.');
+      await expect(page.getByTestId('save-a-input')).toHaveValue('');
     });
   });
 });

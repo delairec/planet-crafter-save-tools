@@ -1,24 +1,10 @@
 import {describe, expect, it} from 'bun:test';
-import {displayRouteLoadingLabel} from '../packages/ui-save-manager/src/messages/displayRouteMessages.js';
-import {spinnerLoadingLabel} from '../packages/ui-save-manager/src/messages/spinnerMessages.js';
 import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
-import {AMBIGUOUS_BUSY_LABEL, checkScenarioLocators, findScenarioLocatorViolations, isScenarioFile} from './check-scenario-locators.ts';
+import {checkScenarioLocators, findScenarioLocatorViolations, isScenarioFile} from './check-scenario-locators.ts';
 
-const TEST_IDENTIFIER_REASON = 'a scenario designates an element by what the screen shows, never by a test identifier';
-const CSS_SELECTOR_REASON = 'a scenario designates an element by its role, its label or its text, never by a CSS selector';
+const ACCESSIBILITY_LOCATOR_REASON = 'a scenario designates an element by its test id, never by its role, its label or its text';
+const CSS_SELECTOR_REASON = 'a scenario designates an element by its test id, never by a CSS selector';
 const REFERENCE_SCREENSHOT_REASON = 'a scenario asserts what the screen shows in words, never against a reference screenshot';
-const AMBIGUOUS_BUSY_LABEL_REASON = 'the busy indicator is designated by its status role, the hydration fallback carrying the same label';
-
-describe('AMBIGUOUS_BUSY_LABEL', () => {
-
-  describe('When the message modules the guard copies are read', () => {
-    it('should hold the very label both of them export, a rewording of either failing here rather than disarming the guard', () => {
-      // Assert
-      expect(AMBIGUOUS_BUSY_LABEL).toBe(displayRouteLoadingLabel);
-      expect(AMBIGUOUS_BUSY_LABEL).toBe(spinnerLoadingLabel);
-    });
-  });
-});
 
 describe('isScenarioFile', () => {
 
@@ -61,27 +47,59 @@ describe('isScenarioFile', () => {
 
 describe('findScenarioLocatorViolations', () => {
 
-  describe('When a scenario designates an element by a test identifier', () => {
-    it('should report the locator built for that identifier', () => {
+  describe('When a scenario designates elements by their test id', () => {
+    it('should report nothing, whether the scenario acts on the element, asserts it or narrows it down', () => {
       // Arrange
-      const source = "await expect(page.getByTestId('merge-button')).toBeVisible();";
+      const source = [
+        "await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);",
+        "await page.getByTestId('merge-button').click();",
+        "await expect(page.getByTestId('merge-success-message')).toHaveText('Merge successful!');",
+        "await expect(page.getByTestId('merge-area').getByTestId('save-a-input')).toHaveValue('');"
+      ].join('\n');
 
       // Act
       const violations = findScenarioLocatorViolations(source);
 
       // Assert
-      expect(violations).toEqual([{line: 1, reason: TEST_IDENTIFIER_REASON}]);
+      expect(violations).toEqual([]);
+    });
+  });
+
+  describe('When a scenario designates an element by its role, its label or its text', () => {
+    it('should report each locator that reads the accessibility tree or the text of the page', () => {
+      // Arrange
+      const source = [
+        "await page.getByRole('button', {name: 'Merge'}).click();",
+        "await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);",
+        "await expect(page.getByText('Merge successful!')).toBeVisible();",
+        "await page.getByPlaceholder('Search').fill('Skeo');",
+        "await expect(page.getByAltText('Planet')).toBeVisible();",
+        "await expect(page.getByTitle('Swap save A and save B')).toBeVisible();"
+      ].join('\n');
+
+      // Act
+      const violations = findScenarioLocatorViolations(source);
+
+      // Assert
+      expect(violations).toEqual([
+        {line: 1, reason: ACCESSIBILITY_LOCATOR_REASON},
+        {line: 2, reason: ACCESSIBILITY_LOCATOR_REASON},
+        {line: 3, reason: ACCESSIBILITY_LOCATOR_REASON},
+        {line: 4, reason: ACCESSIBILITY_LOCATOR_REASON},
+        {line: 5, reason: ACCESSIBILITY_LOCATOR_REASON},
+        {line: 6, reason: ACCESSIBILITY_LOCATOR_REASON}
+      ]);
     });
 
-    it('should report the attribute asserted on an element', () => {
+    it('should report the locator reached from another element as well', () => {
       // Arrange
-      const source = "await expect(page.getByRole('listitem')).toHaveAttribute('data-testid', 'error-row');";
+      const source = "await expect(page.getByTestId('merge-area').getByRole('listitem')).toHaveCount(1);";
 
       // Act
       const violations = findScenarioLocatorViolations(source);
 
       // Assert
-      expect(violations).toEqual([{line: 1, reason: TEST_IDENTIFIER_REASON}]);
+      expect(violations).toEqual([{line: 1, reason: ACCESSIBILITY_LOCATOR_REASON}]);
     });
   });
 
@@ -142,8 +160,8 @@ describe('findScenarioLocatorViolations', () => {
     it('should report the frame locator whatever receives it, its argument being a raw selector in every case', () => {
       // Arrange
       const source = [
-        "await page.frameLocator('#preview').getByRole('button').click();",
-        "await page.getByRole('region').frameLocator('iframe.preview').getByRole('button').click();"
+        "await page.frameLocator('#preview').getByTestId('merge-button').click();",
+        "await page.getByTestId('preview-area').frameLocator('iframe.preview').getByTestId('merge-button').click();"
       ].join('\n');
 
       // Act
@@ -159,9 +177,9 @@ describe('findScenarioLocatorViolations', () => {
     it('should leave a locator method alone when the page itself is the receiver of a legitimate call', () => {
       // Arrange
       const source = [
-        "await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);",
-        "await page.getByRole('checkbox').setChecked(true);",
-        "const value = await page.getByLabel('Save A:').inputValue();"
+        "await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);",
+        "await page.getByTestId('prefer-legacy-format').setChecked(true);",
+        "const value = await page.getByTestId('save-a-input').inputValue();"
       ].join('\n');
 
       // Act
@@ -193,53 +211,10 @@ describe('findScenarioLocatorViolations', () => {
     });
   });
 
-  describe('When a scenario designates the busy indicator by the label the hydration fallback shares', () => {
-    it('should report the line, that label naming two states at once', () => {
-      // Arrange
-      const source = "await expect(page.getByText('Loading...')).toBeVisible();";
-
-      // Act
-      const violations = findScenarioLocatorViolations(source);
-
-      // Assert
-      expect(violations).toEqual([{line: 1, reason: AMBIGUOUS_BUSY_LABEL_REASON}]);
-    });
-  });
-
-  describe('When a scenario designates the busy indicator by its role', () => {
-    it('should report nothing, the role being what tells the indicator from the hydration fallback', () => {
-      // Arrange
-      const source = "await expect(page.getByRole('status')).toBeVisible();";
-
-      // Act
-      const violations = findScenarioLocatorViolations(source);
-
-      // Assert
-      expect(violations).toEqual([]);
-    });
-  });
-
-  describe('When a scenario designates elements by what the screen shows', () => {
-    it('should report nothing for a role, a label or a sentence', () => {
-      // Arrange
-      const source = [
-        "await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);",
-        "await page.getByRole('button', {name: 'Merge'}).click();",
-        "await expect(page.getByText('Merge successful!')).toBeVisible();"
-      ].join('\n');
-
-      // Act
-      const violations = findScenarioLocatorViolations(source);
-
-      // Assert
-      expect(violations).toEqual([]);
-    });
-  });
-
   describe('When the shape of a refused call is quoted inside a string', () => {
     it('should report nothing, a quoted call not being code', () => {
       // Arrange
-      const source = "const refusedForm = 'page.locator(\".merge-result\") designates nothing the screen shows';";
+      const source = "const refusedForm = 'page.getByRole(\"button\") designates an element by its role';";
 
       // Act
       const violations = findScenarioLocatorViolations(source);
@@ -253,8 +228,8 @@ describe('findScenarioLocatorViolations', () => {
     it('should report nothing, the accepted limit of a line reading being that it never joins two lines', () => {
       // Arrange
       const source = [
-        'await expect(page.getByTestId',
-        "  ('merge-button')).toBeVisible();"
+        'await expect(page.getByRole',
+        "  ('button')).toBeVisible();"
       ].join('\n');
 
       // Act
@@ -268,28 +243,8 @@ describe('findScenarioLocatorViolations', () => {
 
 describe('checkScenarioLocators', () => {
 
-  describe('When every scenario designates an element by what the screen shows', () => {
+  describe('When every scenario designates an element by its test id', () => {
     it('should print that nothing was found and exit with zero', async () => {
-      // Arrange
-      const {io, printed, exitCodes} = createFakeScriptIo({
-        files: {
-          'packages/ui-save-manager/e2e/merge.e2e.ts': "await expect(page.getByRole('button', {name: 'Merge'})).toBeVisible();"
-        }
-      });
-
-      // Act
-      await checkScenarioLocators(io);
-
-      // Assert
-      expect({printed, exitCodes}).toEqual({
-        printed: ['check:locators: no scenario designates an element by something other than what the screen shows.'],
-        exitCodes: [0]
-      });
-    });
-  });
-
-  describe('When a scenario designates an element by a test identifier', () => {
-    it('should print each offending line with its reason, then the count, and exit with one', async () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
@@ -302,9 +257,29 @@ describe('checkScenarioLocators', () => {
 
       // Assert
       expect({printed, exitCodes}).toEqual({
+        printed: ['check:locators: no scenario designates an element by something other than its test id.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a scenario designates an element by its role', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/ui-save-manager/e2e/merge.e2e.ts': "await expect(page.getByRole('button', {name: 'Merge'})).toBeVisible();"
+        }
+      });
+
+      // Act
+      await checkScenarioLocators(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
         printed: [
-          'packages/ui-save-manager/e2e/merge.e2e.ts:1\n  a scenario designates an element by what the screen shows, never by a test identifier',
-          'check:locators: 1 line(s) designating an element by something other than what the screen shows.'
+          'packages/ui-save-manager/e2e/merge.e2e.ts:1\n  a scenario designates an element by its test id, never by its role, its label or its text',
+          'check:locators: 1 line(s) designating an element by something other than its test id.'
         ],
         exitCodes: [1]
       });

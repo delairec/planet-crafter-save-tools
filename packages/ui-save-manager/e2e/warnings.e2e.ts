@@ -5,19 +5,18 @@ const currentFormatSaveFixturePath = new URL('./fixtures/baseline_valid.json', i
 
 const legacyFormatWarningFragment = 'written by version 1.618 of the game or earlier';
 const legacyFormatWarningCode = 'legacy-save-format';
-const revealMessagesLabel = 'Show details';
 
 async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string): Promise<void> {
-  await page.getByLabel('Save file:').setInputFiles(saveFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
-  await page.getByText(revealMessagesLabel).click();
+  await page.getByTestId('save-file-input').setInputFiles(saveFixturePath);
+  await page.getByTestId('visualize-button').click();
+  await page.getByTestId('display-warnings-details-toggle').click();
 }
 
 async function mergeAndRevealTheMessages(page: Page, saveAFixturePath: string, saveBFixturePath: string): Promise<void> {
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await page.getByText(revealMessagesLabel).first().click();
+  await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);
+  await page.getByTestId('save-b-input').setInputFiles(saveBFixturePath);
+  await page.getByTestId('merge-button').click();
+  await page.getByTestId('save-a-warnings-details-toggle').click();
 }
 
 test.describe('Save warnings', () => {
@@ -30,22 +29,22 @@ test.describe('Save warnings', () => {
       await visualizeAndRevealTheMessages(page, legacySaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Warnings', {exact: true})).toBeVisible();
-      await expect(page.getByRole('listitem')).toContainText(legacyFormatWarningFragment);
-      await expect(page.getByRole('listitem')).not.toContainText(legacyFormatWarningCode);
+      await expect(page.getByTestId('display-warnings-title')).toHaveText('Warnings');
+      await expect(page.getByTestId('display-warnings-messages')).toContainText(legacyFormatWarningFragment);
+      await expect(page.getByTestId('display-warnings-messages')).not.toContainText(legacyFormatWarningCode);
     });
 
     test('should render the save data all the same, a warning not making the save unusable', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(legacySaveFixturePath);
+      await page.getByTestId('save-file-input').setInputFiles(legacySaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await page.getByTestId('visualize-button').click();
 
       // Assert
-      await expect(page.getByText('Warnings', {exact: true})).toBeVisible();
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+      await expect(page.getByTestId('display-warnings-title')).toHaveText('Warnings');
+      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
     });
   });
 
@@ -58,10 +57,10 @@ test.describe('Save warnings', () => {
       await mergeAndRevealTheMessages(page, legacySaveFixturePath, currentFormatSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Save A warnings')).toBeVisible();
-      await expect(page.getByText('Save B warnings')).toBeHidden();
-      await expect(page.getByRole('listitem').first()).toContainText(legacyFormatWarningFragment);
-      await expect(page.getByRole('link', {name: 'Download'})).toBeVisible();
+      await expect(page.getByTestId('save-a-warnings-title')).toHaveText('Save A warnings');
+      await expect(page.getByTestId('save-b-warnings-title')).toBeHidden();
+      await expect(page.getByTestId('save-a-warnings-messages')).toContainText(legacyFormatWarningFragment);
+      await expect(page.getByTestId('download-link')).toBeVisible();
     });
   });
 });

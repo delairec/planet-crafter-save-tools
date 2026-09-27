@@ -8,7 +8,7 @@ test.describe('Application version', () => {
       await page.goto('/');
 
       // Assert
-      await expect(page.getByRole('contentinfo')).toHaveText(`Version ${uiManifest.version}`);
+      await expect(page.getByTestId('application-version')).toHaveText(`Version ${uiManifest.version}`);
     });
   });
 
