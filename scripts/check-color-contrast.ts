@@ -71,7 +71,7 @@ export const TOKEN_PAIRS: TokenPair[] = [
   {
     description: 'the icon of an icon-only button under the pointer, on its hover panel',
     file: 'packages/ui-save-manager/src/styles/buttons.css',
-    selector: '.icon-button button:hover:not(:disabled)',
+    selector: '.icon-button :enabled:hover',
     foreground: 'content',
     background: 'elevated'
   },
@@ -162,7 +162,7 @@ export const TOKEN_PAIRS: TokenPair[] = [
   {
     description: 'a read-only field label on the panel surface it is nested in',
     file: 'packages/ui-save-manager/src/styles/forms.css',
-    selector: '.fields-group.readonly .field .label',
+    selector: '.fields-group .label',
     foreground: 'primary',
     background: 'surface'
   },
@@ -185,6 +185,34 @@ export const TOKEN_PAIRS: TokenPair[] = [
     file: 'packages/ui-save-manager/src/styles/effects.css',
     selector: '.spinner-container',
     foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the title of a group of the menu, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.menu-group-title',
+    foreground: 'neon-purple',
+    background: 'surface'
+  },
+  {
+    description: 'a link of the menu, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.menu a',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the menu link of the open page, on its neon fill',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.menu a[aria-current="page"]',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'the open page of the breadcrumb, on the page background',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.breadcrumb-page',
+    foreground: 'content',
     background: 'canvas'
   }
 ];

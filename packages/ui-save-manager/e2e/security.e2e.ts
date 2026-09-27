@@ -1,9 +1,10 @@
 import {expect, test, type Page} from '@playwright/test';
 import {readSiteHeaders} from '../siteHeaders';
 import {removeScriptNonces} from '../src/lib/scriptNonce';
+import {chooseTheTwoSavesToMerge, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
-const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
+const saveAFixturePath = locateTheFixture('baseline_valid.json');
+const saveBFixturePath = locateTheFixture('other-player_valid.json');
 
 /** The headers the server must send on the document, as `public/_headers` declares them. */
 const policyHeaderNames = ['Content-Security-Policy', 'Referrer-Policy', 'Permissions-Policy'];
@@ -31,12 +32,11 @@ function recordRequestedUrls(page: Page): string[] {
 }
 
 async function loadViewAndMergeASave(page: Page): Promise<void> {
-  await page.goto('/');
-  await page.getByLabel('Save file:').setInputFiles(saveAFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
+  await visualizeTheSave(page, saveAFixturePath);
+  await openThePageOfTheMenu(page, 'Configuration');
   await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
+  await openThePageOfTheMenu(page, 'Merge two saves');
+  await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
   await page.getByRole('button', {name: 'Merge'}).click();
   await expect(page.getByText('Merge successful!')).toBeVisible();
   const downloadStarted = page.waitForEvent('download');

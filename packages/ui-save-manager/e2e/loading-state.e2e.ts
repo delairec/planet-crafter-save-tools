@@ -1,7 +1,8 @@
 import {expect, test, type Page} from '@playwright/test';
+import {chooseTheSaveToVisualize, chooseTheTwoSavesToMerge, locateTheFixture} from './scenarioSteps';
 
-const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
+const saveAFixturePath = locateTheFixture('baseline_valid.json');
+const saveBFixturePath = locateTheFixture('other-player_valid.json');
 
 declare global {
   interface Window {
@@ -43,19 +44,25 @@ async function releaseTheHeldFileReads(page: Page): Promise<void> {
   await page.evaluate(() => window.releaseTheHeldFileReads());
 }
 
-async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
+async function chooseTheSaveToVisualizeWithTheReadsHeld(page: Page): Promise<void> {
+  await holdEveryFileRead(page);
+  await chooseTheSaveToVisualize(page, saveAFixturePath);
+}
+
+async function chooseTheTwoSavesToMergeWithTheReadsHeld(page: Page): Promise<void> {
   await holdEveryFileRead(page);
   await page.goto('/');
-  await page.getByLabel('Save file:').setInputFiles(saveAFixturePath);
+  await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
+}
+
+async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
+  await chooseTheSaveToVisualizeWithTheReadsHeld(page);
   await page.getByRole('button', {name: 'Visualize'}).click();
   await expect(page.getByRole('status')).toBeVisible();
 }
 
 async function startMergingWithTheReadsHeld(page: Page): Promise<void> {
-  await holdEveryFileRead(page);
-  await page.goto('/');
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
+  await chooseTheTwoSavesToMergeWithTheReadsHeld(page);
   await page.getByRole('button', {name: 'Merge'}).click();
   await expect(page.getByRole('status')).toBeVisible();
 }
@@ -64,9 +71,7 @@ test.describe('Loading states', () => {
   test.describe('When a save file is being read for display', () => {
     test('should show a busy indicator and keep the button out of reach', async ({page}) => {
       // Arrange
-      await holdEveryFileRead(page);
-      await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(saveAFixturePath);
+      await chooseTheSaveToVisualizeWithTheReadsHeld(page);
 
       // Act
       await page.getByRole('button', {name: 'Visualize'}).click();
@@ -86,7 +91,7 @@ test.describe('Loading states', () => {
       await releaseTheHeldFileReads(page);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+      await expect(page.getByRole('heading', {name: 'Loaded save: baseline_valid.json'})).toBeVisible();
       await expect(page.getByRole('button', {name: 'Visualize'})).toBeEnabled();
     });
   });
@@ -94,10 +99,7 @@ test.describe('Loading states', () => {
   test.describe('When two save files are being read for a merge', () => {
     test('should show a busy indicator and keep the button out of reach', async ({page}) => {
       // Arrange
-      await holdEveryFileRead(page);
-      await page.goto('/');
-      await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-      await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
+      await chooseTheTwoSavesToMergeWithTheReadsHeld(page);
 
       // Act
       await page.getByRole('button', {name: 'Merge'}).click();
