@@ -6,3 +6,12 @@
     font-size: var(--text-xs);
     font-weight: var(--semibold);
 }
+.surface {
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+}
+
+.surface-bordered {
+    border: var(--border-thin);
+}

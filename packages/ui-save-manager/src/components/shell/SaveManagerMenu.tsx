@@ -1,13 +1,14 @@
-import {For, Show} from 'solid-js';
+import {Show} from 'solid-js';
 import {A, useNavigate} from '@solidjs/router';
 import MenuGroup from '~/components/shell/MenuGroup';
+import PlayersMenu from '~/components/shell/PlayersMenu';
+import SaveIdentity from '~/components/shell/SaveIdentity';
 import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
 import {
   configurationPageTitle,
   loadAnotherSavePageTitle,
   menuLabel,
-  saveIdentityLabel,
   mergeTwoSavesPageTitle,
   overviewPageTitle,
   playersGroupTitle,
@@ -30,20 +31,7 @@ export default function SaveManagerMenu() {
       </MenuGroup>
       <Show when={loadedSave.isSaveLoaded()}>
         <Show when={loadedSave.viewModels.saveIdentity()}>
-          {(saveIdentity) => (
-            <section class="menu-identity" aria-label={saveIdentityLabel}>
-              <p class="menu-identity-file">{saveIdentity().fileName}</p>
-              <Show when={saveIdentity().displayName}>
-                {(displayName) => <p class="menu-identity-detail">{displayName()}</p>}
-              </Show>
-              <Show when={saveIdentity().mode}>
-                {(mode) => <p class="menu-identity-detail">{mode()}</p>}
-              </Show>
-              <Show when={saveIdentity().gameRelease}>
-                {(gameRelease) => <p class="menu-identity-detail">{gameRelease()}</p>}
-              </Show>
-            </section>
-          )}
+          {(saveIdentity) => <SaveIdentity saveIdentity={saveIdentity()}/>}
         </Show>
         <MenuGroup title={saveGroupTitle}>
           <A href={PAGE_PATHS.overviewPath} end>{overviewPageTitle}</A>
@@ -52,21 +40,9 @@ export default function SaveManagerMenu() {
           <A href={PAGE_PATHS.terraformationPath}>{terraformationPageTitle}</A>
         </MenuGroup>
         <MenuGroup title={playersGroupTitle}>
-          <ul class="menu-players">
-            <For each={loadedSave.viewModels.playersMenu()?.players}>
-              {(player) => (
-                <li class="menu-player">
-                  <span class="menu-player-name">{player.name}</span>
-                  <Show when={player.hostBadge}>
-                    {(hostBadge) => <span class="host-badge">{hostBadge()}</span>}
-                  </Show>
-                  <Show when={player.planet}>
-                    {(planet) => <span class="menu-player-planet">{planet()}</span>}
-                  </Show>
-                </li>
-              )}
-            </For>
-          </ul>
+          <Show when={loadedSave.viewModels.playersMenu()}>
+            {(playersMenu) => <PlayersMenu playersMenu={playersMenu()}/>}
+          </Show>
           <button onClick={() => navigate(PAGE_PATHS.playersPath)}>{seeMorePlayersButtonLabel}</button>
         </MenuGroup>
       </Show>
