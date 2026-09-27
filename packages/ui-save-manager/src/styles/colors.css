@@ -1,7 +1,8 @@
 :root {
     /* FOND & SURFACES */
     --canvas: #f4f6fd;
-    --surface: #ffffff;
+    --surface-card: #ffffff;
+    --surface: #f1eded;
     --elevated: #f1f4ff;
     --disclaimer: #cccfdc;
     --warning-surface: #f5ead6;
@@ -36,7 +37,8 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --canvas: #0a0d1a;
-        --surface: #11152b;
+        --surface-card: #11152b;
+        --surface: #191e3a;
         --elevated: #161b36;
         --disclaimer: #293055;
         --warning-surface: #33290f;

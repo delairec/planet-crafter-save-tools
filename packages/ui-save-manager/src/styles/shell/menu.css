@@ -6,7 +6,7 @@
     padding: var(--space-lg) var(--space-md);
     border: var(--border-thin);
     border-radius: var(--radius-sm);
-    background-color: var(--surface);
+    background-color: var(--surface-card);
 }
 
 .menu-identity .surface {
