@@ -1753,6 +1753,11 @@ DECISION TheSiteHeadersReachTheDocumentThroughTheServer
 		+ "drawn for that response in script-src, and Solid writes it on its inline scripts"
 		IMPL "packages/ui-save-manager/src/entry-server.tsx::allowTheInlineScriptsOf"
 		IMPL "packages/ui-save-manager/e2e/security.e2e.ts"
+	SPEC "the development server policy is derived in the Vite config alone: 'unsafe-inline' added"
+		+ "to style-src under the serve command, public/_headers verbatim under the build; the"
+		+ "handler that renders the document has no environment branch"
+		IMPL "packages/ui-save-manager/vite.config.ts::allowInlineStyles"
+		ENFORCED_BY "packages/ui-save-manager/e2e/security.e2e.ts"
 	REJECTED "hashes of the inline scripts in the policy: Solid emits its serialisation script or"
 		+ "not depending on streaming timing, so the hash changes, and the synchronous mode emits a"
 		+ "second script"
@@ -1761,9 +1766,16 @@ DECISION TheSiteHeadersReachTheDocumentThroughTheServer
 	REJECTED "the handler reading back or overriding the Content-Security-Policy of the route rule:"
 		+ "measured, the route-rule header is neither visible nor overridable from the SolidStart"
 		+ "handler, and the nonce never reached the response"
+	REJECTED "a development branch in the document handler (the nonce allowing styles, a csp-nonce"
+		+ "meta): an environment difference belongs to configuration, never to the code that serves"
+		+ "production"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	SOURCE "Measured while implementing FIX101 on 2026-09-23"
 		PR 134
+	SOURCE "Measured on the development server on 2026-09-27: Vite injects every style as an inline"
+		+ "element, and the SolidStart toolbar logo carries style attributes; owner ruling on the"
+		+ "shape of the allowance"
+		PR 203
 
 DECISION TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
 	SPEC "check:site fetches a URL rebuilt from constants, never the --url= argument itself: the"
@@ -2519,3 +2531,16 @@ DECISION TheModulesTheClisImportKeepTheirContract
 	SOURCE "Owner ruling of 2026-09-27 on the redesign plan: the parts of core-mapping the CLIs use"
 		+ "must not move"
 		REF @URL.SaveManagerRedesignMockup
+
+DECISION TheDevelopmentServerPreBundlesTheToolbarSourceMapReader
+	SPEC "the development server pre-bundles @jridgewell/trace-mapping, which the SolidStart"
+		+ "toolbar imports from node_modules, so that its @jridgewell/resolve-uri import, resolved"
+		+ "to a UMD file by the browser condition, is converted to a module"
+		IMPL "packages/ui-save-manager/vite.config.ts::@solidjs/start > @jridgewell/trace-mapping"
+	REJECTED "the SolidStart development overlay turned off: it hides the error viewer of the"
+		+ "development server instead of loading it"
+	UNTIL "SolidStart pre-bundles its own source map reader, or @jridgewell/resolve-uri resolves to"
+		+ "a module under the browser condition"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	SOURCE "Measured on the development server on 2026-09-27, SolidStart 2.0.5 and Vite 8.3.0"
+		PR 203

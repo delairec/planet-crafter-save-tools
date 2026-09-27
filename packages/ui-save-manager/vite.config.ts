@@ -1,12 +1,10 @@
 import { defineConfig, type Plugin } from "vite";
 import { nitro } from "nitro/vite";
 import { solidStart } from "@solidjs/start/config";
-import { readSiteHeaders } from "./siteHeaders";
+import { readSiteHeaders } from "./siteHeaders.ts";
 import { writeVersionDocument } from "./versionDocument.ts";
 import uiManifest from "./package.json" with { type: "json" };
 
-// The document carries the content security policy with a nonce drawn per response by
-// `src/entry-server.tsx`; the server route rule carries the rest of `public/_headers`.
 const { "Content-Security-Policy": siteContentSecurityPolicy, ...otherSiteHeaders } = readSiteHeaders();
 
 function emitVersionDocument(): Plugin {
@@ -23,9 +21,18 @@ function emitVersionDocument(): Plugin {
   };
 }
 
-export default defineConfig({
+function allowInlineStyles(policy: string): string {
+  return policy.replace("style-src", "style-src 'unsafe-inline'");
+}
+
+export default defineConfig(({ command }) => ({
   define: {
-    "import.meta.env.SITE_CONTENT_SECURITY_POLICY": JSON.stringify(siteContentSecurityPolicy)
+    "import.meta.env.SITE_CONTENT_SECURITY_POLICY": JSON.stringify(
+      command === "serve" ? allowInlineStyles(siteContentSecurityPolicy) : siteContentSecurityPolicy
+    )
+  },
+  optimizeDeps: {
+    include: ["@solidjs/start > @jridgewell/trace-mapping"]
   },
   plugins: [
     solidStart(),
@@ -36,4 +43,4 @@ export default defineConfig({
     }),
     emitVersionDocument()
   ]
-});
+}));
