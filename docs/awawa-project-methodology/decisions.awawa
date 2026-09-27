@@ -1692,8 +1692,8 @@ DECISION ConsumerVersionsAreComputedByARepositoryScript
 	SPEC "A consumer takes a new version when a first-parent commit of master since its last tag"
 		+ "changes its directory or that of a workspace package it depends on transitively"
 		IMPL "scripts/release/resolveConsumerPaths.ts::collectReachableDirectories"
-		IMPL "scripts/release/readCommitSubjects.ts::--first-parent"
-		ENFORCED_BY "scripts/release/readCommitSubjects.spec.ts"
+		IMPL "scripts/release/readCommits.ts::--first-parent"
+		ENFORCED_BY "scripts/release/readCommits.spec.ts"
 	SPEC "Below 1.0.0, a ! raises the minor number and any other subject the patch number; a"
 		+ "release never leaves 0"
 		IMPL "scripts/release/planRelease.ts::lowerIncrementBeforeFirstMajor"
@@ -1824,7 +1824,6 @@ DECISION TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
 DECISION TheReadmeBadgesShowTheStateOfMaster
 	SPEC "Every status badge of the README but Release shows the state of master and links to the"
 		+ "runs of master"
-		IMPL "README.md::deploy-status?branch=master"
 		IMPL "README.md::quality.yml/badge.svg?branch=master"
 		IMPL "README.md::dependabot-updates/badge.svg?branch=master"
 		IMPL "README.md::site-check.yml?query=branch%3Amaster"
@@ -1919,11 +1918,29 @@ DECISION AWaveIsAnEntityThatOutlivesItsTasks
 
 DECISION AChangelogEntryListsOnlyUserFacingCommits
 	SPEC "A changelog entry lists the commits whose subject is feat or fix, scoped or not, and"
-		+ "every commit whose subject carries a !, in the order the release reads them"
-		IMPL "scripts/release/addChangelogEntry.ts::commitSubjects.filter(isUserFacingChange)"
+		+ "every commit whose subject carries a !, that change the directory of the tool whatever"
+		+ "their scope names, in the order the release reads them"
+		IMPL "scripts/release/addChangelogEntry.ts::changesDirectory(commit, release.directory)"
 		IMPL "scripts/release/conventionalCommitSubject.ts::isUserFacingChange"
 		ENFORCED_BY "scripts/release/addChangelogEntry.spec.ts::When the release carries commits of"
 			+ "other types beside features, fixes and breaking changes"
+		ENFORCED_BY "scripts/release/addChangelogEntry.spec.ts::When a commit scoped to another"
+			+ "tool changes the directory of the consumer"
+	SPEC "Such a commit that changes only dependencies of the tool is replaced, after the commits"
+		+ "of the tool, by the changelogLine of each dependency it changes, a line shared by two"
+		+ "dependencies written once"
+		IMPL "scripts/release/addChangelogEntry.ts::listDependencyLines"
+		ENFORCED_BY "scripts/release/addChangelogEntry.spec.ts::When the release carries features"
+			+ "of its own beside a fix of a dependency"
+		ENFORCED_BY "scripts/release/addChangelogEntry.spec.ts::When two changed dependencies"
+			+ "declare the same line"
+	SPEC "Every workspace package other than a cli-* or ui-* one declares its changelogLine in its"
+		+ "package.json, and the release refuses a dependency without one that a user-facing commit"
+		+ "changed"
+		IMPL "packages/core-mapping/package.json::changelogLine"
+		IMPL "scripts/release/addChangelogEntry.ts::refuseDependenciesWithoutChangelogLine"
+		ENFORCED_BY "scripts/release/release.spec.ts::When a dependency declaring no changelog line"
+			+ "brought a fix"
 	SPEC "An entry whose version holds no such commit reads the single line - Maintenance changes"
 		+ "only"
 		IMPL "scripts/release/addChangelogEntry.ts::MAINTENANCE_ONLY_LINE"
@@ -1935,6 +1952,7 @@ DECISION AChangelogEntryListsOnlyUserFacingCommits
 		ENFORCED_BY "scripts/release/planRelease.spec.ts::When a consumer carries only maintenance"
 			+ "commits"
 	APPLIES_TO_TASK @TASK.FEAT120
+	APPLIES_TO_TASK @TASK.CHORE130
 	REJECTED "Filtering the commits when they are read: planRelease would then raise no version for"
 		+ "a tool whose commits are all chore or docs, and a bug report could name a build no"
 		+ "version tells apart"
@@ -1944,13 +1962,26 @@ DECISION AChangelogEntryListsOnlyUserFacingCommits
 		+ "reads as a release that lost its notes"
 	REJECTED "Rewriting the 0.1.0 entries already published: a changelog is history, only the"
 		+ "entries written from now on are filtered"
+	REJECTED "Listing on a tool every user-facing commit that reaches it, its previous form: a"
+		+ "commit changing only core-mapping reached both CLIs under a subject naming the UI"
+	REJECTED "Rewording a commit for the tool it reaches: a changelog quotes commits, it never"
+		+ "invents one"
+	REJECTED "Writing the dependency line only when the tool has no commit of its own: a fix of the"
+		+ "engine that changes the output of a CLI would go unsaid"
+	REJECTED "Deciding from the scope which tool lists a commit: scopes name corpus areas and"
+		+ "guards as often as packages"
+	REJECTED "One sentence for every dependency, or a map of lines kept in the release script: a"
+		+ "new package could then be released with no line of its own"
 	RATIONALE "The changelog is the release note of each tool, read by a player for what changed;"
 		+ "chore, docs, refactor, ci, test and build subjects say nothing to that reader, while a !"
-		+ "announces a change they must know of whatever its type"
+		+ "announces a change they must know of whatever its type, and the subject of a commit made"
+		+ "for another tool tells them nothing either"
 		REF @LIMITATION.AVersionTagCreatesNoGitHubRelease
 	SOURCE "Owner request after reading the 0.1.0 changelog entries, ruled while delivering FEAT120"
 		PR 165
 		PR 171
+	SOURCE "Owner review of the 0.1.1 release, ruled while refining CHORE130"
+		PR 199
 
 DECISION TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping

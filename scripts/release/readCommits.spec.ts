@@ -2,12 +2,12 @@ import {afterEach, beforeEach, describe, expect, it} from 'bun:test';
 import {mkdir, mkdtemp, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {dirname, join} from 'node:path';
-import {readCommitSubjects} from './readCommitSubjects.ts';
+import {readCommits} from './readCommits.ts';
 
 const CONSUMER_PATHS = ['packages/cli-merge', 'packages/core-mapping'];
 const NO_TAG = undefined;
 
-describe('readCommitSubjects', () => {
+describe('readCommits', () => {
   let repositoryRoot: string;
 
   function runGit(gitArguments: string[]): void {
@@ -24,7 +24,7 @@ describe('readCommitSubjects', () => {
   }
 
   beforeEach(async () => {
-    repositoryRoot = await mkdtemp(join(tmpdir(), 'read-commit-subjects-'));
+    repositoryRoot = await mkdtemp(join(tmpdir(), 'read-commits-'));
     runGit(['init', '--quiet', '--initial-branch=master']);
     await commitFile('README.md', 'docs: describe the tools');
     await commitFile('packages/core-mapping/index.ts', 'feat(core-mapping): add Skeo (#112)');
@@ -39,10 +39,13 @@ describe('readCommitSubjects', () => {
   describe('When the consumer has no version tag yet', () => {
     it('should give every commit touching its paths, newest first', () => {
       // Act
-      const subjects = readCommitSubjects({repositoryRoot, sinceTag: NO_TAG, paths: CONSUMER_PATHS});
+      const commits = readCommits({repositoryRoot, sinceTag: NO_TAG, paths: CONSUMER_PATHS});
 
       // Assert
-      expect(subjects).toEqual(['fix(cli-merge): keep the output folder (#150)', 'feat(core-mapping): add Skeo (#112)']);
+      expect(commits).toEqual([
+        {subject: 'fix(cli-merge): keep the output folder (#150)', changedFiles: ['packages/cli-merge/cli.js']},
+        {subject: 'feat(core-mapping): add Skeo (#112)', changedFiles: ['packages/core-mapping/index.ts']}
+      ]);
     });
   });
 
@@ -54,17 +57,19 @@ describe('readCommitSubjects', () => {
       await commitFile('packages/ui-save-manager/footer.tsx', 'feat(ui-save-manager): show the version (#161)');
 
       // Act
-      const subjects = readCommitSubjects({repositoryRoot, sinceTag: 'cli-merge-v1.0.0', paths: CONSUMER_PATHS});
+      const commits = readCommits({repositoryRoot, sinceTag: 'cli-merge-v1.0.0', paths: CONSUMER_PATHS});
 
       // Assert
-      expect(subjects).toEqual(['fix(core-mapping): refuse an empty section (#160)']);
+      expect(commits).toEqual([
+        {subject: 'fix(core-mapping): refuse an empty section (#160)', changedFiles: ['packages/core-mapping/rules.ts']}
+      ]);
     });
   });
 
   describe('When the version tag of the consumer is missing from the repository', () => {
     it('should refuse with the reason git gives', () => {
       // Act
-      const reading = () => readCommitSubjects({repositoryRoot, sinceTag: 'cli-merge-v1.0.0', paths: CONSUMER_PATHS});
+      const reading = () => readCommits({repositoryRoot, sinceTag: 'cli-merge-v1.0.0', paths: CONSUMER_PATHS});
 
       // Assert
       expect(reading).toThrow('cli-merge-v1.0.0..HEAD');
@@ -80,13 +85,13 @@ describe('readCommitSubjects', () => {
       runGit(['merge', '--quiet', '--no-ff', '-m', 'feat(core-mapping): deliver the wave (#170)', 'integration/wave']);
 
       // Act
-      const subjects = readCommitSubjects({repositoryRoot, sinceTag: NO_TAG, paths: CONSUMER_PATHS});
+      const commits = readCommits({repositoryRoot, sinceTag: NO_TAG, paths: CONSUMER_PATHS});
 
       // Assert
-      expect(subjects).toEqual([
-        'feat(core-mapping): deliver the wave (#170)',
-        'fix(cli-merge): keep the output folder (#150)',
-        'feat(core-mapping): add Skeo (#112)'
+      expect(commits).toEqual([
+        {subject: 'feat(core-mapping): deliver the wave (#170)', changedFiles: ['packages/core-mapping/wave.ts']},
+        {subject: 'fix(cli-merge): keep the output folder (#150)', changedFiles: ['packages/cli-merge/cli.js']},
+        {subject: 'feat(core-mapping): add Skeo (#112)', changedFiles: ['packages/core-mapping/index.ts']}
       ]);
     });
   });

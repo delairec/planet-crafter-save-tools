@@ -2,6 +2,7 @@
   "name": "util-types",
   "version": "1.0.0",
   "description": "Runtime platform contract (fs/process adapters)",
+  "changelogLine": "Runtime platform updated",
   "type": "module",
   "exports": {
     "./platform": "./platform/index.ts",
