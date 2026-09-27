@@ -1,4 +1,5 @@
-import {expect, test, type Page} from '@playwright/test';
+import {expect, type Page, test} from '@playwright/test';
+import {visualizeSave} from "./helpers/visualizeSave";
 
 const invalidSaveFixturePath = new URL('./fixtures/negative-gauge_invalid.json', import.meta.url).pathname;
 const validSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
@@ -6,8 +7,7 @@ const validSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.me
 const errorLocationInTheSave = 'at Players (section 2), entry 0';
 
 async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string): Promise<void> {
-  await page.getByTestId('save-file-input').setInputFiles(saveFixturePath);
-  await page.getByTestId('visualize-button').click();
+  await visualizeSave(page, saveFixturePath);
   await page.getByTestId('display-errors-details-toggle').click();
 }
 
@@ -35,10 +35,9 @@ test.describe('Save validation errors', () => {
     test('should leave the save data unrendered', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(invalidSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, invalidSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');

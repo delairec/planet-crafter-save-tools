@@ -1,4 +1,5 @@
 import {expect, test} from '@playwright/test';
+import {visualizeSave} from "./helpers/visualizeSave";
 
 const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
@@ -12,10 +13,9 @@ test.describe('Save display', () => {
     test('should display the save configuration of that file', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, baselineSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
@@ -26,10 +26,9 @@ test.describe('Save display', () => {
     test('should display it without a validation error', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(legacySaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, legacySaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
@@ -41,10 +40,9 @@ test.describe('Save display', () => {
     test('should display it without a validation error, naming the planet of its placed world object Skeo and the power that object produces', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(skeoUpdateSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('display-errors-title')).toBeHidden();
@@ -55,10 +53,9 @@ test.describe('Save display', () => {
     test('should warn once, under the Power title, that submerged machines may distort the computed available energy', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(skeoUpdateSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
@@ -68,10 +65,9 @@ test.describe('Save display', () => {
     test('should display the drone logistics as paused', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(skeoUpdateSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
       const droneLogisticsField = page.getByTestId('global-progression-field').filter({hasText: 'Drone logistics'});
@@ -83,10 +79,9 @@ test.describe('Save display', () => {
     test('should name no game release', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(skeoUpdateSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
@@ -98,10 +93,9 @@ test.describe('Save display', () => {
     test('should name that game release in a notification, under the submerged machines one', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, baselineSaveFixturePath);
 
       // Assert
       const notifications = page.getByTestId('energy-levels-notification');
@@ -127,10 +121,9 @@ test.describe('Save display', () => {
         };
       });
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, baselineSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('display-failure-message')).toHaveText('The save file could not be displayed. Please try again.');

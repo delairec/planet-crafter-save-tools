@@ -1,6 +1,7 @@
 import {expect, test, type Page} from '@playwright/test';
 import {readSiteHeaders} from '../siteHeaders';
 import {removeScriptNonces} from '../src/lib/scriptNonce';
+import {visualizeSave} from "./helpers/visualizeSave";
 
 const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
@@ -32,8 +33,7 @@ function recordRequestedUrls(page: Page): string[] {
 
 async function loadViewAndMergeASave(page: Page): Promise<void> {
   await page.goto('/');
-  await page.getByTestId('save-file-input').setInputFiles(saveAFixturePath);
-  await page.getByTestId('visualize-button').click();
+  await visualizeSave(page, saveAFixturePath);
   await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
   await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);
   await page.getByTestId('save-b-input').setInputFiles(saveBFixturePath);

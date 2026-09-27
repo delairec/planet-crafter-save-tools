@@ -1,4 +1,5 @@
 import {expect, test, type Page} from '@playwright/test';
+import {visualizeSave} from "./helpers/visualizeSave";
 
 const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
@@ -46,8 +47,7 @@ async function releaseTheHeldFileReads(page: Page): Promise<void> {
 async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
   await holdEveryFileRead(page);
   await page.goto('/');
-  await page.getByTestId('save-file-input').setInputFiles(saveAFixturePath);
-  await page.getByTestId('visualize-button').click();
+  await visualizeSave(page, saveAFixturePath);
   await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
 }
 
@@ -66,10 +66,9 @@ test.describe('Loading states', () => {
       // Arrange
       await holdEveryFileRead(page);
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(saveAFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, saveAFixturePath);
 
       // Assert
       await expect(page.getByTestId('display-busy-indicator')).toBeVisible();

@@ -1,4 +1,5 @@
-import {expect, test, type Page} from '@playwright/test';
+import {expect, type Page, test} from '@playwright/test';
+import {visualizeSave} from "./helpers/visualizeSave";
 
 const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
 const currentFormatSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
@@ -7,8 +8,7 @@ const legacyFormatWarningFragment = 'written by version 1.618 of the game or ear
 const legacyFormatWarningCode = 'legacy-save-format';
 
 async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string): Promise<void> {
-  await page.getByTestId('save-file-input').setInputFiles(saveFixturePath);
-  await page.getByTestId('visualize-button').click();
+  await visualizeSave(page, saveFixturePath);
   await page.getByTestId('display-warnings-details-toggle').click();
 }
 
@@ -37,10 +37,10 @@ test.describe('Save warnings', () => {
     test('should render the save data all the same, a warning not making the save unusable', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(legacySaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await visualizeSave(page, legacySaveFixturePath);
+
 
       // Assert
       await expect(page.getByTestId('display-warnings-title')).toHaveText('Warnings');
