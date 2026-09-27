@@ -104,7 +104,7 @@ Arguments, exit codes and Node.js support are described in [Command-line tools](
 | [Releases and production](docs/wiki/releases.md) | maintainers: versions, cutting a release, publishing the web UI         |
 
 Each tool carries its own version, listed in its `CHANGELOG.md`. Netlify publishes no production deploy by itself:
-production is published by hand from a `ui-save-manager-v*` tag, and the deploy previews stay public.
+production is built from a `ui-save-manager-v*` tag and published by hand, and the deploy previews stay public.
 
 ## Under the hood: how the merge decides
 

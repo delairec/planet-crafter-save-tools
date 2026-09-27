@@ -1,7 +1,7 @@
 name: Site check
 
 # Checks that the production web UI loads and carries the headers of
-# packages/ui-save-manager/public/_headers. Netlify builds master on each push but publishes a
+# packages/ui-save-manager/public/_headers. Netlify builds master from a release tag but publishes a
 # deployment by hand, so no GitHub event follows a publication: run this workflow by hand once a
 # deployment is published. The weekly run catches a header lost outside a deployment. On demand,
 # `url` checks a deploy preview. It prints the version and the commit production serves and names

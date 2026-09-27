@@ -37,3 +37,24 @@ jobs:
             packages/ui-save-manager/playwright-report/
             packages/ui-save-manager/test-results/
           retention-days: 7
+
+  build-site:
+    if: startsWith(github.ref_name, 'ui-save-manager-v')
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Refuse a tag master has moved past, since the build hook builds the head of master
+        run: |
+          tagged_commit=$(git rev-parse HEAD)
+          master_commit=$(git ls-remote origin refs/heads/master | cut -f1)
+          if [ "$tagged_commit" != "$master_commit" ]; then
+            echo "::error::${GITHUB_REF_NAME} names ${tagged_commit}, master is at ${master_commit}: the build hook would build ${master_commit}."
+            exit 1
+          fi
+      - name: Build the tagged commit on Netlify
+        run: curl --fail-with-body --silent --show-error --request POST --data '{}' "${NETLIFY_BUILD_HOOK_URL}?trigger_title=${GITHUB_REF_NAME}"
+        env:
+          NETLIFY_BUILD_HOOK_URL: ${{ secrets.NETLIFY_BUILD_HOOK_URL }}

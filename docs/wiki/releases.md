@@ -38,8 +38,11 @@ commit. A tag creates no GitHub release: the `CHANGELOG.md` of each tool is its 
 ## Publishing the web UI
 
 Production is the deploy of the commit a `ui-save-manager-v*` tag names — the squash commit of the release pull
-request — published by hand from the Netlify dashboard. Netlify builds every push to `master` and every pull request
-against it, and the deploy previews stay public, but it never publishes production by itself.
+request — published by hand from the Netlify dashboard. Netlify builds no push to `master`: once a
+`ui-save-manager-v*` tag passes `release:verify`, the `Release` workflow calls a Netlify build hook, which builds the
+head of `master`, and fails instead when `master` has moved past the tagged commit. Netlify builds every push to a
+pull request against `master`, and the deploy previews stay public, but it never publishes production by itself.
+The hook address is the `NETLIFY_BUILD_HOOK_URL` secret of the repository.
 
 The production build is served at https://planet-crafter-save-manager.netlify.app/. The `Site check` workflow, run
 from the Actions tab after each publication and every week, checks that it loads and carries the headers of

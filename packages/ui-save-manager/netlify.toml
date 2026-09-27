@@ -1,0 +1,6 @@
+# Netlify reads this file from the base directory, packages/ui-save-manager, set in its dashboard.
+# A push to master builds nothing: the Release workflow calls a build hook once a ui-save-manager-v*
+# tag passes release:verify, and Netlify never cancels a hook build, whatever this command exits.
+# Every other branch is a deploy preview of a pull request against master, built on each push.
+[build]
+  ignore = 'test "$BRANCH" = master'
