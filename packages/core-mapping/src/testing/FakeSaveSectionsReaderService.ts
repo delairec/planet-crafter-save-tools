@@ -58,12 +58,20 @@ export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
     return [new PlayerEntity({
       name: 'Nikowa',
       inventory: [],
-      equipment: []
+      equipment: [],
+      planetId: 'Toxicity',
+      host: true
     }), new PlayerEntity({
       name: 'Chileny',
       inventory: [],
-      equipment: []
+      equipment: [],
+      planetId: '',
+      host: false
     })];
+  }
+
+  getDeclaredVersion(): string | undefined {
+    return '2.008';
   }
 
   getTerraformationLevels(): TerraformationLevelEntity[] {

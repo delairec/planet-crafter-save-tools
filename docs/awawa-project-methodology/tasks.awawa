@@ -1785,7 +1785,8 @@ TASK FEAT134
 
 TASK FEAT135
 	TITLE "Feed the menu with the save identity and the players list, two zone view models"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 205
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; whether the game"
 		+ "release shown is the declared version or the resolved release, what a save without a"
 		+ "version shows, and what a player whose planet is empty or legacy shows, are settled with"
@@ -1793,13 +1794,34 @@ TASK FEAT135
 	SPEC "the save identity zone of the menu shows the file name, the display name, the mode and"
 		+ "the game release of the loaded save, above the groups of the menu; a save without a"
 		+ "configuration entry shows the file name alone"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the save identity above the"
+			+ "groups"
+		IMPL "packages/core-mapping/src/application/LoadSaveIdentity.spec.ts::should present the"
+			+ "file name alone"
 	SPEC "the Players group of the menu lists the players of the save, each with the planet they"
 		+ "stand on and a Host badge for the host"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should list the players in the Players"
+			+ "group"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should list its players with the planet"
+			+ "they stand on"
 	SPEC "the save identity and the players menu are two view models of core-mapping, each built by"
 		+ "a presenter of its own from a use case of its own, reached by a controller of its own"
 		+ "that takes the validated text; the file name enters through the request"
+		IMPL "packages/core-mapping/src/controllers/LoadSaveIdentityController.ts::loadSaveIdentity(validatedContent:"
+			+ "string, fileName: string)"
+		IMPL "packages/core-mapping/src/controllers/LoadPlayersMenuController.ts::loadPlayersMenu(validatedContent:"
+			+ "string)"
+		IMPL "packages/core-mapping/src/presentation/SaveIdentityPresenter.ts::class"
+			+ "SaveIdentityPresenter"
+		IMPL "packages/core-mapping/src/presentation/PlayersMenuPresenter.ts::class"
+			+ "PlayersMenuPresenter"
+		IMPL "packages/core-mapping/src/application/requests/LoadSaveIdentityRequest.ts::fileName"
 	SPEC "the player entity carries the planet and the host flag of its entry"
+		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::readonly planetId: string"
+		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::readonly host: boolean"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
+		IMPL "packages/cli-validate/cli/validate-cli.node.spec.js"
 	AFTER @TASK.FEAT134
 	WAVE @WAVE.10
 	RATIONALE "The menu needs two things no view model carries today: the identity of the save,"

@@ -5,7 +5,10 @@
 @import "styles/forms.css";
 @import "styles/buttons.css";
 
-@import "styles/specifics/shell.css";
+@import "styles/shell/shell.css";
+@import "styles/shell/breadcrumb.css";
+@import "styles/shell/menu.css";
+@import "styles/components.css";
 
 .app {
     height: var(--app-height);
@@ -13,5 +16,5 @@
     grid-template-rows: auto 1fr auto;
     padding-left: var(--space-lg);
     padding-right: var(--space-lg);
-    font-size: var(--text-xl);
+    font-size: var(--text-base);
 }

@@ -68,7 +68,7 @@ button:focus-visible {
     background-color: transparent;
     color: var(--muted);
     font-size: var(--text-base);
-    line-height: 1;
+    line-height: var(--line-height-sm);
 }
 
 .icon-button :enabled:hover {

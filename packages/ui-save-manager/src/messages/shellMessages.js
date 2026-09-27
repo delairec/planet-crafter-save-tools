@@ -1,5 +1,6 @@
 export const menuLabel = 'Menu';
 export const breadcrumbLabel = 'Breadcrumb';
+export const saveIdentityLabel = 'Loaded save';
 
 export const toolsGroupTitle = 'Tools';
 export const saveGroupTitle = 'Save';

@@ -2391,7 +2391,7 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 			+ "take for a save declaring %s the values of %s"
 	SPEC "a save declaring no version, or a version resolving to no release, takes the values of"
 		+ "the last release of the releases table"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::??"
+		IMPL "packages/core-mapping/src/domain/rules/resolveGameReleaseOfDeclaredVersion.ts::??"
 			+ "CURRENT_FORMAT_RELEASE"
 		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
 			+ "take the values of the last release of the table"
@@ -2715,3 +2715,38 @@ DECISION EachPageOfTheSaveManagerIsARoute
 	SOURCE "Owner ruling of 2026-09-27, when FEAT134 started: one route per page, the loaded save"
 		+ "in a store above the routes"
 		PR 202
+
+DECISION TheSaveIdentityShowsTheResolvedGameRelease
+	SPEC "the game release of the save identity is the release resolved from the version the save"
+		+ "declares, the current format release when the save declares no version or one no release"
+		+ "matches"
+		IMPL "packages/core-mapping/src/domain/rules/resolveGameReleaseOfDeclaredVersion.ts::resolveGameReleaseOfDeclaredVersion"
+		IMPL "packages/core-mapping/src/application/LoadSaveIdentity.ts::resolveGameReleaseOfDeclaredVersion"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadSaveIdentity.spec.ts::should present"
+			+ "the current format release"
+	REJECTED "the version the save declares, printed as is: a version no release names reads as a"
+		+ "release the project does not know, and a save without a version would show nothing"
+	REJECTED "no game release for a save without a version: the save is read by the branch of the"
+		+ "current format release all the same, so the identity would hide the release that reads"
+		+ "it"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT135
+	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
+		PR 205
+
+DECISION APlayerOnAnEmptyPlanetShowsNoPlanet
+	SPEC "the players menu shows no planet for a player whose planet is empty, and the planet of"
+		+ "the entry otherwise, whatever the format of the save"
+		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::findPlanetStoodOn"
+		ENFORCED_BY "packages/core-mapping/src/domain/entities/PlayerEntity.spec.ts::should answer"
+			+ "$expected for $situation"
+		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should list its players with the"
+			+ "planet they stand on"
+	REJECTED "no planet for any player of a legacy save: a legacy player entry carries its planet"
+		+ "like any other, so hiding it drops a fact the save states"
+	REJECTED "a placeholder such as Unknown planet: it spends a line of the menu to say nothing"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT135
+	SOURCE "Owner review of 2026-09-27: the planet shows when its name is not empty, legacy save or"
+		+ "not"
+		PR 205

@@ -189,28 +189,63 @@ export const TOKEN_PAIRS: TokenPair[] = [
   },
   {
     description: 'the title of a group of the menu, on the menu panel',
-    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
     selector: '.menu-group-title',
     foreground: 'neon-purple',
     background: 'surface'
   },
   {
     description: 'a link of the menu, on the menu panel',
-    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
     selector: '.menu a',
     foreground: 'content',
     background: 'surface'
   },
   {
     description: 'the menu link of the open page, on its neon fill',
-    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
     selector: '.menu a[aria-current="page"]',
     foreground: 'inverted',
     background: 'neon-cyan'
   },
   {
+    description: 'the file name of the loaded save, in the identity zone of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-identity-file',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the display name, mode and game release of the loaded save, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-identity-detail',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the name of a player in the Players group, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-player',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the planet a player stands on, in the Players group of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-player-planet',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the Host badge of a player, on its neon fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.host-badge',
+    foreground: 'inverted',
+    background: 'neon-purple'
+  },
+  {
     description: 'the open page of the breadcrumb, on the page background',
-    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    file: 'packages/ui-save-manager/src/styles/shell/breadcrumb.css',
     selector: '.breadcrumb-page',
     foreground: 'content',
     background: 'canvas'
@@ -357,7 +392,7 @@ export function findUncataloguedForegroundDeclarations(source: string, filePath:
 }
 
 /**
- * @param {string} workspaceRoot the repository root the stylesheets are looked up from
+ * @param io
  * @returns every foreground violation of the stylesheets of `packages/ui-save-manager/src/`, generated ones excluded,
  * each cited by its path relative to the workspace root
  */

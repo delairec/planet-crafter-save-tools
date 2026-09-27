@@ -10,6 +10,8 @@ export interface SaveSectionsReaderPort {
 
   getGlobalProgression(): GlobalProgressionValueObject;
 
+  getDeclaredVersion(): string | undefined;
+
   getTerraformationLevels(): TerraformationLevelEntity[];
 
   getStatistics(): StatisticsValueObject | undefined;

@@ -22,6 +22,8 @@
     --space-lg:  1rem;     /* 16px */
     --space-xl:  1.5rem;   /* 24px */
     --space-xxl:  2rem;   /* 32px */
+    --line-height-sm: 1;
+    --line-height-md: 1.5;
 
     /** Borders **/
     --border-thin: 1px solid var(--border-color-inverted);
@@ -50,7 +52,7 @@ body {
     margin: 0;
     background: var(--canvas);
     color: var(--content);
-    line-height: 1.5;
+    line-height: var(--line-height-md);
 }
 
 details.surface summary {
