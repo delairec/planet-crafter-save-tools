@@ -1824,7 +1824,6 @@ DECISION TheSiteCheckFetchesOnlyTheProductionSiteOrItsDeployPreviews
 DECISION TheReadmeBadgesShowTheStateOfMaster
 	SPEC "Every status badge of the README but Release shows the state of master and links to the"
 		+ "runs of master"
-		IMPL "README.md::deploy-status?branch=master"
 		IMPL "README.md::quality.yml/badge.svg?branch=master"
 		IMPL "README.md::dependabot-updates/badge.svg?branch=master"
 		IMPL "README.md::site-check.yml?query=branch%3Amaster"
