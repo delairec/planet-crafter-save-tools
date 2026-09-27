@@ -2603,19 +2603,19 @@ DECISION TheSaveIdentityShowsTheResolvedGameRelease
 	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
 		PR 205
 
-DECISION APlayerOnAnEmptyOrLegacyPlanetShowsNoPlanet
-	SPEC "the players menu shows no planet for a player whose planet is empty or whose save is"
-		+ "legacy"
+DECISION APlayerOnAnEmptyPlanetShowsNoPlanet
+	SPEC "the players menu shows no planet for a player whose planet is empty, and the planet of"
+		+ "the entry otherwise, whatever the format of the save"
 		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::findPlanetStoodOn"
 		ENFORCED_BY "packages/core-mapping/src/domain/entities/PlayerEntity.spec.ts::should answer"
 			+ "$expected for $situation"
-		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should list its players without the"
+		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should list its players with the"
 			+ "planet they stand on"
-	REJECTED "the planet of the terraformation levels for a legacy save: the legacy player entry"
-		+ "names no planet, and one guessed from another section could name a planet the player"
-		+ "never stood on"
+	REJECTED "no planet for any player of a legacy save: a legacy player entry carries its planet"
+		+ "like any other, so hiding it drops a fact the save states"
 	REJECTED "a placeholder such as Unknown planet: it spends a line of the menu to say nothing"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT135
-	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
+	SOURCE "Owner review of 2026-09-27: the planet shows when its name is not empty, legacy save or"
+		+ "not"
 		PR 205

@@ -45,7 +45,7 @@ export class PlayerEntity {
     return this._host;
   }
 
-  findPlanetStoodOn(isLegacySave: boolean): string | undefined {
-    return isLegacySave || this._planetId === '' ? undefined : this._planetId;
+  findPlanetStoodOn(): string | undefined {
+    return this._planetId === '' ? undefined : this._planetId;
   }
 }

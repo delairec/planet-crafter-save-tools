@@ -9,10 +9,9 @@ export class LoadPlayersMenu {
   ) {}
 
   async execute(): Promise<void> {
-    const isLegacySave = this.saveSectionsReader.isLegacySave();
     const players = this.saveSectionsReader.getPlayers().map((player) => createPlayerMenuEntryValueObject({
       name: player.name,
-      planet: player.findPlanetStoodOn(isLegacySave),
+      planet: player.findPlanetStoodOn(),
       isHost: player.isHost
     }));
 

@@ -42,15 +42,14 @@ describe('PlayerEntity', () => {
 
   describe('When the planet it stands on is asked', () => {
     it.each([
-      {situation: 'an ordinary save', planetId: 'Toxicity', isLegacySave: false, expected: 'Toxicity'},
-      {situation: 'an empty planet', planetId: '', isLegacySave: false, expected: undefined},
-      {situation: 'a legacy save', planetId: 'Toxicity', isLegacySave: true, expected: undefined}
-    ])('should answer $expected for $situation', ({planetId, isLegacySave, expected}) => {
+      {situation: 'a named planet', planetId: 'Toxicity', expected: 'Toxicity'},
+      {situation: 'an empty planet', planetId: '', expected: undefined}
+    ])('should answer $expected for $situation', ({planetId, expected}) => {
       // Arrange
       const player = new PlayerEntity(createPlayerInput({planetId}));
 
       // Act
-      const planet = player.findPlanetStoodOn(isLegacySave);
+      const planet = player.findPlanetStoodOn();
 
       // Assert
       expect(planet).toBe(expected);

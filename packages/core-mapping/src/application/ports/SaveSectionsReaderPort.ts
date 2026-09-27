@@ -12,8 +12,6 @@ export interface SaveSectionsReaderPort {
 
   getDeclaredVersion(): string | undefined;
 
-  isLegacySave(): boolean;
-
   getTerraformationLevels(): TerraformationLevelEntity[];
 
   getStatistics(): StatisticsValueObject | undefined;

@@ -74,10 +74,6 @@ export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
     return '2.008';
   }
 
-  isLegacySave(): boolean {
-    return false;
-  }
-
   getTerraformationLevels(): TerraformationLevelEntity[] {
     return [new TerraformationLevelEntity({
       planetId: "Toxicity",

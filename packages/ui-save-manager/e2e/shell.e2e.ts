@@ -87,7 +87,7 @@ test.describe('Save manager shell', () => {
       await expect(findTheMenu(page).getByRole('group', {name: 'Players'}).getByRole('button').last()).toHaveText('See more');
     });
 
-    test('should show the file name, display name, mode and game release of the save above the groups', async ({page}) => {
+    test('should show the save identity above the groups', async ({page}) => {
       // Act
       await visualizeTheSave(page, baselineSaveFixturePath);
 
@@ -99,7 +99,7 @@ test.describe('Save manager shell', () => {
         .toBeLessThan((await findTheMenu(page).getByRole('group', {name: 'Save', exact: true}).boundingBox())!.y);
     });
 
-    test('should list the players of the save in the Players group, with their planet and a Host badge', async ({page}) => {
+    test('should list the players in the Players group', async ({page}) => {
       // Act
       await visualizeTheSave(page, baselineSaveFixturePath);
 
@@ -110,13 +110,13 @@ test.describe('Save manager shell', () => {
   });
 
   test.describe('When a legacy save is loaded', () => {
-    test('should list its players without the planet they stand on', async ({page}) => {
+    test('should list its players with the planet they stand on', async ({page}) => {
       // Act
       await visualizeTheSave(page, legacySaveFixturePath);
 
       // Assert
       await expect(findTheMenu(page).getByRole('group', {name: 'Players'}).getByRole('listitem'))
-        .toHaveText(['NikowaHost']);
+        .toHaveText(['NikowaHostToxicity']);
     });
   });
 

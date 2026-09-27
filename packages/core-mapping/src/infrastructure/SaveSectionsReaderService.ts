@@ -70,10 +70,6 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
     return this.sections.saveConfigurations[0]?.version;
   }
 
-  isLegacySave(): boolean {
-    return this.sections.terrainLayers !== undefined;
-  }
-
   getTerraformationLevels(): TerraformationLevelEntity[] {
     return this.sections.terraformationLevels.map((level: TerraformationLevel): TerraformationLevelEntity => new TerraformationLevelEntity({
       planetId: level.planetId,
