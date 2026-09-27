@@ -62,12 +62,12 @@
     list-style: none;
 }
 
-.breadcrumb li[aria-current="page"] {
+.breadcrumb-page {
     color: var(--content);
     font-weight: var(--semibold);
 }
 
-.breadcrumb li[aria-current="page"]::before {
+.breadcrumb-page::before {
     content: '›';
     margin-right: var(--space-sm);
     font-weight: normal;

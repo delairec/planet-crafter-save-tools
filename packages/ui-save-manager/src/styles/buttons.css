@@ -67,11 +67,11 @@ button:focus-visible {
     border: var(--border-medium);
     background-color: transparent;
     color: var(--muted);
-    font-size: 1rem;
+    font-size: var(--text-base);
     line-height: 1;
 }
 
-.icon-button button:hover:not(:disabled) {
+.icon-button :enabled:hover {
     background-color: var(--elevated);
     color: var(--content);
 }

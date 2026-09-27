@@ -61,20 +61,24 @@ details summary:hover {
     cursor: pointer;
 }
 
-details.surface summary::marker {
-    content: '👋🧑‍🚀 '
+details {
+    --summary-marker: '👉 ';
 }
 
-details:open.surface summary::marker {
-    content: '  🧑‍🚀 '
+details[open] {
+    --summary-marker: '👇 ';
 }
 
-details summary::marker {
-    content: '👉 '
+.surface {
+    --summary-marker: '👋🧑‍🚀 ';
 }
 
-details:open summary::marker {
-    content: '👇 '
+.surface[open] {
+    --summary-marker: '  🧑‍🚀 ';
+}
+
+summary::marker {
+    content: var(--summary-marker);
 }
 
 .container {

@@ -33,11 +33,7 @@ select:focus {
     border-color: var(--neon-pink);
     box-shadow: var(--shadow-medium) var(--neon-pink);
 }
-.fields-group-container.fields-group-single{
-    grid-column-gap: var(--space-lg);
-    width: fit-content;
-}
-.fields-group-container:not(.fields-group-single){
+.fields-group-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--fields-group-width), 1fr));
     gap: var(--space-xxl);
@@ -61,7 +57,7 @@ select:focus {
     border-radius: var(--space-sm);
 }
 
-.fields-group.readonly .field .label {
+.fields-group .label {
     color: var(--primary);
 }
 

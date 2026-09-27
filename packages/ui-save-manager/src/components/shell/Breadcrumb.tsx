@@ -10,7 +10,7 @@ export default function Breadcrumb(props: BreadcrumbProps) {
     <nav class="breadcrumb" aria-label={breadcrumbLabel}>
       <ol>
         <li>{props.group}</li>
-        <li aria-current="page">{props.page}</li>
+        <li class="breadcrumb-page" aria-current="page">{props.page}</li>
       </ol>
     </nav>
   );
