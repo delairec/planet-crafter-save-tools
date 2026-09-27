@@ -79,7 +79,7 @@
     gap: var(--space-lg);
 }
 
-@media (max-width: var(--breakpoint-tablet)) {
+@media (max-width: 768px) {
     .shell {
         grid-template-columns: 1fr;
     }

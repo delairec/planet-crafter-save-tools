@@ -174,7 +174,7 @@ pre {
     margin-bottom: var(--space-xxl);
 }
 
-@media (max-width: var(--breakpoint-tablet)) {
+@media (max-width: 768px) {
     .grid-container {
         grid-template-columns: 1fr;
     }
