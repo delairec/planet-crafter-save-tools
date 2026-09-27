@@ -86,4 +86,5 @@
 
 .menu button {
     margin-top: var(--space-xs);
+    background-color: var(--neon-pink);
 }
