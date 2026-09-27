@@ -9,10 +9,15 @@ const skeoUpdateSaveFixturePath = new URL('./fixtures/skeo-update_valid.json', i
 const submergedMachinesNotification = 'Submerged machines may distort the computed available energy.';
 const gameReleaseNotificationPrefix = 'Values of game release';
 
-async function expectGameReleaseNotificationsToHaveCount(page: Page, expectedCount: number) {
+async function expectNotificationsToBePresent(page: Page, expectedNotification:string) {
   await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
   const notifications = page.getByTestId('energy-levels-notification');
-  await expect(notifications.filter({hasText: gameReleaseNotificationPrefix})).toHaveCount(expectedCount);
+  await expect(notifications.filter({hasText: expectedNotification})).toHaveCount(1);
+}
+async function expectNotificationsToBeAbsent(page: Page, expectedNotification:string) {
+  await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
+  const notifications = page.getByTestId('energy-levels-notification');
+  await expect(notifications.filter({hasText: expectedNotification})).toHaveCount(0);
 }
 
 test.describe('Save display', () => {
@@ -65,7 +70,7 @@ test.describe('Save display', () => {
       await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
-      await expectGameReleaseNotificationsToHaveCount(page, 1);
+      await expectNotificationsToBePresent(page, submergedMachinesNotification);
     });
 
     test('should display the drone logistics as paused', async ({page}) => {
@@ -90,7 +95,7 @@ test.describe('Save display', () => {
       await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
-      await expectGameReleaseNotificationsToHaveCount(page, 0);
+      await expectNotificationsToBeAbsent(page, gameReleaseNotificationPrefix);
     });
   });
 

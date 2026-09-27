@@ -1114,8 +1114,6 @@ DECISION ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		PR 183
 
 DECISION AGuardRefusesLocatorsTheScreenDoesNotShow
-	REJECTED "Recognising a CSS selector by the shape of its literal: getByTestId('#3') would be"
-		+ "refused"
 	REJECTED "Refusing a selector-taking shortcut whatever its receiver: on a locator, click and"
 		+ "setInputFiles are the scenario gestures"
 	REJECTED "Refusing page.frame: its argument is a frame name or URL"
