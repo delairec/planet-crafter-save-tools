@@ -2555,7 +2555,7 @@ DECISION EachPageOfTheSaveManagerIsARoute
 	SPEC "the loaded save lives in a store above the routes: switching page reads no file again and"
 		+ "reloads no page, and the view models of a loaded save are computed once for it"
 		IMPL "packages/ui-save-manager/src/app.tsx::<LoadedSaveProvider>"
-		IMPL "packages/ui-save-manager/src/lib/loadedSave.tsx::useSectionViewModels(loadSaveFile.validatedContent)"
+		IMPL "packages/ui-save-manager/src/providers/LoadedSaveProvider.tsx::useSectionViewModels(loadSaveFile.validatedContent)"
 		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should keep the loaded save without"
 			+ "reading its file again nor reloading the page"
 	SPEC "a page of the save requested while no save is loaded opens the Overview page"

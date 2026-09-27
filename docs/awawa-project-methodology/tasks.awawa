@@ -1683,7 +1683,7 @@ TASK FEAT134
 		+ "computed once per loaded save"
 		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should keep the loaded save without"
 			+ "reading its file again nor reloading the page"
-		IMPL "packages/ui-save-manager/src/lib/loadedSave.tsx::useSectionViewModels(loadSaveFile.validatedContent)"
+		IMPL "packages/ui-save-manager/src/providers/LoadedSaveProvider.tsx::useSectionViewModels(loadSaveFile.validatedContent)"
 	SPEC "a page whose view model is loading shows the busy indicator of today, and a page whose"
 		+ "controller rejects shows the failure sentence of today"
 		IMPL "packages/ui-save-manager/src/routes/power.tsx::<EnergyLevelsSection"

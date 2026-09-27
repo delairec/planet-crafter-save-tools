@@ -23,7 +23,7 @@ import ValidationMessagesList from "~/components/validation/ValidationMessagesLi
 import Spinner from "~/components/structure/Spinner";
 import DropZone from "~/components/structure/DropZone";
 import SaveFileField from "~/components/structure/SaveFileField";
-import {useLoadedSave} from "~/lib/loadedSave";
+import {useLoadedSave} from "~/hooks/useLoadedSave.tsx";
 import {configurationPath, loadASaveAnchor, mergeTwoSavesAnchor, powerPath, terraformationPath} from "~/lib/pagePaths";
 import {selectFileInInput} from "~/lib/selectFileInInput";
 import {tooManyFilesForOneSaveMessage} from "~/messages/dropZoneMessages";

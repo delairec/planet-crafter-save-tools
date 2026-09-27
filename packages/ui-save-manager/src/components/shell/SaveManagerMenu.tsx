@@ -1,7 +1,7 @@
 import {Show} from 'solid-js';
 import {A, useNavigate} from '@solidjs/router';
 import MenuGroup from '~/components/shell/MenuGroup';
-import {useLoadedSave} from '~/lib/loadedSave';
+import {useLoadedSave} from '~/hooks/useLoadedSave.tsx';
 import {
   configurationPath,
   loadAnotherSavePath,

@@ -1,6 +1,6 @@
 import SavePage from '~/components/shell/SavePage';
 import PlayersSection from '~/components/PlayersSection';
-import {useLoadedSave} from '~/lib/loadedSave';
+import {useLoadedSave} from '~/hooks/useLoadedSave.tsx';
 import {playersGroupTitle, playersPageTitle} from '~/messages/shellMessages';
 
 export default function PlayersPage() {

@@ -5,9 +5,9 @@ import {Component, Suspense} from "solid-js";
 import {appName, resolveVersionLabel} from "~/messages/appMessages";
 import HomeDisclaimer from "~/components/HomeDisclaimer";
 import SaveManagerMenu from "~/components/shell/SaveManagerMenu";
-import {LoadedSaveProvider} from "~/lib/loadedSave";
 import {preventDropOutsideAreas} from "~/lib/preventDropOutsideAreas";
 import {version} from "../package.json";
+import {LoadedSaveProvider} from "~/providers/LoadedSaveProvider.tsx";
 
 const Layout: Component<RouteSectionProps> = (props) => {
   preventDropOutsideAreas();

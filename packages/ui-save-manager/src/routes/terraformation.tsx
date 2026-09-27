@@ -1,6 +1,6 @@
 import SavePage from '~/components/shell/SavePage';
 import TerraformationLevelsSection from '~/components/TerraformationLevelsSection';
-import {useLoadedSave} from '~/lib/loadedSave';
+import {useLoadedSave} from '~/hooks/useLoadedSave.tsx';
 import {saveGroupTitle, terraformationPageTitle} from '~/messages/shellMessages';
 
 export default function TerraformationPage() {
