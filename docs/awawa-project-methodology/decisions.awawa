@@ -2601,6 +2601,7 @@ DECISION TheSaveIdentityShowsTheResolvedGameRelease
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT135
 	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
+		PR 205
 
 DECISION APlayerOnAnEmptyOrLegacyPlanetShowsNoPlanet
 	SPEC "the players menu shows no planet for a player whose planet is empty or whose save is"
@@ -2617,3 +2618,4 @@ DECISION APlayerOnAnEmptyOrLegacyPlanetShowsNoPlanet
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT135
 	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
+		PR 205
