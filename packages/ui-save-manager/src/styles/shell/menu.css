@@ -45,12 +45,14 @@
     align-items: center;
     gap: var(--space-xxs) var(--space-sm);
     color: var(--content);
+    font-size: var(--text-sm);
 }
 
 .menu-player-planet {
     flex-basis: 100%;
     font-size: var(--text-xs);
     color: var(--muted);
+    line-height: var(--line-height-sm);
 }
 
 
