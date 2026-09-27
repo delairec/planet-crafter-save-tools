@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, Page, test} from '@playwright/test';
 import {visualizeSave} from "./helpers/visualizeSave";
 import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
 
@@ -8,6 +8,11 @@ const skeoUpdateSaveFixturePath = new URL('./fixtures/skeo-update_valid.json', i
 
 const submergedMachinesNotification = 'Submerged machines may distort the computed available energy.';
 const gameReleaseNotificationPrefix = 'Values of game release';
+
+async function expectGameReleaseNotificationsToHaveCount(page: Page, expectedCount: number) {
+  const notifications = page.getByTestId('energy-levels-notification');
+  await expect(notifications.filter({hasText: gameReleaseNotificationPrefix})).toHaveCount(expectedCount);
+}
 
 test.describe('Save display', () => {
   test.describe('When a valid save file is visualized', () => {
@@ -60,7 +65,7 @@ test.describe('Save display', () => {
 
       // Assert
       await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
-      await expect(page.getByTestId('energy-levels-notification').filter({hasText: submergedMachinesNotification})).toHaveCount(1);
+      await expectGameReleaseNotificationsToHaveCount(page, 1);
     });
 
     test('should display the drone logistics as paused', async ({page}) => {
@@ -86,7 +91,7 @@ test.describe('Save display', () => {
 
       // Assert
       await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
-      await expect(page.getByTestId('energy-levels-notification').filter({hasText: gameReleaseNotificationPrefix})).toHaveCount(0);
+      await expectGameReleaseNotificationsToHaveCount(page, 0);
     });
   });
 
