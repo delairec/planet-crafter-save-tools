@@ -1,0 +1,22 @@
+.shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    gap: var(--space-xl);
+    align-items: start;
+}
+
+.shell-page {
+    min-width: 0;
+}
+
+.overview-pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+    .shell {
+        grid-template-columns: 1fr;
+    }
+}
