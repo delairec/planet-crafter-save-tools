@@ -1,6 +1,8 @@
 import {Show} from 'solid-js';
 import {A, useNavigate} from '@solidjs/router';
 import MenuGroup from '~/components/shell/MenuGroup';
+import PlayersMenu from '~/components/shell/PlayersMenu';
+import SaveIdentity from '~/components/shell/SaveIdentity';
 import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
 import {
@@ -28,6 +30,9 @@ export default function SaveManagerMenu() {
         <a href={PAGE_PATHS.loadAnotherSavePath}>{loadAnotherSavePageTitle}</a>
       </MenuGroup>
       <Show when={loadedSave.isSaveLoaded()}>
+        <Show when={loadedSave.viewModels.saveIdentity()}>
+          {(saveIdentity) => <SaveIdentity saveIdentity={saveIdentity()}/>}
+        </Show>
         <MenuGroup title={saveGroupTitle}>
           <A href={PAGE_PATHS.overviewPath} end>{overviewPageTitle}</A>
           <A href={PAGE_PATHS.configurationPath}>{configurationPageTitle}</A>
@@ -35,6 +40,9 @@ export default function SaveManagerMenu() {
           <A href={PAGE_PATHS.terraformationPath}>{terraformationPageTitle}</A>
         </MenuGroup>
         <MenuGroup title={playersGroupTitle}>
+          <Show when={loadedSave.viewModels.playersMenu()}>
+            {(playersMenu) => <PlayersMenu playersMenu={playersMenu()}/>}
+          </Show>
           <button onClick={() => navigate(PAGE_PATHS.playersPath)}>{seeMorePlayersButtonLabel}</button>
         </MenuGroup>
       </Show>

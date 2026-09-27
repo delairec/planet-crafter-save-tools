@@ -1,0 +1,19 @@
+.breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin: var(--space-lg) 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.breadcrumb-page {
+    color: var(--content);
+    font-weight: var(--semibold);
+}
+
+.breadcrumb-page::before {
+    content: '›';
+    margin-right: var(--space-sm);
+    font-weight: normal;
+}
