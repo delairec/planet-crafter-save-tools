@@ -10,6 +10,7 @@ const submergedMachinesNotification = 'Submerged machines may distort the comput
 const gameReleaseNotificationPrefix = 'Values of game release';
 
 async function expectGameReleaseNotificationsToHaveCount(page: Page, expectedCount: number) {
+  await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
   const notifications = page.getByTestId('energy-levels-notification');
   await expect(notifications.filter({hasText: gameReleaseNotificationPrefix})).toHaveCount(expectedCount);
 }
@@ -64,7 +65,6 @@ test.describe('Save display', () => {
       await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
       await expectGameReleaseNotificationsToHaveCount(page, 1);
     });
 
@@ -90,7 +90,6 @@ test.describe('Save display', () => {
       await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
       await expectGameReleaseNotificationsToHaveCount(page, 0);
     });
   });
