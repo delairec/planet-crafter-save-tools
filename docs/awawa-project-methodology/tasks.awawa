@@ -2166,3 +2166,92 @@ TASK FEAT146
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: the details may be adjusted during the"
 		+ "implementation for accessibility and the phone display"
 		REF @URL.SaveManagerRedesignMockup
+
+TASK TEST147
+	TITLE "Locate the elements of the end-to-end scenarios by test id, not by the HTML structure"
+	STATUS todo
+	DESC "ratified by the owner on 2026-09-27; the task writes the decision that justifies the test"
+		+ "id and rewrites the decisions it reverses"
+	SPEC "a DECISION of the corpus records that a UI test must not break on a change of the DOM"
+		+ "structure, and justifies by it locating by a data-testid attribute"
+	SPEC "the UI scenarios locate the elements they act on and assert by a data-testid attribute,"
+		+ "so that a change of the HTML structure alone breaks none of them"
+	SPEC "check:locators accepts a test id in scenario files"
+	SPEC "the decisions that the locator guard refuses what the screen does not show and that a UI"
+		+ "scenario asserts what the screen shows are rewritten in place wherever they contradict"
+		+ "the new decision, which they cite as their reason"
+	SPEC "the process that a test task changes the UI only for its own sake states that a"
+		+ "data-testid attribute is a neutral attribute that does not change the UI, and so is not"
+		+ "an interface change it governs"
+	RATIONALE "Asked by the owner on a review of the save manager redesign, where a warnings"
+		+ "scenario reaches the warning list through the main landmark and its list items, a"
+		+ "locator a change of layout breaks. The locator guard refuses a test id because a"
+		+ "scenario designates what the screen shows; the owner ruled that a UI test must not break"
+		+ "on a change of the DOM structure, and that this ruling, recorded as a decision by the"
+		+ "task, justifies the test id and replaces that reason. The scenarios locate by test id"
+		+ "every element they act on or assert, so every such element carries one, and a role,"
+		+ "label or text locator no longer designates one. The test task process holds: a test id"
+		+ "changes nothing the user sees or uses, so adding one is not the interface change the"
+		+ "process refuses. That statement goes into the process rather than into the new decision,"
+		+ "since nothing in the repository anchors it and the corpus writes a rule with nothing to"
+		+ "anchor as a process. Dropping the role locators drops the accessibility checks they"
+		+ "carried, the status role of the busy indicator in the loading state scenarios among"
+		+ "them; those checks move to the accessibility tests of TEST148, not back into the"
+		+ "scenarios"
+		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
+		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
+		REF @TASK.TEST148
+		REF @PACKAGE.ui_save_manager
+	SOURCE "Owner review comment on packages/ui-save-manager/e2e/warnings.e2e.ts line 21: add a"
+		+ "draft task on master, the end-to-end tests use data-testid so they no longer depend on"
+		+ "the HTML structure"
+		PR 205
+	SOURCE "Owner ruling of 2026-09-27 on the draft: the task creates a decision that a UI test"
+		+ "must not break on a change of the DOM structure, which justifies data-testid, and passes"
+		+ "todo"
+		PR 206
+	SOURCE "Owner ruling of 2026-09-27 on the ratified task: the test task process holds, a"
+		+ "data-testid attribute is a neutral attribute that does not change the UI; the"
+		+ "accessibility checks leave the scenarios for a second task"
+		PR 206
+
+TASK TEST148
+	TITLE "Test the accessibility of the save manager in a category of its own, apart from the"
+		+ "scenarios"
+	STATUS draft
+	DESC "draft; the task writes the decision that separates accessibility tests from UI scenarios"
+	SPEC "a DECISION of the corpus records that the UI tests are split in two categories: the"
+		+ "scenarios, which exercise a user flow, and the accessibility tests, which test only"
+		+ "accessibility"
+	SPEC "the accessibility tests form a category of their own, apart from the scenario files, and"
+		+ "assert nothing but accessibility"
+	SPEC "no UI scenario asserts an accessibility property for its own sake"
+	SPEC "the accessibility checks the scenarios lose by locating by test id, the status role of"
+		+ "the busy indicator in the loading state scenarios among them, are covered by the"
+		+ "accessibility tests"
+		REF @TASK.TEST147
+	RATIONALE "Ruled by the owner while ratifying TEST147: once the scenarios locate by test id,"
+		+ "their role, label and text locators no longer check the roles and accessible names they"
+		+ "used to, and accessibility is to be tested on purpose in a category that tests nothing"
+		+ "else rather than as a side effect of a locator. Left open for the refinement: how the"
+		+ "category is written, Playwright specs asserting roles and accessible names or an"
+		+ "automated audit; where its files live and under which suffix; whether it runs on the"
+		+ "three engines and in the same CI workflow as the scenarios; which checks it holds beyond"
+		+ "those TEST147 removes; and its order against TEST147, whose delivery alone leaves those"
+		+ "checks uncovered. The checks TEST147 removed: the status role of the two busy"
+		+ "indicators; the heading role and level of the section titles; the accessible names of"
+		+ "the Visualize and Merge buttons and of the swap button, named by its tooltip; the labels"
+		+ "of the three file inputs; the group role and name of the drop areas; the tooltip role;"
+		+ "the link role of the download; the contentinfo role of the footer; the list item role of"
+		+ "the validation messages"
+		REF @TASK.TEST147
+		REF @DECISION.AnIconOnlyButtonIsNamedByItsTooltip
+		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
+		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
+		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
+		REF @PACKAGE.ui_save_manager
+	SOURCE "Owner ruling of 2026-09-27: the UI tests that check accessibility are separated into a"
+		+ "category of their own that tests only accessibility, the UI tests focus on the"
+		+ "scenarios, as a second task and a second decision drafted on the same pull request"
+		PR 206
