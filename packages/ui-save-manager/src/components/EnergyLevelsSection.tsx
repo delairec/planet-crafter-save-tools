@@ -26,14 +26,14 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
     <SectionState title={energyLevelsSectionTitle} resource={props.viewModel}>
       {(energyLevels) => (
         <div>
-          <h3>{energyLevelsSectionTitle}</h3>
+          <h3 data-testid="energy-levels-title">{energyLevelsSectionTitle}</h3>
           <For each={energyLevels().notifications}>
-            {(notification) => <Notification severity={notification.severity}>{notification.message}</Notification>}
+            {(notification) => <Notification severity={notification.severity} testId="energy-levels-notification">{notification.message}</Notification>}
           </For>
           <For each={energyLevels().planets}>
             {(planet) => (
               <div>
-                <h4>{planet.planetId}</h4>
+                <h4 data-testid="energy-levels-planet-title">{planet.planetId}</h4>
                 <div class="fields-group-container">
                   <FieldsGroup columns={() => planet.energyLevels.columns}/>
                 </div>
@@ -51,6 +51,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
 
                 <FieldsGroupGrid
                   title={energyLevelsSectionProductionTitle}
+                  testId="energy-production"
                   items={planet.productionBreakdown}
                   itemLabel={(row) => row.label}
                   columns={(row) => [

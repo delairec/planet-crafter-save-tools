@@ -155,11 +155,18 @@ PROCESS ATestTaskChangesTheUiOnlyForItsOwnSake
 	REJECTED "Changing the interface for the sole convenience of a locator"
 	SPEC "An unrequested interface change is acceptable in a test task only if it is worth having"
 		+ "on its own, outside the test"
+	SPEC "A data-testid attribute is a neutral attribute that changes nothing the user sees or"
+		+ "uses: adding one is not an interface change this process governs"
 	RATIONALE "A file input without a label stays reachable by its role and accessible name, so no"
 		+ "test rule requires changing the interface to make a field reachable; the change under"
-		+ "review was kept only once its own reason, an accessibility gain, was stated"
+		+ "review was kept only once its own reason, an accessibility gain, was stated. The"
+		+ "scenarios locate by test id, and the attribute they read is not the interface"
+		REF @DECISION.AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	SOURCE "Review of T23"
 		PR 38
+	SOURCE "Owner ruling of 2026-09-27 on TEST147: a data-testid attribute is neutral and does not"
+		+ "change the UI"
+		PR 206
 
 PROCESS AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
 	SPEC "An entity that stops binding is archived or deleted in the pull request that ends it as"

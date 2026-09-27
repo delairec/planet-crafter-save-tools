@@ -15,7 +15,7 @@ export default function GlobalProgressionSection(props: GlobalProgressionProps) 
         <div>
           <h3>{globalProgressionSectionTitle}</h3>
           <div class="fields-group-container">
-            <FieldsGroup columns={() => globalProgression().statistics.columns}/>
+            <FieldsGroup columns={() => globalProgression().statistics.columns} testId="global-progression"/>
           </div>
         </div>
       )}

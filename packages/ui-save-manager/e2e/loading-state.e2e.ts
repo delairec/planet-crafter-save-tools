@@ -1,4 +1,6 @@
 import {expect, test, type Page} from '@playwright/test';
+import {visualizeSave} from "./helpers/visualizeSave";
+import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
 
 const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
@@ -46,18 +48,15 @@ async function releaseTheHeldFileReads(page: Page): Promise<void> {
 async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
   await holdEveryFileRead(page);
   await page.goto('/');
-  await page.getByLabel('Save file:').setInputFiles(saveAFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
-  await expect(page.getByRole('status')).toBeVisible();
+  await visualizeSave(page, saveAFixturePath);
+  await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
 }
 
 async function startMergingWithTheReadsHeld(page: Page): Promise<void> {
   await holdEveryFileRead(page);
   await page.goto('/');
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await expect(page.getByRole('status')).toBeVisible();
+  await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath);
+  await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
 }
 
 test.describe('Loading states', () => {
@@ -66,14 +65,13 @@ test.describe('Loading states', () => {
       // Arrange
       await holdEveryFileRead(page);
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(saveAFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, saveAFixturePath);
 
       // Assert
-      await expect(page.getByRole('status')).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeDisabled();
+      await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
+      await expect(page.getByTestId('visualize-button')).toBeDisabled();
     });
   });
 
@@ -86,8 +84,8 @@ test.describe('Loading states', () => {
       await releaseTheHeldFileReads(page);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeEnabled();
+      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
+      await expect(page.getByTestId('visualize-button')).toBeEnabled();
     });
   });
 
@@ -96,15 +94,13 @@ test.describe('Loading states', () => {
       // Arrange
       await holdEveryFileRead(page);
       await page.goto('/');
-      await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-      await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Merge'}).click();
+      await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath);
 
       // Assert
-      await expect(page.getByRole('status')).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Merge'})).toBeDisabled();
+      await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
+      await expect(page.getByTestId('merge-button')).toBeDisabled();
     });
   });
 
@@ -117,9 +113,9 @@ test.describe('Loading states', () => {
       await releaseTheHeldFileReads(page);
 
       // Assert
-      await expect(page.getByText('Merge successful!')).toBeVisible();
-      await expect(page.getByRole('status')).toBeHidden();
-      await expect(page.getByRole('button', {name: 'Merge'})).toBeEnabled();
+      await expect(page.getByTestId('merge-success-message')).toBeVisible();
+      await expect(page.getByTestId('merge-busy-indicator')).toBeHidden();
+      await expect(page.getByTestId('merge-button')).toBeEnabled();
     });
   });
 });

@@ -14,7 +14,7 @@ const Layout: Component<RouteSectionProps> = (props) => {
       <div class="container rounded-lg">
         {props.children}
       </div>
-      <footer class="text-center">
+      <footer class="text-center" data-testid="application-version">
         {resolveVersionLabel(version)}
       </footer>
     </>

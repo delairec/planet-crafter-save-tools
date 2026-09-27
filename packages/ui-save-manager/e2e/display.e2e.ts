@@ -1,21 +1,36 @@
-import {expect, test} from '@playwright/test';
+import {expect, Page, test} from '@playwright/test';
+import {visualizeSave} from "./helpers/visualizeSave";
+import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
 
 const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
 const skeoUpdateSaveFixturePath = new URL('./fixtures/skeo-update_valid.json', import.meta.url).pathname;
+
+const submergedMachinesNotification = 'Submerged machines may distort the computed available energy.';
+const gameReleaseNotificationPrefix = 'Values of game release';
+
+async function expectNotificationsToBePresent(page: Page, expectedNotification:string) {
+  await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
+  const notifications = page.getByTestId('energy-levels-notification');
+  await expect(notifications.filter({hasText: expectedNotification})).toHaveCount(1);
+}
+async function expectNotificationsToBeAbsent(page: Page, expectedNotification:string) {
+  await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
+  const notifications = page.getByTestId('energy-levels-notification');
+  await expect(notifications.filter({hasText: expectedNotification})).toHaveCount(0);
+}
 
 test.describe('Save display', () => {
   test.describe('When a valid save file is visualized', () => {
     test('should display the save configuration of that file', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
     });
   });
 
@@ -23,14 +38,13 @@ test.describe('Save display', () => {
     test('should display it without a validation error', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(legacySaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, legacySaveFixturePath);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
-      await expect(page.getByText('Errors', {exact: true})).toBeHidden();
+      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
+      await expect(page.getByTestId('display-errors-title')).toBeHidden();
     });
   });
 
@@ -38,42 +52,37 @@ test.describe('Save display', () => {
     test('should display it without a validation error, naming the planet of its placed world object Skeo and the power that object produces', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Errors', {exact: true})).toBeHidden();
-      await expect(page.getByRole('heading', {name: 'Skeo', level: 4})).toBeVisible();
-      await expect(page.getByText('Wind turbine T2')).toBeVisible();
+      await expect(page.getByTestId('display-errors-title')).toBeHidden();
+      await expect(page.getByTestId('energy-levels-planet-title')).toHaveText(['Skeo']);
+      await expect(page.getByTestId('energy-production-item-label')).toContainText(['Wind turbine T2']);
     });
 
     test('should warn once, under the Power title, that submerged machines may distort the computed available energy', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Power', level: 3})).toBeVisible();
-      await expect(page.getByText('Submerged machines may distort the computed available energy')).toHaveCount(1);
-      await expect(page.getByText('Submerged machines may distort the computed available energy')).toBeVisible();
+      await expectNotificationsToBePresent(page, submergedMachinesNotification);
     });
 
     test('should display the drone logistics as paused', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Drone logistics')).toBeVisible();
-      await expect(page.getByText('Paused', {exact: true})).toBeVisible();
+      const droneLogisticsField = page.getByTestId('global-progression-field').filter({hasText: 'Drone logistics'});
+      await expect(droneLogisticsField.getByTestId('global-progression-field-value')).toHaveText('Paused');
     });
   });
 
@@ -81,14 +90,12 @@ test.describe('Save display', () => {
     test('should name no game release', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(skeoUpdateSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, skeoUpdateSaveFixturePath);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Power', level: 3})).toBeVisible();
-      await expect(page.getByText('Values of game release')).toHaveCount(0);
+      await expectNotificationsToBeAbsent(page, gameReleaseNotificationPrefix);
     });
   });
 
@@ -96,16 +103,17 @@ test.describe('Save display', () => {
     test('should name that game release in a notification, under the submerged machines one', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Values of game release 2.004')).toBeVisible();
-      const submergedMachinesNotificationTop = (await page.getByText('Submerged machines may distort the computed available energy').boundingBox())!.y;
-      const gameReleaseNotificationTop = (await page.getByText('Values of game release 2.004').boundingBox())!.y;
-      const firstPlanetTop = (await page.getByRole('heading', {name: 'Planet 1', level: 4}).boundingBox())!.y;
+      const notifications = page.getByTestId('energy-levels-notification');
+      const gameReleaseNotification = notifications.filter({hasText: gameReleaseNotificationPrefix});
+      await expect(gameReleaseNotification).toHaveText('Values of game release 2.004');
+      const submergedMachinesNotificationTop = (await notifications.filter({hasText: submergedMachinesNotification}).boundingBox())!.y;
+      const gameReleaseNotificationTop = (await gameReleaseNotification.boundingBox())!.y;
+      const firstPlanetTop = (await page.getByTestId('energy-levels-planet-title').first().boundingBox())!.y;
       expect(gameReleaseNotificationTop).toBeGreaterThan(submergedMachinesNotificationTop);
       expect(gameReleaseNotificationTop).toBeLessThan(firstPlanetTop);
     });
@@ -123,15 +131,14 @@ test.describe('Save display', () => {
         };
       });
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('The save file could not be displayed. Please try again.')).toBeVisible();
-      await expect(page.getByLabel('Save file:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeEnabled();
+      await expect(page.getByTestId('display-failure-message')).toHaveText('The save file could not be displayed. Please try again.');
+      await expect(page.getByTestId('save-file-input')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('visualize-button')).toBeEnabled();
     });
   });
 
@@ -140,13 +147,13 @@ test.describe('Save display', () => {
       // Arrange
       const noFileSelected: string[] = [];
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByLabel('Save file:').setInputFiles(noFileSelected);
+      await page.getByTestId('save-file-input').setInputFiles(noFileSelected);
 
       // Assert
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeDisabled();
+      await expect(page.getByTestId('visualize-button')).toBeDisabled();
     });
   });
 
@@ -154,16 +161,14 @@ test.describe('Save display', () => {
     test('should leave no save file to visualize', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
-      await page.getByLabel('Save A:').setInputFiles(baselineSaveFixturePath);
-      await page.getByLabel('Save B:').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Merge'}).click();
+      await triggerSaveFileMerge(page, baselineSaveFixturePath, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Merge successful!')).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeDisabled();
+      await expect(page.getByTestId('merge-success-message')).toBeVisible();
+      await expect(page.getByTestId('visualize-button')).toBeDisabled();
     });
   });
 });

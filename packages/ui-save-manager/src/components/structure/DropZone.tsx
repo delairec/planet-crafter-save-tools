@@ -3,6 +3,7 @@ import {resolveNotJsonFileMessage} from '~/messages/dropZoneMessages';
 
 interface DropZoneProps {
   label: string;
+  testId: string;
   maximumFileCount: number;
   tooManyFilesMessage: string;
   onFilesDropped: (files: File[]) => void;
@@ -62,7 +63,7 @@ export default function DropZone(props: DropZoneProps) {
   };
 
   return (
-    <div role="group" aria-label={props.label}
+    <div role="group" aria-label={props.label} data-testid={props.testId}
          class={`drop-zone ${props.class ?? ''}`}
          classList={{'drop-zone-active': dragEnterDepth() > 0}}
          onDragEnter={handleDragEnter}

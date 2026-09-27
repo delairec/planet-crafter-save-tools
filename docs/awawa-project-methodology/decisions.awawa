@@ -1043,14 +1043,25 @@ DECISION AScenarioFixtureIsNamedByContentAndVerdict
 DECISION AUiScenarioAssertsWhatTheScreenShows
 	REJECTED "Asserting the complete message the rule produces: core-mapping already covers it"
 	REJECTED "An invalid fixture accumulating several violations"
+	REJECTED "Reaching the message by the text or the role the screen shows it with: the locator"
+		+ "then breaks on a change of wording or of structure the assertion does not test"
+		REF @DECISION.AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	SPEC "A UI scenario asserts what the screen shows of a validation message, its presence, its"
 		+ "location and that it is a sentence, never the text the rule produced"
 		IMPL "packages/ui-save-manager/e2e/validation-errors.e2e.ts::toContainText(errorLocationInTheSave)"
+	SPEC "The scenario reaches the message list by its test id and asserts the text shown inside it"
+		IMPL "packages/ui-save-manager/e2e/validation-errors.e2e.ts::getByTestId('display-errors-messages')).toContainText(errorLocationInTheSave)"
 	SPEC "An invalid fixture carries a single violation, on one record"
 		IMPL "scripts/generate-scenario-fixtures.ts::createPlayer({playerGaugeToxic: -1})"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "What the screen shows is the assertion, not the locator: a UI test does not break on"
+		+ "a change of the DOM structure, so the test id designates the element and the text read"
+		+ "in it is what the reader sees"
+		REF @DECISION.AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	SOURCE "T40"
 		PR 78
+	SOURCE "TEST147, owner ruling of 2026-09-27"
+		PR 206
 
 DECISION ALoadingStateIsObservedByHoldingTheFileRead
 	REJECTED "Asserting the indicator without holding the read: the assertion becomes intermittent"
@@ -1103,31 +1114,35 @@ DECISION ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		PR 183
 
 DECISION AGuardRefusesLocatorsTheScreenDoesNotShow
-	REJECTED "Recognising a CSS selector by the shape of its literal: getByRole('button', {name:"
-		+ "'#3'}) would be refused"
 	REJECTED "Refusing a selector-taking shortcut whatever its receiver: on a locator, click and"
 		+ "setInputFiles are the scenario gestures"
-	REJECTED "Deriving the ambiguous label from the message modules in the guard: a second reason"
-		+ "to change"
 	REJECTED "Refusing page.frame: its argument is a frame name or URL"
 	REJECTED "Designating the busy indicator by its label: the hydration fallback carries the same"
-	SPEC "check:locators refuses in scenario files a test id, a CSS selector, a reference"
-		+ "screenshot and the label the busy indicator shares with the hydration fallback"
-		IMPL "scripts/check-scenario-locators.ts"
+	REJECTED "Refusing a test id and accepting a role, label or text locator, the previous form of"
+		+ "this ruling: a scenario then breaks when the layout moves the element it reaches through"
+		+ "a landmark or a list"
+		REF @DECISION.AUiTestDoesNotBreakOnAChangeOfTheDomStructure
+	SPEC "check:locators accepts a test id in scenario files and refuses a role, label, text,"
+		+ "placeholder, alt text or title locator, a CSS selector and a reference screenshot"
+		IMPL "scripts/check-scenario-locators.ts::ACCESSIBILITY_LOCATOR"
+		ENFORCED_BY "scripts/check-scenario-locators.spec.ts::When a scenario designates elements"
+			+ "by their test id"
 	SPEC "The refused shortcuts are the Page methods whose first argument is a selector, read off"
 		+ "the installed playwright-core types, refused only when page is their immediate receiver"
 		IMPL "scripts/check-scenario-locators.ts::SELECTOR_TAKING_PAGE_ACTION"
-	SPEC "The ambiguous label constant is pinned in the guard spec against the two message"
-		+ "constants that carry it"
-		IMPL "scripts/check-scenario-locators.spec.ts::expect(AMBIGUOUS_BUSY_LABEL).toBe(displayRouteLoadingLabel);"
-		IMPL "scripts/check-scenario-locators.spec.ts::expect(AMBIGUOUS_BUSY_LABEL).toBe(spinnerLoadingLabel);"
-	SPEC "Loading state scenarios designate the busy indicator by its status role"
-		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts::getByRole('status')"
+	SPEC "Loading state scenarios designate the busy indicator by its test id, which the hydration"
+		+ "fallback does not carry"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts::getByTestId('display-busy-indicator')"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts::getByTestId('merge-busy-indicator')"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	RATIONALE "A scenario designates what the screen shows"
-		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+	RATIONALE "A UI test does not break on a change of the DOM structure, so a scenario designates"
+		+ "an element by its test id alone; a CSS selector names that structure and a reference"
+		+ "screenshot its pixels"
+		REF @DECISION.AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	SOURCE "T42"
 		PR 83
+	SOURCE "TEST147, owner ruling of 2026-09-27"
+		PR 206
 
 DECISION TheSchemaGovernsEveryAreaFromTheDocsRoot
 	SPEC "Every SCHEMA, FIELDSET and SHAPE declaration of the workspace lives in docs/_schema.awawa"
@@ -2286,7 +2301,7 @@ DECISION ANotificationIsRenderedByTheNotificationComponent
 		+ "the Notification component, never by a bare paragraph nor by a component of its own"
 		IMPL "packages/ui-save-manager/src/components/structure/Notification.tsx"
 		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
-			+ "severity={notification.severity}>"
+			+ "severity={notification.severity}"
 	SPEC "The severity of a notification is decided by the presenter and carried by its ViewModel:"
 		+ "limitation for a limit of the tool, warning for a potential gap between the figures and"
 		+ "the game"
@@ -2557,3 +2572,31 @@ DECISION TheDevelopmentServerPreBundlesTheToolbarSourceMapReader
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	SOURCE "Measured on the development server on 2026-09-27, SolidStart 2.0.5 and Vite 8.3.0"
 		PR 203
+
+DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
+	SPEC "A UI scenario locates every element it acts on or asserts by its data-testid attribute,"
+		+ "so that a change of the DOM structure alone breaks none"
+		IMPL "packages/ui-save-manager/e2e/warnings.e2e.ts::getByTestId('display-warnings-messages')"
+		ENFORCED_BY "scripts/check-scenario-locators.ts::ACCESSIBILITY_LOCATOR"
+	SPEC "The component that renders an element a scenario reaches gives it a data-testid; a"
+		+ "structure component rendered more than once receives it through a testId prop"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::data-testid=\"merge-button\""
+		IMPL "packages/ui-save-manager/src/components/structure/DropZone.tsx::data-testid={props.testId}"
+	SPEC "A test id names what the element is on the page, in kebab case, never its tag nor its"
+		+ "place in the tree"
+		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"display-busy-indicator\""
+	REJECTED "Locating by role, label or text: an element reached through a landmark or a list item"
+		+ "breaks when the layout moves, and the scenario tests accessibility as a side effect of"
+		+ "its locator"
+		REF @TASK.TEST148
+	REJECTED "Locating by CSS selector: the selector is the DOM structure"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "A scenario tests a user flow; the markup that draws it changes with every layout"
+		+ "review. A data-testid attribute changes nothing the user sees or uses, so it ties the"
+		+ "scenario to the element and to nothing around it"
+		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
+	SOURCE "Owner review comment on packages/ui-save-manager/e2e/warnings.e2e.ts line 21"
+		PR 205
+	SOURCE "Owner ruling of 2026-09-27 ratifying TEST147: a UI test must not break on a change of"
+		+ "the DOM structure, which justifies data-testid"
+		PR 206

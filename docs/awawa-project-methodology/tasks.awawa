@@ -2169,20 +2169,33 @@ TASK FEAT146
 
 TASK TEST147
 	TITLE "Locate the elements of the end-to-end scenarios by test id, not by the HTML structure"
-	STATUS todo
+	STATUS implemented
 	DESC "ratified by the owner on 2026-09-27; the task writes the decision that justifies the test"
 		+ "id and rewrites the decisions it reverses"
 	SPEC "a DECISION of the corpus records that a UI test must not break on a change of the DOM"
 		+ "structure, and justifies by it locating by a data-testid attribute"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AUiTestDoesNotBreakOnAChangeOfTheDomStructure"
 	SPEC "the UI scenarios locate the elements they act on and assert by a data-testid attribute,"
 		+ "so that a change of the HTML structure alone breaks none of them"
+		IMPL "packages/ui-save-manager/e2e/warnings.e2e.ts::getByTestId('display-warnings-messages')"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::getByTestId('merge-button')"
 	SPEC "check:locators accepts a test id in scenario files"
+		IMPL "scripts/check-scenario-locators.spec.ts::When a scenario designates elements by their"
+			+ "test id"
 	SPEC "the decisions that the locator guard refuses what the screen does not show and that a UI"
 		+ "scenario asserts what the screen shows are rewritten in place wherever they contradict"
 		+ "the new decision, which they cite as their reason"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::Refusing a test id and accepting a"
+			+ "role, label or text locator"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::What the screen shows is the"
+			+ "assertion, not the locator"
 	SPEC "the process that a test task changes the UI only for its own sake states that a"
 		+ "data-testid attribute is a neutral attribute that does not change the UI, and so is not"
 		+ "an interface change it governs"
+		IMPL "docs/awawa-project-methodology/processes.awawa::A data-testid attribute is a neutral"
+			+ "attribute"
+	DELIVERED_BY 207
 	RATIONALE "Asked by the owner on a review of the save manager redesign, where a warnings"
 		+ "scenario reaches the warning list through the main landmark and its list items, a"
 		+ "locator a change of layout breaks. The locator guard refuses a test id because a"
@@ -2239,8 +2252,14 @@ TASK TEST148
 		+ "automated audit; where its files live and under which suffix; whether it runs on the"
 		+ "three engines and in the same CI workflow as the scenarios; which checks it holds beyond"
 		+ "those TEST147 removes; and its order against TEST147, whose delivery alone leaves those"
-		+ "checks uncovered"
+		+ "checks uncovered. The checks TEST147 removed: the status role of the two busy"
+		+ "indicators; the heading role and level of the section titles; the accessible names of"
+		+ "the Visualize and Merge buttons and of the swap button, named by its tooltip; the labels"
+		+ "of the three file inputs; the group role and name of the drop areas; the tooltip role;"
+		+ "the link role of the download; the contentinfo role of the footer; the list item role of"
+		+ "the validation messages"
 		REF @TASK.TEST147
+		REF @DECISION.AnIconOnlyButtonIsNamedByItsTooltip
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
 		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
 		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake

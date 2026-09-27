@@ -87,35 +87,36 @@ export default function MergeSection(props: MergeSectionProps) {
   };
 
   return (
-    <DropZone label={mergeSectionTitle} maximumFileCount={2} tooManyFilesMessage={tooManyFilesForTwoSavesMessage}
+    <DropZone label={mergeSectionTitle} testId="merge-area" maximumFileCount={2} tooManyFilesMessage={tooManyFilesForTwoSavesMessage}
               onFilesDropped={handleSavesDropped}>
       <div class="inline-block">
         <h2>{mergeSectionTitle}</h2>
         <div class="merge-slots">
-          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel}
+          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-button"
                       onClick={handleSwap} disabled={!fileA() && !fileB()}/>
-          <DropZone label={mergeSectionSaveAAreaLabel} maximumFileCount={1}
+          <DropZone label={mergeSectionSaveAAreaLabel} testId="save-a-area" maximumFileCount={1}
                     tooManyFilesMessage={tooManyFilesForOneSaveMessage}
                     onFilesDropped={(files) => selectFileInInput(saveAInput, files[0])}>
-            <p><SaveFileField label={mergeSectionSaveALabel} ref={saveAInput}
+            <p><SaveFileField label={mergeSectionSaveALabel} testId="save-a" ref={saveAInput}
                               onChange={(event) => setFileA(event.currentTarget.files?.[0] ?? null)}/></p>
           </DropZone>
-          <DropZone label={mergeSectionSaveBAreaLabel} maximumFileCount={1}
+          <DropZone label={mergeSectionSaveBAreaLabel} testId="save-b-area" maximumFileCount={1}
                     tooManyFilesMessage={tooManyFilesForOneSaveMessage}
                     onFilesDropped={(files) => selectFileInInput(saveBInput, files[0])}>
-            <p><SaveFileField label={mergeSectionSaveBLabel} ref={saveBInput}
+            <p><SaveFileField label={mergeSectionSaveBLabel} testId="save-b" ref={saveBInput}
                               onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/></p>
           </DropZone>
         </div>
         <p class="merge-option">
           <CheckboxField label={mergeSectionPreferLegacyFormatLabel}
                          description={mergeSectionPreferLegacyFormatDescription}
+                         testId="prefer-legacy-format"
                          checked={preferLegacyFormat()} onChange={setPreferLegacyFormat}/>
         </p>
       </div>
-      <button onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
+      <button data-testid="merge-button" onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
       <Show when={isMerging()}>
-        <Spinner/>
+        <Spinner testId="merge-busy-indicator"/>
       </Show>
       <Show when={hasMergeCallFailed()}>
         <p class="text-color-danger">{mergeSectionCallFailedMessage}</p>

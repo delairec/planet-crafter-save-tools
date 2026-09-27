@@ -20,8 +20,6 @@ const mergedSaveDisplayName = '"saveDisplayName":"baseline_valid-other-player_va
  */
 const legacyTerrainLayerEntry = '"layerId":"PC-Toxicity-Layer2"';
 
-const preferLegacyFormatLabel = 'Prefer legacy format';
-
 const preferLegacyFormatDescription =
   'Tick this checkbox if you want to align the save format on the older version instead of the newer.';
 
@@ -29,19 +27,18 @@ const keepLegacyFormatReminder = 'To write the legacy format instead, tick "Pref
 
 async function chooseTheTwoSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
   await page.goto('/');
-  await page.getByLabel('Save A:').setInputFiles(chosenSaveAPath);
-  await page.getByLabel('Save B:').setInputFiles(chosenSaveBPath);
+  await page.getByTestId('save-a-input').setInputFiles(chosenSaveAPath);
+  await page.getByTestId('save-b-input').setInputFiles(chosenSaveBPath);
 }
 
 async function mergeTheChosenSaves(page: Page): Promise<void> {
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await expect(page.getByText('Merge successful!')).toBeVisible();
+  await page.getByTestId('merge-button').click();
+  await expect(page.getByTestId('merge-success-message')).toBeVisible();
 }
 
-/** The merge report is the last message list of the result: the warnings of each input come before it. */
 async function mergeAndRevealTheMergeReport(page: Page): Promise<void> {
   await mergeTheChosenSaves(page);
-  await page.getByText('Show details').last().click();
+  await page.getByTestId('merge-warnings-details-toggle').click();
 }
 
 async function mergeTheTwoFixtures(page: Page): Promise<void> {
@@ -51,7 +48,7 @@ async function mergeTheTwoFixtures(page: Page): Promise<void> {
 
 async function downloadTheProducedFile(page: Page): Promise<Download> {
   const downloadStarted = page.waitForEvent('download');
-  await page.getByRole('link', {name: 'Download'}).click();
+  await page.getByTestId('download-link').click();
 
   return downloadStarted;
 }
@@ -68,7 +65,7 @@ test.describe('Save merge', () => {
     test('should offer the produced file for download under the announced name', async ({page}) => {
       // Arrange
       await mergeTheTwoFixtures(page);
-      await expect(page.getByText(`Created file: ${mergedFileName}`)).toBeVisible();
+      await expect(page.getByTestId('merged-file-name')).toHaveText(mergedFileName);
 
       // Act
       const download = await downloadTheProducedFile(page);
@@ -114,10 +111,10 @@ test.describe('Save merge', () => {
       await mergeAndRevealTheMergeReport(page);
 
       // Assert
-      await expect(page.getByText('Merge warnings')).toBeVisible();
-      await expect(page.getByText('The two saves carry different formats; the merged save is written in the format of release 2.004.')).toBeVisible();
-      await expect(page.getByText(keepLegacyFormatReminder)).toBeVisible();
-      await expect(page.getByRole('list').last()).not.toContainText('merged-save-format');
+      await expect(page.getByTestId('merge-warnings-title')).toHaveText('Merge warnings');
+      await expect(page.getByTestId('merge-warnings-messages')).toContainText('The two saves carry different formats; the merged save is written in the format of release 2.004.');
+      await expect(page.getByTestId('keep-legacy-format-reminder')).toHaveText(keepLegacyFormatReminder);
+      await expect(page.getByTestId('merge-warnings-messages')).not.toContainText('merged-save-format');
     });
 
     test('should show the merge report and the way to keep the legacy format above the success message', async ({page}) => {
@@ -128,9 +125,9 @@ test.describe('Save merge', () => {
       await mergeAndRevealTheMergeReport(page);
 
       // Assert
-      const successMessageTop = (await page.getByText('Merge successful!').boundingBox())!.y;
-      const mergeWarningsTitleTop = (await page.getByText('Merge warnings').boundingBox())!.y;
-      const keepLegacyFormatReminderTop = (await page.getByText(keepLegacyFormatReminder).boundingBox())!.y;
+      const successMessageTop = (await page.getByTestId('merge-success-message').boundingBox())!.y;
+      const mergeWarningsTitleTop = (await page.getByTestId('merge-warnings-title').boundingBox())!.y;
+      const keepLegacyFormatReminderTop = (await page.getByTestId('keep-legacy-format-reminder').boundingBox())!.y;
       expect(mergeWarningsTitleTop).toBeLessThan(successMessageTop);
       expect(keepLegacyFormatReminderTop).toBeLessThan(successMessageTop);
     });
@@ -140,7 +137,7 @@ test.describe('Save merge', () => {
     test('should hand over a merged save written in the legacy format', async ({page}) => {
       // Arrange
       await chooseTheTwoSaves(page, legacySaveFixturePath, saveAFixturePath);
-      await page.getByLabel(preferLegacyFormatLabel).check();
+      await page.getByTestId('prefer-legacy-format').check();
       await mergeTheChosenSaves(page);
 
       // Act
@@ -155,13 +152,13 @@ test.describe('Save merge', () => {
     test('should show the tooltip that describes it, read by a screen reader as its description', async ({page}) => {
       // Arrange
       await page.goto('/');
-      const preferLegacyFormatCheckbox = page.getByRole('checkbox', {name: preferLegacyFormatLabel});
+      const preferLegacyFormatCheckbox = page.getByTestId('prefer-legacy-format');
 
       // Act
       await preferLegacyFormatCheckbox.focus();
 
       // Assert
-      await expect(page.getByRole('tooltip')).toHaveText(preferLegacyFormatDescription);
+      await expect(page.getByTestId('prefer-legacy-format-tooltip')).toHaveText(preferLegacyFormatDescription);
       await expect(preferLegacyFormatCheckbox).toHaveAccessibleDescription(preferLegacyFormatDescription);
     });
   });
@@ -172,9 +169,9 @@ test.describe('Save merge', () => {
       await page.goto('/');
 
       // Act
-      const saveAInputLeft = (await page.getByLabel('Save A:').boundingBox())!.x;
-      const saveBInputLeft = (await page.getByLabel('Save B:').boundingBox())!.x;
-      const checkboxLeft = (await page.getByRole('checkbox', {name: preferLegacyFormatLabel}).boundingBox())!.x;
+      const saveAInputLeft = (await page.getByTestId('save-a-input').boundingBox())!.x;
+      const saveBInputLeft = (await page.getByTestId('save-b-input').boundingBox())!.x;
+      const checkboxLeft = (await page.getByTestId('prefer-legacy-format').boundingBox())!.x;
 
       // Assert
       expect(saveBInputLeft).toBeCloseTo(saveAInputLeft, 0);
@@ -186,10 +183,10 @@ test.describe('Save merge', () => {
       await page.goto('/');
 
       // Act
-      const saveALabelLeft = (await page.getByText('Save A:', {exact: true}).boundingBox())!.x;
-      const saveAInputLeft = (await page.getByLabel('Save A:').boundingBox())!.x;
-      const saveFileLabelLeft = (await page.getByText('Save file:', {exact: true}).boundingBox())!.x;
-      const saveFileInputLeft = (await page.getByLabel('Save file:').boundingBox())!.x;
+      const saveALabelLeft = (await page.getByTestId('save-a-label').boundingBox())!.x;
+      const saveAInputLeft = (await page.getByTestId('save-a-input').boundingBox())!.x;
+      const saveFileLabelLeft = (await page.getByTestId('save-file-label').boundingBox())!.x;
+      const saveFileInputLeft = (await page.getByTestId('save-file-input').boundingBox())!.x;
 
       // Assert
       expect(saveFileLabelLeft).toBeCloseTo(saveALabelLeft, 0);

@@ -1,6 +1,8 @@
 import {expect, test, type Page} from '@playwright/test';
 import {readSiteHeaders} from '../siteHeaders';
 import {removeScriptNonces} from '../src/lib/scriptNonce';
+import {visualizeSave} from "./helpers/visualizeSave";
+import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
 
 const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
@@ -32,15 +34,12 @@ function recordRequestedUrls(page: Page): string[] {
 
 async function loadViewAndMergeASave(page: Page): Promise<void> {
   await page.goto('/');
-  await page.getByLabel('Save file:').setInputFiles(saveAFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
-  await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await expect(page.getByText('Merge successful!')).toBeVisible();
+  await visualizeSave(page, saveAFixturePath);
+  await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
+  await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath)
+  await expect(page.getByTestId('merge-success-message')).toBeVisible();
   const downloadStarted = page.waitForEvent('download');
-  await page.getByRole('link', {name: 'Download'}).click();
+  await page.getByTestId('download-link').click();
   await downloadStarted;
 }
 

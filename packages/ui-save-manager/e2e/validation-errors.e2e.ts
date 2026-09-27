@@ -1,22 +1,20 @@
-import {expect, test, type Page} from '@playwright/test';
+import {expect, type Page, test} from '@playwright/test';
+import {visualizeSave} from "./helpers/visualizeSave";
+import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
 
 const invalidSaveFixturePath = new URL('./fixtures/negative-gauge_invalid.json', import.meta.url).pathname;
 const validSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 
 const errorLocationInTheSave = 'at Players (section 2), entry 0';
-const revealMessagesLabel = 'Show details';
 
 async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string): Promise<void> {
-  await page.getByLabel('Save file:').setInputFiles(saveFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
-  await page.getByText(revealMessagesLabel).click();
+  await visualizeSave(page, saveFixturePath);
+  await page.getByTestId('display-errors-details-toggle').click();
 }
 
 async function mergeAndRevealTheMessages(page: Page, saveAFixturePath: string, saveBFixturePath: string): Promise<void> {
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await page.getByText(revealMessagesLabel).click();
+  await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath)
+  await page.getByTestId('save-a-errors-details-toggle').click();
 }
 
 test.describe('Save validation errors', () => {
@@ -29,21 +27,20 @@ test.describe('Save validation errors', () => {
       await visualizeAndRevealTheMessages(page, invalidSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Errors', {exact: true})).toBeVisible();
-      await expect(page.getByRole('listitem')).toContainText(errorLocationInTheSave);
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
+      await expect(page.getByTestId('display-errors-messages')).toContainText(errorLocationInTheSave);
     });
 
     test('should leave the save data unrendered', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(invalidSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await visualizeSave(page, invalidSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Errors', {exact: true})).toBeVisible();
-      await expect(page.getByRole('heading', {name: 'Save Configuration:'})).toBeHidden();
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
+      await expect(page.getByTestId('save-configuration-title')).toBeHidden();
     });
   });
 
@@ -56,9 +53,9 @@ test.describe('Save validation errors', () => {
       await mergeAndRevealTheMessages(page, invalidSaveFixturePath, validSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Save A is not a valid save file.')).toBeVisible();
-      await expect(page.getByRole('listitem')).toContainText(errorLocationInTheSave);
-      await expect(page.getByRole('link', {name: 'Download'})).toBeHidden();
+      await expect(page.getByTestId('save-a-errors-title')).toHaveText('Save A is not a valid save file.');
+      await expect(page.getByTestId('save-a-errors-messages')).toContainText(errorLocationInTheSave);
+      await expect(page.getByTestId('download-link')).toBeHidden();
     });
   });
 });
