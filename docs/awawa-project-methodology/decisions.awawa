@@ -452,13 +452,22 @@ DECISION TheQualityGateRunsInTwoCiJobs
 		+ "the full audit command staying that of a working copy"
 		IMPL ".github/workflows/quality.yml::guards:"
 		IMPL ".github/workflows/quality.yml::fallow:"
+	SPEC "The fallow job installs the workspace dependencies before its first analysis, so that no"
+		+ "run reports its inputs as degraded"
+		IMPL ".github/workflows/quality.yml::run: bun install --frozen-lockfile"
 	REJECTED "Plugging the full audit command into a job: its bare branch base does not resolve in"
 		+ "a CI checkout"
 	REJECTED "Keeping the analysis tool out of CI"
 	REJECTED "Scoping the scripts on a tracking reference and dropping the analysis job: it loses"
 		+ "the run summary"
+	REJECTED "Analysing a bare checkout with the imports it cannot resolve listed in fallow.toml:"
+		+ "every run on master reported node-modules-missing and flagged its findings as computed"
+		+ "over less than the whole project"
 	SOURCE "Pull request"
 		PR 45
+	SOURCE "The review of the save manager shell, which found the degraded-input warning recurring"
+		+ "on master"
+		PR 202
 
 DECISION NodeFollowsReleasesWhileBunIsPinnedAndBumped
 	SPEC "No workflow carries a literal Bun version: all read it from the manifest"
