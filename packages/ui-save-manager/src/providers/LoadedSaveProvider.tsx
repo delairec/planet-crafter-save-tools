@@ -17,7 +17,7 @@ import {LoadPlayersMenuController} from "core-mapping/controllers/LoadPlayersMen
 import {SaveIdentityViewModel} from "core-mapping/presentation/viewModels/SaveIdentityViewModel";
 import {PlayersMenuViewModel} from "core-mapping/presentation/viewModels/PlayersMenuViewModel";
 
-export interface SectionViewModels {
+export interface LoadedSaveViewModels {
   saveConfiguration: Resource<SaveConfigurationViewModel>;
   globalProgression: Resource<GlobalProgressionViewModel>;
   energyLevels: Resource<EnergyLevelsViewModel>;
@@ -28,7 +28,7 @@ export interface SectionViewModels {
 }
 export interface LoadedSave extends LoadSaveFile {
   isSaveLoaded: Accessor<boolean>;
-  viewModels: SectionViewModels;
+  viewModels: LoadedSaveViewModels;
 }
 
 export const LoadedSaveContext = createContext<LoadedSave>();
@@ -40,11 +40,6 @@ interface LoadedSaveProviderProps {
 export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
   const loadSaveFile = useLoadSaveFile();
 
-  const loadedSaveFile = () => {
-    const content = loadSaveFile.validatedContent();
-    return content === null ? null : {content, fileName: loadSaveFile.file()?.name ?? ''};
-  };
-
   const [saveConfiguration] = createResource(loadSaveFile.validatedContent,
     (content) => LoadSaveConfigurationSectionController.loadSaveConfigurationSection(content));
   const [globalProgression] = createResource(loadSaveFile.validatedContent,
@@ -55,7 +50,7 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     (content) => LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
   const [players] = createResource(loadSaveFile.validatedContent,
     (content) => LoadPlayersSectionController.loadPlayersSection(content));
-  const [saveIdentity] = createResource(loadedSaveFile,
+  const [saveIdentity] = createResource(loadSaveFile.validatedSave,
     ({content, fileName}) => LoadSaveIdentityController.loadSaveIdentity(content, fileName));
   const [playersMenu] = createResource(loadSaveFile.validatedContent,
     (content) => LoadPlayersMenuController.loadPlayersMenu(content));

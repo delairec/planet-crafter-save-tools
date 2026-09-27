@@ -4,8 +4,14 @@ import {MergeResultViewModel} from "core-mapping/presentation/viewModels/MergeRe
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
 import {yieldToPaint} from "../lib/yieldToPaint.ts";
 
+export interface ValidatedSave {
+  content: string;
+  fileName: string;
+}
+
 export interface LoadSaveFile {
   file: Accessor<File | null>;
+  validatedSave: Accessor<ValidatedSave | null>;
   validatedContent: Accessor<string | null>;
   errors: Accessor<SaveValidationMessageViewModel[]>;
   warnings: Accessor<SaveValidationMessageViewModel[]>;
@@ -20,7 +26,7 @@ export interface LoadSaveFile {
 
 export function useLoadSaveFile(): LoadSaveFile {
   const [file, setFile] = createSignal<File | null>(null);
-  const [validatedContent, setValidatedContent] = createSignal<string | null>(null);
+  const [validatedSave, setValidatedSave] = createSignal<ValidatedSave | null>(null);
   const [errors, setErrors] = createSignal<SaveValidationMessageViewModel[]>([]);
   const [warnings, setWarnings] = createSignal<SaveValidationMessageViewModel[]>([]);
   const [mergeResult, setMergeResult] = createSignal<MergeResultViewModel | null>(null);
@@ -30,7 +36,7 @@ export function useLoadSaveFile(): LoadSaveFile {
   const resetDisplayFields = () => {
     setErrors([]);
     setWarnings([]);
-    setValidatedContent(null);
+    setValidatedSave(null);
     setMergeResult(null);
     setHasLoadCallFailed(false);
   };
@@ -55,7 +61,7 @@ export function useLoadSaveFile(): LoadSaveFile {
       const content = await selectedFile.text();
       const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile(selectedFile.name, content);
 
-      setValidatedContent(viewModel.status === 'valid' ? content : null);
+      setValidatedSave(viewModel.status === 'valid' ? {content, fileName: selectedFile.name} : null);
       setErrors(viewModel.errors);
       setWarnings(viewModel.warnings);
     } catch (error) {
@@ -74,7 +80,8 @@ export function useLoadSaveFile(): LoadSaveFile {
 
   return {
     file,
-    validatedContent,
+    validatedSave,
+    validatedContent: () => validatedSave()?.content ?? null,
     errors,
     warnings,
     mergeResult,
