@@ -59,9 +59,19 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
       return new PlayerEntity({
         name: player.name,
         inventory: playerInventoryIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),
-        equipment: playerEquipmentIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id)
+        equipment: playerEquipmentIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),
+        planetId: player.planetId,
+        host: player.host
       });
     });
+  }
+
+  getDeclaredVersion(): string | undefined {
+    return this.sections.saveConfigurations[0]?.version;
+  }
+
+  isLegacySave(): boolean {
+    return this.sections.terrainLayers !== undefined;
   }
 
   getTerraformationLevels(): TerraformationLevelEntity[] {

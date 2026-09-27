@@ -42,7 +42,7 @@ function createSectionsWithTwoPlayers(): SaveSections {
     terraformationLevels: [createTerraformationLevel()],
     players: [
       createPlayer({name: 'Nikowa'}),
-      createPlayer({name: 'Chileny', inventoryId: 46, equipmentId: 47})
+      createPlayer({name: 'Chileny', inventoryId: 46, equipmentId: 47, host: false})
     ],
     worldObjects: CARRIED_WORLD_OBJECTS,
     inventories: [
@@ -114,11 +114,15 @@ describe('SaveSectionsReaderService', () => {
     expect<PlayerEntity[]>(players).toEqual([new PlayerEntity({
       name: 'Nikowa',
       inventory: ['Phytoplankton3', 'MagnetarQuartz'],
-      equipment: ['Backpack4', 'OxygenTank5']
+      equipment: ['Backpack4', 'OxygenTank5'],
+      planetId: 'Toxicity',
+      host: true
     }), new PlayerEntity({
       name: 'Chileny',
       inventory: ['Phytoplankton1', 'PulsarQuartz'],
-      equipment: ['Backpack7', 'OxygenTank4']
+      equipment: ['Backpack7', 'OxygenTank4'],
+      planetId: 'Toxicity',
+      host: false
     })]);
   });
 

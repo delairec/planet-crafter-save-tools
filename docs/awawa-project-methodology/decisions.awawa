@@ -2330,7 +2330,7 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 			+ "take for a save declaring %s the values of %s"
 	SPEC "a save declaring no version, or a version resolving to no release, takes the values of"
 		+ "the last release of the releases table"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::??"
+		IMPL "packages/core-mapping/src/domain/rules/resolveGameReleaseOfDeclaredVersion.ts::??"
 			+ "CURRENT_FORMAT_RELEASE"
 		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
 			+ "take the values of the last release of the table"
