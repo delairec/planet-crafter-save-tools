@@ -1,9 +1,5 @@
 import {createSignal, onMount, Show} from 'solid-js';
-import PlayersSection from '../components/PlayersSection';
-import GlobalProgressionSection from "../components/GlobalProgressionSection";
-import TerraformationLevelsSection from '../components/TerraformationLevelsSection';
-import SaveConfigurationSection from "../components/SaveConfigurationSection";
-import EnergyLevelsSection from "~/components/EnergyLevelsSection";
+import {A} from '@solidjs/router';
 import MergeSection from "~/components/MergeSection";
 import MergeResultSection from "~/components/MergeResultSection";
 import {
@@ -17,15 +13,19 @@ import {
   displayRouteVisualizationTitle,
   displayRouteWarningsTitle
 } from "~/messages/displayRouteMessages";
+import {
+  configurationPageTitle,
+  powerPageTitle,
+  resolveLoadedSaveTitle,
+  terraformationPageTitle
+} from "~/messages/shellMessages";
 import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
 import Spinner from "~/components/structure/Spinner";
-import HomeDisclaimer from "~/components/HomeDisclaimer";
-import {useLoadSaveFile} from "~/lib/useLoadSaveFile";
-import {useSectionViewModels} from "~/lib/useSectionViewModels";
 import DropZone from "~/components/structure/DropZone";
 import SaveFileField from "~/components/structure/SaveFileField";
+import {useLoadedSave} from "~/hooks/useLoadedSave.ts";
+import {PAGE_PATHS} from "~/lib/pagePaths";
 import {selectFileInInput} from "~/lib/selectFileInInput";
-import {preventDropOutsideAreas} from "~/lib/preventDropOutsideAreas";
 import {tooManyFilesForOneSaveMessage} from "~/messages/dropZoneMessages";
 
 export default function Home() {
@@ -33,22 +33,20 @@ export default function Home() {
 
   const [isReady, setIsReady] = createSignal<boolean>(false);
   onMount(() => setIsReady(true));
-  preventDropOutsideAreas();
 
   const {
     file,
-    validatedContent,
     errors,
     warnings,
     mergeResult,
     isLoading,
     hasLoadCallFailed,
+    isSaveLoaded,
     handleFileChange,
     handleSubmit,
     handleMergeStarted,
     handleSubmitMerge
-  } = useLoadSaveFile();
-  const viewModels = useSectionViewModels(validatedContent);
+  } = useLoadedSave();
 
   const handleMergeResult: typeof handleSubmitMerge = (result) => {
     handleSubmitMerge(result);
@@ -57,10 +55,7 @@ export default function Home() {
 
   return (
     <Show when={isReady()} fallback={<p class="text-color-muted">{displayRouteLoadingLabel}</p>}>
-      <main>
-
-        <HomeDisclaimer/>
-
+      <div id={PAGE_PATHS.loadASaveAnchor}>
         <DropZone label={displayRouteDisplayTitle} testId="display-area" maximumFileCount={1}
                   tooManyFilesMessage={tooManyFilesForOneSaveMessage}
                   onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
@@ -70,44 +65,49 @@ export default function Home() {
             <button data-testid="visualize-button" onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
           </p>
         </DropZone>
+      </div>
 
-        <Show when={isLoading()}>
-          <Spinner testId="display-busy-indicator"/>
-        </Show>
-        <Show when={hasLoadCallFailed()}>
-          <p class="text-color-danger" data-testid="display-failure-message">{displayRouteCallFailedMessage}</p>
-        </Show>
+      <Show when={isLoading()}>
+        <Spinner testId="display-busy-indicator"/>
+      </Show>
+      <Show when={hasLoadCallFailed()}>
+        <p class="text-color-danger" data-testid="display-failure-message">{displayRouteCallFailedMessage}</p>
+      </Show>
 
+      <div id={PAGE_PATHS.mergeTwoSavesAnchor}>
         <MergeSection onMergeStarted={handleMergeStarted} onMergeResult={handleMergeResult}/>
+      </div>
 
-        <h2 data-testid="visualization-title">{displayRouteVisualizationTitle}</h2>
+      <h2 data-testid="visualization-title">{displayRouteVisualizationTitle}</h2>
 
-        <Show when={!errors().length && !validatedContent() && !mergeResult()}>
-          <p class="text-color-muted">{displayRouteParsedDataPlaceholder}</p>
-        </Show>
+      <Show when={!errors().length && !isSaveLoaded() && !mergeResult()}>
+        <p class="text-color-muted">{displayRouteParsedDataPlaceholder}</p>
+      </Show>
 
-        <MergeResultSection result={mergeResult}/>
+      <MergeResultSection result={mergeResult}/>
 
-        <Show when={errors().length}>
-          <code>{file()?.name}</code>
-          <ValidationMessagesList title={displayRouteErrorsTitle} testId="display-errors" severity="danger" messages={errors()}/>
-        </Show>
+      <Show when={errors().length}>
+        <code>{file()?.name}</code>
+        <ValidationMessagesList title={displayRouteErrorsTitle} testId="display-errors" severity="danger" messages={errors()}/>
+      </Show>
 
-        <Show when={warnings().length}>
-          <code>{file()?.name}</code>
-          <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={warnings()}/>
-        </Show>
+      <Show when={warnings().length}>
+        <code>{file()?.name}</code>
+        <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={warnings()}/>
+      </Show>
 
-        <Show when={validatedContent() && !errors().length}>
-          <div class="grid-container">
-            <SaveConfigurationSection viewModel={viewModels.saveConfiguration}/>
-            <GlobalProgressionSection viewModel={viewModels.globalProgression}/>
-          </div>
-          <EnergyLevelsSection viewModel={viewModels.energyLevels}/>
-          <TerraformationLevelsSection viewModel={viewModels.terraformationLevels}/>
-          <PlayersSection viewModel={viewModels.players}/>
-        </Show>
-      </main>
+      <Show when={isSaveLoaded() && file()}>
+        {(loadedFile) => (
+          <>
+            <h3>{resolveLoadedSaveTitle(loadedFile().name)}</h3>
+            <p class="overview-pages">
+              <A href={PAGE_PATHS.configurationPath}>{configurationPageTitle}</A>
+              <A href={PAGE_PATHS.powerPath}>{powerPageTitle}</A>
+              <A href={PAGE_PATHS.terraformationPath}>{terraformationPageTitle}</A>
+            </p>
+          </>
+        )}
+      </Show>
     </Show>
   );
 }

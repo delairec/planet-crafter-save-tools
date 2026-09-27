@@ -1,10 +1,52 @@
+:root {
+    /** Breakpoints **/
+    /* Desktop */
+    --breakpoint-desktop: 1024px;
+    --breakpoint-desktop-xl: 1440px;
+    /* Tablet/Mobile */
+    --breakpoint-tablet: 768px;
+    --breakpoint-mobile: 480px;
+
+    /** App **/
+    --app-height: 100vh;
+    --app-width: 100vw;
+
+    /** Sidebar **/
+    --sidebar-width: 14rem;
+
+    /** Spacing */
+    --space-xxs: 0.125rem; /*  2px */
+    --space-xs:  0.25rem;  /*  4px */
+    --space-sm:  0.5rem;   /*  8px */
+    --space-md:  0.75rem;  /* 12px */
+    --space-lg:  1rem;     /* 16px */
+    --space-xl:  1.5rem;   /* 24px */
+    --space-xxl:  2rem;   /* 32px */
+
+    /** Borders **/
+    --border-thin: 1px solid var(--border-color-inverted);
+    --border-medium: 2px solid var(--border-color-inverted);
+    --border-thick: 3px solid var(--neon-pink);
+    --notification-border: 0.375rem solid;
+
+    /** Radii */
+    --radius-xs: var(--space-xs);
+    --radius-sm: var(--space-sm);
+
+    /** Shadows **/
+    --shadow-medium: 0 0 0 2px;
+    --shadow-thick: 0 0 0 4px;
+    --shadow-glow: 0 0 1rem 0;
+    --text-shadow-thin: -1px 1px;
+}
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
 body {
-    width: 100vw;
-    height: 100vh;
+    width: var(--app-width);
+    height: var(--app-height);
     margin: 0;
     background: var(--canvas);
     color: var(--content);
@@ -12,38 +54,42 @@ body {
 }
 
 details.surface summary {
-    padding-left: 8px;
+    padding-left: var(--space-sm);
 }
 
 details summary:hover {
     cursor: pointer;
 }
 
-details.surface summary::marker {
-    content: '👋🧑‍🚀 '
+details {
+    --summary-marker: '👉 ';
 }
 
-details:open.surface summary::marker {
-    content: '  🧑‍🚀 '
-}
-
-details summary::marker {
-    content: '👉 '
-}
-
-details:open summary::marker {
-    content: '👇 '
-}
-
-.container {
-    max-width: calc(100vw - 2rem);
-    padding-left: 1rem;
-    padding-right: 1rem;
+details[open] {
+    --summary-marker: '👇 ';
 }
 
 .surface {
-    padding: 0.25rem 0.25rem;
-    border-radius: 0.25rem;
+    --summary-marker: '👋🧑‍🚀 ';
+}
+
+.surface[open] {
+    --summary-marker: '  🧑‍🚀 ';
+}
+
+summary::marker {
+    content: var(--summary-marker);
+}
+
+.container {
+    max-width: calc(var(--app-width) - var(--space-xxl));
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+}
+
+.surface {
+    padding: var(--space-xs) var(--space-xs);
+    border-radius: var(--space-xs);
     background-color: var(--surface);
 }
 
@@ -52,9 +98,9 @@ details:open summary::marker {
 }
 
 .notification {
-    padding: 0.5rem 0.75rem;
-    border-left: 0.375rem solid;
-    border-radius: 0 0.25rem 0.25rem 0;
+    padding: var(--space-sm) var(--space-md);
+    border-left: var(--notification-border);
+    border-radius: 0 var(--space-xs) var(--space-xs) 0;
 }
 
 .notification-warning {
@@ -72,28 +118,28 @@ details:open summary::marker {
 }
 
 hr {
-    border-color: var(--border);
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    border-color: var(--border-color-inverted);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xl);
 }
 
 code {
-    padding: 0.25rem 0.25rem;
-    border-radius: 0.5rem;
+    padding: var(--space-xs) var(--space-xs);
+    border-radius: var(--space-sm);
     background-color: var(--elevated);
     color: var(--muted);
 }
 
 /* A validation message reads like a stack frame: the message, then its origin on the line below. */
 .validation-message + .validation-message {
-    margin-top: 0.5rem;
+    margin-top: var(--space-sm);
 }
 
 .validation-message code {
     display: block;
     width: fit-content;
     max-width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: var(--space-sm) var(--space-md);
 }
 
 .validation-message-location {
@@ -104,28 +150,32 @@ code {
 
 
 pre {
-    padding: 1rem;
+    padding: var(--space-lg);
     border-radius: 0.375rem;
     background-color: var(--elevated);
     overflow-x: auto;
 }
 
 .rounded-lg {
-    border-radius: 0.5rem;
+    border-radius: var(--space-sm);
 }
 
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
+    gap: var(--space-lg);
     align-items: start;
 }
 
 .grid-item {
-    padding: 1rem;
+    padding: var(--space-lg);
     background-color: var(--elevated);
     border: 3px solid var(--neon-purple);
     border-radius: 0.375rem;
+}
+
+.mb-2 {
+    margin-bottom: var(--space-xxl);
 }
 
 @media (max-width: 768px) {

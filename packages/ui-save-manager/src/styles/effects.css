@@ -1,5 +1,5 @@
 .drop-shadow-engraved {
-    text-shadow: var(--neon-cyan) -1px 1px;
+    text-shadow: var(--neon-cyan) var(--text-shadow-thin);
 }
 
 ::selection {
@@ -10,16 +10,16 @@
 .spinner-container {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-sm);
     color: var(--muted);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
 }
 
 .spinner {
     display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid var(--border);
+    width: var(--space-lg);
+    height: var(--space-lg);
+    border: var(--border-medium);
     border-top-color: var(--primary);
     border-radius: 50%;
     animation: spinner-rotation 0.8s linear infinite;

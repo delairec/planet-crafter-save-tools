@@ -30,7 +30,7 @@ export default createHandler(() => (
           {props.assets}
         </head>
         <body>
-          <div id="app">{props.children}</div>
+          <div id="app" class="app">{props.children}</div>
           {props.scripts}
         </body>
       </html>
