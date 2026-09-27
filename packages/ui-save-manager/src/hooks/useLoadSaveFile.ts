@@ -2,7 +2,7 @@ import {Accessor, createSignal, JSX} from 'solid-js';
 import {LoadAndValidateSaveFileController} from "core-mapping/controllers/LoadAndValidateSaveFileController";
 import {MergeResultViewModel} from "core-mapping/presentation/viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
-import {yieldToPaint} from "./yieldToPaint";
+import {yieldToPaint} from "../lib/yieldToPaint.ts";
 
 export interface LoadSaveFile {
   file: Accessor<File | null>;

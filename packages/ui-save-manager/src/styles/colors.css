@@ -24,7 +24,7 @@
     --neon-purple: #7f4af5;
 
     /* BORDURES */
-    --border: #d9ddff;
+    --border-color-inverted: #d9ddff;
 
     /* ÉTATS */
     --success: #16813e;
@@ -55,7 +55,7 @@
         --neon-cyan: #2be4ff;
         --neon-purple: #a78bfa;
 
-        --border: #262b52;
+        --border-color-inverted: #262b52;
 
         --success: #4ade80;
         --warning: #fbbf24;
