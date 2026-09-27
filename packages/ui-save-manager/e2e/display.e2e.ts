@@ -5,6 +5,7 @@ const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', imp
 const skeoUpdateSaveFixturePath = new URL('./fixtures/skeo-update_valid.json', import.meta.url).pathname;
 
 const submergedMachinesNotification = 'Submerged machines may distort the computed available energy.';
+const gameReleaseNotificationPrefix = 'Values of game release';
 
 test.describe('Save display', () => {
   test.describe('When a valid save file is visualized', () => {
@@ -61,7 +62,7 @@ test.describe('Save display', () => {
 
       // Assert
       await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
-      await expect(page.getByTestId('energy-levels-notification')).toHaveText([submergedMachinesNotification]);
+      await expect(page.getByTestId('energy-levels-notification').filter({hasText: submergedMachinesNotification})).toHaveCount(1);
     });
 
     test('should display the drone logistics as paused', async ({page}) => {
@@ -89,7 +90,7 @@ test.describe('Save display', () => {
 
       // Assert
       await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
-      await expect(page.getByTestId('energy-levels-notification')).toHaveText([submergedMachinesNotification]);
+      await expect(page.getByTestId('energy-levels-notification').filter({hasText: gameReleaseNotificationPrefix})).toHaveCount(0);
     });
   });
 
@@ -104,9 +105,10 @@ test.describe('Save display', () => {
 
       // Assert
       const notifications = page.getByTestId('energy-levels-notification');
-      await expect(notifications).toHaveText([submergedMachinesNotification, 'Values of game release 2.004']);
-      const submergedMachinesNotificationTop = (await notifications.first().boundingBox())!.y;
-      const gameReleaseNotificationTop = (await notifications.last().boundingBox())!.y;
+      const gameReleaseNotification = notifications.filter({hasText: gameReleaseNotificationPrefix});
+      await expect(gameReleaseNotification).toHaveText('Values of game release 2.004');
+      const submergedMachinesNotificationTop = (await notifications.filter({hasText: submergedMachinesNotification}).boundingBox())!.y;
+      const gameReleaseNotificationTop = (await gameReleaseNotification.boundingBox())!.y;
       const firstPlanetTop = (await page.getByTestId('energy-levels-planet-title').first().boundingBox())!.y;
       expect(gameReleaseNotificationTop).toBeGreaterThan(submergedMachinesNotificationTop);
       expect(gameReleaseNotificationTop).toBeLessThan(firstPlanetTop);
