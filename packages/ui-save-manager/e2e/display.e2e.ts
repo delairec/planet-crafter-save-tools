@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
 import {visualizeSave} from "./helpers/visualizeSave";
+import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
 
 const baselineSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
@@ -152,11 +153,9 @@ test.describe('Save display', () => {
       // Arrange
       await page.goto('/');
       await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
-      await page.getByTestId('save-a-input').setInputFiles(baselineSaveFixturePath);
-      await page.getByTestId('save-b-input').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByTestId('merge-button').click();
+      await triggerSaveFileMerge(page, baselineSaveFixturePath, baselineSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('merge-success-message')).toBeVisible();

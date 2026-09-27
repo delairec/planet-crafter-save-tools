@@ -1,5 +1,6 @@
 import {expect, type Page, test} from '@playwright/test';
 import {visualizeSave} from "./helpers/visualizeSave";
+import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
 
 const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
 const currentFormatSaveFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
@@ -13,9 +14,7 @@ async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string
 }
 
 async function mergeAndRevealTheMessages(page: Page, saveAFixturePath: string, saveBFixturePath: string): Promise<void> {
-  await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);
-  await page.getByTestId('save-b-input').setInputFiles(saveBFixturePath);
-  await page.getByTestId('merge-button').click();
+  await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath);
   await page.getByTestId('save-a-warnings-details-toggle').click();
 }
 
