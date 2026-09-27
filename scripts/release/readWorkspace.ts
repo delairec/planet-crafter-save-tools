@@ -9,11 +9,13 @@ export const REPOSITORY_ROOT = join(import.meta.dir, '../..');
 export interface WorkspacePackage extends WorkspaceManifest {
   version: string;
   manifestPath: string;
+  changelogLine: string | undefined;
 }
 
 interface PackageManifest {
   name: string;
   version?: string;
+  changelogLine?: string;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
 }
@@ -29,7 +31,8 @@ export async function readWorkspace(): Promise<WorkspacePackage[]> {
       name: manifest.name,
       version: manifest.version ?? '',
       dependencies: Object.keys({...manifest.dependencies, ...manifest.devDependencies}),
-      manifestPath
+      manifestPath,
+      changelogLine: manifest.changelogLine
     };
   }));
 }

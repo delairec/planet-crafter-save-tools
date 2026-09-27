@@ -2,6 +2,7 @@
   "name": "core-mapping",
   "version": "1.0.0",
   "description": "Domain/application/infrastructure/presentation mapping for Planet Crafter save files",
+  "changelogLine": "Core engine updated",
   "type": "module",
   "scripts": {
     "test": "bun test",

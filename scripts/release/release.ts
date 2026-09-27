@@ -1,7 +1,7 @@
 import {join} from 'node:path';
-import {addChangelogEntry} from './addChangelogEntry.ts';
-import {planRelease, type PlannedRelease} from './planRelease.ts';
-import {readCommitSubjects} from './readCommitSubjects.ts';
+import {addChangelogEntry, type ReleasedConsumer} from './addChangelogEntry.ts';
+import {planRelease} from './planRelease.ts';
+import {readCommits, type ReleaseCommit} from './readCommits.ts';
 import {findSinceTag} from './findVersionsToTag.ts';
 import {readWorkspace, REPOSITORY_ROOT, runGit, type WorkspacePackage} from './readWorkspace.ts';
 import {resolveConsumerPaths} from './resolveConsumerPaths.ts';
@@ -19,11 +19,17 @@ async function writeManifestVersion(workspacePackage: WorkspacePackage, version:
   await Bun.write(manifestFile, manifestText.replace(declaredVersion, `"version": "${version}"`));
 }
 
-async function writeChangelog(workspacePackage: WorkspacePackage, release: PlannedRelease, date: string): Promise<void> {
-  const changelogFile = Bun.file(join(REPOSITORY_ROOT, workspacePackage.directory, CHANGELOG_FILE_NAME));
+interface ChangelogWrite {
+  path: string;
+  text: string;
+}
+
+async function composeChangelog(release: ReleasedConsumer, date: string): Promise<ChangelogWrite> {
+  const path = join(REPOSITORY_ROOT, release.directory, CHANGELOG_FILE_NAME);
+  const changelogFile = Bun.file(path);
   const changelog = await changelogFile.exists() ? await changelogFile.text() : undefined;
 
-  await Bun.write(changelogFile, addChangelogEntry({changelog, release, date}));
+  return {path, text: addChangelogEntry({changelog, release, date})};
 }
 
 async function release(): Promise<void> {
@@ -31,26 +37,50 @@ async function release(): Promise<void> {
   const existingTags = runGit(['tag', '--list']).split('\n');
   const workspacePackages = await readWorkspace();
   const packagesByName = new Map(workspacePackages.map(workspacePackage => [workspacePackage.name, workspacePackage]));
-
-  const histories = resolveConsumerPaths(workspacePackages).map(consumer => {
+  const packagesByDirectory = new Map(workspacePackages.map(workspacePackage => [workspacePackage.directory, workspacePackage]));
+  const consumers = resolveConsumerPaths(workspacePackages);
+  const commitsByConsumer = new Map<string, ReleaseCommit[]>(consumers.map(consumer => {
     const {version} = packagesByName.get(consumer.name)!;
     const sinceTag = findSinceTag({name: consumer.name, version}, existingTags);
 
-    return {name: consumer.name, version, commitSubjects: readCommitSubjects({repositoryRoot: REPOSITORY_ROOT, sinceTag, paths: consumer.paths})};
-  });
-  const releases = planRelease(histories);
+    return [consumer.name, readCommits({repositoryRoot: REPOSITORY_ROOT, sinceTag, paths: consumer.paths})];
+  }));
+  const releases = planRelease(consumers.map(consumer => ({
+    name: consumer.name,
+    version: packagesByName.get(consumer.name)!.version,
+    commitSubjects: commitsByConsumer.get(consumer.name)!.map(commit => commit.subject)
+  })));
 
   if (releases.length === 0) {
     console.log('No consumer changed since its last version.');
     return;
   }
 
+  const consumersByName = new Map(consumers.map(consumer => [consumer.name, consumer]));
+  const releasedConsumers: ReleasedConsumer[] = releases.map(plannedRelease => {
+    const consumer = consumersByName.get(plannedRelease.name)!;
+
+    return {
+      name: plannedRelease.name,
+      version: plannedRelease.version,
+      directory: consumer.directory,
+      commits: commitsByConsumer.get(plannedRelease.name)!,
+      dependencies: consumer.paths.filter(path => path !== consumer.directory).map(path => {
+        const dependency = packagesByDirectory.get(path)!;
+
+        return {name: dependency.name, directory: dependency.directory, changelogLine: dependency.changelogLine};
+      })
+    };
+  });
   const date = new Date().toISOString().slice(0, 10);
+  const changelogWrites = await Promise.all(releasedConsumers.map(release => composeChangelog(release, date)));
   for (const plannedRelease of releases) {
     const workspacePackage = packagesByName.get(plannedRelease.name)!;
     await writeManifestVersion(workspacePackage, plannedRelease.version);
-    await writeChangelog(workspacePackage, plannedRelease, date);
     console.log(`${plannedRelease.name} ${workspacePackage.version} → ${plannedRelease.version} (${plannedRelease.commitSubjects.length} commit(s))`);
+  }
+  for (const changelogWrite of changelogWrites) {
+    await Bun.write(changelogWrite.path, changelogWrite.text);
   }
   Bun.spawnSync(['bun', 'install'], {cwd: REPOSITORY_ROOT, stdout: 'inherit', stderr: 'inherit'});
 

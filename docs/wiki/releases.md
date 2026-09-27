@@ -23,7 +23,10 @@ bun run release
 Run on a branch cut from an up-to-date `master`. For each tool that changed, it raises the `version` of its
 `package.json`, adds an entry to its `CHANGELOG.md`, and refreshes `bun.lock`. Open the pull request it names,
 `chore(release): …`, against `master`. The version counts every commit the tool carries, but its entry lists only the
-`feat` and `fix` commits and those whose subject carries a `!`; a version with none of them reads
+`feat` and `fix` commits and those whose subject carries a `!`, and among them only the ones that change the directory
+of the tool. One that reaches the tool through a dependency is replaced by the `changelogLine` the `package.json` of
+that dependency declares — `- Core engine updated` for `core-mapping` —, written once after the commits of the tool;
+the release refuses a dependency that brings such a commit without declaring one. A version with none of them reads
 `- Maintenance changes only`.
 
 ```
