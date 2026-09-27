@@ -3,7 +3,7 @@ import {SaveIdentityPresenter} from "./SaveIdentityPresenter";
 import {SaveIdentityViewModel} from "./viewModels/SaveIdentityViewModel";
 
 describe('SaveIdentityPresenter', () => {
-  it('should show the file name, the display name, the mode and the game release', () => {
+  it('should show the save identity', () => {
     // Arrange
     const presenter = new SaveIdentityPresenter();
 

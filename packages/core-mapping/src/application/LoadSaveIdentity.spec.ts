@@ -10,7 +10,7 @@ function createPresenter(): SaveIdentityPresenterPort {
 }
 
 describe('LoadSaveIdentity', () => {
-  it('should present the file name, the display name, the mode and the resolved game release', async () => {
+  it('should present the save identity', async () => {
     // Arrange
     const presenter = createPresenter();
     const useCase = new LoadSaveIdentity(new FakeSaveSectionsReaderService(), presenter);

@@ -3,7 +3,7 @@ import {PlayersMenuPresenter} from "./PlayersMenuPresenter";
 import {PlayersMenuViewModel} from "./viewModels/PlayersMenuViewModel";
 
 describe('PlayersMenuPresenter', () => {
-  it('should show each player with its planet, and the Host badge on the host alone', () => {
+  it('should show the players menu', () => {
     // Arrange
     const presenter = new PlayersMenuPresenter();
 
