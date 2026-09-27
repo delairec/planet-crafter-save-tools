@@ -12,6 +12,10 @@ import {GlobalProgressionViewModel} from "core-mapping/presentation/viewModels/G
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {TerraformationLevelsViewModel} from "core-mapping/presentation/viewModels/TerraformationLevelsViewModel";
 import {PlayersViewModel} from "core-mapping/presentation/viewModels/PlayersViewModel";
+import {LoadSaveIdentityController} from "core-mapping/controllers/LoadSaveIdentityController";
+import {LoadPlayersMenuController} from "core-mapping/controllers/LoadPlayersMenuController";
+import {SaveIdentityViewModel} from "core-mapping/presentation/viewModels/SaveIdentityViewModel";
+import {PlayersMenuViewModel} from "core-mapping/presentation/viewModels/PlayersMenuViewModel";
 
 export interface SectionViewModels {
   saveConfiguration: Resource<SaveConfigurationViewModel>;
@@ -19,6 +23,8 @@ export interface SectionViewModels {
   energyLevels: Resource<EnergyLevelsViewModel>;
   terraformationLevels: Resource<TerraformationLevelsViewModel>;
   players: Resource<PlayersViewModel>;
+  saveIdentity: Resource<SaveIdentityViewModel>;
+  playersMenu: Resource<PlayersMenuViewModel>;
 }
 export interface LoadedSave extends LoadSaveFile {
   isSaveLoaded: Accessor<boolean>;
@@ -34,6 +40,11 @@ interface LoadedSaveProviderProps {
 export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
   const loadSaveFile = useLoadSaveFile();
 
+  const loadedSaveFile = () => {
+    const content = loadSaveFile.validatedContent();
+    return content === null ? null : {content, fileName: loadSaveFile.file()?.name ?? ''};
+  };
+
   const [saveConfiguration] = createResource(loadSaveFile.validatedContent,
     (content) => LoadSaveConfigurationSectionController.loadSaveConfigurationSection(content));
   const [globalProgression] = createResource(loadSaveFile.validatedContent,
@@ -44,11 +55,17 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     (content) => LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
   const [players] = createResource(loadSaveFile.validatedContent,
     (content) => LoadPlayersSectionController.loadPlayersSection(content));
+  const [saveIdentity] = createResource(loadedSaveFile,
+    ({content, fileName}) => LoadSaveIdentityController.loadSaveIdentity(content, fileName));
+  const [playersMenu] = createResource(loadSaveFile.validatedContent,
+    (content) => LoadPlayersMenuController.loadPlayersMenu(content));
 
   const loadedSave: LoadedSave = {
     ...loadSaveFile,
     isSaveLoaded: () => loadSaveFile.validatedContent() !== null,
-    viewModels: {saveConfiguration, globalProgression, energyLevels, terraformationLevels, players}
+    viewModels: {
+      saveConfiguration, globalProgression, energyLevels, terraformationLevels, players, saveIdentity, playersMenu
+    }
   };
 
   return <LoadedSaveContext.Provider value={loadedSave}>{props.children}</LoadedSaveContext.Provider>;

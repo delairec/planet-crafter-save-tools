@@ -18,8 +18,8 @@ test.describe('Save warnings', () => {
 
       // Assert
       await expect(page.getByText('Warnings', {exact: true})).toBeVisible();
-      await expect(page.getByRole('listitem')).toContainText(legacyFormatWarningFragment);
-      await expect(page.getByRole('listitem')).not.toContainText(legacyFormatWarningCode);
+      await expect(page.getByRole('main').getByRole('listitem')).toContainText(legacyFormatWarningFragment);
+      await expect(page.getByRole('main').getByRole('listitem')).not.toContainText(legacyFormatWarningCode);
     });
 
     test('should render the save data all the same, a warning not making the save unusable', async ({page}) => {
@@ -47,7 +47,7 @@ test.describe('Save warnings', () => {
       // Assert
       await expect(page.getByText('Save A warnings')).toBeVisible();
       await expect(page.getByText('Save B warnings')).toBeHidden();
-      await expect(page.getByRole('listitem').first()).toContainText(legacyFormatWarningFragment);
+      await expect(page.getByRole('main').getByRole('listitem').first()).toContainText(legacyFormatWarningFragment);
       await expect(page.getByRole('link', {name: 'Download'})).toBeVisible();
     });
   });

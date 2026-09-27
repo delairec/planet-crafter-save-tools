@@ -2,6 +2,7 @@ import {expect, test, type Locator, type Page} from '@playwright/test';
 import {findTheBreadcrumbSteps, findTheMenu, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
+const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
 
 const disclaimersSummary = 'Click here to show privacy, security and file safety disclaimers';
 
@@ -84,6 +85,38 @@ test.describe('Save manager shell', () => {
 
       // Assert
       await expect(findTheMenu(page).getByRole('group', {name: 'Players'}).getByRole('button').last()).toHaveText('See more');
+    });
+
+    test('should show the file name, display name, mode and game release of the save above the groups', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      const identityZone = findTheMenu(page).getByRole('region', {name: 'Loaded save'});
+      await expect(identityZone.getByRole('paragraph'))
+        .toHaveText(['baseline_valid.json', 'Merged Save', 'Standard', 'Game release 2.004']);
+      expect((await identityZone.boundingBox())!.y)
+        .toBeLessThan((await findTheMenu(page).getByRole('group', {name: 'Save', exact: true}).boundingBox())!.y);
+    });
+
+    test('should list the players of the save in the Players group, with their planet and a Host badge', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(findTheMenu(page).getByRole('group', {name: 'Players'}).getByRole('listitem'))
+        .toHaveText(['NikowaHostToxicity']);
+    });
+  });
+
+  test.describe('When a legacy save is loaded', () => {
+    test('should list its players without the planet they stand on', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, legacySaveFixturePath);
+
+      // Assert
+      await expect(findTheMenu(page).getByRole('group', {name: 'Players'}).getByRole('listitem'))
+        .toHaveText(['NikowaHost']);
     });
   });
 

@@ -209,6 +209,41 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'neon-cyan'
   },
   {
+    description: 'the file name of the loaded save, in the identity zone of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.menu-identity-file',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the display name, mode and game release of the loaded save, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.menu-identity-detail',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the name of a player in the Players group, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.menu-player',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the planet a player stands on, in the Players group of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.menu-player-planet',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the Host badge of a player, on its neon fill',
+    file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
+    selector: '.host-badge',
+    foreground: 'inverted',
+    background: 'neon-purple'
+  },
+  {
     description: 'the open page of the breadcrumb, on the page background',
     file: 'packages/ui-save-manager/src/styles/specifics/shell.css',
     selector: '.breadcrumb-page',
