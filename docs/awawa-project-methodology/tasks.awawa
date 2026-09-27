@@ -2169,19 +2169,38 @@ TASK FEAT146
 
 TASK TEST147
 	TITLE "Locate the elements of the end-to-end scenarios by test id, not by the HTML structure"
-	STATUS draft
+	STATUS todo
+	DESC "ratified by the owner on 2026-09-27; the task writes the decision that justifies the test"
+		+ "id and rewrites the decisions it reverses"
+	SPEC "a DECISION of the corpus records that a UI test must not break on a change of the DOM"
+		+ "structure, and justifies by it locating by a data-testid attribute"
 	SPEC "the UI scenarios locate the elements they act on and assert by a data-testid attribute,"
 		+ "so that a change of the HTML structure alone breaks none of them"
+	SPEC "check:locators accepts a test id in scenario files"
+	SPEC "the decisions that the locator guard refuses what the screen does not show and that a UI"
+		+ "scenario asserts what the screen shows are rewritten in place wherever they contradict"
+		+ "the new decision, which they cite as their reason"
+	SPEC "the process that a test task changes the UI only for its own sake states whether a"
+		+ "data-testid attribute added to the markup is an interface change it governs"
 	RATIONALE "Asked by the owner on a review of the save manager redesign, where a warnings"
 		+ "scenario reaches the warning list through the main landmark and its list items, a"
-		+ "locator a change of layout breaks. Left open: this reverses the test id refusal of the"
-		+ "locator guard and the rule that a scenario designates what the screen shows, which the"
-		+ "task would rewrite in place; whether role and label locators remain allowed beside the"
-		+ "test id; and which elements carry one"
+		+ "locator a change of layout breaks. The locator guard refuses a test id because a"
+		+ "scenario designates what the screen shows; the owner ruled that a UI test must not break"
+		+ "on a change of the DOM structure, and that this ruling, recorded as a decision by the"
+		+ "task, justifies the test id and replaces that reason. The scenarios locate by test id"
+		+ "every element they act on or assert, so every such element carries one, and a role,"
+		+ "label or text locator no longer designates one. A test id adds an attribute to the"
+		+ "markup for the sole sake of a locator, which the test task process refuses for an"
+		+ "interface change"
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
 		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
+		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
 		REF @PACKAGE.ui_save_manager
 	SOURCE "Owner review comment on packages/ui-save-manager/e2e/warnings.e2e.ts line 21: add a"
 		+ "draft task on master, the end-to-end tests use data-testid so they no longer depend on"
 		+ "the HTML structure"
 		PR 205
+	SOURCE "Owner ruling of 2026-09-27 on the draft: the task creates a decision that a UI test"
+		+ "must not break on a change of the DOM structure, which justifies data-testid, and passes"
+		+ "todo"
+		PR 206
