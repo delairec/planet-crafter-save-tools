@@ -1,26 +1,25 @@
-> ❗ I’m not actively maintaining this project (or only minimally). If you’d like to add improvements or fix bugs,
-> feel free to fork it 😃
+# Planet Crafter Save Tools [![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fplanet-crafter-save-manager.netlify.app%2Fversion.json&query=%24.version&label=production)](https://planet-crafter-save-manager.netlify.app/) [![License: GPL-3.0](https://img.shields.io/github/license/delairec/planet-crafter-save-tools)](LICENSE)
 
-<div align="center" width="100%">
-<div>
 
-# Planet Crafter Save Tools
-
-[![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fplanet-crafter-save-manager.netlify.app%2Fversion.json&query=%24.version&label=production)](https://planet-crafter-save-manager.netlify.app/)
-[![Netlify build of master](https://api.netlify.com/api/v1/badges/536103f3-e015-426d-b9cb-0f2beb82ea67/deploy-status?branch=master)](https://app.netlify.com/projects/planet-crafter-save-manager/deploys)
-[![License: GPL-3.0](https://img.shields.io/github/license/delairec/planet-crafter-save-tools)](LICENSE)
 
 [![Site check](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/site-check.yml?query=branch%3Amaster)
 [![Dependabot](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/dependabot/dependabot-updates?query=branch%3Amaster)
 [![Quality](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/quality.yml?query=branch%3Amaster)
 [![UI tests](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml/badge.svg?branch=master)](https://github.com/delairec/planet-crafter-save-tools/actions/workflows/ui-tests.yml?query=branch%3Amaster)
 
+> **DISCLAIMER** – I’m not actively maintaining this project (or only minimally). If you’d like to add improvements or fix bugs, feel free to fork it 😃
+
+<div align="center" width="100%">
+<div>
+<br/>
 
 <!-- TOC -->
 
 #### [What you can do](#what-you-can-do) | [Coming next](#coming-next) | [How to merge two saves](#how-to-merge-two-saves) | [Prefer the command line?](#prefer-the-command-line) | [Going further](#going-further)
 
 <!-- TOC -->
+
+<br/>
 
 ## [Open the Save Manager in browser](https://planet-crafter-save-manager.netlify.app/) — nothing to install
 
@@ -36,6 +35,8 @@
 </p>
 <p><sub>Open a screenshot at full size, or see the <a href="docs/assets/welcome-page-light.png">merge in the light theme</a>
 and the <a href="docs/assets/display-page-light.png">save view in the light theme</a>.</sub></p>
+
+<br/>
 </div>
 </div>
 
