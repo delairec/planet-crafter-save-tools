@@ -204,7 +204,6 @@ PROCESS WhatShouldNeverHaveBeenRecordedIsDeletedAtOnce
 		+ "whole delay, and its archive would say it once held"
 	RATIONALE "Archiving is for what stopped binding; an entity under the recording threshold never"
 		+ "bound anything"
-		REF @PROCESS.ADecisionIsRecordedOnlyIfAPullRequestCouldReverseIt
 
 PROCESS ADecisionIsRecordedOnlyIfAPullRequestCouldReverseIt
 	SPEC "A DECISION or a PROCESS is recorded only if a future pull request could do the reverse by"
@@ -217,6 +216,13 @@ PROCESS ADecisionIsRecordedOnlyIfAPullRequestCouldReverseIt
 	RATIONALE "The threshold of an OPEN_QUESTION is held by the schema, BLOCKS @TASK being"
 		+ "required; the threshold of a ruling cannot be, so it is a conduct rule read by the"
 		+ "review"
+	SOURCE "Archived by the owner ruling of 2026-09-28 on duplicates: both obligations are rules of"
+		+ "the instructions corpus, decision_holds_ruling_rejections_reason and"
+		+ "general_rules_go_to_instructions"
+		PR 54
+		REF @PROJECT.AI
+	STATUS archived
+	ARCHIVED_ON 2026-09-28
 
 PROCESS TheArchiveIsPurgedWithoutAScript
 	SPEC "No cleanup script is written: the cleanup pass is run by hand, through the awawa-ui"
