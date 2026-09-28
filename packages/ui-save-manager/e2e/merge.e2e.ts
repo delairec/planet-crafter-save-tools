@@ -192,7 +192,7 @@ test.describe('Save merge', () => {
       await openThePageOfTheMenu(page, 'Overview');
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Loaded save: baseline_valid.json'})).toBeVisible();
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
     });
   });
 });

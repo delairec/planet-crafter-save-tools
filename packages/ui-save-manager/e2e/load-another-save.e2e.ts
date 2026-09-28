@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
@@ -23,13 +23,13 @@ test.describe('Load another save page', () => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);
       await openThePageOfTheMenu(page, 'Load another save');
-      await page.getByLabel('Save file:').setInputFiles(otherPlayerSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(otherPlayerSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Loaded save: other-player_valid.json'})).toBeVisible();
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: other-player_valid.json');
       await expect(findTheBreadcrumbSteps(page)).toHaveCount(0);
     });
   });
