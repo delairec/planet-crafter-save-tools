@@ -27,7 +27,7 @@
   <a href="docs/assets/home-page-light.png"><img src="docs/assets/home-page-light-thumbnail.png" width="300" alt="The home page of the Save Manager in the light theme, a save loaded and two merged saves attached (full size)"></a>
   <a href="docs/assets/home-page-dark.png"><img src="docs/assets/home-page-dark-thumbnail.png" width="300" alt="The home page of the Save Manager in the dark theme, a save loaded and two merged saves attached (full size)"></a>
 </p>
-<p><sub>Open a screenshot at full size.</sub></p>
+<p><sub>Open a screenshot at full size by clicking the thumbnail.</sub></p>
 
 <br/>
 </div>
