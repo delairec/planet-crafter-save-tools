@@ -45,5 +45,5 @@ export async function openThePageOfTheMenu(page: Page, pageName: string): Promis
 }
 
 export function findTheBreadcrumbSteps(page: Page): Locator {
-  return page.getByTestId(/^breadcrumb-(?:group|page)$/);
+  return page.getByTestId(/^current-page-(?:group|name)$/);
 }
