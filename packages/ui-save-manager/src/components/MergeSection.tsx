@@ -90,7 +90,7 @@ export default function MergeSection(props: MergeSectionProps) {
     <DropZone label={mergeSectionTitle} testId="merge-area" maximumFileCount={2} tooManyFilesMessage={tooManyFilesForTwoSavesMessage}
               onFilesDropped={handleSavesDropped}>
       <div class="inline-block">
-        <h2>{mergeSectionTitle}</h2>
+        <h2 data-testid="merge-title">{mergeSectionTitle}</h2>
         <div class="merge-slots">
           <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-saves"
                       onClick={handleSwap} disabled={!fileA() && !fileB()}/>

@@ -41,7 +41,7 @@ export default function LoadSaveSection(props: LoadSaveSectionProps) {
       <DropZone label={displayRouteDisplayTitle} testId="display-area" maximumFileCount={1}
                 tooManyFilesMessage={tooManyFilesForOneSaveMessage}
                 onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
-        <h2>{displayRouteDisplayTitle}</h2>
+        <h2 data-testid="display-title">{displayRouteDisplayTitle}</h2>
         <p class="save-file-row">
           <SaveFileField label={displayRouteFileInputLabel} testId="save-file" ref={fileInputElement} onChange={handleFileChange}/>
           <button data-testid="visualize" onClick={handleVisualize} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
