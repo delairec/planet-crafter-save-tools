@@ -13,165 +13,6 @@ TASK DOCS1
 		+ "is never delivered work and is never purged"
 		REF @DECISION.AgentsMdNamesOneModelEntityPerType
 
-TASK DOCS50
-	TITLE "the points the corpus migration left in its pull request body are ruled in the corpus"
-	STATUS implemented
-	DELIVERED_BY 179
-	SPEC "the decision BothMessageListsShareOneRendering states that the rendering of the two"
-		+ "lists, foldable and monospace, is never a parameter of the component, and that severity"
-		+ "sets the colour of the title alone"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "BothMessageListsShareOneRendering"
-	SPEC "the decision MockIsolationIsAGlobalPreload names the root and every package that runs bun"
-		+ "test as carrying the preload, one IMPL per bunfig.toml"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "MockIsolationIsAGlobalPreload"
-	SPEC "a decision rules that AGENTS.md and the files of agents/ are written in French, and"
-		+ "AGENTS.md cites it"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "AgentInstructionsAreWrittenInFrench"
-	RATIONALE "The migration left five points in the body of its pull request, where no session"
-		+ "reads them; the owner ruled them while refining this task on 2026-09-25. The severity"
-		+ "prop of ValidationMessagesList.tsx only colours the title: the review of pull request 37"
-		+ "refused the foldable and monospaced parameters, and the decision generalised that"
-		+ "refusal to every parameter, so the decision is rewritten and the code stays."
-		+ "ui-save-manager has no bunfig.toml and no bun test script; its three spec files use no"
-		+ "double and run from the root, under the root preload. The committed scenario saves go to"
-		+ "TEST122: they are generated when the scenarios run and the anchors move onto the"
-		+ "generators, which is test code. PROCESS keeps no APPLIES_TO_PACKAGE nor APPLIES_TO_TASK:"
-		+ "the only process that lost edges pointed at ui_save_manager, the one package with an"
-		+ "interface, and at TEST40, archived since, so neither edge said anything the process does"
-		+ "not. The decision that kept AGENTS.md in French was not carried over; only its prose"
-		+ "holds it, against the general rule that committed documentation is in English, and its"
-		+ "reason stands: these files are agent instructions read by one owner who works in French"
-		REF @USAGE_REPORT.PR95
-		REF @DECISION.BothMessageListsShareOneRendering
-		REF @DECISION.MockIsolationIsAGlobalPreload
-		REF @TASK.TEST122
-		REF @DECISION.NoSaveIsCommittedToThePublicRepository
-		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
-	SOURCE "Usage report of the corpus migration, part A remediation 1"
-		REF @USAGE_REPORT.PR95
-
-TASK FIX53
-	TITLE "Ensure text colors are readable in both light and dark themes"
-	STATUS implemented
-	DESC "study the addition of a more general accessibility checker"
-	SPEC "all text colors are readable in light theme"
-		IMPL "packages/ui-save-manager/src/styles/colors.css"
-	SPEC "all text colors are readable in dark theme"
-		IMPL "packages/ui-save-manager/src/styles/colors.css"
-	SPEC "color accessibility is verified using a color contrast checker"
-		IMPL "scripts/check-color-contrast.ts"
-	RATIONALE "observed that some text colors are not readable in light theme, need to ensure"
-		+ "accessibility and readability for all users"
-	DELIVERED_BY 121
-
-TASK CHORE54
-	TITLE "The cli- packages declare no script running their command, the root scripts being its"
-		+ "only entry"
-	STATUS implemented
-	SPEC "packages/cli-merge/package.json declares no merge or node:merge script"
-		IMPL "scripts/check-package-scripts.spec.ts::When a cli- package script runs its own entry"
-			+ "point"
-		IMPL "package.json::check:package-scripts"
-	SPEC "packages/cli-validate/package.json declares no validate or node:validate script"
-		IMPL "scripts/check-package-scripts.spec.ts::When a cli- package script runs its own entry"
-			+ "point"
-		IMPL "package.json::check:package-scripts"
-	SPEC "no package.json of the repository runs bun with --cwd"
-		IMPL "scripts/check-package-scripts.spec.ts::When a package script runs bun with --cwd"
-		IMPL "package.json::check:package-scripts"
-	SPEC "the real-process tests of bun merge, bun validate, bun run node:merge and bun run"
-		+ "node:validate pass unchanged"
-		IMPL "packages/cli-merge/cli/merge-cli.version.spec.js::the root script of Bun"
-		IMPL "packages/cli-merge/cli/merge-cli.version.spec.js::the root script of Node"
-		IMPL "packages/cli-validate/cli/validate-cli.version.spec.js::the root script of Bun"
-		IMPL "packages/cli-validate/cli/validate-cli.version.spec.js::the root script of Node"
-	DELIVERED_BY 196
-	RATIONALE "The package scripts duplicate the root ones and nothing invokes them: no document,"
-		+ "workflow or script of the repository names them. The Bun ones reach the root through"
-		+ "--cwd ../.., a root-relative path in a package script; the Node ones run from the"
-		+ "package directory, so the merge defaults to packages/cli-merge/input where bun merge"
-		+ "reads input/. The root scripts already run the entry points directly, bun run --filter"
-		+ "being rejected for the prefixes it adds to every line. Exposing the commands through a"
-		+ "package bin was examined and set aside: Bun links the bin of a workspace package at the"
-		+ "root only when the root depends on it, the entry point carries no shebang, and a bin"
-		+ "cannot pass the --import of the Node module hooks"
-		REF @DECISION.TheRootCliScriptsRunTheirEntryPointDirectly
-		REF @DECISION.NodeCommandsRunSourcesThroughModuleHooks
-	SOURCE "Owner's draft of 2026-09-20, commit 4aeee6d pushed without a pull request; refined with"
-		+ "the owner on 2026-09-26"
-
-TASK CHORE56
-	TITLE "bun run guards runs every repository guard, a failing one not stopping the others"
-	STATUS implemented
-	SPEC "bun run guards runs every check: script of the root package.json and validate:tables, no"
-		+ "list of the guards being written anywhere"
-		IMPL "package.json::\"guards\""
-	SPEC "each guard stays runnable alone as bun run check:<name>"
-		IMPL "package.json::\"check:anchors\": \"bun scripts/check-corpus-anchors.ts\""
-	SPEC "a failing guard does not stop the others; the run names every guard that failed and exits"
-		+ "non-zero"
-		IMPL "package.json::--no-exit-on-error"
-	SPEC "no script, workflow, AGENTS.md, file of agents/, page of docs/wiki, README or active"
-		+ "DECISION or PROCESS names check:guards any more; the dated usage reports keep it"
-		IMPL ".github/workflows/quality.yml::- run: bun run guards"
-		IMPL "AGENTS.md::- `bun run guards`"
-		IMPL "agents/worktree.md::- `bun run guards`"
-		IMPL "docs/wiki/development.md::bun run guards"
-	SPEC "the decision on the repository guards states that a guard is a check: script of the root"
-		+ "package.json, that the script running them all bears a name outside check:, and that a"
-		+ "failing guard does not stop the others"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::A failing guard does not stop the"
-			+ "others"
-	RATIONALE "The guards decision names check:guards as its implementation. check:guards chains"
-		+ "fourteen bun run calls with &&, grows by one with each guard and stops at the first"
-		+ "failure. Bun 1.4.2 runs the scripts matching a pattern itself: bun run --sequential"
-		+ "--no-exit-on-error \"check:*\" validate:tables runs them all, prints Exited with code N"
-		+ "for each one that fails and exits non-zero, so no orchestrator file is written. An"
-		+ "aggregate named check:guards matches its own pattern and runs itself without end, hence"
-		+ "the name guards; renaming the thirteen guards under a guard: prefix was set aside for"
-		+ "touching more names, and a TypeScript orchestrator for redoing what Bun does. --parallel"
-		+ "is not used: the whole chain takes half a second, and sequential output stays in order"
-		REF @DECISION.RepositoryGuardsAreGroupedScripts
-	SOURCE "Raised in the review of pull request 101; refined with the owner on 2026-09-26"
-		PR 101
-	DELIVERED_BY 195
-
-TASK CHORE58
-	TITLE "investigate running awawa in CI, then deliver in the same pull request the change the"
-		+ "user picks from the findings"
-	STATUS archived
-	ARCHIVED_ON 2026-09-26
-	DESC "archived undone: awawa runs on ubuntu-latest but has no public install source, and the"
-		+ "owner ruled after reading the investigation to keep it out of CI"
-	SPEC "the pull request body reports whether awawa can be installed in a GitHub Actions runner,"
-		+ "from which source and at which cost per run"
-	SPEC "the pull request body reports, for each place named in the rationale, the lines awawa in"
-		+ "CI would remove or the check it would add, and whether that gain is worth the"
-		+ "installation"
-	SPEC "the change the user picks after reading that report is delivered in the same pull"
-		+ "request, and the report leaves the body once the change is in"
-	RATIONALE "awawa is today a local x86-64 binary, 2.7.0 in ~/.local/bin, 1.6 MB and dynamically"
-		+ "linked, installed from a local archive awawa-2.7.0+gd66a2ad-dirty-linux-x86_64.zip under"
-		+ "the MIT licence, whose install.sh copies its bin/ and whose README gives no download"
-		+ "URL; the repository names no source to install it from. Three places would change: the"
-		+ "corpus parser of scripts/check-corpus-anchors.ts and its spec, which awawa show or"
-		+ "status --json would replace, and the whole guard if lint L016 consulted git instead of"
-		+ "the disk; a CI run of awawa fmt --check and awawa lint --strict, which no job runs"
-		+ "today, so the conformance of the corpus is checked only on the machine of its author;"
-		+ "and the SPEC of CHORE63, proven in pull request 129 by a manual probe because no test"
-		+ "may run awawa in CI, which a test could then prove. Ruled with the user on 2026-09-23:"
-		+ "the findings go to the pull request body, not to a file; the user picks the change after"
-		+ "reading them and it lands in the same pull request without a DECISION; the task"
-		+ "therefore runs in an interactive session, never as an unattended wave agent"
-		REF @TASK.CHORE63
-	SOURCE "Review of pull request 101"
-		PR 101
-	SOURCE "Owner ruling on the investigation report: no awawa in CI, the task abandoned"
-		PR 190
-
 TASK REFACTOR59
 	TITLE "the repository guards read files, import specifiers and corpus lines through shared"
 		+ "modules"
@@ -196,10 +37,9 @@ TASK REFACTOR59
 		+ "of the shared helpers, their IMPL anchors following them"
 	SPEC "on the repository at the base commit, every guard reports the same violations and exits"
 		+ "with the same code as before the task"
-	AFTER @TASK.TEST123
 	RATIONALE "The guards decision requires what guards share to be declared once in a common"
-		+ "module. TEST123 delivered part of it in pull request 197: every guard reads its files"
-		+ "through the ScriptIo port of scripts/scriptIo.ts, the only module importing Glob, and"
+		+ "module. Pull request 197 delivered part of it: every guard reads its files through the"
+		+ "ScriptIo port of scripts/scriptIo.ts, the only module importing Glob, and"
 		+ "check-package-dependencies prints through reportViolations. What remains on that head:"
 		+ "the port scans process.cwd() instead of a root it receives; the dynamic import specifier"
 		+ "pattern is copied in check-presentation-entities and check-package-dependencies; the"
@@ -219,74 +59,14 @@ TASK REFACTOR59
 		+ "every consumer lives in scripts/, which is no package. The name specSources dates from"
 		+ "pull request 15, when the module served only the guards reading spec files; it now"
 		+ "gathers unrelated helpers, hence one file per responsibility. check:section-validators"
-		+ "and validate:tables are package scripts and stay out. Distinct from CHORE56, which"
-		+ "changes how the guards are run, not the code they share"
+		+ "and validate:tables are package scripts and stay out. Distinct from pull request 195,"
+		+ "which changed how the guards are run, not the code they share"
 		REF @DECISION.RepositoryGuardsAreGroupedScripts
 		REF @DECISION.AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
-		REF @TASK.TEST123
-		REF @TASK.CHORE56
 	SOURCE "Raised in the review of pull request 101; refined with the owner on 2026-09-26"
 		PR 101
-	SOURCE "Re-refined with the owner on 2026-09-26, after the review of the pull request"
-		+ "delivering TEST123"
+	SOURCE "Re-refined with the owner on 2026-09-26, after the review of pull request 197"
 		PR 197
-
-TASK REFACTOR62
-	TITLE "shared-save-processing exposes a function selecting one section of a save string"
-	STATUS implemented
-	SPEC "A caller reaching one section of a save string calls a shared-save-processing function"
-		+ "given the section index, and never splits the string on the section separator itself"
-		IMPL "packages/shared-save-processing/replaceSaveSection.js"
-		IMPL "packages/cli-merge/testing/fakeSaveStrings.js"
-		IMPL "packages/cli-validate/testing/fakeSaveContentWithInvalidEntry.js"
-		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js"
-	DESC "callers splitting on '@' to reach one section today: cli-merge testing/fakeSaveStrings.js"
-		+ "(twice), cli-validate testing/fakeSaveContentWithInvalidEntry.js, core-mapping"
-		+ "validateSaveContent.spec.js"
-	DELIVERED_BY 123
-	SOURCE "Review of pull request #102, 2026-09-21, on"
-		+ "packages/cli-merge/testing/fakeSaveStrings.js"
-		PR 102
-
-TASK CHORE60
-	TITLE "the per-worktree instructions name the acceptance commands a task branch runs before its"
-		+ "pull request opens, the CI quality gate included"
-	STATUS implemented
-	SPEC "agents/worktree.md names, as a fourth item, the commands a task branch runs green before"
-		+ "its pull request is opened or updated, bun run audit:quality among them, and the wave"
-		+ "launch prompt copies that list rather than its own"
-		IMPL "agents/worktree.md::4. **Les commandes d'acceptation"
-		IMPL "agents/worktree.md::C'est cette liste que cite le prompt de lancement d'une vague"
-	DELIVERED_BY 128
-	DESC "Raised by the usage report of pull requests 101, 102 and 103: the acceptance list of the"
-		+ "wave prompt held bun test, lint:types, check:guards and the two awawa commands, and two"
-		+ "of the three pull requests were red on the fallow CI job at delivery, at the cost of two"
-		+ "fixing sessions"
-	SOURCE "Usage report of pull requests 101, 102 and 103, 2026-09-21"
-		REF @USAGE_REPORT.PR101_102_103
-
-TASK CHORE63
-	TITLE "a reference between draft tasks of two branches is not refused by the corpus gate"
-	STATUS implemented
-	DELIVERED_BY 129
-	SPEC "awawa lint --strict . exits 0 on a draft TASK citing a task absent from the workspace,"
-		+ "and exits 1 once the citing task is todo"
-		IMPL "docs/_schema.awawa::draft: not ratified by the user, no finding reported until"
-			+ "ratified"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "ADraftTaskReportsNoFindingUntilRatified"
-	RATIONALE "WHEN STATUS draft of TASK is gated error, while awawa treats a draft with dangling"
-		+ "references as normal exploration; the reference from the draft that CHORE57 absorbed to"
-		+ "CHORE57, both on sibling branches, was refused by L004 in the review of pull requests"
-		+ "101 to 103. The gate on draft goes suppressed, not warning: measured on 2026-09-23 on a"
-		+ "probe draft, GATE warning leaves lint . at 0 but --strict promotes L004 back to an"
-		+ "error, so it does not meet the SPEC, while GATE suppressed meets both halves. Its price"
-		+ "is measured too: the same probe kept a missing required TITLE (L006) and a broken IMPL"
-		+ "anchor (L016) unreported for as long as the task stays draft, and both come back on"
-		+ "ratification, whose lint runs with the task todo. Per-rule gating, which would tolerate"
-		+ "L004 alone, does not exist in awawa 2.7.0 and would not be deliverable here anyway"
-	SOURCE "Usage report of pull requests 101, 102 and 103; ruled with the user on 2026-09-21"
-		REF @USAGE_REPORT.PR101_102_103
 
 TASK FEAT69
 	TITLE "Open a validated save as an editable draft and write the draft to a new save"
@@ -765,24 +545,6 @@ TASK FEAT82
 		+ "a second step and is drafted for memory only, without further research"
 		REF @PROJECT.PCST
 
-TASK DOCS88
-	TITLE "State in docs/save-format.md that a planet numeric id is the djb2 hash of its name"
-	STATUS implemented
-	SPEC "docs/save-format.md states that a planet numeric id is the two-accumulator djb2 hash of"
-		+ "the planet name, as the rule on planet numeric ids does, and no longer that no known"
-		+ "hash reproduces the ids"
-		IMPL "docs/save-format.md::The numeric id is a two-accumulator djb2 hash of the planet name"
-	RATIONALE "Pull request 107 corrected the rationale of the rule on planet numeric ids to the"
-		+ "djb2 hash, verified on six ids, and left the format document at its previous sentence;"
-		+ "the FEAT65 agent flagged the document at its hand-back on 2026-09-21 as outside its SPEC"
-		+ "and no task carried it"
-		REF @RULE.APlanetNumericIdIsStableAcrossSaves
-	SOURCE "Usage report of pull requests 111 and 112, part A remediation 2, split from DOCS87 at"
-		+ "the owner's review of pull request 112 on 2026-09-22"
-		PR 112
-		REF @USAGE_REPORT.PR111_112
-	DELIVERED_BY 122
-
 TASK CHORE91
 	TITLE "investigate axe-core in the ui-save-manager scenarios, then deliver in the same pull"
 		+ "request the change the user picks from the findings"
@@ -810,789 +572,14 @@ TASK CHORE91
 		+ "the same pull request, none excluded; the scans run inside the existing scenarios, never"
 		+ "in a new test layer. The findings go to the pull request body and the user picks the"
 		+ "change after reading them, so the task runs in an interactive session, never as an"
-		+ "unattended wave agent, like CHORE58"
+		+ "unattended wave agent, like the investigation of awawa in CI in pull request 190"
 		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
 		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
-		REF @TASK.CHORE99
-		REF @TASK.CHORE58
-	SOURCE "FIX53's task DESC, PR 121"
+	SOURCE "The DESC of the task delivered by PR 121"
 		PR 121
-		REF @TASK.FIX53
 	SOURCE "Owner ruling, 2026-09-26, refining CHORE91: investigation reported in the pull request"
 		+ "body, WCAG A and AA rules, color rules only in the dark scheme, violations fixed"
-
-TASK CHORE99
-	TITLE "Close the three gaps of the check:contrast guard"
-	STATUS implemented
-	SPEC "the guard reports a foreground declaration whose background the catalog does not cover,"
-		+ "even when the same token is catalogued for that stylesheet over another background"
-		IMPL "scripts/check-color-contrast.spec.ts::the background of that selector being"
-			+ "uncatalogued"
-	SPEC "the guard reports a foreground declaration whose color is written as a literal instead of"
-		+ "var(--token)"
-		IMPL "scripts/check-color-contrast.spec.ts::as naming no color token"
-	SPEC "the guard scans every stylesheet of packages/ui-save-manager/src,"
-		+ "packages/ui-save-manager/src/app.css included"
-		IMPL "scripts/check-color-contrast.spec.ts::app.css included"
-	SPEC ".text-color-inverted is gone from packages/ui-save-manager/src/styles/typography.css and"
-		+ "check:guards passes"
-		IMPL "packages/ui-save-manager/src/styles/typography.css"
-		IMPL "package.json::check:contrast"
-	RATIONALE "The catalog of @DECISION.ColorTokenPairsMeetWcagAaByCatalog is the authority on the"
-		+ "pairs checked, and findUncataloguedForegroundDeclarations keys its coverage on the"
-		+ "(token, file) pair, so a second declaration of a token already catalogued for that"
-		+ "stylesheet passes in silence. The standing instance is .text-color-inverted of"
-		+ "typography.css, a class no markup uses, measuring 1.08:1 in the light theme and 1.00:1"
-		+ "in the dark one while --inverted is catalogued for that file over --neon-cyan; a class"
-		+ "nothing renders has no background to catalogue, so it is deleted rather than catalogued."
-		+ "The other two gaps have no standing instance — no stylesheet writes a literal color, and"
-		+ "app.css carries only @import lines — and are each proven on a constructed source."
-		+ "Distinct from CHORE91, which instructs axe-core on the rendered DOM and would never see"
-		+ "a class no markup uses"
-		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
-		REF @TASK.CHORE91
-	SOURCE "Coherence pass of pull request 127, 2026-09-23: three gaps found by reading the guard"
-		+ "against the stylesheets it scans"
-		PR 127
-	SOURCE "Owner ruling, 2026-09-23, refining CHORE99: one criterion per gap, and the dead class"
-		+ "is deleted instead of catalogued"
-		PR 127
-	DELIVERED_BY 150
-
-TASK FIX111
-	TITLE "every section name shown to a user is the LABEL of its SECTION"
-	STATUS archived
-	ARCHIVED_ON 2026-09-25
-	DESC "archived undone: the code labels already equal the SECTION LABELs, and the headings of"
-		+ "docs/save-format.md keep their longer names by owner ruling"
-	SPEC "the section named in the location of a validation message equals the LABEL of the SECTION"
-		+ "entity of that index"
-	SPEC "a SECTION LABEL the code does not follow fails a check of the repository"
-	SOURCE "Picked in the review of the accepted limitations, CHORE102"
-		REF @LIMITATION.SectionLabelsDivergeFromTheFormatDocument
-
-TASK CHORE112
-	TITLE "the fallow audit and health report cover ui-save-manager"
-	STATUS implemented
-	SPEC "fallow.toml ignores no file of packages/ui-save-manager"
-		IMPL "fallow.toml::ignorePatterns ="
-	SPEC "fallow health run on the whole repository, without --base, exits 0 with ui-save-manager"
-		+ "in the fallow perimeter"
-		IMPL "fallow-coverage-gaps.toml::packages/ui-save-manager/src/routes/*.tsx"
-	DELIVERED_BY 181
-	RATIONALE "Measured on 2026-09-25 with the whole package brought in, src/app.tsx,"
-		+ "src/routes/*.tsx, e2e/*.e2e.ts and scripts/*.ts as entries: dead-code reports no issue;"
-		+ "fallow health on the whole repository exits 1 on one function, Home in"
-		+ "src/routes/index.tsx (cyclomatic 7, estimated CRAP 56, its Show blocks), which is"
-		+ "brought under the threshold. Retaken at delivery: with the entries, the application and"
-		+ "the routes declared test roots of the coverage-gaps plugin instead, Home and handleDrop"
-		+ "of DropZone.tsx are estimated covered and the whole-repository run exits 0; declared as"
-		+ "entries of fallow.toml, both exit 1 at estimated CRAP 56. The clone groups of the e2e"
-		+ "scenarios and buttons.css fail no gate, even with --gate all, and are left alone. bun"
-		+ "run audit:quality is not the criterion: its fallow commands take --base master and exit"
-		+ "0 on a pull request that only changes fallow.toml, while fallow health --base exits 1 on"
-		+ "the first later pull request that touches src/routes/index.tsx"
-	SOURCE "Picked in the review of the accepted limitations, CHORE102"
-		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
-
-TASK TEST113
-	TITLE "a test pins that the machine breakdown and the optimizer contributions share the"
-		+ "production of a planet"
-	STATUS implemented
-	SPEC "with several optimizers holding energy fuses and a producer reached by two of them, the"
-		+ "totalLevel of the production breakdown entries plus the contributions of the optimizers"
-		+ "equals the production of the planet"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should add the machine"
-			+ "levels and the optimizer contributions up to the production of the planet"
-	SPEC "on the same planet, the productionRatio shares of the breakdown entries and of the"
-		+ "optimizers sum to 1"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should share the"
-			+ "production of the planet between the machines and the optimizers"
-	WAVE @WAVE.9
-	DELIVERED_BY 177
-	RATIONALE "The draft took the base-only breakdown for a defect; it is the design. The boost is"
-		+ "counted once, in the optimizer contribution, so the shares tell whether a machine or an"
-		+ "optimizer yields more. No spec pins the two tables together: the existing specs check"
-		+ "each share alone. No behaviour changes: the production formula is confirmed in game"
-		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
-	SOURCE "Picked in the review of the accepted limitations, CHORE102"
-		REF @LIMITATION.TheMachineBreakdownIgnoresOptimizerBoost
-
-TASK CHORE105
-	TITLE "measure the unit test coverage and fail the CI when it drops"
-	STATUS implemented
-	SPEC "bun test reports line and function coverage of every module a unit test loads"
-		IMPL "package.json::\"test:coverage\": \"bun test --coverage\""
-		IMPL ".github/workflows/quality.yml::bun test --coverage"
-	SPEC "the CI test job fails when line or function coverage falls under the threshold declared"
-		+ "in bunfig.toml"
-		IMPL ".github/workflows/quality.yml::bun test --coverage"
-		IMPL "bunfig.toml::coverageThreshold"
-	SPEC "the declared threshold equals the floor measured on the delivering branch, rounded down"
-		+ "to the unit"
-		IMPL "bunfig.toml::coverageThreshold = { lines = 1.0, functions = 0.0 }"
-	SPEC "the coverage report of the CI test job appears in the run summary"
-		IMPL ".github/workflows/quality.yml::GITHUB_STEP_SUMMARY"
-	SPEC "the fallow job fails on a source file or export outside ui-save-manager that no test"
-		+ "reaches statically"
-		IMPL "fallow.toml::coverage-gaps ="
-		IMPL ".github/workflows/quality.yml::args: --coverage-gaps"
-	SPEC "only a module a test runs as a spawned process, or a type declaration file, is exempt"
-		+ "from that check, declared with its reason in the one file of exemptions fallow.toml"
-		+ "loads"
-		IMPL "fallow.toml::plugins ="
-		IMPL "fallow-coverage-gaps.toml::entryPointRole ="
-	DELIVERED_BY 173
-	RATIONALE "Nothing measures coverage today: the CI test job runs plain bun test. Measured on"
-		+ "2026-09-23 with Bun 1.4.2: 94.72 % of functions and 97.36 % of lines over the 155"
-		+ "modules the 858 unit tests load, scripts/ the lowest (generate-scenario-fixtures.ts at"
-		+ "28.85 % of lines). Bun reports only the modules a test loads, so a module no test"
-		+ "imports never lowers the figure; fallow health --coverage-gaps closes that blind spot"
-		+ "statically. On 2026-09-23 it reports four files — merge-cli.js, validate-cli.js and"
-		+ "scripts/node/register.js, run as real processes by the command tests, and"
-		+ "jsonSourceTextAccess.d.ts, types only — and five exports: UNEXPECTED_ERROR_EXIT_CODE,"
-		+ "two renderUnexpectedError, RAW_INTEGER_FIELDS, SAVE_SECTIONS_COUNT. ui-save-manager"
-		+ "stays out of scope: no unit test loads it, its flows are covered by the Playwright"
-		+ "scenarios, which are not a required check, and it is already outside the fallow"
-		+ "perimeter. No external coverage service: the report stays in the run summary, nothing"
-		+ "leaves the repository"
-		REF @DECISION.EveryPublishedCommandHasARealProcessTest
-		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
-		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
-		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
-	SOURCE "Owner request, refinement session of 2026-09-23"
-
-TASK FEAT114
-	TITLE "bun merge and bun validate print only their own lines, and the merge reports each folder"
-		+ "as one block"
-	STATUS implemented
-	SPEC "bun merge and bun validate print exactly the lines of their node: counterparts: no"
-		+ "workspace prefix, no line echoing the script and no exit-code line added by the package"
-		+ "manager"
-		IMPL "packages/cli-merge/cli/merge-cli.version.spec.js::the root script of Bun"
-		IMPL "packages/cli-validate/cli/validate-cli.version.spec.js::the root script of Bun"
-	SPEC "bun validate prints no empty line between the error count and the errors"
-		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::should head the report with the"
-			+ "file and how many errors it holds"
-	SPEC "the merge reports each folder of the input directory as one contiguous block under a line"
-		+ "naming the folder, a skipped folder included"
-		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should report the skipped folder in its"
-			+ "own block, under a line naming it"
-	SPEC "the merge reports the folders in name order, the same under Bun and Node"
-		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should report the folders in name order,"
-			+ "each under an empty line and a line naming it"
-	SPEC "the block of each folder opens on an empty line, before the line naming the folder"
-		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should report the folders in name order,"
-			+ "each under an empty line and a line naming it"
-	SPEC "in the block of a merged folder, the line naming the written save comes last, after every"
-		+ "warning, separated from them by an empty line"
-		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should announce the written save last,"
-			+ "separated from the warnings by an empty line"
-	SPEC "the line naming the written save shows its path behind a tick"
-		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::should print the merged output path to"
-			+ "stdout, behind a tick"
-	DELIVERED_BY 182
-	RATIONALE "Seen on the manual test of PR 127, measured on the public fixtures on 2026-09-25:"
-		+ "the root scripts run bun run --filter, which prefixes every line with the package and"
-		+ "script names and adds its own echo and exit-code lines that the node: scripts do not"
-		+ "print; no line of one folder falls among those of another, but the report of a folder is"
-		+ "split in three around the path written, and the folders come in directory order, which"
-		+ "differs between Bun and Node. The path of the merged save stays as the output directory"
-		+ "given joins it: stdout announces where the file is written, and the path is short with"
-		+ "the default output directory. The line naming the save comes last as the save manager"
-		+ "shows the merge report above its success message since the review of PR 127"
-		REF @COMMAND.MergeSaves
-		REF @COMMAND.ValidateSave
-	SOURCE "Owner review, 2026-09-24: the output of the two commands is hard to read, a draft task"
-		+ "with no wave"
-		PR 127
-	SOURCE "Refined with the owner on 2026-09-25: the output of the node: scripts as the reference,"
-		+ "the path unchanged, one block per folder in name order, the saved file last"
-
-TASK CHORE116
-	TITLE "declare a wave as an entity carrying its milestone and its integration branch"
-	STATUS implemented
-	DELIVERED_BY 170
-	SPEC "the schema declares a WAVE type, one entity per wave, named by its number"
-		IMPL "docs/_schema.awawa::SCHEMA WAVE"
-	SPEC "a WAVE entity requires MILESTONE, the title of the GitHub milestone every pull request of"
-		+ "the wave carries"
-		IMPL "docs/_schema.awawa::FIELD MILESTONE string"
-	SPEC "a WAVE entity requires BRANCH, the integration branch every task pull request of the wave"
-		+ "targets"
-		IMPL "docs/_schema.awawa::FIELD BRANCH string"
-	SPEC "the WAVE field of TASK is a reference to a WAVE entity, and every task carrying a wave"
-		+ "resolves to one"
-		IMPL "docs/_schema.awawa::FIELD WAVE @WAVE"
-	SPEC "wave 5 carries milestone skeo and branch integration/save-format-preserved"
-		IMPL "docs/awawa-project-methodology/waves.awawa::MILESTONE \"skeo\""
-		IMPL "docs/awawa-project-methodology/waves.awawa::BRANCH"
-			+ "\"integration/save-format-preserved\""
-	SPEC "wave 6 carries milestone save-edition and branch integration/save-edition"
-		IMPL "docs/awawa-project-methodology/waves.awawa::MILESTONE \"save-edition\""
-		IMPL "docs/awawa-project-methodology/waves.awawa::BRANCH \"integration/save-edition\""
-	SPEC "wave 7 carries milestone fix-corrupted-save and branch integration/fix-corrupted-save"
-		IMPL "docs/awawa-project-methodology/waves.awawa::MILESTONE \"fix-corrupted-save\""
-		IMPL "docs/awawa-project-methodology/waves.awawa::BRANCH \"integration/fix-corrupted-save\""
-	SPEC "AGENTS.md and the files of agents/ name no integration branch: the base of a task is the"
-		+ "BRANCH of its wave, master for a task with no wave"
-		IMPL "AGENTS.md::La base d'une tâche est le `BRANCH` de sa wave"
-		IMPL "agents/worktree.md::c'est le `BRANCH` de sa wave"
-	RATIONALE "WAVE is a bare uint today: an agent launched on a task learns its number, not the"
-		+ "branch to cut from nor the milestone to set on the pull request, so it asks, or reads"
-		+ "the base from AGENTS.md, which names it in prose and drifts — on 2026-09-24 it still"
-		+ "named integration/save-format-preserved while the open milestone and branch were"
-		+ "release-and-hardening. AGENTS.md kept the base out of the corpus because a DESC"
-		+ "rewritten every month gains nothing; one entity per wave is written once and never"
-		+ "rewritten, which removes that objection. Waves 6 and 7 name a milestone and a branch"
-		+ "that do not exist yet on GitHub: they are created when the wave is launched, not by this"
-		+ "task. Wave 8, release-and-hardening, lives on its integration branch and is declared"
-		+ "there. The wave-start command, outside this repository, is changed alongside to read"
-		+ "BRANCH and MILESTONE from the wave instead of asking, and to pass the milestone to the"
-		+ "pull request it opens"
-	SOURCE "Owner request and refinement, session of 2026-09-24"
-
-TASK FEAT119
-	TITLE "a save file is dropped on the Save Manager instead of being picked"
-	STATUS implemented
-	DELIVERED_BY 172
-	SPEC "a JSON file dropped on the display area is selected exactly as if picked with its file"
-		+ "input"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should display that file as if it had been"
-			+ "picked"
-	SPEC "a JSON file dropped on the save A or the save B area of the merge section is selected for"
-		+ "that save"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should select it as save B only"
-	SPEC "two JSON files dropped together anywhere on the merge section, a save slot included, fill"
-		+ "save A and save B in the alphabetical order of their names, the order the command gives"
-		+ "a folder"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should select them as save A and save B in"
-			+ "the alphabetical order of their names"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should hand them to the merge section,"
-			+ "which selects them as save A and save B"
-	SPEC "a button in a column of its own, left of save A and save B, swaps the two selected files,"
-		+ "as a route planner swaps origin and destination"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should select save A as save B and save B"
-			+ "as save A"
-	SPEC "a drop an area cannot take — a file that is not JSON, two files on the display area, more"
-		+ "than two on the merge section — selects nothing and says why next to the area"
-		IMPL "packages/ui-save-manager/src/components/structure/DropZone.tsx::findRejectionMessage"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::When three save files are dropped on the"
-			+ "merge section"
-	SPEC "an area shows that it accepts the drop while a file is dragged over it"
-		IMPL "packages/ui-save-manager/src/components/structure/DropZone.tsx::drop-zone-active"
-	SPEC "an area takes the files from the moment the pointer enters it, without waiting for a"
-		+ "further move"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should take them, so that the browser lets"
-			+ "them be dropped without a further move"
-	SPEC "a file dropped outside every area leaves the page in place instead of opening the file"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should keep the browser from opening them"
-	SPEC "every file input stays, so a file can still be picked with the keyboard"
-		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::ref={fileInputElement}"
-		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::ref={saveBInput}"
-	SPEC "UI scenarios on the three engines drop a file on the display area, one on a merge slot"
-		+ "and two at once on the merge section"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts"
-	SPEC "the README merge steps say the two files are dropped or picked"
-		IMPL "README.md::drop the two files on the merge section"
-	RATIONALE "Picking a save means walking to a hidden AppData folder in a file dialog, twice for"
-		+ "a merge; a drop from the file explorer already open on that folder is the gesture"
-		+ "players expect. The order of a two-file drop matters only when neither save or both name"
-		+ "Prime (@RULE.TheSaveOnPrimeBecomesSaveA); taking the alphabetical order keeps the web UI"
-		+ "and the command merging the same pair the same way, and the swap button reverses it when"
-		+ "that is not the pair the player meant; a save that alone names Prime stays save A"
-		+ "whatever the order"
-		REF @RULE.TheSaveOnPrimeBecomesSaveA
-	SOURCE "Owner request after the README rewrite described picking the files"
-		PR 165
-
-TASK FEAT120
-	TITLE "a changelog entry lists only the feat, fix and breaking commits of the version"
-	STATUS implemented
-	SPEC "a changelog entry lists the commits whose subject has the type feat or fix, with or"
-		+ "without a scope, and every commit whose subject carries a ! whatever its type, in the"
-		+ "order bun run release reads them"
-		IMPL "scripts/release/addChangelogEntry.spec.ts::should list only the features, the fixes"
-			+ "and the breaking changes, in the order of the release"
-	SPEC "a commit of any other type — chore, docs, refactor, ci, test, build — carrying no ! is"
-		+ "left out of the entry"
-		IMPL "scripts/release/conventionalCommitSubject.ts::isUserFacingChange"
-	SPEC "the version a tool takes is still computed from every commit since its last tag"
-		IMPL "scripts/release/planRelease.spec.ts::should raise its patch number from every one of"
-			+ "them"
-	SPEC "a version whose commits hold no feat, no fix and no ! gets an entry with the single line"
-		+ "- Maintenance changes only"
-		IMPL "scripts/release/addChangelogEntry.spec.ts::should give the entry a single line saying"
-			+ "it holds maintenance changes only"
-	DELIVERED_BY 171
-	RATIONALE "The changelog is the release note of each tool, and the user reads it for what"
-		+ "changed in the tool; chore and docs titles such as dependency bumps or corpus edits say"
-		+ "nothing to a player and bury the features and fixes"
-		REF @LIMITATION.AVersionTagCreatesNoGitHubRelease
-	SOURCE "Owner request after reading the 0.1.0 changelog entries"
-		PR 165
-
-TASK TEST122
-	TITLE "the scenario saves are generated when the scenarios run, never committed"
-	STATUS implemented
-	DELIVERED_BY 183
-	SPEC "no save is tracked under packages/ui-save-manager/e2e/fixtures/, the README there stays"
-		IMPL ".gitignore::packages/ui-save-manager/e2e/fixtures/*.json"
-	SPEC "in a fresh clone, bun run check:guards, bun run test:ui and playwright test launched from"
-		+ "packages/ui-save-manager pass, and leave git status clean"
-		IMPL "packages/ui-save-manager/playwright.config.ts::globalSetup:"
-			+ "'../../scripts/generate-scenario-fixtures.ts'"
-		IMPL "scripts/generate-scenario-fixtures.ts::import {writeFile} from 'node:fs/promises';"
-	SPEC "check:scenario-fixtures no longer compares a generated save with a file of the"
-		+ "repository, and still refuses a scenario file naming the input directory in a path"
-		IMPL "scripts/check-scenario-fixtures.ts::INPUT_DIRECTORY_PATH"
-		IMPL "scripts/check-scenario-fixtures.spec.ts::When a scenario reads a file of the input"
-			+ "directory"
-	SPEC "every ATTESTED_BY and IMPL anchor naming a scenario save names instead a file git tracks"
-		+ "whose text contains the fragment the anchor cites, the fragment rewritten where the"
-		+ "saved form appears in no source"
-		IMPL "docs/awawa-project-specification/rules.awawa::packages/shared-save-processing/serializeSave.spec.js"
-		IMPL "docs/awawa-project-specification/sections.awawa::packages/shared-save-processing/testing/createSaveRecords.js"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::createPlayer({playerGaugeToxic: -1})"
-	SPEC "the decisions NoSaveIsCommittedToThePublicRepository,"
-		+ "ScenarioFixturesAreGeneratedAndReplayedByAGuard and AnAnchorNamesAFileTrackedByGit,"
-		+ "agents/corpus-ecrire.md and the README of the fixtures state what the repository does"
-		+ "once the saves are no longer committed"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "NoSaveIsCommittedToThePublicRepository"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "ScenarioFixturesAreGeneratedAndReplayedByAGuard"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "AnAnchorNamesAFileTrackedByGit"
-		IMPL "agents/corpus-ecrire.md::Les saves des scénarios ne le sont pas"
-		IMPL "packages/ui-save-manager/e2e/fixtures/README.md::They are not committed"
-	RATIONALE "The owner ruled while refining DOCS50 that the generated saves need not be committed"
-		+ "and that the anchors move off them; six ATTESTED_BY of the specification, five on rules"
-		+ "and one on the section TerrainLayers, and one IMPL of"
-		+ "AUiScenarioAssertsWhatTheScreenShows name those files today, while the IMPL naming the"
-		+ "README of the fixtures stays valid. The design was settled while refining this task on"
-		+ "2026-09-25: a Playwright global setup writes the saves into the same directory, ignored"
-		+ "by git, so no scenario path changes, the scenario FEAT119 adds included, and a direct"
-		+ "playwright test run gets them too; that setup runs under Node, where Bun.write does not"
-		+ "exist. The byte replay is dropped, since the scenarios read what the generator has just"
-		+ "written, and the refusal of the input directory stays. An anchor points at the tracked"
-		+ "file holding the cited text, whether the generator script, the save factories of"
-		+ "shared-save-processing or a test asserting a serialised line: most fragments live in the"
-		+ "factories, not in the script, and check:anchors checks the path alone, never the"
-		+ "fragment"
-		REF @TASK.DOCS50
-		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
-		REF @SECTION.TerrainLayers
-		REF @TASK.FEAT119
-		REF @DECISION.NoSaveIsCommittedToThePublicRepository
-		REF @DECISION.ScenarioFixturesAreGeneratedAndReplayedByAGuard
-		REF @DECISION.AnAnchorNamesAFileTrackedByGit
-	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25"
-
-TASK TEST123
-	TITLE "Cover every use case of the modules a unit test loads, the coverage report finding the"
-		+ "ones missed"
-	STATUS implemented
-	SPEC "every line bun test --coverage reports unexecuted is traced to the use case it serves,"
-		+ "and that use case gets a test asserting its observable outcome"
-		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.spec.js::When the format is"
-			+ "none of those a save file schema describes"
-		IMPL "packages/core-mapping/src/domain/rules/merge/mergeTerraformationLevels.spec.ts::the"
-			+ "one of $unlockedIn"
-		IMPL "scripts/release/readCommits.spec.ts::When the version tag of the consumer is missing"
-			+ "from the repository"
-	SPEC "no test the task adds exists only to execute a line: each names the use case it covers"
-		+ "and asserts what that use case produces"
-		IMPL "scripts/check-package-dependencies.spec.ts::should report its manifest alone, no"
-			+ "import of it being judged against the matrix"
-		IMPL "scripts/check-corpus-anchors.spec.ts::should give the anchor fields the type declares"
-			+ "itself, the inclusion adding none"
-	SPEC "the main function of every script with an import.meta.main entry block is tested"
-		+ "in-process on a run that passes and on a run that fails, asserting the report it prints"
-		+ "and the exit code it gives, its file system, console and exit received as a fake"
-		IMPL "scripts/testing/createFakeScriptIo.ts::exit: code => exitCodes.push(code)"
-		IMPL "scripts/check-action-pins.spec.ts::await checkActionPins(io)"
-		IMPL "scripts/check-package-scripts.spec.ts::await checkPackageScripts(io)"
-		IMPL "scripts/validate-tables/validate-tables.spec.ts::await validateTables(io)"
-		IMPL "packages/core-mapping/scripts/check-section-validators.spec.ts::await"
-			+ "checkSectionValidators(io)"
-		IMPL "packages/core-mapping/scripts/generate-section-validators.spec.ts::await"
-			+ "generateSectionValidators(io)"
-		IMPL "scripts/generate-scenario-fixtures.spec.ts::await generateScenarioFixtures(line =>"
-			+ "printed.push(line))"
-	SPEC "the coveragePathIgnorePatterns of bunfig.toml lists only modules holding the real input"
-		+ "and output a test replaces with a fake"
-		IMPL "bunfig.toml::coveragePathIgnorePatterns ="
-	SPEC "an entry carrying liPlanet without liId, and one carrying pos without planet, are refused"
-		+ "by the validation of a save, each naming the property it lacks"
-		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::missingProperty:"
-			+ "'liId'"
-		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.spec.js::missingProperty:"
-			+ "'planet'"
-	SPEC "a line no argument of an exported function can reach, with a value a producer of the"
-		+ "repository can emit, is deleted, never tested nor exempted"
-		IMPL "scripts/release/testing/createReleaseRepository.ts::execFileSync('git', gitArguments"
-		IMPL "packages/ui-save-manager/scripts/servedVersion.ts::.find(difference => difference !=="
-			+ "0) ?? 0"
-	SPEC "the coverageThreshold of bunfig.toml is raised to the floor measured once those use cases"
-		+ "are covered"
-		IMPL "bunfig.toml::coverageThreshold = { lines = 1.0, functions = 0.0 }"
-	AFTER @TASK.CHORE105
-	DELIVERED_BY 197
-	RATIONALE "Asked by the owner on the review of CHORE105, which gates coverage at the floor it"
-		+ "measured. The aim is every use case covered, which no tool can check; 100 % of lines"
-		+ "only says the code ran under a test, so the report serves to find use cases left"
-		+ "untested, and a figure reached by tests asserting nothing would satisfy the tool and"
-		+ "cover nothing. Measured on 2026-09-26 on master with Bun 1.4.2: 96.96 % of lines and"
-		+ "94.91 % of functions, 38 modules under 100 %; generate-scenario-fixtures.ts had left the"
-		+ "report with #183 and enters it again with the spec #176 adds, so its writer and its"
-		+ "entry are tested like those of the other scripts, the hand-off in a module free of the"
-		+ "Bun API since Playwright runs it under Node. The lowest are the sixteen scripts of"
-		+ "scripts/ and of core-mapping/scripts/ whose body runs only under import.meta.main,"
-		+ "check-scenario-fixtures.ts and specSources.ts at 41.67 % of lines,"
-		+ "generate-section-validators.ts at 0 % of functions: a test spawning them fails to raise"
-		+ "the figure, as Bun never reports a spawned module, so their input and output is injected"
-		+ "and the real adapter alone ignored. release.ts, release-tag.ts and check-site.ts have no"
-		+ "import.meta.main block and are the process their test spawns: ruled out of scope by the"
-		+ "owner on 2026-09-26, they stay tested as real processes and exempt in"
-		+ "fallow-coverage-gaps.toml. The unexecuted lines of sectionValidators.generated.js are"
-		+ "two field dependencies of the save schema, a validation rule no test asserts. The"
-		+ "unusable-merged-save outcome of the merge CLI is reached by no save, every parse error"
-		+ "being a validation error first, but the presenter of core-mapping emits it: the CLI"
-		+ "receives its merge controller and the test hands one answering that outcome. Bun counts"
-		+ "a class as a function no call reaches, even once instantiated: a one-method class sits"
-		+ "at 50 % of functions and 100 % of lines, which is why the controllers of core-mapping"
-		+ "read 66.67 %; a function gap naming no line is no use case missed, and the owner ruled"
-		+ "on 2026-09-26 that the function threshold is dropped, the line threshold catching every"
-		+ "uncalled function whose body holds a line"
-		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
-		REF @DECISION.AControllerSpecCoversWiringNotBranches
-		REF @DECISION.EveryPublishedCommandHasARealProcessTest
-		REF @DECISION.AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
-	SOURCE "Owner request on the review of CHORE105, and the owner's ruling on its intent in the"
-		+ "same review"
-		PR 173
-	SOURCE "Owner rulings, refinement session of 2026-09-26"
-
-TASK FEAT124
-	TITLE "Price every power-drawing world object the public sources attest, placed in a reference"
-		+ "save or not"
-	STATUS implemented
-	SPEC "every machine of the group without a known energy level that a source prices gets its row"
-		+ "in the energy table, the source in the source field of that row, and moves to the"
-		+ "producing or the consuming group"
-		IMPL "packages/core-mapping/src/domain/energyLevels.json::TradePlatform1"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge %s, a world"
-			+ "object grouped as an energy consumer"
-	SPEC "a name no source prices stays in its group, and nothing records the search made for it"
-		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should neither produce nor"
-			+ "charge for the world objects without a known energy level"
-	SPEC "the rows already in the energy table are not checked again"
-		IMPL "docs/energy-levels.md::rows already in the table were not checked again"
-	SPEC "the sources searched include, beyond the wiki, the game data a community mod or save"
-		+ "editor reads from the game, each one recorded as a URL entity at the address read"
-		IMPL "docs/awawa-project-methodology/sources.awawa::URL CompanionAppGameDataV2103"
-	SPEC "docs/energy-levels.md records the date and the game release of the search, and the"
-		+ "limitation on machines without a known energy level lists only the placed machines no"
-		+ "source prices"
-		IMPL "docs/energy-levels.md::Game data search: 2026-09-25"
-		IMPL "docs/awawa-project-methodology/limitations.awawa::Five placed machines have no known"
-			+ "energy level"
-	WAVE @WAVE.9
-	DELIVERED_BY 178
-	RATIONALE "The cross-check of 2026-09-09 covered only the names placed in the six reference"
-		+ "saves, plus the three names of the Skeo update: 541 names stay without a known energy"
-		+ "level against 104 consumers, and a machine a player places that no reference save holds"
-		+ "is missing from the consumption without any warning. Only a price found is stored: a"
-		+ "source per name searched would weigh 541 records and say nothing the group does not. The"
-		+ "rows already stored are trusted; a gap between the consumption computed and the reading"
-		+ "in game of TEST125 is what reopens one"
-		REF @DATATABLE.EnergyLevels
-		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
-		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
-		REF @TASK.TEST125
-	SOURCE "Owner request of 2026-09-25 opening the wave that completes the power consumption: the"
-		+ "collection of power-drawing machines from the sources is finished before the formula is"
-		+ "measured"
-	SOURCE "Owner ruling of 2026-09-25 on the draft: no source stored per name searched, and no"
-		+ "check of the values already stored until a save shows a consumption gap"
-
-TASK TEST125
-	TITLE "Measure in game the consumption the HUD prints and write the consumption formula as"
-		+ "rules"
-	STATUS implemented
-	SPEC "a public fixture save built for the measurement holds, on one planet, one of each machine"
-		+ "the reading of 2026-09-25 found drawing no power, TreePlanter3, an optimizer holding"
-		+ "energy fuses and an optimizer holding a fuse of another kind"
-		IMPL "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000011, 'Optimizer2', -10,"
-			+ "OTHER_FUSE_OPTIMIZER_INVENTORY_ID)"
-	SPEC "the owner's readings and answers in game the consumption formula rests on are recorded as"
-		+ "SOURCE entries of its rules, citing the game release read when they concern one"
-		IMPL "docs/awawa-project-specification/rules.awawa::Owner's reading in game 2.103 of"
-			+ "2026-09-25"
-	SPEC "the consumption formula is written as RULE entities of domain game, each obligation"
-		+ "attested by the fixture and by a test pinning the value it states"
-		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
-			+ "APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge each"
-			+ "optimizer its base level, the fuses it holds changing no consumption"
-	SPEC "the hypothesis that PodUnderground and RocketAnimals2 draw no power, which the reading of"
-		+ "2026-09-25 confirmed on a private save, is turned into a rule attested by the fixture"
-		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
-			+ "AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption"
-	AFTER @TASK.FEAT124
-	WAVE @WAVE.9
-	DELIVERED_BY 188
-	RATIONALE "The production formula is confirmed by in-game readings; the consumption formula"
-		+ "never was, and no RULE states either. Consumption is today the sum of base levels:"
-		+ "modifierPowerConsumption is read from the save configuration but applied nowhere,"
-		+ "although a private reference save carries 0.0. A public fixture is the only save a"
-		+ "reading in game can attest in CI, the reference saves being private"
-		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
-		REF @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
-		REF @SECTION.SaveConfiguration
-		REF @GAME_RELEASE.2.103
-	SOURCE "Owner request of 2026-09-25 opening the wave, and the owner's agreement the same day to"
-		+ "read the HUD in game on a fixture provided"
-	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save placing nearly every"
-		+ "machine: TreePlanter3 draws 85 kW, and ButterflyDisplayer1, FishDisplayer1,"
-		+ "FrogDisplayer1, Server1, CookingStation1, PodUnderground and RocketAnimals2 draw none;"
-		+ "the fixture keeps them to attest the rules in CI, the save being private"
-		PR 178
-		REF @GAME_RELEASE.2.103
-		REF @PROJECT.DNC
-	SOURCE "Owner's answer of 2026-09-26 on PR 188: modifierPowerConsumption multiplies every"
-		+ "consumption in every game release, at 0 included, so the fixture is no longer read at"
-		+ "several modifier values"
-		PR 188
-		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
-	SOURCE "Owner's answer of 2026-09-26 while promoting the task: the readings of 2026-09-25 cover"
-		+ "every relevant machine and fuses have never changed the consumption, so the fixture is"
-		+ "not read in game again, machines alone or with each optimizer"
-		PR 191
-		REF @RULE.APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
-
-TASK FEAT126
-	TITLE "The consumption of a planet applies the power consumption modifier of its save"
-	STATUS implemented
-	SPEC "the consumption, the available energy and the consumption breakdown of every planet"
-		+ "follow the effect of modifierPowerConsumption the rules of TEST125 state"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::consumptionLevels"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should multiply the unit"
-			+ "and total level of each consumption breakdown entry"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should leave the"
-			+ "production whole and subtract the multiplied consumption from it"
-	SPEC "a unit test pins the consumption computed on the measurement fixture at"
-		+ "modifierPowerConsumption 0, 1 and 1.5"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge the machines"
-			+ "of the energy consumption fixture, at modifier %p, %p kW"
-	SPEC "the Power card names the modifier its figures apply when it is not 1"
-		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should name"
-			+ "that modifier in an information, under the submerged machines limitation"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
-			+ "each={energyLevels().notifications}>"
-	AFTER @TASK.TEST125
-	WAVE @WAVE.9
-	DELIVERED_BY 193
-	RATIONALE "The save configuration presenter already shows the modifier, while PlanetEnergyGrid"
-		+ "sums base levels alone: on a save whose modifier is not 1 the displayed consumption and"
-		+ "available energy disagree with the HUD, whatever the completeness of the energy table"
-		REF @DECISION.APlanetEnergyGridIsAnAggregate
-		REF @PACKAGE.core_mapping
-	SOURCE "Owner request of 2026-09-25 opening the wave: find the right consumption formula"
-
-TASK FEAT127
-	TITLE "Price the machines whose consumption the reading in game established"
-	STATUS archived
-	ARCHIVED_ON 2026-09-26
-	DESC "archived undone: TreePlanter3, the only machine read at a price, already has its 85 kW"
-		+ "row, and the fixture consumption at modifier 1 is pinned by TEST125 in PR 188"
-	DESC "the declaration of machines drawing none is refused by"
-		+ "@DECISION.AZeroInTheGameDataExportIsNotAPrice; the seven machines read at none stay"
-		+ "without a known level, per"
-		+ "@RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption"
-		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
-		REF @RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
-	SPEC "each machine TEST125 read in game gets its row in the energy table, its source naming the"
-		+ "game release read, and moves to the producing or the consuming group"
-	SPEC "a machine the reading shows drawing no power is declared as drawing none, apart from the"
-		+ "machines whose level is unknown, among them ButterflyDisplayer1, FishDisplayer1,"
-		+ "FrogDisplayer1, Server1, CookingStation1, PodUnderground and RocketAnimals2"
-	SPEC "the consumption computed on the measurement fixture at modifier 1 equals the HUD reading"
-	AFTER @TASK.TEST125
-	WAVE @WAVE.9
-	RATIONALE "A reading in game is a source of its own, cited by its release, so a value the wiki"
-		+ "does not print can enter the table without being inferred. Declaring a machine that"
-		+ "draws nothing apart from the unknown ones is what the hypothesis-based decision could"
-		+ "not do without an observation"
-		REF @DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
-		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
-	SOURCE "Owner request of 2026-09-25 opening the wave: every machine that consumes energy is"
-		+ "taken into account"
-	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save: seven machines draw no"
-		+ "power, which archived the limitation on placed machines without a known energy level"
-		PR 178
-		REF @GAME_RELEASE.2.103
-
-TASK FEAT129
-	TITLE "Compute the energy of a save with the values of its game release"
-	STATUS implemented
-	SPEC "the releases table names 2.100, from which the draw of the T1 ore crusher changes"
-		IMPL "packages/shared-save-processing/gameReleases.json::2.100"
-	SPEC "the energy table holds the values of the last release; an earlier release whose values"
-		+ "differ from the next newer table, or from the energy table for the newest, has a table"
-		+ "of its own holding only the rows that differ and applying to that release and every"
-		+ "earlier one; bun run validate:tables refuses a row of such a table naming a world object"
-		+ "the energy table does not hold"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByRelease/2.004.json"
-		IMPL "scripts/validate-tables/schemas/energyLevelsOfRelease.schema.json::valueOfTable"
-		IMPL "scripts/validate-tables/validate-tables.ts::valueOfTable"
-		IMPL "scripts/validate-tables/validate-tables.spec.ts::should report the row whose value"
-			+ "that column does not hold"
-	SPEC "the energy of a displayed save takes the energy table, overwritten in cascade by every"
-		+ "table of a release no earlier than the one its declared version resolves to, from the"
-		+ "newest table to the oldest"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::selectRowsOfRelease"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::selectEnergyLevelsOfDeclaredVersion"
-		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts::selectEnergyLevelsOfDeclaredVersion"
-		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts::declaredVersion"
-	SPEC "the Power section names in a disclaimer, under the submerged machines one, the game"
-		+ "release whose values it applies when that release is earlier than the last of the"
-		+ "releases table, and names none for the last"
-		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
-			+ "each={energyLevels().notifications}>"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name that game release in a"
-			+ "notification, under the submerged machines one"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name no game release"
-	SPEC "OreBreaker1 draws 2.6 kW in a save of 1.618 or 2.004 and 0.6 kW from 2.100"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByRelease/2.004.json::OreBreaker1"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::OreBreaker1"
-			+ "drawing"
-	WAVE @WAVE.9
-	DELIVERED_BY 189
-	RATIONALE "The energy values of the game change between releases: v2.100 lowered the draw of"
-		+ "the T1 ore crusher, and the tool applies the 2.103 values to every save, so a save of"
-		+ "2.008 is computed with a draw its game never had. The save carries no energy value, so"
-		+ "its declared version is the only sign of which values apply; the releases table is"
-		+ "already where a declared version is resolved, and the decision that forbids reading a"
-		+ "save by its version alone rejected a list of versions of its own for each later check,"
-		+ "so 2.100 joins that table although it keeps the format of 2.004. No surface shows the"
-		+ "energy of a merged save: the save manager clears the display after a merge and no"
-		+ "command prints energy; loaded afterwards, the merged save is a displayed save declaring"
-		+ "the version of the save whose format it writes. The 2.6 kW docs/energy-levels.md calls"
-		+ "wrong was wrong for 2.103 only: the wiki printed it on 2025-10-11, before v2.100. A"
-		+ "search of 2026-09-25 read the 265 Steam announcements of the game and the revision"
-		+ "history of the 36 wiki pages carrying a machine infobox; within the supported releases"
-		+ "only the T1 ore crusher change is established, the fusion generator and T3 tree spreader"
-		+ "changes of 2022 predating 1.618 and the wiki edits to the drone station, the ecosystem"
-		+ "and the T3 ore extractor carrying no patch note that dates them; the toxic water"
-		+ "collector values the wiki changed on 2026-03-02 are contradicted by the reading in 2.103"
-		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
-		REF @DATATABLE.EnergyLevels
-		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
-		REF @URL.SteamPatchNotesV2100
-		REF @URL.SteamPatchNotesSkeoLive
-		REF @URL.WikiOreCrushersBeforeV2100
-		REF @URL.WikiToxicWaterCollectorsCreated
-		REF @URL.WikiToxicWaterCollectorsEdited
-	SOURCE "Owner request of 2026-09-25, after the patch notes showed an energy value changing"
-		+ "between releases: a displayed save shows the values of its version, a merge the values"
-		+ "of the version of the format it writes"
-	SOURCE "Owner ruling of 2026-09-26 on refinement: no energy for a merged save, 2.100 joins the"
-		+ "releases table, and the draft that was to establish the values of each release is folded"
-		+ "into this task"
-	SOURCE "Owner review of 2026-09-26: the values of an earlier release are a table of their own"
-		+ "overwriting the energy table rather than a fromRelease column, and the search is not"
-		+ "recorded in docs/energy-levels.md"
-		PR 189
-	SOURCE "Owner ruling of 2026-09-26, in chat, in reply to r4109337238: the release tables"
-		+ "cascade, each applying to its release and every earlier one, so 2.004 carries the only"
-		+ "table"
-		PR 189
-
-TASK FEAT128
-	TITLE "Warn that submerged machines may distort the available energy"
-	STATUS implemented
-	SPEC "the Power section prints once, under its title, the warning: Submerged machines may"
-		+ "distort the computed available energy"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should warn once, under the Power"
-			+ "title, that submerged machines may distort the computed available energy"
-	DELIVERED_BY 187
-	WAVE @WAVE.9
-	RATIONALE "The save cannot tell a submerged machine from one on dry ground, so the tool keeps"
-		+ "counting it; the warning tells the reader why the available energy may be higher in game"
-		+ "than displayed"
-		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
-	SOURCE "Owner request of 2026-09-25, after the in-game reading that found submerged machines on"
-		+ "Prime, to record the warning as a draft task in this pull request"
-		PR 178
-
-TASK CHORE130
-	TITLE "a changelog entry names the dependency a feature or a fix came from instead of listing"
-		+ "its commit"
-	STATUS implemented
-	SPEC "a feat, fix or breaking commit that changes no path of the directory of a tool is never"
-		+ "listed in the changelog entry of that tool, whatever its subject says"
-		IMPL "scripts/release/addChangelogEntry.spec.ts::should give the line of that dependency"
-			+ "instead of its commits"
-	SPEC "a feat, fix or breaking commit that changes a path of the directory of a tool is listed"
-		+ "in the entry of that tool even when its scope names another tool"
-		IMPL "scripts/release/addChangelogEntry.spec.ts::When a commit scoped to another tool"
-			+ "changes the directory of the consumer"
-	SPEC "every workspace package other than a cli-* or ui-* one declares in its package.json the"
-		+ "changelog line of its updates: Core engine updated for core-mapping, Save file format"
-		+ "updated for shared-save-processing, Runtime platform updated for shared-platforms and"
-		+ "util-types"
-		IMPL "packages/core-mapping/package.json::Core engine updated"
-		IMPL "packages/shared-save-processing/package.json::Save file format updated"
-		IMPL "packages/shared-platforms/package.json::Runtime platform updated"
-		IMPL "packages/util-types/package.json::Runtime platform updated"
-	SPEC "an entry whose version received a feat, fix or breaking commit through a dependency"
-		+ "reads, after the commits of the tool itself, the line of each dependency that commit"
-		+ "changed, a line shared by two dependencies written once"
-		IMPL "scripts/release/addChangelogEntry.spec.ts::should list its own features, then the"
-			+ "line of the dependency"
-		IMPL "scripts/release/addChangelogEntry.spec.ts::should write that line once, after the"
-			+ "line of the other dependency"
-	SPEC "an entry whose version received such commits through dependencies only reads their lines"
-		+ "alone, and one holding no feat, fix or breaking commit at all still reads - Maintenance"
-		+ "changes only"
-		IMPL "scripts/release/addChangelogEntry.spec.ts::should give the line of that dependency"
-			+ "instead of its commits"
-		IMPL "scripts/release/addChangelogEntry.spec.ts::should give the entry a single line saying"
-			+ "it holds maintenance changes only"
-	SPEC "bun run release refuses a release in which a dependency declaring no changelog line"
-		+ "received a feat, fix or breaking commit, naming that package"
-		IMPL "scripts/release/release.spec.ts::should refuse the release, naming that dependency"
-		IMPL "scripts/release/release.spec.ts::should leave the manifest of the consumer untouched"
-	SPEC "docs/wiki/releases.md names the dependency lines beside the maintenance line"
-		IMPL "docs/wiki/releases.md::changelogLine"
-	DELIVERED_BY 209
-	RATIONALE "The release script lists on a tool every user-facing commit that touches a path the"
-		+ "tool reaches, and prints the subject of the commit as it stands. A commit that touches"
-		+ "only core-mapping therefore reaches cli-merge and cli-validate under a subject that"
-		+ "names the UI, which tells their reader nothing. The owner ruled on pull request 199 that"
-		+ "a commit is never reworded and none is invented: what a tool receives from a dependency"
-		+ "reads as a fixed sentence, as the maintenance line already does, the entry of"
-		+ "cli-validate of 0.1.1 reading Core engine updated. Ruled at refinement: the dependency"
-		+ "line joins the own commits of a tool rather than only replacing an empty list, so a fix"
-		+ "of the engine that changes the output of a CLI is never silent; the paths of a commit"
-		+ "decide which tools list it, never its scope, since scopes name corpus areas and guards"
-		+ "as often as packages, so 35fbec1 feat(cli-merge), which changes the report of"
-		+ "cli-validate, is listed on both; each dependency carries its own line in its manifest so"
-		+ "a new package cannot be released without one, rather than a single sentence for every"
-		+ "dependency or a map kept in the release script. The second SPEC of"
-		+ "@DECISION.AChangelogEntryListsOnlyUserFacingCommits is rewritten in place by the task,"
-		+ "carrying these refusals as REJECTED"
-		REF @DECISION.AChangelogEntryListsOnlyUserFacingCommits
-		REF @DECISION.ConsumerVersionsAreComputedByARepositoryScript
-	SOURCE "Owner review of pull request 199, the release of cli-merge, cli-validate and"
-		+ "ui-save-manager 0.1.1: the changelog entries listed commits of other tools, and the"
-		+ "owner asked for a generic sentence rather than a reworded or invented commit"
-		PR 199
 
 TASK FEAT131
 	TITLE "Show the terraformation stage of each planet as a badge on its overview card"
@@ -1638,449 +625,6 @@ TASK FEAT132
 		+ "in wave 11"
 		REF @URL.SaveManagerRedesignMockup
 
-TASK FEAT133
-	TITLE "Tell on the merge page that save A wins over save B where their common data conflicts"
-	STATUS implemented
-	DESC "ratified on the reviewed plan on 2026-09-27 without research; the wording of the notice"
-		+ "is established when the task starts"
-	SPEC "the merge page carries, above the form, a notice saying that save A prevails over save B"
-		+ "for the common data the two saves hold in conflict, and that swapping them changes which"
-		+ "one wins"
-		IMPL "packages/ui-save-manager/src/messages/mergeSectionMessages.js::mergeSectionSaveAPrecedenceNotice"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should show the precedence notice above"
-			+ "the save inputs"
-	SPEC "the notice is a static message of the UI package, rendered in the notification style with"
-		+ "the information severity the Notification component accepts; it qualifies no figure of a"
-		+ "section and enters no view model of core-mapping"
-		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::<Notification"
-			+ "severity=\"information\""
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should tell, in an information"
-			+ "notification, that save A prevails over save B"
-	SPEC "the token pair of the information severity is catalogued by the contrast guard"
-		IMPL "scripts/check-color-contrast.ts::.notification-information"
-			+ ".notification-severity-pill"
-	DELIVERED_BY 216
-	AFTER @TASK.FEAT137
-	AFTER @TASK.FEAT138
-	WAVE @WAVE.10
-	RATIONALE "Several merge rules resolve a conflict in favour of save A, the configuration among"
-		+ "them, and the swap control exists to choose which save is A; nothing on the page says"
-		+ "so, and the reader learns it from the result or never. A notification of core-mapping"
-		+ "qualifies the figures of a section and takes its severity from the presenter; this"
-		+ "notice qualifies a rule of the tool, so the owner ruled it a message of the UI, which"
-		+ "leaves the merge result view model the CLI reads untouched"
-		REF @RULE.SaveConfigurationComesFromSaveA
-		REF @RULE.TheSaveOnPrimeBecomesSaveA
-		REF @COMMAND.MergeSaves
-		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
-		REF @DECISION.TheModulesTheClisImportKeepTheirContract
-		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
-	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
-		+ "mockup of three proposals, to draft for memory; owner ruling of 2026-09-27: a static"
-		+ "message on the UI side, delivered in wave 10"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT134
-	TITLE "Lay out the save manager as a shell with a left menu and one page per section"
-	STATUS implemented
-	DELIVERED_BY 202
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; each page is a"
-		+ "route of its own, the loaded save held in a store above the routes"
-		REF @DECISION.EachPageOfTheSaveManagerIsARoute
-	SPEC "the page opens on the disclaimer block of today, unchanged, above the content of every"
-		+ "page, under the title of today and above the version footer of today"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::When a page of the save is opened"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::When the Overview page is opened"
-	SPEC "a left menu carries three groups in this order: Tools, Save, Players; Tools holds Merge"
-		+ "two saves and Load another save; Save holds Overview, Configuration, Power and"
-		+ "Terraformation; Players ends on a See more button that opens the Players page"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the Tools, Save and Players"
-			+ "groups of the menu in that order"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should offer the Tools group alone,"
-			+ "holding Merge two saves and Load save"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should offer the Overview, Configuration,"
-			+ "Power and Terraformation pages in the Save group"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should end the Players group on a See more"
-			+ "button"
-		IMPL "packages/ui-save-manager/e2e/display-players.e2e.ts::should display the players of"
-			+ "the save"
-	SPEC "the Configuration, Power, Terraformation and Players sections of today become one page"
-		+ "each, reached from the menu, rendered by the components and the view models they have"
-		+ "today, the Global progression section on the Configuration page; every page but the"
-		+ "Overview opens on a breadcrumb naming its group and its page"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show the global"
-			+ "progression first, the modifiers next and the unlocks last"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name the planet of its"
-			+ "placed world object Skeo and the power that object produces"
-		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should display the"
-			+ "terraformation levels of that file"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should open on a"
-			+ "breadcrumb naming the Save group and the Configuration page"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should open on a breadcrumb naming"
-			+ "the Save group and the Power page"
-		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should open on a"
-			+ "breadcrumb naming the Save group and the Terraformation page"
-		IMPL "packages/ui-save-manager/e2e/display-players.e2e.ts::should open on a breadcrumb"
-			+ "naming the Players group and the Players page"
-	SPEC "switching page keeps the loaded save: no file is read again, which the scenario proves by"
-		+ "holding the read of the file, and no page reload happens; the view model of a page is"
-		+ "computed once per loaded save"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should keep the loaded save without"
-			+ "reading its file again nor reloading the page"
-	SPEC "a page whose view model is loading shows the busy indicator of today, and a page whose"
-		+ "controller rejects shows the failure sentence of today"
-		IMPL "packages/ui-save-manager/src/routes/power.tsx::<EnergyLevelsSection"
-			+ "viewModel={loadedSave.viewModels.energyLevels}/>"
-		IMPL "packages/ui-save-manager/src/components/structure/SectionState.tsx::sectionLoadingErrorMessage"
-	SPEC "before a save is loaded, the Save and Players groups are absent and the Overview page"
-		+ "carries the file input, the drop zone, the Visualize button, the busy indicator and the"
-		+ "failure sentence of today; once loaded, the Overview page names the file and offers the"
-		+ "pages of the Save group"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should offer the display area,"
-			+ "its file input and its Visualize button"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should name the file and offer"
-			+ "the pages of the Save group"
-		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts::should show a busy indicator and"
-			+ "keep the button out of reach"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should report the failure and"
-			+ "leave the form usable"
-	SPEC "a rejected save shows its errors and its warnings on the Overview page, in the two lists"
-		+ "of today, and the Save and Players groups stay absent; a valid save with warnings shows"
-		+ "them on the Overview page above its content"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should list its errors and keep"
-			+ "the Save and Players groups out of the menu"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show its warnings above"
-			+ "the content of the page"
-	SPEC "the 404 route and its link back home stay; the security, version and drop scenarios of"
-		+ "today pass on the shell"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should say it was not found and lead back"
-			+ "home"
-		IMPL "packages/ui-save-manager/e2e/security.e2e.ts::openThePageOfTheMenu"
-		IMPL "packages/ui-save-manager/e2e/version.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts"
-	SPEC "the display scenarios are one file per page, so that the page tasks of the next waves"
-		+ "edit distinct files, and the anchors and the wording of the decisions naming a moved"
-		+ "scenario or module are rewritten"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/display-players.e2e.ts"
-	WAVE @WAVE.10
-	RATIONALE "The save manager renders every section on one page, 41 000 pixels high and 213 cards"
-		+ "on the largest reference save, with the merge form above the data. The redesign keeps a"
-		+ "single client-side application and cuts the page into a shell and pages, proposal B"
-		+ "being the base and the left menu absorbing the Players and Tools groups of proposal C."
-		+ "This task moves the existing views into pages without changing what they read, so that"
-		+ "the transition of the presentation to one view model per view proceeds page by page in"
-		+ "the tasks that follow; the planet tabs come with the pages that are rebuilt, so as not"
-		+ "to build them twice on the section view models. The disclaimer block is the one element"
-		+ "of today's page the owner keeps as it is. Twenty-two scenarios click Visualize on one"
-		+ "page today and follow the sections to their pages; the coverage-gaps plugin exempts the"
-		+ "route files of today only, and the anchors guard refuses a decision naming a file that"
-		+ "moved"
-		REF @URL.SaveManagerRedesignMockup
-		REF @PACKAGE.ui_save_manager
-		REF @DECISION.AViewModelServesOneView
-		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
-		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
-		REF @DECISION.BothMessageListsShareOneRendering
-		REF @DECISION.UiSaveManagerHasOneUiErrorIdiom
-		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
-		REF @DECISION.ALoadingStateIsObservedByHoldingTheFileRead
-	SOURCE "Owner ruling of 2026-09-26 on the mockup: page F is the final version, its details"
-		+ "adjustable during the implementation, the disclaimer block unchanged; owner ruling of"
-		+ "2026-09-27: each wave carries a piece of the transition to one view model per view"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT135
-	TITLE "Feed the menu with the save identity and the players list, two zone view models"
-	STATUS implemented
-	DELIVERED_BY 205
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; whether the game"
-		+ "release shown is the declared version or the resolved release, what a save without a"
-		+ "version shows, and what a player whose planet is empty or legacy shows, are settled with"
-		+ "the owner when the task starts"
-	SPEC "the save identity zone of the menu shows the file name, the display name, the mode and"
-		+ "the game release of the loaded save, above the groups of the menu; a save without a"
-		+ "configuration entry shows the file name alone"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the save identity above the"
-			+ "groups"
-		IMPL "packages/core-mapping/src/application/LoadSaveIdentity.spec.ts::should present the"
-			+ "file name alone"
-	SPEC "the Players group of the menu lists the players of the save, each with the planet they"
-		+ "stand on and a Host badge for the host"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should list the players in the Players"
-			+ "group"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should list its players with the planet"
-			+ "they stand on"
-	SPEC "the save identity and the players menu are two view models of core-mapping, each built by"
-		+ "a presenter of its own from a use case of its own, reached by a controller of its own"
-		+ "that takes the validated text; the file name enters through the request"
-		IMPL "packages/core-mapping/src/controllers/LoadSaveIdentityController.ts::loadSaveIdentity(validatedContent:"
-			+ "string, fileName: string)"
-		IMPL "packages/core-mapping/src/controllers/LoadPlayersMenuController.ts::loadPlayersMenu(validatedContent:"
-			+ "string)"
-		IMPL "packages/core-mapping/src/presentation/SaveIdentityPresenter.ts::class"
-			+ "SaveIdentityPresenter"
-		IMPL "packages/core-mapping/src/presentation/PlayersMenuPresenter.ts::class"
-			+ "PlayersMenuPresenter"
-		IMPL "packages/core-mapping/src/application/requests/LoadSaveIdentityRequest.ts::fileName"
-	SPEC "the player entity carries the planet and the host flag of its entry"
-		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::readonly planetId: string"
-		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::readonly host: boolean"
-	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
-		IMPL "packages/cli-validate/cli/validate-cli.node.spec.js"
-	AFTER @TASK.FEAT134
-	WAVE @WAVE.10
-	RATIONALE "The menu needs two things no view model carries today: the identity of the save,"
-		+ "whose display name and mode sit in the configuration view model beside the modifiers,"
-		+ "and the planet and host of each player, which the player entity does not read. These two"
-		+ "zones are the first views cut by the new rule, small enough to set the pattern: one use"
-		+ "case, one presenter, one view model, one controller per view. The Overview page shows an"
-		+ "identity of its own, with the file size, composed by its own view model through the"
-		+ "helper this task writes"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
-		REF @DECISION.SectionControllersReceiveTheValidatedText
-		REF @SECTION.Players
-		REF @SECTION.SaveConfiguration
-		REF @PACKAGE.core_mapping
-		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner ruling of 2026-09-27: one view model per view, some use cases and controllers"
-		+ "created rather than migrated"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT136
-	TITLE "Give the Configuration page its view model, progression first and modifiers in tones"
-	STATUS implemented
-	DELIVERED_BY 218
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; which modifiers"
-		+ "are percentages and which are coefficients, and which unlock flags of the eleven the"
-		+ "entry carries are listed, are checked against the save format when the task starts"
-	SPEC "the Configuration page shows the global progression first, the modifiers next and the"
-		+ "unlock flags of the save last; a save without statistics shows the progression without"
-		+ "them, as today"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show the global"
-			+ "progression first, the modifiers next and the unlocks last"
-	SPEC "the global progression card spans the width of the page, above the modifiers and the"
-		+ "unlocks cards, which sit side by side at the same height; below the narrow breakpoint"
-		+ "the three cards stack"
-		IMPL "packages/ui-save-manager/src/styles/layout.css::.configuration-cards"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should lay the global"
-			+ "progression across the page, above the modifiers and the unlocks side by side at the"
-			+ "same height"
-		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.spec.ts::should"
-			+ "show the progression with no crafted object counted"
-	SPEC "the drone logistics is a badge, Paused in the danger tone and Running in the positive"
-		+ "tone; a modifier expressed as a percentage shows 100 % in the neutral tone, above 100 %"
-		+ "in the danger tone and below 100 % in the positive tone; the gauge drain and the"
-		+ "multiplayer factor are coefficients shown as ×n, ×1 in the neutral tone, below 1 in the"
-		+ "danger tone, above 1 in the positive tone; each unlock flag is listed with an on or off"
-		+ "pill"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show the drone"
-			+ "logistics as a Paused badge penalising the player"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show a percentage"
-			+ "modifier below 100 % as helping the player"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show a coefficient"
-			+ "modifier below 1 as penalising the player"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should list each unlock"
-			+ "flag of the save with an on or off pill"
-		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.spec.ts::should"
-			+ "show the drone logistics as a badge in the positive tone"
-	SPEC "whether a modifier is at the game's default, penalises or helps the player is a rule of"
-		+ "the domain, recorded as a RULE of the specification area; the presenter maps it to a"
-		+ "tone, and a tone is also carried by a text or an accessible name, never by colour alone"
-		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.ts"
-		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.ts::toneByModifierEffect"
-		IMPL "packages/ui-save-manager/src/components/structure/ToneBadge.tsx::visually-hidden"
-		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::should read the tone"
-			+ "of a modifier apart from its value"
-	SPEC "the Configuration page reads one view model composed of three zones, progression,"
-		+ "modifiers and unlocks, built by one presenter from one use case that reads the"
-		+ "configuration, the global progression and the statistics; the configuration value object"
-		+ "carries the unlock flags"
-		IMPL "packages/core-mapping/src/application/LoadConfigurationPage.ts"
-		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.ts"
-		IMPL "packages/core-mapping/src/presentation/viewModels/ConfigurationPageViewModel.ts"
-		IMPL "packages/core-mapping/src/domain/valueObjects/SaveConfigurationValueObject.ts::readonly"
-			+ "unlocks"
-		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::ModifiersCard"
-	SPEC "the Configuration and Global progression section controllers, presenters and view models"
-		+ "of today are retired, and every module the task leaves without an importer is deleted in"
-		+ "the same pull request"
-		IMPL "packages/core-mapping/src/controllers/LoadConfigurationPageController.ts"
-		IMPL "packages/ui-save-manager/src/providers/LoadedSaveProvider.tsx::configurationPage"
-	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-		IMPL "packages/cli-merge"
-		IMPL "packages/cli-validate"
-	SPEC "the tone badge and the on or off pill are presentation pieces of the package, their"
-		+ "colours taken from the tokens of its palette in both themes and every token pair they"
-		+ "compose catalogued by the contrast guard"
-		IMPL "packages/ui-save-manager/src/components/structure/ToneBadge.tsx"
-		IMPL "packages/ui-save-manager/src/components/structure/OnOffPill.tsx"
-		IMPL "packages/ui-save-manager/src/styles/colors.css::--danger-on-surface"
-		IMPL "scripts/check-color-contrast.ts::selector: '.tone-badge-danger'"
-		IMPL "scripts/check-color-contrast.ts::selector: '.on-off-pill-on'"
-	AFTER @TASK.FEAT135
-	AFTER @TASK.FEAT138
-	WAVE @WAVE.10
-	RATIONALE "The Configuration page is the first page cut by the new rule: two sections of today"
-		+ "join into one page view model, which is the shape the pages of the next waves repeat."
-		+ "Today every modifier is formatted as a percentage and read as a bare number. The owner"
-		+ "ruled the tones on the mockup: the game's default is neutral, and the direction that"
-		+ "penalises the player is the danger tone, above 100 % for a percentage and below 1 for a"
-		+ "coefficient; that direction is a fact about the game, so it is a domain rule the"
-		+ "presenter renders. The unlock flags are in the configuration entry and shown nowhere"
-		+ "today. The task follows the menu task because both extend the sections reader and its"
-		+ "fake"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-		REF @DECISION.UserTextLivesInCoreMappingPresentation
-		REF @SECTION.SaveConfiguration
-		REF @SECTION.GlobalMetadata
-		REF @SECTION.Statistics
-		REF @PACKAGE.core_mapping
-		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner review of 2026-09-26 of the first working version: global progression first,"
-		+ "colours on the modifiers with 100 % and 1 neutral, drone logistics as a badge"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT137
-	TITLE "Move the merge of two saves and the loading of another save under the Tools group"
-	STATUS implemented
-	DELIVERED_BY 211
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; what Load another"
-		+ "save does to an unsaved merge result is settled with the owner when the task starts"
-	SPEC "the Merge two saves page carries the merge form of today, save A and save B drop zones,"
-		+ "the swap control, the legacy format box and the Merge button, and shows the result, the"
-		+ "download and the warnings of a merge where the form is"
-		IMPL "packages/ui-save-manager/src/routes/merge.tsx::<MergeSection"
-			+ "onMergeStarted={mergedSaves.startMerge}"
-			+ "onMergeResult={mergedSaves.keepMergeResult}/>"
-		IMPL "packages/ui-save-manager/src/routes/merge.tsx::<MergeResultSection"
-			+ "result={mergedSaves.lastMergeResult}"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should lead to the merge form"
-		IMPL "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::Merge two saves page"
-			+ "accessibility"
-	SPEC "a merge leaves the loaded save in memory untouched: the scenario of today that expects a"
-		+ "merge to leave no save to visualize is rewritten to that, and the scenario aligning the"
-		+ "labels of the merge form with the file input of the display is retired, the two forms no"
-		+ "longer sharing a page"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should leave the loaded save in the"
-			+ "Overview page"
-	SPEC "Load another save lets the user pick or drop a save; the new save replaces the loaded one"
-		+ "and the Overview page opens on it"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Overview page on the"
-			+ "new save"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should display that file as if it had been"
-			+ "picked"
-		IMPL "packages/ui-save-manager/e2e/accessibility/load-save.e2e.ts::Load another save page"
-			+ "accessibility"
-	SPEC "Load save and Load another save are one page at /load-save, named by whether a save is"
-		+ "loaded, its menu entry marked current; the root address opens it, a loaded save opens"
-		+ "the Overview page at /overview, and picking a file there leaves the loaded save in place"
-		+ "until a new save validates"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should mark Load save as the current"
-			+ "page of the menu"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Load save page"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Overview page at its"
-			+ "own address"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should keep the loaded save"
-		IMPL "packages/ui-save-manager/src/components/LoadSaveResultSection.tsx::<ValidationMessagesList"
-			+ "title={displayRouteErrorsTitle}"
-	SPEC "the merge page reads the merge result view model of today, unchanged; the drop, merge and"
-		+ "loading-state scenarios of today pass on the new pages"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::createSignal<MergeResultViewModel"
-			+ "| null>(null)"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
-	AFTER @TASK.FEAT135
-	WAVE @WAVE.10
-	RATIONALE "The merge form sits above the visualization today and is the first thing the page"
-		+ "shows; on the mockup it is a tool, reached from the menu, and the display flow opens on"
-		+ "the data. The merge controller and its view model serve cli-merge as well and do not"
-		+ "move: the page is a new home for the same result. A merge clears the displayed save"
-		+ "today because both share one page; on a page of its own it has no reason to. The drop"
-		+ "behaviours outside the areas, the alphabetical order of two dropped files and the swap"
-		+ "tooltip are scenarios the move must keep green. The task follows the menu task because"
-		+ "both edit the menu and the load hook"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.TheModulesTheClisImportKeepTheirContract
-		REF @PACKAGE.ui_save_manager
-		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
-	SOURCE "Owner ruling of 2026-09-26 on the mockup: the Tools group comes first in the menu and"
-		+ "holds the merge and the loading of another save"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT138
-	TITLE "Give the save manager the presentation pieces the pages of the navigation wave render"
-	STATUS implemented
-	DELIVERED_BY 210
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the list of"
-		+ "pieces is closed when the task starts against the pages of wave 10"
-	SPEC "a page opens on a section title; a card has a header holding its title and a summary"
-		+ "figure, and a body; a notification is a line whose severity is named by a pill before"
-		+ "the message; the Host badge names the host"
-		IMPL "packages/ui-save-manager/src/components/structure/SectionTitle.tsx"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should open on a section"
-			+ "title naming the Configuration page"
-		IMPL "packages/ui-save-manager/src/components/structure/Card.tsx::card-summary"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::getByTestId('modifiers-summary')"
-		IMPL "packages/ui-save-manager/src/components/structure/Notification.tsx::notification-severity-pill"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name the severity of that"
-			+ "notification a limitation"
-		IMPL "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::should read the severity of"
-			+ "its notification apart from the message"
-		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::should title the"
-			+ "modifiers with a fourth level heading"
-		IMPL "packages/ui-save-manager/src/components/players/HostBadge.tsx"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::NikowaHostToxicity"
-	SPEC "every piece takes its colours from the tokens of the package's palette, in the light and"
-		+ "in the dark theme, and every token pair it composes is catalogued by the contrast guard"
-		IMPL "packages/ui-save-manager/src/styles/colors.css"
-		IMPL "scripts/check-color-contrast.ts::selector: '.card-summary'"
-		IMPL "scripts/check-color-contrast.ts::selector: '.notification-limitation"
-			+ ".notification-severity-pill'"
-		IMPL "scripts/check-color-contrast.ts::selector: '.notification-warning"
-			+ ".notification-severity-pill'"
-		IMPL "scripts/check-color-contrast.ts::MINIMUM_CONTRAST_RATIO"
-	SPEC "a piece is delivered with the first page that renders it: the section title and the card"
-		+ "come with the Configuration page, the notification pill with the Power page; the tone"
-		+ "badge and the on or off pill come with the modifiers and the unlock flags of the"
-		+ "Configuration page, the figure tile, the status pill, the tab strip and the bar cell"
-		+ "with the Power and Terraformation pages, the selector with the chart"
-		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
-		IMPL "packages/ui-save-manager/src/components/configuration/ModifiersCard.tsx::<Card"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
-	AFTER @TASK.FEAT134
-	WAVE @WAVE.10
-	RATIONALE "The pages of the mockup share a small vocabulary of pieces, and building each once"
-		+ "is what keeps the redesigned pages consistent; but the quality gate refuses a file no"
-		+ "module imports, so a piece lands with its first consumer and this task carries only"
-		+ "those the Configuration page and the shell render. The pieces wear the neon theme of the"
-		+ "current application as page F shows: section titles in neon pink, underlined; card"
-		+ "headers as neon-cyan pills with inverted text; cards with a neon-purple border; the"
-		+ "active menu item, the primary buttons and the Host badge on a neon fill. A scenario"
-		+ "cannot assert a colour, so the palette is recorded here and proven by the tokens of"
-		+ "colors.css and the contrast catalog; the scenarios of the pages assert the text each"
-		+ "piece shows, reached by its test id, and the accessibility tests of the Configuration"
-		+ "page the level of its headings"
-		REF @URL.SaveManagerRedesignMockup
-		REF @PACKAGE.ui_save_manager
-		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
-		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
-		REF @DECISION.AUiTestDoesNotBreakOnAChangeOfTheDomStructure
-		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
-		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
-		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
-	SOURCE "Owner review of 2026-09-26 of the first working version: titles and selector not"
-		+ "visible enough; owner choice of 2026-09-26 of page F, the neon colours"
-		REF @URL.SaveManagerRedesignMockup
-
 TASK FEAT139
 	TITLE "Give the Power page its view model: figures with a status, optimizers first, tables"
 	STATUS todo
@@ -2110,7 +654,6 @@ TASK FEAT139
 		+ "left without an importer is deleted, and the anchors and the wording of the decisions"
 		+ "naming them are rewritten"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.FEAT136
 	WAVE @WAVE.11
 	RATIONALE "The Power section is the largest of the page on a real save, one card per machine"
 		+ "type and fifty types on Prime; tables make it scannable and the optimizers, always fewer"
@@ -2197,7 +740,6 @@ TASK FEAT141
 	SPEC "the Terraformation section controller, presenter and view model of today are retired and"
 		+ "every module left without an importer is deleted"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.FEAT136
 	WAVE @WAVE.11
 	RATIONALE "The section shows today six cards of key and value pairs; the mockup keeps the two"
 		+ "groups of values and adds a bar per row so the reader sees which value carries the"
@@ -2312,8 +854,6 @@ TASK FEAT144
 		+ "retired, every module left without an importer is deleted, and the anchors and the"
 		+ "wording of the decisions naming them are rewritten"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.FEAT135
-	AFTER @TASK.FEAT138
 	WAVE @WAVE.12
 	RATIONALE "The Players section lists today the equipment and the inventory item by item, in"
 		+ "save order, without quantities, and shows no gauge. The owner asked for more graphics on"
@@ -2346,7 +886,6 @@ TASK FEAT145
 		+ "core-mapping and from the UI, and the coverage gates of the repository stay green"
 	SPEC "the controllers and view models the CLIs import are unchanged, and the specs of cli-merge"
 		+ "and cli-validate pass unchanged"
-	AFTER @TASK.FEAT136
 	AFTER @TASK.FEAT139
 	AFTER @TASK.FEAT141
 	AFTER @TASK.FEAT142
@@ -2395,313 +934,6 @@ TASK FEAT146
 		+ "implementation for accessibility and the phone display"
 		REF @URL.SaveManagerRedesignMockup
 
-TASK TEST147
-	TITLE "Locate the elements of the end-to-end scenarios by test id, not by the HTML structure"
-	STATUS implemented
-	DESC "ratified by the owner on 2026-09-27; the task writes the decision that justifies the test"
-		+ "id and rewrites the decisions it reverses"
-	SPEC "a DECISION of the corpus records that a UI test must not break on a change of the DOM"
-		+ "structure, and justifies by it locating by a data-testid attribute"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "AUiTestDoesNotBreakOnAChangeOfTheDomStructure"
-	SPEC "the UI scenarios locate the elements they act on and assert by a data-testid attribute,"
-		+ "so that a change of the HTML structure alone breaks none of them"
-		IMPL "packages/ui-save-manager/e2e/warnings.e2e.ts::getByTestId('display-warnings-messages')"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::getByTestId('merge')"
-	SPEC "check:locators accepts a test id in scenario files"
-		IMPL "scripts/check-scenario-locators.spec.ts::When a scenario designates elements by their"
-			+ "test id"
-	SPEC "the decisions that the locator guard refuses what the screen does not show and that a UI"
-		+ "scenario asserts what the screen shows are rewritten in place wherever they contradict"
-		+ "the new decision, which they cite as their reason"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::Refusing a test id and accepting a"
-			+ "role, label or text locator"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::What the screen shows is the"
-			+ "assertion, not the locator"
-	SPEC "the process that a test task changes the UI only for its own sake states that a"
-		+ "data-testid attribute is a neutral attribute that does not change the UI, and so is not"
-		+ "an interface change it governs"
-		IMPL "docs/awawa-project-methodology/processes.awawa::A data-testid attribute is a neutral"
-			+ "attribute"
-	DELIVERED_BY 207
-	RATIONALE "Asked by the owner on a review of the save manager redesign, where a warnings"
-		+ "scenario reaches the warning list through the main landmark and its list items, a"
-		+ "locator a change of layout breaks. The locator guard refuses a test id because a"
-		+ "scenario designates what the screen shows; the owner ruled that a UI test must not break"
-		+ "on a change of the DOM structure, and that this ruling, recorded as a decision by the"
-		+ "task, justifies the test id and replaces that reason. The scenarios locate by test id"
-		+ "every element they act on or assert, so every such element carries one, and a role,"
-		+ "label or text locator no longer designates one. The test task process holds: a test id"
-		+ "changes nothing the user sees or uses, so adding one is not the interface change the"
-		+ "process refuses. That statement goes into the process rather than into the new decision,"
-		+ "since nothing in the repository anchors it and the corpus writes a rule with nothing to"
-		+ "anchor as a process. Dropping the role locators drops the accessibility checks they"
-		+ "carried, the status role of the busy indicator in the loading state scenarios among"
-		+ "them; those checks move to the accessibility tests of TEST148, not back into the"
-		+ "scenarios"
-		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
-		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
-		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
-		REF @TASK.TEST148
-		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner review comment on packages/ui-save-manager/e2e/warnings.e2e.ts line 21: add a"
-		+ "draft task on master, the end-to-end tests use data-testid so they no longer depend on"
-		+ "the HTML structure"
-		PR 205
-	SOURCE "Owner ruling of 2026-09-27 on the draft: the task creates a decision that a UI test"
-		+ "must not break on a change of the DOM structure, which justifies data-testid, and passes"
-		+ "todo"
-		PR 206
-	SOURCE "Owner ruling of 2026-09-27 on the ratified task: the test task process holds, a"
-		+ "data-testid attribute is a neutral attribute that does not change the UI; the"
-		+ "accessibility checks leave the scenarios for a second task"
-		PR 206
-
-TASK TEST148
-	TITLE "Test the accessibility of the save manager in a category of its own, apart from the"
-		+ "scenarios"
-	STATUS implemented
-	DESC "ratified by the owner on 2026-09-28; the task writes the decision that separates"
-		+ "accessibility tests from UI scenarios"
-	SPEC "a DECISION of the corpus records that the UI tests are split in two categories: the"
-		+ "scenarios, which exercise a user flow, and the accessibility tests, which test only"
-		+ "accessibility"
-		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "AUiTestIsEitherAScenarioOrAnAccessibilityTest"
-	SPEC "the accessibility tests form a category of their own, apart from the scenario files, and"
-		+ "assert nothing but accessibility"
-		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::Overview page"
-			+ "accessibility"
-	SPEC "no UI scenario asserts an accessibility property for its own sake"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should show the tooltip that describes it'"
-	SPEC "the accessibility checks the scenarios lose by locating by test id, the status role of"
-		+ "the busy indicator in the loading state scenarios among them, are covered by the"
-		+ "accessibility tests"
-		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::toHaveRole('status')"
-	SPEC "the accessibility tests live in packages/ui-save-manager/e2e/accessibility.e2e.ts, a"
-		+ "Playwright spec run by bun run test:ui on the three engines of the scenarios"
-		IMPL "packages/ui-save-manager/playwright.config.ts::testMatch: '**/*.e2e.ts'"
-	SPEC "an accessibility test reaches an element by its test id and asserts its role, its"
-		+ "accessible name or its label with toHaveRole, toHaveAccessibleName or"
-		+ "toHaveAccessibleDescription, so that check:locators accepts the file unchanged"
-		IMPL "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::toHaveAccessibleDescription("
-	SPEC "an axe audit of the page, before a save is loaded, once a save is visualized and once a"
-		+ "merge result is shown, reports no WCAG 2 A or AA violation"
-		IMPL "packages/ui-save-manager/e2e/helpers/createAWcag2Audit.ts::withTags(wcag2LevelAAndAaTags)"
-	SPEC "@axe-core/playwright is a development dependency of ui-save-manager"
-		IMPL "packages/ui-save-manager/package.json::\"@axe-core/playwright\""
-	RATIONALE "Ruled by the owner while ratifying TEST147: once the scenarios locate by test id,"
-		+ "their role, label and text locators no longer check the roles and accessible names they"
-		+ "used to, and accessibility is to be tested on purpose in a category that tests nothing"
-		+ "else rather than as a side effect of a locator. Ruled at the refinement of 2026-09-28:"
-		+ "the category is written as hand-written Playwright assertions of the intended roles and"
-		+ "names plus an axe audit, because an audit reports what is broken, a field without a"
-		+ "label, but not a missing intended role, a busy indicator without the status role being"
-		+ "no violation; it holds one file, accessibility.e2e.ts, while master has one page, split"
-		+ "into e2e/accessibility/ with one file per page once the redesign brings its pages; it is"
-		+ "delivered on master outside any wave, since TEST147 left the gap on master, and the"
-		+ "redesign waves carry the tests over to their pages; it runs in the workflow and on the"
-		+ "engines of the scenarios, each engine building its own accessibility tree. The checks"
-		+ "TEST147 removed: the status role of the two busy indicators; the heading role and level"
-		+ "of the section titles; the accessible names of the Visualize and Merge buttons and of"
-		+ "the swap button, named by its tooltip; the labels of the three file inputs; the group"
-		+ "role and name of the drop areas; the tooltip role; the link role of the download; the"
-		+ "contentinfo role of the footer; the list item role of the validation messages"
-		REF @TASK.TEST147
-		REF @DECISION.AnIconOnlyButtonIsNamedByItsTooltip
-		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
-		REF @DECISION.UiScenariosArePlaywrightSpecsOnThreeEngines
-		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
-		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner ruling of 2026-09-27: the UI tests that check accessibility are separated into a"
-		+ "category of their own that tests only accessibility, the UI tests focus on the"
-		+ "scenarios, as a second task and a second decision drafted on the same pull request"
-		PR 206
-	SOURCE "Owner ruling at the refinement of 2026-09-28: Playwright assertions plus an axe audit,"
-		+ "one accessibility.e2e.ts split by page later, delivered on master outside any wave"
-	DELIVERED_BY 213
-
-TASK FEAT149
-	TITLE "Keep the last five merged saves across the pages of the save manager"
-	STATUS implemented
-	DELIVERED_BY 215
-	SPEC "leaving the Merge two saves page for any other page, Load save included, and coming back"
-		+ "shows the last merge result again, its merged save still downloadable"
-		IMPL "packages/ui-save-manager/src/app.tsx::<MergedSavesProvider>"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should show the last merge result again"
-			+ "with its merged save still downloadable"
-	SPEC "the last five merges that produced a file stay downloadable until the reader removes one"
-		+ "from the home page; a sixth drops the oldest, and a merge refused by validation or"
-		+ "failed takes no place and drops no file"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::KEPT_MERGED_SAVES_LIMIT"
-			+ "= 5"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::if (result.status ==="
-			+ "'success')"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should keep the five last merged saves"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should keep the five merged saves, none"
-			+ "dropped"
-	SPEC "the Merge two saves page shows the last merge result in full as today, and below it the"
-		+ "earlier merged saves kept, newest first, each by its file name and download link"
-		IMPL "packages/ui-save-manager/src/components/EarlierMergedSavesSection.tsx"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should list the earlier merged saves below"
-			+ "the last merge result"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should offer each earlier merged save for"
-			+ "download under its name"
-	SPEC "while a merge runs, only the last merge result clears; the merged saves kept stay listed"
-		+ "and downloadable"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::startMerge: () =>"
-			+ "setLastMergeResult(null)"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should clear the last merge result and"
-			+ "keep the merged save listed and downloadable"
-	AFTER @TASK.FEAT137
-	WAVE @WAVE.10
-	RATIONALE "The Merge two saves page holds its result in a signal of its own, lost as soon as"
-		+ "the reader opens another page: a merged save not yet downloaded is gone. The owner asked"
-		+ "for a dedicated provider above the routes, beside the one that holds the loaded save,"
-		+ "keeping the merge result view model unchanged, since cli-merge reads it too. Only files"
-		+ "are kept, a failure being read once and a merge of the same two saves producing the same"
-		+ "file name; the store lives in memory, surviving a reload being FIX152's"
-		REF @TASK.FEAT137
-		REF @DECISION.TheModulesTheClisImportKeepTheirContract
-		REF @TASK.FIX152
-	SOURCE "Owner review of pull request 211: a dedicated provider, the merge result kept across"
-		+ "pages, the last five produced files stacked"
-		PR 211
-
-TASK FEAT150
-	TITLE "Give the save manager a home page at the root address"
-	STATUS implemented
-	DELIVERED_BY 217
-	SPEC "the root address opens a home page of its own, whether a save is loaded or not; it shows"
-		+ "no left menu and keeps the disclaimer the other pages show"
-		IMPL "packages/ui-save-manager/src/app.tsx::<Show when={!isHomePage()}>"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the home page without the menu"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should keep the disclaimers of the other"
-			+ "pages"
-	SPEC "the home page shows a received message in the look of the Message screen of the game,"
-		+ "from SENTINEL CORP: the title Message, an envelope in a hexagon, and a frame with corner"
-		+ "brackets over a grid on the plain page background, without a close button"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-message\""
-		IMPL "packages/ui-save-manager/src/styles/home.css::.home-message-frame::before"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should say what the tool does in a message"
-			+ "from SENTINEL CORP"
-		IMPL "packages/ui-save-manager/e2e/accessibility/home.e2e.ts::Home page accessibility"
-	SPEC "the message welcomes the prisoner and names what the tool does, evaluating the"
-		+ "progression with computed statistics, merging two saves and validating a save, the name"
-		+ "of the tool left to the header of the page; it closes on Keep up the good work! in a"
-		+ "paragraph of its own, after the button links and the card, and is signed SENTINEL CORP"
-		+ "at its bottom right, where the game prints a year"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-page-description\""
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-message-closing\""
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-message-sender\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should say what the tool does in a message"
-			+ "from SENTINEL CORP"
-	SPEC "the frame of the message holds two button links, Merge two saves and Load save, named"
-		+ "Load another save once a save is loaded, each opening its page"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-merge-two-saves-page-link\""
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-load-save-page-link\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should name the Load save page Load another"
-			+ "save"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Merge two saves page"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Load save page"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should hold the button links and the card"
-			+ "of the loaded save in the message"
-	SPEC "once a save is loaded, the frame of the message also holds a card of the loaded save"
-		+ "carrying the save identity of the menu, its file name, display name, mode and game"
-		+ "release, and a neon pink button link to its Overview page"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"home-loaded-save\""
-		IMPL "packages/ui-save-manager/src/styles/buttons.css::.button-link-neon-pink"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-overview-link\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should show the card of the loaded save"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Overview page of the loaded"
-			+ "save from its card"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should hold the button links and the card"
-			+ "of the loaded save in the message"
-	SPEC "the card of the loaded save carries a cross named Unload save that forgets the loaded"
-		+ "save: the home page shows no card and names Load save again, and the Overview page opens"
-		+ "the Load save page; the merged saves attached to the message stay"
-		IMPL "packages/ui-save-manager/src/providers/LoadedSaveProvider.tsx::unloadSave: () =>"
-			+ "setValidatedSave(null)"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"unload-save\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should name its cross Unload save"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should forget the save and show the home"
-			+ "page of no save"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should leave no save to open on the"
-			+ "Overview page"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should keep the merged saves attached to"
-			+ "the message"
-	SPEC "the merged saves kept are attached at the bottom of the frame of the message, below its"
-		+ "signature, listed small like the attachments of a message, newest first, each by its"
-		+ "file name and offered for download under it; no attachment shows while no merged save is"
-		+ "kept"
-		IMPL "packages/ui-save-manager/src/components/HomeMessageAttachments.tsx"
-		IMPL "packages/ui-save-manager/src/styles/home.css::.home-message-attachments"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should attach no merged save to the message"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should attach the merged saves to the"
-			+ "message, newest first"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should offer each attached merged save for"
-			+ "download under its name"
-	SPEC "each attached merged save carries its own cross, named Remove followed by its file name,"
-		+ "which removes it from the merged saves kept, on the Merge two saves page too, and"
-		+ "releases its download; no attachment shows once the last one is removed"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::const"
-			+ "removeMergedSave"
-		IMPL "packages/ui-save-manager/src/messages/shellMessages.js::`Remove ${fileName}`"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should name the cross of each attached"
-			+ "merged save after it"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should detach it from the message"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should no longer list it on the Merge two"
-			+ "saves page, the last merge result kept"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should leave no attachment in the message"
-	SPEC "removing the merged save of the last merge result also clears that result from the Merge"
-		+ "two saves page, the earlier merged saves staying listed"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::if (lastMergedSave()"
-			+ "=== removedMergedSave)"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should clear the last merge result of the"
-			+ "Merge two saves page, the earlier merged saves kept"
-	SPEC "wider than a phone, the frame of the message is at most as wide as the tablet breakpoint,"
-		+ "768px, and centred on the page, the envelope at its left"
-		IMPL "packages/ui-save-manager/src/styles/home.css::minmax(0, var(--breakpoint-tablet))"
-	SPEC "wider than a phone, the frame of the message is at least 21rem high, one and a half"
-		+ "sidebar widths"
-		IMPL "packages/ui-save-manager/src/styles/home.css::min-height: calc(var(--sidebar-width) *"
-			+ "1.5)"
-	SPEC "the message is centred vertically in the height left below the header and the"
-		+ "disclaimers, and starts at the top of that space, scrolling with the page, when it is"
-		+ "taller"
-		IMPL "packages/ui-save-manager/src/styles/home.css::justify-content: safe center"
-		IMPL "packages/ui-save-manager/src/styles/shell/shell.css::.shell-without-menu .shell-page"
-	SPEC "the button links and the card of the loaded save form one group, centred across the frame"
-		+ "of the message, with 24px, the space-xl token, above and below it"
-		IMPL "packages/ui-save-manager/src/styles/home.css::.home-message-actions"
-		IMPL "packages/ui-save-manager/src/styles/home.css::padding: var(--space-xl) 0"
-	SPEC "every page shows the version of the application alone in its bottom-right corner, in"
-		+ "small light text, as v followed by the version, the way the game shows its own"
-		IMPL "packages/ui-save-manager/src/app.tsx::class=\"application-version\""
-		IMPL "packages/ui-save-manager/src/styles/shell/shell.css::.application-version"
-		IMPL "packages/ui-save-manager/e2e/version.e2e.ts::should display the version of the web"
-			+ "application in the footer"
-	SPEC "the title of the application in the header of every page links to the home page"
-		IMPL "packages/ui-save-manager/src/app.tsx::data-testid=\"application-title-link\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::When the title of the application is"
-			+ "clicked on another page"
-	AFTER @TASK.FEAT137
-	WAVE @WAVE.10
-	RATIONALE "The root address redirects to the Load save page until this task lands, a ruling the"
-		+ "pull request ends; the scenarios that open the root address to load a save then open the"
-		+ "Load save page by its own address. The home page stands apart from the pages the menu"
-		+ "lists, so it hides the menu rather than marking an entry of it, and the application"
-		+ "title is the way back to it. The card reuses the save identity view model the menu"
-		+ "already reads, so the task adds no view model. Removing the merged save of the last"
-		+ "merge result clears that result too, the owner's ruling on pull request 217: the Merge"
-		+ "two saves page would otherwise offer a download already released"
-		REF @DECISION.OneLoadSavePageLoadsTheFirstAndEveryNextSave
-		REF @TASK.FEAT135
-	SOURCE "Owner review of pull request 211, then the owner's ruling of 2026-09-28 when the task"
-		+ "was refined: no left menu, the disclaimer unchanged, the save identity card with a link"
-		+ "to Overview, the application title as the way back"
-		PR 211
-
 TASK FEAT151
 	TITLE "Offer on the Load save page to load again a save loaded before"
 	STATUS todo
@@ -2717,7 +949,6 @@ TASK FEAT151
 		+ "loads it again and a button that removes it from the browser"
 	SPEC "a save loaded again goes through the validation of a picked file, its warnings and errors"
 		+ "shown the same way, and opens the Overview page once it validates"
-	AFTER @TASK.FEAT137
 	WAVE @WAVE.13
 	RATIONALE "The save manager holds the loaded save in memory only, so a reader coming back to a"
 		+ "save picks its file again. A save weighs about 2 MB, beyond what the browser's key-value"
@@ -2744,14 +975,12 @@ TASK FIX152
 		+ "in the address bar reloads the application and drops what is held in memory"
 	SPEC "entering the address of a page by hand while a save is loaded opens that page on the same"
 		+ "save, and a merge result not yet downloaded is still offered"
-	AFTER @TASK.FEAT137
 	AFTER @TASK.FEAT151
 	WAVE @WAVE.13
 	RATIONALE "The loaded save and the merge result live in memory only; surviving a reload needs"
 		+ "them kept in the browser storage, which the reload of a save loaded before also needs,"
 		+ "so the two tasks share that storage"
 		REF @TASK.FEAT151
-		REF @TASK.FEAT149
 	SOURCE "Owner review of pull request 211: fixed in this pull request if small, a task of wave"
 		+ "10 otherwise; keeping the save across a reload needs a browser storage the pull request"
 		+ "does not have"
@@ -2790,13 +1019,221 @@ TASK FEAT154
 		+ "reader when confirming the modal, a task of the same wave"
 		PR 211
 
-TASK CHORE155
-	TITLE "Task priority and decision derogation fields"
+TASK DOCS156
+	TITLE "Plan the wave fixing the Clean Architecture violations"
 	STATUS implemented
-	SPEC "a task states its priority in an optional PRIORITY field, critical, high, medium or low,"
-		+ "medium when omitted"
-		IMPL "docs/_schema.awawa::FIELD PRIORITY"
-	SPEC "a decision names in an optional repeatable DEROGATES field each rule of the instructions"
-		+ "corpus it departs from"
-		IMPL "docs/_schema.awawa::FIELD DEROGATES"
-	DELIVERED_BY 221
+	SPEC "wave 14 carries the milestone fix-clean-architecture-violations and the branch"
+		+ "integration/fix-clean-architecture-violations, and names the audit it fixes"
+		IMPL "docs/awawa-project-methodology/waves.awawa::WAVE 14"
+	SPEC "each of the fifteen violations of the audit is covered by a draft task of wave 14"
+		+ "carrying a priority, and so are the three guards and the replacement of the two"
+		+ "decisions the audit names"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::fixes violations 1, 2 and 9 of the audit"
+	SPEC "the delivered waves 5, 8, 9 and 10 are deleted from the corpus with the tasks they"
+		+ "comprise, and nothing in the corpus points at them"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::a delivered wave is deleted from the"
+	SPEC "AGENTS.md says a wave is prepared on master and implemented on its integration branch"
+		IMPL "AGENTS.md::Une wave se prépare sur `master`"
+	DELIVERED_BY 222
+	PRIORITY critical
+	DESC "plan pull request of wave 14, stacked on the schema pull request adding PRIORITY and"
+		+ "DEROGATES"
+	SOURCE "Owner rulings of 2026-09-28 on the Clean Architecture audit, on the purge of the"
+		+ "delivered waves and on the Branches section of AGENTS.md"
+		PR 222
+
+TASK CHORE157
+	TITLE "chore(guards): refuse any domain import in presentation files and presenter ports"
+	STATUS draft
+	SPEC "bun run check:presentation fails on a file of a presentation directory, or a file"
+		+ "application/ports/*Presenter* of a core- package, that imports a module under domain/,"
+		+ "whatever its subdirectory, import type included"
+	SPEC "the files that import domain/ when the task lands are listed in an allow-list the guard"
+		+ "reads: a listed file is not reported, and a listed file that no longer imports domain/"
+		+ "fails the guard until its entry is removed, so the list only shrinks"
+	SPEC "bun run guards passes on the code as it stands"
+	WAVE @WAVE.14
+	PRIORITY critical
+	DESC "guard of violation 1 of the audit, extending scripts/check-presentation-entities.ts"
+		+ "beyond domain/entities"
+	RATIONALE "The guard lands first so that no task of the wave, and no other pull request, adds a"
+		+ "domain import the output boundary task then has to remove; the allow-list is the measure"
+		+ "of what is left, and the output boundary task empties it"
+		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+
+TASK CHORE158
+	TITLE "chore(guards): refuse the wire abbreviations of the save format under domain"
+	STATUS draft
+	SPEC "a guard run by bun run guards fails on a file under domain/ of a core- package that uses"
+		+ "gId, liId, woIds, siIds or linkedWo as an identifier, a property name or a property key"
+	SPEC "the files that use one of them when the task lands are listed in an allow-list the guard"
+		+ "reads: a listed file is not reported, and a listed file that no longer uses any fails"
+		+ "the guard until its entry is removed, so the list only shrinks"
+	SPEC "bun run guards passes on the code as it stands"
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "guard of violation 5 of the audit"
+	RATIONALE "Placed first for the same reason as the presentation guard: the decoding task"
+		+ "empties the allow-list, and nothing adds an abbreviation in the meantime"
+
+TASK REFACTOR159
+	TITLE "refactor(core-mapping): hand the presenters application responses, never a domain type"
+	STATUS draft
+	SPEC "no presenter port and no presentation file of core-mapping imports a module under"
+		+ "domain/: each use case hands its presenter an application response, one per outcome, or"
+		+ "primitives"
+	SPEC "the allow-list of check:presentation is empty and removed, the guard running with no"
+		+ "exemption"
+	SPEC "every value object left under domain/valueObjects holds a business invariant or a"
+		+ "behaviour; PlayerMenuEntry, PlayerSummary, SaveIdentity, TerraformationLevelSummary and"
+		+ "the other projections named after a view or a port are application responses or view"
+		+ "models"
+	SPEC "a save loaded with unreadable lines reaches the presenter through an outcome of its own,"
+		+ "distinct from a save loaded with warnings only, and is never rendered valid"
+	SPEC "APresenterReceivesAValueObjectNeverAnEntity is rewritten in place to the new boundary or"
+		+ "archived; a departure from an instructions rule the rewritten decision keeps is named in"
+		+ "its DEROGATES"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.CHORE157
+	WAVE @WAVE.14
+	PRIORITY critical
+	DESC "fixes violations 1, 2 and 9 of the audit"
+	RATIONALE "The three violations are one boundary: the value objects of violation 2 are the"
+		+ "types that cross it in violation 1, and the load outcome of violation 9 is one of the"
+		+ "responses that replace them. Every later task of the wave that adds an outcome writes it"
+		+ "as a response, so this one lands first"
+		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+
+TASK REFACTOR160
+	TITLE "refactor(core-mapping): call the domain rules from the use cases, not from the adapters"
+	STATUS draft
+	SPEC "no module under infrastructure/ of core-mapping imports domain/rules; validateUniqueHost"
+		+ "and resolvePlanetName are called by the use cases"
+	SPEC "SaveValidatorPort reports technical failures only: a save with more than one host reaches"
+		+ "its presenter through an outcome of its own, never as a ValidationIssue coded"
+		+ "UNIQUE_HOST"
+	SPEC "cli-validate and the save manager still report a save with more than one host, and the"
+		+ "specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.REFACTOR159
+	WAVE @WAVE.14
+	PRIORITY critical
+	DESC "fixes violation 3 of the audit"
+
+TASK REFACTOR161
+	TITLE "refactor(core-mapping): read the save sections through a port, the composition root only"
+		+ "instantiating"
+	STATUS draft
+	SPEC "the composition root of core-mapping instantiates and wires, and parses no save content"
+	SPEC "the sections of a save come from a reader port or a loading use case that returns the"
+		+ "parse errors with them; no error of the parser is dropped on the way to a presenter"
+	SPEC "no application port returns a bag cut for one use case: getEnergyLevelsRawData and"
+		+ "EnergyLevelsRawDataValueObject are gone, and the energy use case assembles its data from"
+		+ "port methods of one concept each"
+	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place or archived, its rejection of"
+		+ "assembling in presentation dropped; a departure from an instructions rule the rewritten"
+		+ "decision keeps is named in its DEROGATES"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR159
+	WAVE @WAVE.14
+	PRIORITY critical
+	DESC "fixes violations 4 and 8 of the audit"
+	RATIONALE "The reader port of violation 4 is where the per-concept methods of violation 8 are"
+		+ "declared, so the two are one change of the same port"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
+
+TASK REFACTOR162
+	TITLE "refactor(core-mapping): decode the save format before it reaches the domain"
+	STATUS draft
+	SPEC "the domain model of core-mapping names its data in business terms: the allow-list of the"
+		+ "wire abbreviation guard is empty and removed, the guard running with no exemption"
+	SPEC "no module under domain/ splits or joins a list of the save text nor reads an empty string"
+		+ "as an absence: the infrastructure hands the domain lists as arrays and absence as"
+		+ "undefined"
+	SPEC "the section separator of the save text is escaped by the serializer, and no module under"
+		+ "application/ names it"
+	SPEC "a domain error names the business rule broken; a shape check, a number or a string"
+		+ "expected, fails at the infrastructure boundary as a technical error"
+	SPEC "a merge of the public fixtures writes the same save text as before the task, and the"
+		+ "specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.CHORE158
+	AFTER @TASK.REFACTOR161
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "fixes violations 5, 10 and 13 of the audit"
+	RATIONALE "The three violations are one boundary, the decoding of the save text: violation 10"
+		+ "escapes what the serializer encodes and violation 13 moves the shape checks to where the"
+		+ "text is decoded. The task follows the reader port, which is where the decoding lands"
+
+TASK REFACTOR163
+	TITLE "refactor(core-mapping): move the game releases into the domain, shared runtime code"
+		+ "confined to the infrastructure"
+	STATUS draft
+	SPEC "the game releases and their comparison are domain knowledge of core-mapping, their values"
+		+ "a JSON table beside the module that reads it, validated by bun run validate:tables"
+	SPEC "no module under domain/ or application/ of a core- package imports runtime code of a"
+		+ "shared- package: only import type crosses"
+	SPEC "a guard run by bun run guards fails on an import of a shared- module from domain/ or"
+		+ "application/ of a core- package that is not import type"
+	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.REFACTOR162
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "fixes violation 6 of the audit and carries the guard on shared runtime imports"
+	RATIONALE "The guard passes the day it lands, the task removing every runtime import it"
+		+ "refuses, so it needs no allow-list. The task follows the decoding, which rewrites the"
+		+ "merge rules that read the releases"
+
+TASK REFACTOR164
+	TITLE "refactor(core-mapping): carry validation issues as codes, their sentences built in"
+		+ "presentation"
+	STATUS draft
+	SPEC "a ValidationIssue carries a code and its data and no sentence; every sentence shown about"
+		+ "a validation issue is built under presentation/messages of core-mapping"
+	SPEC "no sentence shown to the user is built in the infrastructure of core-mapping nor in"
+		+ "shared-save-processing, verifySectionCount and the schema validation messages included"
+	SPEC "an issue locates its section by a section name the infrastructure resolved, and no"
+		+ "presentation module imports the section indexes of the save format"
+	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.REFACTOR160
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "fixes violations 7 and 12 of the audit"
+	RATIONALE "Both violations are the same issue type: its sentence and its location reach the"
+		+ "view as the infrastructure wrote them. The task follows the validator port, which"
+		+ "changes the issues it reports"
+
+TASK REFACTOR165
+	TITLE "refactor(core-mapping): let the merge rule return the warnings of the merged save"
+	STATUS draft
+	SPEC "the merge rule of the domain returns the warnings about the format of the merged save,"
+		+ "and MergeSaveFiles hands them to its presenter without comparing a release nor testing"
+		+ "terrainLayers"
+	SPEC "cli-merge and the save manager show the same merge warnings as before, and the specs of"
+		+ "cli-merge pass unchanged"
+	AFTER @TASK.REFACTOR163
+	WAVE @WAVE.14
+	PRIORITY medium
+	DESC "fixes violation 11 of the audit"
+	RATIONALE "The release comparison the use case makes today moves into the domain with the game"
+		+ "releases, so the task follows that move"
+
+TASK REFACTOR166
+	TITLE "refactor(core-mapping): inject the use cases into the controllers"
+	STATUS draft
+	SPEC "a controller of core-mapping receives its use case, or the factory building it, from the"
+		+ "composition root, and instantiates no adapter"
+	SPEC "a controller spec runs against a test double of its use case, without the real"
+		+ "infrastructure; AControllerSpecCoversWiringNotBranches is rewritten or archived to match"
+	SPEC "no JSDoc of core-mapping cites an instructions file that does not exist,"
+		+ "infrastructure.md included"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR161
+	WAVE @WAVE.14
+	PRIORITY low
+	DESC "fixes violations 14 and 15 of the audit"
+	RATIONALE "Violation 15 is one stale comment, too small for a pull request of its own; the task"
+		+ "follows the composition root, which it extends with the factories"
+		REF @DECISION.AControllerSpecCoversWiringNotBranches

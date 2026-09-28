@@ -149,7 +149,6 @@ LIMITATION SubmergedMachinesAreCountedAsDrawingPower
 		+ "counts it at its base level, so the available energy is underestimated"
 	WORKAROUND "a warning in the energy section that submerged machines may distort the computed"
 		+ "available energy"
-		REF @TASK.FEAT128
 	UNTIL "the save records whether a machine is under water or running"
 	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private consumption()"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -191,28 +190,3 @@ LIMITATION ARuntimeReachedModuleEscapesTheStaticCoverageGate
 	SOURCE "The review of CHORE112, the owner asking for the exemption reasons to be a limitation"
 		+ "the configuration refers to rather than comments and a decision"
 		PR 181
-
-LIMITATION TheDownloadLinkFallsShortOfTheTextContrastAtRest
-	SYMPTOM "At rest, the download link of a merge result draws its text at a contrast of 3.89:1"
-		+ "against its background, under the 4.5:1 WCAG 2 AA asks of 14 px text: its opacity of 0.9"
-		+ "lightens the primary background the contrast check measures at full opacity"
-	WORKAROUND "The axe audit of a merge result excludes the download link; its link role and"
-		+ "accessible name stay asserted by hand"
-	STATUS archived
-	ARCHIVED_ON 2026-09-28
-	SEEN_IN "packages/ui-save-manager/src/styles/buttons.css::.button-link {"
-	SEEN_IN "packages/ui-save-manager/e2e/accessibility.e2e.ts::downloadLinkBelowTheTextContrast"
-	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	RATIONALE "Found by the first axe audit; the fix changes how the link looks at rest and on"
-		+ "hover, which a test task does not decide on its own. The redesign of the save manager"
-		+ "drops the resting opacity: on its integration branch the download link shares the"
-		+ "button, .button-link rule, inverted text on the idle primary background, a pair"
-		+ "check:contrast measures; the defect stays real on master until that branch merges"
-		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
-		REF @WAVE.10
-		REF @PROCESS.AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
-	SOURCE "axe color-contrast violation, UI workflow run 36365018731 on the three engines"
-		PR 213
-	SOURCE "Owner review reply of 2026-09-28: the colours changed on the integration branch of wave"
-		+ "10, so the limitation can be lifted at the rebase"
-		PR 213

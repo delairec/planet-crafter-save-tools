@@ -1,7 +1,3 @@
-WAVE 5
-	MILESTONE "skeo"
-	BRANCH "integration/save-format-preserved"
-
 WAVE 6
 	MILESTONE "save-edition"
 	BRANCH "integration/save-edition"
@@ -9,23 +5,6 @@ WAVE 6
 WAVE 7
 	MILESTONE "fix-corrupted-save"
 	BRANCH "integration/fix-corrupted-save"
-
-WAVE 8
-	MILESTONE "release-and-hardening"
-	BRANCH "integration/release-and-hardening"
-
-WAVE 9
-	MILESTONE "power-consumption"
-	BRANCH "integration/power-consumption"
-
-WAVE 10
-	MILESTONE "save-manager-navigation"
-	BRANCH "integration/save-manager-navigation"
-	DESC "the save manager is navigated by pages from a left menu, its shell fed by the first view"
-		+ "models cut by view: the save identity, the players menu and the Configuration page; the"
-		+ "other pages still read the section view models, and the merge notice joins the wave"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
 
 WAVE 11
 	MILESTONE "save-manager-planets"
@@ -54,3 +33,17 @@ WAVE 13
 	SOURCE "Owner ruling of 2026-09-28 when FEAT151 was refined: the saves loaded before are kept"
 		+ "in a wave of their own, not in wave 10"
 		PR 211
+
+WAVE 14
+	MILESTONE "fix-clean-architecture-violations"
+	BRANCH "integration/fix-clean-architecture-violations"
+	DESC "core-mapping keeps the meaning of Clean Architecture, not only its layer structure: the"
+		+ "domain handles business names instead of the save format, the presenters receive"
+		+ "application responses, the adapters take no business decision, and guards keep it so"
+	RATIONALE "The wave fixes the fifteen violations of the audit"
+		+ "docs/audits/2026-09-28-clean-architecture-violations.md, the first commit of its"
+		+ "integration branch, one task per pull request, each task naming the violation numbers it"
+		+ "fixes and carrying the grade of the worst of them as its priority"
+		REF @PACKAGE.core_mapping
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222

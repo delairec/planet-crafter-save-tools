@@ -93,7 +93,7 @@ above, whose consumption the tool underestimates
 (`@DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine`). The hypothesis stands until observed
 otherwise in game. The game data search below prices `TreePlanter3` at 85 kW and `TreePlanter` at 40 kW, so the
 hypothesis is narrowed to `PodUnderground` and `RocketAnimals2`, `TreePlanter3` moving to the consuming group;
-the fixture of `@TASK.TEST125` keeps it, to check the 85 kW in game.
+the energy consumption fixture of `scripts/generate-scenario-fixtures.ts` keeps it, to check the 85 kW in game.
 
 **Game data search: 2026-09-25**, against game version 2.103. Every name of the group without a known energy level,
 placed in a reference save or not, was looked up in a community export of the game's own item data
@@ -117,8 +117,8 @@ alone were wrong and follow the export: `ToxicWaterCollector1` 0.8 kW (was 1.2),
 (`@LIMITATION.SubmergedMachinesAreCountedAsDrawingPower`). The reading confirms the eight values the game data search
 added, `TreePlanter3` included, and shows that `ButterflyDisplayer1`, `FishDisplayer1`, `FrogDisplayer1`, `Server1`,
 `CookingStation1`, `PodUnderground` and `RocketAnimals2` draw no power. These seven stay in the group without a known
-energy level until `@TASK.FEAT127` declares the machines that draw none apart from it; the underestimate the
-unpriced five were feared to cause does not exist.
+energy level, where nothing is charged (`@RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption`); the
+underestimate the unpriced five were feared to cause does not exist.
 
 **Source registry.** Each value the 2026-09-07/09 cross-check added carries, in the `source` field of its row, the
 wiki page it was read from (game v2.102). Earlier values are sourced by the wiki pages listed in EN-BASE-2 above.
