@@ -28,6 +28,25 @@ test.describe('Configuration page', () => {
       await expect(page.getByTestId(/^(global-progression|modifiers|unlocks)-title$/)).toHaveText(['Global progression', 'Modifiers', 'Unlocks']);
     });
 
+    test('should lay the global progression across the page, above the modifiers and the unlocks side by side at the same height', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Act
+      await openThePageOfTheMenu(page, 'Configuration');
+
+      // Assert
+      const progression = (await page.getByTestId('global-progression-card').boundingBox())!;
+      const modifiers = (await page.getByTestId('modifiers-card').boundingBox())!;
+      const unlocks = (await page.getByTestId('unlocks-card').boundingBox())!;
+      expect(progression.y + progression.height).toBeLessThanOrEqual(modifiers.y);
+      expect(progression.x).toBeCloseTo(modifiers.x, 0);
+      expect(progression.x + progression.width).toBeCloseTo(unlocks.x + unlocks.width, 0);
+      expect(unlocks.x).toBeGreaterThan(modifiers.x + modifiers.width);
+      expect(unlocks.y).toBeCloseTo(modifiers.y, 0);
+      expect(unlocks.height).toBeCloseTo(modifiers.height, 0);
+    });
+
     test('should state the game defaults in the summary of the modifiers', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);

@@ -16,7 +16,7 @@ export default function ConfigurationPage() {
       <SectionTitle testId="configuration-title">{configurationPageTitle}</SectionTitle>
       <SectionState title={configurationPageTitle} resource={loadedSave.viewModels.configurationPage}>
         {(configurationPage) => (
-          <div class="grid-container">
+          <div class="configuration-cards">
             <ProgressionCard progression={configurationPage().progression}/>
             <Show when={configurationPage().modifiers}>
               {(modifiers) => <ModifiersCard modifiers={modifiers()}/>}
