@@ -2837,6 +2837,8 @@ DECISION APresentationPieceLandsWithTheFirstPageThatRendersIt
 		+ "of the Configuration modifiers and unlock flags"
 		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
 		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
+		IMPL "packages/ui-save-manager/src/components/configuration/ModifiersCard.tsx::<ToneBadge"
+		IMPL "packages/ui-save-manager/src/components/configuration/UnlocksCard.tsx::<OnOffPill"
 	REJECTED "Shipping the tone badge and the on or off pill with FEAT138, ahead of any page: no"
 		+ "module would import them, which the fallow unused-file gate refuses"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -2972,4 +2974,5 @@ DECISION TheConfigurationPageListsEightUnlockFlagsAndStatesEachToneInText
 	APPLIES_TO_TASK @TASK.FEAT136
 	SOURCE "Rulings of the FEAT136 agent of 2026-09-28, checking the unlock flags against the save"
 		+ "format as the task asks"
+		PR 218
 		REF @URL.SaveManagerRedesignMockup
