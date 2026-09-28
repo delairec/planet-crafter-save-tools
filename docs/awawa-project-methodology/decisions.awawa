@@ -2833,3 +2833,5 @@ DECISION TheOverviewAndLoadAnotherSaveShareOneLoadSection
 	RATIONALE "Two pages load a save; one section keeps their form, drop zone, busy indicator and"
 		+ "failure sentence identical. The file chosen in the input can differ from the loaded save"
 		+ "once Load another save is open, so the name shown comes from what was validated"
+	SOURCE "Ruled by the task agent while delivering FEAT137"
+		PR 211

@@ -1898,20 +1898,37 @@ TASK FEAT136
 
 TASK FEAT137
 	TITLE "Move the merge of two saves and the loading of another save under the Tools group"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 211
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; what Load another"
 		+ "save does to an unsaved merge result is settled with the owner when the task starts"
 	SPEC "the Merge two saves page carries the merge form of today, save A and save B drop zones,"
 		+ "the swap control, the legacy format box and the Merge button, and shows the result, the"
 		+ "download and the warnings of a merge where the form is"
+		IMPL "packages/ui-save-manager/src/routes/merge.tsx::<MergeSection onMergeStarted={() =>"
+			+ "setMergeResult(null)} onMergeResult={setMergeResult}/>"
+		IMPL "packages/ui-save-manager/src/routes/merge.tsx::<MergeResultSection"
+			+ "result={mergeResult}/>"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should lead to the merge form"
 	SPEC "a merge leaves the loaded save in memory untouched: the scenario of today that expects a"
 		+ "merge to leave no save to visualize is rewritten to that, and the scenario aligning the"
 		+ "labels of the merge form with the file input of the display is retired, the two forms no"
 		+ "longer sharing a page"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should leave the loaded save in the"
+			+ "Overview page"
 	SPEC "Load another save lets the user pick or drop a save; the new save replaces the loaded one"
 		+ "and the Overview page opens on it"
+		IMPL "packages/ui-save-manager/e2e/load-another-save.e2e.ts::should open the Overview page"
+			+ "on the new save"
+		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should display that file as if it had been"
+			+ "picked"
 	SPEC "the merge page reads the merge result view model of today, unchanged; the drop, merge and"
 		+ "loading-state scenarios of today pass on the new pages"
+		IMPL "packages/ui-save-manager/src/routes/merge.tsx::createSignal<MergeResultViewModel |"
+			+ "null>(null)"
+		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
 	AFTER @TASK.FEAT135
 	WAVE @WAVE.10
 	RATIONALE "The merge form sits above the visualization today and is the first thing the page"
