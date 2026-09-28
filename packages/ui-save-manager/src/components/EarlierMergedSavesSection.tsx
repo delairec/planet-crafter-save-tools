@@ -13,9 +13,9 @@ export default function EarlierMergedSavesSection(props: EarlierMergedSavesSecti
         <h3 data-testid="earlier-merged-saves-title">{earlierMergedSavesTitle}</h3>
         <ul>
           <For each={props.mergedSaves()}>
-            {(mergedSave) => (
-              <li data-testid="earlier-merged-save">
-                <code data-testid="earlier-merged-save-file-name">{mergedSave.fileName}</code> <a class="button-link" data-testid="earlier-merged-save-download"
+            {(mergedSave, index) => (
+              <li data-testid={`earlier-merged-save-${index()}`}>
+                <code data-testid={`earlier-merged-save-file-name-${index()}`}>{mergedSave.fileName}</code> <a class="button-link" data-testid={`earlier-merged-save-download-${index()}`}
                                                                                                 href={mergedSave.downloadUrl}
                                                                                                 download={mergedSave.fileName}>{mergeResultSectionDownloadLinkLabel}</a>
               </li>

@@ -238,7 +238,7 @@ test.describe('Save merge', () => {
 
       // Assert
       await expect(page.getByTestId('merged-file-name')).toHaveText('legacy-format_valid-baseline_valid-merged.json');
-      await expect(page.getByTestId('earlier-merged-save-file-name')).toHaveText([
+      await expect(page.getByTestId(/^earlier-merged-save-file-name-\d+$/)).toHaveText([
         'other-player_valid-baseline_valid-merged.json',
         'baseline_valid-energy-consumption_valid-merged.json',
         'baseline_valid-skeo-update_valid-merged.json',
@@ -253,7 +253,7 @@ test.describe('Save merge', () => {
       const downloadStarted = page.waitForEvent('download');
 
       // Act
-      await page.getByTestId('earlier-merged-save-download').click();
+      await page.getByTestId('earlier-merged-save-download-0').click();
 
       // Assert
       expect((await downloadStarted).suggestedFilename()).toBe(mergedFileName);
@@ -284,7 +284,7 @@ test.describe('Save merge', () => {
 
       // Assert
       await expect(page.getByTestId('save-a-errors-title')).toBeVisible();
-      await expect(page.getByTestId('earlier-merged-save-file-name')).toHaveText([
+      await expect(page.getByTestId(/^earlier-merged-save-file-name-\d+$/)).toHaveText([
         'other-player_valid-baseline_valid-merged.json',
         'baseline_valid-energy-consumption_valid-merged.json',
         'baseline_valid-skeo-update_valid-merged.json',
@@ -310,8 +310,8 @@ test.describe('Save merge', () => {
       // Assert
       await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
       await expect(page.getByTestId('merge-success-message')).toBeHidden();
-      await expect(page.getByTestId('earlier-merged-save-file-name')).toHaveText([mergedFileName]);
-      await expect(page.getByTestId('earlier-merged-save-download')).toHaveAttribute('href', /^blob:/);
+      await expect(page.getByTestId(/^earlier-merged-save-file-name-\d+$/)).toHaveText([mergedFileName]);
+      await expect(page.getByTestId('earlier-merged-save-download-0')).toHaveAttribute('href', /^blob:/);
     });
   });
 });

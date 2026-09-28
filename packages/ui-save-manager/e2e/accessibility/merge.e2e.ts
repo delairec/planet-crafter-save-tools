@@ -158,8 +158,8 @@ test.describe('Merge two saves page accessibility', () => {
       await showTwoMergeResults(page);
 
       // Assert
-      await expect(page.getByTestId('earlier-merged-save-download')).toHaveRole('link');
-      await expect(page.getByTestId('earlier-merged-save-download')).toHaveAccessibleName('Download');
+      await expect(page.getByTestId('earlier-merged-save-download-0')).toHaveRole('link');
+      await expect(page.getByTestId('earlier-merged-save-download-0')).toHaveAccessibleName('Download');
     });
   });
 });
