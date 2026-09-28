@@ -1,4 +1,5 @@
 import {Resource} from "solid-js";
+import Card from "./structure/Card";
 import FieldsGroup from "./structure/FieldsGroup";
 import SectionState from "./structure/SectionState";
 import {SaveConfigurationViewModel} from "core-mapping/presentation/viewModels/SaveConfigurationViewModel";
@@ -12,12 +13,13 @@ export default function SaveConfigurationSection(props: SaveConfigurationProps) 
   return (
     <SectionState title={saveConfigurationSectionTitleLabel} resource={props.viewModel}>
       {(saveConfiguration) => (
-        <div>
-          <h3 data-testid="save-configuration-title">{saveConfigurationSectionTitleLabel} {saveConfiguration().title} ({saveConfiguration().mode})</h3>
+        <Card title={saveConfigurationSectionTitleLabel}
+              summary={`${saveConfiguration().title} (${saveConfiguration().mode})`}
+              testId="save-configuration">
           <div class="fields-group-container">
             <FieldsGroup columns={() => saveConfiguration().modifiers.columns}/>
           </div>
-        </div>
+        </Card>
       )}
     </SectionState>
   );

@@ -6,6 +6,17 @@ const skeoUpdateSaveFixturePath = locateTheFixture('skeo-update_valid.json');
 
 test.describe('Configuration page', () => {
   test.describe('When the Configuration page of a visualized save is opened', () => {
+    test('should open on a section title naming the Configuration page', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Act
+      await openThePageOfTheMenu(page, 'Configuration');
+
+      // Assert
+      await expect(page.getByTestId('configuration-title')).toHaveText('Configuration');
+    });
+
     test('should display the save configuration and the global progression of that file', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);
@@ -14,7 +25,8 @@ test.describe('Configuration page', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Assert
-      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
+      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration');
+      await expect(page.getByTestId('save-configuration-summary')).toHaveText('Merged Save (Standard)');
       await expect(page.getByTestId('global-progression-title')).toHaveText('Global progression');
     });
 

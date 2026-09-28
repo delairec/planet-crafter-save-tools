@@ -15,3 +15,38 @@
 .surface-bordered {
     border: var(--border-thin);
 }
+
+.card {
+    border: 3px solid var(--neon-purple);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+}
+
+.card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-xs) var(--space-md);
+    margin: var(--space-md);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    background-color: var(--neon-cyan);
+    box-shadow: var(--shadow-glow) var(--neon-cyan);
+}
+
+.card-header h4 {
+    margin: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.card-summary {
+    color: var(--inverted);
+    font-size: var(--text-sm);
+}
+
+.card-body {
+    padding: 0 var(--space-md) var(--space-md);
+}

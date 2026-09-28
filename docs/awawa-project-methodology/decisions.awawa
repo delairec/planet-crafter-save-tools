@@ -2785,3 +2785,33 @@ DECISION APlayerOnAnEmptyPlanetShowsNoPlanet
 	SOURCE "Owner review of 2026-09-27: the planet shows when its name is not empty, legacy save or"
 		+ "not"
 		PR 205
+
+DECISION APresentationPieceLandsWithTheFirstPageThatRendersIt
+	SPEC "A presentation piece of ui-save-manager is delivered by the task of the first page that"
+		+ "renders it, never ahead of that page: the tone badge and the on or off pill by the task"
+		+ "of the Configuration modifiers and unlock flags"
+		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
+	REJECTED "Shipping the tone badge and the on or off pill with FEAT138, ahead of any page: no"
+		+ "module would import them, which the fallow unused-file gate refuses"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT138
+	APPLIES_TO_TASK @TASK.FEAT136
+	RATIONALE "FEAT136 renders the modifiers in tones and the unlock flags, the first consumers of"
+		+ "the two pieces"
+		REF @TASK.FEAT136
+	SOURCE "Owner ruling at the launch of wave 10 on 2026-09-28"
+		PR 210
+
+DECISION TheSeverityPillLabelIsAMessageOfTheUi
+	SPEC "The label of a notification severity pill is a message of ui-save-manager, read from a"
+		+ "table typed on NotificationSeverity; the severity itself stays decided by the presenter"
+		IMPL "packages/ui-save-manager/src/messages/notificationMessages.js::notificationSeverityLabels"
+	REJECTED "Carrying the label in NotificationViewModel: no CLI renders a notification, and every"
+		+ "presenter and controller spec literal would restate a label of the pill"
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+	REJECTED "A ternary on the severity: a third severity would read as Warning in silence"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT138
+	SOURCE "FEAT138 delivery"
+		PR 210

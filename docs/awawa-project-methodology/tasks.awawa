@@ -1869,6 +1869,9 @@ TASK FEAT136
 		+ "of today are retired, and every module the task leaves without an importer is deleted in"
 		+ "the same pull request"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	SPEC "the tone badge and the on or off pill are presentation pieces of the package, their"
+		+ "colours taken from the tokens of its palette in both themes and every token pair they"
+		+ "compose catalogued by the contrast guard"
 	AFTER @TASK.FEAT135
 	AFTER @TASK.FEAT138
 	WAVE @WAVE.10
@@ -1929,18 +1932,44 @@ TASK FEAT137
 
 TASK FEAT138
 	TITLE "Give the save manager the presentation pieces the pages of the navigation wave render"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 210
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the list of"
 		+ "pieces is closed when the task starts against the pages of wave 10"
 	SPEC "a page opens on a section title; a card has a header holding its title and a summary"
 		+ "figure, and a body; a notification is a line whose severity is named by a pill before"
-		+ "the message; a tone badge shows a value with a text naming its tone; an on or off pill"
-		+ "names its state; the Host badge names the host"
+		+ "the message; the Host badge names the host"
+		IMPL "packages/ui-save-manager/src/components/structure/SectionTitle.tsx"
+		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should open on a section"
+			+ "title naming the Configuration page"
+		IMPL "packages/ui-save-manager/src/components/structure/Card.tsx::card-summary"
+		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::getByTestId('save-configuration-summary')"
+		IMPL "packages/ui-save-manager/src/components/structure/Notification.tsx::notification-severity-pill"
+		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name the severity of that"
+			+ "notification a limitation"
+		IMPL "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::should read the severity of"
+			+ "its notification apart from the message"
+		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::should title the"
+			+ "save configuration with a fourth level heading"
+		IMPL "packages/ui-save-manager/src/components/players/HostBadge.tsx"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::NikowaHostToxicity"
 	SPEC "every piece takes its colours from the tokens of the package's palette, in the light and"
 		+ "in the dark theme, and every token pair it composes is catalogued by the contrast guard"
-	SPEC "a piece is delivered with the first page that renders it: the figure tile, the status"
-		+ "pill, the tab strip and the bar cell come with the Power and Terraformation pages, the"
-		+ "selector with the chart"
+		IMPL "packages/ui-save-manager/src/styles/colors.css"
+		IMPL "scripts/check-color-contrast.ts::selector: '.card-summary'"
+		IMPL "scripts/check-color-contrast.ts::selector: '.notification-limitation"
+			+ ".notification-severity-pill'"
+		IMPL "scripts/check-color-contrast.ts::selector: '.notification-warning"
+			+ ".notification-severity-pill'"
+		IMPL "scripts/check-color-contrast.ts::MINIMUM_CONTRAST_RATIO"
+	SPEC "a piece is delivered with the first page that renders it: the section title and the card"
+		+ "come with the Configuration page, the notification pill with the Power page; the tone"
+		+ "badge and the on or off pill come with the modifiers and the unlock flags of the"
+		+ "Configuration page, the figure tile, the status pill, the tab strip and the bar cell"
+		+ "with the Power and Terraformation pages, the selector with the chart"
+		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
+		IMPL "packages/ui-save-manager/src/components/SaveConfigurationSection.tsx::<Card"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
 	AFTER @TASK.FEAT134
 	WAVE @WAVE.10
 	RATIONALE "The pages of the mockup share a small vocabulary of pieces, and building each once"
@@ -1951,11 +1980,15 @@ TASK FEAT138
 		+ "headers as neon-cyan pills with inverted text; cards with a neon-purple border; the"
 		+ "active menu item, the primary buttons and the Host badge on a neon fill. A scenario"
 		+ "cannot assert a colour, so the palette is recorded here and proven by the tokens of"
-		+ "colors.css and the contrast catalog; the scenarios of the pages assert the structure"
+		+ "colors.css and the contrast catalog; the scenarios of the pages assert the text each"
+		+ "piece shows, reached by its test id, and the accessibility tests of the Configuration"
+		+ "page the level of its headings"
 		REF @URL.SaveManagerRedesignMockup
 		REF @PACKAGE.ui_save_manager
 		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
+		REF @DECISION.AUiTestDoesNotBreakOnAChangeOfTheDomStructure
+		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
 		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
 		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "Owner review of 2026-09-26 of the first working version: titles and selector not"

@@ -51,6 +51,18 @@ test.describe('Power page', () => {
       await expect(findTheNotifications(page, submergedMachinesNotification)).toHaveCount(1);
       await expect(findTheNotifications(page, submergedMachinesNotification)).toBeVisible();
     });
+
+    test('should name the severity of that notification a limitation', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+
+      // Act
+      await openThePageOfTheMenu(page, 'Power');
+
+      // Assert
+      await expect(findTheNotifications(page, submergedMachinesNotification).getByTestId(/^energy-levels-notification-\d+-severity$/))
+        .toHaveText('Limitation');
+    });
   });
 
   test.describe('When the Power page of a save of the current game release is opened', () => {
