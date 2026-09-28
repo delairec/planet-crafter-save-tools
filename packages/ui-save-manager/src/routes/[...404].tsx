@@ -12,9 +12,9 @@ export default function NotFound() {
     <div class="py-4 text-center text-xl">
       <p class="text-6xl">
         {notFoundRouteStatusCode}&nbsp;
-        <span class="uppercase middle text-lg">{notFoundRouteTitle}</span>
+        <span class="uppercase middle text-lg" data-testid="not-found-title">{notFoundRouteTitle}</span>
       </p>
-      <A href="/"><Icon content={notFoundRouteBackHomeIcon}/> {notFoundRouteBackHomeLabel}</A>
+      <A href="/" data-testid="home-page-link"><Icon content={notFoundRouteBackHomeIcon}/> {notFoundRouteBackHomeLabel}</A>
     </div>
   );
 }

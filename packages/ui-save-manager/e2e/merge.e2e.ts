@@ -1,10 +1,11 @@
 import {readFile} from 'node:fs/promises';
-import {expect, test, type Download, type Page} from '@playwright/test';
+import {type Download, type Page} from '@playwright/test';
 import {
   baselineSaveFixturePath as saveAFixturePath,
   legacySaveFixturePath,
   otherPlayerSaveFixturePath as saveBFixturePath
 } from './helpers/scenarioFixturePaths';
+import {expect, test} from './scenarioTest';
 
 /** The name the merge gives its output, built from the two source file names. */
 const mergedFileName = 'baseline_valid-other-player_valid-merged.json';
@@ -28,18 +29,18 @@ const keepLegacyFormatReminder = 'To write the legacy format instead, tick "Pref
 
 async function chooseTheTwoSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
   await page.goto('/');
-  await page.getByTestId('save-a-input').setInputFiles(chosenSaveAPath);
-  await page.getByTestId('save-b-input').setInputFiles(chosenSaveBPath);
+  await page.getByTestId('save-a').setInputFiles(chosenSaveAPath);
+  await page.getByTestId('save-b').setInputFiles(chosenSaveBPath);
 }
 
 async function mergeTheChosenSaves(page: Page): Promise<void> {
-  await page.getByTestId('merge-button').click();
+  await page.getByTestId('merge').click();
   await expect(page.getByTestId('merge-success-message')).toBeVisible();
 }
 
 async function mergeAndRevealTheMergeReport(page: Page): Promise<void> {
   await mergeTheChosenSaves(page);
-  await page.getByTestId('merge-warnings-details-toggle').click();
+  await page.getByTestId('merge-warnings-details').click();
 }
 
 async function mergeTheTwoFixtures(page: Page): Promise<void> {
@@ -49,7 +50,7 @@ async function mergeTheTwoFixtures(page: Page): Promise<void> {
 
 async function downloadTheProducedFile(page: Page): Promise<Download> {
   const downloadStarted = page.waitForEvent('download');
-  await page.getByTestId('download-link').click();
+  await page.getByTestId('merged-save-download').click();
 
   return downloadStarted;
 }
@@ -159,7 +160,7 @@ test.describe('Save merge', () => {
       await preferLegacyFormatCheckbox.focus();
 
       // Assert
-      await expect(page.getByTestId('prefer-legacy-format-tooltip')).toHaveText(preferLegacyFormatDescription);
+      await expect(page.getByTestId('prefer-legacy-format-description')).toHaveText(preferLegacyFormatDescription);
     });
   });
 
@@ -169,8 +170,8 @@ test.describe('Save merge', () => {
       await page.goto('/');
 
       // Act
-      const saveAInputLeft = (await page.getByTestId('save-a-input').boundingBox())!.x;
-      const saveBInputLeft = (await page.getByTestId('save-b-input').boundingBox())!.x;
+      const saveAInputLeft = (await page.getByTestId('save-a').boundingBox())!.x;
+      const saveBInputLeft = (await page.getByTestId('save-b').boundingBox())!.x;
       const checkboxLeft = (await page.getByTestId('prefer-legacy-format').boundingBox())!.x;
 
       // Assert
@@ -183,10 +184,10 @@ test.describe('Save merge', () => {
       await page.goto('/');
 
       // Act
-      const saveALabelLeft = (await page.getByTestId('save-a-label').boundingBox())!.x;
-      const saveAInputLeft = (await page.getByTestId('save-a-input').boundingBox())!.x;
-      const saveFileLabelLeft = (await page.getByTestId('save-file-label').boundingBox())!.x;
-      const saveFileInputLeft = (await page.getByTestId('save-file-input').boundingBox())!.x;
+      const saveALabelLeft = (await page.getByTestId('save-a-caption').boundingBox())!.x;
+      const saveAInputLeft = (await page.getByTestId('save-a').boundingBox())!.x;
+      const saveFileLabelLeft = (await page.getByTestId('save-file-caption').boundingBox())!.x;
+      const saveFileInputLeft = (await page.getByTestId('save-file').boundingBox())!.x;
 
       // Assert
       expect(saveFileLabelLeft).toBeCloseTo(saveALabelLeft, 0);

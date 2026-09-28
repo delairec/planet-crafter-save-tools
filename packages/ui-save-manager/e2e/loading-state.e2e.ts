@@ -1,5 +1,6 @@
-import {expect, test, type Page} from '@playwright/test';
+import {type Page} from '@playwright/test';
 import {holdEveryFileRead, releaseTheHeldFileReads} from './helpers/holdEveryFileRead';
+import {expect, test} from './scenarioTest';
 import {chooseTheSaveToVisualize, chooseTheTwoSavesToMerge, locateTheFixture} from './scenarioSteps';
 
 const saveAFixturePath = locateTheFixture('baseline_valid.json');
@@ -18,13 +19,13 @@ async function chooseTheTwoSavesToMergeWithTheReadsHeld(page: Page): Promise<voi
 
 async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
   await chooseTheSaveToVisualizeWithTheReadsHeld(page);
-  await page.getByRole('button', {name: 'Visualize'}).click();
+  await page.getByTestId('visualize').click();
   await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
 }
 
 async function startMergingWithTheReadsHeld(page: Page): Promise<void> {
   await chooseTheTwoSavesToMergeWithTheReadsHeld(page);
-  await page.getByRole('button', {name: 'Merge'}).click();
+  await page.getByTestId('merge').click();
   await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
 }
 
@@ -35,11 +36,11 @@ test.describe('Loading states', () => {
       await chooseTheSaveToVisualizeWithTheReadsHeld(page);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await page.getByTestId('visualize').click();
 
       // Assert
       await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeDisabled();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 
@@ -52,8 +53,8 @@ test.describe('Loading states', () => {
       await releaseTheHeldFileReads(page);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Loaded save: baseline_valid.json'})).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeEnabled();
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('visualize')).toBeEnabled();
     });
   });
 
@@ -63,11 +64,11 @@ test.describe('Loading states', () => {
       await chooseTheTwoSavesToMergeWithTheReadsHeld(page);
 
       // Act
-      await page.getByRole('button', {name: 'Merge'}).click();
+      await page.getByTestId('merge').click();
 
       // Assert
       await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Merge'})).toBeDisabled();
+      await expect(page.getByTestId('merge')).toBeDisabled();
     });
   });
 
@@ -80,9 +81,9 @@ test.describe('Loading states', () => {
       await releaseTheHeldFileReads(page);
 
       // Assert
-      await expect(page.getByText('Merge successful!')).toBeVisible();
+      await expect(page.getByTestId('merge-success-message')).toBeVisible();
       await expect(page.getByTestId('merge-busy-indicator')).toBeHidden();
-      await expect(page.getByRole('button', {name: 'Merge'})).toBeEnabled();
+      await expect(page.getByTestId('merge')).toBeEnabled();
     });
   });
 });

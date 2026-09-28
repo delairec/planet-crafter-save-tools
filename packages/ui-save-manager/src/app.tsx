@@ -15,7 +15,7 @@ const Layout: Component<RouteSectionProps> = (props) => {
   return (
     <LoadedSaveProvider>
       <header>
-        <h1 class="text-center drop-shadow-engraved">{appName}</h1>
+        <h1 class="text-center drop-shadow-engraved" data-testid="application-title">{appName}</h1>
       </header>
       <div class="container rounded-lg shell">
         <SaveManagerMenu/>

@@ -92,7 +92,7 @@ export default function MergeSection(props: MergeSectionProps) {
       <div class="inline-block">
         <h2>{mergeSectionTitle}</h2>
         <div class="merge-slots">
-          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-button"
+          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-saves"
                       onClick={handleSwap} disabled={!fileA() && !fileB()}/>
           <DropZone label={mergeSectionSaveAAreaLabel} testId="save-a-area" maximumFileCount={1}
                     tooManyFilesMessage={tooManyFilesForOneSaveMessage}
@@ -114,7 +114,7 @@ export default function MergeSection(props: MergeSectionProps) {
                          checked={preferLegacyFormat()} onChange={setPreferLegacyFormat}/>
         </p>
       </div>
-      <button data-testid="merge-button" onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
+      <button data-testid="merge" onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
       <Show when={isMerging()}>
         <Spinner testId="merge-busy-indicator"/>
       </Show>

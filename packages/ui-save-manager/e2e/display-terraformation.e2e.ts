@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
@@ -13,7 +13,7 @@ test.describe('Terraformation page', () => {
       await openThePageOfTheMenu(page, 'Terraformation');
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Terraformation Levels', level: 3})).toBeVisible();
+      await expect(page.getByTestId('terraformation-levels-title')).toHaveText('Terraformation Levels');
     });
 
     test('should open on a breadcrumb naming the Save group and the Terraformation page', async ({page}) => {

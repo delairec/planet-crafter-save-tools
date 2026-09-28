@@ -11,8 +11,8 @@ export default function PlayersMenu(props: PlayersMenuProps) {
   return (
     <ul class="menu-players">
       <For each={props.playersMenu.players}>
-        {(player) => (
-          <li>
+        {(player, index) => (
+          <li data-testid={`player-summary-${index()}`}>
             <Surface>
               <div class="menu-player">
                 <span class="menu-player-name">{player.name}</span>

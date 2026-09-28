@@ -17,7 +17,7 @@ export default function CheckboxField(props: CheckboxFieldProps) {
                onChange={(event) => props.onChange(event.currentTarget.checked)}/>
         {props.label}
       </label>
-      <span id={tooltipId} role="tooltip" class="tooltip" data-testid={`${props.testId}-tooltip`}>{props.description}</span>
+      <span id={tooltipId} role="tooltip" class="tooltip" data-testid={`${props.testId}-description`}>{props.description}</span>
     </span>
   );
 }

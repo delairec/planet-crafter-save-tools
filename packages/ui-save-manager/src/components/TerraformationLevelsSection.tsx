@@ -16,7 +16,7 @@ export default function TerraformationLevelsSection(props: TerraformationLevelsP
   return (
     <SectionState title={terraformationLevelsSectionTitle} resource={props.viewModel}>
       {(terraformationLevels) => (<>
-        <h3>{terraformationLevelsSectionTitle}</h3>
+        <h3 data-testid="terraformation-levels-title">{terraformationLevelsSectionTitle}</h3>
         <div class="grid-container">
           <For each={terraformationLevels().planets}>
             {(planet) => (

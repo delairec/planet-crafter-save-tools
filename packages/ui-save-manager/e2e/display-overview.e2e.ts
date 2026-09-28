@@ -1,5 +1,6 @@
-import {expect, test} from '@playwright/test';
-import {findTheMenu, locateTheFixture, visualizeTheSave} from './scenarioSteps';
+import {expect, test} from './scenarioTest';
+import {triggerSaveFileMerge} from './helpers/triggerSaveFileMerge';
+import {findTheMenuGroupTitles, locateTheFixture, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
@@ -12,9 +13,9 @@ test.describe('Overview page', () => {
       await page.goto('/');
 
       // Assert
-      await expect(page.getByRole('group', {name: 'Display a save\'s data'})).toBeVisible();
-      await expect(page.getByLabel('Save file:')).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeDisabled();
+      await expect(page.getByTestId('display-area')).toBeVisible();
+      await expect(page.getByTestId('save-file')).toBeVisible();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 
@@ -24,8 +25,8 @@ test.describe('Overview page', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Loaded save: baseline_valid.json'})).toBeVisible();
-      await expect(page.getByRole('main').getByRole('link')).toHaveText(['Configuration', 'Power', 'Terraformation']);
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId(/^overview-[a-z]+-page-link$/)).toHaveText(['Configuration', 'Power', 'Terraformation']);
     });
   });
 
@@ -35,8 +36,8 @@ test.describe('Overview page', () => {
       await visualizeTheSave(page, legacySaveFixturePath);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Loaded save: legacy-format_valid.json'})).toBeVisible();
-      await expect(page.getByText('Errors', {exact: true})).toBeHidden();
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: legacy-format_valid.json');
+      await expect(page.getByTestId('display-errors-title')).toBeHidden();
     });
 
     test('should show its warnings above the content of the page', async ({page}) => {
@@ -44,9 +45,9 @@ test.describe('Overview page', () => {
       await visualizeTheSave(page, legacySaveFixturePath);
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Loaded save: legacy-format_valid.json'})).toBeVisible();
-      const warningsTop = (await page.getByText('Warnings', {exact: true}).boundingBox())!.y;
-      const loadedSaveTop = (await page.getByRole('heading', {name: 'Loaded save: legacy-format_valid.json'}).boundingBox())!.y;
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: legacy-format_valid.json');
+      const warningsTop = (await page.getByTestId('display-warnings-title').boundingBox())!.y;
+      const loadedSaveTop = (await page.getByTestId('loaded-save-title').boundingBox())!.y;
       expect(warningsTop).toBeLessThan(loadedSaveTop);
     });
   });
@@ -57,8 +58,8 @@ test.describe('Overview page', () => {
       await visualizeTheSave(page, invalidSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Errors', {exact: true})).toBeVisible();
-      await expect(findTheMenu(page).getByRole('group')).toHaveAccessibleName('Tools');
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
+      await expect(findTheMenuGroupTitles(page)).toHaveText(['Tools']);
     });
   });
 
@@ -74,15 +75,15 @@ test.describe('Overview page', () => {
         };
       });
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByText('The save file could not be displayed. Please try again.')).toBeVisible();
-      await expect(page.getByLabel('Save file:')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeEnabled();
+      await expect(page.getByTestId('display-failure-message')).toHaveText('The save file could not be displayed. Please try again.');
+      await expect(page.getByTestId('save-file')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('visualize')).toBeEnabled();
     });
   });
 
@@ -91,13 +92,13 @@ test.describe('Overview page', () => {
       // Arrange
       const noFileSelected: string[] = [];
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByLabel('Save file:').setInputFiles(noFileSelected);
+      await page.getByTestId('save-file').setInputFiles(noFileSelected);
 
       // Assert
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeDisabled();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 
@@ -105,16 +106,14 @@ test.describe('Overview page', () => {
     test('should leave no save file to visualize', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(baselineSaveFixturePath);
-      await page.getByLabel('Save A:').setInputFiles(baselineSaveFixturePath);
-      await page.getByLabel('Save B:').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Merge'}).click();
+      await triggerSaveFileMerge(page, baselineSaveFixturePath, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByText('Merge successful!')).toBeVisible();
-      await expect(page.getByRole('button', {name: 'Visualize'})).toBeDisabled();
+      await expect(page.getByTestId('merge-success-message')).toBeVisible();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 });

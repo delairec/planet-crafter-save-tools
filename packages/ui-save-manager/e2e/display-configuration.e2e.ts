@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
@@ -14,8 +14,8 @@ test.describe('Configuration page', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
-      await expect(page.getByRole('heading', {name: 'Global progression'})).toBeVisible();
+      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
+      await expect(page.getByTestId('global-progression-title')).toHaveText('Global progression');
     });
 
     test('should open on a breadcrumb naming the Save group and the Configuration page', async ({page}) => {
@@ -39,8 +39,8 @@ test.describe('Configuration page', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Assert
-      await expect(page.getByText('Drone logistics')).toBeVisible();
-      await expect(page.getByText('Paused', {exact: true})).toBeVisible();
+      const droneLogisticsField = page.getByTestId(/^global-progression-field-\d+$/).filter({hasText: 'Drone logistics'});
+      await expect(droneLogisticsField.getByTestId(/^global-progression-field-\d+-value-\d+$/)).toHaveText('Paused');
     });
   });
 });

@@ -13,7 +13,7 @@ export default function GlobalProgressionSection(props: GlobalProgressionProps) 
     <SectionState title={globalProgressionSectionTitle} resource={props.viewModel}>
       {(globalProgression) => (
         <div>
-          <h3>{globalProgressionSectionTitle}</h3>
+          <h3 data-testid="global-progression-title">{globalProgressionSectionTitle}</h3>
           <div class="fields-group-container">
             <FieldsGroup columns={() => globalProgression().statistics.columns} testId="global-progression"/>
           </div>

@@ -13,12 +13,12 @@ export default function FieldsGroup(props: FieldsGroupProps) {
   return (
     <div class="fields-group readonly mb-2">
       <For each={props.columns()}>
-        {(column) => (
-          <div class="field" data-testid={props.testId && `${props.testId}-field`}>
+        {(column, columnIndex) => (
+          <div class="field" data-testid={props.testId && `${props.testId}-field-${columnIndex()}`}>
             <div class="label">{column.header}</div>
             <For each={column.values}>
-              {(value) => (
-                <div class="value" data-testid={props.testId && `${props.testId}-field-value`}>{value}</div>
+              {(value, valueIndex) => (
+                <div class="value" data-testid={props.testId && `${props.testId}-field-${columnIndex()}-value-${valueIndex()}`}>{value}</div>
               )}
             </For>
           </div>

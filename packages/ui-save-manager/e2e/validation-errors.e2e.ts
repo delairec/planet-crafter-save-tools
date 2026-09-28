@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {locateTheFixture, mergeAndRevealTheMessages, visualizeAndRevealTheMessages} from './scenarioSteps';
 
 const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
@@ -13,24 +13,24 @@ test.describe('Save validation errors', () => {
       await page.goto('/');
 
       // Act
-      await visualizeAndRevealTheMessages(page, invalidSaveFixturePath);
+      await visualizeAndRevealTheMessages(page, invalidSaveFixturePath, 'display-errors');
 
       // Assert
-      await expect(page.getByText('Errors', {exact: true})).toBeVisible();
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
       await expect(page.getByTestId('display-errors-messages')).toContainText(errorLocationInTheSave);
     });
 
     test('should leave the save data unrendered', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByLabel('Save file:').setInputFiles(invalidSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(invalidSaveFixturePath);
 
       // Act
-      await page.getByRole('button', {name: 'Visualize'}).click();
+      await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByText('Errors', {exact: true})).toBeVisible();
-      await expect(page.getByRole('heading', {name: 'Loaded save:'})).toBeHidden();
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
+      await expect(page.getByTestId('loaded-save-title')).toBeHidden();
     });
   });
 
@@ -40,12 +40,12 @@ test.describe('Save validation errors', () => {
       await page.goto('/');
 
       // Act
-      await mergeAndRevealTheMessages(page, invalidSaveFixturePath, validSaveFixturePath);
+      await mergeAndRevealTheMessages(page, invalidSaveFixturePath, validSaveFixturePath, 'save-a-errors');
 
       // Assert
-      await expect(page.getByText('Save A is not a valid save file.')).toBeVisible();
-      await expect(page.getByRole('listitem')).toContainText(errorLocationInTheSave);
-      await expect(page.getByRole('link', {name: 'Download'})).toBeHidden();
+      await expect(page.getByTestId('save-a-errors-title')).toHaveText('Save A is not a valid save file.');
+      await expect(page.getByTestId('save-a-errors-messages')).toContainText(errorLocationInTheSave);
+      await expect(page.getByTestId('merged-save-download')).toBeHidden();
     });
   });
 });

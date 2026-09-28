@@ -18,7 +18,7 @@ export default function ValidationMessagesList(props: {
   return <>
     <p class={`text-color-${props.severity}`} data-testid={`${props.testId}-title`}>{props.title}</p>
     <details>
-      <summary data-testid={`${props.testId}-details-toggle`} onClick={() => setIsOpen((previous) => !previous)}>
+      <summary data-testid={`${props.testId}-details`} onClick={() => setIsOpen((previous) => !previous)}>
         {isOpen() ? hideValidationMessagesDetails : showValidationMessagesDetails}
       </summary>
       <ul data-testid={`${props.testId}-messages`}>

@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import uiManifest from '../package.json' with {type: 'json'};
 
 test.describe('Application version', () => {
