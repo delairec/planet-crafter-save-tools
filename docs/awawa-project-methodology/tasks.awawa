@@ -2564,7 +2564,8 @@ TASK FIX152
 	SPEC "entering the address of a page by hand while a save is loaded opens that page on the same"
 		+ "save, and a merge result not yet downloaded is still offered"
 	AFTER @TASK.FEAT137
-	WAVE @WAVE.10
+	AFTER @TASK.FEAT151
+	WAVE @WAVE.13
 	RATIONALE "The loaded save and the merge result live in memory only; surviving a reload needs"
 		+ "them kept in the browser storage, which the reload of a save loaded before also needs,"
 		+ "so the two tasks share that storage"
