@@ -90,6 +90,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'warning-surface'
   },
   {
+    description: 'the text of an information notification, inherited from the body, on its surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-information',
+    foreground: 'content',
+    background: 'information-surface'
+  },
+  {
     description: 'the severity pill of a limitation notification, on its own surface',
     file: 'packages/ui-save-manager/src/styles/layout.css',
     selector: '.notification-limitation .notification-severity-pill',
@@ -101,6 +108,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     file: 'packages/ui-save-manager/src/styles/layout.css',
     selector: '.notification-warning .notification-severity-pill',
     foreground: 'warning',
+    background: 'surface'
+  },
+  {
+    description: 'the severity pill of an information notification, on its own surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-information .notification-severity-pill',
+    foreground: 'information',
     background: 'surface'
   },
   {

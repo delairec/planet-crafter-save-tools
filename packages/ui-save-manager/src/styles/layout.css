@@ -119,6 +119,11 @@ summary::marker {
     background-color: var(--limitation-surface);
 }
 
+.notification-information {
+    border-left-color: var(--information);
+    background-color: var(--information-surface);
+}
+
 .notification-severity-pill {
     display: inline-flex;
     align-items: center;
@@ -136,6 +141,10 @@ summary::marker {
 
 .notification-limitation .notification-severity-pill {
     color: var(--limitation);
+}
+
+.notification-information .notification-severity-pill {
+    color: var(--information);
 }
 
 .inline-block {

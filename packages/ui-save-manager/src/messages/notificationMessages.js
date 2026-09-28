@@ -1,5 +1,6 @@
 /** @type {Record<import('core-mapping/presentation/viewModels/NotificationViewModel').NotificationSeverity, string>} */
 const notificationSeverityLabels = {
+  information: 'Information',
   limitation: 'Limitation',
   warning: 'Warning'
 };

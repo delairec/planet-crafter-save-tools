@@ -169,7 +169,7 @@ describe('EnergyLevelsPresenter', () => {
   });
 
   describe('When the save multiplies the consumption by a power consumption modifier other than 1', () => {
-    it('should name that modifier in a limitation, under the submerged machines one', () => {
+    it('should name that modifier in an information, under the submerged machines limitation', () => {
       // Arrange
       const presenter = new EnergyLevelsPresenter();
 
@@ -179,7 +179,7 @@ describe('EnergyLevelsPresenter', () => {
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
         {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'},
-        {severity: 'limitation', message: "Consumption applies the save's Power Consumption modifier: 150%"}
+        {severity: 'information', message: "Consumption applies the save's Power Consumption modifier: 150%"}
       ]);
     });
   });
@@ -196,7 +196,7 @@ describe('EnergyLevelsPresenter', () => {
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
         {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'},
         {severity: 'warning', message: 'Values of game release 2.004'},
-        {severity: 'limitation', message: "Consumption applies the save's Power Consumption modifier: 150%"}
+        {severity: 'information', message: "Consumption applies the save's Power Consumption modifier: 150%"}
       ]);
     });
   });

@@ -14,6 +14,12 @@ async function showAMergeResult(page: Page): Promise<void> {
   await expect(page.getByTestId('merge-success-message')).toBeVisible();
 }
 
+async function showTwoMergeResults(page: Page): Promise<void> {
+  await showAMergeResult(page);
+  await triggerSaveFileMerge(page, saveBFixturePath, saveAFixturePath);
+  await expect(page.getByTestId('merged-file-name')).toHaveText('other-player_valid-baseline_valid-merged.json');
+}
+
 test.describe('Merge two saves page accessibility', () => {
   test.describe('When the page opens', () => {
     test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
@@ -123,6 +129,37 @@ test.describe('Merge two saves page accessibility', () => {
       // Assert
       await expect(page.getByTestId('merged-save-download')).toHaveRole('link');
       await expect(page.getByTestId('merged-save-download')).toHaveAccessibleName('Download');
+    });
+  });
+
+  test.describe('When earlier merged saves are kept', () => {
+    test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
+      // Arrange
+      await showTwoMergeResults(page);
+
+      // Act
+      const {violations} = await createAWcag2Audit(page).analyze();
+
+      // Assert
+      expect(violations).toEqual(noViolation);
+    });
+
+    test('should title the earlier merged saves with a third level heading', async ({page}) => {
+      // Act
+      await showTwoMergeResults(page);
+
+      // Assert
+      await expect(page.getByTestId('earlier-merged-saves-title')).toHaveAccessibleName('Earlier merged saves');
+      await expect(page.getByTestId('earlier-merged-saves-title')).toMatchAriaSnapshot('- heading [level=3]');
+    });
+
+    test('should offer each earlier merged save as a download link', async ({page}) => {
+      // Act
+      await showTwoMergeResults(page);
+
+      // Assert
+      await expect(page.getByTestId('earlier-merged-save-download-0')).toHaveRole('link');
+      await expect(page.getByTestId('earlier-merged-save-download-0')).toHaveAccessibleName('Download');
     });
   });
 });

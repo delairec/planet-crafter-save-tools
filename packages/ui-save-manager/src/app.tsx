@@ -8,6 +8,7 @@ import SaveManagerMenu from "~/components/shell/SaveManagerMenu";
 import {preventDropOutsideAreas} from "~/lib/preventDropOutsideAreas";
 import {version} from "../package.json";
 import {LoadedSaveProvider} from "~/providers/LoadedSaveProvider.tsx";
+import {MergedSavesProvider} from "~/providers/MergedSavesProvider.tsx";
 
 const Layout: Component<RouteSectionProps> = (props) => {
   preventDropOutsideAreas();
@@ -36,9 +37,11 @@ const Layout: Component<RouteSectionProps> = (props) => {
 export default function App() {
   return (
     <Suspense>
-      <Router root={Layout}>
-        <FileRoutes/>
-      </Router>
+      <MergedSavesProvider>
+        <Router root={Layout}>
+          <FileRoutes/>
+        </Router>
+      </MergedSavesProvider>
     </Suspense>
   );
 }
