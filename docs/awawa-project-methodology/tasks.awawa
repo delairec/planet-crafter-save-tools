@@ -896,29 +896,6 @@ TASK CHORE112
 	SOURCE "Picked in the review of the accepted limitations, CHORE102"
 		REF @LIMITATION.TheFallowAuditReadsNoFileOfUiSaveManager
 
-TASK TEST113
-	TITLE "a test pins that the machine breakdown and the optimizer contributions share the"
-		+ "production of a planet"
-	STATUS implemented
-	SPEC "with several optimizers holding energy fuses and a producer reached by two of them, the"
-		+ "totalLevel of the production breakdown entries plus the contributions of the optimizers"
-		+ "equals the production of the planet"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should add the machine"
-			+ "levels and the optimizer contributions up to the production of the planet"
-	SPEC "on the same planet, the productionRatio shares of the breakdown entries and of the"
-		+ "optimizers sum to 1"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should share the"
-			+ "production of the planet between the machines and the optimizers"
-	WAVE @WAVE.9
-	DELIVERED_BY 177
-	RATIONALE "The draft took the base-only breakdown for a defect; it is the design. The boost is"
-		+ "counted once, in the optimizer contribution, so the shares tell whether a machine or an"
-		+ "optimizer yields more. No spec pins the two tables together: the existing specs check"
-		+ "each share alone. No behaviour changes: the production formula is confirmed in game"
-		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
-	SOURCE "Picked in the review of the accepted limitations, CHORE102"
-		REF @LIMITATION.TheMachineBreakdownIgnoresOptimizerBoost
-
 TASK CHORE105
 	TITLE "measure the unit test coverage and fail the CI when it drops"
 	STATUS implemented
@@ -1025,10 +1002,6 @@ TASK CHORE116
 	SPEC "the WAVE field of TASK is a reference to a WAVE entity, and every task carrying a wave"
 		+ "resolves to one"
 		IMPL "docs/_schema.awawa::FIELD WAVE @WAVE"
-	SPEC "wave 5 carries milestone skeo and branch integration/save-format-preserved"
-		IMPL "docs/awawa-project-methodology/waves.awawa::MILESTONE \"skeo\""
-		IMPL "docs/awawa-project-methodology/waves.awawa::BRANCH"
-			+ "\"integration/save-format-preserved\""
 	SPEC "wave 6 carries milestone save-edition and branch integration/save-edition"
 		IMPL "docs/awawa-project-methodology/waves.awawa::MILESTONE \"save-edition\""
 		IMPL "docs/awawa-project-methodology/waves.awawa::BRANCH \"integration/save-edition\""
@@ -1275,261 +1248,6 @@ TASK TEST123
 		PR 173
 	SOURCE "Owner rulings, refinement session of 2026-09-26"
 
-TASK FEAT124
-	TITLE "Price every power-drawing world object the public sources attest, placed in a reference"
-		+ "save or not"
-	STATUS implemented
-	SPEC "every machine of the group without a known energy level that a source prices gets its row"
-		+ "in the energy table, the source in the source field of that row, and moves to the"
-		+ "producing or the consuming group"
-		IMPL "packages/core-mapping/src/domain/energyLevels.json::TradePlatform1"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge %s, a world"
-			+ "object grouped as an energy consumer"
-	SPEC "a name no source prices stays in its group, and nothing records the search made for it"
-		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should neither produce nor"
-			+ "charge for the world objects without a known energy level"
-	SPEC "the rows already in the energy table are not checked again"
-		IMPL "docs/energy-levels.md::rows already in the table were not checked again"
-	SPEC "the sources searched include, beyond the wiki, the game data a community mod or save"
-		+ "editor reads from the game, each one recorded as a URL entity at the address read"
-		IMPL "docs/awawa-project-methodology/sources.awawa::URL CompanionAppGameDataV2103"
-	SPEC "docs/energy-levels.md records the date and the game release of the search, and the"
-		+ "limitation on machines without a known energy level lists only the placed machines no"
-		+ "source prices"
-		IMPL "docs/energy-levels.md::Game data search: 2026-09-25"
-		IMPL "docs/awawa-project-methodology/limitations.awawa::Five placed machines have no known"
-			+ "energy level"
-	WAVE @WAVE.9
-	DELIVERED_BY 178
-	RATIONALE "The cross-check of 2026-09-09 covered only the names placed in the six reference"
-		+ "saves, plus the three names of the Skeo update: 541 names stay without a known energy"
-		+ "level against 104 consumers, and a machine a player places that no reference save holds"
-		+ "is missing from the consumption without any warning. Only a price found is stored: a"
-		+ "source per name searched would weigh 541 records and say nothing the group does not. The"
-		+ "rows already stored are trusted; a gap between the consumption computed and the reading"
-		+ "in game of TEST125 is what reopens one"
-		REF @DATATABLE.EnergyLevels
-		REF @LIMITATION.ElevenPlacedMachinesHaveNoKnownEnergyLevel
-		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
-		REF @TASK.TEST125
-	SOURCE "Owner request of 2026-09-25 opening the wave that completes the power consumption: the"
-		+ "collection of power-drawing machines from the sources is finished before the formula is"
-		+ "measured"
-	SOURCE "Owner ruling of 2026-09-25 on the draft: no source stored per name searched, and no"
-		+ "check of the values already stored until a save shows a consumption gap"
-
-TASK TEST125
-	TITLE "Measure in game the consumption the HUD prints and write the consumption formula as"
-		+ "rules"
-	STATUS implemented
-	SPEC "a public fixture save built for the measurement holds, on one planet, one of each machine"
-		+ "the reading of 2026-09-25 found drawing no power, TreePlanter3, an optimizer holding"
-		+ "energy fuses and an optimizer holding a fuse of another kind"
-		IMPL "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000011, 'Optimizer2', -10,"
-			+ "OTHER_FUSE_OPTIMIZER_INVENTORY_ID)"
-	SPEC "the owner's readings and answers in game the consumption formula rests on are recorded as"
-		+ "SOURCE entries of its rules, citing the game release read when they concern one"
-		IMPL "docs/awawa-project-specification/rules.awawa::Owner's reading in game 2.103 of"
-			+ "2026-09-25"
-	SPEC "the consumption formula is written as RULE entities of domain game, each obligation"
-		+ "attested by the fixture and by a test pinning the value it states"
-		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
-			+ "APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge each"
-			+ "optimizer its base level, the fuses it holds changing no consumption"
-	SPEC "the hypothesis that PodUnderground and RocketAnimals2 draw no power, which the reading of"
-		+ "2026-09-25 confirmed on a private save, is turned into a rule attested by the fixture"
-		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
-			+ "AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption"
-	AFTER @TASK.FEAT124
-	WAVE @WAVE.9
-	DELIVERED_BY 188
-	RATIONALE "The production formula is confirmed by in-game readings; the consumption formula"
-		+ "never was, and no RULE states either. Consumption is today the sum of base levels:"
-		+ "modifierPowerConsumption is read from the save configuration but applied nowhere,"
-		+ "although a private reference save carries 0.0. A public fixture is the only save a"
-		+ "reading in game can attest in CI, the reference saves being private"
-		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
-		REF @HYPOTHESIS.PodUndergroundAndRocketAnimals2DrawNoPower
-		REF @SECTION.SaveConfiguration
-		REF @GAME_RELEASE.2.103
-	SOURCE "Owner request of 2026-09-25 opening the wave, and the owner's agreement the same day to"
-		+ "read the HUD in game on a fixture provided"
-	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save placing nearly every"
-		+ "machine: TreePlanter3 draws 85 kW, and ButterflyDisplayer1, FishDisplayer1,"
-		+ "FrogDisplayer1, Server1, CookingStation1, PodUnderground and RocketAnimals2 draw none;"
-		+ "the fixture keeps them to attest the rules in CI, the save being private"
-		PR 178
-		REF @GAME_RELEASE.2.103
-		REF @PROJECT.DNC
-	SOURCE "Owner's answer of 2026-09-26 on PR 188: modifierPowerConsumption multiplies every"
-		+ "consumption in every game release, at 0 included, so the fixture is no longer read at"
-		+ "several modifier values"
-		PR 188
-		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
-	SOURCE "Owner's answer of 2026-09-26 while promoting the task: the readings of 2026-09-25 cover"
-		+ "every relevant machine and fuses have never changed the consumption, so the fixture is"
-		+ "not read in game again, machines alone or with each optimizer"
-		PR 191
-		REF @RULE.APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
-
-TASK FEAT126
-	TITLE "The consumption of a planet applies the power consumption modifier of its save"
-	STATUS implemented
-	SPEC "the consumption, the available energy and the consumption breakdown of every planet"
-		+ "follow the effect of modifierPowerConsumption the rules of TEST125 state"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::consumptionLevels"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should multiply the unit"
-			+ "and total level of each consumption breakdown entry"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should leave the"
-			+ "production whole and subtract the multiplied consumption from it"
-	SPEC "a unit test pins the consumption computed on the measurement fixture at"
-		+ "modifierPowerConsumption 0, 1 and 1.5"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should charge the machines"
-			+ "of the energy consumption fixture, at modifier %p, %p kW"
-	SPEC "the Power card names the modifier its figures apply when it is not 1"
-		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should name"
-			+ "that modifier in an information, under the submerged machines limitation"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
-			+ "each={energyLevels().notifications}>"
-	AFTER @TASK.TEST125
-	WAVE @WAVE.9
-	DELIVERED_BY 193
-	RATIONALE "The save configuration presenter already shows the modifier, while PlanetEnergyGrid"
-		+ "sums base levels alone: on a save whose modifier is not 1 the displayed consumption and"
-		+ "available energy disagree with the HUD, whatever the completeness of the energy table"
-		REF @DECISION.APlanetEnergyGridIsAnAggregate
-		REF @PACKAGE.core_mapping
-	SOURCE "Owner request of 2026-09-25 opening the wave: find the right consumption formula"
-
-TASK FEAT127
-	TITLE "Price the machines whose consumption the reading in game established"
-	STATUS archived
-	ARCHIVED_ON 2026-09-26
-	DESC "archived undone: TreePlanter3, the only machine read at a price, already has its 85 kW"
-		+ "row, and the fixture consumption at modifier 1 is pinned by TEST125 in PR 188"
-	DESC "the declaration of machines drawing none is refused by"
-		+ "@DECISION.AZeroInTheGameDataExportIsNotAPrice; the seven machines read at none stay"
-		+ "without a known level, per"
-		+ "@RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption"
-		REF @DECISION.AZeroInTheGameDataExportIsNotAPrice
-		REF @RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
-	SPEC "each machine TEST125 read in game gets its row in the energy table, its source naming the"
-		+ "game release read, and moves to the producing or the consuming group"
-	SPEC "a machine the reading shows drawing no power is declared as drawing none, apart from the"
-		+ "machines whose level is unknown, among them ButterflyDisplayer1, FishDisplayer1,"
-		+ "FrogDisplayer1, Server1, CookingStation1, PodUnderground and RocketAnimals2"
-	SPEC "the consumption computed on the measurement fixture at modifier 1 equals the HUD reading"
-	AFTER @TASK.TEST125
-	WAVE @WAVE.9
-	RATIONALE "A reading in game is a source of its own, cited by its release, so a value the wiki"
-		+ "does not print can enter the table without being inferred. Declaring a machine that"
-		+ "draws nothing apart from the unknown ones is what the hypothesis-based decision could"
-		+ "not do without an observation"
-		REF @DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
-		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
-	SOURCE "Owner request of 2026-09-25 opening the wave: every machine that consumes energy is"
-		+ "taken into account"
-	SOURCE "Owner's reading in game 2.103 of 2026-09-25 on a private save: seven machines draw no"
-		+ "power, which archived the limitation on placed machines without a known energy level"
-		PR 178
-		REF @GAME_RELEASE.2.103
-
-TASK FEAT129
-	TITLE "Compute the energy of a save with the values of its game release"
-	STATUS implemented
-	SPEC "the releases table names 2.100, from which the draw of the T1 ore crusher changes"
-		IMPL "packages/shared-save-processing/gameReleases.json::2.100"
-	SPEC "the energy table holds the values of the last release; an earlier release whose values"
-		+ "differ from the next newer table, or from the energy table for the newest, has a table"
-		+ "of its own holding only the rows that differ and applying to that release and every"
-		+ "earlier one; bun run validate:tables refuses a row of such a table naming a world object"
-		+ "the energy table does not hold"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByRelease/2.004.json"
-		IMPL "scripts/validate-tables/schemas/energyLevelsOfRelease.schema.json::valueOfTable"
-		IMPL "scripts/validate-tables/validate-tables.ts::valueOfTable"
-		IMPL "scripts/validate-tables/validate-tables.spec.ts::should report the row whose value"
-			+ "that column does not hold"
-	SPEC "the energy of a displayed save takes the energy table, overwritten in cascade by every"
-		+ "table of a release no earlier than the one its declared version resolves to, from the"
-		+ "newest table to the oldest"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::selectRowsOfRelease"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::selectEnergyLevelsOfDeclaredVersion"
-		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts::selectEnergyLevelsOfDeclaredVersion"
-		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts::declaredVersion"
-	SPEC "the Power section names in a disclaimer, under the submerged machines one, the game"
-		+ "release whose values it applies when that release is earlier than the last of the"
-		+ "releases table, and names none for the last"
-		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
-			+ "each={energyLevels().notifications}>"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name that game release in a"
-			+ "notification, under the submerged machines one"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name no game release"
-	SPEC "OreBreaker1 draws 2.6 kW in a save of 1.618 or 2.004 and 0.6 kW from 2.100"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByRelease/2.004.json::OreBreaker1"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::OreBreaker1"
-			+ "drawing"
-	WAVE @WAVE.9
-	DELIVERED_BY 189
-	RATIONALE "The energy values of the game change between releases: v2.100 lowered the draw of"
-		+ "the T1 ore crusher, and the tool applies the 2.103 values to every save, so a save of"
-		+ "2.008 is computed with a draw its game never had. The save carries no energy value, so"
-		+ "its declared version is the only sign of which values apply; the releases table is"
-		+ "already where a declared version is resolved, and the decision that forbids reading a"
-		+ "save by its version alone rejected a list of versions of its own for each later check,"
-		+ "so 2.100 joins that table although it keeps the format of 2.004. No surface shows the"
-		+ "energy of a merged save: the save manager clears the display after a merge and no"
-		+ "command prints energy; loaded afterwards, the merged save is a displayed save declaring"
-		+ "the version of the save whose format it writes. The 2.6 kW docs/energy-levels.md calls"
-		+ "wrong was wrong for 2.103 only: the wiki printed it on 2025-10-11, before v2.100. A"
-		+ "search of 2026-09-25 read the 265 Steam announcements of the game and the revision"
-		+ "history of the 36 wiki pages carrying a machine infobox; within the supported releases"
-		+ "only the T1 ore crusher change is established, the fusion generator and T3 tree spreader"
-		+ "changes of 2022 predating 1.618 and the wiki edits to the drone station, the ecosystem"
-		+ "and the T3 ore extractor carrying no patch note that dates them; the toxic water"
-		+ "collector values the wiki changed on 2026-03-02 are contradicted by the reading in 2.103"
-		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
-		REF @DATATABLE.EnergyLevels
-		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
-		REF @URL.SteamPatchNotesV2100
-		REF @URL.SteamPatchNotesSkeoLive
-		REF @URL.WikiOreCrushersBeforeV2100
-		REF @URL.WikiToxicWaterCollectorsCreated
-		REF @URL.WikiToxicWaterCollectorsEdited
-	SOURCE "Owner request of 2026-09-25, after the patch notes showed an energy value changing"
-		+ "between releases: a displayed save shows the values of its version, a merge the values"
-		+ "of the version of the format it writes"
-	SOURCE "Owner ruling of 2026-09-26 on refinement: no energy for a merged save, 2.100 joins the"
-		+ "releases table, and the draft that was to establish the values of each release is folded"
-		+ "into this task"
-	SOURCE "Owner review of 2026-09-26: the values of an earlier release are a table of their own"
-		+ "overwriting the energy table rather than a fromRelease column, and the search is not"
-		+ "recorded in docs/energy-levels.md"
-		PR 189
-	SOURCE "Owner ruling of 2026-09-26, in chat, in reply to r4109337238: the release tables"
-		+ "cascade, each applying to its release and every earlier one, so 2.004 carries the only"
-		+ "table"
-		PR 189
-
-TASK FEAT128
-	TITLE "Warn that submerged machines may distort the available energy"
-	STATUS implemented
-	SPEC "the Power section prints once, under its title, the warning: Submerged machines may"
-		+ "distort the computed available energy"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should warn once, under the Power"
-			+ "title, that submerged machines may distort the computed available energy"
-	DELIVERED_BY 187
-	WAVE @WAVE.9
-	RATIONALE "The save cannot tell a submerged machine from one on dry ground, so the tool keeps"
-		+ "counting it; the warning tells the reader why the available energy may be higher in game"
-		+ "than displayed"
-		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
-	SOURCE "Owner request of 2026-09-25, after the in-game reading that found submerged machines on"
-		+ "Prime, to record the warning as a draft task in this pull request"
-		PR 178
-
 TASK CHORE130
 	TITLE "a changelog entry names the dependency a feature or a fix came from instead of listing"
 		+ "its commit"
@@ -1638,449 +1356,6 @@ TASK FEAT132
 		+ "in wave 11"
 		REF @URL.SaveManagerRedesignMockup
 
-TASK FEAT133
-	TITLE "Tell on the merge page that save A wins over save B where their common data conflicts"
-	STATUS implemented
-	DESC "ratified on the reviewed plan on 2026-09-27 without research; the wording of the notice"
-		+ "is established when the task starts"
-	SPEC "the merge page carries, above the form, a notice saying that save A prevails over save B"
-		+ "for the common data the two saves hold in conflict, and that swapping them changes which"
-		+ "one wins"
-		IMPL "packages/ui-save-manager/src/messages/mergeSectionMessages.js::mergeSectionSaveAPrecedenceNotice"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should show the precedence notice above"
-			+ "the save inputs"
-	SPEC "the notice is a static message of the UI package, rendered in the notification style with"
-		+ "the information severity the Notification component accepts; it qualifies no figure of a"
-		+ "section and enters no view model of core-mapping"
-		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::<Notification"
-			+ "severity=\"information\""
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should tell, in an information"
-			+ "notification, that save A prevails over save B"
-	SPEC "the token pair of the information severity is catalogued by the contrast guard"
-		IMPL "scripts/check-color-contrast.ts::.notification-information"
-			+ ".notification-severity-pill"
-	DELIVERED_BY 216
-	AFTER @TASK.FEAT137
-	AFTER @TASK.FEAT138
-	WAVE @WAVE.10
-	RATIONALE "Several merge rules resolve a conflict in favour of save A, the configuration among"
-		+ "them, and the swap control exists to choose which save is A; nothing on the page says"
-		+ "so, and the reader learns it from the result or never. A notification of core-mapping"
-		+ "qualifies the figures of a section and takes its severity from the presenter; this"
-		+ "notice qualifies a rule of the tool, so the owner ruled it a message of the UI, which"
-		+ "leaves the merge result view model the CLI reads untouched"
-		REF @RULE.SaveConfigurationComesFromSaveA
-		REF @RULE.TheSaveOnPrimeBecomesSaveA
-		REF @COMMAND.MergeSaves
-		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
-		REF @DECISION.TheModulesTheClisImportKeepTheirContract
-		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
-	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
-		+ "mockup of three proposals, to draft for memory; owner ruling of 2026-09-27: a static"
-		+ "message on the UI side, delivered in wave 10"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT134
-	TITLE "Lay out the save manager as a shell with a left menu and one page per section"
-	STATUS implemented
-	DELIVERED_BY 202
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; each page is a"
-		+ "route of its own, the loaded save held in a store above the routes"
-		REF @DECISION.EachPageOfTheSaveManagerIsARoute
-	SPEC "the page opens on the disclaimer block of today, unchanged, above the content of every"
-		+ "page, under the title of today and above the version footer of today"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::When a page of the save is opened"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::When the Overview page is opened"
-	SPEC "a left menu carries three groups in this order: Tools, Save, Players; Tools holds Merge"
-		+ "two saves and Load another save; Save holds Overview, Configuration, Power and"
-		+ "Terraformation; Players ends on a See more button that opens the Players page"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the Tools, Save and Players"
-			+ "groups of the menu in that order"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should offer the Tools group alone,"
-			+ "holding Merge two saves and Load save"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should offer the Overview, Configuration,"
-			+ "Power and Terraformation pages in the Save group"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should end the Players group on a See more"
-			+ "button"
-		IMPL "packages/ui-save-manager/e2e/display-players.e2e.ts::should display the players of"
-			+ "the save"
-	SPEC "the Configuration, Power, Terraformation and Players sections of today become one page"
-		+ "each, reached from the menu, rendered by the components and the view models they have"
-		+ "today, the Global progression section on the Configuration page; every page but the"
-		+ "Overview opens on a breadcrumb naming its group and its page"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show the global"
-			+ "progression first, the modifiers next and the unlocks last"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name the planet of its"
-			+ "placed world object Skeo and the power that object produces"
-		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should display the"
-			+ "terraformation levels of that file"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should open on a"
-			+ "breadcrumb naming the Save group and the Configuration page"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should open on a breadcrumb naming"
-			+ "the Save group and the Power page"
-		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should open on a"
-			+ "breadcrumb naming the Save group and the Terraformation page"
-		IMPL "packages/ui-save-manager/e2e/display-players.e2e.ts::should open on a breadcrumb"
-			+ "naming the Players group and the Players page"
-	SPEC "switching page keeps the loaded save: no file is read again, which the scenario proves by"
-		+ "holding the read of the file, and no page reload happens; the view model of a page is"
-		+ "computed once per loaded save"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should keep the loaded save without"
-			+ "reading its file again nor reloading the page"
-	SPEC "a page whose view model is loading shows the busy indicator of today, and a page whose"
-		+ "controller rejects shows the failure sentence of today"
-		IMPL "packages/ui-save-manager/src/routes/power.tsx::<EnergyLevelsSection"
-			+ "viewModel={loadedSave.viewModels.energyLevels}/>"
-		IMPL "packages/ui-save-manager/src/components/structure/SectionState.tsx::sectionLoadingErrorMessage"
-	SPEC "before a save is loaded, the Save and Players groups are absent and the Overview page"
-		+ "carries the file input, the drop zone, the Visualize button, the busy indicator and the"
-		+ "failure sentence of today; once loaded, the Overview page names the file and offers the"
-		+ "pages of the Save group"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should offer the display area,"
-			+ "its file input and its Visualize button"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should name the file and offer"
-			+ "the pages of the Save group"
-		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts::should show a busy indicator and"
-			+ "keep the button out of reach"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should report the failure and"
-			+ "leave the form usable"
-	SPEC "a rejected save shows its errors and its warnings on the Overview page, in the two lists"
-		+ "of today, and the Save and Players groups stay absent; a valid save with warnings shows"
-		+ "them on the Overview page above its content"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should list its errors and keep"
-			+ "the Save and Players groups out of the menu"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show its warnings above"
-			+ "the content of the page"
-	SPEC "the 404 route and its link back home stay; the security, version and drop scenarios of"
-		+ "today pass on the shell"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should say it was not found and lead back"
-			+ "home"
-		IMPL "packages/ui-save-manager/e2e/security.e2e.ts::openThePageOfTheMenu"
-		IMPL "packages/ui-save-manager/e2e/version.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts"
-	SPEC "the display scenarios are one file per page, so that the page tasks of the next waves"
-		+ "edit distinct files, and the anchors and the wording of the decisions naming a moved"
-		+ "scenario or module are rewritten"
-		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/display-players.e2e.ts"
-	WAVE @WAVE.10
-	RATIONALE "The save manager renders every section on one page, 41 000 pixels high and 213 cards"
-		+ "on the largest reference save, with the merge form above the data. The redesign keeps a"
-		+ "single client-side application and cuts the page into a shell and pages, proposal B"
-		+ "being the base and the left menu absorbing the Players and Tools groups of proposal C."
-		+ "This task moves the existing views into pages without changing what they read, so that"
-		+ "the transition of the presentation to one view model per view proceeds page by page in"
-		+ "the tasks that follow; the planet tabs come with the pages that are rebuilt, so as not"
-		+ "to build them twice on the section view models. The disclaimer block is the one element"
-		+ "of today's page the owner keeps as it is. Twenty-two scenarios click Visualize on one"
-		+ "page today and follow the sections to their pages; the coverage-gaps plugin exempts the"
-		+ "route files of today only, and the anchors guard refuses a decision naming a file that"
-		+ "moved"
-		REF @URL.SaveManagerRedesignMockup
-		REF @PACKAGE.ui_save_manager
-		REF @DECISION.AViewModelServesOneView
-		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
-		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
-		REF @DECISION.BothMessageListsShareOneRendering
-		REF @DECISION.UiSaveManagerHasOneUiErrorIdiom
-		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
-		REF @DECISION.ALoadingStateIsObservedByHoldingTheFileRead
-	SOURCE "Owner ruling of 2026-09-26 on the mockup: page F is the final version, its details"
-		+ "adjustable during the implementation, the disclaimer block unchanged; owner ruling of"
-		+ "2026-09-27: each wave carries a piece of the transition to one view model per view"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT135
-	TITLE "Feed the menu with the save identity and the players list, two zone view models"
-	STATUS implemented
-	DELIVERED_BY 205
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; whether the game"
-		+ "release shown is the declared version or the resolved release, what a save without a"
-		+ "version shows, and what a player whose planet is empty or legacy shows, are settled with"
-		+ "the owner when the task starts"
-	SPEC "the save identity zone of the menu shows the file name, the display name, the mode and"
-		+ "the game release of the loaded save, above the groups of the menu; a save without a"
-		+ "configuration entry shows the file name alone"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the save identity above the"
-			+ "groups"
-		IMPL "packages/core-mapping/src/application/LoadSaveIdentity.spec.ts::should present the"
-			+ "file name alone"
-	SPEC "the Players group of the menu lists the players of the save, each with the planet they"
-		+ "stand on and a Host badge for the host"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should list the players in the Players"
-			+ "group"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should list its players with the planet"
-			+ "they stand on"
-	SPEC "the save identity and the players menu are two view models of core-mapping, each built by"
-		+ "a presenter of its own from a use case of its own, reached by a controller of its own"
-		+ "that takes the validated text; the file name enters through the request"
-		IMPL "packages/core-mapping/src/controllers/LoadSaveIdentityController.ts::loadSaveIdentity(validatedContent:"
-			+ "string, fileName: string)"
-		IMPL "packages/core-mapping/src/controllers/LoadPlayersMenuController.ts::loadPlayersMenu(validatedContent:"
-			+ "string)"
-		IMPL "packages/core-mapping/src/presentation/SaveIdentityPresenter.ts::class"
-			+ "SaveIdentityPresenter"
-		IMPL "packages/core-mapping/src/presentation/PlayersMenuPresenter.ts::class"
-			+ "PlayersMenuPresenter"
-		IMPL "packages/core-mapping/src/application/requests/LoadSaveIdentityRequest.ts::fileName"
-	SPEC "the player entity carries the planet and the host flag of its entry"
-		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::readonly planetId: string"
-		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::readonly host: boolean"
-	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
-		IMPL "packages/cli-validate/cli/validate-cli.node.spec.js"
-	AFTER @TASK.FEAT134
-	WAVE @WAVE.10
-	RATIONALE "The menu needs two things no view model carries today: the identity of the save,"
-		+ "whose display name and mode sit in the configuration view model beside the modifiers,"
-		+ "and the planet and host of each player, which the player entity does not read. These two"
-		+ "zones are the first views cut by the new rule, small enough to set the pattern: one use"
-		+ "case, one presenter, one view model, one controller per view. The Overview page shows an"
-		+ "identity of its own, with the file size, composed by its own view model through the"
-		+ "helper this task writes"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
-		REF @DECISION.SectionControllersReceiveTheValidatedText
-		REF @SECTION.Players
-		REF @SECTION.SaveConfiguration
-		REF @PACKAGE.core_mapping
-		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner ruling of 2026-09-27: one view model per view, some use cases and controllers"
-		+ "created rather than migrated"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT136
-	TITLE "Give the Configuration page its view model, progression first and modifiers in tones"
-	STATUS implemented
-	DELIVERED_BY 218
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; which modifiers"
-		+ "are percentages and which are coefficients, and which unlock flags of the eleven the"
-		+ "entry carries are listed, are checked against the save format when the task starts"
-	SPEC "the Configuration page shows the global progression first, the modifiers next and the"
-		+ "unlock flags of the save last; a save without statistics shows the progression without"
-		+ "them, as today"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show the global"
-			+ "progression first, the modifiers next and the unlocks last"
-	SPEC "the global progression card spans the width of the page, above the modifiers and the"
-		+ "unlocks cards, which sit side by side at the same height; below the narrow breakpoint"
-		+ "the three cards stack"
-		IMPL "packages/ui-save-manager/src/styles/layout.css::.configuration-cards"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should lay the global"
-			+ "progression across the page, above the modifiers and the unlocks side by side at the"
-			+ "same height"
-		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.spec.ts::should"
-			+ "show the progression with no crafted object counted"
-	SPEC "the drone logistics is a badge, Paused in the danger tone and Running in the positive"
-		+ "tone; a modifier expressed as a percentage shows 100 % in the neutral tone, above 100 %"
-		+ "in the danger tone and below 100 % in the positive tone; the gauge drain and the"
-		+ "multiplayer factor are coefficients shown as ×n, ×1 in the neutral tone, below 1 in the"
-		+ "danger tone, above 1 in the positive tone; each unlock flag is listed with an on or off"
-		+ "pill"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show the drone"
-			+ "logistics as a Paused badge penalising the player"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show a percentage"
-			+ "modifier below 100 % as helping the player"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show a coefficient"
-			+ "modifier below 1 as penalising the player"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should list each unlock"
-			+ "flag of the save with an on or off pill"
-		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.spec.ts::should"
-			+ "show the drone logistics as a badge in the positive tone"
-	SPEC "whether a modifier is at the game's default, penalises or helps the player is a rule of"
-		+ "the domain, recorded as a RULE of the specification area; the presenter maps it to a"
-		+ "tone, and a tone is also carried by a text or an accessible name, never by colour alone"
-		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.ts"
-		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.ts::toneByModifierEffect"
-		IMPL "packages/ui-save-manager/src/components/structure/ToneBadge.tsx::visually-hidden"
-		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::should read the tone"
-			+ "of a modifier apart from its value"
-	SPEC "the Configuration page reads one view model composed of three zones, progression,"
-		+ "modifiers and unlocks, built by one presenter from one use case that reads the"
-		+ "configuration, the global progression and the statistics; the configuration value object"
-		+ "carries the unlock flags"
-		IMPL "packages/core-mapping/src/application/LoadConfigurationPage.ts"
-		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.ts"
-		IMPL "packages/core-mapping/src/presentation/viewModels/ConfigurationPageViewModel.ts"
-		IMPL "packages/core-mapping/src/domain/valueObjects/SaveConfigurationValueObject.ts::readonly"
-			+ "unlocks"
-		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::ModifiersCard"
-	SPEC "the Configuration and Global progression section controllers, presenters and view models"
-		+ "of today are retired, and every module the task leaves without an importer is deleted in"
-		+ "the same pull request"
-		IMPL "packages/core-mapping/src/controllers/LoadConfigurationPageController.ts"
-		IMPL "packages/ui-save-manager/src/providers/LoadedSaveProvider.tsx::configurationPage"
-	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-		IMPL "packages/cli-merge"
-		IMPL "packages/cli-validate"
-	SPEC "the tone badge and the on or off pill are presentation pieces of the package, their"
-		+ "colours taken from the tokens of its palette in both themes and every token pair they"
-		+ "compose catalogued by the contrast guard"
-		IMPL "packages/ui-save-manager/src/components/structure/ToneBadge.tsx"
-		IMPL "packages/ui-save-manager/src/components/structure/OnOffPill.tsx"
-		IMPL "packages/ui-save-manager/src/styles/colors.css::--danger-on-surface"
-		IMPL "scripts/check-color-contrast.ts::selector: '.tone-badge-danger'"
-		IMPL "scripts/check-color-contrast.ts::selector: '.on-off-pill-on'"
-	AFTER @TASK.FEAT135
-	AFTER @TASK.FEAT138
-	WAVE @WAVE.10
-	RATIONALE "The Configuration page is the first page cut by the new rule: two sections of today"
-		+ "join into one page view model, which is the shape the pages of the next waves repeat."
-		+ "Today every modifier is formatted as a percentage and read as a bare number. The owner"
-		+ "ruled the tones on the mockup: the game's default is neutral, and the direction that"
-		+ "penalises the player is the danger tone, above 100 % for a percentage and below 1 for a"
-		+ "coefficient; that direction is a fact about the game, so it is a domain rule the"
-		+ "presenter renders. The unlock flags are in the configuration entry and shown nowhere"
-		+ "today. The task follows the menu task because both extend the sections reader and its"
-		+ "fake"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-		REF @DECISION.UserTextLivesInCoreMappingPresentation
-		REF @SECTION.SaveConfiguration
-		REF @SECTION.GlobalMetadata
-		REF @SECTION.Statistics
-		REF @PACKAGE.core_mapping
-		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner review of 2026-09-26 of the first working version: global progression first,"
-		+ "colours on the modifiers with 100 % and 1 neutral, drone logistics as a badge"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT137
-	TITLE "Move the merge of two saves and the loading of another save under the Tools group"
-	STATUS implemented
-	DELIVERED_BY 211
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; what Load another"
-		+ "save does to an unsaved merge result is settled with the owner when the task starts"
-	SPEC "the Merge two saves page carries the merge form of today, save A and save B drop zones,"
-		+ "the swap control, the legacy format box and the Merge button, and shows the result, the"
-		+ "download and the warnings of a merge where the form is"
-		IMPL "packages/ui-save-manager/src/routes/merge.tsx::<MergeSection"
-			+ "onMergeStarted={mergedSaves.startMerge}"
-			+ "onMergeResult={mergedSaves.keepMergeResult}/>"
-		IMPL "packages/ui-save-manager/src/routes/merge.tsx::<MergeResultSection"
-			+ "result={mergedSaves.lastMergeResult}"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should lead to the merge form"
-		IMPL "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::Merge two saves page"
-			+ "accessibility"
-	SPEC "a merge leaves the loaded save in memory untouched: the scenario of today that expects a"
-		+ "merge to leave no save to visualize is rewritten to that, and the scenario aligning the"
-		+ "labels of the merge form with the file input of the display is retired, the two forms no"
-		+ "longer sharing a page"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should leave the loaded save in the"
-			+ "Overview page"
-	SPEC "Load another save lets the user pick or drop a save; the new save replaces the loaded one"
-		+ "and the Overview page opens on it"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Overview page on the"
-			+ "new save"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should display that file as if it had been"
-			+ "picked"
-		IMPL "packages/ui-save-manager/e2e/accessibility/load-save.e2e.ts::Load another save page"
-			+ "accessibility"
-	SPEC "Load save and Load another save are one page at /load-save, named by whether a save is"
-		+ "loaded, its menu entry marked current; the root address opens it, a loaded save opens"
-		+ "the Overview page at /overview, and picking a file there leaves the loaded save in place"
-		+ "until a new save validates"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should mark Load save as the current"
-			+ "page of the menu"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Load save page"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Overview page at its"
-			+ "own address"
-		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should keep the loaded save"
-		IMPL "packages/ui-save-manager/src/components/LoadSaveResultSection.tsx::<ValidationMessagesList"
-			+ "title={displayRouteErrorsTitle}"
-	SPEC "the merge page reads the merge result view model of today, unchanged; the drop, merge and"
-		+ "loading-state scenarios of today pass on the new pages"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::createSignal<MergeResultViewModel"
-			+ "| null>(null)"
-		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
-		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
-	AFTER @TASK.FEAT135
-	WAVE @WAVE.10
-	RATIONALE "The merge form sits above the visualization today and is the first thing the page"
-		+ "shows; on the mockup it is a tool, reached from the menu, and the display flow opens on"
-		+ "the data. The merge controller and its view model serve cli-merge as well and do not"
-		+ "move: the page is a new home for the same result. A merge clears the displayed save"
-		+ "today because both share one page; on a page of its own it has no reason to. The drop"
-		+ "behaviours outside the areas, the alphabetical order of two dropped files and the swap"
-		+ "tooltip are scenarios the move must keep green. The task follows the menu task because"
-		+ "both edit the menu and the load hook"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.TheModulesTheClisImportKeepTheirContract
-		REF @PACKAGE.ui_save_manager
-		REF @DECISION.AUiScenarioAssertsWhatTheScreenShows
-	SOURCE "Owner ruling of 2026-09-26 on the mockup: the Tools group comes first in the menu and"
-		+ "holds the merge and the loading of another save"
-		REF @URL.SaveManagerRedesignMockup
-
-TASK FEAT138
-	TITLE "Give the save manager the presentation pieces the pages of the navigation wave render"
-	STATUS implemented
-	DELIVERED_BY 210
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the list of"
-		+ "pieces is closed when the task starts against the pages of wave 10"
-	SPEC "a page opens on a section title; a card has a header holding its title and a summary"
-		+ "figure, and a body; a notification is a line whose severity is named by a pill before"
-		+ "the message; the Host badge names the host"
-		IMPL "packages/ui-save-manager/src/components/structure/SectionTitle.tsx"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should open on a section"
-			+ "title naming the Configuration page"
-		IMPL "packages/ui-save-manager/src/components/structure/Card.tsx::card-summary"
-		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::getByTestId('modifiers-summary')"
-		IMPL "packages/ui-save-manager/src/components/structure/Notification.tsx::notification-severity-pill"
-		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name the severity of that"
-			+ "notification a limitation"
-		IMPL "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::should read the severity of"
-			+ "its notification apart from the message"
-		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::should title the"
-			+ "modifiers with a fourth level heading"
-		IMPL "packages/ui-save-manager/src/components/players/HostBadge.tsx"
-		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::NikowaHostToxicity"
-	SPEC "every piece takes its colours from the tokens of the package's palette, in the light and"
-		+ "in the dark theme, and every token pair it composes is catalogued by the contrast guard"
-		IMPL "packages/ui-save-manager/src/styles/colors.css"
-		IMPL "scripts/check-color-contrast.ts::selector: '.card-summary'"
-		IMPL "scripts/check-color-contrast.ts::selector: '.notification-limitation"
-			+ ".notification-severity-pill'"
-		IMPL "scripts/check-color-contrast.ts::selector: '.notification-warning"
-			+ ".notification-severity-pill'"
-		IMPL "scripts/check-color-contrast.ts::MINIMUM_CONTRAST_RATIO"
-	SPEC "a piece is delivered with the first page that renders it: the section title and the card"
-		+ "come with the Configuration page, the notification pill with the Power page; the tone"
-		+ "badge and the on or off pill come with the modifiers and the unlock flags of the"
-		+ "Configuration page, the figure tile, the status pill, the tab strip and the bar cell"
-		+ "with the Power and Terraformation pages, the selector with the chart"
-		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
-		IMPL "packages/ui-save-manager/src/components/configuration/ModifiersCard.tsx::<Card"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
-	AFTER @TASK.FEAT134
-	WAVE @WAVE.10
-	RATIONALE "The pages of the mockup share a small vocabulary of pieces, and building each once"
-		+ "is what keeps the redesigned pages consistent; but the quality gate refuses a file no"
-		+ "module imports, so a piece lands with its first consumer and this task carries only"
-		+ "those the Configuration page and the shell render. The pieces wear the neon theme of the"
-		+ "current application as page F shows: section titles in neon pink, underlined; card"
-		+ "headers as neon-cyan pills with inverted text; cards with a neon-purple border; the"
-		+ "active menu item, the primary buttons and the Host badge on a neon fill. A scenario"
-		+ "cannot assert a colour, so the palette is recorded here and proven by the tokens of"
-		+ "colors.css and the contrast catalog; the scenarios of the pages assert the text each"
-		+ "piece shows, reached by its test id, and the accessibility tests of the Configuration"
-		+ "page the level of its headings"
-		REF @URL.SaveManagerRedesignMockup
-		REF @PACKAGE.ui_save_manager
-		REF @DECISION.UiSaveManagerHasNoComponentTestLayer
-		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
-		REF @DECISION.AUiTestDoesNotBreakOnAChangeOfTheDomStructure
-		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
-		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
-		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
-	SOURCE "Owner review of 2026-09-26 of the first working version: titles and selector not"
-		+ "visible enough; owner choice of 2026-09-26 of page F, the neon colours"
-		REF @URL.SaveManagerRedesignMockup
-
 TASK FEAT139
 	TITLE "Give the Power page its view model: figures with a status, optimizers first, tables"
 	STATUS todo
@@ -2110,7 +1385,6 @@ TASK FEAT139
 		+ "left without an importer is deleted, and the anchors and the wording of the decisions"
 		+ "naming them are rewritten"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.FEAT136
 	WAVE @WAVE.11
 	RATIONALE "The Power section is the largest of the page on a real save, one card per machine"
 		+ "type and fifty types on Prime; tables make it scannable and the optimizers, always fewer"
@@ -2197,7 +1471,6 @@ TASK FEAT141
 	SPEC "the Terraformation section controller, presenter and view model of today are retired and"
 		+ "every module left without an importer is deleted"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.FEAT136
 	WAVE @WAVE.11
 	RATIONALE "The section shows today six cards of key and value pairs; the mockup keeps the two"
 		+ "groups of values and adds a bar per row so the reader sees which value carries the"
@@ -2312,8 +1585,6 @@ TASK FEAT144
 		+ "retired, every module left without an importer is deleted, and the anchors and the"
 		+ "wording of the decisions naming them are rewritten"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.FEAT135
-	AFTER @TASK.FEAT138
 	WAVE @WAVE.12
 	RATIONALE "The Players section lists today the equipment and the inventory item by item, in"
 		+ "save order, without quantities, and shows no gauge. The owner asked for more graphics on"
@@ -2346,7 +1617,6 @@ TASK FEAT145
 		+ "core-mapping and from the UI, and the coverage gates of the repository stay green"
 	SPEC "the controllers and view models the CLIs import are unchanged, and the specs of cli-merge"
 		+ "and cli-validate pass unchanged"
-	AFTER @TASK.FEAT136
 	AFTER @TASK.FEAT139
 	AFTER @TASK.FEAT141
 	AFTER @TASK.FEAT142
@@ -2521,187 +1791,6 @@ TASK TEST148
 		+ "one accessibility.e2e.ts split by page later, delivered on master outside any wave"
 	DELIVERED_BY 213
 
-TASK FEAT149
-	TITLE "Keep the last five merged saves across the pages of the save manager"
-	STATUS implemented
-	DELIVERED_BY 215
-	SPEC "leaving the Merge two saves page for any other page, Load save included, and coming back"
-		+ "shows the last merge result again, its merged save still downloadable"
-		IMPL "packages/ui-save-manager/src/app.tsx::<MergedSavesProvider>"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should show the last merge result again"
-			+ "with its merged save still downloadable"
-	SPEC "the last five merges that produced a file stay downloadable until the reader removes one"
-		+ "from the home page; a sixth drops the oldest, and a merge refused by validation or"
-		+ "failed takes no place and drops no file"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::KEPT_MERGED_SAVES_LIMIT"
-			+ "= 5"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::if (result.status ==="
-			+ "'success')"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should keep the five last merged saves"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should keep the five merged saves, none"
-			+ "dropped"
-	SPEC "the Merge two saves page shows the last merge result in full as today, and below it the"
-		+ "earlier merged saves kept, newest first, each by its file name and download link"
-		IMPL "packages/ui-save-manager/src/components/EarlierMergedSavesSection.tsx"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should list the earlier merged saves below"
-			+ "the last merge result"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should offer each earlier merged save for"
-			+ "download under its name"
-	SPEC "while a merge runs, only the last merge result clears; the merged saves kept stay listed"
-		+ "and downloadable"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::startMerge: () =>"
-			+ "setLastMergeResult(null)"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should clear the last merge result and"
-			+ "keep the merged save listed and downloadable"
-	AFTER @TASK.FEAT137
-	WAVE @WAVE.10
-	RATIONALE "The Merge two saves page holds its result in a signal of its own, lost as soon as"
-		+ "the reader opens another page: a merged save not yet downloaded is gone. The owner asked"
-		+ "for a dedicated provider above the routes, beside the one that holds the loaded save,"
-		+ "keeping the merge result view model unchanged, since cli-merge reads it too. Only files"
-		+ "are kept, a failure being read once and a merge of the same two saves producing the same"
-		+ "file name; the store lives in memory, surviving a reload being FIX152's"
-		REF @TASK.FEAT137
-		REF @DECISION.TheModulesTheClisImportKeepTheirContract
-		REF @TASK.FIX152
-	SOURCE "Owner review of pull request 211: a dedicated provider, the merge result kept across"
-		+ "pages, the last five produced files stacked"
-		PR 211
-
-TASK FEAT150
-	TITLE "Give the save manager a home page at the root address"
-	STATUS implemented
-	DELIVERED_BY 217
-	SPEC "the root address opens a home page of its own, whether a save is loaded or not; it shows"
-		+ "no left menu and keeps the disclaimer the other pages show"
-		IMPL "packages/ui-save-manager/src/app.tsx::<Show when={!isHomePage()}>"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the home page without the menu"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should keep the disclaimers of the other"
-			+ "pages"
-	SPEC "the home page shows a received message in the look of the Message screen of the game,"
-		+ "from SENTINEL CORP: the title Message, an envelope in a hexagon, and a frame with corner"
-		+ "brackets over a grid on the plain page background, without a close button"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-message\""
-		IMPL "packages/ui-save-manager/src/styles/home.css::.home-message-frame::before"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should say what the tool does in a message"
-			+ "from SENTINEL CORP"
-		IMPL "packages/ui-save-manager/e2e/accessibility/home.e2e.ts::Home page accessibility"
-	SPEC "the message welcomes the prisoner and names what the tool does, evaluating the"
-		+ "progression with computed statistics, merging two saves and validating a save, the name"
-		+ "of the tool left to the header of the page; it closes on Keep up the good work! in a"
-		+ "paragraph of its own, after the button links and the card, and is signed SENTINEL CORP"
-		+ "at its bottom right, where the game prints a year"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-page-description\""
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-message-closing\""
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-message-sender\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should say what the tool does in a message"
-			+ "from SENTINEL CORP"
-	SPEC "the frame of the message holds two button links, Merge two saves and Load save, named"
-		+ "Load another save once a save is loaded, each opening its page"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-merge-two-saves-page-link\""
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-load-save-page-link\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should name the Load save page Load another"
-			+ "save"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Merge two saves page"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Load save page"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should hold the button links and the card"
-			+ "of the loaded save in the message"
-	SPEC "once a save is loaded, the frame of the message also holds a card of the loaded save"
-		+ "carrying the save identity of the menu, its file name, display name, mode and game"
-		+ "release, and a neon pink button link to its Overview page"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"home-loaded-save\""
-		IMPL "packages/ui-save-manager/src/styles/buttons.css::.button-link-neon-pink"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-overview-link\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should show the card of the loaded save"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Overview page of the loaded"
-			+ "save from its card"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should hold the button links and the card"
-			+ "of the loaded save in the message"
-	SPEC "the card of the loaded save carries a cross named Unload save that forgets the loaded"
-		+ "save: the home page shows no card and names Load save again, and the Overview page opens"
-		+ "the Load save page; the merged saves attached to the message stay"
-		IMPL "packages/ui-save-manager/src/providers/LoadedSaveProvider.tsx::unloadSave: () =>"
-			+ "setValidatedSave(null)"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"unload-save\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should name its cross Unload save"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should forget the save and show the home"
-			+ "page of no save"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should leave no save to open on the"
-			+ "Overview page"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should keep the merged saves attached to"
-			+ "the message"
-	SPEC "the merged saves kept are attached at the bottom of the frame of the message, below its"
-		+ "signature, listed small like the attachments of a message, newest first, each by its"
-		+ "file name and offered for download under it; no attachment shows while no merged save is"
-		+ "kept"
-		IMPL "packages/ui-save-manager/src/components/HomeMessageAttachments.tsx"
-		IMPL "packages/ui-save-manager/src/styles/home.css::.home-message-attachments"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should attach no merged save to the message"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should attach the merged saves to the"
-			+ "message, newest first"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should offer each attached merged save for"
-			+ "download under its name"
-	SPEC "each attached merged save carries its own cross, named Remove followed by its file name,"
-		+ "which removes it from the merged saves kept, on the Merge two saves page too, and"
-		+ "releases its download; no attachment shows once the last one is removed"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::const"
-			+ "removeMergedSave"
-		IMPL "packages/ui-save-manager/src/messages/shellMessages.js::`Remove ${fileName}`"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should name the cross of each attached"
-			+ "merged save after it"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should detach it from the message"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should no longer list it on the Merge two"
-			+ "saves page, the last merge result kept"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should leave no attachment in the message"
-	SPEC "removing the merged save of the last merge result also clears that result from the Merge"
-		+ "two saves page, the earlier merged saves staying listed"
-		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::if (lastMergedSave()"
-			+ "=== removedMergedSave)"
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should clear the last merge result of the"
-			+ "Merge two saves page, the earlier merged saves kept"
-	SPEC "wider than a phone, the frame of the message is at most as wide as the tablet breakpoint,"
-		+ "768px, and centred on the page, the envelope at its left"
-		IMPL "packages/ui-save-manager/src/styles/home.css::minmax(0, var(--breakpoint-tablet))"
-	SPEC "wider than a phone, the frame of the message is at least 21rem high, one and a half"
-		+ "sidebar widths"
-		IMPL "packages/ui-save-manager/src/styles/home.css::min-height: calc(var(--sidebar-width) *"
-			+ "1.5)"
-	SPEC "the message is centred vertically in the height left below the header and the"
-		+ "disclaimers, and starts at the top of that space, scrolling with the page, when it is"
-		+ "taller"
-		IMPL "packages/ui-save-manager/src/styles/home.css::justify-content: safe center"
-		IMPL "packages/ui-save-manager/src/styles/shell/shell.css::.shell-without-menu .shell-page"
-	SPEC "the button links and the card of the loaded save form one group, centred across the frame"
-		+ "of the message, with 24px, the space-xl token, above and below it"
-		IMPL "packages/ui-save-manager/src/styles/home.css::.home-message-actions"
-		IMPL "packages/ui-save-manager/src/styles/home.css::padding: var(--space-xl) 0"
-	SPEC "every page shows the version of the application alone in its bottom-right corner, in"
-		+ "small light text, as v followed by the version, the way the game shows its own"
-		IMPL "packages/ui-save-manager/src/app.tsx::class=\"application-version\""
-		IMPL "packages/ui-save-manager/src/styles/shell/shell.css::.application-version"
-		IMPL "packages/ui-save-manager/e2e/version.e2e.ts::should display the version of the web"
-			+ "application in the footer"
-	SPEC "the title of the application in the header of every page links to the home page"
-		IMPL "packages/ui-save-manager/src/app.tsx::data-testid=\"application-title-link\""
-		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::When the title of the application is"
-			+ "clicked on another page"
-	AFTER @TASK.FEAT137
-	WAVE @WAVE.10
-	RATIONALE "The root address redirects to the Load save page until this task lands, a ruling the"
-		+ "pull request ends; the scenarios that open the root address to load a save then open the"
-		+ "Load save page by its own address. The home page stands apart from the pages the menu"
-		+ "lists, so it hides the menu rather than marking an entry of it, and the application"
-		+ "title is the way back to it. The card reuses the save identity view model the menu"
-		+ "already reads, so the task adds no view model. Removing the merged save of the last"
-		+ "merge result clears that result too, the owner's ruling on pull request 217: the Merge"
-		+ "two saves page would otherwise offer a download already released"
-		REF @DECISION.OneLoadSavePageLoadsTheFirstAndEveryNextSave
-		REF @TASK.FEAT135
-	SOURCE "Owner review of pull request 211, then the owner's ruling of 2026-09-28 when the task"
-		+ "was refined: no left menu, the disclaimer unchanged, the save identity card with a link"
-		+ "to Overview, the application title as the way back"
-		PR 211
-
 TASK FEAT151
 	TITLE "Offer on the Load save page to load again a save loaded before"
 	STATUS todo
@@ -2717,7 +1806,6 @@ TASK FEAT151
 		+ "loads it again and a button that removes it from the browser"
 	SPEC "a save loaded again goes through the validation of a picked file, its warnings and errors"
 		+ "shown the same way, and opens the Overview page once it validates"
-	AFTER @TASK.FEAT137
 	WAVE @WAVE.13
 	RATIONALE "The save manager holds the loaded save in memory only, so a reader coming back to a"
 		+ "save picks its file again. A save weighs about 2 MB, beyond what the browser's key-value"
@@ -2744,14 +1832,12 @@ TASK FIX152
 		+ "in the address bar reloads the application and drops what is held in memory"
 	SPEC "entering the address of a page by hand while a save is loaded opens that page on the same"
 		+ "save, and a merge result not yet downloaded is still offered"
-	AFTER @TASK.FEAT137
 	AFTER @TASK.FEAT151
 	WAVE @WAVE.13
 	RATIONALE "The loaded save and the merge result live in memory only; surviving a reload needs"
 		+ "them kept in the browser storage, which the reload of a save loaded before also needs,"
 		+ "so the two tasks share that storage"
 		REF @TASK.FEAT151
-		REF @TASK.FEAT149
 	SOURCE "Owner review of pull request 211: fixed in this pull request if small, a task of wave"
 		+ "10 otherwise; keeping the save across a reload needs a browser storage the pull request"
 		+ "does not have"
@@ -2800,3 +1886,222 @@ TASK CHORE155
 		+ "corpus it departs from"
 		IMPL "docs/_schema.awawa::FIELD DEROGATES"
 	DELIVERED_BY 221
+
+TASK DOCS156
+	TITLE "Plan the wave fixing the Clean Architecture violations"
+	STATUS implemented
+	SPEC "wave 14 carries the milestone fix-clean-architecture-violations and the branch"
+		+ "integration/fix-clean-architecture-violations, and names the audit it fixes"
+		IMPL "docs/awawa-project-methodology/waves.awawa::WAVE 14"
+	SPEC "each of the fifteen violations of the audit is covered by a draft task of wave 14"
+		+ "carrying a priority, and so are the three guards and the replacement of the two"
+		+ "decisions the audit names"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::fixes violations 1, 2 and 9 of the audit"
+	SPEC "the delivered waves 5, 8, 9 and 10 are deleted from the corpus with the tasks they"
+		+ "comprise, and nothing in the corpus points at them"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::a delivered wave is deleted from the"
+	SPEC "AGENTS.md says a wave is prepared on master and implemented on its integration branch"
+		IMPL "AGENTS.md::Une wave se prépare sur `master`"
+	DELIVERED_BY 222
+	PRIORITY critical
+	DESC "plan pull request of wave 14, stacked on the schema pull request adding PRIORITY and"
+		+ "DEROGATES"
+	SOURCE "Owner rulings of 2026-09-28 on the Clean Architecture audit, on the purge of the"
+		+ "delivered waves and on the Branches section of AGENTS.md"
+		PR 222
+
+TASK CHORE157
+	TITLE "chore(guards): refuse any domain import in presentation files and presenter ports"
+	STATUS draft
+	SPEC "bun run check:presentation fails on a file of a presentation directory, or a file"
+		+ "application/ports/*Presenter* of a core- package, that imports a module under domain/,"
+		+ "whatever its subdirectory, import type included"
+	SPEC "the files that import domain/ when the task lands are listed in an allow-list the guard"
+		+ "reads: a listed file is not reported, and a listed file that no longer imports domain/"
+		+ "fails the guard until its entry is removed, so the list only shrinks"
+	SPEC "bun run guards passes on the code as it stands"
+	WAVE @WAVE.14
+	PRIORITY critical
+	DESC "guard of violation 1 of the audit, extending scripts/check-presentation-entities.ts"
+		+ "beyond domain/entities"
+	RATIONALE "The guard lands first so that no task of the wave, and no other pull request, adds a"
+		+ "domain import the output boundary task then has to remove; the allow-list is the measure"
+		+ "of what is left, and the output boundary task empties it"
+		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+
+TASK CHORE158
+	TITLE "chore(guards): refuse the wire abbreviations of the save format under domain"
+	STATUS draft
+	SPEC "a guard run by bun run guards fails on a file under domain/ of a core- package that uses"
+		+ "gId, liId, woIds, siIds or linkedWo as an identifier, a property name or a property key"
+	SPEC "the files that use one of them when the task lands are listed in an allow-list the guard"
+		+ "reads: a listed file is not reported, and a listed file that no longer uses any fails"
+		+ "the guard until its entry is removed, so the list only shrinks"
+	SPEC "bun run guards passes on the code as it stands"
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "guard of violation 5 of the audit"
+	RATIONALE "Placed first for the same reason as the presentation guard: the decoding task"
+		+ "empties the allow-list, and nothing adds an abbreviation in the meantime"
+
+TASK REFACTOR159
+	TITLE "refactor(core-mapping): hand the presenters application responses, never a domain type"
+	STATUS draft
+	SPEC "no presenter port and no presentation file of core-mapping imports a module under"
+		+ "domain/: each use case hands its presenter an application response, one per outcome, or"
+		+ "primitives"
+	SPEC "the allow-list of check:presentation is empty and removed, the guard running with no"
+		+ "exemption"
+	SPEC "every value object left under domain/valueObjects holds a business invariant or a"
+		+ "behaviour; PlayerMenuEntry, PlayerSummary, SaveIdentity, TerraformationLevelSummary and"
+		+ "the other projections named after a view or a port are application responses or view"
+		+ "models"
+	SPEC "a save loaded with unreadable lines reaches the presenter through an outcome of its own,"
+		+ "distinct from a save loaded with warnings only, and is never rendered valid"
+	SPEC "APresenterReceivesAValueObjectNeverAnEntity is rewritten in place to the new boundary or"
+		+ "archived; a departure from an instructions rule the rewritten decision keeps is named in"
+		+ "its DEROGATES"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.CHORE157
+	WAVE @WAVE.14
+	PRIORITY critical
+	DESC "fixes violations 1, 2 and 9 of the audit"
+	RATIONALE "The three violations are one boundary: the value objects of violation 2 are the"
+		+ "types that cross it in violation 1, and the load outcome of violation 9 is one of the"
+		+ "responses that replace them. Every later task of the wave that adds an outcome writes it"
+		+ "as a response, so this one lands first"
+		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+
+TASK REFACTOR160
+	TITLE "refactor(core-mapping): call the domain rules from the use cases, not from the adapters"
+	STATUS draft
+	SPEC "no module under infrastructure/ of core-mapping imports domain/rules; validateUniqueHost"
+		+ "and resolvePlanetName are called by the use cases"
+	SPEC "SaveValidatorPort reports technical failures only: a save with more than one host reaches"
+		+ "its presenter through an outcome of its own, never as a ValidationIssue coded"
+		+ "UNIQUE_HOST"
+	SPEC "cli-validate and the save manager still report a save with more than one host, and the"
+		+ "specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.REFACTOR159
+	WAVE @WAVE.14
+	PRIORITY critical
+	DESC "fixes violation 3 of the audit"
+
+TASK REFACTOR161
+	TITLE "refactor(core-mapping): read the save sections through a port, the composition root only"
+		+ "instantiating"
+	STATUS draft
+	SPEC "the composition root of core-mapping instantiates and wires, and parses no save content"
+	SPEC "the sections of a save come from a reader port or a loading use case that returns the"
+		+ "parse errors with them; no error of the parser is dropped on the way to a presenter"
+	SPEC "no application port returns a bag cut for one use case: getEnergyLevelsRawData and"
+		+ "EnergyLevelsRawDataValueObject are gone, and the energy use case assembles its data from"
+		+ "port methods of one concept each"
+	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place or archived, its rejection of"
+		+ "assembling in presentation dropped; a departure from an instructions rule the rewritten"
+		+ "decision keeps is named in its DEROGATES"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR159
+	WAVE @WAVE.14
+	PRIORITY critical
+	DESC "fixes violations 4 and 8 of the audit"
+	RATIONALE "The reader port of violation 4 is where the per-concept methods of violation 8 are"
+		+ "declared, so the two are one change of the same port"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
+
+TASK REFACTOR162
+	TITLE "refactor(core-mapping): decode the save format before it reaches the domain"
+	STATUS draft
+	SPEC "the domain model of core-mapping names its data in business terms: the allow-list of the"
+		+ "wire abbreviation guard is empty and removed, the guard running with no exemption"
+	SPEC "no module under domain/ splits or joins a list of the save text nor reads an empty string"
+		+ "as an absence: the infrastructure hands the domain lists as arrays and absence as"
+		+ "undefined"
+	SPEC "the section separator of the save text is escaped by the serializer, and no module under"
+		+ "application/ names it"
+	SPEC "a domain error names the business rule broken; a shape check, a number or a string"
+		+ "expected, fails at the infrastructure boundary as a technical error"
+	SPEC "a merge of the public fixtures writes the same save text as before the task, and the"
+		+ "specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.CHORE158
+	AFTER @TASK.REFACTOR161
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "fixes violations 5, 10 and 13 of the audit"
+	RATIONALE "The three violations are one boundary, the decoding of the save text: violation 10"
+		+ "escapes what the serializer encodes and violation 13 moves the shape checks to where the"
+		+ "text is decoded. The task follows the reader port, which is where the decoding lands"
+
+TASK REFACTOR163
+	TITLE "refactor(core-mapping): move the game releases into the domain, shared runtime code"
+		+ "confined to the infrastructure"
+	STATUS draft
+	SPEC "the game releases and their comparison are domain knowledge of core-mapping, their values"
+		+ "a JSON table beside the module that reads it, validated by bun run validate:tables"
+	SPEC "no module under domain/ or application/ of a core- package imports runtime code of a"
+		+ "shared- package: only import type crosses"
+	SPEC "a guard run by bun run guards fails on an import of a shared- module from domain/ or"
+		+ "application/ of a core- package that is not import type"
+	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.REFACTOR162
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "fixes violation 6 of the audit and carries the guard on shared runtime imports"
+	RATIONALE "The guard passes the day it lands, the task removing every runtime import it"
+		+ "refuses, so it needs no allow-list. The task follows the decoding, which rewrites the"
+		+ "merge rules that read the releases"
+
+TASK REFACTOR164
+	TITLE "refactor(core-mapping): carry validation issues as codes, their sentences built in"
+		+ "presentation"
+	STATUS draft
+	SPEC "a ValidationIssue carries a code and its data and no sentence; every sentence shown about"
+		+ "a validation issue is built under presentation/messages of core-mapping"
+	SPEC "no sentence shown to the user is built in the infrastructure of core-mapping nor in"
+		+ "shared-save-processing, verifySectionCount and the schema validation messages included"
+	SPEC "an issue locates its section by a section name the infrastructure resolved, and no"
+		+ "presentation module imports the section indexes of the save format"
+	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.REFACTOR160
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "fixes violations 7 and 12 of the audit"
+	RATIONALE "Both violations are the same issue type: its sentence and its location reach the"
+		+ "view as the infrastructure wrote them. The task follows the validator port, which"
+		+ "changes the issues it reports"
+
+TASK REFACTOR165
+	TITLE "refactor(core-mapping): let the merge rule return the warnings of the merged save"
+	STATUS draft
+	SPEC "the merge rule of the domain returns the warnings about the format of the merged save,"
+		+ "and MergeSaveFiles hands them to its presenter without comparing a release nor testing"
+		+ "terrainLayers"
+	SPEC "cli-merge and the save manager show the same merge warnings as before, and the specs of"
+		+ "cli-merge pass unchanged"
+	AFTER @TASK.REFACTOR163
+	WAVE @WAVE.14
+	PRIORITY medium
+	DESC "fixes violation 11 of the audit"
+	RATIONALE "The release comparison the use case makes today moves into the domain with the game"
+		+ "releases, so the task follows that move"
+
+TASK REFACTOR166
+	TITLE "refactor(core-mapping): inject the use cases into the controllers"
+	STATUS draft
+	SPEC "a controller of core-mapping receives its use case, or the factory building it, from the"
+		+ "composition root, and instantiates no adapter"
+	SPEC "a controller spec runs against a test double of its use case, without the real"
+		+ "infrastructure; AControllerSpecCoversWiringNotBranches is rewritten or archived to match"
+	SPEC "no JSDoc of core-mapping cites an instructions file that does not exist,"
+		+ "infrastructure.md included"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR161
+	WAVE @WAVE.14
+	PRIORITY low
+	DESC "fixes violations 14 and 15 of the audit"
+	RATIONALE "Violation 15 is one stale comment, too small for a pull request of its own; the task"
+		+ "follows the composition root, which it extends with the factories"
+		REF @DECISION.AControllerSpecCoversWiringNotBranches

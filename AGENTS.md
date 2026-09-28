@@ -134,11 +134,13 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 
 ## Branches
 
-**La base d'une tâche est le `BRANCH` de sa wave, `master` pour une tâche sans wave.** Chaque wave est une entité
-`WAVE` du corpus, écrite une fois et jamais réécrite, qui porte aussi le `MILESTONE` à poser sur chaque pull request
-de la wave : `awawa show @TASK.<id> .` donne la wave d'une tâche, `awawa show @WAVE.<n> .` sa base et son milestone,
-`awawa status WAVE .` la liste des waves (@DECISION.AWaveIsAnEntityThatOutlivesItsTasks).
+**Une wave se prépare sur `master` et s'implémente sur sa branche d'intégration**
+(@DECISION.AWaveIsAnEntityThatOutlivesItsTasks). Son `WAVE` et ses `TASK` arrivent sur `master` par une pull request
+de plan ; la branche d'intégration part ensuite de `master`, les branches de tâche partent d'elle, et les changements
+de corpus des tâches n'arrivent sur `master` qu'à sa fusion, la wave terminée. Une wave livrée est supprimée du
+corpus avec ses tâches : son milestone GitHub en garde la trace.
 
-Une branche d'intégration part de `master`, porte le corpus de sa wave et n'est fusionnée qu'une fois la wave
-terminée. Un numéro de tâche se lit sur toutes les branches ouvertes, pas seulement sur la base : la wave 5 tenait
-92 à 99 quand la wave 8 a été numérotée.
+**La base d'une tâche est le `BRANCH` de sa wave, `master` pour une tâche sans wave.** La `WAVE` porte aussi le
+`MILESTONE` à poser sur chaque pull request de la wave : `awawa show @TASK.<id> .` donne la wave d'une tâche,
+`awawa show @WAVE.<n> .` sa base et son milestone, `awawa status WAVE .` la liste des waves. Un numéro de tâche se
+lit sur toutes les branches ouvertes, pas seulement sur la base.

@@ -149,7 +149,6 @@ LIMITATION SubmergedMachinesAreCountedAsDrawingPower
 		+ "counts it at its base level, so the available energy is underestimated"
 	WORKAROUND "a warning in the energy section that submerged machines may distort the computed"
 		+ "available energy"
-		REF @TASK.FEAT128
 	UNTIL "the save records whether a machine is under water or running"
 	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private consumption()"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -209,7 +208,6 @@ LIMITATION TheDownloadLinkFallsShortOfTheTextContrastAtRest
 		+ "button, .button-link rule, inverted text on the idle primary background, a pair"
 		+ "check:contrast measures; the defect stays real on master until that branch merges"
 		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
-		REF @WAVE.10
 		REF @PROCESS.AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
 	SOURCE "axe color-contrast violation, UI workflow run 36365018731 on the three engines"
 		PR 213

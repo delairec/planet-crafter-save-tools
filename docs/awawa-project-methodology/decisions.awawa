@@ -1924,20 +1924,36 @@ DECISION EveryActionIsPinnedOnACommitSha
 		REF @URL.DependabotSupportedEcosystemsGithubActions
 
 DECISION AWaveIsAnEntityThatOutlivesItsTasks
-	SPEC "every wave of the plan is a WAVE entity on master, carrying its MILESTONE and its BRANCH,"
-		+ "and stays there once its tasks are archived and purged"
-		IMPL "docs/awawa-project-methodology/waves.awawa::WAVE 8"
-	SPEC "AGENTS.md and the files of agents/ name no integration branch: the base of a task is read"
-		+ "from its wave"
+	SPEC "a wave is prepared on master: its WAVE entity, carrying its MILESTONE and its BRANCH, and"
+		+ "its TASK entities reach master through a plan pull request"
+		IMPL "docs/awawa-project-methodology/waves.awawa::WAVE 14"
+		IMPL "AGENTS.md::Une wave se prépare sur `master`"
+	SPEC "the integration branch of a wave is created from master and serves the implementation:"
+		+ "the task branches of the wave base on it, and the corpus changes of its tasks reach"
+		+ "master when it merges"
+		IMPL "AGENTS.md::la branche d'intégration part ensuite de `master`"
+	SPEC "AGENTS.md and the files of agents/ name no integration branch: the base of a task is the"
+		+ "BRANCH of its wave, master for a task with no wave"
 		IMPL "AGENTS.md::La base d'une tâche est le `BRANCH` de sa wave"
 		IMPL "agents/worktree.md::c'est le `BRANCH` de sa wave"
-	REJECTED "declaring a wave on its integration branch only: once the branch merges and its tasks"
-		+ "are purged, master keeps no trace of its milestone nor of its branch"
+	SPEC "a delivered wave is deleted from the corpus with the tasks it comprises, never archived"
+		IMPL "AGENTS.md::Une wave livrée est supprimée du"
+	REJECTED "a delivered wave staying on master once its tasks are purged: the GitHub milestone"
+		+ "keeps the trace of a delivered wave"
+	REJECTED "declaring a wave and its tasks on its integration branch only: the plan reaches"
+		+ "master only once implemented, and no task agent reads it from master before"
 	REJECTED "naming the base in an AGENTS.md table: the prose drifted, still naming"
 		+ "integration/save-format-preserved while release-and-hardening was open"
 	APPLIES_TO_TASK @TASK.CHORE116
+	APPLIES_TO_TASK @TASK.DOCS156
+	RATIONALE "A wave planned on master is reviewed as a plan before any implementation starts, and"
+		+ "every agent launched on one of its tasks finds the task and its base in the corpus it"
+		+ "reads. The integration branch then carries only the implementation"
 	SOURCE "Owner request and refinement of the task, session of 2026-09-24"
 		PR 170
+	SOURCE "Owner ruling, session of 2026-09-28: a wave is prepared on master and implemented on"
+		+ "its integration branch; the delivered waves are deleted, not archived"
+		PR 222
 
 DECISION AChangelogEntryListsOnlyUserFacingCommits
 	SPEC "A changelog entry lists the commits whose subject is feat or fix, scoped or not, and"
@@ -2008,7 +2024,6 @@ DECISION AChangelogEntryListsOnlyUserFacingCommits
 
 DECISION TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.TEST113
 	SPEC "A production breakdown entry carries the base level of its machines, without the boost of"
 		+ "energy fuses"
 		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private"
@@ -2315,7 +2330,6 @@ DECISION AZeroInTheGameDataExportIsNotAPrice
 		+ "holds only prices found, and a zero is not one"
 		REF @DATATABLE.EnergyLevels
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT124
 	RATIONALE "The export prints 0 for 458 of the 541 names searched, among them Iron, Algae1Seed"
 		+ "and Foundation, next to the 107 existing rows it matches to the kilowatt; a price is"
 		+ "therefore only a non-zero value"
@@ -2345,7 +2359,6 @@ DECISION TheSubmergedMachinesLimitationIsCarriedByTheEnergyViewModel
 		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT128
 	SOURCE "Owner review of the FEAT128 pull request"
 		PR 187
 	SOURCE "Owner review of 2026-09-26, comment r4111099239: the disclaimer becomes a limitation"
@@ -2384,9 +2397,6 @@ DECISION ANotificationIsRenderedByTheNotificationComponent
 		REF @DECISION.UserTextLivesInCoreMappingPresentation
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT128
-	APPLIES_TO_TASK @TASK.FEAT126
-	APPLIES_TO_TASK @TASK.FEAT133
 	SOURCE "Owner review of the FEAT128 pull request"
 		PR 187
 	SOURCE "Owner review of 2026-09-26, comment r4111099239: the disclaimer and the notes become"
@@ -2465,7 +2475,6 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 		+ "OreBreaker1 at 2.6 kW"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT129
 	RATIONALE "The save carries no energy value, so its declared version is the only sign of which"
 		+ "values apply"
 	SOURCE "Ruling taken on delivery of the task, 2026-09-26, then rewritten on the owner review of"
@@ -2512,7 +2521,6 @@ DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 		+ "save the figures apply, not a limit of the tool"
 		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT126
 	RESTS_ON @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 	RATIONALE "The game multiplies the draw of each machine, so a breakdown entry shows what the"
 		+ "machine draws in that save; the energy table keeps the base levels the HUD prints at 1"
@@ -2557,7 +2565,7 @@ DECISION AViewModelServesOneView
 	SPEC "a view model of core-mapping is built for one view of the save manager, a page or a zone"
 		+ "of a page; a page view model composes the view models of its zones, and a zone view"
 		+ "model is the type its zone component receives"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT136"
+		IMPL "packages/core-mapping/src/presentation/viewModels/ConfigurationPageViewModel.ts"
 	SPEC "a zone rendered by one component on several pages is one view: each page view model holds"
 		+ "its own instance of it, built by a presentation helper the presenters of those pages"
 		+ "call; what two views share is that helper, a pure mapping from value objects to the"
@@ -2566,7 +2574,9 @@ DECISION AViewModelServesOneView
 	SPEC "a controller serves one view and a presenter builds one view model; a use case is one"
 		+ "meaningful action of the save manager, load one page or one zone, and orchestrates the"
 		+ "sections that view needs"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT135"
+		IMPL "packages/core-mapping/src/controllers/LoadSaveIdentityController.ts"
+		IMPL "packages/core-mapping/src/presentation/SaveIdentityPresenter.ts"
+		IMPL "packages/core-mapping/src/application/LoadSaveIdentity.ts"
 	SPEC "a section controller, one per section of the save, is retired once no page reads its view"
 		+ "model, in the pull request of the page that stops reading it"
 		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT145"
@@ -2579,8 +2589,6 @@ DECISION AViewModelServesOneView
 		+ "to no view, and a change for one page reaches the other unnoticed"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT135
-	APPLIES_TO_TASK @TASK.FEAT136
 	APPLIES_TO_TASK @TASK.FEAT139
 	APPLIES_TO_TASK @TASK.FEAT141
 	APPLIES_TO_TASK @TASK.FEAT142
@@ -2786,7 +2794,6 @@ DECISION EachPageOfTheSaveManagerIsARoute
 		+ "address, the history of the browser does not step back through the pages, and their"
 		+ "modules leave the test roots the plugin declares"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT134
 	RATIONALE "The save is read from a file the reader picks and never leaves the browser, so it"
 		+ "cannot be carried by the URL; the store above the router keeps it while the routes give"
 		+ "each page an address, and the file routes are already exempt as a whole from the static"
@@ -2810,7 +2817,6 @@ DECISION TheSaveIdentityShowsTheResolvedGameRelease
 		+ "current format release all the same, so the identity would hide the release that reads"
 		+ "it"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT135
 	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
 		PR 205
 
@@ -2826,7 +2832,6 @@ DECISION APlayerOnAnEmptyPlanetShowsNoPlanet
 		+ "like any other, so hiding it drops a fact the save states"
 	REJECTED "a placeholder such as Unknown planet: it spends a line of the menu to say nothing"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.FEAT135
 	SOURCE "Owner review of 2026-09-27: the planet shows when its name is not empty, legacy save or"
 		+ "not"
 		PR 205
@@ -2839,14 +2844,12 @@ DECISION APresentationPieceLandsWithTheFirstPageThatRendersIt
 		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
 		IMPL "packages/ui-save-manager/src/components/configuration/ModifiersCard.tsx::<ToneBadge"
 		IMPL "packages/ui-save-manager/src/components/configuration/UnlocksCard.tsx::<OnOffPill"
-	REJECTED "Shipping the tone badge and the on or off pill with FEAT138, ahead of any page: no"
-		+ "module would import them, which the fallow unused-file gate refuses"
+	REJECTED "Shipping the tone badge and the on or off pill with the shell of the save manager,"
+		+ "ahead of any page: no module would import them, which the fallow unused-file gate"
+		+ "refuses"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT138
-	APPLIES_TO_TASK @TASK.FEAT136
-	RATIONALE "FEAT136 renders the modifiers in tones and the unlock flags, the first consumers of"
-		+ "the two pieces"
-		REF @TASK.FEAT136
+	RATIONALE "The Configuration page renders the modifiers in tones and the unlock flags, the"
+		+ "first consumers of the two pieces"
 	SOURCE "Owner ruling at the launch of wave 10 on 2026-09-28"
 		PR 210
 
@@ -2859,7 +2862,6 @@ DECISION TheSeverityPillLabelIsAMessageOfTheUi
 		REF @DECISION.UserTextLivesInCoreMappingPresentation
 	REJECTED "A ternary on the severity: a third severity would read as Warning in silence"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT138
 	SOURCE "FEAT138 delivery"
 		PR 210
 
@@ -2898,10 +2900,7 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 		+ "file picked on another page"
 	REJECTED "the root address redirecting to the Load save page: the home page owns the root"
 		+ "address"
-		REF @TASK.FEAT150
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT137
-	APPLIES_TO_TASK @TASK.FEAT150
 	RATIONALE "Two pages loaded a save until the review; one address with a name that follows the"
 		+ "loaded save keeps the menu entry lit on the page the reader is on, and the load form"
 		+ "stays one component, its result shown by a section of its own as the merge does"
@@ -2933,7 +2932,6 @@ DECISION TheMergedSavesLiveInAStoreAboveTheRouter
 	REJECTED "the result section building its own object URL, as before: the link of the last"
 		+ "result would then differ from the one kept, and leaving the page would revoke it"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT149
 	RATIONALE "The route component is disposed when the reader opens another page, taking any"
 		+ "signal it holds; a store above the router outlives every page, as the loaded save does"
 		REF @DECISION.EachPageOfTheSaveManagerIsARoute
@@ -2974,7 +2972,6 @@ DECISION TheConfigurationPageListsEightUnlockFlagsAndStatesEachToneInText
 		+ "progression as it was"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT136
 	SOURCE "Rulings of the FEAT136 agent of 2026-09-28, checking the unlock flags against the save"
 		+ "format as the task asks"
 		PR 218
