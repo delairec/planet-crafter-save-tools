@@ -29,6 +29,11 @@ const legacyTerrainLayerEntry = '"layerId":"PC-Toxicity-Layer2"';
 const preferLegacyFormatDescription =
   'Tick this checkbox if you want to align the save format on the older version instead of the newer.';
 
+const saveAPrecedenceNotice =
+  'Where the two saves hold the same data in conflict, save A prevails over save B, its configuration included: '
+  + 'swap the saves to change which one prevails. When only one of them is on Prime, that save acts as save A '
+  + 'whatever their order.';
+
 const keepLegacyFormatReminder = 'To write the legacy format instead, tick "Prefer legacy format" and merge again.';
 
 async function chooseTheTwoSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
@@ -194,6 +199,27 @@ test.describe('Save merge', () => {
       // Assert
       expect(saveBInputLeft).toBeCloseTo(saveAInputLeft, 0);
       expect(checkboxLeft).toBeCloseTo(saveAInputLeft, 0);
+    });
+
+    test('should tell, in an information notification, that save A prevails over save B', async ({page}) => {
+      // Act
+      await page.goto('/merge');
+
+      // Assert
+      await expect(page.getByTestId('merge-precedence-notice')).toContainText(saveAPrecedenceNotice);
+      await expect(page.getByTestId('merge-precedence-notice-severity')).toHaveText('Information');
+    });
+
+    test('should show the precedence notice above the save inputs', async ({page}) => {
+      // Arrange
+      await page.goto('/merge');
+
+      // Act
+      const notice = (await page.getByTestId('merge-precedence-notice').boundingBox())!;
+      const saveAInputTop = (await page.getByTestId('save-a').boundingBox())!.y;
+
+      // Assert
+      expect(notice.y + notice.height).toBeLessThanOrEqual(saveAInputTop);
     });
   });
 

@@ -2362,6 +2362,11 @@ DECISION ANotificationIsRenderedByTheNotificationComponent
 		+ "limitation for a limit of the tool, warning for a potential gap between the figures and"
 		+ "the game, information for a fact of the save the figures take into account"
 		IMPL "packages/core-mapping/src/presentation/viewModels/NotificationViewModel.ts::NotificationSeverity"
+	SPEC "A static message of the UI stating a rule of the tool, qualifying no figure, is an"
+		+ "information notification whose severity the UI sets; it enters no ViewModel of"
+		+ "core-mapping"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::<Notification"
+			+ "severity=\"information\""
 	SPEC "The Notification component takes the severity as a prop and draws its thick left border"
 		+ "and its surface from the tokens of colors.css: --limitation on --limitation-surface for"
 		+ "a limitation, --warning on --warning-surface for a warning, --information on"
@@ -2374,13 +2379,14 @@ DECISION ANotificationIsRenderedByTheNotificationComponent
 	REJECTED "A bare paragraph under the section title: it reads as ordinary text of the section"
 	REJECTED "A colour literal in the notification rule: it escapes the light and dark themes of"
 		+ "colors.css"
-	REJECTED "The severity chosen by the UI: the core-mapping presentation owns the message and"
-		+ "what it qualifies"
+	REJECTED "The severity chosen by the UI for a notification qualifying figures: the core-mapping"
+		+ "presentation owns the message and what it qualifies"
 		REF @DECISION.UserTextLivesInCoreMappingPresentation
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT128
 	APPLIES_TO_TASK @TASK.FEAT126
+	APPLIES_TO_TASK @TASK.FEAT133
 	SOURCE "Owner review of the FEAT128 pull request"
 		PR 187
 	SOURCE "Owner review of 2026-09-26, comment r4111099239: the disclaimer and the notes become"
@@ -2390,6 +2396,10 @@ DECISION ANotificationIsRenderedByTheNotificationComponent
 	SOURCE "Owner review of 2026-09-28: a setting of the save the figures apply is an information,"
 		+ "neither a limit of the tool nor a gap with the game"
 		PR 215
+	SOURCE "Owner ruling of 2026-09-27 on FEAT133: the merge precedence notice is a static message"
+		+ "on the UI side, rendered with the information severity of PR 215 rather than a severity"
+		+ "of its own"
+		PR 216
 
 DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SPEC "the energy table holds the values of the last release of the releases table, one row per"

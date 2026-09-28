@@ -1640,16 +1640,26 @@ TASK FEAT132
 
 TASK FEAT133
 	TITLE "Tell on the merge page that save A wins over save B where their common data conflicts"
-	STATUS todo
+	STATUS implemented
 	DESC "ratified on the reviewed plan on 2026-09-27 without research; the wording of the notice"
 		+ "is established when the task starts"
 	SPEC "the merge page carries, above the form, a notice saying that save A prevails over save B"
 		+ "for the common data the two saves hold in conflict, and that swapping them changes which"
 		+ "one wins"
+		IMPL "packages/ui-save-manager/src/messages/mergeSectionMessages.js::mergeSectionSaveAPrecedenceNotice"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should show the precedence notice above"
+			+ "the save inputs"
 	SPEC "the notice is a static message of the UI package, rendered in the notification style with"
-		+ "an info severity the Notification component accepts; it qualifies no figure of a section"
-		+ "and enters no view model of core-mapping"
-	SPEC "the token pair of the info severity is catalogued by the contrast guard"
+		+ "the information severity the Notification component accepts; it qualifies no figure of a"
+		+ "section and enters no view model of core-mapping"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::<Notification"
+			+ "severity=\"information\""
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should tell, in an information"
+			+ "notification, that save A prevails over save B"
+	SPEC "the token pair of the information severity is catalogued by the contrast guard"
+		IMPL "scripts/check-color-contrast.ts::.notification-information"
+			+ ".notification-severity-pill"
+	DELIVERED_BY 216
 	AFTER @TASK.FEAT137
 	AFTER @TASK.FEAT138
 	WAVE @WAVE.10
