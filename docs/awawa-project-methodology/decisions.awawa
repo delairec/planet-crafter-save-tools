@@ -1417,6 +1417,15 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SPEC "Every stylesheet of packages/ui-save-manager/src is scanned, app.css included"
 		IMPL "scripts/check-color-contrast.ts::packages/ui-save-manager/src/**/*.css"
 		ENFORCED_BY "scripts/check-color-contrast.spec.ts::app.css included"
+	SPEC "The fill behind the label of an enabled button is a token of colors.css that the catalog"
+		+ "pairs with that label, never a color the stylesheet derives from a token: the idle fill"
+		+ "is --primary-idle, the accent darkened in both themes; a disabled button, which WCAG"
+		+ "exempts, keeps a derived fill"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--primary-idle"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::--button-primary-bg-idle:"
+			+ "var(--primary-idle);"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::When a merge result"
+			+ "is shown"
 	REJECTED "WCAG 2.1 AAA (7:1): unreachable by the neon accent palette (--neon-pink,"
 		+ "--neon-purple, --neon-cyan) without abandoning the palette's own identity"
 	REJECTED "The full cross-product of every declared color token, text or not: produces pairs no"
@@ -1429,6 +1438,10 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		+ "inherits its background from an ancestor, which a stylesheet scan cannot see"
 	REJECTED "Letting inherit or currentColor through: the pair they render depends on an ancestor"
 		+ "the catalog does not name for that selector"
+	REJECTED "The idle button fill mixed from --primary toward white in the light theme: white on"
+		+ "#5677fa is 3.87:1, and the catalog, pairing the label with --primary, passed it; the axe"
+		+ "audit of the merge result caught it on the download link"
+		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
 	RATIONALE "The task's SPEC left the threshold and the verification method open. WCAG 2.1 AA is"
 		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
 		+ "-rendered DOM, a gap @TASK.CHORE91 studies closing with axe-core"
@@ -1441,6 +1454,9 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "CHORE99's delivery: the catalog keyed on the selector, literals reported, every"
 		+ "stylesheet of the package scanned"
 		PR 150
+	SOURCE "Owner ruling of 2026-09-28 on the second review round: the contrast of the download"
+		+ "link of the merge result is fixed in this pull request"
+		PR 211
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"

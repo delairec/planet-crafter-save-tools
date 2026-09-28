@@ -16,6 +16,7 @@
 
     /* ACCENTS */
     --primary: #4368f9;
+    --primary-idle: #3c5ee0;
     --secondary: #a855f7;
     --accent: #06b6d4;
 
@@ -50,6 +51,7 @@
         --inverted: #0a0d1a;
 
         --primary: #6d8dff;
+        --primary-idle: #627fe6;
         --secondary: #c084fc;
         --accent: #22d3ee;
 
