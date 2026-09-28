@@ -2789,3 +2789,14 @@ TASK FEAT154
 	SOURCE "Owner ruling of 2026-09-28 when FEAT151 was refined: a retention delay set by the"
 		+ "reader when confirming the modal, a task of the same wave"
 		PR 211
+
+TASK CHORE155
+	TITLE "Task priority and decision derogation fields"
+	STATUS implemented
+	SPEC "a task states its priority in an optional PRIORITY field, critical, high, medium or low,"
+		+ "medium when omitted"
+		IMPL "docs/_schema.awawa::FIELD PRIORITY"
+	SPEC "a decision names in an optional repeatable DEROGATES field each rule of the instructions"
+		+ "corpus it departs from"
+		IMPL "docs/_schema.awawa::FIELD DEROGATES"
+	DELIVERED_BY 0

@@ -2979,3 +2979,27 @@ DECISION TheConfigurationPageListsEightUnlockFlagsAndStatesEachToneInText
 		+ "format as the task asks"
 		PR 218
 		REF @URL.SaveManagerRedesignMockup
+
+DECISION ADecisionDepartingFromAnInstructionsRuleNamesIt
+	SPEC "a decision that contradicts a rule of the instructions corpus names it in DEROGATES, as"
+		+ "@RULE.<name>, one rule per line"
+		IMPL "docs/_schema.awawa::FIELD DEROGATES"
+	REJECTED "a decision overriding an instructions rule without naming it"
+	RATIONALE "APresenterReceivesAValueObjectNeverAnEntity and APlanetEnergyGridIsAnAggregate"
+		+ "silently overrode architecture rules of the instructions corpus and entrenched Clean"
+		+ "Architecture violations found by the audit of 2026-09-28. The instructions corpus is a"
+		+ "separate awawa workspace, so the field is a string and not an anchor: the departure is"
+		+ "named, the RATIONALE states why it is justified."
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 0
+
+DECISION ATaskCarriesAPriorityOnTheReviewScale
+	SPEC "a task states its urgency in PRIORITY, one of critical, high, medium or low, medium when"
+		+ "not stated"
+		IMPL "docs/_schema.awawa::FIELD PRIORITY"
+	REJECTED "the scale P0 to P3: a second scale beside the review grades"
+	REJECTED "the scale high, medium, low: no grade above the review's highest"
+	RATIONALE "The scale is the one of the architecture review grades, so a task fixing a violation"
+		+ "takes the grade of that violation without translation."
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 0
