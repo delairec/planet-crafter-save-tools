@@ -188,6 +188,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'primary'
   },
   {
+    description: 'the label of a neon pink button link, on its neon pink fill',
+    file: 'packages/ui-save-manager/src/styles/buttons.css',
+    selector: '.button-link-neon-pink, .button-link-neon-pink:hover',
+    foreground: 'inverted',
+    background: 'neon-pink'
+  },
+  {
     description: 'a form field value on its input surface',
     file: 'packages/ui-save-manager/src/styles/forms.css',
     selector: 'input, textarea, select',

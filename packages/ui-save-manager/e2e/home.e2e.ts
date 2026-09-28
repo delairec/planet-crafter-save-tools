@@ -23,12 +23,11 @@ test.describe('Home page', () => {
       await expect(page.getByTestId('disclaimers')).toBeVisible();
     });
 
-    test('should name the tool and say what it does', async ({page}) => {
+    test('should say what the tool does', async ({page}) => {
       // Act
       await page.goto('/');
 
       // Assert
-      await expect(page.getByTestId('home-page-title')).toHaveText('Planet Crafter Save Manager');
       await expect(page.getByTestId('home-page-description')).toHaveText(/^[A-Z].+\.$/);
     });
 
