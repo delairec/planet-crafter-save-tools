@@ -5,6 +5,7 @@ import {checkScenarioLocators, findScenarioLocatorViolations, isScenarioFile} fr
 const ACCESSIBILITY_LOCATOR_REASON = 'a scenario designates an element by its test id, never by its role, its label or its text';
 const CSS_SELECTOR_REASON = 'a scenario designates an element by its test id, never by a CSS selector';
 const REFERENCE_SCREENSHOT_REASON = 'a scenario asserts what the screen shows in words, never against a reference screenshot';
+const UNCHECKED_TEST_REASON = 'a scenario takes its test from scenarioTest, which fails a page repeating a test id';
 
 describe('isScenarioFile', () => {
 
@@ -51,10 +52,10 @@ describe('findScenarioLocatorViolations', () => {
     it('should report nothing, whether the scenario acts on the element, asserts it or narrows it down', () => {
       // Arrange
       const source = [
-        "await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);",
-        "await page.getByTestId('merge-button').click();",
+        "await page.getByTestId('save-a').setInputFiles(saveAFixturePath);",
+        "await page.getByTestId('merge').click();",
         "await expect(page.getByTestId('merge-success-message')).toHaveText('Merge successful!');",
-        "await expect(page.getByTestId('merge-area').getByTestId('save-a-input')).toHaveValue('');"
+        "await expect(page.getByTestId('merge-area').getByTestId('save-a')).toHaveValue('');"
       ].join('\n');
 
       // Act
@@ -160,8 +161,8 @@ describe('findScenarioLocatorViolations', () => {
     it('should report the frame locator whatever receives it, its argument being a raw selector in every case', () => {
       // Arrange
       const source = [
-        "await page.frameLocator('#preview').getByTestId('merge-button').click();",
-        "await page.getByTestId('preview-area').frameLocator('iframe.preview').getByTestId('merge-button').click();"
+        "await page.frameLocator('#preview').getByTestId('merge').click();",
+        "await page.getByTestId('preview-area').frameLocator('iframe.preview').getByTestId('merge').click();"
       ].join('\n');
 
       // Act
@@ -177,9 +178,9 @@ describe('findScenarioLocatorViolations', () => {
     it('should leave a locator method alone when the page itself is the receiver of a legitimate call', () => {
       // Arrange
       const source = [
-        "await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);",
+        "await page.getByTestId('save-a').setInputFiles(saveAFixturePath);",
         "await page.getByTestId('prefer-legacy-format').setChecked(true);",
-        "const value = await page.getByTestId('save-a-input').inputValue();"
+        "const value = await page.getByTestId('save-a').inputValue();"
       ].join('\n');
 
       // Act
@@ -207,6 +208,25 @@ describe('findScenarioLocatorViolations', () => {
         {line: 1, reason: REFERENCE_SCREENSHOT_REASON},
         {line: 2, reason: REFERENCE_SCREENSHOT_REASON},
         {line: 3, reason: REFERENCE_SCREENSHOT_REASON}
+      ]);
+    });
+  });
+
+  describe('When a scenario imports its test', () => {
+    it('should report the test taken from Playwright, which leaves the uniqueness of the test ids unchecked', () => {
+      // Arrange
+      const source = [
+        "import {expect, test} from '@playwright/test';",
+        "import {type Locator, type Page} from '@playwright/test';",
+        "import {expect, test} from './scenarioTest';"
+      ].join('\n');
+
+      // Act
+      const violations = findScenarioLocatorViolations(source);
+
+      // Assert
+      expect(violations).toEqual([
+        {line: 1, reason: UNCHECKED_TEST_REASON}
       ]);
     });
   });
@@ -248,7 +268,7 @@ describe('checkScenarioLocators', () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          'packages/ui-save-manager/e2e/merge.e2e.ts': "await expect(page.getByTestId('merge-button')).toBeVisible();"
+          'packages/ui-save-manager/e2e/merge.e2e.ts': "await expect(page.getByTestId('merge')).toBeVisible();"
         }
       });
 

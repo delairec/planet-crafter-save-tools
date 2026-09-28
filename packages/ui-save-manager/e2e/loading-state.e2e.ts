@@ -1,20 +1,31 @@
-import {expect, test, type Page} from '@playwright/test';
-import {holdEveryFileRead, releaseTheHeldFileReads} from "./helpers/holdEveryFileRead";
-import {baselineSaveFixturePath as saveAFixturePath, otherPlayerSaveFixturePath as saveBFixturePath} from "./helpers/scenarioFixturePaths";
-import {visualizeSave} from "./helpers/visualizeSave";
-import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
+import {type Page} from '@playwright/test';
+import {holdEveryFileRead, releaseTheHeldFileReads} from './helpers/holdEveryFileRead';
+import {expect, test} from './scenarioTest';
+import {chooseTheSaveToVisualize, chooseTheTwoSavesToMerge, locateTheFixture} from './scenarioSteps';
+
+const saveAFixturePath = locateTheFixture('baseline_valid.json');
+const saveBFixturePath = locateTheFixture('other-player_valid.json');
+
+async function chooseTheSaveToVisualizeWithTheReadsHeld(page: Page): Promise<void> {
+  await holdEveryFileRead(page);
+  await chooseTheSaveToVisualize(page, saveAFixturePath);
+}
+
+async function chooseTheTwoSavesToMergeWithTheReadsHeld(page: Page): Promise<void> {
+  await holdEveryFileRead(page);
+  await page.goto('/merge');
+  await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
+}
 
 async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
-  await holdEveryFileRead(page);
-  await page.goto('/');
-  await visualizeSave(page, saveAFixturePath);
+  await chooseTheSaveToVisualizeWithTheReadsHeld(page);
+  await page.getByTestId('visualize').click();
   await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
 }
 
 async function startMergingWithTheReadsHeld(page: Page): Promise<void> {
-  await holdEveryFileRead(page);
-  await page.goto('/');
-  await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath);
+  await chooseTheTwoSavesToMergeWithTheReadsHeld(page);
+  await page.getByTestId('merge').click();
   await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
 }
 
@@ -22,20 +33,19 @@ test.describe('Loading states', () => {
   test.describe('When a save file is being read for display', () => {
     test('should show a busy indicator and keep the button out of reach', async ({page}) => {
       // Arrange
-      await holdEveryFileRead(page);
-      await page.goto('/');
+      await chooseTheSaveToVisualizeWithTheReadsHeld(page);
 
       // Act
-      await visualizeSave(page, saveAFixturePath);
+      await page.getByTestId('visualize').click();
 
       // Assert
       await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
-      await expect(page.getByTestId('visualize-button')).toBeDisabled();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 
   test.describe('When the display of a save file completes', () => {
-    test('should end the busy state and hand the button back', async ({page}) => {
+    test('should end the busy state and open the Overview page on the save', async ({page}) => {
       // Arrange
       await startVisualizingWithTheReadsHeld(page);
 
@@ -43,23 +53,22 @@ test.describe('Loading states', () => {
       await releaseTheHeldFileReads(page);
 
       // Assert
-      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
-      await expect(page.getByTestId('visualize-button')).toBeEnabled();
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page).toHaveURL(/\/overview$/);
     });
   });
 
   test.describe('When two save files are being read for a merge', () => {
     test('should show a busy indicator and keep the button out of reach', async ({page}) => {
       // Arrange
-      await holdEveryFileRead(page);
-      await page.goto('/');
+      await chooseTheTwoSavesToMergeWithTheReadsHeld(page);
 
       // Act
-      await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath);
+      await page.getByTestId('merge').click();
 
       // Assert
       await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
-      await expect(page.getByTestId('merge-button')).toBeDisabled();
+      await expect(page.getByTestId('merge')).toBeDisabled();
     });
   });
 
@@ -74,7 +83,7 @@ test.describe('Loading states', () => {
       // Assert
       await expect(page.getByTestId('merge-success-message')).toBeVisible();
       await expect(page.getByTestId('merge-busy-indicator')).toBeHidden();
-      await expect(page.getByTestId('merge-button')).toBeEnabled();
+      await expect(page.getByTestId('merge')).toBeEnabled();
     });
   });
 });

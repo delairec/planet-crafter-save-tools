@@ -63,7 +63,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
 
     if (energyLevels.powerConsumptionModifier !== UNMODIFIED_POWER_CONSUMPTION_MODIFIER) {
       notifications.push({
-        severity: 'limitation',
+        severity: 'information',
         message: resolveEnergyLevelsSectionPowerConsumptionModifierNotification(
           formatNumber(energyLevels.powerConsumptionModifier, FormatNumberStrategies.PERCENTAGE)
         )

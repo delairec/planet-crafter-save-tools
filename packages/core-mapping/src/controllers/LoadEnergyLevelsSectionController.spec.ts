@@ -18,7 +18,7 @@ describe('LoadEnergyLevelsSectionController', () => {
       notifications: [
         {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'},
         {severity: 'warning', message: 'Values of game release 2.004'},
-        {severity: 'limitation', message: "Consumption applies the save's Power Consumption modifier: 20%"}
+        {severity: 'information', message: "Consumption applies the save's Power Consumption modifier: 20%"}
       ],
       planets: [{
         planetId: 'Planet 1',

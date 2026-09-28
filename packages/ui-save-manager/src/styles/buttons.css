@@ -1,33 +1,50 @@
+:root {
+    --button-primary-bg-idle: var(--primary-idle);
 
+    --button-primary-bg-hover: var(--primary);
 
-button {
+    --button-primary-bg-disabled: color-mix(
+            in srgb,
+            var(--primary) 50%,
+            white
+    );
+
+    @media (prefers-color-scheme: dark) {
+        --button-primary-bg-disabled: color-mix(
+                in srgb,
+                var(--primary) 50%,
+                black
+        );
+    }
+}
+
+button, .button-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: var(--space-sm);
     border: 0;
-    opacity: 0.9;
-    border-radius: 0.25rem;
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    background-color: var(--primary);
+    border-radius: var(--radius-xs);
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--text-sm);
+    font-weight: var(--semibold);
+    background-color: var(--button-primary-bg-idle);
     color: var(--inverted);
 }
 
 button:hover {
-    opacity: 1;
+    background-color: var(--button-primary-bg-hover);
     cursor: pointer;
 }
 
 button:disabled {
-    opacity: 0.5;
+    background-color: var(--button-primary-bg-disabled);
     cursor: not-allowed;
 }
 
 button:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--neon-pink), 0 0 0 4px var(--neon-pink);
+    box-shadow: var(--shadow-medium) var(--neon-pink), var(--shadow-thick) var(--neon-pink);
 }
 
 .tooltip-anchor {
@@ -36,15 +53,15 @@ button:focus-visible {
 }
 
 .icon-button button {
-    padding: 0.25rem 0.375rem;
-    border: 1px solid var(--border);
+    padding: var(--space-sm);
+    border: var(--border-medium);
     background-color: transparent;
     color: var(--muted);
-    font-size: 1rem;
-    line-height: 1;
+    font-size: var(--text-base);
+    line-height: var(--line-height-sm);
 }
 
-.icon-button button:hover:not(:disabled) {
+.icon-button :enabled:hover {
     background-color: var(--elevated);
     color: var(--content);
 }
@@ -52,15 +69,15 @@ button:focus-visible {
 .tooltip {
     position: absolute;
     left: 0;
-    bottom: calc(100% + 0.5rem);
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.25rem;
+    bottom: calc(100% + var(--space-sm));
+    padding: var(--space-xs) var(--space-sm);
+    border: var(--border-medium);
+    border-radius: var(--radius-xs);
     background-color: var(--elevated);
     color: var(--content);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     width: max-content;
-    max-width: min(24rem, calc(100vw - 2rem));
+    max-width: min(48ch, calc(var(--app-width) - var(--space-xxl)));
     visibility: hidden;
     pointer-events: none;
 }
@@ -71,27 +88,25 @@ button:focus-visible {
 }
 
 .button-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    border: 0;
-    opacity: 0.9;
-    border-radius: 0.25rem;
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    background-color: var(--primary);
-    color: var(--inverted);
     text-decoration: none;
 }
 
 .button-link:hover {
-    opacity: 1;
+    background-color: var(--button-primary-bg-hover);
     cursor: pointer;
 }
 
 .button-link:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--neon-pink), 0 0 0 4px var(--neon-pink);
+    box-shadow: var(--shadow-medium) var(--neon-pink), var(--shadow-thick) var(--neon-pink);
+}
+
+.button-link-neon-pink,
+.button-link-neon-pink:hover {
+    background-color: var(--neon-pink);
+    color: var(--inverted);
+}
+
+.button-link-neon-pink:hover {
+    text-decoration: underline;
 }

@@ -155,7 +155,6 @@ DECISION UiSaveManagerHasOneUiErrorIdiom
 	SPEC "A controller call that does not complete sets a local error signal, logs the technical"
 		+ "detail, and displays a fixed sentence of the package messages"
 		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::console.error(error)"
-		IMPL "packages/ui-save-manager/src/lib/useLoadSaveFile.ts::console.error(error)"
 		IMPL "packages/ui-save-manager/src/messages/mergeSectionMessages.js::mergeSectionCallFailedMessage"
 		IMPL "packages/ui-save-manager/src/messages/displayRouteMessages.js::displayRouteCallFailedMessage"
 	SPEC "The failure notice is displayed under the button that produced it, never in the area of"
@@ -453,13 +452,22 @@ DECISION TheQualityGateRunsInTwoCiJobs
 		+ "the full audit command staying that of a working copy"
 		IMPL ".github/workflows/quality.yml::guards:"
 		IMPL ".github/workflows/quality.yml::fallow:"
+	SPEC "The fallow job installs the workspace dependencies before its first analysis, so that no"
+		+ "run reports its inputs as degraded"
+		IMPL ".github/workflows/quality.yml::run: bun install --frozen-lockfile"
 	REJECTED "Plugging the full audit command into a job: its bare branch base does not resolve in"
 		+ "a CI checkout"
 	REJECTED "Keeping the analysis tool out of CI"
 	REJECTED "Scoping the scripts on a tracking reference and dropping the analysis job: it loses"
 		+ "the run summary"
+	REJECTED "Analysing a bare checkout with the imports it cannot resolve listed in fallow.toml:"
+		+ "every run on master reported node-modules-missing and flagged its findings as computed"
+		+ "over less than the whole project"
 	SOURCE "Pull request"
 		PR 45
+	SOURCE "The review of the save manager shell, which found the degraded-input warning recurring"
+		+ "on master"
+		PR 202
 
 DECISION NodeFollowsReleasesWhileBunIsPinnedAndBumped
 	SPEC "No workflow carries a literal Bun version: all read it from the manifest"
@@ -658,7 +666,6 @@ DECISION SectionControllersReceiveTheValidatedText
 	SPEC "Each section controller takes the save text and gets its reader from the composition"
 		+ "root; the UI knows no representation of the sections"
 		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::createSaveSectionsReader"
-		IMPL "packages/ui-save-manager/src/lib/useSectionViewModels.ts"
 	REJECTED "An opaque save identifier with a registry in core-mapping: state in a stateless"
 		+ "package"
 	RATIONALE "A second parse is deterministic and costs about 12 ms per section on a 2 MB save"
@@ -1073,8 +1080,8 @@ DECISION ALoadingStateIsObservedByHoldingTheFileRead
 		IMPL "packages/ui-save-manager/e2e/helpers/holdEveryFileRead.ts::page.addInitScript"
 	SPEC "The end of the loading state is asserted by the rendered button and the data, not by the"
 		+ "absence of an indicator"
-		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts::should end the busy state and hand"
-			+ "the button back"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts::should end the busy state and open"
+			+ "the Overview page on the save"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	SOURCE "T40"
 		PR 78
@@ -1410,6 +1417,15 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SPEC "Every stylesheet of packages/ui-save-manager/src is scanned, app.css included"
 		IMPL "scripts/check-color-contrast.ts::packages/ui-save-manager/src/**/*.css"
 		ENFORCED_BY "scripts/check-color-contrast.spec.ts::app.css included"
+	SPEC "The fill behind the label of an enabled button is a token of colors.css that the catalog"
+		+ "pairs with that label, never a color the stylesheet derives from a token: the idle fill"
+		+ "is --primary-idle, the accent darkened in both themes; a disabled button, which WCAG"
+		+ "exempts, keeps a derived fill"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--primary-idle"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::--button-primary-bg-idle:"
+			+ "var(--primary-idle);"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::When a merge result"
+			+ "is shown"
 	REJECTED "WCAG 2.1 AAA (7:1): unreachable by the neon accent palette (--neon-pink,"
 		+ "--neon-purple, --neon-cyan) without abandoning the palette's own identity"
 	REJECTED "The full cross-product of every declared color token, text or not: produces pairs no"
@@ -1422,6 +1438,10 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		+ "inherits its background from an ancestor, which a stylesheet scan cannot see"
 	REJECTED "Letting inherit or currentColor through: the pair they render depends on an ancestor"
 		+ "the catalog does not name for that selector"
+	REJECTED "The idle button fill mixed from --primary toward white in the light theme: white on"
+		+ "#5677fa is 3.87:1, and the catalog, pairing the label with --primary, passed it; the axe"
+		+ "audit of the merge result caught it on the download link"
+		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
 	RATIONALE "The task's SPEC left the threshold and the verification method open. WCAG 2.1 AA is"
 		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
 		+ "-rendered DOM, a gap @TASK.CHORE91 studies closing with axe-core"
@@ -1434,6 +1454,9 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "CHORE99's delivery: the catalog keyed on the selector, literals reported, every"
 		+ "stylesheet of the package scanned"
 		PR 150
+	SOURCE "Owner ruling of 2026-09-28 on the second review round: the contrast of the download"
+		+ "link of the merge result is fixed in this pull request"
+		PR 211
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"
@@ -2126,8 +2149,8 @@ DECISION AnIconOnlyButtonIsNamedByItsTooltip
 		IMPL "packages/ui-save-manager/src/styles/buttons.css::.tooltip-anchor:focus-within"
 			+ ".tooltip"
 		ENFORCED_BY "packages/ui-save-manager/e2e/drop.e2e.ts::should show its label as a tooltip"
-		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility.e2e.ts::should name the swap button"
-			+ "by its tooltip"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::should name the swap"
+			+ "button by its tooltip"
 	SPEC "An icon-only button is drawn without a fill, in the muted text color and at the size of"
 		+ "its icon, so that it stays secondary to the filled buttons that run an action"
 		IMPL "packages/ui-save-manager/src/styles/buttons.css::.icon-button button {"
@@ -2148,8 +2171,8 @@ DECISION ALabelledControlIsDescribedByItsTooltip
 		+ "element with aria-describedby: the visible label stays its accessible name, and the"
 		+ "tooltip is read as its description"
 		IMPL "packages/ui-save-manager/src/components/structure/CheckboxField.tsx::aria-describedby={tooltipId}"
-		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility.e2e.ts::should describe the legacy"
-			+ "format checkbox by its tooltip"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::should describe the"
+			+ "legacy format checkbox by its tooltip"
 	SPEC "The tooltip shows while the pointer rests on the control or its label and while the"
 		+ "control holds the keyboard focus, like the tooltip of an icon-only button"
 		IMPL "packages/ui-save-manager/src/styles/buttons.css::.tooltip-anchor:focus-within"
@@ -2337,31 +2360,46 @@ DECISION ANotificationIsRenderedByTheNotificationComponent
 			+ "severity={notification.severity}"
 	SPEC "The severity of a notification is decided by the presenter and carried by its ViewModel:"
 		+ "limitation for a limit of the tool, warning for a potential gap between the figures and"
-		+ "the game"
+		+ "the game, information for a fact of the save the figures take into account"
 		IMPL "packages/core-mapping/src/presentation/viewModels/NotificationViewModel.ts::NotificationSeverity"
+	SPEC "A static message of the UI stating a rule of the tool, qualifying no figure, is an"
+		+ "information notification whose severity the UI sets; it enters no ViewModel of"
+		+ "core-mapping"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::<Notification"
+			+ "severity=\"information\""
 	SPEC "The Notification component takes the severity as a prop and draws its thick left border"
 		+ "and its surface from the tokens of colors.css: --limitation on --limitation-surface for"
-		+ "a limitation, --warning on --warning-surface for a warning"
+		+ "a limitation, --warning on --warning-surface for a warning, --information on"
+		+ "--information-surface for an information"
 		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification-limitation"
 		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification-warning"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification-information"
 	REJECTED "A Disclaimer component rendering every note alike in the warning colour: a limit of"
 		+ "the tool and a potential gap read the same"
 	REJECTED "A bare paragraph under the section title: it reads as ordinary text of the section"
 	REJECTED "A colour literal in the notification rule: it escapes the light and dark themes of"
 		+ "colors.css"
-	REJECTED "The severity chosen by the UI: the core-mapping presentation owns the message and"
-		+ "what it qualifies"
+	REJECTED "The severity chosen by the UI for a notification qualifying figures: the core-mapping"
+		+ "presentation owns the message and what it qualifies"
 		REF @DECISION.UserTextLivesInCoreMappingPresentation
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT128
 	APPLIES_TO_TASK @TASK.FEAT126
+	APPLIES_TO_TASK @TASK.FEAT133
 	SOURCE "Owner review of the FEAT128 pull request"
 		PR 187
 	SOURCE "Owner review of 2026-09-26, comment r4111099239: the disclaimer and the notes become"
 		+ "notifications of a generic component, severity limitation (purple) or warning set by the"
 		+ "ViewModel; two limitations and one warning, the game release, in the Power section"
 		PR 193
+	SOURCE "Owner review of 2026-09-28: a setting of the save the figures apply is an information,"
+		+ "neither a limit of the tool nor a gap with the game"
+		PR 215
+	SOURCE "Owner ruling of 2026-09-27 on FEAT133: the merge precedence notice is a static message"
+		+ "on the UI side, rendered with the information severity of PR 215 rather than a severity"
+		+ "of its own"
+		PR 216
 
 DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SPEC "the energy table holds the values of the last release of the releases table, one row per"
@@ -2384,7 +2422,7 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 			+ "take for a save declaring %s the values of %s"
 	SPEC "a save declaring no version, or a version resolving to no release, takes the values of"
 		+ "the last release of the releases table"
-		IMPL "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.ts::??"
+		IMPL "packages/core-mapping/src/domain/rules/resolveGameReleaseOfDeclaredVersion.ts::??"
 			+ "CURRENT_FORMAT_RELEASE"
 		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
 			+ "take the values of the last release of the table"
@@ -2407,8 +2445,8 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 			+ "game release"
 		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
 			+ "name no game release"
-		ENFORCED_BY "packages/ui-save-manager/e2e/display.e2e.ts::should name that game release in"
-			+ "a notification, under the submerged machines one"
+		ENFORCED_BY "packages/ui-save-manager/e2e/display-power.e2e.ts::should name that game"
+			+ "release in a notification, under the submerged machines one"
 	REJECTED "Showing no energy for a save whose version resolves to no release: the values of the"
 		+ "last release are the ones the tool applied to every save until now"
 	REJECTED "Naming the release in the Power section for every save, the last release included, in"
@@ -2454,13 +2492,13 @@ DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 		IMPL "packages/core-mapping/src/domain/powerConsumptionModifier.ts::UNMODIFIED_POWER_CONSUMPTION_MODIFIER"
 		ENFORCED_BY "packages/core-mapping/src/application/LoadEnergyLevelsSection.spec.ts::should"
 			+ "charge the base consumption levels, the modifier being 1"
-	SPEC "the Power section names the modifier in a limitation notification, under the game release"
-		+ "one, when it is not 1, and names none at 1"
+	SPEC "the Power section names the modifier in an information notification, under the game"
+		+ "release one, when it is not 1, and names none at 1"
 		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionPowerConsumptionModifierNotification("
 		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
 			+ "each={energyLevels().notifications}>"
 		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "name that modifier in a limitation, under the submerged machines one"
+			+ "name that modifier in an information, under the submerged machines limitation"
 		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
 			+ "name that modifier under the game release warning"
 		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
@@ -2470,6 +2508,9 @@ DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 	REJECTED "Applying the modifier in the presenter: the available energy is computed in the"
 		+ "domain, and would stay on base levels"
 		REF @DECISION.APlanetEnergyGridIsAnAggregate
+	REJECTED "Naming the modifier in a limitation notification: the modifier is a setting of the"
+		+ "save the figures apply, not a limit of the tool"
+		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT126
 	RESTS_ON @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
@@ -2477,6 +2518,9 @@ DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 		+ "machine draws in that save; the energy table keeps the base levels the HUD prints at 1"
 	SOURCE "Ruling taken on delivery of the task, 2026-09-26"
 		PR 193
+	SOURCE "Owner review of 2026-09-28: the Power Consumption modifier notification is an"
+		+ "information, not a limitation, corrected in this pull request"
+		PR 215
 
 DECISION AnArgumentOfAnExportedFunctionMakesALineReachable
 	REJECTED "Deleting a guard no save reaches while an argument of its exported function does: the"
@@ -2613,16 +2657,39 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 		ENFORCED_BY "scripts/check-scenario-locators.ts::ACCESSIBILITY_LOCATOR"
 	SPEC "The component that renders an element a scenario reaches gives it a data-testid; a"
 		+ "structure component rendered more than once receives it through a testId prop"
-		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::data-testid=\"merge-button\""
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::data-testid=\"merge\""
 		IMPL "packages/ui-save-manager/src/components/structure/DropZone.tsx::data-testid={props.testId}"
-	SPEC "A test id names what the element is on the page, in kebab case, never its tag nor its"
-		+ "place in the tree"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"display-busy-indicator\""
+	SPEC "A test id names what the page shows in the business language, in kebab case, never the"
+		+ "component that draws it, its layout region nor its kind of control"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::testId=\"display-busy-indicator\""
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"page-navigation\""
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::data-testid=\"merged-save-download\""
+	SPEC "A change of layout or structure alone changes no scenario; a change of the data shown or"
+		+ "of a behaviour changes or adds the scenarios that go with it"
+		IMPL "packages/ui-save-manager/e2e/scenarioSteps.ts::getByTestId('page-navigation')"
+	SPEC "A test id is unique on the page; an element a list repeats takes its rank in that list as"
+		+ "a suffix, and a scenario reaches the whole list through a pattern of its test ids"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"overview-page-link\""
+		IMPL "packages/ui-save-manager/src/components/shell/PlayersMenu.tsx::player-summary-"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::-message-${index()}"
+		ENFORCED_BY "packages/ui-save-manager/e2e/scenarioTest.ts::testIdsStayUnique"
+		ENFORCED_BY "scripts/check-scenario-locators.ts::UNCHECKED_TEST_IMPORT"
 	REJECTED "Locating by role, label or text: an element reached through a landmark or a list item"
 		+ "breaks when the layout moves, and the scenario tests accessibility as a side effect of"
 		+ "its locator"
 		REF @TASK.TEST148
 	REJECTED "Locating by CSS selector: the selector is the DOM structure"
+	REJECTED "One test id shared by the elements of a kind, told apart by their text: the test id"
+		+ "no longer designates one element, and the scenario falls back to reading the page"
+	REJECTED "Naming a test id after its layout region or its kind of control (menu, breadcrumb,"
+		+ "button, link, toggle, input, tooltip): a redesign moving the menu to tabs or turning a"
+		+ "button into a link would break the scenarios, while it changes neither the data shown"
+		+ "nor a behaviour"
+	REJECTED "Renaming now the positional test ids the generic field groups build from a column and"
+		+ "a value rank: the view models of the Configuration and Power pages are replaced and the"
+		+ "data they show changes in wave 11, which rewrites those scenarios and names those ids"
+		+ "there"
+		REF @WAVE.11
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "A scenario tests a user flow; the markup that draws it changes with every layout"
 		+ "review. A data-testid attribute changes nothing the user sees or uses, so it ties the"
@@ -2633,6 +2700,17 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	SOURCE "Owner ruling of 2026-09-27 ratifying TEST147: a UI test must not break on a change of"
 		+ "the DOM structure, which justifies data-testid"
 		PR 206
+	SOURCE "Owner review comment on packages/ui-save-manager/src/routes/index.tsx line 104: test"
+		+ "ids must be unique"
+		PR 212
+	SOURCE "Owner ruling of 2026-09-28 in the piloting session of the second review round: a test"
+		+ "id describes what is displayed in the business language, so that a redesign, like a"
+		+ "refactor, breaks no scenario, while a redesign showing new data or changing a behaviour"
+		+ "changes or adds its scenarios"
+		PR 212
+	SOURCE "Owner ruling of 2026-09-28 on the second review round: the merge warnings, repeated"
+		+ "under one test id, are given their rank in this pull request"
+		PR 211
 
 DECISION AUiTestIsEitherAScenarioOrAnAccessibilityTest
 	REJECTED "Testing accessibility as a side effect of the scenario locators: a role or label"
@@ -2645,24 +2723,33 @@ DECISION AUiTestIsEitherAScenarioOrAnAccessibilityTest
 		+ "recorded, and an exclusion names that record"
 	SPEC "The UI tests fall in two categories: the scenarios, which exercise a user flow and assert"
 		+ "what the user sees, and the accessibility tests, which assert nothing but accessibility"
-		IMPL "packages/ui-save-manager/e2e/accessibility.e2e.ts::Save manager accessibility"
+		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::Overview page"
+			+ "accessibility"
 	SPEC "No scenario asserts a role, an accessible name or an accessible description; those"
 		+ "assertions live in the accessibility tests"
 		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should show the tooltip that describes it'"
 	SPEC "An accessibility test reaches an element by its test id and asserts the role, the name or"
 		+ "the description it is meant to have, with toHaveRole, toHaveAccessibleName or"
 		+ "toHaveAccessibleDescription"
-		IMPL "packages/ui-save-manager/e2e/accessibility.e2e.ts::toHaveRole('status')"
+		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::toHaveRole('status')"
 		ENFORCED_BY "scripts/check-scenario-locators.ts::ACCESSIBILITY_LOCATOR"
 	SPEC "An axe audit of the page before a save is loaded, once a save is visualized and once a"
 		+ "merge result is shown reports no WCAG 2 A or AA violation"
-		IMPL "packages/ui-save-manager/e2e/accessibility.e2e.ts::withTags(wcag2LevelAAndAaTags)"
+		IMPL "packages/ui-save-manager/e2e/helpers/createAWcag2Audit.ts::withTags(wcag2LevelAAndAaTags)"
 	SPEC "The accessibility tests run with the scenarios, by bun run test:ui, on the three engines,"
 		+ "each engine building its own accessibility tree"
 		IMPL "packages/ui-save-manager/playwright.config.ts::testMatch: '**/*.e2e.ts'"
 	SPEC "The accessibility tests hold one file while the save manager has one page, split into one"
 		+ "file per page under e2e/accessibility/ once it has several"
-		IMPL "packages/ui-save-manager/e2e/accessibility.e2e.ts::Save manager accessibility"
+		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::Overview page"
+			+ "accessibility"
+		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::Configuration page"
+			+ "accessibility"
+		IMPL "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::Power page accessibility"
+		IMPL "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::Merge two saves page"
+			+ "accessibility"
+		IMPL "packages/ui-save-manager/e2e/accessibility/load-save.e2e.ts::Load another save page"
+			+ "accessibility"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.TEST148
 	RATIONALE "Once the scenarios locate by test id, their locators no longer check the roles and"
@@ -2675,3 +2762,220 @@ DECISION AUiTestIsEitherAScenarioOrAnAccessibilityTest
 	SOURCE "Owner ruling at the refinement of TEST148, 2026-09-28: hand-written Playwright"
 		+ "assertions plus an axe audit, one accessibility.e2e.ts split by page later"
 		PR 213
+
+DECISION EachPageOfTheSaveManagerIsARoute
+	SPEC "each page of the save manager is a file route of its own, addressed by its URL through"
+		+ "the SolidStart router"
+		IMPL "packages/ui-save-manager/src/routes/configuration.tsx"
+		IMPL "packages/ui-save-manager/src/routes/power.tsx"
+		IMPL "packages/ui-save-manager/src/routes/terraformation.tsx"
+		IMPL "packages/ui-save-manager/src/routes/players.tsx"
+	SPEC "the loaded save lives in a store above the routes: switching page reads no file again and"
+		+ "reloads no page, and the view models of a loaded save are computed once for it"
+		IMPL "packages/ui-save-manager/src/app.tsx::<LoadedSaveProvider>"
+		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should keep the loaded save without"
+			+ "reading its file again nor reloading the page"
+	SPEC "a page of the save requested while no save is loaded opens the Load save page"
+		IMPL "packages/ui-save-manager/src/components/shell/SavePage.tsx::<Navigate"
+			+ "href={PAGE_PATHS.loadSavePath}/>"
+		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should open the Load save page"
+	SPEC "the route files the shell adds are test roots of the coverage-gaps plugin, reached by the"
+		+ "production build the scenarios spawn"
+		IMPL "fallow-coverage-gaps.toml::packages/ui-save-manager/src/routes/*.tsx"
+	REJECTED "the pages as components of the one route, switched by a signal: a page has no"
+		+ "address, the history of the browser does not step back through the pages, and their"
+		+ "modules leave the test roots the plugin declares"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT134
+	RATIONALE "The save is read from a file the reader picks and never leaves the browser, so it"
+		+ "cannot be carried by the URL; the store above the router keeps it while the routes give"
+		+ "each page an address, and the file routes are already exempt as a whole from the static"
+		+ "coverage gate"
+		REF @DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile
+	SOURCE "Owner ruling of 2026-09-27, when FEAT134 started: one route per page, the loaded save"
+		+ "in a store above the routes"
+		PR 202
+
+DECISION TheSaveIdentityShowsTheResolvedGameRelease
+	SPEC "the game release of the save identity is the release resolved from the version the save"
+		+ "declares, the current format release when the save declares no version or one no release"
+		+ "matches"
+		IMPL "packages/core-mapping/src/domain/rules/resolveGameReleaseOfDeclaredVersion.ts::resolveGameReleaseOfDeclaredVersion"
+		IMPL "packages/core-mapping/src/application/LoadSaveIdentity.ts::resolveGameReleaseOfDeclaredVersion"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadSaveIdentity.spec.ts::should present"
+			+ "the current format release"
+	REJECTED "the version the save declares, printed as is: a version no release names reads as a"
+		+ "release the project does not know, and a save without a version would show nothing"
+	REJECTED "no game release for a save without a version: the save is read by the branch of the"
+		+ "current format release all the same, so the identity would hide the release that reads"
+		+ "it"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT135
+	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
+		PR 205
+
+DECISION APlayerOnAnEmptyPlanetShowsNoPlanet
+	SPEC "the players menu shows no planet for a player whose planet is empty, and the planet of"
+		+ "the entry otherwise, whatever the format of the save"
+		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::findPlanetStoodOn"
+		ENFORCED_BY "packages/core-mapping/src/domain/entities/PlayerEntity.spec.ts::should answer"
+			+ "$expected for $situation"
+		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should list its players with the"
+			+ "planet they stand on"
+	REJECTED "no planet for any player of a legacy save: a legacy player entry carries its planet"
+		+ "like any other, so hiding it drops a fact the save states"
+	REJECTED "a placeholder such as Unknown planet: it spends a line of the menu to say nothing"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT135
+	SOURCE "Owner review of 2026-09-27: the planet shows when its name is not empty, legacy save or"
+		+ "not"
+		PR 205
+
+DECISION APresentationPieceLandsWithTheFirstPageThatRendersIt
+	SPEC "A presentation piece of ui-save-manager is delivered by the task of the first page that"
+		+ "renders it, never ahead of that page: the tone badge and the on or off pill by the task"
+		+ "of the Configuration modifiers and unlock flags"
+		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
+		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
+		IMPL "packages/ui-save-manager/src/components/configuration/ModifiersCard.tsx::<ToneBadge"
+		IMPL "packages/ui-save-manager/src/components/configuration/UnlocksCard.tsx::<OnOffPill"
+	REJECTED "Shipping the tone badge and the on or off pill with FEAT138, ahead of any page: no"
+		+ "module would import them, which the fallow unused-file gate refuses"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT138
+	APPLIES_TO_TASK @TASK.FEAT136
+	RATIONALE "FEAT136 renders the modifiers in tones and the unlock flags, the first consumers of"
+		+ "the two pieces"
+		REF @TASK.FEAT136
+	SOURCE "Owner ruling at the launch of wave 10 on 2026-09-28"
+		PR 210
+
+DECISION TheSeverityPillLabelIsAMessageOfTheUi
+	SPEC "The label of a notification severity pill is a message of ui-save-manager, read from a"
+		+ "table typed on NotificationSeverity; the severity itself stays decided by the presenter"
+		IMPL "packages/ui-save-manager/src/messages/notificationMessages.js::notificationSeverityLabels"
+	REJECTED "Carrying the label in NotificationViewModel: no CLI renders a notification, and every"
+		+ "presenter and controller spec literal would restate a label of the pill"
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+	REJECTED "A ternary on the severity: a third severity would read as Warning in silence"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT138
+	SOURCE "FEAT138 delivery"
+		PR 210
+
+DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
+	SPEC "one page at /load-save loads the first save and every next one; it is named Load save"
+		+ "before a save is loaded and Load another save once one is, in the menu and in its"
+		+ "breadcrumb, and its menu entry is marked as the current page while it is open"
+		IMPL "packages/ui-save-manager/src/routes/load-save.tsx::resolveLoadSavePageTitle(loadedSave.isSaveLoaded())"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"load-save-page-link\""
+		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should mark Load save as the"
+			+ "current page of the menu"
+	SPEC "the Overview page has the address /overview and opens once a save is loaded; requested"
+		+ "with no save loaded, it opens the Load save page"
+		IMPL "packages/ui-save-manager/src/lib/pagePaths.ts::const overviewPath = '/overview';"
+		IMPL "packages/ui-save-manager/src/routes/overview.tsx::fallback={<Navigate"
+			+ "href={PAGE_PATHS.loadSavePath}/>}"
+		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Overview page"
+			+ "at its own address"
+	SPEC "the file picked, its validation and its errors belong to the load page; the store above"
+		+ "the routes takes a save only once it validated, and a load that ends after the page was"
+		+ "left is dropped"
+		IMPL "packages/ui-save-manager/src/routes/load-save.tsx::loadedSave.loadSave({content:"
+			+ "result.content, fileName: result.fileName, warnings: result.warnings});"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::if (!isDisposed) {"
+		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should keep the loaded save"
+		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should offer nothing to"
+			+ "visualize before a file is picked on it"
+	SPEC "the Overview page names the loaded save from the validated save, never from the file"
+		+ "chosen in the input"
+		IMPL "packages/ui-save-manager/src/routes/overview.tsx::resolveLoadedSaveTitle(loadedSave().fileName)"
+	REJECTED "the Overview page carrying the load section before a save is loaded, beside a Load"
+		+ "another save page: the same form at two addresses, and no entry of the menu marked"
+		+ "current before a save is loaded"
+	REJECTED "the picked file and its validation held in the store above the routes: picking a file"
+		+ "on Load another save unloaded the loaded save at once, and Visualize was enabled by a"
+		+ "file picked on another page"
+	REJECTED "the root address redirecting to the Load save page: the home page owns the root"
+		+ "address"
+		REF @TASK.FEAT150
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT137
+	APPLIES_TO_TASK @TASK.FEAT150
+	RATIONALE "Two pages loaded a save until the review; one address with a name that follows the"
+		+ "loaded save keeps the menu entry lit on the page the reader is on, and the load form"
+		+ "stays one component, its result shown by a section of its own as the merge does"
+		REF @DECISION.EachPageOfTheSaveManagerIsARoute
+	SOURCE "Owner review of 2026-09-28: Load save and Load another save share /load-save, the root"
+		+ "address redirects to it, the Overview page moves to /overview; the staging of the picked"
+		+ "file answers three bot review threads"
+		PR 211
+	SOURCE "Owner ruling of 2026-09-28 when FEAT150 was refined: the root address opens a home page"
+		+ "of its own, and the scenarios that load a save open /load-save by its own address"
+		PR 217
+
+DECISION TheMergedSavesLiveInAStoreAboveTheRouter
+	SPEC "the last merge result and the merged saves kept live in a provider of their own, mounted"
+		+ "around the router, the merge page reading them and holding no merge state"
+		IMPL "packages/ui-save-manager/src/app.tsx::<MergedSavesProvider>"
+		IMPL "packages/ui-save-manager/src/routes/merge.tsx::useMergedSaves()"
+	SPEC "a merged save is kept as its file name and one object URL, created when the merge returns"
+		+ "and revoked when the save is dropped or removed; the result section, the list of earlier"
+		+ "saves and the attachments of the home message link to that URL and build none of their"
+		+ "own"
+		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::URL.createObjectURL"
+		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::URL.revokeObjectURL"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::href={props.mergedSave()?.downloadUrl}"
+	REJECTED "the provider inside the Layout beside LoadedSaveProvider: the Layout is the shell"
+		+ "every page task of the wave edits, and the store needs nothing of the router"
+	REJECTED "keeping the merge result view models of the five merges: a failure is read once, and"
+		+ "five save contents held twice, as text and as a Blob, cost memory for nothing"
+	REJECTED "the result section building its own object URL, as before: the link of the last"
+		+ "result would then differ from the one kept, and leaving the page would revoke it"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT149
+	RATIONALE "The route component is disposed when the reader opens another page, taking any"
+		+ "signal it holds; a store above the router outlives every page, as the loaded save does"
+		REF @DECISION.EachPageOfTheSaveManagerIsARoute
+	SOURCE "Ruling taken when FEAT149 was implemented, within the owner's ask of a dedicated"
+		+ "provider above the routes"
+		PR 215
+
+DECISION TheConfigurationPageListsEightUnlockFlagsAndStatesEachToneInText
+	SPEC "the unlocks zone lists the eight flags page F of the mockup shows, in this order: free"
+		+ "craft, everything unlocked, space trading, ore extractors, teleporters, drones,"
+		+ "autocrafter, randomized mineables; the other flags of the configuration entry are not"
+		+ "listed"
+		IMPL "packages/core-mapping/src/domain/valueObjects/SaveConfigurationValueObject.ts::readonly"
+			+ "unlocks"
+		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should list each unlock"
+			+ "flag of the save with an on or off pill"
+	SPEC "the summary of the modifiers card is the note that 100 % and ×1 are the game's defaults;"
+		+ "the save name and mode stay in the save identity of the menu"
+		IMPL "packages/ui-save-manager/src/messages/configurationPageMessages.js::modifiersCardSummary"
+		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should state the game"
+			+ "defaults in the summary of the modifiers"
+	SPEC "a tone badge states its tone in visually hidden text after its value, so a screen reader"
+		+ "and a colour-blind reader get it without the colour"
+		IMPL "packages/ui-save-manager/src/components/structure/ToneBadge.tsx::visually-hidden"
+		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::should read the tone"
+			+ "of a modifier apart from its value"
+	SPEC "a save without statistics shows the total crafted objects as 0, as the Global progression"
+		+ "section did"
+		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.spec.ts::should"
+			+ "show the progression with no crafted object counted"
+	REJECTED "Every flag of the entry, preInterplanetarySave and modded included: they describe the"
+		+ "save, not what the player unlocked, and page F does not show them"
+	REJECTED "The save name and mode as the summary of the modifiers card, as the Save"
+		+ "Configuration section had: the menu identity already names the save"
+	REJECTED "The tone as a title attribute or as colour alone: a title is not read reliably and"
+		+ "colour alone fails WCAG 1.4.1"
+	REJECTED "Hiding the crafted objects row of a save without statistics: the task keeps the"
+		+ "progression as it was"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT136
+	SOURCE "Rulings of the FEAT136 agent of 2026-09-28, checking the unlock flags against the save"
+		+ "format as the task asks"
+		PR 218
+		REF @URL.SaveManagerRedesignMockup

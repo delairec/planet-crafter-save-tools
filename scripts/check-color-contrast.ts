@@ -71,7 +71,7 @@ export const TOKEN_PAIRS: TokenPair[] = [
   {
     description: 'the icon of an icon-only button under the pointer, on its hover panel',
     file: 'packages/ui-save-manager/src/styles/buttons.css',
-    selector: '.icon-button button:hover:not(:disabled)',
+    selector: '.icon-button :enabled:hover',
     foreground: 'content',
     background: 'elevated'
   },
@@ -88,6 +88,34 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.notification-warning',
     foreground: 'content',
     background: 'warning-surface'
+  },
+  {
+    description: 'the text of an information notification, inherited from the body, on its surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-information',
+    foreground: 'content',
+    background: 'information-surface'
+  },
+  {
+    description: 'the severity pill of a limitation notification, on its own surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-limitation .notification-severity-pill',
+    foreground: 'limitation',
+    background: 'surface'
+  },
+  {
+    description: 'the severity pill of a warning notification, on its own surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-warning .notification-severity-pill',
+    foreground: 'warning',
+    background: 'surface'
+  },
+  {
+    description: 'the severity pill of an information notification, on its own surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-information .notification-severity-pill',
+    foreground: 'information',
+    background: 'surface'
   },
   {
     description: 'a validation message origin, nested inside the code panel above',
@@ -146,11 +174,25 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
-    description: 'a button label, and the text-selection highlight, on the accent fill',
+    description: 'a button label on the idle fill of a button, the accent darkened',
     file: 'packages/ui-save-manager/src/styles/buttons.css',
     selector: 'button, .button-link',
     foreground: 'inverted',
+    background: 'primary-idle'
+  },
+  {
+    description: 'a button label under the pointer, on the accent fill',
+    file: 'packages/ui-save-manager/src/styles/buttons.css',
+    selector: 'button:hover, .button-link:hover',
+    foreground: 'inverted',
     background: 'primary'
+  },
+  {
+    description: 'the label of a neon pink button link, on its neon pink fill',
+    file: 'packages/ui-save-manager/src/styles/buttons.css',
+    selector: '.button-link-neon-pink, .button-link-neon-pink:hover',
+    foreground: 'inverted',
+    background: 'neon-pink'
   },
   {
     description: 'a form field value on its input surface',
@@ -162,7 +204,7 @@ export const TOKEN_PAIRS: TokenPair[] = [
   {
     description: 'a read-only field label on the panel surface it is nested in',
     file: 'packages/ui-save-manager/src/styles/forms.css',
-    selector: '.fields-group.readonly .field .label',
+    selector: '.fields-group .label',
     foreground: 'primary',
     background: 'surface'
   },
@@ -185,6 +227,139 @@ export const TOKEN_PAIRS: TokenPair[] = [
     file: 'packages/ui-save-manager/src/styles/effects.css',
     selector: '.spinner-container',
     foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the title of a group of the menu, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-group-title',
+    foreground: 'neon-purple',
+    background: 'surface'
+  },
+  {
+    description: 'a link of the menu, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu a',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the menu link of the open page, on its neon fill',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu a[aria-current="page"]',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'the file name of the loaded save, in the identity zone of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-identity-file',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the display name, mode and game release of the loaded save, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-identity-detail',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the name of a player in the Players group, on the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-player',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the planet a player stands on, in the Players group of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-player-planet',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the Host badge of a player, on its neon fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.host-badge',
+    foreground: 'inverted',
+    background: 'neon-purple'
+  },
+  {
+    description: 'the open page of the breadcrumb, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/breadcrumb.css',
+    selector: '.breadcrumb-page',
+    foreground: 'content',
+    background: 'canvas'
+  },
+  {
+    description: 'the summary figure of a card header, on the neon-cyan pill of that header',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.card-summary',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'a label of a key and value list, on a card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.key-value dt',
+    foreground: 'muted',
+    background: 'surface-card'
+  },
+  {
+    description: 'a tone badge at the game default, on its neutral fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.tone-badge-neutral',
+    foreground: 'muted',
+    background: 'elevated'
+  },
+  {
+    description: 'a tone badge that penalises the player, on its danger fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.tone-badge-danger',
+    foreground: 'danger-on-surface',
+    background: 'danger-surface'
+  },
+  {
+    description: 'a tone badge that helps the player, on its positive fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.tone-badge-positive',
+    foreground: 'positive-on-surface',
+    background: 'positive-surface'
+  },
+  {
+    description: 'an on pill of an unlock flag, on its positive fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.on-off-pill-on',
+    foreground: 'positive-on-surface',
+    background: 'positive-surface'
+  },
+  {
+    description: 'an off pill of an unlock flag, on its neutral fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.on-off-pill-off',
+    foreground: 'muted',
+    background: 'elevated'
+  },
+  {
+    description: 'the application title, a link to the home page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
+    selector: '.application-title-link',
+    foreground: 'content',
+    background: 'canvas'
+  },
+  {
+    description: 'the version of the application, in the bottom-right corner, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
+    selector: '.application-version',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the file name of a merged save attached to the home message, on its chip',
+    file: 'packages/ui-save-manager/src/styles/home.css',
+    selector: '.home-message-attachment-download',
+    foreground: 'content',
     background: 'canvas'
   }
 ];
@@ -329,7 +504,7 @@ export function findUncataloguedForegroundDeclarations(source: string, filePath:
 }
 
 /**
- * @param {string} workspaceRoot the repository root the stylesheets are looked up from
+ * @param io
  * @returns every foreground violation of the stylesheets of `packages/ui-save-manager/src/`, generated ones excluded,
  * each cited by its path relative to the workspace root
  */

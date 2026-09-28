@@ -1,11 +1,11 @@
-import {expect, test, type Page} from '@playwright/test';
+import {type Page} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {readSiteHeaders} from '../siteHeaders';
 import {removeScriptNonces} from '../src/lib/scriptNonce';
-import {visualizeSave} from "./helpers/visualizeSave";
-import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
+import {chooseTheTwoSavesToMerge, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
-const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
+const saveAFixturePath = locateTheFixture('baseline_valid.json');
+const saveBFixturePath = locateTheFixture('other-player_valid.json');
 
 /** The headers the server must send on the document, as `public/_headers` declares them. */
 const policyHeaderNames = ['Content-Security-Policy', 'Referrer-Policy', 'Permissions-Policy'];
@@ -33,13 +33,15 @@ function recordRequestedUrls(page: Page): string[] {
 }
 
 async function loadViewAndMergeASave(page: Page): Promise<void> {
-  await page.goto('/');
-  await visualizeSave(page, saveAFixturePath);
-  await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
-  await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath)
+  await visualizeTheSave(page, saveAFixturePath);
+  await openThePageOfTheMenu(page, 'Configuration');
+  await expect(page.getByTestId('modifiers-title')).toHaveText('Modifiers');
+  await openThePageOfTheMenu(page, 'Merge two saves');
+  await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
+  await page.getByTestId('merge').click();
   await expect(page.getByTestId('merge-success-message')).toBeVisible();
   const downloadStarted = page.waitForEvent('download');
-  await page.getByTestId('download-link').click();
+  await page.getByTestId('merged-save-download').click();
   await downloadStarted;
 }
 

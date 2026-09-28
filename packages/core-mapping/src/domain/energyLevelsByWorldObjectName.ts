@@ -1,4 +1,5 @@
-import {CURRENT_FORMAT_RELEASE, compareGameReleases, resolveGameRelease} from 'shared-save-processing/gameReleases.js';
+import {compareGameReleases} from 'shared-save-processing/gameReleases.js';
+import {resolveGameReleaseOfDeclaredVersion} from './rules/resolveGameReleaseOfDeclaredVersion';
 import {WorldObjectName} from './worldObjectNames';
 import energyLevels from './energyLevels.json' with {type: 'json'};
 import energyLevelsOf2004 from './energyLevelsByRelease/2.004.json' with {type: 'json'};
@@ -40,7 +41,7 @@ function selectEnergyLevelsByRole(role: EnergyRole, rows: readonly EnergyLevelRo
 }
 
 export function selectEnergyLevelsOfDeclaredVersion(declaredVersion: string | undefined): EnergyLevelsOfRelease {
-  const release = (declaredVersion === undefined ? undefined : resolveGameRelease(declaredVersion)) ?? CURRENT_FORMAT_RELEASE;
+  const release = resolveGameReleaseOfDeclaredVersion(declaredVersion);
   const rows = selectRowsOfRelease(release);
 
   return {

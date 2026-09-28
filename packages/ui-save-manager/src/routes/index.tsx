@@ -1,113 +1,60 @@
-import {createSignal, onMount, Show} from 'solid-js';
-import PlayersSection from '../components/PlayersSection';
-import GlobalProgressionSection from "../components/GlobalProgressionSection";
-import TerraformationLevelsSection from '../components/TerraformationLevelsSection';
-import SaveConfigurationSection from "../components/SaveConfigurationSection";
-import EnergyLevelsSection from "~/components/EnergyLevelsSection";
-import MergeSection from "~/components/MergeSection";
-import MergeResultSection from "~/components/MergeResultSection";
+import {A} from '@solidjs/router';
+import {Show} from 'solid-js';
+import SaveIdentity from '~/components/shell/SaveIdentity';
+import IconButton from '~/components/structure/IconButton';
+import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
+import {PAGE_PATHS} from '~/lib/pagePaths';
+import HomeMessageAttachments from '~/components/HomeMessageAttachments';
+import {useMergedSaves} from '~/hooks/useMergedSaves';
 import {
-  displayRouteCallFailedMessage,
-  displayRouteDisplayTitle,
-  displayRouteErrorsTitle,
-  displayRouteFileInputLabel,
-  displayRouteLoadingLabel,
-  displayRouteParsedDataPlaceholder,
-  displayRouteSubmitButtonLabel,
-  displayRouteVisualizationTitle,
-  displayRouteWarningsTitle
-} from "~/messages/displayRouteMessages";
-import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
-import Spinner from "~/components/structure/Spinner";
-import HomeDisclaimer from "~/components/HomeDisclaimer";
-import {useLoadSaveFile} from "~/lib/useLoadSaveFile";
-import {useSectionViewModels} from "~/lib/useSectionViewModels";
-import DropZone from "~/components/structure/DropZone";
-import SaveFileField from "~/components/structure/SaveFileField";
-import {selectFileInInput} from "~/lib/selectFileInInput";
-import {preventDropOutsideAreas} from "~/lib/preventDropOutsideAreas";
-import {tooManyFilesForOneSaveMessage} from "~/messages/dropZoneMessages";
+  crossIcon,
+  homeMessageBody,
+  homeMessageClosing,
+  homeMessageSender,
+  homeMessageTitle,
+  mergeTwoSavesPageTitle,
+  openOverviewLinkLabel,
+  resolveLoadSavePageTitle,
+  unloadSaveButtonLabel
+} from '~/messages/shellMessages';
 
-export default function Home() {
-  let fileInputElement!: HTMLInputElement;
-
-  const [isReady, setIsReady] = createSignal<boolean>(false);
-  onMount(() => setIsReady(true));
-  preventDropOutsideAreas();
-
-  const {
-    file,
-    validatedContent,
-    errors,
-    warnings,
-    mergeResult,
-    isLoading,
-    hasLoadCallFailed,
-    handleFileChange,
-    handleSubmit,
-    handleMergeStarted,
-    handleSubmitMerge
-  } = useLoadSaveFile();
-  const viewModels = useSectionViewModels(validatedContent);
-
-  const handleMergeResult: typeof handleSubmitMerge = (result) => {
-    handleSubmitMerge(result);
-    fileInputElement.value = '';
-  };
+export default function HomePage() {
+  const loadedSave = useLoadedSave();
+  const mergedSaves = useMergedSaves();
 
   return (
-    <Show when={isReady()} fallback={<p class="text-color-muted">{displayRouteLoadingLabel}</p>}>
-      <main>
-
-        <HomeDisclaimer/>
-
-        <DropZone label={displayRouteDisplayTitle} testId="display-area" maximumFileCount={1}
-                  tooManyFilesMessage={tooManyFilesForOneSaveMessage}
-                  onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
-          <h2>{displayRouteDisplayTitle}</h2>
-          <p class="save-file-row">
-            <SaveFileField label={displayRouteFileInputLabel} testId="save-file" ref={fileInputElement} onChange={handleFileChange}/>
-            <button data-testid="visualize-button" onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
-          </p>
-        </DropZone>
-
-        <Show when={isLoading()}>
-          <Spinner testId="display-busy-indicator"/>
-        </Show>
-        <Show when={hasLoadCallFailed()}>
-          <p class="text-color-danger" data-testid="display-failure-message">{displayRouteCallFailedMessage}</p>
-        </Show>
-
-        <MergeSection onMergeStarted={handleMergeStarted} onMergeResult={handleMergeResult}/>
-
-        <h2 data-testid="visualization-title">{displayRouteVisualizationTitle}</h2>
-
-        <Show when={!errors().length && !validatedContent() && !mergeResult()}>
-          <p class="text-color-muted">{displayRouteParsedDataPlaceholder}</p>
-        </Show>
-
-        <MergeResultSection result={mergeResult}/>
-
-        <Show when={errors().length}>
-          <code>{file()?.name}</code>
-          <ValidationMessagesList title={displayRouteErrorsTitle} testId="display-errors" severity="danger" messages={errors()}/>
-        </Show>
-
-        <Show when={warnings().length}>
-          <code>{file()?.name}</code>
-          <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={warnings()}/>
-        </Show>
-
-        <Show when={validatedContent() && !errors().length}>
-          <div class="grid-container">
-            <SaveConfigurationSection viewModel={viewModels.saveConfiguration}/>
-            <GlobalProgressionSection viewModel={viewModels.globalProgression}/>
+    <section class="home-page" data-testid="home-page">
+      <article class="home-message" aria-labelledby="home-message-title" data-testid="home-message">
+        <h2 id="home-message-title" class="home-message-title" data-testid="home-message-title">{homeMessageTitle}</h2>
+        <div class="home-message-envelope" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <polygon class="home-message-hexagon" points="50,4 90,27 90,73 50,96 10,73 10,27"/>
+            <rect class="home-message-letter" x="24" y="32" width="52" height="36" rx="3"/>
+            <polyline class="home-message-flap" points="25,34 50,54 75,34"/>
+          </svg>
+        </div>
+        <div class="home-message-frame">
+          <p class="home-message-body" data-testid="home-page-description">{homeMessageBody}</p>
+          <div class="home-message-actions">
+            <p class="home-page-links">
+              <A href={PAGE_PATHS.mergeTwoSavesPath} class="button-link" data-testid="home-merge-two-saves-page-link">{mergeTwoSavesPageTitle}</A>
+              <A href={PAGE_PATHS.loadSavePath} class="button-link" data-testid="home-load-save-page-link">{resolveLoadSavePageTitle(loadedSave.isSaveLoaded())}</A>
+            </p>
+            <Show when={loadedSave.isSaveLoaded() && loadedSave.viewModels.saveIdentity()}>
+              {(saveIdentity) => (
+                <SaveIdentity saveIdentity={saveIdentity()} testId="home-loaded-save">
+                  <IconButton class="home-unload-save" icon={crossIcon} label={unloadSaveButtonLabel} testId="unload-save"
+                              onClick={loadedSave.unloadSave} disabled={false}/>
+                  <A href={PAGE_PATHS.overviewPath} class="button-link button-link-neon-pink" data-testid="home-overview-link">{openOverviewLinkLabel}</A>
+                </SaveIdentity>
+              )}
+            </Show>
           </div>
-          <EnergyLevelsSection viewModel={viewModels.energyLevels}/>
-          <TerraformationLevelsSection viewModel={viewModels.terraformationLevels}/>
-          <PlayersSection viewModel={viewModels.players}/>
-        </Show>
-      </main>
-    </Show>
+          <p class="home-message-body" data-testid="home-message-closing">{homeMessageClosing}</p>
+          <p class="home-message-sender" data-testid="home-message-sender">{homeMessageSender}</p>
+          <HomeMessageAttachments mergedSaves={mergedSaves.keptMergedSaves} onRemove={mergedSaves.removeMergedSave}/>
+        </div>
+      </article>
+    </section>
   );
 }

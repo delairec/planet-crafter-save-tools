@@ -15,9 +15,9 @@ export default function FieldsGroupGrid<T>(props: FieldsGroupGridProps<T>) {
       <h5>{props.title}</h5>
       <div class="grid-container">
         <For each={props.items}>
-          {(item) => (
+          {(item, index) => (
             <div class="grid-item">
-              <h5 data-testid={props.testId && `${props.testId}-item-label`}>{props.itemLabel(item)}</h5>
+              <h5 data-testid={props.testId && `${props.testId}-item-label-${index()}`}>{props.itemLabel(item)}</h5>
               <FieldsGroup columns={() => props.columns(item)}/>
             </div>
           )}

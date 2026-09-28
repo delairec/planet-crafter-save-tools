@@ -6,15 +6,16 @@ import {
   notFoundRouteTitle
 } from "~/messages/notFoundRouteMessages";
 import Icon from "~/components/Icon";
+import {PAGE_PATHS} from "~/lib/pagePaths";
 
 export default function NotFound() {
   return (
-    <main class="py-4 text-center text-xl">
+    <div class="py-4 text-center text-xl">
       <p class="text-6xl">
         {notFoundRouteStatusCode}&nbsp;
-        <span class="uppercase middle text-lg">{notFoundRouteTitle}</span>
+        <span class="uppercase middle text-lg" data-testid="not-found-title">{notFoundRouteTitle}</span>
       </p>
-      <A href="/"><Icon content={notFoundRouteBackHomeIcon}/> {notFoundRouteBackHomeLabel}</A>
-    </main>
+      <A href={PAGE_PATHS.homePath} data-testid="home-page-link"><Icon content={notFoundRouteBackHomeIcon}/> {notFoundRouteBackHomeLabel}</A>
+    </div>
   );
 }

@@ -28,12 +28,12 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
         <div>
           <h3 data-testid="energy-levels-title">{energyLevelsSectionTitle}</h3>
           <For each={energyLevels().notifications}>
-            {(notification) => <Notification severity={notification.severity} testId="energy-levels-notification">{notification.message}</Notification>}
+            {(notification, index) => <Notification severity={notification.severity} testId={`energy-levels-notification-${index()}`}>{notification.message}</Notification>}
           </For>
           <For each={energyLevels().planets}>
-            {(planet) => (
+            {(planet, planetIndex) => (
               <div>
-                <h4 data-testid="energy-levels-planet-title">{planet.planetId}</h4>
+                <h4 data-testid={`energy-levels-planet-${planetIndex()}-title`}>{planet.planetId}</h4>
                 <div class="fields-group-container">
                   <FieldsGroup columns={() => planet.energyLevels.columns}/>
                 </div>
@@ -51,7 +51,7 @@ export default function EnergyLevelsSection(props: EnergyLevelsProps) {
 
                 <FieldsGroupGrid
                   title={energyLevelsSectionProductionTitle}
-                  testId="energy-production"
+                  testId={`energy-production-${planetIndex()}`}
                   items={planet.productionBreakdown}
                   itemLabel={(row) => row.label}
                   columns={(row) => [

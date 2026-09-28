@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import uiManifest from '../package.json' with {type: 'json'};
 
 test.describe('Application version', () => {
@@ -8,7 +8,7 @@ test.describe('Application version', () => {
       await page.goto('/');
 
       // Assert
-      await expect(page.getByTestId('application-version')).toHaveText(`Version ${uiManifest.version}`);
+      await expect(page.getByTestId('application-version')).toHaveText(`v${uiManifest.version}`);
     });
   });
 

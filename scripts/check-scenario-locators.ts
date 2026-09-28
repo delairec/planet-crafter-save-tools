@@ -8,11 +8,13 @@ const SCENARIO_EXTENSION = /\.e2e\.ts$/;
 const ACCESSIBILITY_LOCATOR = /\bgetBy(?:Role|Label|Text|Placeholder|AltText|Title)\s*\(/;
 const SELECTOR_QUERY = /\.locator\s*\(|\bquerySelector(?:All)?\s*\(|\bwaitForSelector\s*\(|\bframeLocator\s*\(/;
 const SELECTOR_TAKING_PAGE_ACTION = /\bpage\s*\.\s*(?:\$\$?(?:eval)?|click|dblclick|fill|focus|hover|type|press|check|uncheck|selectOption|setInputFiles|setChecked|inputValue|dragAndDrop|textContent|innerText|innerHTML|getAttribute|isVisible|isHidden|isEnabled|isDisabled|isChecked|isEditable|tap|dispatchEvent)\s*\(/;
+const UNCHECKED_TEST_IMPORT = /^\s*import\s*\{[^}]*\btest\b[^}]*\}\s*from\s*['"]@playwright\/test['"]/;
 const REFERENCE_SCREENSHOT = /\btoHaveScreenshot\s*\(|\btoMatchSnapshot\s*\(|\.screenshot\s*\(/;
 
 const ACCESSIBILITY_LOCATOR_REASON = 'a scenario designates an element by its test id, never by its role, its label or its text';
 const CSS_SELECTOR_REASON = 'a scenario designates an element by its test id, never by a CSS selector';
 const REFERENCE_SCREENSHOT_REASON = 'a scenario asserts what the screen shows in words, never against a reference screenshot';
+const UNCHECKED_TEST_REASON = 'a scenario takes its test from scenarioTest, which fails a page repeating a test id';
 
 const CHECK_NAME = 'check:locators';
 
@@ -41,7 +43,8 @@ export function findScenarioLocatorViolations(source: string): ScenarioLocatorVi
     return [
       ...ACCESSIBILITY_LOCATOR.test(code) ? [{line, reason: ACCESSIBILITY_LOCATOR_REASON}] : [],
       ...designatesByCssSelector ? [{line, reason: CSS_SELECTOR_REASON}] : [],
-      ...REFERENCE_SCREENSHOT.test(code) ? [{line, reason: REFERENCE_SCREENSHOT_REASON}] : []
+      ...REFERENCE_SCREENSHOT.test(code) ? [{line, reason: REFERENCE_SCREENSHOT_REASON}] : [],
+      ...UNCHECKED_TEST_IMPORT.test(text) ? [{line, reason: UNCHECKED_TEST_REASON}] : []
     ];
   });
 }

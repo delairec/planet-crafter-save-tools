@@ -1,10 +1,15 @@
 import {readFile} from 'node:fs/promises';
-import {expect, test, type Download, type Page} from '@playwright/test';
-import {
-  baselineSaveFixturePath as saveAFixturePath,
-  legacySaveFixturePath,
-  otherPlayerSaveFixturePath as saveBFixturePath
-} from './helpers/scenarioFixturePaths';
+import {type Download, type Page} from '@playwright/test';
+import {holdEveryFileRead, holdTheFileReadsAgain, releaseTheHeldFileReads} from './helpers/holdEveryFileRead';
+import {expect, test} from './scenarioTest';
+import {chooseTheTwoSavesToMerge, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
+
+const saveAFixturePath = locateTheFixture('baseline_valid.json');
+const saveBFixturePath = locateTheFixture('other-player_valid.json');
+const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
+const skeoUpdateFixturePath = locateTheFixture('skeo-update_valid.json');
+const energyConsumptionFixturePath = locateTheFixture('energy-consumption_valid.json');
+const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
 
 /** The name the merge gives its output, built from the two source file names. */
 const mergedFileName = 'baseline_valid-other-player_valid-merged.json';
@@ -24,22 +29,27 @@ const legacyTerrainLayerEntry = '"layerId":"PC-Toxicity-Layer2"';
 const preferLegacyFormatDescription =
   'Tick this checkbox if you want to align the save format on the older version instead of the newer.';
 
+const saveAPrecedenceNotice =
+  'Where the two saves hold the same data in conflict, save A prevails over save B, its configuration included: '
+  + 'swap the saves to change which one prevails. When only one of them is on Prime, that save acts as save A '
+  + 'whatever their order.';
+
 const keepLegacyFormatReminder = 'To write the legacy format instead, tick "Prefer legacy format" and merge again.';
 
 async function chooseTheTwoSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
-  await page.goto('/');
-  await page.getByTestId('save-a-input').setInputFiles(chosenSaveAPath);
-  await page.getByTestId('save-b-input').setInputFiles(chosenSaveBPath);
+  await page.goto('/merge');
+  await page.getByTestId('save-a').setInputFiles(chosenSaveAPath);
+  await page.getByTestId('save-b').setInputFiles(chosenSaveBPath);
 }
 
 async function mergeTheChosenSaves(page: Page): Promise<void> {
-  await page.getByTestId('merge-button').click();
+  await page.getByTestId('merge').click();
   await expect(page.getByTestId('merge-success-message')).toBeVisible();
 }
 
 async function mergeAndRevealTheMergeReport(page: Page): Promise<void> {
   await mergeTheChosenSaves(page);
-  await page.getByTestId('merge-warnings-details-toggle').click();
+  await page.getByTestId('merge-warnings-details').click();
 }
 
 async function mergeTheTwoFixtures(page: Page): Promise<void> {
@@ -47,9 +57,22 @@ async function mergeTheTwoFixtures(page: Page): Promise<void> {
   await mergeTheChosenSaves(page);
 }
 
+async function mergeAnotherPairOfSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
+  await chooseTheTwoSavesToMerge(page, chosenSaveAPath, chosenSaveBPath);
+  await mergeTheChosenSaves(page);
+}
+
+async function mergeFivePairsOfSaves(page: Page): Promise<void> {
+  await mergeTheTwoFixtures(page);
+  await mergeAnotherPairOfSaves(page, saveAFixturePath, legacySaveFixturePath);
+  await mergeAnotherPairOfSaves(page, saveAFixturePath, skeoUpdateFixturePath);
+  await mergeAnotherPairOfSaves(page, saveAFixturePath, energyConsumptionFixturePath);
+  await mergeAnotherPairOfSaves(page, saveBFixturePath, saveAFixturePath);
+}
+
 async function downloadTheProducedFile(page: Page): Promise<Download> {
   const downloadStarted = page.waitForEvent('download');
-  await page.getByTestId('download-link').click();
+  await page.getByTestId('merged-save-download').click();
 
   return downloadStarted;
 }
@@ -152,25 +175,25 @@ test.describe('Save merge', () => {
   test.describe('When the legacy format checkbox takes the keyboard focus', () => {
     test('should show the tooltip that describes it', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/merge');
       const preferLegacyFormatCheckbox = page.getByTestId('prefer-legacy-format');
 
       // Act
       await preferLegacyFormatCheckbox.focus();
 
       // Assert
-      await expect(page.getByTestId('prefer-legacy-format-tooltip')).toHaveText(preferLegacyFormatDescription);
+      await expect(page.getByTestId('prefer-legacy-format-description')).toHaveText(preferLegacyFormatDescription);
     });
   });
 
   test.describe('When the merge section is shown', () => {
     test('should align the edge of the legacy format checkbox with the edge of the save inputs', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/merge');
 
       // Act
-      const saveAInputLeft = (await page.getByTestId('save-a-input').boundingBox())!.x;
-      const saveBInputLeft = (await page.getByTestId('save-b-input').boundingBox())!.x;
+      const saveAInputLeft = (await page.getByTestId('save-a').boundingBox())!.x;
+      const saveBInputLeft = (await page.getByTestId('save-b').boundingBox())!.x;
       const checkboxLeft = (await page.getByTestId('prefer-legacy-format').boundingBox())!.x;
 
       // Assert
@@ -178,19 +201,143 @@ test.describe('Save merge', () => {
       expect(checkboxLeft).toBeCloseTo(saveAInputLeft, 0);
     });
 
-    test('should align the label and the input of the save to visualize with those of the saves to merge', async ({page}) => {
-      // Arrange
-      await page.goto('/');
-
+    test('should tell, in an information notification, that save A prevails over save B', async ({page}) => {
       // Act
-      const saveALabelLeft = (await page.getByTestId('save-a-label').boundingBox())!.x;
-      const saveAInputLeft = (await page.getByTestId('save-a-input').boundingBox())!.x;
-      const saveFileLabelLeft = (await page.getByTestId('save-file-label').boundingBox())!.x;
-      const saveFileInputLeft = (await page.getByTestId('save-file-input').boundingBox())!.x;
+      await page.goto('/merge');
 
       // Assert
-      expect(saveFileLabelLeft).toBeCloseTo(saveALabelLeft, 0);
-      expect(saveFileInputLeft).toBeCloseTo(saveAInputLeft, 0);
+      await expect(page.getByTestId('merge-precedence-notice')).toContainText(saveAPrecedenceNotice);
+      await expect(page.getByTestId('merge-precedence-notice-severity')).toHaveText('Information');
+    });
+
+    test('should show the precedence notice above the save inputs', async ({page}) => {
+      // Arrange
+      await page.goto('/merge');
+
+      // Act
+      const notice = (await page.getByTestId('merge-precedence-notice').boundingBox())!;
+      const saveAInputTop = (await page.getByTestId('save-a').boundingBox())!.y;
+
+      // Assert
+      expect(notice.y + notice.height).toBeLessThanOrEqual(saveAInputTop);
+    });
+  });
+
+  test.describe('When a merge produces a result while a save is loaded', () => {
+    test('should leave the loaded save in the Overview page', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, saveAFixturePath);
+      await openThePageOfTheMenu(page, 'Merge two saves');
+      await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
+      await mergeTheChosenSaves(page);
+
+      // Act
+      await openThePageOfTheMenu(page, 'Overview');
+
+      // Assert
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+    });
+  });
+
+  test.describe('When the reader leaves the Merge two saves page for Load save and comes back', () => {
+    test('should show the last merge result again with its merged save still downloadable', async ({page}) => {
+      // Arrange
+      await mergeTheTwoFixtures(page);
+      await openThePageOfTheMenu(page, 'Load save');
+
+      // Act
+      await openThePageOfTheMenu(page, 'Merge two saves');
+
+      // Assert
+      await expect(page.getByTestId('merged-file-name')).toHaveText(mergedFileName);
+      expect((await downloadTheProducedFile(page)).suggestedFilename()).toBe(mergedFileName);
+    });
+  });
+
+  test.describe('When six merges produced a file', () => {
+    test('should keep the five last merged saves, the earlier ones listed newest first below the last result', async ({page}) => {
+      // Arrange
+      await mergeFivePairsOfSaves(page);
+
+      // Act
+      await mergeAnotherPairOfSaves(page, legacySaveFixturePath, saveAFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('merged-file-name')).toHaveText('legacy-format_valid-baseline_valid-merged.json');
+      await expect(page.getByTestId(/^earlier-merged-save-file-name-\d+$/)).toHaveText([
+        'other-player_valid-baseline_valid-merged.json',
+        'baseline_valid-energy-consumption_valid-merged.json',
+        'baseline_valid-skeo-update_valid-merged.json',
+        'baseline_valid-legacy-format_valid-merged.json'
+      ]);
+    });
+
+    test('should offer each earlier merged save for download under its name', async ({page}) => {
+      // Arrange
+      await mergeTheTwoFixtures(page);
+      await mergeAnotherPairOfSaves(page, saveAFixturePath, legacySaveFixturePath);
+      const downloadStarted = page.waitForEvent('download');
+
+      // Act
+      await page.getByTestId('earlier-merged-save-download-0').click();
+
+      // Assert
+      expect((await downloadStarted).suggestedFilename()).toBe(mergedFileName);
+    });
+
+    test('should list the earlier merged saves below the last merge result', async ({page}) => {
+      // Arrange
+      await mergeTheTwoFixtures(page);
+
+      // Act
+      await mergeAnotherPairOfSaves(page, saveAFixturePath, legacySaveFixturePath);
+
+      // Assert
+      const lastResultTop = (await page.getByTestId('merged-file-name').boundingBox())!.y;
+      const earlierMergedSavesTop = (await page.getByTestId('earlier-merged-saves-title').boundingBox())!.y;
+      expect(lastResultTop).toBeLessThan(earlierMergedSavesTop);
+    });
+  });
+
+  test.describe('When a merge refused by validation follows five merges that produced a file', () => {
+    test('should keep the five merged saves, none dropped', async ({page}) => {
+      // Arrange
+      await mergeFivePairsOfSaves(page);
+      await chooseTheTwoSavesToMerge(page, invalidSaveFixturePath, saveAFixturePath);
+
+      // Act
+      await page.getByTestId('merge').click();
+
+      // Assert
+      await expect(page.getByTestId('save-a-errors-title')).toBeVisible();
+      await expect(page.getByTestId(/^earlier-merged-save-file-name-\d+$/)).toHaveText([
+        'other-player_valid-baseline_valid-merged.json',
+        'baseline_valid-energy-consumption_valid-merged.json',
+        'baseline_valid-skeo-update_valid-merged.json',
+        'baseline_valid-legacy-format_valid-merged.json',
+        mergedFileName
+      ]);
+    });
+  });
+
+  test.describe('When a merge runs after a merge that produced a file', () => {
+    test('should clear the last merge result and keep the merged save listed and downloadable', async ({page}) => {
+      // Arrange
+      await holdEveryFileRead(page);
+      await chooseTheTwoSaves(page, saveAFixturePath, saveBFixturePath);
+      await page.getByTestId('merge').click();
+      await releaseTheHeldFileReads(page);
+      await expect(page.getByTestId('merge-success-message')).toBeVisible();
+      await holdTheFileReadsAgain(page);
+
+      // Act
+      await page.getByTestId('merge').click();
+
+      // Assert
+      await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
+      await expect(page.getByTestId('merge-success-message')).toBeHidden();
+      await expect(page.getByTestId(/^earlier-merged-save-file-name-\d+$/)).toHaveText([mergedFileName]);
+      await expect(page.getByTestId('earlier-merged-save-download-0')).toHaveAttribute('href', /^blob:/);
     });
   });
 });

@@ -6,6 +6,7 @@ import DropZone from '~/components/structure/DropZone';
 import CheckboxField from '~/components/structure/CheckboxField';
 import IconButton from '~/components/structure/IconButton';
 import SaveFileField from '~/components/structure/SaveFileField';
+import Notification from '~/components/structure/Notification';
 import {yieldToPaint} from '~/lib/yieldToPaint';
 import {selectFileInInput} from '~/lib/selectFileInInput';
 import {orderDroppedSaves} from '~/lib/orderDroppedSaves';
@@ -16,6 +17,7 @@ import {
   mergeSectionPreferLegacyFormatLabel,
   mergeSectionSaveAAreaLabel,
   mergeSectionSaveALabel,
+  mergeSectionSaveAPrecedenceNotice,
   mergeSectionSaveBAreaLabel,
   mergeSectionSaveBLabel,
   mergeSectionSwapButtonLabel,
@@ -90,9 +92,10 @@ export default function MergeSection(props: MergeSectionProps) {
     <DropZone label={mergeSectionTitle} testId="merge-area" maximumFileCount={2} tooManyFilesMessage={tooManyFilesForTwoSavesMessage}
               onFilesDropped={handleSavesDropped}>
       <div class="inline-block">
-        <h2>{mergeSectionTitle}</h2>
+        <h2 data-testid="merge-title">{mergeSectionTitle}</h2>
+        <Notification severity="information" testId="merge-precedence-notice">{mergeSectionSaveAPrecedenceNotice}</Notification>
         <div class="merge-slots">
-          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-button"
+          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-saves"
                       onClick={handleSwap} disabled={!fileA() && !fileB()}/>
           <DropZone label={mergeSectionSaveAAreaLabel} testId="save-a-area" maximumFileCount={1}
                     tooManyFilesMessage={tooManyFilesForOneSaveMessage}
@@ -114,7 +117,7 @@ export default function MergeSection(props: MergeSectionProps) {
                          checked={preferLegacyFormat()} onChange={setPreferLegacyFormat}/>
         </p>
       </div>
-      <button data-testid="merge-button" onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
+      <button data-testid="merge" onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
       <Show when={isMerging()}>
         <Spinner testId="merge-busy-indicator"/>
       </Show>

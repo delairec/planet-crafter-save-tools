@@ -40,6 +40,16 @@ export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
         meteoOccurrence: 0.3,
         multiplayerFactor: 0.4,
         powerConsumption: 0.5
+      },
+      unlocks: {
+        freeCraft: false,
+        everythingUnlocked: false,
+        spaceTrading: true,
+        oreExtractors: true,
+        teleporters: false,
+        drones: true,
+        autocrafter: false,
+        randomizedMineables: false
       }
     });
   }
@@ -58,12 +68,20 @@ export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
     return [new PlayerEntity({
       name: 'Nikowa',
       inventory: [],
-      equipment: []
+      equipment: [],
+      planetId: 'Toxicity',
+      host: true
     }), new PlayerEntity({
       name: 'Chileny',
       inventory: [],
-      equipment: []
+      equipment: [],
+      planetId: '',
+      host: false
     })];
+  }
+
+  getDeclaredVersion(): string | undefined {
+    return '2.008';
   }
 
   getTerraformationLevels(): TerraformationLevelEntity[] {

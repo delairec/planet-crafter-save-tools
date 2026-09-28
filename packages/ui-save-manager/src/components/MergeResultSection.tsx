@@ -1,4 +1,4 @@
-import {Accessor, createEffect, createSignal, onCleanup, Show} from 'solid-js';
+import {Accessor, Show} from 'solid-js';
 import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeResultViewModel';
 import {
   mergeResultSectionDownloadLinkLabel,
@@ -14,32 +14,14 @@ import {
   mergeResultSectionSuccessMessage
 } from '~/messages/mergeResultSectionMessages';
 import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
+import {KeptMergedSave} from "~/providers/MergedSavesProvider.tsx";
 
 interface MergeResultSectionProps {
   result: Accessor<MergeResultViewModel | null>;
+  mergedSave: Accessor<KeptMergedSave | null>;
 }
 
 export default function MergeResultSection(props: MergeResultSectionProps) {
-  const [downloadUrl, setDownloadUrl] = createSignal<string | null>(null);
-  let downloadFileUrl: string | null = null;
-
-  createEffect(() => {
-    const result = props.result();
-
-    if (downloadFileUrl) {
-      URL.revokeObjectURL(downloadFileUrl);
-    }
-
-    downloadFileUrl = result?.status === 'success' ? URL.createObjectURL(new Blob([result.content], {type: 'application/json'})) : null;
-    setDownloadUrl(downloadFileUrl);
-  });
-
-  onCleanup(() => {
-    if (downloadFileUrl) {
-      URL.revokeObjectURL(downloadFileUrl);
-    }
-  });
-
   return (
     <Show when={props.result()}>
       {(result) => (
@@ -62,8 +44,8 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
               <p data-testid="keep-legacy-format-reminder">{mergeResultSectionKeepLegacyFormatReminder}</p>
             </Show>
             <p class="text-color-success" data-testid="merge-success-message">{mergeResultSectionSuccessMessage}</p>
-            <p>{mergeResultSectionFileCreatedMessage} <code data-testid="merged-file-name">{result().fileName}</code> <a class="button-link" data-testid="download-link"
-                                                                                          href={downloadUrl() ?? undefined}
+            <p>{mergeResultSectionFileCreatedMessage} <code data-testid="merged-file-name">{result().fileName}</code> <a class="button-link" data-testid="merged-save-download"
+                                                                                          href={props.mergedSave()?.downloadUrl}
                                                                                           download={result().fileName}>{mergeResultSectionDownloadLinkLabel}</a>
             </p>
             <Show when={result().mergeErrors.length > 0}>

@@ -18,6 +18,20 @@ export function assertNonEmptyString(value: unknown, field: string): string {
   return value;
 }
 
+export function assertString(value: unknown, field: string): string {
+  if (typeof value !== 'string') {
+    throw new InvalidSaveDataError(`${field} must be a string, received ${String(value)}`);
+  }
+  return value;
+}
+
+export function assertBoolean(value: unknown, field: string): boolean {
+  if (typeof value !== 'boolean') {
+    throw new InvalidSaveDataError(`${field} must be a boolean, received ${String(value)}`);
+  }
+  return value;
+}
+
 export function assertOptionalString(value: unknown, field: string): string | undefined {
   if (value === undefined) {
     return undefined;

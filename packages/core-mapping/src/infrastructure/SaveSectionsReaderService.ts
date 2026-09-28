@@ -59,9 +59,15 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
       return new PlayerEntity({
         name: player.name,
         inventory: playerInventoryIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),
-        equipment: playerEquipmentIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id)
+        equipment: playerEquipmentIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),
+        planetId: player.planetId,
+        host: player.host
       });
     });
+  }
+
+  getDeclaredVersion(): string | undefined {
+    return this.sections.saveConfigurations[0]?.version;
   }
 
   getTerraformationLevels(): TerraformationLevelEntity[] {
@@ -93,6 +99,16 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
         gaugeDrain: saveConfiguration.modifierGaugeDrain,
         meteoOccurrence: saveConfiguration.modifierMeteoOccurence,
         multiplayerFactor: saveConfiguration.modifierMultiplayerTerraformationFactor
+      },
+      unlocks: {
+        freeCraft: saveConfiguration.freeCraft,
+        everythingUnlocked: saveConfiguration.unlockedEverything,
+        spaceTrading: saveConfiguration.unlockedSpaceTrading,
+        oreExtractors: saveConfiguration.unlockedOreExtrators,
+        teleporters: saveConfiguration.unlockedTeleporters,
+        drones: saveConfiguration.unlockedDrones,
+        autocrafter: saveConfiguration.unlockedAutocrafter,
+        randomizedMineables: saveConfiguration.randomizeMineables
       }
     }))[0];
   }
