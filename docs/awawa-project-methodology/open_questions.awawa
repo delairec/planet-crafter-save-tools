@@ -19,14 +19,3 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog
 		REF @GAME_RELEASE.2.102
-
-OPEN_QUESTION AMergeResultNotDownloadedSurvivesLeavingTheMergePage
-	DESC "whether the result of a merge not yet downloaded stays on the Merge two saves page once"
-		+ "the user opens another page, Load another save included, or is dropped with the page as"
-		+ "the implementation does"
-		REF @TASK.FEAT137
-	BLOCKS @TASK.FEAT137
-	RATIONALE "The task left what Load another save does to an unsaved merge result to the owner."
-		+ "The merge result is held by the merge page and discarded when it unmounts, so loading"
-		+ "another save, like any page change, drops it; keeping it would move it into a store"
-		+ "above the routes beside the loaded save"

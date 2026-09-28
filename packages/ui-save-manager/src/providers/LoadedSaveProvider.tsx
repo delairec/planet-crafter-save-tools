@@ -1,5 +1,5 @@
-import {Accessor, createContext, createResource, JSX, Resource} from "solid-js";
-import {LoadSaveFile, useLoadSaveFile} from "../hooks/useLoadSaveFile.ts";
+import {Accessor, createContext, createResource, createSignal, JSX, Resource} from "solid-js";
+import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
 import {LoadSaveConfigurationSectionController} from "core-mapping/controllers/LoadSaveConfigurationSectionController";
 import {LoadPlayersSectionController} from "core-mapping/controllers/LoadPlayersSectionController";
 import {
@@ -26,8 +26,17 @@ export interface LoadedSaveViewModels {
   saveIdentity: Resource<SaveIdentityViewModel>;
   playersMenu: Resource<PlayersMenuViewModel>;
 }
-export interface LoadedSave extends LoadSaveFile {
+export interface ValidatedSave {
+  content: string;
+  fileName: string;
+  warnings: SaveValidationMessageViewModel[];
+}
+
+export interface LoadedSave {
+  validatedSave: Accessor<ValidatedSave | null>;
+  warnings: Accessor<SaveValidationMessageViewModel[]>;
   isSaveLoaded: Accessor<boolean>;
+  loadSave: (save: ValidatedSave) => void;
   viewModels: LoadedSaveViewModels;
 }
 
@@ -38,26 +47,29 @@ interface LoadedSaveProviderProps {
 }
 
 export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
-  const loadSaveFile = useLoadSaveFile();
+  const [validatedSave, setValidatedSave] = createSignal<ValidatedSave | null>(null);
+  const validatedContent = () => validatedSave()?.content ?? null;
 
-  const [saveConfiguration] = createResource(loadSaveFile.validatedContent,
+  const [saveConfiguration] = createResource(validatedContent,
     (content) => LoadSaveConfigurationSectionController.loadSaveConfigurationSection(content));
-  const [globalProgression] = createResource(loadSaveFile.validatedContent,
+  const [globalProgression] = createResource(validatedContent,
     (content) => LoadGlobalProgressionSectionController.loadGlobalProgressionSection(content));
-  const [energyLevels] = createResource(loadSaveFile.validatedContent,
+  const [energyLevels] = createResource(validatedContent,
     (content) => LoadEnergyLevelsSectionController.loadEnergyLevelsSection(content));
-  const [terraformationLevels] = createResource(loadSaveFile.validatedContent,
+  const [terraformationLevels] = createResource(validatedContent,
     (content) => LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
-  const [players] = createResource(loadSaveFile.validatedContent,
+  const [players] = createResource(validatedContent,
     (content) => LoadPlayersSectionController.loadPlayersSection(content));
-  const [saveIdentity] = createResource(loadSaveFile.validatedSave,
+  const [saveIdentity] = createResource(validatedSave,
     ({content, fileName}) => LoadSaveIdentityController.loadSaveIdentity(content, fileName));
-  const [playersMenu] = createResource(loadSaveFile.validatedContent,
+  const [playersMenu] = createResource(validatedContent,
     (content) => LoadPlayersMenuController.loadPlayersMenu(content));
 
   const loadedSave: LoadedSave = {
-    ...loadSaveFile,
-    isSaveLoaded: () => loadSaveFile.validatedContent() !== null,
+    validatedSave,
+    warnings: () => validatedSave()?.warnings ?? [],
+    isSaveLoaded: () => validatedContent() !== null,
+    loadSave: setValidatedSave,
     viewModels: {
       saveConfiguration, globalProgression, energyLevels, terraformationLevels, players, saveIdentity, playersMenu
     }

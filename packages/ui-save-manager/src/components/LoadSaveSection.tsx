@@ -1,38 +1,82 @@
-import {createSignal, onMount, Show} from 'solid-js';
+import {createSignal, onCleanup, onMount, Show} from 'solid-js';
+import {LoadAndValidateSaveFileController} from 'core-mapping/controllers/LoadAndValidateSaveFileController';
+import {SaveValidationMessageViewModel} from 'core-mapping/presentation/viewModels/SaveFileValidationViewModel';
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';
 import SaveFileField from '~/components/structure/SaveFileField';
-import ValidationMessagesList from '~/components/validation/ValidationMessagesList';
-import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {selectFileInInput} from '~/lib/selectFileInInput';
+import {yieldToPaint} from '~/lib/yieldToPaint';
 import {
   displayRouteCallFailedMessage,
   displayRouteDisplayTitle,
-  displayRouteErrorsTitle,
   displayRouteFileInputLabel,
   displayRouteLoadingLabel,
-  displayRouteSubmitButtonLabel,
-  displayRouteWarningsTitle
+  displayRouteSubmitButtonLabel
 } from '~/messages/displayRouteMessages';
 import {tooManyFilesForOneSaveMessage} from '~/messages/dropZoneMessages';
 
+export interface LoadSaveResult {
+  fileName: string;
+  content: string;
+  isValid: boolean;
+  errors: SaveValidationMessageViewModel[];
+  warnings: SaveValidationMessageViewModel[];
+}
+
 interface LoadSaveSectionProps {
-  onSaveLoaded?: () => void;
+  onLoadStarted: () => void;
+  onLoadResult: (result: LoadSaveResult) => void;
 }
 
 export default function LoadSaveSection(props: LoadSaveSectionProps) {
   let fileInputElement!: HTMLInputElement;
+  let isDisposed = false;
+  onCleanup(() => {
+    isDisposed = true;
+  });
 
   const [isReady, setIsReady] = createSignal<boolean>(false);
   onMount(() => setIsReady(true));
 
-  const {file, errors, warnings, isLoading, hasLoadCallFailed, isSaveLoaded, handleFileChange, handleSubmit} =
-    useLoadedSave();
+  const [file, setFile] = createSignal<File | null>(null);
+  const [isLoading, setIsLoading] = createSignal<boolean>(false);
+  const [hasLoadCallFailed, setHasLoadCallFailed] = createSignal<boolean>(false);
+
+  const handleFileChange = (event: Event & {currentTarget: HTMLInputElement}) => {
+    setHasLoadCallFailed(false);
+    props.onLoadStarted();
+    setFile(event.currentTarget.files?.[0] ?? null);
+  };
 
   const handleVisualize = async () => {
-    await handleSubmit();
-    if (isSaveLoaded()) {
-      props.onSaveLoaded?.();
+    const selectedFile = file();
+    if (!selectedFile) {
+      return;
+    }
+
+    setHasLoadCallFailed(false);
+    props.onLoadStarted();
+    setIsLoading(true);
+    try {
+      await yieldToPaint();
+
+      const content = await selectedFile.text();
+      const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile(selectedFile.name, content);
+
+      if (!isDisposed) {
+        props.onLoadResult({
+          fileName: selectedFile.name,
+          content,
+          isValid: viewModel.status === 'valid',
+          errors: viewModel.errors,
+          warnings: viewModel.warnings
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      setHasLoadCallFailed(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,17 +97,6 @@ export default function LoadSaveSection(props: LoadSaveSectionProps) {
       </Show>
       <Show when={hasLoadCallFailed()}>
         <p class="text-color-danger" data-testid="display-failure-message">{displayRouteCallFailedMessage}</p>
-      </Show>
-
-      <Show when={!isSaveLoaded()}>
-        <Show when={errors().length}>
-          <code>{file()?.name}</code>
-          <ValidationMessagesList title={displayRouteErrorsTitle} testId="display-errors" severity="danger" messages={errors()}/>
-        </Show>
-        <Show when={warnings().length}>
-          <code>{file()?.name}</code>
-          <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={warnings()}/>
-        </Show>
       </Show>
     </Show>
   );

@@ -72,7 +72,7 @@ test.describe('Save file drop', () => {
   test.describe('When a save file is dropped on the display area', () => {
     test('should display that file as if it had been picked', async ({page}) => {
       // Arrange
-      const [baselineSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath], '/load-another-save');
+      const [baselineSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath], '/load-save');
       await dropTheFiles(page, page.getByTestId('display-area'), [baselineSave]);
 
       // Act
@@ -156,7 +156,7 @@ test.describe('Save file drop', () => {
     test('should announce a copy to the browser', async ({page, browserName}) => {
       test.skip(browserName !== 'firefox', scriptBuiltTransferKeepsNoEffect);
       // Act
-      const effect = await openThePageAndReadTheEffectAnnouncedOver(page, '/load-another-save', (openedPage) => openedPage.getByTestId('save-file'));
+      const effect = await openThePageAndReadTheEffectAnnouncedOver(page, '/load-save', (openedPage) => openedPage.getByTestId('save-file'));
 
       // Assert
       expect<string>(effect).toBe('copy');
@@ -167,7 +167,7 @@ test.describe('Save file drop', () => {
     test('should announce to the browser that nothing can be dropped there', async ({page, browserName}) => {
       test.skip(browserName !== 'firefox', scriptBuiltTransferKeepsNoEffect);
       // Act
-      const effect = await openThePageAndReadTheEffectAnnouncedOver(page, '/load-another-save', (openedPage) => openedPage.getByTestId('current-page-group'));
+      const effect = await openThePageAndReadTheEffectAnnouncedOver(page, '/load-save', (openedPage) => openedPage.getByTestId('current-page-group'));
 
       // Assert
       expect<string>(effect).toBe('none');
@@ -175,7 +175,7 @@ test.describe('Save file drop', () => {
 
     test('should keep the browser from opening them', async ({page}) => {
       // Arrange
-      const [baselineSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath], '/load-another-save');
+      const [baselineSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath], '/load-save');
 
       // Act
       const isTaken = await isTakenByThePage(page, page.getByTestId('current-page-group'), 'dragover', [baselineSave]);
@@ -216,7 +216,7 @@ test.describe('Save file drop', () => {
   test.describe('When two save files are dropped on a single-file area', () => {
     test('should select nothing and say why next to the area', async ({page}) => {
       // Arrange
-      const [baselineSave, otherPlayerSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath, otherPlayerSaveFixturePath], '/load-another-save');
+      const [baselineSave, otherPlayerSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath, otherPlayerSaveFixturePath], '/load-save');
 
       // Act
       await dropTheFiles(page, page.getByTestId('display-area'), [baselineSave, otherPlayerSave]);

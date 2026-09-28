@@ -1,5 +1,5 @@
-const overviewPath = '/';
-const loadAnotherSavePath = '/load-another-save';
+const overviewPath = '/overview';
+const loadSavePath = '/load-save';
 const mergeTwoSavesPath = '/merge';
 const configurationPath = '/configuration';
 const powerPath = '/power';
@@ -8,7 +8,7 @@ const playersPath = '/players';
 
 export const PAGE_PATHS = {
   overviewPath,
-  loadAnotherSavePath,
+  loadSavePath,
   mergeTwoSavesPath,
   configurationPath,
   powerPath,

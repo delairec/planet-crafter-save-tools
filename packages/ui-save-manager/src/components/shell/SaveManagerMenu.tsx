@@ -7,12 +7,12 @@ import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
 import {
   configurationPageTitle,
-  loadAnotherSavePageTitle,
   menuLabel,
   mergeTwoSavesPageTitle,
   overviewPageTitle,
   playersGroupTitle,
   powerPageTitle,
+  resolveLoadSavePageTitle,
   saveGroupTitle,
   seeMorePlayersButtonLabel,
   terraformationPageTitle,
@@ -27,7 +27,7 @@ export default function SaveManagerMenu() {
     <nav class="menu" aria-label={menuLabel} data-testid="page-navigation">
       <MenuGroup title={toolsGroupTitle} testId="tools-pages">
         <A href={PAGE_PATHS.mergeTwoSavesPath} data-testid="merge-two-saves-page-link">{mergeTwoSavesPageTitle}</A>
-        <A href={PAGE_PATHS.loadAnotherSavePath} data-testid="load-another-save-page-link">{loadAnotherSavePageTitle}</A>
+        <A href={PAGE_PATHS.loadSavePath} data-testid="load-save-page-link">{resolveLoadSavePageTitle(loadedSave.isSaveLoaded())}</A>
       </MenuGroup>
       <Show when={loadedSave.isSaveLoaded()}>
         <Show when={loadedSave.viewModels.saveIdentity()}>
