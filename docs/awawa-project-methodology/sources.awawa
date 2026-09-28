@@ -188,3 +188,22 @@ URL SaveManagerRedesignMockup
 		+ "may still be adjusted during the implementation, accessibility and phone-width display"
 		+ "among the reasons, and the disclaimer block with the astronaut stays unchanged at the"
 		+ "top of the page"
+
+USAGE_REPORT PR113_219
+	FILE "docs/awawa-usage-reports/pull-requests/2026-09-28-pr-113-219.md::<!-- awawa-usage-report"
+		+ "-->"
+	EVALUATES 134
+	EVALUATES 141
+	EVALUATES 173
+	EVALUATES 176
+	EVALUATES 188
+	EVALUATES 189
+	EVALUATES 199
+	EVALUATES 201
+	EVALUATES 205
+	EVALUATES 211
+	EVALUATES 219
+	DESC "one usage report for the 106 pull requests 113 to 219 merged from 2026-09-22 to"
+		+ "2026-09-28, on the owner's instruction: an aggregate over all of them and the full"
+		+ "collection on the eleven pull requests EVALUATES lists; committed as a docs pull request"
+		+ "of its own"
