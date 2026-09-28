@@ -1390,7 +1390,7 @@ TASK FEAT126
 			+ "of the energy consumption fixture, at modifier %p, %p kW"
 	SPEC "the Power card names the modifier its figures apply when it is not 1"
 		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should name"
-			+ "that modifier in a limitation, under the submerged machines one"
+			+ "that modifier in an information, under the submerged machines limitation"
 		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
 			+ "each={energyLevels().notifications}>"
 	AFTER @TASK.TEST125

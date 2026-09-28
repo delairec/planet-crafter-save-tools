@@ -7,6 +7,7 @@
     --disclaimer: #cccfdc;
     --warning-surface: #f5ead6;
     --limitation-surface: #ebe4fd;
+    --information-surface: #dff0f8;
 
     /* TEXTE */
     --content: #0f1226;
@@ -32,6 +33,7 @@
     --success: #16813e;
     --warning: #9c6406;
     --limitation: #7f4af5;
+    --information: #0b6e99;
     --danger: #e01313;
 }
 
@@ -44,6 +46,7 @@
         --disclaimer: #293055;
         --warning-surface: #33290f;
         --limitation-surface: #2a2352;
+        --information-surface: #102d3d;
 
         --content: #f1f3ff;
         --muted: #a4a9d4;
@@ -64,6 +67,7 @@
         --success: #4ade80;
         --warning: #fbbf24;
         --limitation: #a78bfa;
+        --information: #38bdf8;
         --danger: #f87171;
     }
 }
