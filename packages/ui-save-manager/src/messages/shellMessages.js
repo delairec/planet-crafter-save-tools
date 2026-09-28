@@ -22,7 +22,11 @@ export const homeMessageClosing = 'Keep up the good work!';
 export const homeMessageSender = 'SENTINEL CORP';
 export const openOverviewLinkLabel = 'Open the Overview';
 export const unloadSaveButtonLabel = 'Unload save';
-export const unloadSaveIcon = '✕';
+export const crossIcon = '✕';
+export const homeMessageAttachmentsLabel = 'Merged saves';
+
+/** @param {string} fileName */
+export const resolveRemoveMergedSaveButtonLabel = (fileName) => `Remove ${fileName}`;
 
 /** @param {string} fileName */
 export const resolveLoadedSaveTitle = (fileName) => `Loaded save: ${fileName}`;

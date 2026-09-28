@@ -1,7 +1,26 @@
 import {expect, test} from './scenarioTest';
-import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
+import {type Locator, type Page} from '@playwright/test';
+import {chooseTheTwoSavesToMerge, findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
+const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
+const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
+
+async function mergeTwoSaves(page: Page, saveAFixturePath: string, saveBFixturePath: string): Promise<void> {
+  await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
+  await page.getByTestId('merge').click();
+  await expect(page.getByTestId('merge-success-message')).toBeVisible();
+}
+
+async function mergeTwoPairsOfSaves(page: Page): Promise<void> {
+  await page.goto('/merge');
+  await mergeTwoSaves(page, baselineSaveFixturePath, otherPlayerSaveFixturePath);
+  await mergeTwoSaves(page, baselineSaveFixturePath, legacySaveFixturePath);
+}
+
+function findTheAttachedMergedSaves(page: Page): Locator {
+  return page.getByTestId('home-message').getByTestId(/^home-merged-save-download-\d+$/);
+}
 
 test.describe('Home page', () => {
   test.describe('When the root address is opened before a save is loaded', () => {
@@ -41,6 +60,114 @@ test.describe('Home page', () => {
       // Assert
       await expect(page.getByTestId(/^home-[a-z-]+-page-link$/)).toHaveText(['Merge two saves', 'Load save']);
       await expect(page.getByTestId('home-loaded-save')).toHaveCount(0);
+    });
+
+    test('should attach no merged save to the message', async ({page}) => {
+      // Act
+      await page.goto('/');
+
+      // Assert
+      await expect(page.getByTestId('home-merged-saves')).toHaveCount(0);
+    });
+  });
+
+  test.describe('When the home page is opened once merged saves are kept', () => {
+    test('should attach the merged saves to the message, newest first', async ({page}) => {
+      // Arrange
+      await mergeTwoPairsOfSaves(page);
+
+      // Act
+      await page.getByTestId('application-title-link').click();
+
+      // Assert
+      await expect(findTheAttachedMergedSaves(page)).toHaveText([
+        'baseline_valid-legacy-format_valid-merged.json',
+        'baseline_valid-other-player_valid-merged.json'
+      ]);
+    });
+
+    test('should offer each attached merged save for download under its name', async ({page}) => {
+      // Arrange
+      await mergeTwoPairsOfSaves(page);
+      await page.getByTestId('application-title-link').click();
+      const downloadStarted = page.waitForEvent('download');
+
+      // Act
+      await page.getByTestId('home-merged-save-download-1').click();
+
+      // Assert
+      expect((await downloadStarted).suggestedFilename()).toBe('baseline_valid-other-player_valid-merged.json');
+    });
+
+    test('should name the cross of each attached merged save after it', async ({page}) => {
+      // Arrange
+      await mergeTwoPairsOfSaves(page);
+
+      // Act
+      await page.getByTestId('application-title-link').click();
+
+      // Assert
+      await expect(page.getByTestId('home-merged-save-remove-0')).toHaveAccessibleName('Remove baseline_valid-legacy-format_valid-merged.json');
+      await expect(page.getByTestId('home-merged-save-remove-1')).toHaveAccessibleName('Remove baseline_valid-other-player_valid-merged.json');
+    });
+  });
+
+  test.describe('When an earlier merged save is removed from the message', () => {
+    test('should detach it from the message', async ({page}) => {
+      // Arrange
+      await mergeTwoPairsOfSaves(page);
+      await page.getByTestId('application-title-link').click();
+
+      // Act
+      await page.getByTestId('home-merged-save-remove-1').click();
+
+      // Assert
+      await expect(findTheAttachedMergedSaves(page)).toHaveText(['baseline_valid-legacy-format_valid-merged.json']);
+    });
+
+    test('should no longer list it on the Merge two saves page, the last merge result kept', async ({page}) => {
+      // Arrange
+      await mergeTwoPairsOfSaves(page);
+      await page.getByTestId('application-title-link').click();
+      await page.getByTestId('home-merged-save-remove-1').click();
+
+      // Act
+      await page.getByTestId('home-merge-two-saves-page-link').click();
+
+      // Assert
+      await expect(page.getByTestId('merged-file-name')).toHaveText('baseline_valid-legacy-format_valid-merged.json');
+      await expect(page.getByTestId('earlier-merged-saves')).toHaveCount(0);
+    });
+  });
+
+  test.describe('When the merged save of the last merge result is removed from the message', () => {
+    test('should clear the last merge result of the Merge two saves page, the earlier merged saves kept', async ({page}) => {
+      // Arrange
+      await mergeTwoPairsOfSaves(page);
+      await page.getByTestId('application-title-link').click();
+      await page.getByTestId('home-merged-save-remove-0').click();
+
+      // Act
+      await page.getByTestId('home-merge-two-saves-page-link').click();
+
+      // Assert
+      await expect(page.getByTestId('merge-success-message')).toHaveCount(0);
+      await expect(page.getByTestId(/^earlier-merged-save-file-name-\d+$/)).toHaveText(['baseline_valid-other-player_valid-merged.json']);
+    });
+  });
+
+  test.describe('When the last attached merged save is removed from the message', () => {
+    test('should leave no attachment in the message', async ({page}) => {
+      // Arrange
+      await page.goto('/merge');
+      await mergeTwoSaves(page, baselineSaveFixturePath, otherPlayerSaveFixturePath);
+      await page.getByTestId('application-title-link').click();
+
+      // Act
+      await page.getByTestId('home-merged-save-remove-0').click();
+
+      // Assert
+      await expect(page.getByTestId('home-merged-saves')).toHaveCount(0);
     });
   });
 
@@ -158,6 +285,20 @@ test.describe('Home page', () => {
 
       // Assert
       await expect(page).toHaveURL(/\/load-save$/);
+    });
+
+    test('should keep the merged saves attached to the message', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+      await openThePageOfTheMenu(page, 'Merge two saves');
+      await mergeTwoSaves(page, baselineSaveFixturePath, otherPlayerSaveFixturePath);
+      await page.getByTestId('application-title-link').click();
+
+      // Act
+      await page.getByTestId('unload-save').click();
+
+      // Assert
+      await expect(findTheAttachedMergedSaves(page)).toHaveText(['baseline_valid-other-player_valid-merged.json']);
     });
   });
 

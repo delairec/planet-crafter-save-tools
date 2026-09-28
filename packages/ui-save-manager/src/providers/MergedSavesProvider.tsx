@@ -12,8 +12,10 @@ export interface MergedSaves {
   lastMergeResult: Accessor<MergeResultViewModel | null>;
   lastMergedSave: Accessor<KeptMergedSave | null>;
   earlierMergedSaves: Accessor<KeptMergedSave[]>;
+  keptMergedSaves: Accessor<KeptMergedSave[]>;
   startMerge: () => void;
   keepMergeResult: (result: MergeResultViewModel) => void;
+  removeMergedSave: (mergedSave: KeptMergedSave) => void;
 }
 
 export const MergedSavesContext = createContext<MergedSaves>();
@@ -49,14 +51,24 @@ export function MergedSavesProvider(props: MergedSavesProviderProps) {
     setLastMergeResult(result);
   };
 
+  const removeMergedSave = (removedMergedSave: KeptMergedSave) => {
+    if (lastMergedSave() === removedMergedSave) {
+      setLastMergeResult(null);
+    }
+    releaseMergedSaves([removedMergedSave]);
+    setKeptMergedSaves(keptMergedSaves().filter((mergedSave) => mergedSave !== removedMergedSave));
+  };
+
   onCleanup(() => releaseMergedSaves(keptMergedSaves()));
 
   const mergedSaves: MergedSaves = {
     lastMergeResult,
     lastMergedSave,
     earlierMergedSaves: () => lastMergedSave() ? keptMergedSaves().slice(1) : keptMergedSaves(),
+    keptMergedSaves,
     startMerge: () => setLastMergeResult(null),
-    keepMergeResult
+    keepMergeResult,
+    removeMergedSave
   };
 
   return <MergedSavesContext.Provider value={mergedSaves}>{props.children}</MergedSavesContext.Provider>;

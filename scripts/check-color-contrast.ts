@@ -354,6 +354,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.application-version',
     foreground: 'muted',
     background: 'canvas'
+  },
+  {
+    description: 'the file name of a merged save attached to the home message, on its chip',
+    file: 'packages/ui-save-manager/src/styles/home.css',
+    selector: '.home-message-attachment-download',
+    foreground: 'content',
+    background: 'canvas'
   }
 ];
 

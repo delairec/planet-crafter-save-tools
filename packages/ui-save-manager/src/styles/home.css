@@ -157,6 +157,57 @@
     text-align: right;
 }
 
+.home-message-attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin: 0;
+    padding: var(--space-sm) 0 0;
+    border-top: var(--border-thin);
+    list-style: none;
+    font-size: var(--text-xs);
+}
+
+.home-message-attachment {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    border: var(--border-thin);
+    border-radius: var(--radius-xs);
+    background-color: var(--canvas);
+}
+
+.home-message-attachment-download {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-width: 0;
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--content);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.home-message-attachment-download:hover {
+    text-decoration: underline;
+}
+
+.home-message-attachment-clip {
+    flex: none;
+    width: 1em;
+    height: 1em;
+    fill: none;
+    stroke: var(--neon-cyan);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.home-message-attachment-remove button {
+    padding: var(--space-xs) var(--space-sm);
+    border: none;
+    font-size: var(--text-xs);
+}
+
 @media (max-width: 480px) {
     .home-message {
         grid-template-columns: 4rem minmax(0, 1fr);

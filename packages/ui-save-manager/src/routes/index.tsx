@@ -4,7 +4,10 @@ import SaveIdentity from '~/components/shell/SaveIdentity';
 import IconButton from '~/components/structure/IconButton';
 import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
+import HomeMessageAttachments from '~/components/HomeMessageAttachments';
+import {useMergedSaves} from '~/hooks/useMergedSaves';
 import {
+  crossIcon,
   homeMessageBody,
   homeMessageClosing,
   homeMessageSender,
@@ -12,12 +15,12 @@ import {
   mergeTwoSavesPageTitle,
   openOverviewLinkLabel,
   resolveLoadSavePageTitle,
-  unloadSaveButtonLabel,
-  unloadSaveIcon
+  unloadSaveButtonLabel
 } from '~/messages/shellMessages';
 
 export default function HomePage() {
   const loadedSave = useLoadedSave();
+  const mergedSaves = useMergedSaves();
 
   return (
     <section class="home-page" data-testid="home-page">
@@ -40,7 +43,7 @@ export default function HomePage() {
             <Show when={loadedSave.isSaveLoaded() && loadedSave.viewModels.saveIdentity()}>
               {(saveIdentity) => (
                 <SaveIdentity saveIdentity={saveIdentity()} testId="home-loaded-save">
-                  <IconButton class="home-unload-save" icon={unloadSaveIcon} label={unloadSaveButtonLabel} testId="unload-save"
+                  <IconButton class="home-unload-save" icon={crossIcon} label={unloadSaveButtonLabel} testId="unload-save"
                               onClick={loadedSave.unloadSave} disabled={false}/>
                   <A href={PAGE_PATHS.overviewPath} class="button-link button-link-neon-pink" data-testid="home-overview-link">{openOverviewLinkLabel}</A>
                 </SaveIdentity>
@@ -49,6 +52,7 @@ export default function HomePage() {
           </div>
           <p class="home-message-body" data-testid="home-message-closing">{homeMessageClosing}</p>
           <p class="home-message-sender" data-testid="home-message-sender">{homeMessageSender}</p>
+          <HomeMessageAttachments mergedSaves={mergedSaves.keptMergedSaves} onRemove={mergedSaves.removeMergedSave}/>
         </div>
       </article>
     </section>
