@@ -31,7 +31,7 @@ export default function SaveManagerMenu() {
       </MenuGroup>
       <Show when={loadedSave.isSaveLoaded()}>
         <Show when={loadedSave.viewModels.saveIdentity()}>
-          {(saveIdentity) => <SaveIdentity saveIdentity={saveIdentity()}/>}
+          {(saveIdentity) => <SaveIdentity saveIdentity={saveIdentity()} testId="save-identity"/>}
         </Show>
         <MenuGroup title={saveGroupTitle} testId="save-pages">
           <A href={PAGE_PATHS.overviewPath} end data-testid="overview-page-link">{overviewPageTitle}</A>

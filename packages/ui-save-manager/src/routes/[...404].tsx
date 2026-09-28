@@ -6,6 +6,7 @@ import {
   notFoundRouteTitle
 } from "~/messages/notFoundRouteMessages";
 import Icon from "~/components/Icon";
+import {PAGE_PATHS} from "~/lib/pagePaths";
 
 export default function NotFound() {
   return (
@@ -14,7 +15,7 @@ export default function NotFound() {
         {notFoundRouteStatusCode}&nbsp;
         <span class="uppercase middle text-lg" data-testid="not-found-title">{notFoundRouteTitle}</span>
       </p>
-      <A href="/" data-testid="home-page-link"><Icon content={notFoundRouteBackHomeIcon}/> {notFoundRouteBackHomeLabel}</A>
+      <A href={PAGE_PATHS.homePath} data-testid="home-page-link"><Icon content={notFoundRouteBackHomeIcon}/> {notFoundRouteBackHomeLabel}</A>
     </div>
   );
 }

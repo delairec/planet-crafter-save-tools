@@ -1,3 +1,4 @@
+const homePath = '/';
 const overviewPath = '/overview';
 const loadSavePath = '/load-save';
 const mergeTwoSavesPath = '/merge';
@@ -7,6 +8,7 @@ const terraformationPath = '/terraformation';
 const playersPath = '/players';
 
 export const PAGE_PATHS = {
+  homePath,
   overviewPath,
   loadSavePath,
   mergeTwoSavesPath,

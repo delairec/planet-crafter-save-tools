@@ -10,7 +10,7 @@ test.describe('Save validation errors', () => {
   test.describe('When an invalid save file is visualized', () => {
     test('should list the errors and say where in the save each one was found', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Act
       await visualizeAndRevealTheMessages(page, invalidSaveFixturePath, 'display-errors');
@@ -22,7 +22,7 @@ test.describe('Save validation errors', () => {
 
     test('should leave the save data unrendered', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/load-save');
       await page.getByTestId('save-file').setInputFiles(invalidSaveFixturePath);
 
       // Act

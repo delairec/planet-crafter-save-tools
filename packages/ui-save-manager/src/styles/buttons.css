@@ -100,3 +100,13 @@ button:focus-visible {
     outline: none;
     box-shadow: var(--shadow-medium) var(--neon-pink), var(--shadow-thick) var(--neon-pink);
 }
+
+.button-link-neon-pink,
+.button-link-neon-pink:hover {
+    background-color: var(--neon-pink);
+    color: var(--inverted);
+}
+
+.button-link-neon-pink:hover {
+    text-decoration: underline;
+}

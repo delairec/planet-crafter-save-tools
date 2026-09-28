@@ -34,6 +34,7 @@ export interface LoadedSave {
   warnings: Accessor<SaveValidationMessageViewModel[]>;
   isSaveLoaded: Accessor<boolean>;
   loadSave: (save: ValidatedSave) => void;
+  unloadSave: () => void;
   viewModels: LoadedSaveViewModels;
 }
 
@@ -65,6 +66,7 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     warnings: () => validatedSave()?.warnings ?? [],
     isSaveLoaded: () => validatedContent() !== null,
     loadSave: setValidatedSave,
+    unloadSave: () => setValidatedSave(null),
     viewModels: {
       configurationPage, energyLevels, terraformationLevels, players, saveIdentity, playersMenu
     }

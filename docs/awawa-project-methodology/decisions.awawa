@@ -2871,10 +2871,6 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"load-save-page-link\""
 		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should mark Load save as the"
 			+ "current page of the menu"
-	SPEC "the root address opens the Load save page until the home page is written"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::<Navigate"
-			+ "href={PAGE_PATHS.loadSavePath}/>"
-		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Load save page"
 	SPEC "the Overview page has the address /overview and opens once a save is loaded; requested"
 		+ "with no save loaded, it opens the Load save page"
 		IMPL "packages/ui-save-manager/src/lib/pagePaths.ts::const overviewPath = '/overview';"
@@ -2900,9 +2896,12 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 	REJECTED "the picked file and its validation held in the store above the routes: picking a file"
 		+ "on Load another save unloaded the loaded save at once, and Visualize was enabled by a"
 		+ "file picked on another page"
-	UNTIL @TASK.FEAT150
+	REJECTED "the root address redirecting to the Load save page: the home page owns the root"
+		+ "address"
+		REF @TASK.FEAT150
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT137
+	APPLIES_TO_TASK @TASK.FEAT150
 	RATIONALE "Two pages loaded a save until the review; one address with a name that follows the"
 		+ "loaded save keeps the menu entry lit on the page the reader is on, and the load form"
 		+ "stays one component, its result shown by a section of its own as the merge does"
@@ -2911,6 +2910,9 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 		+ "address redirects to it, the Overview page moves to /overview; the staging of the picked"
 		+ "file answers three bot review threads"
 		PR 211
+	SOURCE "Owner ruling of 2026-09-28 when FEAT150 was refined: the root address opens a home page"
+		+ "of its own, and the scenarios that load a save open /load-save by its own address"
+		PR 217
 
 DECISION TheMergedSavesLiveInAStoreAboveTheRouter
 	SPEC "the last merge result and the merged saves kept live in a provider of their own, mounted"
@@ -2918,8 +2920,9 @@ DECISION TheMergedSavesLiveInAStoreAboveTheRouter
 		IMPL "packages/ui-save-manager/src/app.tsx::<MergedSavesProvider>"
 		IMPL "packages/ui-save-manager/src/routes/merge.tsx::useMergedSaves()"
 	SPEC "a merged save is kept as its file name and one object URL, created when the merge returns"
-		+ "and revoked when the save is dropped; the result section and the list of earlier saves"
-		+ "link to that URL and build none of their own"
+		+ "and revoked when the save is dropped or removed; the result section, the list of earlier"
+		+ "saves and the attachments of the home message link to that URL and build none of their"
+		+ "own"
 		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::URL.createObjectURL"
 		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::URL.revokeObjectURL"
 		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::href={props.mergedSave()?.downloadUrl}"

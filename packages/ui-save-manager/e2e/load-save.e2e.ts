@@ -6,10 +6,10 @@ const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
 const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
 
 test.describe('Load save page', () => {
-  test.describe('When the application is opened before a save is loaded', () => {
+  test.describe('When its own address is opened before a save is loaded', () => {
     test('should open the Load save page', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(page).toHaveURL(/\/load-save$/);
@@ -18,7 +18,7 @@ test.describe('Load save page', () => {
 
     test('should mark Load save as the current page of the menu', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(findTheMenu(page).getByTestId('load-save-page-link')).toHaveText('Load save');

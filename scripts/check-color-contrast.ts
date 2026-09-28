@@ -188,6 +188,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'primary'
   },
   {
+    description: 'the label of a neon pink button link, on its neon pink fill',
+    file: 'packages/ui-save-manager/src/styles/buttons.css',
+    selector: '.button-link-neon-pink, .button-link-neon-pink:hover',
+    foreground: 'inverted',
+    background: 'neon-pink'
+  },
+  {
     description: 'a form field value on its input surface',
     file: 'packages/ui-save-manager/src/styles/forms.css',
     selector: 'input, textarea, select',
@@ -333,6 +340,27 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.on-off-pill-off',
     foreground: 'muted',
     background: 'elevated'
+  },
+  {
+    description: 'the application title, a link to the home page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
+    selector: '.application-title-link',
+    foreground: 'content',
+    background: 'canvas'
+  },
+  {
+    description: 'the version of the application, in the bottom-right corner, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
+    selector: '.application-version',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the file name of a merged save attached to the home message, on its chip',
+    file: 'packages/ui-save-manager/src/styles/home.css',
+    selector: '.home-message-attachment-download',
+    foreground: 'content',
+    background: 'canvas'
   }
 ];
 
