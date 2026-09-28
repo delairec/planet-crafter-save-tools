@@ -1,5 +1,9 @@
 # Changelog of cli-merge
 
+## 0.1.2 — 2026-09-28
+
+- Core engine updated
+
 ## 0.1.1 — 2026-09-26
 
 - feat(cli-merge): report each folder as one block and print the same lines under Bun as under Node (#182)
