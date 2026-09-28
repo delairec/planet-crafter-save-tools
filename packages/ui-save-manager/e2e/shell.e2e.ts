@@ -39,7 +39,7 @@ test.describe('Save manager shell', () => {
   test.describe('When the Overview page is opened', () => {
     test('should show the disclaimers under the title, above the page and above the version footer', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Act
       const shellParts = await readTheShellPartsFromTopToBottom(page, 'display-area');
@@ -50,7 +50,7 @@ test.describe('Save manager shell', () => {
 
     test('should offer the Tools group alone, holding Merge two saves and Load save', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(findTheMenuGroupTitles(page)).toHaveText(['Tools']);
@@ -204,7 +204,7 @@ test.describe('Save manager shell', () => {
       await page.getByTestId('home-page-link').click();
 
       // Assert
-      await expect(page.getByTestId('display-area')).toBeVisible();
+      await expect(page.getByTestId('home-page')).toBeVisible();
     });
   });
 });

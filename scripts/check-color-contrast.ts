@@ -333,6 +333,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.on-off-pill-off',
     foreground: 'muted',
     background: 'elevated'
+  },
+  {
+    description: 'the application title, a link to the home page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
+    selector: '.application-title-link',
+    foreground: 'content',
+    background: 'canvas'
   }
 ];
 

@@ -16,6 +16,9 @@ export const terraformationPageTitle = 'Terraformation';
 export const playersPageTitle = 'All players';
 export const seeMorePlayersButtonLabel = 'See more';
 
+export const homePageDescription = 'Merge two Planet Crafter saves into one, or load a save to read its configuration, power, terraformation and players.';
+export const openOverviewLinkLabel = 'Open the Overview';
+
 /** @param {string} fileName */
 export const resolveLoadedSaveTitle = (fileName) => `Loaded save: ${fileName}`;
 

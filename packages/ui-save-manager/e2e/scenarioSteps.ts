@@ -8,12 +8,12 @@ export function locateTheFixture(fileName: string): string {
 }
 
 export async function chooseTheSaveToVisualize(page: Page, saveFixturePath: string): Promise<void> {
-  await page.goto('/');
+  await page.goto('/load-save');
   await page.getByTestId('save-file').setInputFiles(saveFixturePath);
 }
 
 export async function visualizeTheSave(page: Page, saveFixturePath: string): Promise<void> {
-  await page.goto('/');
+  await page.goto('/load-save');
   await visualizeSave(page, saveFixturePath);
 }
 

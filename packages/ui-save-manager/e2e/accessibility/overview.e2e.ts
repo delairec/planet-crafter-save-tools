@@ -17,7 +17,7 @@ test.describe('Overview page accessibility', () => {
   test.describe('When the page opens before a save is loaded', () => {
     test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Act
       const {violations} = await createAWcag2Audit(page).analyze();
@@ -28,7 +28,7 @@ test.describe('Overview page accessibility', () => {
 
     test('should name the display area as a group', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(page.getByTestId('display-area')).toHaveRole('group');
@@ -37,7 +37,7 @@ test.describe('Overview page accessibility', () => {
 
     test('should label the save file input', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(page.getByTestId('save-file')).toHaveAccessibleName('Save file:');
@@ -45,7 +45,7 @@ test.describe('Overview page accessibility', () => {
 
     test('should name the visualize button by its text', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(page.getByTestId('visualize')).toHaveRole('button');
@@ -54,7 +54,7 @@ test.describe('Overview page accessibility', () => {
 
     test('should title the display area with a second level heading', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(page.getByTestId('display-title')).toHaveRole('heading');
@@ -64,7 +64,7 @@ test.describe('Overview page accessibility', () => {
 
     test('should mark the version footer as the page footer', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(page.getByTestId('application-version')).toHaveRole('contentinfo');
@@ -75,7 +75,7 @@ test.describe('Overview page accessibility', () => {
     test('should announce the busy indicator as a status', async ({page}) => {
       // Arrange
       await holdEveryFileRead(page);
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Act
       await visualizeSave(page, saveAFixturePath);

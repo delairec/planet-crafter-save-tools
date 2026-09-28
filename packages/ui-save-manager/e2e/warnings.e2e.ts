@@ -11,7 +11,7 @@ test.describe('Save warnings', () => {
   test.describe('When a save file raising a warning is visualized', () => {
     test('should give the reader a sentence rather than the code the warning travels as', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Act
       await visualizeAndRevealTheMessages(page, legacySaveFixturePath, 'display-warnings');
@@ -24,7 +24,7 @@ test.describe('Save warnings', () => {
 
     test('should render the save data all the same, a warning not making the save unusable', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/load-save');
       await page.getByTestId('save-file').setInputFiles(legacySaveFixturePath);
 
       // Act

@@ -9,7 +9,7 @@ test.describe('Overview page', () => {
   test.describe('When no save is loaded', () => {
     test('should offer the display area, its file input and its Visualize button', async ({page}) => {
       // Act
-      await page.goto('/');
+      await page.goto('/load-save');
 
       // Assert
       await expect(page.getByTestId('display-area')).toBeVisible();
@@ -73,7 +73,7 @@ test.describe('Overview page', () => {
           throw new Error('The file is no longer readable.');
         };
       });
-      await page.goto('/');
+      await page.goto('/load-save');
       await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
 
       // Act
@@ -90,7 +90,7 @@ test.describe('Overview page', () => {
     test('should leave no save file to visualize', async ({page}) => {
       // Arrange
       const noFileSelected: string[] = [];
-      await page.goto('/');
+      await page.goto('/load-save');
       await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
 
       // Act

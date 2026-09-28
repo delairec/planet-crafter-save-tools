@@ -5,6 +5,15 @@
     align-items: start;
 }
 
+.shell-without-menu {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.application-title-link {
+    color: var(--content);
+    text-decoration: none;
+}
+
 .shell-page {
     min-width: 0;
 }
@@ -13,6 +22,16 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-lg);
+}
+
+.home-page-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+.home-page .menu-identity {
+    max-width: calc(var(--sidebar-width) * 1.5);
 }
 
 @media (max-width: 768px) {
