@@ -13,6 +13,9 @@ import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryI
 import {selectWrittenFormatSave} from './selectWrittenFormatSave';
 import {mergeTerrainLayers} from './mergeTerrainLayers';
 import {MergedSaveSections} from './MergedSaveSections';
+import {MergeWarning} from './MergeWarning';
+import {SaveSectionsMerge} from './SaveSectionsMerge';
+import {compareGameReleases} from '../compareGameReleases';
 import {SaveSections} from '../../save/SaveSections';
 
 export interface MergeOptions {
@@ -20,16 +23,13 @@ export interface MergeOptions {
   preferLegacyFormat: boolean;
 }
 
-/**
- * @see @RULE.TheSaveOnPrimeBecomesSaveA
- */
-export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSections, {saveDisplayName, preferLegacyFormat}: MergeOptions): MergedSaveSections {
+export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSections, {saveDisplayName, preferLegacyFormat}: MergeOptions): SaveSectionsMerge {
   const [mainSave, secondarySave] = determineSaveOrder(sectionsA, sectionsB);
   const writtenFormatSave = selectWrittenFormatSave(mainSave, secondarySave, preferLegacyFormat);
 
   const ejectedPlayerIds = collectEjectedPlayerInventoryIds(mainSave.players, secondarySave.players, secondarySave.inventories);
 
-  return {
+  const sections: MergedSaveSections = {
     formatRelease: writtenFormatSave.formatRelease,
     globalMetadata: mergeGlobalMetadata(mainSave.globalMetadata, secondarySave.globalMetadata),
     terraformationLevels: mergeTerraformationLevels(mainSave.terraformationLevels, secondarySave.terraformationLevels),
@@ -46,4 +46,29 @@ export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSectio
     terrainLayers: mergeTerrainLayers(mainSave, secondarySave, writtenFormatSave),
     worldEvents: mergeWorldEvents(mainSave.worldEvents, secondarySave.worldEvents)
   };
+
+  if (mainSave.formatRelease === secondarySave.formatRelease) {
+    return {sections, warnings: [], legacyFormatCouldBeKept: false};
+  }
+
+  const otherFormatSave = writtenFormatSave === mainSave ? secondarySave : mainSave;
+
+  return {
+    sections,
+    warnings: reportWrittenFormat(sections, otherFormatSave.formatRelease),
+    legacyFormatCouldBeKept: !preferLegacyFormat
+  };
+}
+
+function reportWrittenFormat(sections: MergedSaveSections, otherRelease: string): MergeWarning[] {
+  const warnings: MergeWarning[] = [{code: 'merged-save-format', formatRelease: sections.formatRelease}];
+
+  if (sections.terrainLayers === undefined) {
+    warnings.push({code: 'merged-save-section-dropped', section: 'terrainLayers'});
+  }
+  if (compareGameReleases(sections.formatRelease, otherRelease) < 0) {
+    warnings.push({code: 'merged-save-content-newer-than-format', formatRelease: sections.formatRelease, contentRelease: otherRelease});
+  }
+
+  return warnings;
 }

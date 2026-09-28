@@ -1,9 +1,6 @@
 import {InventoryEntry} from '../../save/InventoryEntry';
 import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
-/**
- * Source of the identifiers handed to the entries renumbered during conflict resolution.
- */
 export interface IdSequence {
   next(): number;
 }
@@ -14,17 +11,6 @@ interface IdentifiedEntry {
 
 const FIRST_ID = 1;
 
-/**
- * Starts the sequence above the highest identifier of the merged save, taken across both sections
- * that share one numbering space: inventories and world objects. Seeding on the whole space before
- * a single identifier is handed out is what keeps a renumbered inventory off an existing world
- * object id.
- *
- * Player identifiers are left out on purpose: they share no numbering space with inventories and
- * world objects, and are never regenerated.
- *
- * @see @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects, @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide, @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
- */
 export function createIdSequence(inventories: readonly InventoryEntry[], worldObjects: readonly WorldObjectEntry[]): IdSequence {
   let nextId = Math.max(findHighestId(inventories), findHighestId(worldObjects)) + 1;
 

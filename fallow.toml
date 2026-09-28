@@ -11,6 +11,7 @@ entry = [
     "scripts/check-package-dependencies.spec.ts",
     "scripts/check-presentation-entities.ts",
     "scripts/check-presentation-entities.spec.ts",
+    "scripts/shrinkingAllowList.spec.ts",
     "scripts/check-solid-idioms.ts",
     "scripts/check-solid-idioms.spec.ts",
     "scripts/check-scenario-fixtures.ts",

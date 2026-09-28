@@ -1,4 +1,5 @@
-import {ValidateSaveFileController} from 'core-mapping/controllers/ValidateSaveFileController';
+/** @import { SaveFileValidationViewModel } from 'core-mapping/presentation/viewModels/SaveFileValidationViewModel' */
+
 import {parseValidateCliArguments} from './parseValidateCliArguments.js';
 import {renderHelp, renderMissingFile, renderSaveErrors, renderSaveIsValid, renderSaveWarnings, renderUnknownArguments, renderVersion} from './renderValidateCliOutput.js';
 
@@ -9,8 +10,9 @@ const FAILURE_EXIT_CODE = 1;
  * @param {{readTextFile: (path: string) => Promise<string>, exitProcess: (code: number) => void}} platform
  * @param {string[]} argv
  * @param {{name: string, version: string}} release
+ * @param {(filePath: string, save: string) => Promise<SaveFileValidationViewModel>} validateSaveFile
  */
-export function initValidateCli({readTextFile, exitProcess}, argv = [], release) {
+export function initValidateCli({readTextFile, exitProcess}, argv = [], release, validateSaveFile) {
   const {filePath, isVersionAsked, isHelpAsked, unknownArguments} = parseValidateCliArguments(argv);
 
   async function main() {
@@ -39,7 +41,7 @@ export function initValidateCli({readTextFile, exitProcess}, argv = [], release)
     }
 
     const save = await readTextFile(filePath);
-    const {status, errors, warnings} = await ValidateSaveFileController.validateSaveFile(filePath, save);
+    const {status, errors, warnings} = await validateSaveFile(filePath, save);
 
     renderSaveWarnings(warnings);
 

@@ -54,7 +54,7 @@ on the very defect the rule describes, and must not be titled as if it could.
 
 **What the versioned guard covers.** `worldObjectNames.ts` declares every known `gId` in exactly one of three
 groups — producing energy, consuming energy, or without a known energy level (section 6) — and
-`PlanetEnergyGrid.spec.ts` asserts the two directions of that
+`EnergyLevelsReaderService.spec.ts` asserts, on the table the adapter reads, the two directions of that
 partition: every name of the producing and consuming groups yields a strictly positive level, and no name of the
 third group yields any. Consequences: removing a table entry turns the suite red (including the entry of a machine
 that has no sibling tier, `Beacon` or `ComAntenna`, which the earlier by-family guard let through), pricing a name
@@ -160,7 +160,7 @@ placed inside an Optimizer.
 
 **Rule EN-OPT-1 (capacity):** the fuse slots, the maximum number of machines affected and the radius of each
 Optimizer tier are the rows of
-[`packages/core-mapping/src/domain/optimizerConfig.json`](../packages/core-mapping/src/domain/optimizerConfig.json)
+[`packages/data-world-objects/optimizerConfig.json`](../packages/data-world-objects/optimizerConfig.json)
 (`@DATATABLE.OptimizerConfiguration`).
 
 **Rule EN-OPT-2 (targeting):** An Optimizer boosts the **closest** machines of the type matching its fuse(s),
@@ -237,14 +237,14 @@ HUD production value (24075.45 kW) for a real save containing 2 active Optimizer
 **Rule EN-PLANET-1 (per-planet scoping, resolved):** each planet has its own independent power grid in-game.
 Steps 1–7 above are therefore applied **once per distinct `WorldObject.planet`** rather than once globally:
 positioned world objects are grouped by `planet` first, and production, consumption, available, breakdowns
-and Optimizers are all computed from each planet's own subset only (`SaveSectionsReaderService.getEnergyLevels`
-returns `EnergyLevelsValueObject.planets`, one entry per planet). Optimizer targeting was already restricted to
+and Optimizers are all computed from each planet's own subset only (`LoadEnergyLevelsSection` hands the presenter
+`EnergyLevelsResponse.planets`, one entry per planet). Optimizer targeting was already restricted to
 producers on the same `planet` (Rule EN-OPT-2), so no cross-planet leakage was possible there; this rule only
 formalizes that production/consumption/breakdowns are scoped the same way.
 
 **Rule EN-PLANET-2 (planet label resolution):** each planet is labelled using the fixed numeric-id → name
 lookup table of `packages/core-mapping/src/domain/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`),
-looked up by `SaveSectionsReaderService.resolvePlanetLabel`. For planet ids not in that table (e.g. future
+looked up by the domain rule `resolvePlanetName`. For planet ids not in that table (e.g. future
 planets, modded content), a fallback heuristic applies: some world object `gId`s embed the planet name in
 plain text (e.g. `Seed7Humble` on planet `Humble`) — if exactly one of the save's known planet names (from
 `TerraformationLevels`) is found as a substring of a `gId` among that planet's world objects, that name is

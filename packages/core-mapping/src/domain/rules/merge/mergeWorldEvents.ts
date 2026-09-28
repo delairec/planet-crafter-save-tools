@@ -1,14 +1,11 @@
-import {WorldEvent} from 'shared-save-processing/gameDefinitions';
+import {WorldEventEntry} from '../../save/WorldEventEntry';
 
-/**
- * @see @RULE.WorldEventsAreDeduplicatedByPlanetSeedAndPosition
- */
-export function mergeWorldEvents(worldEventsA: WorldEvent[], worldEventsB: WorldEvent[]): WorldEvent[] {
+export function mergeWorldEvents(worldEventsA: readonly WorldEventEntry[], worldEventsB: readonly WorldEventEntry[]): WorldEventEntry[] {
   const worldEventsFromBNotInA = worldEventsB.filter(eventB =>
     !worldEventsA.some(eventA =>
       eventA.planet === eventB.planet &&
       eventA.seed === eventB.seed &&
-      eventA.pos === eventB.pos
+      eventA.position === eventB.position
     )
   );
 

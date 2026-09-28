@@ -1,4 +1,6 @@
+import {SaveValidationMessageViewModel} from "./SaveFileValidationViewModel";
 export interface PlayersMenuViewModel {
+  unreadableLines?: SaveValidationMessageViewModel[];
   players: PlayerMenuEntryViewModel[];
 }
 

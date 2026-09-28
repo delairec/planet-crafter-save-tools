@@ -1,6 +1,6 @@
-/** @import { SaveSectionName } from 'shared-save-processing/gameDefinitions' */
+/** @import { SaveSectionNameResponse } from '../../application/responses/SaveSectionNameResponse' */
 
-/** @type {Record<SaveSectionName, string>} */
+/** @type {Record<SaveSectionNameResponse, string>} */
 export const saveSectionLabels = {
   globalMetadata: 'Global metadata',
   terraformationLevels: 'Terraformation levels',

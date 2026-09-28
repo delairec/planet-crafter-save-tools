@@ -5,7 +5,6 @@ import {FormatNumberStrategies} from "./FormatNumberStrategies";
 const nbsp = '\u00A0';
 
 describe('formatNumber', () => {
-
   describe('When formatting strategy is THOUSANDS_SEPARATOR', () => {
     it('should format the number with thousands separator', () => {
       // Act
@@ -104,11 +103,6 @@ describe('formatNumber', () => {
       expect(result).toBe(`1${nbsp}ppq`);
     });
 
-    // Rule EN-FMT-1: the unit steps up as soon as the value reaches the next threshold (matching
-    // WEIGHT/SYMBOL strategies below) — regression test for a bug where the threshold check was
-    // divided by an extra 1000 versus the division used for the displayed value, keeping large
-    // values stuck on the base "ppq" unit far longer than intended (e.g. 1_000_000 used to render
-    // as "1,000 ppt" instead of "1 ppb").
     it.each([
       {symbol:'ppt', value: 1_000},
       {symbol:'ppb', value: 1_000_000},

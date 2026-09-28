@@ -1,7 +1,10 @@
-import {EnergyLevelsValueObject} from "../domain/valueObjects/EnergyLevelsValueObject";
-import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
-import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
-import {OptimizerValueObject} from "../domain/valueObjects/OptimizerValueObject";
+import {formatUnreadableLine} from "./formatUnreadableLine";
+import {
+  EnergyBreakdownEntryResponse,
+  EnergyLevelsResponse,
+  OptimizerResponse,
+  PlanetEnergyLevelsResponse
+} from "../application/responses/EnergyLevelsResponse";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
 import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {PlanetEnergyLevelsViewModel} from "./viewModels/PlanetEnergyLevelsViewModel";
@@ -11,9 +14,7 @@ import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
-import {worldObjectLabels} from "./worldObjectLabels";
-import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
-import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
+import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 import {
   energyLevelsSectionAvailableTitle,
   energyLevelsSectionConsumptionTitle,
@@ -24,6 +25,7 @@ import {
   resolveEnergyLevelsSectionPowerConsumptionModifierNotification,
   resolveEnergyLevelsSectionUnnamedPlanetName
 } from "./messages/energyLevelsSectionMessages.js";
+import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 
 const submergedMachinesNotification: NotificationViewModel = {
   severity: 'limitation',
@@ -44,24 +46,28 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     return this._viewModel;
   }
 
-  displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void {
+  displayEnergyLevels(energyLevels: EnergyLevelsResponse): void {
     this._viewModel = {
       notifications: this.buildNotifications(energyLevels),
-      planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
+      planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet, energyLevels.worldObjectLabels))
     };
   }
 
-  private buildNotifications(energyLevels: EnergyLevelsValueObject): NotificationViewModel[] {
+  displaySaveWithUnreadableLines({unreadableLines}: UnreadableLinesResponse): void {
+    this._viewModel = {notifications: [], planets: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
+  }
+
+  private buildNotifications(energyLevels: EnergyLevelsResponse): NotificationViewModel[] {
     const notifications: NotificationViewModel[] = [submergedMachinesNotification];
 
-    if (energyLevels.gameRelease !== CURRENT_FORMAT_RELEASE) {
+    if (energyLevels.gameReleaseIsEarlierThanCurrent) {
       notifications.push({
         severity: 'warning',
         message: resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)
       });
     }
 
-    if (energyLevels.powerConsumptionModifier !== UNMODIFIED_POWER_CONSUMPTION_MODIFIER) {
+    if (energyLevels.powerConsumptionIsModified) {
       notifications.push({
         severity: 'information',
         message: resolveEnergyLevelsSectionPowerConsumptionModifierNotification(
@@ -73,7 +79,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     return notifications;
   }
 
-  private buildPlanet(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsViewModel {
+  private buildPlanet(planet: PlanetEnergyLevelsResponse, worldObjectLabels: WorldObjectLabelsResponse): PlanetEnergyLevelsViewModel {
     return {
       planetId: planet.planetName ?? resolveEnergyLevelsSectionUnnamedPlanetName(planet.planetId),
       energyLevels: {
@@ -92,13 +98,13 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
           }
         ]
       },
-      productionBreakdown: this.buildBreakdownRows(planet.productionBreakdown),
-      consumptionBreakdown: this.buildBreakdownRows(planet.consumptionBreakdown),
-      optimizers: this.buildOptimizers(planet.optimizers)
+      productionBreakdown: this.buildBreakdownRows(planet.productionBreakdown, worldObjectLabels),
+      consumptionBreakdown: this.buildBreakdownRows(planet.consumptionBreakdown, worldObjectLabels),
+      optimizers: this.buildOptimizers(planet.optimizers, worldObjectLabels)
     };
   }
 
-  private buildBreakdownRows(breakdown: readonly EnergyBreakdownEntryValueObject[]): EnergyBreakdownRowViewModel[] {
+  private buildBreakdownRows(breakdown: readonly EnergyBreakdownEntryResponse[], worldObjectLabels: WorldObjectLabelsResponse): EnergyBreakdownRowViewModel[] {
     return breakdown.map((entry): EnergyBreakdownRowViewModel => ({
       label: worldObjectLabels[entry.name],
       quantity: formatNumber(entry.quantity),
@@ -107,7 +113,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     }));
   }
 
-  private buildOptimizers(optimizers: readonly OptimizerValueObject[]): OptimizerViewModel[] {
+  private buildOptimizers(optimizers: readonly OptimizerResponse[], worldObjectLabels: WorldObjectLabelsResponse): OptimizerViewModel[] {
     return optimizers.map((optimizer): OptimizerViewModel => ({
       label: worldObjectLabels[optimizer.name],
       fuseCount: formatNumber(optimizer.fuseCount),

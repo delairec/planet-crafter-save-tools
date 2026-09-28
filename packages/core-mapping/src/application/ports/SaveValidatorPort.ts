@@ -1,5 +1,7 @@
-import {SaveValidationResult} from "./SaveValidationResult";
+import {SaveValidationResponse} from "../responses/SaveValidationResponse";
 
 export interface SaveValidatorPort {
-  validate(fileName: string, content: string): SaveValidationResult;
+  hasJsonExtension(fileName: string): boolean;
+
+  validate(content: string): SaveValidationResponse;
 }

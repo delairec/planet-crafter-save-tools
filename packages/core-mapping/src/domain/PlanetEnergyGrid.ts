@@ -1,4 +1,4 @@
-import {PlanetWorldObjectsValueObject} from "./valueObjects/EnergyLevelsRawDataValueObject";
+import {PlanetWorldObjectsValueObject} from "./valueObjects/PlanetWorldObjectsValueObject";
 import {PlacedWorldObjectEntity} from "./entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "./entities/WorldObjectEntity";
 import {InventoryEntity} from "./entities/InventoryEntity";
@@ -11,8 +11,18 @@ import {createEnergyBreakdownEntryValueObject} from "./valueObjects/EnergyBreakd
 import {createOptimizerValueObject, OptimizerValueObject} from "./valueObjects/OptimizerValueObject";
 import {createOptimizerBoostedMachineValueObject} from "./valueObjects/OptimizerBoostedMachineValueObject";
 import {EnergyLevelsOfRelease} from "./energyLevelsByWorldObjectName";
+import {OptimizerRangesByWorldObjectName} from "./valueObjects/OptimizerRangeValueObject";
 import {ENERGY_FUSE_MULTIPLIER_PER_FUSE} from "./energyOptimizerConfig";
 import {computeEnergyBreakdown} from "./rules/computeEnergyBreakdown";
+
+export interface PlanetEnergyGridInput {
+  readonly planet: PlanetWorldObjectsValueObject;
+  readonly allWorldObjects: readonly WorldObjectEntity[];
+  readonly inventories: readonly InventoryEntity[];
+  readonly energyLevels: EnergyLevelsOfRelease;
+  readonly optimizerRanges: OptimizerRangesByWorldObjectName;
+  readonly powerConsumptionModifier: number;
+}
 
 interface OptimizerBoost {
   readonly optimizer: PlacedWorldObjectEntity;
@@ -27,19 +37,13 @@ export class PlanetEnergyGrid {
   private readonly energyLevels: EnergyLevelsOfRelease;
   private readonly consumptionLevels: EnergyLevelsOfRelease["consumption"];
 
-  constructor(
-    planet: PlanetWorldObjectsValueObject,
-    allWorldObjects: readonly WorldObjectEntity[],
-    inventories: readonly InventoryEntity[],
-    energyLevels: EnergyLevelsOfRelease,
-    powerConsumptionModifier: number
-  ) {
+  constructor({planet, allWorldObjects, inventories, energyLevels, optimizerRanges, powerConsumptionModifier}: PlanetEnergyGridInput) {
     this.planet = planet;
     this.energyLevels = energyLevels;
     this.consumptionLevels = Object.fromEntries(
       Object.entries(energyLevels.consumption).map(([name, level]) => [name, level * powerConsumptionModifier])
     );
-    this.boosts = PlanetEnergyGrid.collectBoosts(planet.placedWorldObjects, allWorldObjects, inventories);
+    this.boosts = PlanetEnergyGrid.collectBoosts(planet.placedWorldObjects, allWorldObjects, inventories, optimizerRanges, energyLevels.production);
     this.fuseCountByProducerId = PlanetEnergyGrid.countFusesByProducerId(this.boosts);
   }
 
@@ -62,11 +66,18 @@ export class PlanetEnergyGrid {
   private static collectBoosts(
     placedWorldObjects: readonly PlacedWorldObjectEntity[],
     allWorldObjects: readonly WorldObjectEntity[],
-    inventories: readonly InventoryEntity[]
+    inventories: readonly InventoryEntity[],
+    optimizerRanges: OptimizerRangesByWorldObjectName,
+    productionLevels: EnergyLevelsOfRelease["production"]
   ): OptimizerBoost[] {
     const boosts: OptimizerBoost[] = [];
 
-    for (const optimizer of placedWorldObjects.filter((worldObject) => worldObject.isOptimizer())) {
+    for (const optimizer of placedWorldObjects) {
+      const range = optimizerRanges[optimizer.name];
+      if (range === undefined) {
+        continue;
+      }
+
       const inventory = inventories.find((candidate) => candidate.id === optimizer.inventoryId);
       if (!inventory) {
         continue;
@@ -79,7 +90,7 @@ export class PlanetEnergyGrid {
         continue;
       }
 
-      boosts.push({optimizer, fuseCount, boostedProducers: optimizer.boostedProducersAmong(placedWorldObjects)});
+      boosts.push({optimizer, fuseCount, boostedProducers: optimizer.boostedProducersAmong(placedWorldObjects, range, productionLevels)});
     }
 
     return boosts;

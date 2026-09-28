@@ -1,9 +1,6 @@
-import {ValidationIssue} from "../ports/ValidationIssue";
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import {SaveFileFindingsResponse} from "./SaveFileFindingsResponse";
 
 export interface SaveFilesInvalidResponse {
-  saveAErrors: ValidationIssue[];
-  saveBErrors: ValidationIssue[];
-  saveAWarnings: SaveWarning[];
-  saveBWarnings: SaveWarning[];
+  saveA: SaveFileFindingsResponse;
+  saveB: SaveFileFindingsResponse;
 }

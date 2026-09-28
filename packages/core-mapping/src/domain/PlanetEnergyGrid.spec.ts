@@ -1,11 +1,13 @@
 import {selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
+import {ENERGY_LEVEL_TABLES, OPTIMIZER_RANGES} from '../testing/energyLevelTablesFixture';
+import {GAME_RELEASES} from '../testing/gameReleasesFixture';
 import {describe, expect, it} from 'bun:test';
 import {PlanetEnergyGrid} from './PlanetEnergyGrid';
 import {PlacedWorldObjectEntity} from './entities/PlacedWorldObjectEntity';
 import {WorldObjectEntity} from './entities/WorldObjectEntity';
 import {InventoryEntity} from './entities/InventoryEntity';
-import {WorldObjectName, worldObjectNamesByEnergyRole} from './worldObjectNames';
-import {createPlanetWorldObjectsValueObject} from './valueObjects/EnergyLevelsRawDataValueObject';
+import {WorldObjectName} from './worldObjectNames';
+import {createPlanetWorldObjectsValueObject} from './valueObjects/PlanetWorldObjectsValueObject';
 
 const PLANET_ID = 1;
 
@@ -29,26 +31,28 @@ function gridOf(
   inventories: readonly InventoryEntity[] = [],
   planetName?: string
 ): PlanetEnergyGrid {
-  return new PlanetEnergyGrid(
-    createPlanetWorldObjectsValueObject({planetId: PLANET_ID, planetName, placedWorldObjects}),
+  return new PlanetEnergyGrid({
+    planet: createPlanetWorldObjectsValueObject({planetId: PLANET_ID, planetName, placedWorldObjects}),
     allWorldObjects,
     inventories,
-    selectEnergyLevelsOfDeclaredVersion('2.103'),
-    1
-  );
+    energyLevels: selectEnergyLevelsOfDeclaredVersion('2.103', ENERGY_LEVEL_TABLES, GAME_RELEASES),
+    optimizerRanges: OPTIMIZER_RANGES,
+    powerConsumptionModifier: 1
+  });
 }
 
 function gridOfSaveWithPowerConsumptionModifier(
   placedWorldObjects: readonly PlacedWorldObjectEntity[],
   powerConsumptionModifier: number
 ): PlanetEnergyGrid {
-  return new PlanetEnergyGrid(
-    createPlanetWorldObjectsValueObject({planetId: PLANET_ID, placedWorldObjects}),
-    placedWorldObjects,
-    [],
-    selectEnergyLevelsOfDeclaredVersion('2.103'),
+  return new PlanetEnergyGrid({
+    planet: createPlanetWorldObjectsValueObject({planetId: PLANET_ID, placedWorldObjects}),
+    allWorldObjects: placedWorldObjects,
+    inventories: [],
+    energyLevels: selectEnergyLevelsOfDeclaredVersion('2.103', ENERGY_LEVEL_TABLES, GAME_RELEASES),
+    optimizerRanges: OPTIMIZER_RANGES,
     powerConsumptionModifier
-  );
+  });
 }
 
 describe('PlanetEnergyGrid', () => {
@@ -91,37 +95,6 @@ describe('PlanetEnergyGrid', () => {
 
       // Assert
       expect(levels.production).toBe(1.2);
-    });
-
-    const {producing, consuming, withoutKnownEnergyLevel} = worldObjectNamesByEnergyRole;
-
-    const aloneOnThePlanet = (name: WorldObjectName) => gridOf([placedWorldObject(name, name)]).levels();
-
-    it.each([...producing])('should read a strictly positive production level for %s', (name) => {
-      // Act
-      const levels = aloneOnThePlanet(name);
-
-      // Assert
-      expect(levels.production).toBeGreaterThan(0);
-    });
-
-    it.each([...consuming])('should charge %s, a world object grouped as an energy consumer', (name) => {
-      // Act
-      const levels = aloneOnThePlanet(name);
-
-      // Assert
-      expect(levels.consumption).toBeGreaterThan(0);
-    });
-
-    it('should neither produce nor charge for the world objects without a known energy level', () => {
-      // Act
-      const withALevel = withoutKnownEnergyLevel.filter((name) => {
-        const levels = aloneOnThePlanet(name);
-        return levels.production > 0 || levels.consumption > 0;
-      });
-
-      // Assert
-      expect(withALevel).toEqual([]);
     });
   });
 

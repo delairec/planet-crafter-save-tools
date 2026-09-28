@@ -1,5 +1,4 @@
 import {WorldObjectName} from "../worldObjectNames";
-import {assertNonEmptyString} from "../errors/assertions";
 import {ENERGY_FUSE_NAME} from "../energyOptimizerConfig";
 
 export interface WorldObjectEntityInput {
@@ -12,8 +11,8 @@ export class WorldObjectEntity {
   private readonly _name: WorldObjectName;
 
   constructor(input: WorldObjectEntityInput) {
-    this._id = assertNonEmptyString(input.id, 'WorldObjectEntity.id');
-    this._name = assertNonEmptyString(input.name, 'WorldObjectEntity.name') as WorldObjectName;
+    this._id = input.id;
+    this._name = input.name;
   }
 
   get id(): string {

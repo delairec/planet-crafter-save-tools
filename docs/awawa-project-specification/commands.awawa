@@ -2,7 +2,7 @@ COMMAND MergeSaves
 	INVOCATION "bun run merge"
 	DESC "merges the two saves of each folder of the input directory and writes the result to the"
 		+ "output directory"
-	IMPL "packages/cli-merge/cli/merge-cli.js::initMergeCli(platform, cliArguments, cliManifest)"
+	IMPL "packages/cli-merge/cli/merge-cli.js::initMergeCli(platform, cliArguments, cliManifest,"
 	APPLIES @RULE.TheSaveOnPrimeBecomesSaveA
 	APPLIES @RULE.GlobalMetadataIsSummedAndUnioned
 	APPLIES @RULE.TerraformationLevelsTakeTheHigherValue
@@ -23,6 +23,7 @@ COMMAND MergeSaves
 	APPLIES @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
 	APPLIES @RULE.APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 	APPLIES @RULE.TheGlobalMetadataEntryCarriesLogisticsPaused
+	APPLIES @RULE.ASaveDesignatesExactlyOneHostPlayer
 	RATIONALE "The node: form of the script reaches the same entry point on the other runtime; the"
 		+ "parity of the two runtimes is a ruling of ours, not a second command"
 		REF @DECISION.NodeCommandsRunSourcesThroughModuleHooks
@@ -32,9 +33,10 @@ COMMAND ValidateSave
 	INVOCATION "bun run validate"
 	DESC "reads the one save named by --file and reports, located, what does not meet the format"
 	IMPL "packages/cli-validate/cli/validate-cli.js::initValidateCli(platform, cliArguments,"
-		+ "cliManifest)"
+		+ "cliManifest,"
 	APPLIES @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	APPLIES @RULE.ASectionLineIsOneJsonEntry
 	APPLIES @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
 	APPLIES @RULE.TheGlobalMetadataEntryCarriesLogisticsPaused
+	APPLIES @RULE.ASaveDesignatesExactlyOneHostPlayer
 	SOURCE "Extracted from the published scripts of the root manifest on 2026-09-18"

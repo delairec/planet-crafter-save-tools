@@ -1,63 +1,40 @@
-import {describe, expect, it} from 'bun:test';
-import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {describe, expect, it, mock} from 'bun:test';
 import {LoadTerraformationLevelsSectionController} from './LoadTerraformationLevelsSectionController';
+import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {TerraformationLevelsViewModel} from '../presentation/viewModels/TerraformationLevelsViewModel';
 
-const nbsp = '\u00A0';
+type ExecuteLoadTerraformationLevelsSection = (request: LoadSaveSectionsRequest) => Promise<void>;
+
+function createController(execute: ExecuteLoadTerraformationLevelsSection, presenter: {viewModel: TerraformationLevelsViewModel}): LoadTerraformationLevelsSectionController {
+  return new LoadTerraformationLevelsSectionController(() => ({useCase: {execute}, presenter}));
+}
 
 describe('LoadTerraformationLevelsSectionController', () => {
-  it('should present terraformation levels from the parsed save', async () => {
+  it('should hand its use case the validated content', async () => {
     // Arrange
-    const validatedContent = createFakeSaveContent();
+    const execute = mock<ExecuteLoadTerraformationLevelsSection>(async () => {});
+    const controller = createController(execute, {viewModel: {planets: []}});
 
     // Act
-    const viewModel = await LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(validatedContent);
+    await controller.loadTerraformationLevelsSection('validated content');
 
     // Assert
-    expect(viewModel).toEqual<TerraformationLevelsViewModel>({
-      planets: [
-        {
-          name: 'Toxicity',
-          environmentalLevels: {
-            columns: [
-              {
-                header: 'O²',
-                values: [`100${nbsp}ppq`]
-              },
-              {
-                header: 'Heat',
-                values: [`200${nbsp}pK`]
-              },
-              {
-                header: 'Pressure',
-                values: [`300${nbsp}nPa`]
-              },
-              {
-                header: 'Purification',
-                values: [`700${nbsp}Pu`]
-              }
-            ]
-          },
-          organicLevels: {
-            columns: [
-              {
-                header: 'Plants',
-                values: [`400${nbsp}g`]
-              },
-              {
-                header: 'Insects',
-                values: [`500${nbsp}g`]
-              },
-              {
-                header: 'Animals',
-                values: [`600${nbsp}g`]
-              },
-            ]
-          },
-          terraformationIndex: `2.8${nbsp}kTi`,
-          biomass: `1.5${nbsp}kg`
-        }
-      ],
-    });
+    expect(execute).toHaveBeenCalledWith({content: 'validated content'});
+  });
+
+  it('should return the view model its presenter holds once the use case has run', async () => {
+    // Arrange
+    const presenter: {viewModel: TerraformationLevelsViewModel} = {viewModel: {planets: []}};
+    const viewModelAfterRun: TerraformationLevelsViewModel = {planets: [], unreadableLines: [{message: 'Unreadable line', location: null}]};
+    const controller = createController(async () => {
+      await Promise.resolve();
+      presenter.viewModel = viewModelAfterRun;
+    }, presenter);
+
+    // Act
+    const viewModel = await controller.loadTerraformationLevelsSection('validated content');
+
+    // Assert
+    expect(viewModel).toBe(viewModelAfterRun);
   });
 });

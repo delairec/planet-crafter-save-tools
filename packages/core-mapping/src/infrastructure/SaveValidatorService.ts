@@ -1,17 +1,16 @@
 import {hasJsonExtension} from "shared-save-processing/jsonExtension.js";
 import {validateSaveContent} from "./validateSaveContent.js";
 import {SaveValidatorPort} from "../application/ports/SaveValidatorPort";
-import {SaveValidationResult} from "../application/ports/SaveValidationResult";
-import {VALIDATION_ISSUE_CODES} from "../application/ports/ValidationIssue";
+import {SaveValidationResponse} from "../application/responses/SaveValidationResponse";
 
 export class SaveValidatorService implements SaveValidatorPort {
-  validate(fileName: string, content: string): SaveValidationResult {
-    if (!hasJsonExtension(fileName)) {
-      return {isValid: false, errors: [{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'}], warnings: []};
-    }
+  hasJsonExtension(fileName: string): boolean {
+    return hasJsonExtension(fileName);
+  }
 
-    const {isValid, errors, warnings} = validateSaveContent(content);
+  validate(content: string): SaveValidationResponse {
+    const {isValid, errors, warnings, declaredVersion, carriedRelease} = validateSaveContent(content);
 
-    return {isValid, errors, warnings};
+    return {isValid, errors, warnings, declaredVersion, carriedRelease};
   }
 }

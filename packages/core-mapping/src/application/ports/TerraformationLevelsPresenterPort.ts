@@ -1,5 +1,8 @@
-import {TerraformationLevelSummaryValueObject} from '../../domain/valueObjects/TerraformationLevelSummaryValueObject';
+import type {UnreadableLinesResponse} from "../responses/UnreadableLinesResponse";
+import {TerraformationLevelSummaryResponse} from '../responses/TerraformationLevelSummaryResponse';
 
 export interface TerraformationLevelsPresenterPort {
-  displayTerraformationLevels(levels: TerraformationLevelSummaryValueObject[]): void;
+  displayTerraformationLevels(levels: TerraformationLevelSummaryResponse[]): void;
+
+  displaySaveWithUnreadableLines(response: UnreadableLinesResponse): void;
 }

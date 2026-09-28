@@ -1,11 +1,11 @@
 import {describe, it, expect} from 'bun:test';
 import {mergeWorldEvents} from './mergeWorldEvents';
-import {createWorldEvent} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createWorldEventEntry} from '../../../testing/createSaveEntries';
 
 describe('Merge world events', () => {
-  const worldEventA = createWorldEvent({planet: 110910045, seed: 12345, pos: '100,200,300'});
-  const worldEventB = createWorldEvent({planet: 110910046, seed: 67890, pos: '400,500,600'});
-  const worldEventShared = createWorldEvent({planet: 110910047, seed: 11111, pos: '700,800,900'});
+  const worldEventA = createWorldEventEntry({planet: 110910045, seed: 12345, position: '100,200,300'});
+  const worldEventB = createWorldEventEntry({planet: 110910046, seed: 67890, position: '400,500,600'});
+  const worldEventShared = createWorldEventEntry({planet: 110910047, seed: 11111, position: '700,800,900'});
 
   describe('When world events are unique', () => {
     it('should concat world events from both saves', () => {
@@ -14,8 +14,8 @@ describe('Merge world events', () => {
 
       // Assert
       expect(result).toEqual([
-        {planet: 110910045, seed: 12345, pos: '100,200,300'},
-        {planet: 110910046, seed: 67890, pos: '400,500,600'}
+        {planet: 110910045, seed: 12345, position: '100,200,300'},
+        {planet: 110910046, seed: 67890, position: '400,500,600'}
       ]);
     });
   });
@@ -26,7 +26,7 @@ describe('Merge world events', () => {
       const result = mergeWorldEvents([worldEventShared], [worldEventShared]);
 
       // Assert
-      expect(result).toEqual([{planet: 110910047, seed: 11111, pos: '700,800,900'}]);
+      expect(result).toEqual([{planet: 110910047, seed: 11111, position: '700,800,900'}]);
     });
   });
 
@@ -35,8 +35,8 @@ describe('Merge world events', () => {
       // Arrange
       const wreckEvent = {
         owner: 0, planet: -1140328421, index: 1, seed: 577338550,
-        pos: '1250.623,-51.60085,-215.7026', rot: '-0.001,-0.353,-0.010,-0.935',
-        wrecksWOGenerated: true, woIdsGenerated: '201234,205678', woIdsDropped: '201234', version: 13
+        position: '1250.623,-51.60085,-215.7026', rotation: '-0.001,-0.353,-0.010,-0.935',
+        wrecksGenerated: true, generatedWorldObjectIds: [201234, 205678], droppedWorldObjectIds: [201234], version: 13
       };
       const noWorldEventsFromSaveA: never[] = [];
 
@@ -46,8 +46,8 @@ describe('Merge world events', () => {
       // Assert
       expect(result).toEqual([{
         owner: 0, planet: -1140328421, index: 1, seed: 577338550,
-        pos: '1250.623,-51.60085,-215.7026', rot: '-0.001,-0.353,-0.010,-0.935',
-        wrecksWOGenerated: true, woIdsGenerated: '201234,205678', woIdsDropped: '201234', version: 13
+        position: '1250.623,-51.60085,-215.7026', rotation: '-0.001,-0.353,-0.010,-0.935',
+        wrecksGenerated: true, generatedWorldObjectIds: [201234, 205678], droppedWorldObjectIds: [201234], version: 13
       }]);
     });
   });

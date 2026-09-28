@@ -1,19 +1,40 @@
-import {describe, expect, it} from 'bun:test';
-import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {describe, expect, it, mock} from 'bun:test';
 import {LoadPlayersMenuController} from './LoadPlayersMenuController';
+import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {PlayersMenuViewModel} from '../presentation/viewModels/PlayersMenuViewModel';
 
+type ExecuteLoadPlayersMenu = (request: LoadSaveSectionsRequest) => Promise<void>;
+
+function createController(execute: ExecuteLoadPlayersMenu, presenter: {viewModel: PlayersMenuViewModel}): LoadPlayersMenuController {
+  return new LoadPlayersMenuController(() => ({useCase: {execute}, presenter}));
+}
+
 describe('LoadPlayersMenuController', () => {
-  it('should present the players menu of the parsed save', async () => {
+  it('should hand its use case the validated content', async () => {
     // Arrange
-    const validatedContent = createFakeSaveContent();
+    const execute = mock<ExecuteLoadPlayersMenu>(async () => {});
+    const controller = createController(execute, {viewModel: {players: []}});
 
     // Act
-    const viewModel = await LoadPlayersMenuController.loadPlayersMenu(validatedContent);
+    await controller.loadPlayersMenu('validated content');
 
     // Assert
-    expect(viewModel).toEqual<PlayersMenuViewModel>({
-      players: [{name: 'Nikowa', planet: 'Toxicity', hostBadge: 'Host'}]
-    });
+    expect(execute).toHaveBeenCalledWith({content: 'validated content'});
+  });
+
+  it('should return the view model its presenter holds once the use case has run', async () => {
+    // Arrange
+    const presenter: {viewModel: PlayersMenuViewModel} = {viewModel: {players: []}};
+    const viewModelAfterRun: PlayersMenuViewModel = {players: [], unreadableLines: [{message: 'Unreadable line', location: null}]};
+    const controller = createController(async () => {
+      await Promise.resolve();
+      presenter.viewModel = viewModelAfterRun;
+    }, presenter);
+
+    // Act
+    const viewModel = await controller.loadPlayersMenu('validated content');
+
+    // Assert
+    expect(viewModel).toBe(viewModelAfterRun);
   });
 });

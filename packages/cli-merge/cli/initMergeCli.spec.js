@@ -1,4 +1,7 @@
+/** @import { MergeResultViewModel } from 'core-mapping/presentation/viewModels/MergeResultViewModel' */
+
 import {beforeEach, describe, expect, it, mock, spyOn} from 'bun:test';
+import {mergeSaveFilesController} from 'core-mapping/composition/compositionRoot';
 import {initMergeCli, UNEXPECTED_ERROR_EXIT_CODE} from './initMergeCli.js';
 import {
   FAKE_SAVE_STRING_A,
@@ -54,7 +57,11 @@ describe('Merge CLI', () => {
     });
   }
 
-  function initCli(argv, mergeSaveFiles) {
+  function mergeWithTheWiredController(request) {
+    return mergeSaveFilesController.mergeSaveFiles(request);
+  }
+
+  function initCli(argv, mergeSaveFiles = mergeWithTheWiredController) {
     const fakePlatform = {
       readDirectory,
       readTextFile,
@@ -751,7 +758,8 @@ describe('Merge CLI', () => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       readTextFile.mockResolvedValue(FAKE_SAVE_STRING_A);
-      const mergeSaveFiles = mock(() => Promise.resolve({
+      /** @type {MergeResultViewModel} */
+      const mergeFailedViewModel = {
         status: 'mergeFailed',
         fileName: '',
         content: '',
@@ -763,7 +771,8 @@ describe('Merge CLI', () => {
         saveBErrors: [],
         saveAWarnings: [],
         saveBWarnings: []
-      }));
+      };
+      const mergeSaveFiles = mock(() => Promise.resolve(mergeFailedViewModel));
       ({main} = initCli([], mergeSaveFiles));
     });
 

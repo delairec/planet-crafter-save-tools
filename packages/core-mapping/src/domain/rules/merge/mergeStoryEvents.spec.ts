@@ -1,11 +1,11 @@
 import {describe, it, expect} from 'bun:test';
 import {mergeStoryEvents} from './mergeStoryEvents';
-import {createStoryEvent} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createStoryEventEntry} from '../../../testing/createSaveEntries';
 
 describe('Merge story events', () => {
-  const storyEventA = createStoryEvent({stringId: 'StoryEvent-FirstMessageClick'});
-  const storyEventB = createStoryEvent({stringId: 'StoryEvent-Toxicity-InfosGoo'});
-  const storyEventShared = createStoryEvent({stringId: 'StoryEvent-Shared'});
+  const storyEventA = createStoryEventEntry({stringId: 'StoryEvent-FirstMessageClick'});
+  const storyEventB = createStoryEventEntry({stringId: 'StoryEvent-Toxicity-InfosGoo'});
+  const storyEventShared = createStoryEventEntry({stringId: 'StoryEvent-Shared'});
 
   describe('When story events are unique', () => {
     it('should concat story events from both saves', () => {

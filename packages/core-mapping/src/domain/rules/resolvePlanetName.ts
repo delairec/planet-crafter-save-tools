@@ -1,13 +1,10 @@
-import {planetNamesByNumericId} from "../planetNamesByNumericId";
-
 export function resolvePlanetName(
-  planetId: number,
+  planetNameOfNumericId: string | undefined,
   worldObjectNamesOnPlanet: string[],
   knownPlanetNames: string[]
 ): string | undefined {
-  const knownPlanetName = planetNamesByNumericId[planetId];
-  if (knownPlanetName !== undefined) {
-    return knownPlanetName;
+  if (planetNameOfNumericId !== undefined) {
+    return planetNameOfNumericId;
   }
 
   const matchingPlanetNames = new Set(
