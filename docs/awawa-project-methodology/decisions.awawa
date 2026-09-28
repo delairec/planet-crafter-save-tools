@@ -1923,7 +1923,7 @@ DECISION EveryActionIsPinnedOnACommitSha
 		+ "actions/checkout@<commit>, and the version comment when it sits on the same line"
 		REF @URL.DependabotSupportedEcosystemsGithubActions
 
-DECISION AWaveIsAnEntityThatOutlivesItsTasks
+DECISION AWaveIsPlannedOnMasterAndDeletedOnceDelivered
 	SPEC "a wave is prepared on master: its WAVE entity, carrying its MILESTONE and its BRANCH, and"
 		+ "its TASK entities reach master through a plan pull request"
 		IMPL "docs/awawa-project-methodology/waves.awawa::WAVE 14"
@@ -1937,7 +1937,7 @@ DECISION AWaveIsAnEntityThatOutlivesItsTasks
 		IMPL "AGENTS.md::La base d'une tâche est le `BRANCH` de sa wave"
 		IMPL "agents/worktree.md::c'est le `BRANCH` de sa wave"
 	SPEC "a delivered wave is deleted from the corpus with the tasks it comprises, never archived"
-		IMPL "AGENTS.md::Une wave livrée est supprimée du"
+		IMPL "AGENTS.md::supprimée du corpus avec ses tâches"
 	REJECTED "a delivered wave staying on master once its tasks are purged: the GitHub milestone"
 		+ "keeps the trace of a delivered wave"
 	REJECTED "declaring a wave and its tasks on its integration branch only: the plan reaches"

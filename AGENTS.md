@@ -135,10 +135,10 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 ## Branches
 
 **Une wave se prépare sur `master` et s'implémente sur sa branche d'intégration**
-(@DECISION.AWaveIsAnEntityThatOutlivesItsTasks). Son `WAVE` et ses `TASK` arrivent sur `master` par une pull request
-de plan ; la branche d'intégration part ensuite de `master`, les branches de tâche partent d'elle, et les changements
-de corpus des tâches n'arrivent sur `master` qu'à sa fusion, la wave terminée. Une wave livrée est supprimée du
-corpus avec ses tâches : son milestone GitHub en garde la trace.
+(@DECISION.AWaveIsPlannedOnMasterAndDeletedOnceDelivered). Son `WAVE` et ses `TASK` arrivent sur `master` par une
+pull request de plan ; la branche d'intégration part ensuite de `master`, les branches de tâche partent d'elle, et
+les changements de corpus des tâches n'arrivent sur `master` qu'à sa fusion, la wave terminée. Une wave livrée est
+supprimée du corpus avec ses tâches : son milestone GitHub en garde la trace.
 
 **La base d'une tâche est le `BRANCH` de sa wave, `master` pour une tâche sans wave.** La `WAVE` porte aussi le
 `MILESTONE` à poser sur chaque pull request de la wave : `awawa show @TASK.<id> .` donne la wave d'une tâche,
