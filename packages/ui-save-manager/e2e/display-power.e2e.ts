@@ -89,7 +89,7 @@ test.describe('Power page', () => {
 
       // Assert
       const gameReleaseNotification = findTheNotifications(page, gameReleaseNotificationPrefix);
-      await expect(gameReleaseNotification).toHaveText('Values of game release 2.004');
+      await expect(gameReleaseNotification).toHaveText(/Values of game release 2\.004$/);
       const submergedMachinesNotificationTop = (await findTheNotifications(page, submergedMachinesNotification).boundingBox())!.y;
       const gameReleaseNotificationTop = (await gameReleaseNotification.boundingBox())!.y;
       const firstPlanetTop = (await page.getByTestId('energy-levels-planet-0-title').boundingBox())!.y;

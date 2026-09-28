@@ -150,7 +150,7 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Assert
-      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
+      await expect(page.getByTestId('save-configuration-summary')).toHaveText('Merged Save (Standard)');
       expect(loadedDocumentUrls).toEqual([]);
     });
   });
