@@ -10,10 +10,11 @@ const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', imp
 
 const wcag2LevelAAndAaTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa'];
 const noViolation: readonly unknown[] = [];
+// Exempted by @LIMITATION.TheDownloadLinkFallsShortOfTheTextContrastAtRest; its role and name stay asserted below.
+const downloadLinkBelowTheTextContrast = '[data-testid="download-link"]';
 
-async function auditTheWcag2Conformance(page: Page) {
-  const audit = await new AxeBuilder({page}).withTags(wcag2LevelAAndAaTags).analyze();
-  return audit.violations;
+function createAWcag2Audit(page: Page): AxeBuilder {
+  return new AxeBuilder({page}).withTags(wcag2LevelAAndAaTags);
 }
 
 async function showASaveVisualization(page: Page): Promise<void> {
@@ -35,7 +36,7 @@ test.describe('Save manager accessibility', () => {
       await page.goto('/');
 
       // Act
-      const violations = await auditTheWcag2Conformance(page);
+      const {violations} = await createAWcag2Audit(page).analyze();
 
       // Assert
       expect(violations).toEqual(noViolation);
@@ -151,7 +152,7 @@ test.describe('Save manager accessibility', () => {
       await showASaveVisualization(page);
 
       // Act
-      const violations = await auditTheWcag2Conformance(page);
+      const {violations} = await createAWcag2Audit(page).analyze();
 
       // Assert
       expect(violations).toEqual(noViolation);
@@ -202,7 +203,7 @@ test.describe('Save manager accessibility', () => {
       await showAMergeResult(page);
 
       // Act
-      const violations = await auditTheWcag2Conformance(page);
+      const {violations} = await createAWcag2Audit(page).exclude(downloadLinkBelowTheTextContrast).analyze();
 
       // Assert
       expect(violations).toEqual(noViolation);

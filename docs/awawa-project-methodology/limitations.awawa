@@ -190,3 +190,20 @@ LIMITATION ARuntimeReachedModuleEscapesTheStaticCoverageGate
 	SOURCE "The review of CHORE112, the owner asking for the exemption reasons to be a limitation"
 		+ "the configuration refers to rather than comments and a decision"
 		PR 181
+
+LIMITATION TheDownloadLinkFallsShortOfTheTextContrastAtRest
+	SYMPTOM "At rest, the download link of a merge result draws its text at a contrast of 3.89:1"
+		+ "against its background, under the 4.5:1 WCAG 2 AA asks of 14 px text: its opacity of 0.9"
+		+ "lightens the primary background the contrast check measures at full opacity"
+	WORKAROUND "The axe audit of a merge result excludes the download link; its link role and"
+		+ "accessible name stay asserted by hand"
+	UNTIL "The download link reaches a text contrast of 4.5:1 at rest, a change of its style the"
+		+ "owner rules on"
+	SEEN_IN "packages/ui-save-manager/src/styles/buttons.css::.button-link {"
+	SEEN_IN "packages/ui-save-manager/e2e/accessibility.e2e.ts::downloadLinkBelowTheTextContrast"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "Found by the first axe audit; the fix changes how the link looks at rest and on"
+		+ "hover, which a test task does not decide on its own"
+		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
+	SOURCE "axe color-contrast violation, UI workflow run 36365018731 on the three engines"
+		PR 213
