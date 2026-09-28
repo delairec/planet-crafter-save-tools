@@ -197,13 +197,22 @@ LIMITATION TheDownloadLinkFallsShortOfTheTextContrastAtRest
 		+ "lightens the primary background the contrast check measures at full opacity"
 	WORKAROUND "The axe audit of a merge result excludes the download link; its link role and"
 		+ "accessible name stay asserted by hand"
-	UNTIL "The download link reaches a text contrast of 4.5:1 at rest, a change of its style the"
-		+ "owner rules on"
+	UNTIL "The integration branch of the save manager redesign carries this test and its axe audit"
+		+ "of a merge result passes without the exclusion; that pull request removes the exclusion"
+		+ "and archives this limitation"
 	SEEN_IN "packages/ui-save-manager/src/styles/buttons.css::.button-link {"
 	SEEN_IN "packages/ui-save-manager/e2e/accessibility.e2e.ts::downloadLinkBelowTheTextContrast"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "Found by the first axe audit; the fix changes how the link looks at rest and on"
-		+ "hover, which a test task does not decide on its own"
+		+ "hover, which a test task does not decide on its own. The redesign of the save manager"
+		+ "drops the resting opacity: on its integration branch the download link shares the"
+		+ "button, .button-link rule, inverted text on the idle primary background, a pair"
+		+ "check:contrast measures; the defect stays real on master until that branch merges"
 		REF @PROCESS.ATestTaskChangesTheUiOnlyForItsOwnSake
+		REF @WAVE.10
+		REF @PROCESS.AnEntityThatStopsBindingIsArchivedByThePullRequestThatEndsIt
 	SOURCE "axe color-contrast violation, UI workflow run 36365018731 on the three engines"
+		PR 213
+	SOURCE "Owner review reply of 2026-09-28: the colours changed on the integration branch of wave"
+		+ "10, so the limitation can be lifted at the rebase"
 		PR 213
