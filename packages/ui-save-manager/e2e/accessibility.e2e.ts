@@ -1,12 +1,14 @@
 import AxeBuilder from '@axe-core/playwright';
 import {expect, test, type Page} from '@playwright/test';
 import {holdEveryFileRead} from './helpers/holdEveryFileRead';
+import {
+  baselineSaveFixturePath as saveAFixturePath,
+  legacySaveFixturePath,
+  otherPlayerSaveFixturePath as saveBFixturePath
+} from './helpers/scenarioFixturePaths';
 import {triggerSaveFileMerge} from './helpers/triggerSaveFileMerge';
 import {visualizeSave} from './helpers/visualizeSave';
 
-const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
-const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
 
 const wcag2LevelAAndAaTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa'];
 const noViolation: readonly unknown[] = [];
