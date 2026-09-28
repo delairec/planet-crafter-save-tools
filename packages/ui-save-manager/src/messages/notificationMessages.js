@@ -6,3 +6,5 @@ const notificationSeverityLabels = {
 
 /** @param {import('core-mapping/presentation/viewModels/NotificationViewModel').NotificationSeverity} severity */
 export const resolveNotificationSeverityLabel = (severity) => notificationSeverityLabels[severity];
+
+export const notificationSeveritySeparator = ': ';

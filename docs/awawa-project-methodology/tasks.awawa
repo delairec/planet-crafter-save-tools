@@ -1947,6 +1947,8 @@ TASK FEAT138
 		IMPL "packages/ui-save-manager/src/components/structure/Notification.tsx::notification-severity-pill"
 		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should name the severity of that"
 			+ "notification a limitation"
+		IMPL "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::should read the severity of"
+			+ "its notification apart from the message"
 		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::should title the"
 			+ "save configuration with a fourth level heading"
 		IMPL "packages/ui-save-manager/src/components/players/HostBadge.tsx"
