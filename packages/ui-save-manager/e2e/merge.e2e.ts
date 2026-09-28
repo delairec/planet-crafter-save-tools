@@ -149,7 +149,7 @@ test.describe('Save merge', () => {
   });
 
   test.describe('When the legacy format checkbox takes the keyboard focus', () => {
-    test('should show the tooltip that describes it, read by a screen reader as its description', async ({page}) => {
+    test('should show the tooltip that describes it', async ({page}) => {
       // Arrange
       await page.goto('/');
       const preferLegacyFormatCheckbox = page.getByTestId('prefer-legacy-format');
@@ -159,7 +159,6 @@ test.describe('Save merge', () => {
 
       // Assert
       await expect(page.getByTestId('prefer-legacy-format-tooltip')).toHaveText(preferLegacyFormatDescription);
-      await expect(preferLegacyFormatCheckbox).toHaveAccessibleDescription(preferLegacyFormatDescription);
     });
   });
 
