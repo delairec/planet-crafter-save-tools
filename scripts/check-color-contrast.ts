@@ -347,6 +347,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.application-title-link',
     foreground: 'content',
     background: 'canvas'
+  },
+  {
+    description: 'the version of the application, in the bottom-right corner, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
+    selector: '.application-version',
+    foreground: 'muted',
+    background: 'canvas'
   }
 ];
 

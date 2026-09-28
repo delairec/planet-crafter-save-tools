@@ -33,7 +33,7 @@ const Layout: Component<RouteSectionProps> = (props) => {
           </Suspense>
         </main>
       </div>
-      <footer class="text-center" data-testid="application-version">
+      <footer class="application-version" data-testid="application-version">
         {resolveVersionLabel(version)}
       </footer>
     </LoadedSaveProvider>

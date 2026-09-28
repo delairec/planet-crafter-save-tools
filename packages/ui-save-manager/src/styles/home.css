@@ -1,0 +1,160 @@
+.home-message {
+    --bracket-color: var(--neon-cyan);
+    --bracket-length: 1rem;
+    --bracket-thickness: 2px;
+    --grid-line: color-mix(in srgb, var(--neon-cyan) 14%, transparent);
+    --grid-step: 1.5rem;
+
+    display: grid;
+    grid-template-columns: minmax(6rem, 1fr) minmax(0, var(--breakpoint-tablet)) minmax(0, 1fr);
+    grid-template-areas: "title title title" "envelope frame .";
+    margin-top: var(--space-lg);
+    column-gap: var(--space-xl);
+    row-gap: var(--space-lg);
+    align-items: start;
+}
+
+.home-message-title {
+    grid-area: title;
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: normal;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+}
+
+.home-message-envelope,
+.home-message-frame {
+    background:
+        linear-gradient(var(--bracket-color), var(--bracket-color)) top left / var(--bracket-length) var(--bracket-thickness) no-repeat,
+        linear-gradient(var(--bracket-color), var(--bracket-color)) top left / var(--bracket-thickness) var(--bracket-length) no-repeat,
+        linear-gradient(var(--bracket-color), var(--bracket-color)) top right / var(--bracket-length) var(--bracket-thickness) no-repeat,
+        linear-gradient(var(--bracket-color), var(--bracket-color)) top right / var(--bracket-thickness) var(--bracket-length) no-repeat,
+        linear-gradient(var(--bracket-color), var(--bracket-color)) bottom left / var(--bracket-length) var(--bracket-thickness) no-repeat,
+        linear-gradient(var(--bracket-color), var(--bracket-color)) bottom left / var(--bracket-thickness) var(--bracket-length) no-repeat,
+        linear-gradient(var(--bracket-color), var(--bracket-color)) bottom right / var(--bracket-length) var(--bracket-thickness) no-repeat,
+        linear-gradient(var(--bracket-color), var(--bracket-color)) bottom right / var(--bracket-thickness) var(--bracket-length) no-repeat;
+}
+
+.home-message-envelope {
+    grid-area: envelope;
+    justify-self: end;
+    width: 6rem;
+    padding: var(--space-md);
+}
+
+.home-message-envelope svg {
+    display: block;
+    width: 100%;
+    filter: drop-shadow(var(--shadow-glow) color-mix(in srgb, var(--neon-cyan) 35%, transparent));
+}
+
+.home-message-hexagon {
+    fill: var(--surface);
+    stroke: var(--neon-cyan);
+    stroke-width: 3;
+}
+
+.home-message-letter,
+.home-message-flap {
+    fill: none;
+    stroke: var(--content);
+    stroke-width: 4;
+    stroke-linejoin: round;
+}
+
+.home-message-frame {
+    grid-area: frame;
+    position: relative;
+    isolation: isolate;
+    padding: var(--space-xl) var(--space-xl) var(--space-lg);
+}
+
+.home-message-frame::before {
+    content: "";
+    position: absolute;
+    inset: var(--space-xs);
+    z-index: -1;
+    background:
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px) 0 0 / var(--grid-step) var(--grid-step),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px) 0 0 / var(--grid-step) var(--grid-step);
+}
+
+.home-message-frame::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--space-sm) * -1);
+    left: 20%;
+    right: 20%;
+    height: var(--bracket-thickness);
+    background: linear-gradient(to right, transparent, var(--bracket-color) 12%, var(--bracket-color) 88%, transparent);
+}
+
+.home-message-frame {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.home-message-frame p {
+    margin: 0;
+}
+
+.home-message-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.home-message-actions .home-page-links {
+    justify-content: center;
+}
+
+.home-message-actions .menu-identity {
+    width: 100%;
+}
+
+.home-message-body {
+    font-size: var(--text-lg);
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+}
+
+.home-message-sender {
+    font-style: italic;
+    font-weight: var(--semibold);
+    letter-spacing: 0.08em;
+    text-align: right;
+}
+
+@media (max-width: 480px) {
+    .home-message {
+        grid-template-columns: 4rem minmax(0, 1fr);
+        grid-template-areas: "envelope title" "frame frame";
+        column-gap: var(--space-md);
+    }
+
+    .home-message-title {
+        align-self: center;
+        text-align: left;
+    }
+
+    .home-message-envelope {
+        justify-self: stretch;
+        width: auto;
+        padding: var(--space-sm);
+    }
+
+    .home-message-frame {
+        padding: var(--space-lg);
+    }
+
+    .home-message-body {
+        font-size: var(--text-base);
+    }
+}

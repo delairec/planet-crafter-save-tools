@@ -14,6 +14,14 @@
     text-decoration: none;
 }
 
+.application-version {
+    padding: var(--space-sm) 0;
+    font-size: var(--text-xs);
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-align: right;
+}
+
 .shell-page {
     min-width: 0;
 }

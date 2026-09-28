@@ -4,7 +4,9 @@ import SaveIdentity from '~/components/shell/SaveIdentity';
 import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
 import {
-  homePageDescription,
+  homeMessageBody,
+  homeMessageSender,
+  homeMessageTitle,
   mergeTwoSavesPageTitle,
   openOverviewLinkLabel,
   resolveLoadSavePageTitle
@@ -15,18 +17,33 @@ export default function HomePage() {
 
   return (
     <section class="home-page" data-testid="home-page">
-      <p data-testid="home-page-description">{homePageDescription}</p>
-      <p class="home-page-links">
-        <A href={PAGE_PATHS.mergeTwoSavesPath} class="button-link" data-testid="home-merge-two-saves-page-link">{mergeTwoSavesPageTitle}</A>
-        <A href={PAGE_PATHS.loadSavePath} class="button-link" data-testid="home-load-save-page-link">{resolveLoadSavePageTitle(loadedSave.isSaveLoaded())}</A>
-      </p>
-      <Show when={loadedSave.isSaveLoaded() && loadedSave.viewModels.saveIdentity()}>
-        {(saveIdentity) => (
-          <SaveIdentity saveIdentity={saveIdentity()} testId="home-loaded-save">
-            <A href={PAGE_PATHS.overviewPath} class="button-link button-link-neon-pink" data-testid="home-overview-link">{openOverviewLinkLabel}</A>
-          </SaveIdentity>
-        )}
-      </Show>
+      <article class="home-message" aria-labelledby="home-message-title" data-testid="home-message">
+        <h2 id="home-message-title" class="home-message-title" data-testid="home-message-title">{homeMessageTitle}</h2>
+        <div class="home-message-envelope" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <polygon class="home-message-hexagon" points="50,4 90,27 90,73 50,96 10,73 10,27"/>
+            <rect class="home-message-letter" x="24" y="32" width="52" height="36" rx="3"/>
+            <polyline class="home-message-flap" points="25,34 50,54 75,34"/>
+          </svg>
+        </div>
+        <div class="home-message-frame">
+          <p class="home-message-body" data-testid="home-page-description">{homeMessageBody}</p>
+          <div class="home-message-actions">
+            <p class="home-page-links">
+              <A href={PAGE_PATHS.mergeTwoSavesPath} class="button-link" data-testid="home-merge-two-saves-page-link">{mergeTwoSavesPageTitle}</A>
+              <A href={PAGE_PATHS.loadSavePath} class="button-link" data-testid="home-load-save-page-link">{resolveLoadSavePageTitle(loadedSave.isSaveLoaded())}</A>
+            </p>
+            <Show when={loadedSave.isSaveLoaded() && loadedSave.viewModels.saveIdentity()}>
+              {(saveIdentity) => (
+                <SaveIdentity saveIdentity={saveIdentity()} testId="home-loaded-save">
+                  <A href={PAGE_PATHS.overviewPath} class="button-link button-link-neon-pink" data-testid="home-overview-link">{openOverviewLinkLabel}</A>
+                </SaveIdentity>
+              )}
+            </Show>
+          </div>
+          <p class="home-message-sender" data-testid="home-message-sender">{homeMessageSender}</p>
+        </div>
+      </article>
     </section>
   );
 }

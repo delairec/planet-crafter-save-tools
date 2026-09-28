@@ -8,6 +8,7 @@
 @import "styles/shell/shell.css";
 @import "styles/shell/breadcrumb.css";
 @import "styles/shell/menu.css";
+@import "styles/home.css";
 @import "styles/components.css";
 
 .app {

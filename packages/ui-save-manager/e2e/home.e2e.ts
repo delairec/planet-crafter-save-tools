@@ -23,12 +23,14 @@ test.describe('Home page', () => {
       await expect(page.getByTestId('disclaimers')).toBeVisible();
     });
 
-    test('should say what the tool does', async ({page}) => {
+    test('should say what the tool does in a message from SENTINEL CORP', async ({page}) => {
       // Act
       await page.goto('/');
 
       // Assert
-      await expect(page.getByTestId('home-page-description')).toHaveText(/^[A-Z].+\.$/);
+      await expect(page.getByTestId('home-message-title')).toHaveText('Message');
+      await expect(page.getByTestId('home-page-description')).toHaveText(/^Welcome to the Planet Crafter Save Manager, prisoner\..+merge two saves.+validate your save integrity.+!$/);
+      await expect(page.getByTestId('home-message-sender')).toHaveText('SENTINEL CORP');
     });
 
     test('should offer the Merge two saves and Load save pages', async ({page}) => {
@@ -91,6 +93,18 @@ test.describe('Home page', () => {
       await expect(page.getByTestId('home-loaded-save').getByTestId('save-identity-display-name')).toHaveText('Merged Save');
       await expect(page.getByTestId('home-loaded-save').getByTestId('save-identity-mode')).toHaveText('Standard');
       await expect(page.getByTestId('home-loaded-save').getByTestId('save-identity-game-release')).toHaveText('Game release 2.004');
+    });
+
+    test('should hold the button links and the card of the loaded save in the message', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Act
+      await page.getByTestId('application-title-link').click();
+
+      // Assert
+      await expect(page.getByTestId('home-message').getByTestId(/^home-[a-z-]+-page-link$/)).toHaveCount(2);
+      await expect(page.getByTestId('home-message').getByTestId('home-loaded-save').getByTestId('home-overview-link')).toBeVisible();
     });
 
     test('should open the Overview page of the loaded save from its card', async ({page}) => {
