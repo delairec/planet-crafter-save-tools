@@ -1,14 +1,12 @@
 import {Accessor, createContext, createResource, createSignal, JSX, Resource} from "solid-js";
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
-import {LoadSaveConfigurationSectionController} from "core-mapping/controllers/LoadSaveConfigurationSectionController";
+import {LoadConfigurationPageController} from "core-mapping/controllers/LoadConfigurationPageController";
 import {LoadPlayersSectionController} from "core-mapping/controllers/LoadPlayersSectionController";
 import {
   LoadTerraformationLevelsSectionController
 } from "core-mapping/controllers/LoadTerraformationLevelsSectionController";
-import {LoadGlobalProgressionSectionController} from "core-mapping/controllers/LoadGlobalProgressionSectionController";
 import {LoadEnergyLevelsSectionController} from "core-mapping/controllers/LoadEnergyLevelsSectionController";
-import {SaveConfigurationViewModel} from "core-mapping/presentation/viewModels/SaveConfigurationViewModel";
-import {GlobalProgressionViewModel} from "core-mapping/presentation/viewModels/GlobalProgressionViewModel";
+import {ConfigurationPageViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {TerraformationLevelsViewModel} from "core-mapping/presentation/viewModels/TerraformationLevelsViewModel";
 import {PlayersViewModel} from "core-mapping/presentation/viewModels/PlayersViewModel";
@@ -18,8 +16,7 @@ import {SaveIdentityViewModel} from "core-mapping/presentation/viewModels/SaveId
 import {PlayersMenuViewModel} from "core-mapping/presentation/viewModels/PlayersMenuViewModel";
 
 export interface LoadedSaveViewModels {
-  saveConfiguration: Resource<SaveConfigurationViewModel>;
-  globalProgression: Resource<GlobalProgressionViewModel>;
+  configurationPage: Resource<ConfigurationPageViewModel>;
   energyLevels: Resource<EnergyLevelsViewModel>;
   terraformationLevels: Resource<TerraformationLevelsViewModel>;
   players: Resource<PlayersViewModel>;
@@ -50,10 +47,8 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
   const [validatedSave, setValidatedSave] = createSignal<ValidatedSave | null>(null);
   const validatedContent = () => validatedSave()?.content ?? null;
 
-  const [saveConfiguration] = createResource(validatedContent,
-    (content) => LoadSaveConfigurationSectionController.loadSaveConfigurationSection(content));
-  const [globalProgression] = createResource(validatedContent,
-    (content) => LoadGlobalProgressionSectionController.loadGlobalProgressionSection(content));
+  const [configurationPage] = createResource(validatedContent,
+    (content) => LoadConfigurationPageController.loadConfigurationPage(content));
   const [energyLevels] = createResource(validatedContent,
     (content) => LoadEnergyLevelsSectionController.loadEnergyLevelsSection(content));
   const [terraformationLevels] = createResource(validatedContent,
@@ -71,7 +66,7 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     isSaveLoaded: () => validatedContent() !== null,
     loadSave: setValidatedSave,
     viewModels: {
-      saveConfiguration, globalProgression, energyLevels, terraformationLevels, players, saveIdentity, playersMenu
+      configurationPage, energyLevels, terraformationLevels, players, saveIdentity, playersMenu
     }
   };
 

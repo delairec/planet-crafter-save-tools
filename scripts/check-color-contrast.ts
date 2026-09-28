@@ -291,6 +291,48 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.card-summary',
     foreground: 'inverted',
     background: 'neon-cyan'
+  },
+  {
+    description: 'a label of a key and value list, on a card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.key-value dt',
+    foreground: 'muted',
+    background: 'surface-card'
+  },
+  {
+    description: 'a tone badge at the game default, on its neutral fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.tone-badge-neutral',
+    foreground: 'muted',
+    background: 'elevated'
+  },
+  {
+    description: 'a tone badge that penalises the player, on its danger fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.tone-badge-danger',
+    foreground: 'danger-on-surface',
+    background: 'danger-surface'
+  },
+  {
+    description: 'a tone badge that helps the player, on its positive fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.tone-badge-positive',
+    foreground: 'positive-on-surface',
+    background: 'positive-surface'
+  },
+  {
+    description: 'an on pill of an unlock flag, on its positive fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.on-off-pill-on',
+    foreground: 'positive-on-surface',
+    background: 'positive-surface'
+  },
+  {
+    description: 'an off pill of an unlock flag, on its neutral fill',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.on-off-pill-off',
+    foreground: 'muted',
+    background: 'elevated'
   }
 ];
 

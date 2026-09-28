@@ -14,6 +14,16 @@ describe('SaveConfigurationValueObject', () => {
         gaugeDrain: 0.3,
         meteoOccurrence: 0.4,
         multiplayerFactor: 0.5
+      },
+      unlocks: {
+        freeCraft: false,
+        everythingUnlocked: false,
+        spaceTrading: false,
+        oreExtractors: false,
+        teleporters: false,
+        drones: false,
+        autocrafter: false,
+        randomizedMineables: false
       }
     };
 
@@ -35,6 +45,48 @@ describe('SaveConfigurationValueObject', () => {
         gaugeDrain: 0.3,
         meteoOccurrence: 0.4,
         multiplayerFactor: 0.5
+      },
+      unlocks: {
+        freeCraft: false,
+        everythingUnlocked: false,
+        spaceTrading: false,
+        oreExtractors: false,
+        teleporters: false,
+        drones: false,
+        autocrafter: false,
+        randomizedMineables: false
+      }
+    };
+
+    // Act
+    const buildSaveConfiguration = () => createSaveConfigurationValueObject(input);
+
+    // Assert
+    expect(buildSaveConfiguration).toThrow(InvalidSaveDataError);
+  });
+
+  it('should reject an unlock flag that is not a boolean', () => {
+    // Arrange
+    const notABoolean: unknown = 'yes';
+    const input = {
+      title: 'Merged Save',
+      mode: 'Standard',
+      modifiers: {
+        terraformationPace: 0.1,
+        powerConsumption: 0.2,
+        gaugeDrain: 0.3,
+        meteoOccurrence: 0.4,
+        multiplayerFactor: 0.5
+      },
+      unlocks: {
+        freeCraft: notABoolean as boolean,
+        everythingUnlocked: false,
+        spaceTrading: false,
+        oreExtractors: false,
+        teleporters: false,
+        drones: false,
+        autocrafter: false,
+        randomizedMineables: false
       }
     };
 

@@ -40,6 +40,16 @@ export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
         meteoOccurrence: 0.3,
         multiplayerFactor: 0.4,
         powerConsumption: 0.5
+      },
+      unlocks: {
+        freeCraft: false,
+        everythingUnlocked: false,
+        spaceTrading: true,
+        oreExtractors: true,
+        teleporters: false,
+        drones: true,
+        autocrafter: false,
+        randomizedMineables: false
       }
     });
   }

@@ -8,7 +8,7 @@ const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 async function openTheConfigurationPageOfAVisualizedSave(page: Page): Promise<void> {
   await visualizeTheSave(page, baselineSaveFixturePath);
   await openThePageOfTheMenu(page, 'Configuration');
-  await expect(page.getByTestId('save-configuration-title')).toBeVisible();
+  await expect(page.getByTestId('modifiers-title')).toBeVisible();
 }
 
 test.describe('Configuration page accessibility', () => {
@@ -34,14 +34,23 @@ test.describe('Configuration page accessibility', () => {
       await expect(page.getByTestId('configuration-title')).toMatchAriaSnapshot('- heading [level=3]');
     });
 
-    test('should title the save configuration with a fourth level heading', async ({page}) => {
+    test('should title the modifiers with a fourth level heading', async ({page}) => {
       // Act
       await openTheConfigurationPageOfAVisualizedSave(page);
 
       // Assert
-      await expect(page.getByTestId('save-configuration-title')).toHaveRole('heading');
-      await expect(page.getByTestId('save-configuration-title')).toHaveAccessibleName('Save Configuration');
-      await expect(page.getByTestId('save-configuration-title')).toMatchAriaSnapshot('- heading [level=4]');
+      await expect(page.getByTestId('modifiers-title')).toHaveRole('heading');
+      await expect(page.getByTestId('modifiers-title')).toHaveAccessibleName('Modifiers');
+      await expect(page.getByTestId('modifiers-title')).toMatchAriaSnapshot('- heading [level=4]');
+    });
+
+    test('should read the tone of a modifier apart from its value', async ({page}) => {
+      // Act
+      await openTheConfigurationPageOfAVisualizedSave(page);
+
+      // Assert
+      const terraformationPace = page.getByTestId(/^modifier-\d+$/).filter({hasText: 'Terraformation Pace'});
+      await expect(terraformationPace.getByTestId(/^modifier-\d+-badge$/)).toHaveText('10\u00A0%, helps the player');
     });
 
     test('should title the global progression with a fourth level heading', async ({page}) => {
