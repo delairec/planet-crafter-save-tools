@@ -2888,3 +2888,29 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 		+ "address redirects to it, the Overview page moves to /overview; the staging of the picked"
 		+ "file answers three bot review threads"
 		PR 211
+
+DECISION TheMergedSavesLiveInAStoreAboveTheRouter
+	SPEC "the last merge result and the merged saves kept live in a provider of their own, mounted"
+		+ "around the router, the merge page reading them and holding no merge state"
+		IMPL "packages/ui-save-manager/src/app.tsx::<MergedSavesProvider>"
+		IMPL "packages/ui-save-manager/src/routes/merge.tsx::useMergedSaves()"
+	SPEC "a merged save is kept as its file name and one object URL, created when the merge returns"
+		+ "and revoked when the save is dropped; the result section and the list of earlier saves"
+		+ "link to that URL and build none of their own"
+		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::URL.createObjectURL"
+		IMPL "packages/ui-save-manager/src/providers/MergedSavesProvider.tsx::URL.revokeObjectURL"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::href={props.mergedSave()?.downloadUrl}"
+	REJECTED "the provider inside the Layout beside LoadedSaveProvider: the Layout is the shell"
+		+ "every page task of the wave edits, and the store needs nothing of the router"
+	REJECTED "keeping the merge result view models of the five merges: a failure is read once, and"
+		+ "five save contents held twice, as text and as a Blob, cost memory for nothing"
+	REJECTED "the result section building its own object URL, as before: the link of the last"
+		+ "result would then differ from the one kept, and leaving the page would revoke it"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT149
+	RATIONALE "The route component is disposed when the reader opens another page, taking any"
+		+ "signal it holds; a store above the router outlives every page, as the loaded save does"
+		REF @DECISION.EachPageOfTheSaveManagerIsARoute
+	SOURCE "Ruling taken when FEAT149 was implemented, within the owner's ask of a dedicated"
+		+ "provider above the routes"
+		PR 215
