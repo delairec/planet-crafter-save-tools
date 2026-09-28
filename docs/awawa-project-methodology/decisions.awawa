@@ -2991,7 +2991,7 @@ DECISION ADecisionDepartingFromAnInstructionsRuleNamesIt
 		+ "separate awawa workspace, so the field is a string and not an anchor: the departure is"
 		+ "named, the RATIONALE states why it is justified."
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
-		PR 0
+		PR 221
 
 DECISION ATaskCarriesAPriorityOnTheReviewScale
 	SPEC "a task states its urgency in PRIORITY, one of critical, high, medium or low, medium when"
@@ -3002,4 +3002,4 @@ DECISION ATaskCarriesAPriorityOnTheReviewScale
 	RATIONALE "The scale is the one of the architecture review grades, so a task fixing a violation"
 		+ "takes the grade of that violation without translation."
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
-		PR 0
+		PR 221

@@ -2799,4 +2799,4 @@ TASK CHORE155
 	SPEC "a decision names in an optional repeatable DEROGATES field each rule of the instructions"
 		+ "corpus it departs from"
 		IMPL "docs/_schema.awawa::FIELD DEROGATES"
-	DELIVERED_BY 0
+	DELIVERED_BY 221
