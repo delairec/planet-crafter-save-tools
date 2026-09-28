@@ -2790,7 +2790,7 @@ DECISION APresentationPieceLandsWithTheFirstPageThatRendersIt
 	SPEC "A presentation piece of ui-save-manager is delivered by the task of the first page that"
 		+ "renders it, never ahead of that page: the tone badge and the on or off pill by the task"
 		+ "of the Configuration modifiers and unlock flags"
-		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle>"
+		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
 		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
 	REJECTED "Shipping the tone badge and the on or off pill with FEAT138, ahead of any page: no"
 		+ "module would import them, which the fallow unused-file gate refuses"

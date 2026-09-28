@@ -52,7 +52,7 @@ test.describe('Power page', () => {
       await expect(findTheNotifications(page, submergedMachinesNotification)).toBeVisible();
     });
 
-    test('should name the severity of that notification by a pill before its message', async ({page}) => {
+    test('should name the severity of that notification a limitation', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, skeoUpdateSaveFixturePath);
 
@@ -60,8 +60,8 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByText('Submerged machines may distort the computed available energy'))
-        .toHaveText('LimitationSubmerged machines may distort the computed available energy.');
+      await expect(findTheNotifications(page, submergedMachinesNotification).getByTestId(/^energy-levels-notification-\d+-severity$/))
+        .toHaveText('Limitation');
     });
   });
 

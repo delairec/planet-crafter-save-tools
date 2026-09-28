@@ -10,7 +10,7 @@ export default function ConfigurationPage() {
 
   return (
     <SavePage group={saveGroupTitle} page={configurationPageTitle}>
-      <SectionTitle>{configurationPageTitle}</SectionTitle>
+      <SectionTitle testId="configuration-title">{configurationPageTitle}</SectionTitle>
       <div class="grid-container">
         <SaveConfigurationSection viewModel={loadedSave.viewModels.saveConfiguration}/>
         <GlobalProgressionSection viewModel={loadedSave.viewModels.globalProgression}/>

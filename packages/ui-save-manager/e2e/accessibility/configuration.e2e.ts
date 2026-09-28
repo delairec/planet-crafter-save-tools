@@ -24,14 +24,34 @@ test.describe('Configuration page accessibility', () => {
       expect(violations).toEqual(noViolation);
     });
 
-    test('should title the save configuration with a third level heading', async ({page}) => {
+    test('should title the page with a third level heading', async ({page}) => {
+      // Act
+      await openTheConfigurationPageOfAVisualizedSave(page);
+
+      // Assert
+      await expect(page.getByTestId('configuration-title')).toHaveRole('heading');
+      await expect(page.getByTestId('configuration-title')).toHaveAccessibleName('Configuration');
+      await expect(page.getByTestId('configuration-title')).toMatchAriaSnapshot('- heading [level=3]');
+    });
+
+    test('should title the save configuration with a fourth level heading', async ({page}) => {
       // Act
       await openTheConfigurationPageOfAVisualizedSave(page);
 
       // Assert
       await expect(page.getByTestId('save-configuration-title')).toHaveRole('heading');
-      await expect(page.getByTestId('save-configuration-title')).toHaveAccessibleName('Save Configuration: Merged Save (Standard)');
-      await expect(page.getByTestId('save-configuration-title')).toMatchAriaSnapshot('- heading [level=3]');
+      await expect(page.getByTestId('save-configuration-title')).toHaveAccessibleName('Save Configuration');
+      await expect(page.getByTestId('save-configuration-title')).toMatchAriaSnapshot('- heading [level=4]');
+    });
+
+    test('should title the global progression with a fourth level heading', async ({page}) => {
+      // Act
+      await openTheConfigurationPageOfAVisualizedSave(page);
+
+      // Assert
+      await expect(page.getByTestId('global-progression-title')).toHaveRole('heading');
+      await expect(page.getByTestId('global-progression-title')).toHaveAccessibleName('Global progression');
+      await expect(page.getByTestId('global-progression-title')).toMatchAriaSnapshot('- heading [level=4]');
     });
   });
 });
