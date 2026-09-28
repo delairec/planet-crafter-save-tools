@@ -10,7 +10,7 @@ test.describe('Players page', () => {
       await visualizeTheSave(page, otherPlayerSaveFixturePath);
 
       // Act
-      await page.getByTestId('see-more-players-button').click();
+      await page.getByTestId('more-players').click();
 
       // Assert
       await expect(page.getByTestId('players-title')).toHaveText('Players');
@@ -22,7 +22,7 @@ test.describe('Players page', () => {
       await visualizeTheSave(page, otherPlayerSaveFixturePath);
 
       // Act
-      await page.getByTestId('see-more-players-button').click();
+      await page.getByTestId('more-players').click();
 
       // Assert
       await expect(findTheBreadcrumbSteps(page)).toHaveText(['Players', 'All players']);

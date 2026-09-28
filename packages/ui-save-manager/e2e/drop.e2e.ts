@@ -62,8 +62,8 @@ async function openThePageAndReadTheEffectAnnouncedOver(page: Page, findTheEleme
 }
 
 async function expectTheSavesChosenForTheMerge(page: Page, chosenSaves: {saveA: RegExp; saveB: RegExp}): Promise<void> {
-  await expect(page.getByTestId('save-a-input')).toHaveValue(chosenSaves.saveA);
-  await expect(page.getByTestId('save-b-input')).toHaveValue(chosenSaves.saveB);
+  await expect(page.getByTestId('save-a')).toHaveValue(chosenSaves.saveA);
+  await expect(page.getByTestId('save-b')).toHaveValue(chosenSaves.saveB);
 }
 
 const scriptBuiltTransferKeepsNoEffect = 'Chromium and WebKit ignore a drop effect set on a script-built DataTransfer';
@@ -76,10 +76,10 @@ test.describe('Save file drop', () => {
       await dropTheFiles(page, page.getByTestId('display-area'), [baselineSave]);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByTestId('save-file-input')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('save-file')).toHaveValue(/baseline_valid\.json$/);
       await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
     });
   });
@@ -93,8 +93,8 @@ test.describe('Save file drop', () => {
       await dropTheFiles(page, page.getByTestId('save-b-area'), [baselineSave]);
 
       // Assert
-      await expect(page.getByTestId('save-b-input')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByTestId('save-a-input')).toHaveValue('');
+      await expect(page.getByTestId('save-b')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('save-a')).toHaveValue('');
     });
   });
 
@@ -108,7 +108,7 @@ test.describe('Save file drop', () => {
 
       // Assert
       await expectTheSavesChosenForTheMerge(page, {saveA: /baseline_valid\.json$/, saveB: /other-player_valid\.json$/});
-      await expect(page.getByTestId('merge-button')).toBeEnabled();
+      await expect(page.getByTestId('merge')).toBeEnabled();
     });
   });
 
@@ -119,7 +119,7 @@ test.describe('Save file drop', () => {
       await chooseTheTwoSavesToMerge(page, baselineSaveFixturePath, otherPlayerSaveFixturePath);
 
       // Act
-      await page.getByTestId('swap-button').click();
+      await page.getByTestId('swap-saves').click();
 
       // Assert
       await expectTheSavesChosenForTheMerge(page, {saveA: /other-player_valid\.json$/, saveB: /baseline_valid\.json$/});
@@ -130,13 +130,13 @@ test.describe('Save file drop', () => {
     test('should show its label as a tooltip', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-a-input').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-a').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByTestId('swap-button').hover();
+      await page.getByTestId('swap-saves').hover();
 
       // Assert
-      await expect(page.getByTestId('swap-button-tooltip')).toHaveText('Swap save A and save B');
+      await expect(page.getByTestId('swap-saves-description')).toHaveText('Swap save A and save B');
     });
   });
 
@@ -146,7 +146,7 @@ test.describe('Save file drop', () => {
       const [baselineSave, otherPlayerSave] = await readTheFixturesAndOpenThePage(page, [baselineSaveFixturePath, otherPlayerSaveFixturePath]);
 
       // Act
-      const isTaken = await isTakenByThePage(page, page.getByTestId('save-a-input'), 'dragenter', [baselineSave, otherPlayerSave]);
+      const isTaken = await isTakenByThePage(page, page.getByTestId('save-a'), 'dragenter', [baselineSave, otherPlayerSave]);
 
       // Assert
       expect<boolean>(isTaken).toBe(true);
@@ -157,7 +157,7 @@ test.describe('Save file drop', () => {
     test('should announce a copy to the browser', async ({page, browserName}) => {
       test.skip(browserName !== 'firefox', scriptBuiltTransferKeepsNoEffect);
       // Act
-      const effect = await openThePageAndReadTheEffectAnnouncedOver(page, (openedPage) => openedPage.getByTestId('save-file-input'));
+      const effect = await openThePageAndReadTheEffectAnnouncedOver(page, (openedPage) => openedPage.getByTestId('save-file'));
 
       // Assert
       expect<string>(effect).toBe('copy');
@@ -210,7 +210,7 @@ test.describe('Save file drop', () => {
 
       // Assert
       await expect(page.getByTestId('save-a-area')).toContainText('notes.txt is not a JSON save file.');
-      await expect(page.getByTestId('save-a-input')).toHaveValue('');
+      await expect(page.getByTestId('save-a')).toHaveValue('');
     });
   });
 
@@ -224,7 +224,7 @@ test.describe('Save file drop', () => {
 
       // Assert
       await expect(page.getByTestId('display-area')).toContainText('Drop a single save file here.');
-      await expect(page.getByTestId('visualize-button')).toBeDisabled();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 
@@ -241,7 +241,7 @@ test.describe('Save file drop', () => {
 
       // Assert
       await expect(page.getByTestId('merge-area')).toContainText('Drop two save files at most here.');
-      await expect(page.getByTestId('save-a-input')).toHaveValue('');
+      await expect(page.getByTestId('save-a')).toHaveValue('');
     });
   });
 });

@@ -17,7 +17,7 @@ export default function IconButton(props: IconButtonProps) {
       <button aria-labelledby={tooltipId} data-testid={props.testId} onClick={() => props.onClick()} disabled={props.disabled}>
         <Icon content={props.icon}/>
       </button>
-      <span id={tooltipId} role="tooltip" class="tooltip" data-testid={`${props.testId}-tooltip`}>{props.label}</span>
+      <span id={tooltipId} role="tooltip" class="tooltip" data-testid={`${props.testId}-description`}>{props.label}</span>
     </span>
   );
 }

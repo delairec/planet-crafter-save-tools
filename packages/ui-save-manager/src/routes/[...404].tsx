@@ -14,7 +14,7 @@ export default function NotFound() {
         {notFoundRouteStatusCode}&nbsp;
         <span class="uppercase middle text-lg" data-testid="not-found-title">{notFoundRouteTitle}</span>
       </p>
-      <A href="/" data-testid="back-home-link"><Icon content={notFoundRouteBackHomeIcon}/> {notFoundRouteBackHomeLabel}</A>
+      <A href="/" data-testid="home-page-link"><Icon content={notFoundRouteBackHomeIcon}/> {notFoundRouteBackHomeLabel}</A>
     </div>
   );
 }

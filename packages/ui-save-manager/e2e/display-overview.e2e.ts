@@ -14,8 +14,8 @@ test.describe('Overview page', () => {
 
       // Assert
       await expect(page.getByTestId('display-area')).toBeVisible();
-      await expect(page.getByTestId('save-file-input')).toBeVisible();
-      await expect(page.getByTestId('visualize-button')).toBeDisabled();
+      await expect(page.getByTestId('save-file')).toBeVisible();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 
@@ -26,7 +26,7 @@ test.describe('Overview page', () => {
 
       // Assert
       await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
-      await expect(page.getByTestId(/-overview-link$/)).toHaveText(['Configuration', 'Power', 'Terraformation']);
+      await expect(page.getByTestId(/^overview-[a-z]+-page-link$/)).toHaveText(['Configuration', 'Power', 'Terraformation']);
     });
   });
 
@@ -75,15 +75,15 @@ test.describe('Overview page', () => {
         };
       });
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await page.getByTestId('visualize').click();
 
       // Assert
       await expect(page.getByTestId('display-failure-message')).toHaveText('The save file could not be displayed. Please try again.');
-      await expect(page.getByTestId('save-file-input')).toHaveValue(/baseline_valid\.json$/);
-      await expect(page.getByTestId('visualize-button')).toBeEnabled();
+      await expect(page.getByTestId('save-file')).toHaveValue(/baseline_valid\.json$/);
+      await expect(page.getByTestId('visualize')).toBeEnabled();
     });
   });
 
@@ -92,13 +92,13 @@ test.describe('Overview page', () => {
       // Arrange
       const noFileSelected: string[] = [];
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
 
       // Act
-      await page.getByTestId('save-file-input').setInputFiles(noFileSelected);
+      await page.getByTestId('save-file').setInputFiles(noFileSelected);
 
       // Assert
-      await expect(page.getByTestId('visualize-button')).toBeDisabled();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 
@@ -106,14 +106,14 @@ test.describe('Overview page', () => {
     test('should leave no save file to visualize', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(baselineSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
 
       // Act
       await triggerSaveFileMerge(page, baselineSaveFixturePath, baselineSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('merge-success-message')).toBeVisible();
-      await expect(page.getByTestId('visualize-button')).toBeDisabled();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 });

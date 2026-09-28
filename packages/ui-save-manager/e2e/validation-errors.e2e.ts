@@ -23,10 +23,10 @@ test.describe('Save validation errors', () => {
     test('should leave the save data unrendered', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(invalidSaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(invalidSaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await page.getByTestId('visualize').click();
 
       // Assert
       await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
@@ -45,7 +45,7 @@ test.describe('Save validation errors', () => {
       // Assert
       await expect(page.getByTestId('save-a-errors-title')).toHaveText('Save A is not a valid save file.');
       await expect(page.getByTestId('save-a-errors-messages')).toContainText(errorLocationInTheSave);
-      await expect(page.getByTestId('download-link')).toBeHidden();
+      await expect(page.getByTestId('merged-save-download')).toBeHidden();
     });
   });
 });

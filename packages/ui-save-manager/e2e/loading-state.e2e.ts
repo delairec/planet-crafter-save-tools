@@ -58,13 +58,13 @@ async function chooseTheTwoSavesToMergeWithTheReadsHeld(page: Page): Promise<voi
 
 async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
   await chooseTheSaveToVisualizeWithTheReadsHeld(page);
-  await page.getByTestId('visualize-button').click();
+  await page.getByTestId('visualize').click();
   await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
 }
 
 async function startMergingWithTheReadsHeld(page: Page): Promise<void> {
   await chooseTheTwoSavesToMergeWithTheReadsHeld(page);
-  await page.getByTestId('merge-button').click();
+  await page.getByTestId('merge').click();
   await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
 }
 
@@ -75,11 +75,11 @@ test.describe('Loading states', () => {
       await chooseTheSaveToVisualizeWithTheReadsHeld(page);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await page.getByTestId('visualize').click();
 
       // Assert
       await expect(page.getByTestId('display-busy-indicator')).toBeVisible();
-      await expect(page.getByTestId('visualize-button')).toBeDisabled();
+      await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });
 
@@ -93,7 +93,7 @@ test.describe('Loading states', () => {
 
       // Assert
       await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
-      await expect(page.getByTestId('visualize-button')).toBeEnabled();
+      await expect(page.getByTestId('visualize')).toBeEnabled();
     });
   });
 
@@ -103,11 +103,11 @@ test.describe('Loading states', () => {
       await chooseTheTwoSavesToMergeWithTheReadsHeld(page);
 
       // Act
-      await page.getByTestId('merge-button').click();
+      await page.getByTestId('merge').click();
 
       // Assert
       await expect(page.getByTestId('merge-busy-indicator')).toBeVisible();
-      await expect(page.getByTestId('merge-button')).toBeDisabled();
+      await expect(page.getByTestId('merge')).toBeDisabled();
     });
   });
 
@@ -122,7 +122,7 @@ test.describe('Loading states', () => {
       // Assert
       await expect(page.getByTestId('merge-success-message')).toBeVisible();
       await expect(page.getByTestId('merge-busy-indicator')).toBeHidden();
-      await expect(page.getByTestId('merge-button')).toBeEnabled();
+      await expect(page.getByTestId('merge')).toBeEnabled();
     });
   });
 });

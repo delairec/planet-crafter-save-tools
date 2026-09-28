@@ -25,10 +25,10 @@ test.describe('Save warnings', () => {
     test('should render the save data all the same, a warning not making the save unusable', async ({page}) => {
       // Arrange
       await page.goto('/');
-      await page.getByTestId('save-file-input').setInputFiles(legacySaveFixturePath);
+      await page.getByTestId('save-file').setInputFiles(legacySaveFixturePath);
 
       // Act
-      await page.getByTestId('visualize-button').click();
+      await page.getByTestId('visualize').click();
 
       // Assert
       await expect(page.getByTestId('display-warnings-title')).toHaveText('Warnings');
@@ -48,7 +48,7 @@ test.describe('Save warnings', () => {
       await expect(page.getByTestId('save-a-warnings-title')).toHaveText('Save A warnings');
       await expect(page.getByTestId('save-b-warnings-title')).toBeHidden();
       await expect(page.getByTestId('save-a-warnings-messages')).toContainText(legacyFormatWarningFragment);
-      await expect(page.getByTestId('download-link')).toBeVisible();
+      await expect(page.getByTestId('merged-save-download')).toBeVisible();
     });
   });
 });

@@ -24,26 +24,26 @@ export default function SaveManagerMenu() {
   const navigate = useNavigate();
 
   return (
-    <nav class="menu" aria-label={menuLabel} data-testid="menu">
-      <MenuGroup title={toolsGroupTitle} testId="tools-menu-group">
-        <a href={PAGE_PATHS.mergeTwoSavesPath} data-testid="merge-two-saves-menu-link">{mergeTwoSavesPageTitle}</a>
-        <a href={PAGE_PATHS.loadAnotherSavePath} data-testid="load-another-save-menu-link">{loadAnotherSavePageTitle}</a>
+    <nav class="menu" aria-label={menuLabel} data-testid="page-navigation">
+      <MenuGroup title={toolsGroupTitle} testId="tools-pages">
+        <a href={PAGE_PATHS.mergeTwoSavesPath} data-testid="merge-two-saves-page-link">{mergeTwoSavesPageTitle}</a>
+        <a href={PAGE_PATHS.loadAnotherSavePath} data-testid="load-another-save-page-link">{loadAnotherSavePageTitle}</a>
       </MenuGroup>
       <Show when={loadedSave.isSaveLoaded()}>
         <Show when={loadedSave.viewModels.saveIdentity()}>
           {(saveIdentity) => <SaveIdentity saveIdentity={saveIdentity()}/>}
         </Show>
-        <MenuGroup title={saveGroupTitle} testId="save-menu-group">
-          <A href={PAGE_PATHS.overviewPath} end data-testid="overview-menu-link">{overviewPageTitle}</A>
-          <A href={PAGE_PATHS.configurationPath} data-testid="configuration-menu-link">{configurationPageTitle}</A>
-          <A href={PAGE_PATHS.powerPath} data-testid="power-menu-link">{powerPageTitle}</A>
-          <A href={PAGE_PATHS.terraformationPath} data-testid="terraformation-menu-link">{terraformationPageTitle}</A>
+        <MenuGroup title={saveGroupTitle} testId="save-pages">
+          <A href={PAGE_PATHS.overviewPath} end data-testid="overview-page-link">{overviewPageTitle}</A>
+          <A href={PAGE_PATHS.configurationPath} data-testid="configuration-page-link">{configurationPageTitle}</A>
+          <A href={PAGE_PATHS.powerPath} data-testid="power-page-link">{powerPageTitle}</A>
+          <A href={PAGE_PATHS.terraformationPath} data-testid="terraformation-page-link">{terraformationPageTitle}</A>
         </MenuGroup>
-        <MenuGroup title={playersGroupTitle} testId="players-menu-group">
+        <MenuGroup title={playersGroupTitle} testId="players-pages">
           <Show when={loadedSave.viewModels.playersMenu()}>
             {(playersMenu) => <PlayersMenu playersMenu={playersMenu()}/>}
           </Show>
-          <button data-testid="see-more-players-button" onClick={() => navigate(PAGE_PATHS.playersPath)}>{seeMorePlayersButtonLabel}</button>
+          <button data-testid="more-players" onClick={() => navigate(PAGE_PATHS.playersPath)}>{seeMorePlayersButtonLabel}</button>
         </MenuGroup>
       </Show>
     </nav>

@@ -52,10 +52,10 @@ describe('findScenarioLocatorViolations', () => {
     it('should report nothing, whether the scenario acts on the element, asserts it or narrows it down', () => {
       // Arrange
       const source = [
-        "await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);",
-        "await page.getByTestId('merge-button').click();",
+        "await page.getByTestId('save-a').setInputFiles(saveAFixturePath);",
+        "await page.getByTestId('merge').click();",
         "await expect(page.getByTestId('merge-success-message')).toHaveText('Merge successful!');",
-        "await expect(page.getByTestId('merge-area').getByTestId('save-a-input')).toHaveValue('');"
+        "await expect(page.getByTestId('merge-area').getByTestId('save-a')).toHaveValue('');"
       ].join('\n');
 
       // Act
@@ -161,8 +161,8 @@ describe('findScenarioLocatorViolations', () => {
     it('should report the frame locator whatever receives it, its argument being a raw selector in every case', () => {
       // Arrange
       const source = [
-        "await page.frameLocator('#preview').getByTestId('merge-button').click();",
-        "await page.getByTestId('preview-area').frameLocator('iframe.preview').getByTestId('merge-button').click();"
+        "await page.frameLocator('#preview').getByTestId('merge').click();",
+        "await page.getByTestId('preview-area').frameLocator('iframe.preview').getByTestId('merge').click();"
       ].join('\n');
 
       // Act
@@ -178,9 +178,9 @@ describe('findScenarioLocatorViolations', () => {
     it('should leave a locator method alone when the page itself is the receiver of a legitimate call', () => {
       // Arrange
       const source = [
-        "await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);",
+        "await page.getByTestId('save-a').setInputFiles(saveAFixturePath);",
         "await page.getByTestId('prefer-legacy-format').setChecked(true);",
-        "const value = await page.getByTestId('save-a-input').inputValue();"
+        "const value = await page.getByTestId('save-a').inputValue();"
       ].join('\n');
 
       // Act
@@ -268,7 +268,7 @@ describe('checkScenarioLocators', () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          'packages/ui-save-manager/e2e/merge.e2e.ts': "await expect(page.getByTestId('merge-button')).toBeVisible();"
+          'packages/ui-save-manager/e2e/merge.e2e.ts': "await expect(page.getByTestId('merge')).toBeVisible();"
         }
       });
 

@@ -18,7 +18,7 @@ export default function HomeDisclaimer() {
 
   return (
     <details class="surface surface-warning">
-      <summary class="text-center" data-testid="disclaimers-toggle" onClick={() => setIsOpen((previous) => !previous)}>
+      <summary class="text-center" data-testid="disclaimers" onClick={() => setIsOpen((previous) => !previous)}>
         {isOpen() ? hideDisclaimersLabel : showDisclaimersLabel}
       </summary>
       <p>

@@ -2618,15 +2618,20 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 		ENFORCED_BY "scripts/check-scenario-locators.ts::ACCESSIBILITY_LOCATOR"
 	SPEC "The component that renders an element a scenario reaches gives it a data-testid; a"
 		+ "structure component rendered more than once receives it through a testId prop"
-		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::data-testid=\"merge-button\""
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::data-testid=\"merge\""
 		IMPL "packages/ui-save-manager/src/components/structure/DropZone.tsx::data-testid={props.testId}"
-	SPEC "A test id names what the element is on the page, in kebab case, never its tag nor its"
-		+ "place in the tree"
+	SPEC "A test id names what the page shows in the business language, in kebab case, never the"
+		+ "component that draws it, its layout region nor its kind of control"
 		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"display-busy-indicator\""
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"page-navigation\""
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::data-testid=\"merged-save-download\""
+	SPEC "A change of layout or structure alone changes no scenario; a change of the data shown or"
+		+ "of a behaviour changes or adds the scenarios that go with it"
+		IMPL "packages/ui-save-manager/e2e/scenarioSteps.ts::getByTestId('page-navigation')"
 	SPEC "A test id is unique on the page; an element a list repeats takes its rank in that list as"
 		+ "a suffix, and a scenario reaches the whole list through a pattern of its test ids"
-		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"overview-menu-link\""
-		IMPL "packages/ui-save-manager/src/components/shell/PlayersMenu.tsx::menu-player-"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"overview-page-link\""
+		IMPL "packages/ui-save-manager/src/components/shell/PlayersMenu.tsx::player-summary-"
 		ENFORCED_BY "packages/ui-save-manager/e2e/scenarioTest.ts::testIdsStayUnique"
 		ENFORCED_BY "scripts/check-scenario-locators.ts::UNCHECKED_TEST_IMPORT"
 	REJECTED "Locating by role, label or text: an element reached through a landmark or a list item"
@@ -2636,6 +2641,15 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	REJECTED "Locating by CSS selector: the selector is the DOM structure"
 	REJECTED "One test id shared by the elements of a kind, told apart by their text: the test id"
 		+ "no longer designates one element, and the scenario falls back to reading the page"
+	REJECTED "Naming a test id after its layout region or its kind of control (menu, breadcrumb,"
+		+ "button, link, toggle, input, tooltip): a redesign moving the menu to tabs or turning a"
+		+ "button into a link would break the scenarios, while it changes neither the data shown"
+		+ "nor a behaviour"
+	REJECTED "Renaming now the positional test ids the generic field groups build from a column and"
+		+ "a value rank: the view models of the Configuration and Power pages are replaced and the"
+		+ "data they show changes in wave 11, which rewrites those scenarios and names those ids"
+		+ "there"
+		REF @WAVE.11
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "A scenario tests a user flow; the markup that draws it changes with every layout"
 		+ "review. A data-testid attribute changes nothing the user sees or uses, so it ties the"
@@ -2648,6 +2662,11 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 		PR 206
 	SOURCE "Owner review comment on packages/ui-save-manager/src/routes/index.tsx line 104: test"
 		+ "ids must be unique"
+		PR 212
+	SOURCE "Owner ruling of 2026-09-28 in the piloting session of the second review round: a test"
+		+ "id describes what is displayed in the business language, so that a redesign, like a"
+		+ "refactor, breaks no scenario, while a redesign showing new data or changing a behaviour"
+		+ "changes or adds its scenarios"
 		PR 212
 
 DECISION EachPageOfTheSaveManagerIsARoute

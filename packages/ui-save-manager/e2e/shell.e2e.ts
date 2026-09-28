@@ -10,7 +10,7 @@ type ShellPart = 'title' | 'disclaimers' | 'page' | 'footer';
 async function readTheShellPartsFromTopToBottom(page: Page, pageContentTestId: string): Promise<ShellPart[]> {
   const partLocators: [ShellPart, Locator][] = [
     ['title', page.getByTestId('application-title')],
-    ['disclaimers', page.getByTestId('disclaimers-toggle')],
+    ['disclaimers', page.getByTestId('disclaimers')],
     ['page', page.getByTestId(pageContentTestId)],
     ['footer', page.getByTestId('application-version')]
   ];
@@ -54,7 +54,7 @@ test.describe('Save manager shell', () => {
 
       // Assert
       await expect(findTheMenuGroupTitles(page)).toHaveText(['Tools']);
-      await expect(findTheMenu(page).getByTestId(/-menu-link$/)).toHaveText(['Merge two saves', 'Load another save']);
+      await expect(findTheMenu(page).getByTestId(/-page-link$/)).toHaveText(['Merge two saves', 'Load another save']);
     });
   });
 
@@ -72,7 +72,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('save-menu-group').getByTestId(/-menu-link$/))
+      await expect(page.getByTestId('save-pages').getByTestId(/-page-link$/))
         .toHaveText(['Overview', 'Configuration', 'Power', 'Terraformation']);
     });
 
@@ -81,11 +81,11 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      const playersGroup = page.getByTestId('players-menu-group');
-      const seeMoreButton = playersGroup.getByTestId('see-more-players-button');
+      const playersGroup = page.getByTestId('players-pages');
+      const seeMoreButton = playersGroup.getByTestId('more-players');
       await expect(seeMoreButton).toHaveText('See more');
       expect((await seeMoreButton.boundingBox())!.y)
-        .toBeGreaterThan((await playersGroup.getByTestId(/^menu-player-\d+$/).last().boundingBox())!.y);
+        .toBeGreaterThan((await playersGroup.getByTestId(/^player-summary-\d+$/).last().boundingBox())!.y);
     });
 
     test('should show the save identity above the groups', async ({page}) => {
@@ -99,7 +99,7 @@ test.describe('Save manager shell', () => {
       await expect(identityZone.getByTestId('save-identity-mode')).toHaveText('Standard');
       await expect(identityZone.getByTestId('save-identity-game-release')).toHaveText('Game release 2.004');
       expect((await identityZone.boundingBox())!.y)
-        .toBeLessThan((await page.getByTestId('save-menu-group').boundingBox())!.y);
+        .toBeLessThan((await page.getByTestId('save-pages').boundingBox())!.y);
     });
 
     test('should list the players in the Players group', async ({page}) => {
@@ -107,7 +107,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('players-menu-group').getByTestId(/^menu-player-\d+$/))
+      await expect(page.getByTestId('players-pages').getByTestId(/^player-summary-\d+$/))
         .toHaveText(['NikowaHostToxicity']);
     });
   });
@@ -118,7 +118,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, legacySaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('players-menu-group').getByTestId(/^menu-player-\d+$/))
+      await expect(page.getByTestId('players-pages').getByTestId(/^player-summary-\d+$/))
         .toHaveText(['NikowaHostToxicity']);
     });
   });
@@ -176,7 +176,7 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Merge two saves');
 
       // Assert
-      await expect(page.getByTestId('save-a-input')).toBeVisible();
+      await expect(page.getByTestId('save-a')).toBeVisible();
     });
   });
 
@@ -190,7 +190,7 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Load another save');
 
       // Assert
-      await expect(page.getByTestId('save-file-input')).toBeVisible();
+      await expect(page.getByTestId('save-file')).toBeVisible();
     });
   });
 
@@ -201,7 +201,7 @@ test.describe('Save manager shell', () => {
       await expect(page.getByTestId('not-found-title')).toHaveText('Not Found');
 
       // Act
-      await page.getByTestId('back-home-link').click();
+      await page.getByTestId('home-page-link').click();
 
       // Assert
       await expect(page.getByTestId('display-area')).toBeVisible();

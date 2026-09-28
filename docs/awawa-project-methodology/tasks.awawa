@@ -2288,7 +2288,7 @@ TASK TEST147
 	SPEC "the UI scenarios locate the elements they act on and assert by a data-testid attribute,"
 		+ "so that a change of the HTML structure alone breaks none of them"
 		IMPL "packages/ui-save-manager/e2e/warnings.e2e.ts::getByTestId('display-warnings-messages')"
-		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::getByTestId('merge-button')"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::getByTestId('merge')"
 	SPEC "check:locators accepts a test id in scenario files"
 		IMPL "scripts/check-scenario-locators.spec.ts::When a scenario designates elements by their"
 			+ "test id"

@@ -38,10 +38,10 @@ async function loadViewAndMergeASave(page: Page): Promise<void> {
   await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
   await openThePageOfTheMenu(page, 'Merge two saves');
   await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
-  await page.getByTestId('merge-button').click();
+  await page.getByTestId('merge').click();
   await expect(page.getByTestId('merge-success-message')).toBeVisible();
   const downloadStarted = page.waitForEvent('download');
-  await page.getByTestId('download-link').click();
+  await page.getByTestId('merged-save-download').click();
   await downloadStarted;
 }
 
