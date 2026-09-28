@@ -128,6 +128,10 @@ SCHEMA DECISION
 		REPEATABLE
 		CONVERSE GROUNDS
 		DESC "a hypothesis the ruling rests on"
+	FIELD DEROGATES string
+		REPEATABLE
+		DESC "a rule of the instructions corpus the ruling departs from, as @RULE.<name>, one rule"
+			+ "per line; the RATIONALE states why the departure is justified"
 
 SCHEMA PROCESS
 	DESC "a ruling on how the work is led, with nothing in the repository to anchor"
@@ -210,6 +214,10 @@ SCHEMA TASK
 	FIELD PURGE true|false
 		DEFAULT true
 		DESC "whether the cleanup pass deletes the task once archived; false keeps it"
+	FIELD PRIORITY critical|high|medium|low
+		DEFAULT medium
+		DESC "the urgency of the task, on the scale of the architecture review grades; medium when"
+			+ "not stated"
 	WHEN STATUS draft
 		GATE suppressed
 	WHEN STATUS todo
