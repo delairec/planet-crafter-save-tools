@@ -1089,7 +1089,7 @@ TASK FEAT119
 	SPEC "a file dropped outside every area leaves the page in place instead of opening the file"
 		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should keep the browser from opening them"
 	SPEC "every file input stays, so a file can still be picked with the keyboard"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::ref={fileInputElement}"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::ref={fileInputElement}"
 		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::ref={saveBInput}"
 	SPEC "UI scenarios on the three engines drop a file on the display area, one on a merge slot"
 		+ "and two at once on the merge section"

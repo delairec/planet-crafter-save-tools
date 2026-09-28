@@ -13,7 +13,7 @@ async function chooseTheSaveToVisualizeWithTheReadsHeld(page: Page): Promise<voi
 
 async function chooseTheTwoSavesToMergeWithTheReadsHeld(page: Page): Promise<void> {
   await holdEveryFileRead(page);
-  await page.goto('/');
+  await page.goto('/merge');
   await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
 }
 

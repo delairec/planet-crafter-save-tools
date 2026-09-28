@@ -1,7 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {type Download, type Page} from '@playwright/test';
 import {expect, test} from './scenarioTest';
-import {locateTheFixture} from './scenarioSteps';
+import {chooseTheTwoSavesToMerge, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const saveAFixturePath = locateTheFixture('baseline_valid.json');
 const saveBFixturePath = locateTheFixture('other-player_valid.json');
@@ -28,7 +28,7 @@ const preferLegacyFormatDescription =
 const keepLegacyFormatReminder = 'To write the legacy format instead, tick "Prefer legacy format" and merge again.';
 
 async function chooseTheTwoSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
-  await page.goto('/');
+  await page.goto('/merge');
   await page.getByTestId('save-a').setInputFiles(chosenSaveAPath);
   await page.getByTestId('save-b').setInputFiles(chosenSaveBPath);
 }
@@ -153,7 +153,7 @@ test.describe('Save merge', () => {
   test.describe('When the legacy format checkbox takes the keyboard focus', () => {
     test('should show the tooltip that describes it', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/merge');
       const preferLegacyFormatCheckbox = page.getByTestId('prefer-legacy-format');
 
       // Act
@@ -167,7 +167,7 @@ test.describe('Save merge', () => {
   test.describe('When the merge section is shown', () => {
     test('should align the edge of the legacy format checkbox with the edge of the save inputs', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/merge');
 
       // Act
       const saveAInputLeft = (await page.getByTestId('save-a').boundingBox())!.x;
@@ -178,20 +178,21 @@ test.describe('Save merge', () => {
       expect(saveBInputLeft).toBeCloseTo(saveAInputLeft, 0);
       expect(checkboxLeft).toBeCloseTo(saveAInputLeft, 0);
     });
+  });
 
-    test('should align the label and the input of the save to visualize with those of the saves to merge', async ({page}) => {
+  test.describe('When a merge produces a result while a save is loaded', () => {
+    test('should leave the loaded save in the Overview page', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await visualizeTheSave(page, saveAFixturePath);
+      await openThePageOfTheMenu(page, 'Merge two saves');
+      await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
+      await mergeTheChosenSaves(page);
 
       // Act
-      const saveALabelLeft = (await page.getByTestId('save-a-caption').boundingBox())!.x;
-      const saveAInputLeft = (await page.getByTestId('save-a').boundingBox())!.x;
-      const saveFileLabelLeft = (await page.getByTestId('save-file-caption').boundingBox())!.x;
-      const saveFileInputLeft = (await page.getByTestId('save-file').boundingBox())!.x;
+      await openThePageOfTheMenu(page, 'Overview');
 
       // Assert
-      expect(saveFileLabelLeft).toBeCloseTo(saveALabelLeft, 0);
-      expect(saveFileInputLeft).toBeCloseTo(saveAInputLeft, 0);
+      await expect(page.getByRole('heading', {name: 'Loaded save: baseline_valid.json'})).toBeVisible();
     });
   });
 });

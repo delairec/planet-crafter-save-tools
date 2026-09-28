@@ -1,6 +1,5 @@
 import {Accessor, createSignal, JSX} from 'solid-js';
 import {LoadAndValidateSaveFileController} from "core-mapping/controllers/LoadAndValidateSaveFileController";
-import {MergeResultViewModel} from "core-mapping/presentation/viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
 import {yieldToPaint} from "../lib/yieldToPaint.ts";
 
@@ -15,13 +14,10 @@ export interface LoadSaveFile {
   validatedContent: Accessor<string | null>;
   errors: Accessor<SaveValidationMessageViewModel[]>;
   warnings: Accessor<SaveValidationMessageViewModel[]>;
-  mergeResult: Accessor<MergeResultViewModel | null>;
   isLoading: Accessor<boolean>;
   hasLoadCallFailed: Accessor<boolean>;
   handleFileChange: JSX.EventHandler<HTMLInputElement, Event>;
   handleSubmit: () => Promise<void>;
-  handleMergeStarted: () => void;
-  handleSubmitMerge: (result: MergeResultViewModel) => void;
 }
 
 export function useLoadSaveFile(): LoadSaveFile {
@@ -29,7 +25,6 @@ export function useLoadSaveFile(): LoadSaveFile {
   const [validatedSave, setValidatedSave] = createSignal<ValidatedSave | null>(null);
   const [errors, setErrors] = createSignal<SaveValidationMessageViewModel[]>([]);
   const [warnings, setWarnings] = createSignal<SaveValidationMessageViewModel[]>([]);
-  const [mergeResult, setMergeResult] = createSignal<MergeResultViewModel | null>(null);
   const [isLoading, setIsLoading] = createSignal<boolean>(false);
   const [hasLoadCallFailed, setHasLoadCallFailed] = createSignal<boolean>(false);
 
@@ -37,7 +32,6 @@ export function useLoadSaveFile(): LoadSaveFile {
     setErrors([]);
     setWarnings([]);
     setValidatedSave(null);
-    setMergeResult(null);
     setHasLoadCallFailed(false);
   };
 
@@ -72,24 +66,15 @@ export function useLoadSaveFile(): LoadSaveFile {
     }
   };
 
-  const handleSubmitMerge = (result: MergeResultViewModel) => {
-    resetDisplayFields();
-    setFile(null);
-    setMergeResult(result);
-  };
-
   return {
     file,
     validatedSave,
     validatedContent: () => validatedSave()?.content ?? null,
     errors,
     warnings,
-    mergeResult,
     isLoading,
     hasLoadCallFailed,
     handleFileChange,
-    handleSubmit,
-    handleMergeStarted: resetDisplayFields,
-    handleSubmitMerge
+    handleSubmit
   };
 }

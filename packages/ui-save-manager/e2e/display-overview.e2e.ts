@@ -1,5 +1,4 @@
 import {expect, test} from './scenarioTest';
-import {triggerSaveFileMerge} from './helpers/triggerSaveFileMerge';
 import {findTheMenuGroupTitles, locateTheFixture, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
@@ -98,21 +97,6 @@ test.describe('Overview page', () => {
       await page.getByTestId('save-file').setInputFiles(noFileSelected);
 
       // Assert
-      await expect(page.getByTestId('visualize')).toBeDisabled();
-    });
-  });
-
-  test.describe('When a merge produces a result while a save file is chosen for display', () => {
-    test('should leave no save file to visualize', async ({page}) => {
-      // Arrange
-      await page.goto('/');
-      await page.getByTestId('save-file').setInputFiles(baselineSaveFixturePath);
-
-      // Act
-      await triggerSaveFileMerge(page, baselineSaveFixturePath, baselineSaveFixturePath);
-
-      // Assert
-      await expect(page.getByTestId('merge-success-message')).toBeVisible();
       await expect(page.getByTestId('visualize')).toBeDisabled();
     });
   });

@@ -1,113 +1,37 @@
-import {createSignal, onMount, Show} from 'solid-js';
 import {A} from '@solidjs/router';
-import MergeSection from "~/components/MergeSection";
-import MergeResultSection from "~/components/MergeResultSection";
-import {
-  displayRouteCallFailedMessage,
-  displayRouteDisplayTitle,
-  displayRouteErrorsTitle,
-  displayRouteFileInputLabel,
-  displayRouteLoadingLabel,
-  displayRouteParsedDataPlaceholder,
-  displayRouteSubmitButtonLabel,
-  displayRouteVisualizationTitle,
-  displayRouteWarningsTitle
-} from "~/messages/displayRouteMessages";
+import {Show} from 'solid-js';
 import {
   configurationPageTitle,
   powerPageTitle,
   resolveLoadedSaveTitle,
   terraformationPageTitle
 } from "~/messages/shellMessages";
+import {displayRouteWarningsTitle} from "~/messages/displayRouteMessages";
 import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
-import Spinner from "~/components/structure/Spinner";
-import DropZone from "~/components/structure/DropZone";
-import SaveFileField from "~/components/structure/SaveFileField";
+import LoadSaveSection from "~/components/LoadSaveSection";
 import {useLoadedSave} from "~/hooks/useLoadedSave.ts";
 import {PAGE_PATHS} from "~/lib/pagePaths";
-import {selectFileInInput} from "~/lib/selectFileInInput";
-import {tooManyFilesForOneSaveMessage} from "~/messages/dropZoneMessages";
 
-export default function Home() {
-  let fileInputElement!: HTMLInputElement;
-
-  const [isReady, setIsReady] = createSignal<boolean>(false);
-  onMount(() => setIsReady(true));
-
-  const {
-    file,
-    errors,
-    warnings,
-    mergeResult,
-    isLoading,
-    hasLoadCallFailed,
-    isSaveLoaded,
-    handleFileChange,
-    handleSubmit,
-    handleMergeStarted,
-    handleSubmitMerge
-  } = useLoadedSave();
-
-  const handleMergeResult: typeof handleSubmitMerge = (result) => {
-    handleSubmitMerge(result);
-    fileInputElement.value = '';
-  };
+export default function OverviewPage() {
+  const {validatedSave, warnings} = useLoadedSave();
 
   return (
-    <Show when={isReady()} fallback={<p class="text-color-muted">{displayRouteLoadingLabel}</p>}>
-      <div id={PAGE_PATHS.loadASaveAnchor}>
-        <DropZone label={displayRouteDisplayTitle} testId="display-area" maximumFileCount={1}
-                  tooManyFilesMessage={tooManyFilesForOneSaveMessage}
-                  onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
-          <h2>{displayRouteDisplayTitle}</h2>
-          <p class="save-file-row">
-            <SaveFileField label={displayRouteFileInputLabel} testId="save-file" ref={fileInputElement} onChange={handleFileChange}/>
-            <button data-testid="visualize" onClick={handleSubmit} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
+    <Show when={validatedSave()} fallback={<LoadSaveSection/>}>
+      {(loadedSave) => (
+        <>
+          <Show when={warnings().length}>
+            <code>{loadedSave().fileName}</code>
+            <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={warnings()}/>
+          </Show>
+
+          <h3 data-testid="loaded-save-title">{resolveLoadedSaveTitle(loadedSave().fileName)}</h3>
+          <p class="overview-pages">
+            <A href={PAGE_PATHS.configurationPath} data-testid="overview-configuration-page-link">{configurationPageTitle}</A>
+            <A href={PAGE_PATHS.powerPath} data-testid="overview-power-page-link">{powerPageTitle}</A>
+            <A href={PAGE_PATHS.terraformationPath} data-testid="overview-terraformation-page-link">{terraformationPageTitle}</A>
           </p>
-        </DropZone>
-      </div>
-
-      <Show when={isLoading()}>
-        <Spinner testId="display-busy-indicator"/>
-      </Show>
-      <Show when={hasLoadCallFailed()}>
-        <p class="text-color-danger" data-testid="display-failure-message">{displayRouteCallFailedMessage}</p>
-      </Show>
-
-      <div id={PAGE_PATHS.mergeTwoSavesAnchor}>
-        <MergeSection onMergeStarted={handleMergeStarted} onMergeResult={handleMergeResult}/>
-      </div>
-
-      <h2 data-testid="visualization-title">{displayRouteVisualizationTitle}</h2>
-
-      <Show when={!errors().length && !isSaveLoaded() && !mergeResult()}>
-        <p class="text-color-muted">{displayRouteParsedDataPlaceholder}</p>
-      </Show>
-
-      <MergeResultSection result={mergeResult}/>
-
-      <Show when={errors().length}>
-        <code>{file()?.name}</code>
-        <ValidationMessagesList title={displayRouteErrorsTitle} testId="display-errors" severity="danger" messages={errors()}/>
-      </Show>
-
-      <Show when={warnings().length}>
-        <code>{file()?.name}</code>
-        <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={warnings()}/>
-      </Show>
-
-      <Show when={isSaveLoaded() && file()}>
-        {(loadedFile) => (
-          <>
-            <h3 data-testid="loaded-save-title">{resolveLoadedSaveTitle(loadedFile().name)}</h3>
-            <p class="overview-pages">
-              <A href={PAGE_PATHS.configurationPath} data-testid="overview-configuration-page-link">{configurationPageTitle}</A>
-              <A href={PAGE_PATHS.powerPath} data-testid="overview-power-page-link">{powerPageTitle}</A>
-              <A href={PAGE_PATHS.terraformationPath} data-testid="overview-terraformation-page-link">{terraformationPageTitle}</A>
-            </p>
-          </>
-        )}
-      </Show>
+        </>
+      )}
     </Show>
   );
 }

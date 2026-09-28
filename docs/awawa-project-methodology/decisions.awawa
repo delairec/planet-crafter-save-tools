@@ -2624,7 +2624,7 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 		IMPL "packages/ui-save-manager/src/components/structure/DropZone.tsx::data-testid={props.testId}"
 	SPEC "A test id names what the page shows in the business language, in kebab case, never the"
 		+ "component that draws it, its layout region nor its kind of control"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"display-busy-indicator\""
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::testId=\"display-busy-indicator\""
 		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"page-navigation\""
 		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::data-testid=\"merged-save-download\""
 	SPEC "A change of layout or structure alone changes no scenario; a change of the data shown or"
@@ -2815,3 +2815,21 @@ DECISION TheSeverityPillLabelIsAMessageOfTheUi
 	APPLIES_TO_TASK @TASK.FEAT138
 	SOURCE "FEAT138 delivery"
 		PR 210
+
+DECISION TheOverviewAndLoadAnotherSaveShareOneLoadSection
+	SPEC "before a save is loaded, the Overview page carries the load section; Load another save"
+		+ "carries the same section under its breadcrumb and opens the Overview page once the new"
+		+ "save is loaded"
+		IMPL "packages/ui-save-manager/src/routes/index.tsx::fallback={<LoadSaveSection/>}"
+		IMPL "packages/ui-save-manager/src/routes/load-another-save.tsx::<LoadSaveSection"
+			+ "onSaveLoaded={() => navigate(PAGE_PATHS.overviewPath)}/>"
+	SPEC "the Overview page names the loaded save from the validated save, never from the file"
+		+ "chosen in the input"
+		IMPL "packages/ui-save-manager/src/routes/index.tsx::resolveLoadedSaveTitle(loadedSave().fileName)"
+	REJECTED "redirecting the Overview page to Load another save while no save is loaded: it breaks"
+		+ "the Overview contract of FEAT134 and the scenarios anchored on it"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT137
+	RATIONALE "Two pages load a save; one section keeps their form, drop zone, busy indicator and"
+		+ "failure sentence identical. The file chosen in the input can differ from the loaded save"
+		+ "once Load another save is open, so the name shown comes from what was validated"
