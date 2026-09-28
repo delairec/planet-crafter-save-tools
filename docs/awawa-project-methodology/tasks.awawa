@@ -2569,16 +2569,38 @@ TASK FEAT149
 
 TASK FEAT150
 	TITLE "Give the save manager a home page at the root address"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 217
 	SPEC "the root address opens a home page of its own, whether a save is loaded or not; it shows"
 		+ "no left menu and keeps the disclaimer the other pages show"
+		IMPL "packages/ui-save-manager/src/app.tsx::<Show when={!isHomePage()}>"
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the home page without the menu"
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should keep the disclaimers of the other"
+			+ "pages"
 	SPEC "the home page shows the name of the tool, one sentence saying what it does, and two"
 		+ "links, Merge two saves and Load save, named Load another save once a save is loaded,"
 		+ "each opening its page"
+		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-page-description\""
+		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-merge-two-saves-page-link\""
+		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-load-save-page-link\""
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should name the tool and say what it does"
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should name the Load save page Load another"
+			+ "save"
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Merge two saves page"
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Load save page"
 	SPEC "once a save is loaded, the home page shows a card of the loaded save carrying the save"
 		+ "identity of the menu, its file name, display name, mode and game release, and a link to"
 		+ "its Overview page"
+		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"home-loaded-save\""
+		IMPL "packages/ui-save-manager/src/routes/index.tsx::data-testid=\"home-overview-link\""
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should show the card of the loaded save"
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::should open the Overview page of the loaded"
+			+ "save from its card"
+		IMPL "packages/ui-save-manager/e2e/accessibility/home.e2e.ts::Home page accessibility"
 	SPEC "the title of the application in the header of every page links to the home page"
+		IMPL "packages/ui-save-manager/src/app.tsx::data-testid=\"application-title-link\""
+		IMPL "packages/ui-save-manager/e2e/home.e2e.ts::When the title of the application is"
+			+ "clicked on another page"
 	AFTER @TASK.FEAT137
 	WAVE @WAVE.10
 	RATIONALE "The root address redirects to the Load save page until this task lands, a ruling the"

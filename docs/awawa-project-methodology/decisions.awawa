@@ -2897,10 +2897,11 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 		+ "on Load another save unloaded the loaded save at once, and Visualize was enabled by a"
 		+ "file picked on another page"
 	REJECTED "the root address redirecting to the Load save page: the home page owns the root"
-		+ "address once it is written"
+		+ "address"
 		REF @TASK.FEAT150
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT137
+	APPLIES_TO_TASK @TASK.FEAT150
 	RATIONALE "Two pages loaded a save until the review; one address with a name that follows the"
 		+ "loaded save keeps the menu entry lit on the page the reader is on, and the load form"
 		+ "stays one component, its result shown by a section of its own as the merge does"
@@ -2909,6 +2910,9 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 		+ "address redirects to it, the Overview page moves to /overview; the staging of the picked"
 		+ "file answers three bot review threads"
 		PR 211
+	SOURCE "Owner ruling of 2026-09-28 when FEAT150 was refined: the root address opens a home page"
+		+ "of its own, and the scenarios that load a save open /load-save by its own address"
+		PR 217
 
 DECISION TheMergedSavesLiveInAStoreAboveTheRouter
 	SPEC "the last merge result and the merged saves kept live in a provider of their own, mounted"
