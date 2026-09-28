@@ -90,6 +90,20 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'warning-surface'
   },
   {
+    description: 'the severity pill of a limitation notification, on its own surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-limitation .notification-severity-pill',
+    foreground: 'limitation',
+    background: 'surface'
+  },
+  {
+    description: 'the severity pill of a warning notification, on its own surface',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.notification-warning .notification-severity-pill',
+    foreground: 'warning',
+    background: 'surface'
+  },
+  {
     description: 'a validation message origin, nested inside the code panel above',
     file: 'packages/ui-save-manager/src/styles/layout.css',
     selector: '.validation-message-location',
@@ -249,6 +263,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.breadcrumb-page',
     foreground: 'content',
     background: 'canvas'
+  },
+  {
+    description: 'the summary figure of a card header, on the neon-cyan pill of that header',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.card-summary',
+    foreground: 'inverted',
+    background: 'neon-cyan'
   }
 ];
 

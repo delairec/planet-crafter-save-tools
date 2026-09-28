@@ -1,1 +1,1 @@
-export const saveConfigurationSectionTitleLabel = 'Save Configuration:';
+export const saveConfigurationSectionTitleLabel = 'Save Configuration';
