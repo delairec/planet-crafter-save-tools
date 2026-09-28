@@ -43,3 +43,13 @@ WAVE 12
 		+ "retired, and the whole save manager is usable at phone width and by keyboard"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
+
+WAVE 13
+	MILESTONE "save-manager-history"
+	BRANCH "integration/save-manager-history"
+	DESC "the save manager keeps the saves loaded in the browser once the reader asks for it, lists"
+		+ "them on the Load save page to load them again or remove them, and lets the reader clear"
+		+ "them and bound how long they stay"
+	SOURCE "Owner ruling of 2026-09-28 when FEAT151 was refined: the saves loaded before are kept"
+		+ "in a wave of their own, not in wave 10"
+		PR 211

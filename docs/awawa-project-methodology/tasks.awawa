@@ -2523,12 +2523,37 @@ TASK FEAT150
 
 TASK FEAT151
 	TITLE "Offer on the Load save page to load again a save loaded before"
-	STATUS draft
-	DESC "asked by the owner in the review of pull request 211 on 2026-09-28"
-	SPEC "the Load save page offers a button that loads again a save the reader loaded before"
+	STATUS todo
+	SPEC "while saves are not kept, the Load save page offers a Remember saves button; it opens a"
+		+ "modal warning that the saves kept, player names included, stay in this browser for"
+		+ "anyone using this computer, with a Confirm and a Cancel button, Cancel closing it and"
+		+ "keeping nothing"
+	SPEC "once confirmed, the Remember saves button is gone, and the save loaded, if any, and every"
+		+ "save loaded next are kept in the browser, the last five loaded; a sixth drops the"
+		+ "oldest, and a kept save loaded again moves to the top instead of taking a second place"
+	SPEC "the saves kept survive a reload of the page and a new visit; the Load save page lists"
+		+ "them newest first, each by its file name and the date it was loaded, with a button that"
+		+ "loads it again and a button that removes it from the browser"
+	SPEC "a save loaded again goes through the validation of a picked file, its warnings and errors"
+		+ "shown the same way, and opens the Overview page once it validates"
 	AFTER @TASK.FEAT137
-	WAVE @WAVE.10
-	SOURCE "Owner review of pull request 211"
+	WAVE @WAVE.13
+	RATIONALE "The save manager holds the loaded save in memory only, so a reader coming back to a"
+		+ "save picks its file again. A save weighs about 2 MB, beyond what the browser's key-value"
+		+ "storage holds for five saves, hence a browser database; nothing reaches the server. The"
+		+ "saves carry the real names of the players, so nothing is kept until the reader asks for"
+		+ "it by a button, never by a modal opening on its own, and a refusal leaves nothing to"
+		+ "record. Loading a kept save again takes the path of a picked file, so no second load"
+		+ "path exists. The storage this task builds is the one FIX152 needs to survive a reload,"
+		+ "and the one FEAT153 clears and FEAT154 bounds in time"
+		REF @TASK.FIX152
+		REF @TASK.FEAT153
+		REF @TASK.FEAT154
+		REF @DECISION.SectionControllersReceiveTheValidatedText
+		REF @DECISION.OneLoadSavePageLoadsTheFirstAndEveryNextSave
+	SOURCE "Owner review of pull request 211, then the owner's ruling of 2026-09-28 when the task"
+		+ "was refined: a wave of its own, the last five saves, kept only after a Remember saves"
+		+ "button and a modal with a shared-computer warning, each save removable"
 		PR 211
 
 TASK FIX152
@@ -2548,4 +2573,37 @@ TASK FIX152
 	SOURCE "Owner review of pull request 211: fixed in this pull request if small, a task of wave"
 		+ "10 otherwise; keeping the save across a reload needs a browser storage the pull request"
 		+ "does not have"
+		PR 211
+
+TASK FEAT153
+	TITLE "Let the reader clear the saves kept in the browser from every page"
+	STATUS draft
+	DESC "to be refined with the owner: the place of the button when no save is loaded"
+	SPEC "once saves are kept, the left menu shows a Clear history button under the save identity"
+		+ "on every page; it is absent while saves are not kept"
+	SPEC "Clear history opens a confirmation modal with a Stop storing saves in this browser"
+		+ "checkbox and a Confirm and a Cancel button; Confirm removes every kept save, Cancel"
+		+ "changes nothing"
+	SPEC "confirmed with the box checked, the saves loaded next are no longer kept, the Clear"
+		+ "history button disappears and the Load save page offers Remember saves again"
+	AFTER @TASK.FEAT151
+	WAVE @WAVE.13
+	SOURCE "Owner ruling of 2026-09-28 when FEAT151 was refined: a Clear history button in the left"
+		+ "menu under the save identity, shown once the reader confirmed, its modal carrying a"
+		+ "checkbox to stop storing saves"
+		PR 211
+
+TASK FEAT154
+	TITLE "Let the reader choose how long the saves kept in the browser stay there"
+	STATUS draft
+	DESC "to be refined with the owner: the delays offered, the default, and whether the delay"
+		+ "counts from the load of a save or from its last load"
+	DESC "check whether Safari erases the storage of a site after seven days of use without a"
+		+ "visit, which would bound any delay offered"
+	SPEC "the Remember saves modal lets the reader choose a retention delay, and a kept save older"
+		+ "than that delay is removed from the browser"
+	AFTER @TASK.FEAT151
+	WAVE @WAVE.13
+	SOURCE "Owner ruling of 2026-09-28 when FEAT151 was refined: a retention delay set by the"
+		+ "reader when confirming the modal, a task of the same wave"
 		PR 211
