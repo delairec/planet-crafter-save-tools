@@ -112,6 +112,9 @@ SCHEMA DECISION
 		FIELD ENFORCED_BY anchor
 			REPEATABLE
 			DESC "the guard, test or workflow that fails when the obligation is broken"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the prose names, so that it is indexed"
 	FIELD APPLIES_TO_PACKAGE @PACKAGE
 		REPEATABLE
 		CONVERSE GOVERNED_BY
@@ -143,6 +146,9 @@ SCHEMA PROCESS
 		FIELD ENFORCED_BY anchor
 			REPEATABLE
 			DESC "the hook or workflow that fails when the obligation is broken"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the prose names, so that it is indexed"
 
 SCHEMA LIMITATION
 	DESC "a known defect of this project left in place; a defect of an external tool is not"
@@ -201,6 +207,9 @@ SCHEMA TASK
 		FIELD IMPL anchor
 			REPEATABLE
 			DESC "the test or the code where the criterion is proven; written at delivery"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the prose names, so that it is indexed"
 	FIELD AFTER @TASK
 		REPEATABLE
 		CONVERSE BEFORE
@@ -331,6 +340,9 @@ SCHEMA RULE
 			REPEATABLE
 			CATEGORY attestation
 			DESC "the save, fixture, test or game source that proves the obligation"
+		FIELD REF reference
+			REPEATABLE
+			DESC "an entity the prose names, so that it is indexed"
 	FIELD APPLIES_TO_SECTION @SECTION
 		REPEATABLE
 		CONVERSE CONSTRAINED_BY

@@ -952,7 +952,6 @@ DECISION RepositoryGuardsAreGroupedScripts
 		IMPL "scripts/specSources.ts::reportViolations"
 	SPEC "The line-by-line limit of a guard is pinned by a test that names it"
 		IMPL "scripts/check-test-assertions.spec.ts::When an assertion is spread over several lines"
-	APPLIES_TO_TASK @TASK.REFACTOR59
 	SOURCE "T12"
 		PR 40
 		PR 46
@@ -1438,8 +1437,9 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
 	RATIONALE "The task's SPEC left the threshold and the verification method open. WCAG 2.1 AA is"
 		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
-		+ "-rendered DOM, a gap @TASK.CHORE91 studies closing with axe-core"
-		REF @TASK.CHORE91
+		+ "-rendered DOM, a gap the axe audits of the accessibility tests close in the light"
+		+ "scheme, @TASK.TEST91 extending them to the dark one"
+		REF @TASK.TEST91
 	SOURCE "the launching command's defensible-option guidance, checked against the palette before"
 		+ "ratifying"
 		PR 121
