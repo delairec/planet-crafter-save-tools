@@ -1,3 +1,7 @@
-export const baselineSaveFixturePath = new URL('../fixtures/baseline_valid.json', import.meta.url).pathname;
-export const otherPlayerSaveFixturePath = new URL('../fixtures/other-player_valid.json', import.meta.url).pathname;
-export const legacySaveFixturePath = new URL('../fixtures/legacy-format_valid.json', import.meta.url).pathname;
+function resolveScenarioFixturePath(fixtureFileName: string): string {
+  return new URL(`../fixtures/${fixtureFileName}`, import.meta.url).pathname;
+}
+
+export const baselineSaveFixturePath = resolveScenarioFixturePath('baseline_valid.json');
+export const otherPlayerSaveFixturePath = resolveScenarioFixturePath('other-player_valid.json');
+export const legacySaveFixturePath = resolveScenarioFixturePath('legacy-format_valid.json');

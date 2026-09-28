@@ -1,10 +1,8 @@
 import {expect, test, type Page} from '@playwright/test';
 import {holdEveryFileRead, releaseTheHeldFileReads} from "./helpers/holdEveryFileRead";
+import {baselineSaveFixturePath as saveAFixturePath, otherPlayerSaveFixturePath as saveBFixturePath} from "./helpers/scenarioFixturePaths";
 import {visualizeSave} from "./helpers/visualizeSave";
 import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
-
-const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
 
 async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
   await holdEveryFileRead(page);
