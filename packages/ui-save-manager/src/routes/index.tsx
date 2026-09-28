@@ -5,6 +5,7 @@ import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
 import {
   homeMessageBody,
+  homeMessageClosing,
   homeMessageSender,
   homeMessageTitle,
   mergeTwoSavesPageTitle,
@@ -41,6 +42,7 @@ export default function HomePage() {
               )}
             </Show>
           </div>
+          <p class="home-message-body" data-testid="home-message-closing">{homeMessageClosing}</p>
           <p class="home-message-sender" data-testid="home-message-sender">{homeMessageSender}</p>
         </div>
       </article>

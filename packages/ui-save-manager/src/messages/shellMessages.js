@@ -17,7 +17,8 @@ export const playersPageTitle = 'All players';
 export const seeMorePlayersButtonLabel = 'See more';
 
 export const homeMessageTitle = 'Message';
-export const homeMessageBody = 'Welcome to the Planet Crafter Save Manager, prisoner. Use this dashboard to evaluate your progression with computed statistics, merge two saves, or simply validate your save integrity. Keep up the good work!';
+export const homeMessageBody = 'Welcome to the Planet Crafter Save Manager, prisoner. Use this dashboard to evaluate your progression with computed statistics, merge two saves, or simply validate your save integrity.';
+export const homeMessageClosing = 'Keep up the good work!';
 export const homeMessageSender = 'SENTINEL CORP';
 export const openOverviewLinkLabel = 'Open the Overview';
 

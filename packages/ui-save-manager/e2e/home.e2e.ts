@@ -29,7 +29,8 @@ test.describe('Home page', () => {
 
       // Assert
       await expect(page.getByTestId('home-message-title')).toHaveText('Message');
-      await expect(page.getByTestId('home-page-description')).toHaveText(/^Welcome to the Planet Crafter Save Manager, prisoner\..+merge two saves.+validate your save integrity.+!$/);
+      await expect(page.getByTestId('home-page-description')).toHaveText(/^Welcome to the Planet Crafter Save Manager, prisoner\..+merge two saves.+validate your save integrity\.$/);
+      await expect(page.getByTestId('home-message-closing')).toHaveText('Keep up the good work!');
       await expect(page.getByTestId('home-message-sender')).toHaveText('SENTINEL CORP');
     });
 
