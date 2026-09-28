@@ -24,8 +24,8 @@ modification ou réponse qu'il gouverne. Ne charger rien d'autre.
 ## Corpus de spécification (awawa)
 
 La spécification du projet est le corpus awawa de `docs/`, rédigé en anglais, noms
-d'entités compris : `docs/_schema.awawa` déclare tous les types pour l'ensemble du workspace, puis un fichier
-par type dans l'aire qui le porte — `docs/awawa-project-methodology/` pour la méthodologie (`decisions.awawa`,
+d'entités compris, rangé comme le dit @DECISION.TheSchemaGovernsEveryAreaFromTheDocsRoot :
+`docs/awawa-project-methodology/` pour la méthodologie (`decisions.awawa`,
 `processes.awawa`, `limitations.awawa`, `tasks.awawa`, `waves.awawa`, `packages.awawa`, `open_questions.awawa` quand
 une question existe) et `sources.awawa` pour les sources ; `docs/awawa-project-specification/` pour la
 spécification produit (`sections.awawa`, `rules.awawa`, `commands.awawa`, `hypotheses.awawa`,
@@ -35,16 +35,11 @@ que les ancres résolvent, `..` y est refusé, et c'est elle que prend le dernie
 passer un fichier seul : chaque commande agit sur tout l'espace de travail, et un fichier isolé rapporte comme cassées
 des références qui tiennent.
 
-**Chaque aire a son pivot** : `TASK` pour la méthodologie, `RULE` pour la spécification produit. Une question sur le
-produit part d'une `RULE` — son `context` tire la `SECTION`, la `DATATABLE` et l'`HYPOTHESIS` qu'elle nomme, et son
-pied de page nomme la `COMMAND` qui l'applique. Aucun des cinq types de spécification ne porte d'état « implemented » :
-une règle est vraie ou fausse, pas livrée, et ce qui n'est pas encore construit est un `TASK`
-(@DECISION.TheSpecificationAreaPivotsOnTheRule).
+**Chaque aire a son pivot** (@DECISION.TheSpecificationAreaPivotsOnTheRule) : le `context` d'une `RULE` tire la
+`SECTION`, la `DATATABLE` et l'`HYPOTHESIS` qu'elle nomme, et son pied de page nomme la `COMMAND` qui l'applique.
 
-**Le corpus se lit par `awawa`, jamais par `cat`, `grep`, `sed` ni l'outil de lecture de fichiers** : la table de
-correspondance est la règle CORPUS-4 de `~/.ai/instructions/corpus.md`. Ici, le dernier argument est toujours `.`.
-
-**Lancer `awawa` depuis un worktree du dépôt public**, avec `.` pour racine.
+Lire et éditer le corpus : @RULE.corpus_read_through_tool, @RULE.shell_read_replaced_by_awawa_command et
+@RULE.corpus_formatted_and_linted_after_edit de `~/.ai`, `<root>` valant `.`.
 
 ```
 awawa status .                                          # où en est le projet : entités par type et par STATUS
@@ -54,13 +49,11 @@ awawa context @PACKAGE.core_mapping --skip reasoning --skip provenance .   # le 
 awawa lint --strict .                                   # doit sortir en 0
 ```
 
-- **Début de session** : `awawa status .`. Ne jamais tenir ailleurs une liste que `status` sait rendre — une liste
-  hors du corpus est de l'information dérivée, maintenue à la main, et fausse au commit suivant.
+- **Début de session** : `awawa status .` ; ce qu'il rend n'est tenu nulle part ailleurs
+  (@PROCESS.TheCorpusHoldsNoViewItAlreadyRenders).
 - **Avant d'implémenter ou de spécifier X** : `awawa context @TYPE.X --skip reasoning --skip provenance --with-schema .`
   et `awawa lint --closure @TYPE.X .`. Lire le paquet **au lieu** des fichiers ; son pied de page compte toute omission,
   et la ligne `BLOCKED_BY` dit ce qui bloque X — une arête entrante, qu'aucune traversée ne trouve.
-- **Éditer le corpus comme du texte**, puis `awawa fmt .` et `awawa lint --strict .`. `awawa new TYPE Nom .` imprime
-  un squelette conforme au schéma : l'utiliser plutôt que réciter le schéma.
 - Protocole complet : `awawa --help`. Le manuel et le protocole agent sont dans l'archive awawa.
 
 ## Emplacement
@@ -70,9 +63,8 @@ satellite privé `delairec/.do-not-commit`, branche `planet-crafter-save-tools`,
 (git-ignoré ici) et ne porte plus que ce qui ne peut pas être public
 (@DECISION.ThePrivateContextHoldsOnlySavesAndPlans).
 
-**Langue** : le corpus est en anglais, noms d'entités compris. Ce fichier et ceux d'`agents/` restent en français
-(@DECISION.AgentInstructionsAreWrittenInFrench) ; le reste du dépôt public — `README.md`, les `.md` de `docs/`,
-commentaires de code — est en anglais, et les messages de commit le sont dans tous les dépôts.
+**Langue.** Ce fichier et ceux d'`agents/` restent en français (@DECISION.AgentInstructionsAreWrittenInFrench) ; le
+reste suit @RULE.written_output_in_english de `~/.ai`.
 
 ## Commandes
 
@@ -135,10 +127,7 @@ déjà poussé n'est pas réécrit — le coût est hors de proportion, et la br
 ## Branches
 
 **Une wave se prépare sur `master` et s'implémente sur sa branche d'intégration**
-(@DECISION.AWaveIsPlannedOnMasterAndDeletedOnceDelivered). Son `WAVE` et ses `TASK` arrivent sur `master` par une
-pull request de plan ; la branche d'intégration part ensuite de `master`, les branches de tâche partent d'elle, et
-les changements de corpus des tâches n'arrivent sur `master` qu'à sa fusion, la wave terminée. Une wave livrée est
-supprimée du corpus avec ses tâches : son milestone GitHub en garde la trace.
+(@DECISION.AWaveIsPlannedOnMasterAndDeletedOnceDelivered).
 
 **La base d'une tâche est le `BRANCH` de sa wave, `master` pour une tâche sans wave.** La `WAVE` porte aussi le
 `MILESTONE` à poser sur chaque pull request de la wave : `awawa show @TASK.<id> .` donne la wave d'une tâche,
