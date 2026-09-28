@@ -1,8 +1,7 @@
 import {WorldObjectName} from "../worldObjectNames";
-import {assertFiniteNumber, assertOptionalFiniteNumber} from "../errors/assertions";
 import {WorldObjectEntity, WorldObjectEntityInput} from "./WorldObjectEntity";
-import {energyProductionLevelsByWorldObjectName} from "../energyLevelsByWorldObjectName";
-import {OPTIMIZER_CONFIG_BY_NAME} from "../energyOptimizerConfig";
+import {EnergyLevelsByWorldObjectName} from "../energyLevelsByWorldObjectName";
+import {OptimizerRangeValueObject} from "../valueObjects/OptimizerRangeValueObject";
 
 export interface PlacedWorldObjectEntityInput extends WorldObjectEntityInput {
   readonly position: readonly [number, number, number];
@@ -20,13 +19,9 @@ export class PlacedWorldObjectEntity extends WorldObjectEntity {
 
     const [x, y, z] = input.position;
 
-    this._position = [
-      assertFiniteNumber(x, 'PlacedWorldObjectEntity.position[0]'),
-      assertFiniteNumber(y, 'PlacedWorldObjectEntity.position[1]'),
-      assertFiniteNumber(z, 'PlacedWorldObjectEntity.position[2]')
-    ];
-    this._planetId = assertFiniteNumber(input.planetId, 'PlacedWorldObjectEntity.planetId');
-    this._inventoryId = assertOptionalFiniteNumber(input.inventoryId, 'PlacedWorldObjectEntity.inventoryId');
+    this._position = [x, y, z];
+    this._planetId = input.planetId;
+    this._inventoryId = input.inventoryId;
   }
 
   get position(): readonly [number, number, number] {
@@ -41,27 +36,18 @@ export class PlacedWorldObjectEntity extends WorldObjectEntity {
     return this._inventoryId;
   }
 
-  get energyProductionLevel(): number | undefined {
-    return energyProductionLevelsByWorldObjectName[this.name];
-  }
-
-  isOptimizer(): boolean {
-    return OPTIMIZER_CONFIG_BY_NAME[this.name] !== undefined;
-  }
-
-  boostedProducersAmong(candidates: readonly PlacedWorldObjectEntity[]): PlacedWorldObjectEntity[] {
-    const config = OPTIMIZER_CONFIG_BY_NAME[this.name];
-    if (config === undefined) {
-      return [];
-    }
-
+  boostedProducersAmong(
+    candidates: readonly PlacedWorldObjectEntity[],
+    range: OptimizerRangeValueObject,
+    productionLevels: EnergyLevelsByWorldObjectName
+  ): PlacedWorldObjectEntity[] {
     return candidates
-      .filter((candidate) => candidate.energyProductionLevel !== undefined)
+      .filter((candidate) => productionLevels[candidate.name] !== undefined)
       .filter((candidate) => candidate.planetId === this._planetId)
-      .filter((candidate) => this.isWithinRadius(candidate, config.radius))
+      .filter((candidate) => this.isWithinRadius(candidate, range.radius))
       .map((candidate) => ({candidate, distance: this.distanceTo(candidate)}))
       .sort((a, b) => a.distance - b.distance)
-      .slice(0, config.maxMachines)
+      .slice(0, range.maxMachines)
       .map(({candidate}) => candidate);
   }
 

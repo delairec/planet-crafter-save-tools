@@ -1,42 +1,23 @@
 import {describe, expect, it} from 'bun:test';
 import {LoadSaveFilePresenter} from './LoadSaveFilePresenter';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {SaveParseError, SaveWarning} from 'shared-save-processing/gameDefinitions';
-import {PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {LoadSaveFileViewModel} from './viewModels/LoadSaveFileViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
-const noParsingErrors: SaveParseError[] = [];
-const noWarnings: SaveWarning[] = [];
+const noWarnings: SaveWarningResponse[] = [];
 
 describe('LoadSaveFilePresenter', () => {
 
-  describe('When presenting a loaded save file', () => {
-    it('should update the view model with the valid status and the parsing errors', () => {
+  describe('When presenting a valid save file', () => {
+    it('should update the view model with the valid status and no error', () => {
       // Arrange
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile([{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2, formatRelease: '2.004'}], noWarnings);
+      presenter.presentValidSaveFile(noWarnings);
 
       // Assert
-      expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
-        status: 'valid',
-        errors: [{message: 'Invalid JSON: {', location: 'World objects (section 3), entry 2'}],
-        warnings: []
-      });
-    });
-
-    it('should leave a parsing error about the whole file without a location', () => {
-      // Arrange
-      const presenter = new LoadSaveFilePresenter();
-
-      // Act
-      presenter.presentLoadedSaveFile([{detail: 'Expected 11 sections but found 2'}], noWarnings);
-
-      // Assert
-      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors)
-        .toEqual([{message: 'Expected 11 sections but found 2', location: null}]);
+      expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({status: 'valid', errors: [], warnings: []});
     });
 
     it('should translate the warning codes into user messages', () => {
@@ -44,7 +25,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile(noParsingErrors, [{code: 'legacy-save-format'}]);
+      presenter.presentValidSaveFile([{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -54,18 +35,66 @@ describe('LoadSaveFilePresenter', () => {
     });
   });
 
+  describe('When presenting a save file with unreadable lines', () => {
+    it('should update the view model with the invalid status and the unreadable lines located', () => {
+      // Arrange
+      const presenter = new LoadSaveFilePresenter();
+
+      // Act
+      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{'}], warnings: noWarnings});
+
+      // Assert
+      expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
+        status: 'invalid',
+        errors: [{message: 'Invalid JSON: {', location: 'World objects (section 78), entry 2'}],
+        warnings: []
+      });
+    });
+
+    it('should keep the warnings alongside the unreadable lines', () => {
+      // Arrange
+      const presenter = new LoadSaveFilePresenter();
+
+      // Act
+      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
+
+      // Assert
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
+        location: null
+      }]);
+    });
+  });
+
+  describe('When presenting a file without a JSON extension', () => {
+    it('should update the view model with the invalid status and the extension error', () => {
+      // Arrange
+      const presenter = new LoadSaveFilePresenter();
+
+      // Act
+      presenter.presentFileWithoutJsonExtension();
+
+      // Assert
+      expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
+        status: 'invalid',
+        errors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
+        warnings: []
+      });
+    });
+  });
+
   describe('When presenting an invalid save file', () => {
     it('should update the view model with the invalid status and the formatted errors', () => {
       // Arrange
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'}], noWarnings);
+      presenter.presentInvalidSaveFile({errors: [{code: 'unexpected-section-count', foundSectionCount: 3, expectedSectionCounts: [11, 12]}], warnings: noWarnings});
 
       // Assert
       expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
         status: 'invalid',
-        errors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
+        errors: [{message: 'Expected 11 or 12 sections but found 3', location: null}],
         warnings: []
       });
     });
@@ -75,7 +104,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}], [{code: 'legacy-save-format'}]);
+      presenter.presentInvalidSaveFile({errors: [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -89,10 +118,30 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {', section: PLAYERS_SECTION_INDEX, entryIndex: 1, formatRelease: '2.004'}], noWarnings);
+      presenter.presentInvalidSaveFile({errors: [{code: 'invalid-json', section: {name: 'players', index: 77}, entryIndex: 1, line: '{'}], warnings: noWarnings});
 
       // Assert
-      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Players (section 2), entry 1'}]);
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Players (section 77), entry 1'}]);
+    });
+  });
+
+  describe('When presenting a save file that designates no host or more than one', () => {
+    it('should update the view model with the invalid status and the host count found', () => {
+      // Arrange
+      const presenter = new LoadSaveFilePresenter();
+
+      // Act
+      presenter.presentSaveFileWithoutUniqueHost(2, [{code: 'legacy-save-format'}]);
+
+      // Assert
+      expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
+        status: 'invalid',
+        errors: [{message: 'Expected exactly one host player, found 2', location: null}],
+        warnings: [{
+          message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
+          location: null
+        }]
+      });
     });
   });
 });

@@ -1,5 +1,8 @@
-import {PlayerSummaryValueObject} from "../../domain/valueObjects/PlayerSummaryValueObject";
+import type {UnreadableLinesResponse} from "../responses/UnreadableLinesResponse";
+import {PlayersResponse} from "../responses/PlayersResponse";
 
 export interface PlayersPresenterPort {
-  displayPlayers(players: PlayerSummaryValueObject[]): void;
+  displayPlayers(response: PlayersResponse): void;
+
+  displaySaveWithUnreadableLines(response: UnreadableLinesResponse): void;
 }

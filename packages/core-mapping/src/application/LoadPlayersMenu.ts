@@ -1,6 +1,7 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {LoadSaveSectionsRequest} from "./requests/LoadSaveSectionsRequest";
 import {PlayersMenuPresenterPort} from "./ports/PlayersMenuPresenterPort";
-import {createPlayerMenuEntryValueObject} from "../domain/valueObjects/PlayerMenuEntryValueObject";
+import {PlayerMenuEntryResponse} from "./responses/PlayerMenuEntryResponse";
 
 export class LoadPlayersMenu {
   constructor(
@@ -8,8 +9,15 @@ export class LoadPlayersMenu {
     private readonly presenter: PlayersMenuPresenterPort
   ) {}
 
-  async execute(): Promise<void> {
-    const players = this.saveSectionsReader.getPlayers().map((player) => createPlayerMenuEntryValueObject({
+  async execute({content}: LoadSaveSectionsRequest): Promise<void> {
+    const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
+
+    if (unreadableLines.length > 0) {
+      this.presenter.displaySaveWithUnreadableLines({unreadableLines});
+      return;
+    }
+
+    const players = saveSections.getPlayers().map((player): PlayerMenuEntryResponse => ({
       name: player.name,
       planet: player.findPlanetStoodOn(),
       isHost: player.isHost

@@ -1,10 +1,15 @@
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSucceededResponse} from "../application/responses/MergeSucceededResponse";
 import {SaveFilesInvalidResponse} from "../application/responses/SaveFilesInvalidResponse";
+import {SaveFileFindingsResponse} from "../application/responses/SaveFileFindingsResponse";
+import {SaveFilesWithoutUniqueHostResponse} from "../application/responses/SaveFilesWithoutUniqueHostResponse";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
+import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
 import {formatMergeWarning} from "./formatMergeWarning";
+import {formatUniqueHostError} from "./formatUniqueHostError";
+import {formatJsonExtensionError} from "./formatJsonExtensionError";
 import {mergedSaveUnusableMessage} from "./messages/mergeFailureMessages.js";
 
 export class MergeResultPresenter implements MergeResultPresenterPort {
@@ -46,7 +51,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     };
   }
 
-  presentSaveFilesInvalid({saveAErrors, saveBErrors, saveAWarnings, saveBWarnings}: SaveFilesInvalidResponse): void {
+  presentSaveFilesInvalid({saveA, saveB}: SaveFilesInvalidResponse): void {
     this._viewModel = {
       status: 'validationError',
       fileName: '',
@@ -55,8 +60,24 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       mergeErrors: [],
       mergeWarnings: [],
       legacyFormatCouldBeKept: false,
-      saveAErrors: saveAErrors.map(formatValidationError),
-      saveBErrors: saveBErrors.map(formatValidationError),
+      saveAErrors: formatFindingErrors(saveA),
+      saveBErrors: formatFindingErrors(saveB),
+      saveAWarnings: formatFindingWarnings(saveA),
+      saveBWarnings: formatFindingWarnings(saveB)
+    };
+  }
+
+  presentSaveFilesWithoutUniqueHost({saveAWrongHostCount, saveBWrongHostCount, saveAWarnings, saveBWarnings}: SaveFilesWithoutUniqueHostResponse): void {
+    this._viewModel = {
+      status: 'validationError',
+      fileName: '',
+      content: '',
+      mergeFailureMessage: '',
+      mergeErrors: [],
+      mergeWarnings: [],
+      legacyFormatCouldBeKept: false,
+      saveAErrors: formatWrongHostCount(saveAWrongHostCount),
+      saveBErrors: formatWrongHostCount(saveBWrongHostCount),
       saveAWarnings: saveAWarnings.map(formatSaveWarning),
       saveBWarnings: saveBWarnings.map(formatSaveWarning)
     };
@@ -77,4 +98,16 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       saveBWarnings: []
     };
   }
+}
+
+function formatWrongHostCount(wrongHostCount: number | undefined): SaveValidationMessageViewModel[] {
+  return wrongHostCount === undefined ? [] : [formatUniqueHostError(wrongHostCount)];
+}
+
+function formatFindingErrors(findings: SaveFileFindingsResponse): SaveValidationMessageViewModel[] {
+  return findings.hasJsonExtension ? findings.errors.map(formatValidationError) : [formatJsonExtensionError()];
+}
+
+function formatFindingWarnings(findings: SaveFileFindingsResponse): SaveValidationMessageViewModel[] {
+  return findings.hasJsonExtension ? findings.warnings.map(formatSaveWarning) : [];
 }

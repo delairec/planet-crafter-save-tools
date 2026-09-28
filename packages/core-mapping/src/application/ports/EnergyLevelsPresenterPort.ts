@@ -1,5 +1,8 @@
-import {EnergyLevelsValueObject} from "../../domain/valueObjects/EnergyLevelsValueObject";
+import type {UnreadableLinesResponse} from "../responses/UnreadableLinesResponse";
+import {EnergyLevelsResponse} from "../responses/EnergyLevelsResponse";
 
 export interface EnergyLevelsPresenterPort {
-  displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void;
+  displayEnergyLevels(energyLevels: EnergyLevelsResponse): void;
+
+  displaySaveWithUnreadableLines(response: UnreadableLinesResponse): void;
 }

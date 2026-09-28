@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {formatSaveWarning} from './formatSaveWarning';
-import {SaveWarning, SaveWarningCode} from 'shared-save-processing/gameDefinitions';
+import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 describe('formatSaveWarning', () => {
@@ -21,7 +21,7 @@ describe('formatSaveWarning', () => {
   describe('When the save contradicts the game release its version declares', () => {
     it('should name the declared version, its release and the release whose format the save carries', () => {
       // Arrange
-      const contradiction: SaveWarning = {
+      const contradiction: SaveWarningResponse = {
         code: 'declared-release-contradicts-content',
         declaredVersion: '2.103',
         declaredRelease: '2.102',
@@ -42,7 +42,7 @@ describe('formatSaveWarning', () => {
   describe('When the warning code is unknown', () => {
     it('should return a generic sentence rather than the code', () => {
       // Arrange
-      const unknownWarning = {code: 'unheard-of-warning' as SaveWarningCode} as SaveWarning;
+      const unknownWarning = {code: 'unheard-of-warning' as SaveWarningResponse['code']} as SaveWarningResponse;
 
       // Act
       const warning = formatSaveWarning(unknownWarning);

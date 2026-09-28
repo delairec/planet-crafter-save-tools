@@ -1,24 +1,8 @@
 import Ajv from 'ajv';
-import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import {runAsEntryPoint, type ScriptIo} from '../scriptIo.ts';
 
-export const TABLE_SCHEMAS_DIRECTORY = path.join(import.meta.dir, 'schemas');
-
-const REPOSITORY_ROOT = path.join(import.meta.dir, '..', '..');
-
-interface TableColumn {
-  table: string;
-  column: string;
-}
-
-function readTableColumn({table, column}: TableColumn): unknown[] {
-  const rows: Record<string, unknown>[] = JSON.parse(readFileSync(path.join(REPOSITORY_ROOT, table), 'utf8'));
-  return rows.map((row) => row[column]);
-}
-
-export interface TableViolation {
-  table: string;
+interface TableViolation {
   row: number;
   message: string;
 }
@@ -31,13 +15,8 @@ function parseRowIndex(instancePath: string): number {
   return -1;
 }
 
-export function findTableViolations(table: string, rows: unknown, schema: object): TableViolation[] {
+function findTableViolations(rows: unknown, schema: object): TableViolation[] {
   const ajv = new Ajv({allErrors: true});
-  ajv.addKeyword({
-    keyword: 'valueOfTable',
-    schemaType: 'object',
-    validate: (tableColumn: TableColumn, value: unknown) => readTableColumn(tableColumn).includes(value)
-  });
   const validate = ajv.compile(schema);
   const valid = validate(rows);
   if (valid) {
@@ -45,24 +24,99 @@ export function findTableViolations(table: string, rows: unknown, schema: object
   }
   const errors = validate.errors ?? [];
   return errors.map((error) => ({
-    table,
     row: parseRowIndex(error.instancePath),
     message: `${error.instancePath || '/'} ${error.message}`
   }));
 }
 
-/** A table is named by its path without `.json`, followed by `:<schema>` when its schema is not named after it. */
+const TABLES_PATTERN = 'packages/data-*/**/*.json';
+
+const SCHEMA_SUFFIX = '.schema.json';
+
+function isTable(file: string): boolean {
+  const name = path.basename(file);
+  return !file.includes('node_modules/') && name !== 'package.json' && !name.startsWith('tsconfig') && !name.endsWith(SCHEMA_SUFFIX);
+}
+
+async function readTextIfPresent(io: ScriptIo, file: string): Promise<string | undefined> {
+  try {
+    return await io.readText(file);
+  } catch {
+    return undefined;
+  }
+}
+
+function isPlainObject(node: unknown): node is Record<string, unknown> {
+  return typeof node === 'object' && node !== null && !Array.isArray(node);
+}
+
+async function readJson(io: ScriptIo, file: string): Promise<unknown> {
+  const content = await readTextIfPresent(io, file);
+  if (content === undefined) {
+    throw new Error(`${file} is not readable`);
+  }
+  return JSON.parse(content);
+}
+
+async function readTableColumn(io: ScriptIo, table: string, column: string): Promise<unknown[]> {
+  const rows = (await readJson(io, table)) as Record<string, unknown>[];
+  return rows.map((row) => row[column]);
+}
+
+async function readSchema(io: ScriptIo, schemaFile: string, isReferenced: boolean): Promise<unknown> {
+  const directory = path.dirname(schemaFile);
+
+  async function resolve(node: unknown): Promise<unknown> {
+    if (Array.isArray(node)) {
+      return Promise.all(node.map(resolve));
+    }
+    if (!isPlainObject(node)) {
+      return node;
+    }
+    const reference = node['$ref'];
+    if (typeof reference === 'string' && reference.startsWith('.')) {
+      return readSchema(io, path.join(directory, reference), true);
+    }
+    const resolved: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(node)) {
+      resolved[key] = await resolve(value);
+    }
+    const {valueOfTable, ...constraints} = resolved;
+    if (isPlainObject(valueOfTable) && typeof valueOfTable['table'] === 'string' && typeof valueOfTable['column'] === 'string') {
+      return {...constraints, enum: await readTableColumn(io, path.join(directory, valueOfTable['table']), valueOfTable['column'])};
+    }
+    return resolved;
+  }
+
+  const schema = await resolve(await readJson(io, schemaFile));
+  if (isReferenced && isPlainObject(schema)) {
+    const {$id: _id, $schema: _schema, ...embedded} = schema;
+    return embedded;
+  }
+  return schema;
+}
+
 export async function validateTables(io: ScriptIo): Promise<void> {
   let exitCode = 0;
-  for (const table of io.commandLineArguments) {
-    const [stem = table, schemaName = path.basename(stem)] = table.split(':');
-    const rowsContent = await io.readText(`${stem}.json`);
-    const schemaContent = await io.readText(path.join(TABLE_SCHEMAS_DIRECTORY, `${schemaName}.schema.json`));
-    const rows = JSON.parse(rowsContent);
-    const schema = JSON.parse(schemaContent);
-    const violations = findTableViolations(stem, rows, schema);
+  const tables: string[] = [];
+  for await (const file of io.scanFiles(TABLES_PATTERN)) {
+    if (isTable(file)) {
+      tables.push(file);
+    }
+  }
+  for (const table of tables.toSorted()) {
+    const stem = table.slice(0, -'.json'.length);
+    const schemaFile = `${stem}${SCHEMA_SUFFIX}`;
+    if ((await readTextIfPresent(io, schemaFile)) === undefined) {
+      io.printError(`${table} has no schema beside it, ${schemaFile}`);
+      exitCode = 1;
+      continue;
+    }
+    const rows = JSON.parse(await io.readText(table));
+    const schema = await readSchema(io, schemaFile, false);
+    const violations = findTableViolations(rows, schema as object);
     for (const violation of violations) {
-      io.printError(`${stem}.json row ${violation.row}: ${violation.message}`);
+      io.printError(`${table} row ${violation.row}: ${violation.message}`);
     }
     if (violations.length > 0) {
       exitCode = 1;

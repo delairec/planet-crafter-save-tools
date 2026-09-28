@@ -1,23 +1,40 @@
-import {describe, expect, it} from 'bun:test';
-import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {describe, expect, it, mock} from 'bun:test';
 import {LoadConfigurationPageController} from './LoadConfigurationPageController';
-import {ModifierViewModel} from '../presentation/viewModels/ConfigurationPageViewModel';
+import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
+import {ConfigurationPageViewModel} from '../presentation/viewModels/ConfigurationPageViewModel';
+
+type ExecuteLoadConfigurationPage = (request: LoadSaveSectionsRequest) => Promise<void>;
+
+function createController(execute: ExecuteLoadConfigurationPage, presenter: {viewModel: ConfigurationPageViewModel}): LoadConfigurationPageController {
+  return new LoadConfigurationPageController(() => ({useCase: {execute}, presenter}));
+}
 
 describe('LoadConfigurationPageController', () => {
-  it('should present the modifiers of the parsed save in their tones', async () => {
+  it('should hand its use case the validated content', async () => {
     // Arrange
-    const validatedContent = createFakeSaveContent();
+    const execute = mock<ExecuteLoadConfigurationPage>(async () => {});
+    const controller = createController(execute, {viewModel: {progression: {fields: []}}});
 
     // Act
-    const viewModel = await LoadConfigurationPageController.loadConfigurationPage(validatedContent);
+    await controller.loadConfigurationPage('validated content');
 
     // Assert
-    expect<ModifierViewModel[] | undefined>(viewModel.modifiers?.modifiers).toEqual([
-      {label: 'Terraformation Pace', badge: {value: '10 %', tone: 'positive', toneLabel: 'helps the player'}},
-      {label: 'Gauge Drain', badge: {value: '× 0.3', tone: 'danger', toneLabel: 'penalises the player'}},
-      {label: 'Meteo Occurrence', badge: {value: '40 %', tone: 'positive', toneLabel: 'helps the player'}},
-      {label: 'Multiplayer Factor', badge: {value: '× 0.5', tone: 'danger', toneLabel: 'penalises the player'}},
-      {label: 'Power Consumption', badge: {value: '20 %', tone: 'positive', toneLabel: 'helps the player'}}
-    ]);
+    expect(execute).toHaveBeenCalledWith({content: 'validated content'});
+  });
+
+  it('should return the view model its presenter holds once the use case has run', async () => {
+    // Arrange
+    const presenter: {viewModel: ConfigurationPageViewModel} = {viewModel: {progression: {fields: []}}};
+    const viewModelAfterRun: ConfigurationPageViewModel = {progression: {fields: []}, unreadableLines: [{message: 'Unreadable line', location: null}]};
+    const controller = createController(async () => {
+      await Promise.resolve();
+      presenter.viewModel = viewModelAfterRun;
+    }, presenter);
+
+    // Act
+    const viewModel = await controller.loadConfigurationPage('validated content');
+
+    // Assert
+    expect(viewModel).toBe(viewModelAfterRun);
   });
 });

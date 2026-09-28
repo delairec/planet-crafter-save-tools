@@ -1,7 +1,9 @@
+import {formatUnreadableLine} from "./formatUnreadableLine";
 import {SaveIdentityViewModel} from "./viewModels/SaveIdentityViewModel";
 import {SaveIdentityPresenterPort} from "../application/ports/SaveIdentityPresenterPort";
-import {SaveIdentityValueObject} from "../domain/valueObjects/SaveIdentityValueObject";
+import {SaveIdentityResponse} from "../application/responses/SaveIdentityResponse";
 import {resolveSaveIdentityGameReleaseLabel} from "./messages/saveIdentityMessages.js";
+import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 
 export class SaveIdentityPresenter implements SaveIdentityPresenterPort {
   private _viewModel: SaveIdentityViewModel = {fileName: ''};
@@ -10,7 +12,7 @@ export class SaveIdentityPresenter implements SaveIdentityPresenterPort {
     return this._viewModel;
   }
 
-  displaySaveIdentity(saveIdentity: SaveIdentityValueObject): void {
+  displaySaveIdentity(saveIdentity: SaveIdentityResponse): void {
     this._viewModel = {
       fileName: saveIdentity.fileName,
       displayName: saveIdentity.displayName,
@@ -21,5 +23,9 @@ export class SaveIdentityPresenter implements SaveIdentityPresenterPort {
 
   displayUnconfiguredSaveIdentity(fileName: string): void {
     this._viewModel = {fileName};
+  }
+
+  displaySaveWithUnreadableLines(fileName: string, {unreadableLines}: UnreadableLinesResponse): void {
+    this._viewModel = {fileName, unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

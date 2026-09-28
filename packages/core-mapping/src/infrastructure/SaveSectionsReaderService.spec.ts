@@ -1,383 +1,42 @@
 import {describe, expect, it} from 'bun:test';
-import {GlobalMetadata, SaveConfiguration, Statistics} from 'shared-save-processing/gameDefinitions';
-import {
-  createGlobalMetadata,
-  createPlayer,
-  createSaveConfiguration,
-  createStatistics,
-  createTerraformationLevel
-} from 'shared-save-processing/testing/createSaveRecords.js';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
+import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
 import {SaveSectionsReaderService} from './SaveSectionsReaderService';
-import {createSaveSections} from '../testing/createSaveSections';
+import {SaveSectionsParserPort} from '../application/ports/SaveSectionsParserPort';
 import {SaveSections} from '../domain/save/SaveSections';
-import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
-import {PlayerEntity} from '../domain/entities/PlayerEntity';
-import {GlobalProgressionValueObject} from '../domain/valueObjects/GlobalProgressionValueObject';
-import {TerraformationLevelEntity} from '../domain/entities/TerraformationLevelEntity';
-import {StatisticsValueObject} from '../domain/valueObjects/StatisticsValueObject';
-import {SaveConfigurationValueObject} from '../domain/valueObjects/SaveConfigurationValueObject';
-import {
-  EnergyLevelsRawDataValueObject,
-  PlanetWorldObjectsValueObject
-} from '../domain/valueObjects/EnergyLevelsRawDataValueObject';
-import {WorldObjectEntity} from '../domain/entities/WorldObjectEntity';
-import {InventoryEntity} from '../domain/entities/InventoryEntity';
-import {PlacedWorldObjectEntity} from '../domain/entities/PlacedWorldObjectEntity';
+import {createSaveSections} from '../testing/createSaveSections';
 
+const SAVE_CONTENT = 'save content';
 
-const CARRIED_WORLD_OBJECTS: WorldObjectEntry[] = [
-  {id: 79111656, gId: 'Phytoplankton3'},
-  {id: 58524136, gId: 'MagnetarQuartz'},
-  {id: 85274195, gId: 'Backpack4'},
-  {id: 48456321, gId: 'OxygenTank5'},
-  {id: 15974863, gId: 'Phytoplankton1'},
-  {id: 28491667, gId: 'PulsarQuartz'},
-  {id: 39187611, gId: 'Backpack7'},
-  {id: 65514812, gId: 'OxygenTank4'}
-];
-
-function createSectionsWithTwoPlayers(): SaveSections {
-  return createSaveSections({
-    globalMetadata: [createGlobalMetadata()],
-    terraformationLevels: [createTerraformationLevel()],
-    players: [
-      createPlayer({name: 'Nikowa'}),
-      createPlayer({name: 'Chileny', inventoryId: 46, equipmentId: 47, host: false})
-    ],
-    worldObjects: CARRIED_WORLD_OBJECTS,
-    inventories: [
-      {id: 44, woIds: [79111656, 58524136], size: 20},
-      {id: 45, woIds: [85274195, 48456321], size: 10},
-      {id: 46, woIds: [15974863, 28491667], size: 20},
-      {id: 47, woIds: [39187611, 65514812], size: 10}
-    ],
-    statistics: [createStatistics()],
-    saveConfigurations: [createSaveConfiguration()]
-  });
+function createParser(sections: SaveSections, errors: UnreadableLine[]): SaveSectionsParserPort {
+  return {
+    parse: (content: string) => content === SAVE_CONTENT ? {sections, errors} : {sections: createSaveSections(), errors: []}
+  };
 }
 
 describe('SaveSectionsReaderService', () => {
-
-  it('should extract global metadata', () => {
+  it('should give access to the sections parsed from the content', () => {
     // Arrange
-    const service = new SaveSectionsReaderService(createSectionsWithTwoPlayers());
+    const noUnreadableLines: UnreadableLine[] = [];
+    const sections = createSaveSections({players: [createPlayer({name: 'Nikowa'})]});
+    const reader = new SaveSectionsReaderService(createParser(sections, noUnreadableLines));
 
     // Act
-    const metadata = service.getGlobalProgression();
+    const {saveSections} = reader.read(SAVE_CONTENT);
 
     // Assert
-    expect<GlobalProgressionValueObject>(metadata).toEqual({
-      allTimeTerraTokens: 200_345
-    });
+    expect(saveSections.getPlayers()[0].name).toBe('Nikowa');
   });
 
-  describe('When the global metadata carries logisticsPaused', () => {
-    it('should extract logisticsPaused alongside the terra tokens', () => {
-      // Arrange
-      const service = new SaveSectionsReaderService(createSaveSections({globalMetadata: [createGlobalMetadata({logisticsPaused: true})]}));
-
-      // Act
-      const metadata = service.getGlobalProgression();
-
-      // Assert
-      expect<GlobalProgressionValueObject>(metadata).toEqual({
-        allTimeTerraTokens: 200_345,
-        logisticsPaused: true
-      });
-    });
-  });
-
-  describe('When global metadata are missing', () => {
-    it('should use fallback values', () => {
-      // Arrange
-      const noGlobalMetadata: GlobalMetadata[] = [];
-      const service = new SaveSectionsReaderService(createSaveSections({globalMetadata: noGlobalMetadata}));
-
-      // Act
-      const metadata = service.getGlobalProgression();
-
-      // Assert
-      expect<GlobalProgressionValueObject>(metadata).toEqual({
-        allTimeTerraTokens: 0
-      });
-    });
-  });
-
-  it('should extract players section', () => {
+  it('should carry every line the parser could not read', () => {
     // Arrange
-    const service = new SaveSectionsReaderService(createSectionsWithTwoPlayers());
+    const unreadableLines: UnreadableLine[] = [{code: 'invalid-json', section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+    const reader = new SaveSectionsReaderService(createParser(createSaveSections(), unreadableLines));
 
     // Act
-    const players = service.getPlayers();
+    const reading = reader.read(SAVE_CONTENT);
 
     // Assert
-    expect<PlayerEntity[]>(players).toEqual([new PlayerEntity({
-      name: 'Nikowa',
-      inventory: ['Phytoplankton3', 'MagnetarQuartz'],
-      equipment: ['Backpack4', 'OxygenTank5'],
-      planetId: 'Toxicity',
-      host: true
-    }), new PlayerEntity({
-      name: 'Chileny',
-      inventory: ['Phytoplankton1', 'PulsarQuartz'],
-      equipment: ['Backpack7', 'OxygenTank4'],
-      planetId: 'Toxicity',
-      host: false
-    })]);
-  });
-
-  it('should extract terraformation levels', () => {
-    // Arrange
-    const service = new SaveSectionsReaderService(createSectionsWithTwoPlayers());
-
-    // Act
-    const levels = service.getTerraformationLevels();
-
-    // Assert
-    expect<TerraformationLevelEntity[]>(levels).toEqual([new TerraformationLevelEntity({
-      planetId: 'Toxicity',
-      unitOxygenLevel: 100,
-      unitHeatLevel: 200,
-      unitPressureLevel: 300,
-      unitPlantsLevel: 400,
-      unitInsectsLevel: 500,
-      unitAnimalsLevel: 600,
-      unitPurificationLevel: 700
-    })]);
-  });
-
-  it('should extract statistics', () => {
-    // Arrange
-    const service = new SaveSectionsReaderService(createSectionsWithTwoPlayers());
-
-    // Act
-    const statistics = service.getStatistics();
-
-    // Assert
-    expect<StatisticsValueObject>(statistics).toEqual({
-      totalCraftedObjects: 10
-    });
-  });
-
-  describe('When statistics are missing', () => {
-    it('should return undefined', () => {
-      // Arrange
-      const noStatistics: Statistics[] = [];
-      const service = new SaveSectionsReaderService(createSaveSections({statistics: noStatistics}));
-
-      // Act
-      const statistics = service.getStatistics();
-
-      // Assert
-      expect(statistics).toBeUndefined();
-    });
-  });
-
-  it('should extract save configuration', () => {
-    // Arrange
-    const service = new SaveSectionsReaderService(createSectionsWithTwoPlayers());
-
-    // Act
-    const saveConfiguration = service.getSaveConfiguration();
-
-    // Assert
-    expect<SaveConfigurationValueObject>(saveConfiguration).toEqual({
-      title: 'Merged Save',
-      mode: 'Standard',
-      modifiers: {
-        terraformationPace: 0.1,
-        powerConsumption: 0.2,
-        gaugeDrain: 0.3,
-        meteoOccurrence: 0.4,
-        multiplayerFactor: 0.5
-      },
-      unlocks: {
-        freeCraft: false,
-        everythingUnlocked: false,
-        spaceTrading: false,
-        oreExtractors: false,
-        teleporters: false,
-        drones: false,
-        autocrafter: false,
-        randomizedMineables: false
-      }
-    });
-  });
-
-  describe('When save configuration is missing', () => {
-    it('should return undefined', () => {
-      // Arrange
-      const noSaveConfigurations: SaveConfiguration[] = [];
-      const service = new SaveSectionsReaderService(createSaveSections({saveConfigurations: noSaveConfigurations}));
-
-      // Act
-      const saveConfiguration = service.getSaveConfiguration();
-
-      // Assert
-      expect(saveConfiguration).toBeUndefined();
-    });
-  });
-
-  describe('When reading energy levels raw data', () => {
-    it('should carry the power consumption modifier of the save configuration', () => {
-      // Arrange
-      const sections = createSaveSections({
-        saveConfigurations: [createSaveConfiguration({modifierPowerConsumption: 1.5})]
-      });
-      const service = new SaveSectionsReaderService(sections);
-
-      // Act
-      const rawData = service.getEnergyLevelsRawData();
-
-      // Assert
-      expect(rawData.powerConsumptionModifier).toBe(1.5);
-    });
-
-    it('should keep every world object but place only those with a position and a planet', () => {
-      // Arrange
-      const sections = createSaveSections({
-        worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: 1},
-          {id: 2, gId: 'FuseEnergy1'},
-          {id: 3, gId: 'EnergyGenerator1', pos: '10,0,0'},
-          {id: 4, gId: 'EnergyGenerator1', planet: 1}
-        ]
-      });
-      const service = new SaveSectionsReaderService(sections);
-
-      // Act
-      const rawData = service.getEnergyLevelsRawData();
-
-      // Assert
-      expect<EnergyLevelsRawDataValueObject>(rawData).toEqual({
-        allWorldObjects: [
-          new WorldObjectEntity({id: '1', name: 'EnergyGenerator1'}),
-          new WorldObjectEntity({id: '2', name: 'FuseEnergy1'}),
-          new WorldObjectEntity({id: '3', name: 'EnergyGenerator1'}),
-          new WorldObjectEntity({id: '4', name: 'EnergyGenerator1'})
-        ],
-        inventories: [],
-        planets: [{
-          planetId: 1,
-          planetName: undefined,
-          placedWorldObjects: [
-            new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator1', position: [0, 0, 0], planetId: 1})
-          ]
-        }]
-      });
-    });
-
-    it('should group placed world objects by planet (Rule EN-PLANET-1)', () => {
-      // Arrange
-      const sections = createSaveSections({
-        worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: 1},
-          {id: 2, gId: 'Drill0', pos: '10,0,0', planet: 2},
-          {id: 3, gId: 'Heater1', pos: '20,0,0', planet: 1}
-        ]
-      });
-      const service = new SaveSectionsReaderService(sections);
-
-      // Act
-      const rawData = service.getEnergyLevelsRawData();
-
-      // Assert
-      expect<readonly PlanetWorldObjectsValueObject[]>(rawData.planets).toEqual([
-        {
-          planetId: 1,
-          planetName: undefined,
-          placedWorldObjects: [
-            new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator1', position: [0, 0, 0], planetId: 1}),
-            new PlacedWorldObjectEntity({id: '3', name: 'Heater1', position: [20, 0, 0], planetId: 1})
-          ]
-        },
-        {
-          planetId: 2,
-          planetName: undefined,
-          placedWorldObjects: [
-            new PlacedWorldObjectEntity({id: '2', name: 'Drill0', position: [10, 0, 0], planetId: 2})
-          ]
-        }
-      ]);
-    });
-
-    it('should name a planet from its numeric id (Rule EN-PLANET-3)', () => {
-      // Arrange
-      const primePlanetNumericId = -1140328421;
-      const sections = createSaveSections({
-        worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: primePlanetNumericId}
-        ]
-      });
-      const service = new SaveSectionsReaderService(sections);
-
-      // Act
-      const rawData = service.getEnergyLevelsRawData();
-
-      // Assert
-      expect(rawData.planets[0].planetName).toBe('Prime');
-    });
-
-    it('should offer the terraformed planet names as hints when the numeric id is unknown (Rule EN-PLANET-2)', () => {
-      // Arrange
-      const unknownPlanetNumericId = 1;
-      const sections = createSaveSections({
-        terraformationLevels: [createTerraformationLevel({planetId: 'Humble'})],
-        worldObjects: [
-          {id: 1, gId: 'Seed7Humble', pos: '0,0,0', planet: unknownPlanetNumericId},
-          {id: 2, gId: 'EnergyGenerator1', pos: '10,0,0', planet: unknownPlanetNumericId}
-        ]
-      });
-      const service = new SaveSectionsReaderService(sections);
-
-      // Act
-      const rawData = service.getEnergyLevelsRawData();
-
-      // Assert
-      expect(rawData.planets[0].planetName).toBe('Humble');
-    });
-
-    it('should translate the save format fields of a placed world object into business terms', () => {
-      // Arrange
-      const sections = createSaveSections({
-        worldObjects: [
-          {id: 95585241, gId: 'Optimizer1', pos: '1751.865,-472.58,1106.104', planet: 1, liId: 100}
-        ]
-      });
-      const service = new SaveSectionsReaderService(sections);
-
-      // Act
-      const rawData = service.getEnergyLevelsRawData();
-
-      // Assert
-      expect<readonly PlacedWorldObjectEntity[]>(rawData.planets[0].placedWorldObjects).toEqual([new PlacedWorldObjectEntity({
-        id: '95585241',
-        name: 'Optimizer1',
-        position: [1751.865, -472.58, 1106.104],
-        planetId: 1,
-        inventoryId: 100
-      })]);
-    });
-
-    it('should hand over the inventory content as a list of world object ids', () => {
-      // Arrange
-      const noWorldObjectIds: number[] = [];
-      const sections = createSaveSections({
-        inventories: [
-          {id: 100, woIds: [20, 21], size: 3},
-          {id: 101, woIds: noWorldObjectIds, size: 1}
-        ]
-      });
-      const service = new SaveSectionsReaderService(sections);
-
-      // Act
-      const rawData = service.getEnergyLevelsRawData();
-
-      // Assert
-      expect<readonly InventoryEntity[]>(rawData.inventories).toEqual([
-        new InventoryEntity({id: 100, worldObjectIds: ['20', '21'], size: 3}),
-        new InventoryEntity({id: 101, worldObjectIds: [], size: 1})
-      ]);
-    });
+    expect<UnreadableLine[]>(reading.unreadableLines).toEqual([{code: 'invalid-json', section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]);
   });
 });

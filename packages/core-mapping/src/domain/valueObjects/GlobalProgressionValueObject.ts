@@ -1,4 +1,3 @@
-import {assertFiniteNumber, assertOptionalBoolean} from "../errors/assertions";
 
 export interface GlobalProgressionValueObject {
   readonly allTimeTerraTokens: number;
@@ -7,7 +6,7 @@ export interface GlobalProgressionValueObject {
 
 export function createGlobalProgressionValueObject(input: GlobalProgressionValueObject): GlobalProgressionValueObject {
   return {
-    allTimeTerraTokens: assertFiniteNumber(input.allTimeTerraTokens, 'GlobalProgressionValueObject.allTimeTerraTokens'),
-    logisticsPaused: assertOptionalBoolean(input.logisticsPaused, 'GlobalProgressionValueObject.logisticsPaused')
+    allTimeTerraTokens: input.allTimeTerraTokens,
+    logisticsPaused: input.logisticsPaused
   };
 }

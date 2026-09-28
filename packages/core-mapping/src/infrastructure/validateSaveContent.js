@@ -1,32 +1,39 @@
 /**
- * @import { SaveParseError, SaveWarning } from 'shared-save-processing/gameDefinitions'
- * @import { ValidationIssue } from '../application/ports/ValidationIssue'
- * @import { UniqueHostViolation } from '../domain/rules/validateUniqueHost'
+ * @import { SaveWarning, UnreadableSaveLine } from 'shared-save-processing/gameDefinitions'
+ * @import { ValidationIssue } from '../domain/validation/ValidationIssue'
  */
 
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
-import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
+import {resolveSectionIndexes, SAVE_CONFIGURATION_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
-import {validateUniqueHost} from '../domain/rules/validateUniqueHost.ts';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
+import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes.ts';
+import {locateSaveSection} from './locateSaveSection.ts';
+import {locateUnreadableLine} from './locateUnreadableLine.ts';
 
 /**
  * @param {string} saveContent
- * @returns {{isValid: boolean, errors: ValidationIssue[], warnings: SaveWarning[]}}
+ * @returns {{isValid: boolean, errors: ValidationIssue[], warnings: SaveWarning[], declaredVersion?: string, carriedRelease?: string}}
  */
 export function validateSaveContent(saveContent) {
-  const sectionCountErrors = verifySectionCount(saveContent.split('@'));
-  if (sectionCountErrors.length > 0) {
+  const [sectionCountError] = verifySectionCount(saveContent.split('@'));
+  if (sectionCountError !== undefined) {
     return {
       isValid: false,
-      errors: [{code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: sectionCountErrors[0].detail}],
+      errors: [{
+        code: VALIDATION_ISSUE_CODES.UNEXPECTED_SECTION_COUNT,
+        foundSectionCount: sectionCountError.foundSectionCount,
+        expectedSectionCounts: sectionCountError.expectedSectionCounts
+      }],
       warnings: []
     };
   }
 
-  const {formatRelease, sections, errors: parseErrors, warnings} = parseSaveSections(saveContent);
+  const parsedSave = parseSaveSections(saveContent);
+  const formatRelease = /** @type {string} */ (parsedSave.formatRelease);
+  const {sections, errors: parseErrors, warnings} = parsedSave;
+
   const sectionIndexes = resolveSectionIndexes(formatRelease);
   const worldObjectIssues = validateWorldObjectsSection(
     /** @type {() => Generator<unknown>} */ (sections[sectionIndexes.worldObjects]),
@@ -34,7 +41,7 @@ export function validateSaveContent(saveContent) {
     sectionIndexes.worldObjects
   );
 
-  const errors = parseErrors.map(toInvalidJsonIssue);
+  const errors = parseErrors.map(parseError => toInvalidJsonIssue(parseError, formatRelease));
 
   errors.push(...validateGlobalMetadataEntryCount(
     /** @type {unknown[]} */ (sections[sectionIndexes.globalMetadata]),
@@ -45,28 +52,32 @@ export function validateSaveContent(saveContent) {
   errors.push(...worldObjectIssues);
   errors.push(...validateFloatSerialization(saveContent));
 
-  const uniqueHostViolation = validateUniqueHost(/** @type {Parameters<typeof validateUniqueHost>[0]} */ (sections[sectionIndexes.players]));
-  if (uniqueHostViolation !== null) {
-    errors.push(toUniqueHostIssue(uniqueHostViolation));
-  }
+  const declaredVersion = readDeclaredVersion(
+    /** @type {unknown[]} */ (sections[SAVE_CONFIGURATION_SECTION_INDEX])
+  );
 
-  return {isValid: errors.length === 0, errors, warnings};
+  return {isValid: errors.length === 0, errors, warnings, declaredVersion, carriedRelease: formatRelease};
 }
 
 /**
- * @param {UniqueHostViolation} violation
- * @returns {ValidationIssue}
+ * @param {unknown[]} saveConfigurationSection
+ * @returns {string | undefined}
  */
-function toUniqueHostIssue({hostCount}) {
-  return {
-    code: VALIDATION_ISSUE_CODES.UNIQUE_HOST,
-    detail: `Expected exactly one host player, found ${hostCount}`
-  };
+function readDeclaredVersion(saveConfigurationSection) {
+  const [saveConfiguration] = saveConfigurationSection;
+
+  if (typeof saveConfiguration !== 'object' || saveConfiguration === null) {
+    return undefined;
+  }
+
+  const {version} = /** @type {{version?: unknown}} */ (saveConfiguration);
+
+  return typeof version === 'string' ? version : undefined;
 }
 
 /**
  * @param {unknown[]} globalMetadataSection
- * @param {string | undefined} formatRelease
+ * @param {string} formatRelease
  * @param {number} sectionIndex
  * @returns {ValidationIssue[]}
  */
@@ -78,16 +89,16 @@ function validateGlobalMetadataEntryCount(globalMetadataSection, formatRelease, 
   }
 
   return [{
-    code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE,
-    detail: `Expected at least ${minItems} entry but found ${globalMetadataSection.length}`,
-    section: sectionIndex,
-    formatRelease
+    code: VALIDATION_ISSUE_CODES.TOO_FEW_SECTION_ENTRIES,
+    section: locateSaveSection(sectionIndex, formatRelease),
+    foundEntryCount: globalMetadataSection.length,
+    minimumEntryCount: minItems
   }];
 }
 
 /**
  * @param {() => Generator<unknown>} createWorldObjects
- * @param {string | undefined} formatRelease
+ * @param {string} formatRelease
  * @param {number} sectionIndex
  * @returns {ValidationIssue[]}
  */
@@ -105,9 +116,10 @@ function validateWorldObjectsSection(createWorldObjects, formatRelease, sectionI
 }
 
 /**
- * @param {SaveParseError} parseError
+ * @param {UnreadableSaveLine} parseError
+ * @param {string} formatRelease
  * @returns {ValidationIssue}
  */
-function toInvalidJsonIssue({detail, section, entryIndex, formatRelease}) {
-  return {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail, section, entryIndex, formatRelease};
+function toInvalidJsonIssue(parseError, formatRelease) {
+  return {...locateUnreadableLine(parseError, formatRelease), code: VALIDATION_ISSUE_CODES.INVALID_JSON};
 }

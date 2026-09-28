@@ -168,7 +168,7 @@ RULE WorldObjectsAreDeduplicatedByPlanetAndPosition
 	SPEC "when two objects share the same planet and pos, save A's object is kept and save B's"
 		+ "discarded"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldObjects.spec.ts::should"
-			+ "deduplicate by pos and keep only the one from save A"
+			+ "deduplicate by position and keep only the one from save A"
 	SPEC "the world objects held by the inventories of a player ejected from save B are removed"
 		+ "before the merge"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldObjects.spec.ts::should"
@@ -263,8 +263,6 @@ RULE SaveConfigurationComesFromSaveA
 		+ "written, so a merge of two saves of the same format declares the version of save A"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
 			+ "declare the version of that save"
-		ATTESTED_BY "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::should"
-			+ "write the format of 2.004 and declare a version of that format"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-CFG-1 and GR-CFG-3); GR-CFG-2 moved"
 		+ "to @DECISION.TheMergedSaveDisplayNameComesFromTheCaller"
@@ -366,9 +364,9 @@ RULE APlanetNumericIdIsStableAcrossSaves
 	DOMAIN format
 	SPEC "the numeric planet id a world object and a world event carry is the same value in every"
 		+ "save, being derived neither from the world seed nor from the content of the save"
-		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.json::-1140328421"
+		ATTESTED_BY "packages/data-planets/planetNamesByNumericId.json::-1140328421"
 		ATTESTED_BY "packages/shared-save-processing/schemas/section9-world-events.schema.json::planet"
-		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.json::-440810600"
+		ATTESTED_BY "packages/data-planets/planetNamesByNumericId.json::-440810600"
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	APPLIES_TO_SECTION @SECTION.WorldEvents
 	VALUES_FROM @DATATABLE.PlanetNamesByNumericId
@@ -402,7 +400,7 @@ RULE APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 		+ "written by 1.618 or earlier has none of them"
 		ATTESTED_BY "packages/shared-save-processing/schemas/section2-players.schema.json::\"cameraView\":"
 			+ "{"
-		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::LegacyCompatiblePlayer"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::NUMBER_FIELD_FALLBACKS"
 	APPLIES_TO_SECTION @SECTION.Players
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-PLAYER-4, a"
 		+ "fact about the save left inside @RULE.PlayersAreDeduplicatedByName"
@@ -436,7 +434,7 @@ RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 		ATTESTED_BY "packages/shared-save-processing/testing/createSaveRecords.js::PC-Toxicity-Layer2"
 	SPEC "the game writes the six properties of the table in every Terrain Layers entry it writes,"
 		+ "and no other"
-		ATTESTED_BY "packages/shared-save-processing/legacyTerrainLayerProperties.json::colorCustomLerp"
+		ATTESTED_BY "packages/data-save-format/legacyTerrainLayerProperties.json::colorCustomLerp"
 	VALUES_FROM @DATATABLE.LegacyTerrainLayerProperties
 	APPLIES_TO_SECTION @SECTION.TerrainLayers
 	SOURCE "Extracted from the section index module and the legacy normalisation on 2026-09-23"
@@ -591,3 +589,21 @@ RULE EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
 	SOURCE "Owner review of 2026-09-26 of the first working version, ruled on the mockup: above 100"
 		+ "% penalises for a percentage, below 1 for a coefficient"
 		REF @URL.SaveManagerRedesignMockup
+
+RULE ASaveDesignatesExactlyOneHostPlayer
+	HOLDS_FOR all
+	DOMAIN format
+	SPEC "a save holding at least one player entry flags exactly one of them as host"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts::When"
+			+ "exactly one player is host"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts::When no"
+			+ "player is host"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts::When more"
+			+ "than one player is host"
+	SPEC "a save holding no player entry designates no host and breaks no rule"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts::When there"
+			+ "are no players"
+	APPLIES_TO_SECTION @SECTION.Players
+	SOURCE "Owner ruling during the refinement of REFACTOR160: the unique host check the validator"
+		+ "carried is a statement about the save, recorded in the specification area"
+		PR 231

@@ -1,20 +1,13 @@
-import {SaveSectionName} from "shared-save-processing/gameDefinitions";
-import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
+import {RESERVED_SAVE_PART, type SaveSectionLocationResponse} from "../application/responses/SaveSectionLocationResponse";
 import {saveSectionLabels} from "./messages/saveSectionLabels.js";
 
 interface ErrorLocation {
-  section?: number;
-  entryIndex?: number;
-  formatRelease?: string;
+  readonly section: SaveSectionLocationResponse;
+  readonly entryIndex?: number;
 }
 
-export function formatErrorLocation({section, entryIndex, formatRelease}: ErrorLocation): string | null {
-  if (section === undefined) {
-    return null;
-  }
-
-  const sectionName = findSectionName(section, formatRelease);
-  const sectionLocation = sectionName ? `${saveSectionLabels[sectionName]} (section ${section})` : `section ${section}`;
+export function formatErrorLocation({section, entryIndex}: ErrorLocation): string {
+  const sectionLocation = formatSectionLocation(section);
 
   if (entryIndex === undefined) {
     return sectionLocation;
@@ -23,12 +16,10 @@ export function formatErrorLocation({section, entryIndex, formatRelease}: ErrorL
   return `${sectionLocation}, entry ${entryIndex}`;
 }
 
-function findSectionName(section: number, formatRelease: string | undefined): SaveSectionName | undefined {
-  if (formatRelease === undefined) {
-    return undefined;
+function formatSectionLocation({name, index}: SaveSectionLocationResponse): string {
+  if (name === RESERVED_SAVE_PART) {
+    return `section ${index}`;
   }
 
-  const sectionIndexes = resolveSectionIndexes(formatRelease);
-
-  return (Object.keys(sectionIndexes) as SaveSectionName[]).find(sectionName => sectionIndexes[sectionName] === section);
+  return `${saveSectionLabels[name]} (section ${index})`;
 }

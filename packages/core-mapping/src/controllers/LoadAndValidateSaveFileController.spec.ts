@@ -1,48 +1,40 @@
-import {describe, expect, it} from 'bun:test';
+import {describe, expect, it, mock} from 'bun:test';
 import {LoadAndValidateSaveFileController} from './LoadAndValidateSaveFileController';
-import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {ValidateSaveFileRequest} from '../application/requests/ValidateSaveFileRequest';
 import {LoadSaveFileViewModel} from '../presentation/viewModels/LoadSaveFileViewModel';
 
+type ExecuteLoadAndValidateSaveFile = (request: ValidateSaveFileRequest) => Promise<void>;
+
+function createController(execute: ExecuteLoadAndValidateSaveFile, presenter: {viewModel: LoadSaveFileViewModel}): LoadAndValidateSaveFileController {
+  return new LoadAndValidateSaveFileController(() => ({useCase: {execute}, presenter}));
+}
+
 describe('LoadAndValidateSaveFileController', () => {
+  it('should hand its use case the file name and the content', async () => {
+    // Arrange
+    const execute = mock<ExecuteLoadAndValidateSaveFile>(async () => {});
+    const controller = createController(execute, {viewModel: {status: 'idle', errors: [], warnings: []}});
 
-  describe('When the file name has a valid extension and the content is a valid save', () => {
-    it('should return a valid view model', async () => {
-      // Act
-      const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile('Save-A.json', createFakeSaveContent());
+    // Act
+    await controller.loadAndValidateSaveFile('Save-A.json', 'save content');
 
-      // Assert
-      expect<LoadSaveFileViewModel>(viewModel).toEqual({status: 'valid', errors: [], warnings: []});
-    });
+    // Assert
+    expect(execute).toHaveBeenCalledWith({fileName: 'Save-A.json', content: 'save content'});
   });
 
-  describe('When the content is a valid save written in the format of 1.618', () => {
-    it('should return a valid view model carrying no error and the warning of that format alone', async () => {
-      // Act
-      const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile('Save-A.json', createLegacyFakeSaveContent());
+  it('should return the view model its presenter holds once the use case has run', async () => {
+    // Arrange
+    const presenter: {viewModel: LoadSaveFileViewModel} = {viewModel: {status: 'idle', errors: [], warnings: []}};
+    const viewModelAfterRun: LoadSaveFileViewModel = {status: 'invalid', errors: [], warnings: []};
+    const controller = createController(async () => {
+      await Promise.resolve();
+      presenter.viewModel = viewModelAfterRun;
+    }, presenter);
 
-      // Assert
-      expect<LoadSaveFileViewModel>(viewModel).toEqual({
-        status: 'valid',
-        errors: [],
-        warnings: [{
-          message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
-          location: null
-        }]
-      });
-    });
-  });
+    // Act
+    const viewModel = await controller.loadAndValidateSaveFile('Save-A.json', 'save content');
 
-  describe('When the content is not a valid save', () => {
-    it('should return an invalid view model with the content validation error messages', async () => {
-      // Act
-      const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile('Save-A.json', 'not a valid save at all');
-
-      // Assert
-      expect<LoadSaveFileViewModel>(viewModel).toEqual({
-        status: 'invalid',
-        errors: [{message: 'Expected 11 or 12 sections but found 1', location: null}],
-        warnings: []
-      });
-    });
+    // Assert
+    expect(viewModel).toBe(viewModelAfterRun);
   });
 });

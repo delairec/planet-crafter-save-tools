@@ -1,15 +1,15 @@
 import {SaveIdentityViewModel} from "../presentation/viewModels/SaveIdentityViewModel";
-import {SaveIdentityPresenter} from "../presentation/SaveIdentityPresenter";
-import {LoadSaveIdentity} from "../application/LoadSaveIdentity";
-import {createSaveSectionsReader} from "../composition/compositionRoot";
+import {LoadSaveIdentityRequest} from "../application/requests/LoadSaveIdentityRequest";
+import {UseCaseFactory} from "./UseCaseFactory";
 
 export class LoadSaveIdentityController {
-  static async loadSaveIdentity(validatedContent: string, fileName: string): Promise<SaveIdentityViewModel> {
-    const saveReader = createSaveSectionsReader(validatedContent);
-    const presenter = new SaveIdentityPresenter();
-    const useCase = new LoadSaveIdentity(saveReader, presenter);
+  constructor(private readonly createLoadSaveIdentity: UseCaseFactory<LoadSaveIdentityRequest, SaveIdentityViewModel>) {
+  }
 
-    await useCase.execute({fileName});
+  async loadSaveIdentity(validatedContent: string, fileName: string): Promise<SaveIdentityViewModel> {
+    const {useCase, presenter} = this.createLoadSaveIdentity();
+
+    await useCase.execute({content: validatedContent, fileName});
 
     return presenter.viewModel;
   }

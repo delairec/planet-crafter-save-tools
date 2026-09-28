@@ -1,0 +1,13 @@
+{
+  "name": "data-energy",
+  "version": "1.0.0",
+  "description": "Energy value tables: the energy levels and those of earlier releases",
+  "changelogLine": "Energy values updated",
+  "type": "module",
+  "exports": {
+    "./*": "./*.ts"
+  },
+  "scripts": {
+    "lint:types": "tsc --noEmit"
+  }
+}

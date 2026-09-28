@@ -148,12 +148,46 @@ the check sees what `tsc` erases.
 bun run check:presentation
 ```
 
-Fails on any import of `domain/entities/` made from a `presentation/` directory. A presenter receives a value
-object, never a domain entity: an entity carries behaviour, so a presenter holding one decides when a domain
-computation runs, and its shape follows the save format rather than what is displayed. Infrastructure may still
-build entities — that is where a save is read and validated — and the reader port still hands them to the
-application layer; only the presentation boundary is closed. Every `.js`, `.ts` and `.tsx` source of every package
-is scanned, outside dependencies and build outputs, and type-only and dynamic imports count.
+Fails on four refusals, closing the output boundary of a `core-` package and the way from a controller to a presenter:
+
+- a file of a `presentation/` directory, specs included, that imports any module under `domain/` or
+  `infrastructure/`, whatever its subdirectory. A presenter reads application responses and primitives only: a domain
+  type carries behaviour, so a presenter holding one decides when a domain computation runs, and an infrastructure
+  type ties what is displayed to the save format;
+- a file of `application/responses/` that imports a module under `domain/entities/` or `infrastructure/`;
+- a presenter port, a file `application/ports/*Presenter*`, that imports any module under `domain/`, whatever its
+  subdirectory. The port is the contract the use case hands its outcome through, so it takes application responses
+  or primitives only;
+- a file of `controllers/` that imports a concrete presenter. A controller knows the view model type only: the
+  composition root creates the presenter and hands it over with the use case.
+
+Infrastructure may still build entities — that is where a save is read and validated — and the reader port still
+hands them to the application layer; only the output boundary is closed. Every `.js`, `.ts` and `.tsx` source of every
+`core-` package is scanned, outside dependencies and build outputs, and type-only and dynamic imports count. The
+guard runs with no exemption.
+
+```
+bun run check:wire-format
+```
+
+Fails on a file under the `domain/` directory of a `core-` package, spec files included, that uses a save format
+abbreviation — `gId`, `liId`, `woIds`, `siIds` or `linkedWo` — as an identifier, a property name or a property key,
+string literal keys included. The domain names the business concept; the abbreviation is tolerated only in the save
+format records and is translated at the domain boundary. Comments and string literals that are not keys are not
+reported. An import of the save format records themselves is refused by `check:workspace-imports`.
+
+Every `.js`, `.ts` and `.tsx` source under a `domain/` directory of every `core-` package is scanned, outside
+dependencies and build outputs. The guard runs with no exemption.
+
+```
+bun run check:workspace-imports
+```
+
+Fails on any file of a `core-` package outside its `infrastructure/` directory that imports another workspace
+package, spec files and `testing/` included. A value import, a type-only import, a re-export, a dynamic import and a
+JSDoc `@import` all count. The application declares the types its ports exchange and the domain its own business
+types; the infrastructure adapter maps the records of the other package onto them, so only the infrastructure knows
+that package. The guard carries no allow-list.
 
 ```
 bun run check:action-pins

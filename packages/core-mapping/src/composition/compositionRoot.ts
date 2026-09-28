@@ -1,26 +1,30 @@
-import {SaveValidatorService} from "../infrastructure/SaveValidatorService";
-import {SaveSectionsParserService} from "../infrastructure/SaveSectionsParserService";
-import {SaveSectionsSerializerService} from "../infrastructure/SaveSectionsSerializerService";
-import {SaveSectionsReaderService} from "../infrastructure/SaveSectionsReaderService";
-import {SaveValidatorPort} from "../application/ports/SaveValidatorPort";
-import {SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
-import {SaveSectionsSerializerPort} from "../application/ports/SaveSectionsSerializerPort";
-import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPort";
+import {LoadAndValidateSaveFileController} from "../controllers/LoadAndValidateSaveFileController";
+import {LoadConfigurationPageController} from "../controllers/LoadConfigurationPageController";
+import {LoadEnergyLevelsSectionController} from "../controllers/LoadEnergyLevelsSectionController";
+import {LoadPlayersMenuController} from "../controllers/LoadPlayersMenuController";
+import {LoadPlayersSectionController} from "../controllers/LoadPlayersSectionController";
+import {LoadSaveIdentityController} from "../controllers/LoadSaveIdentityController";
+import {LoadTerraformationLevelsSectionController} from "../controllers/LoadTerraformationLevelsSectionController";
+import {MergeSaveFilesController} from "../controllers/MergeSaveFilesController";
+import {ValidateSaveFileController} from "../controllers/ValidateSaveFileController";
+import {
+  createValidateSaveFile,
+  createLoadAndValidateSaveFile,
+  createMergeSaveFiles,
+  createLoadConfigurationPage,
+  createLoadEnergyLevelsSection,
+  createLoadPlayersMenu,
+  createLoadPlayersSection,
+  createLoadSaveIdentity,
+  createLoadTerraformationLevelsSection
+} from "./useCaseFactories";
 
-export function createSaveValidator(): SaveValidatorPort {
-  return new SaveValidatorService();
-}
-
-export function createSaveSectionsParser(): SaveSectionsParserPort {
-  return new SaveSectionsParserService();
-}
-
-export function createSaveSectionsSerializer(): SaveSectionsSerializerPort {
-  return new SaveSectionsSerializerService();
-}
-
-export function createSaveSectionsReader(validatedContent: string): SaveSectionsReaderPort {
-  const {sections} = createSaveSectionsParser().parse(validatedContent);
-
-  return new SaveSectionsReaderService(sections);
-}
+export const validateSaveFileController = new ValidateSaveFileController(createValidateSaveFile);
+export const loadAndValidateSaveFileController = new LoadAndValidateSaveFileController(createLoadAndValidateSaveFile);
+export const mergeSaveFilesController = new MergeSaveFilesController(createMergeSaveFiles);
+export const loadConfigurationPageController = new LoadConfigurationPageController(createLoadConfigurationPage);
+export const loadEnergyLevelsSectionController = new LoadEnergyLevelsSectionController(createLoadEnergyLevelsSection);
+export const loadPlayersMenuController = new LoadPlayersMenuController(createLoadPlayersMenu);
+export const loadPlayersSectionController = new LoadPlayersSectionController(createLoadPlayersSection);
+export const loadSaveIdentityController = new LoadSaveIdentityController(createLoadSaveIdentity);
+export const loadTerraformationLevelsSectionController = new LoadTerraformationLevelsSectionController(createLoadTerraformationLevelsSection);

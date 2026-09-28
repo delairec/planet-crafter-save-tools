@@ -1,29 +1,27 @@
-import {
-  GlobalMetadata,
-  MailboxMessage,
-  Player,
-  SaveConfiguration,
-  Statistics,
-  StoryEvent,
-  TerraformationLevel,
-  TerrainLayer,
-  WorldEvent
-} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
+import {GlobalMetadataEntry} from '../../save/GlobalMetadataEntry';
 import {InventoryEntry} from '../../save/InventoryEntry';
+import {MailboxMessageEntry} from '../../save/MailboxMessageEntry';
+import {PlayerEntry} from '../../save/PlayerEntry';
+import {SaveConfigurationEntry} from '../../save/SaveConfigurationEntry';
+import {StatisticsEntry} from '../../save/StatisticsEntry';
+import {StoryEventEntry} from '../../save/StoryEventEntry';
+import {TerraformationLevelEntry} from '../../save/TerraformationLevelEntry';
+import {TerrainLayerEntry} from '../../save/TerrainLayerEntry';
+import {WorldEventEntry} from '../../save/WorldEventEntry';
 import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 export interface MergedSaveSections {
   readonly formatRelease: string;
-  readonly globalMetadata: GlobalMetadata;
-  readonly terraformationLevels: readonly TerraformationLevel[];
-  readonly players: EntriesByOrigin<Player>;
+  readonly globalMetadata: GlobalMetadataEntry;
+  readonly terraformationLevels: readonly TerraformationLevelEntry[];
+  readonly players: EntriesByOrigin<PlayerEntry>;
   readonly worldObjects: EntriesByOrigin<WorldObjectEntry>;
   readonly inventories: EntriesByOrigin<InventoryEntry>;
-  readonly statistics: Statistics | undefined;
-  readonly mailboxes: readonly MailboxMessage[];
-  readonly storyEvents: readonly StoryEvent[];
-  readonly saveConfiguration: SaveConfiguration | undefined;
-  readonly terrainLayers: readonly TerrainLayer[] | undefined;
-  readonly worldEvents: readonly WorldEvent[];
+  readonly statistics: StatisticsEntry | undefined;
+  readonly mailboxes: readonly MailboxMessageEntry[];
+  readonly storyEvents: readonly StoryEventEntry[];
+  readonly saveConfiguration: SaveConfigurationEntry | undefined;
+  readonly terrainLayers: readonly TerrainLayerEntry[] | undefined;
+  readonly worldEvents: readonly WorldEventEntry[];
 }

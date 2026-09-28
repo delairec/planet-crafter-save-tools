@@ -1,8 +1,18 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {LoadSaveSectionsRequest} from "./requests/LoadSaveSectionsRequest";
 import {ConfigurationPagePresenterPort} from "./ports/ConfigurationPagePresenterPort";
-import {AssessedSaveConfigurationResponse} from "./responses/ConfigurationPageResponse";
+import {
+  AssessedSaveConfigurationResponse,
+  DifficultyModifierEffectsResponse,
+  DifficultyModifiersResponse,
+  GlobalProgressionResponse,
+  StatisticsResponse,
+  UnlocksResponse
+} from "./responses/ConfigurationPageResponse";
 import {SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
-import {assessDifficultyModifiers} from "../domain/rules/assessDifficultyModifiers";
+import {GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
+import {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
+import {assessDifficultyModifiers, DifficultyModifierEffects, DifficultyModifiers} from "../domain/rules/assessDifficultyModifiers";
 
 export class LoadConfigurationPage {
   constructor(
@@ -10,18 +20,73 @@ export class LoadConfigurationPage {
     private readonly presenter: ConfigurationPagePresenterPort
   ) {}
 
-  async execute(): Promise<void> {
+  async execute({content}: LoadSaveSectionsRequest): Promise<void> {
+    const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
+
+    if (unreadableLines.length > 0) {
+      this.presenter.displaySaveWithUnreadableLines({unreadableLines});
+      return;
+    }
+
     this.presenter.displayConfigurationPage({
-      globalProgression: this.saveSectionsReader.getGlobalProgression(),
-      statistics: this.saveSectionsReader.getStatistics(),
-      assessedSaveConfiguration: assessSaveConfiguration(this.saveSectionsReader.getSaveConfiguration())
+      globalProgression: describeGlobalProgression(saveSections.getGlobalProgression()),
+      statistics: describeStatistics(saveSections.getStatistics()),
+      assessedSaveConfiguration: assessSaveConfiguration(saveSections.getSaveConfiguration())
     });
   }
+}
+
+function describeGlobalProgression(globalProgression: GlobalProgressionValueObject): GlobalProgressionResponse {
+  return {allTimeTerraTokens: globalProgression.allTimeTerraTokens, logisticsPaused: globalProgression.logisticsPaused};
+}
+
+function describeStatistics(statistics: StatisticsValueObject | undefined): StatisticsResponse | undefined {
+  if (!statistics) {
+    return undefined;
+  }
+  return {totalCraftedObjects: statistics.totalCraftedObjects};
 }
 
 function assessSaveConfiguration(saveConfiguration: SaveConfigurationValueObject | undefined): AssessedSaveConfigurationResponse | undefined {
   if (!saveConfiguration) {
     return undefined;
   }
-  return {saveConfiguration, modifierEffects: assessDifficultyModifiers(saveConfiguration.modifiers)};
+  return {
+    modifiers: describeDifficultyModifiers(saveConfiguration.modifiers),
+    modifierEffects: describeDifficultyModifierEffects(assessDifficultyModifiers(saveConfiguration.modifiers)),
+    unlocks: describeUnlocks(saveConfiguration.unlocks)
+  };
+}
+
+function describeDifficultyModifiers(modifiers: DifficultyModifiers): DifficultyModifiersResponse {
+  return {
+    terraformationPace: modifiers.terraformationPace,
+    powerConsumption: modifiers.powerConsumption,
+    gaugeDrain: modifiers.gaugeDrain,
+    meteoOccurrence: modifiers.meteoOccurrence,
+    multiplayerFactor: modifiers.multiplayerFactor
+  };
+}
+
+function describeDifficultyModifierEffects(effects: DifficultyModifierEffects): DifficultyModifierEffectsResponse {
+  return {
+    terraformationPace: effects.terraformationPace,
+    powerConsumption: effects.powerConsumption,
+    gaugeDrain: effects.gaugeDrain,
+    meteoOccurrence: effects.meteoOccurrence,
+    multiplayerFactor: effects.multiplayerFactor
+  };
+}
+
+function describeUnlocks(unlocks: SaveConfigurationValueObject['unlocks']): UnlocksResponse {
+  return {
+    freeCraft: unlocks.freeCraft,
+    everythingUnlocked: unlocks.everythingUnlocked,
+    spaceTrading: unlocks.spaceTrading,
+    oreExtractors: unlocks.oreExtractors,
+    teleporters: unlocks.teleporters,
+    drones: unlocks.drones,
+    autocrafter: unlocks.autocrafter,
+    randomizedMineables: unlocks.randomizedMineables
+  };
 }

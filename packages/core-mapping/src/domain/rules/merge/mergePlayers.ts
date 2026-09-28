@@ -1,8 +1,5 @@
-import {Player} from 'shared-save-processing/gameDefinitions';
 import {EntriesByOrigin} from './EntriesByOrigin';
-
-type LegacyCompatiblePlayer = Omit<Player, 'cameraView' | 'totalCraftedObjects' | 'totalTerraTokenEarned'>
-  & Partial<Pick<Player, 'cameraView' | 'totalCraftedObjects' | 'totalTerraTokenEarned'>>;
+import {PlayerEntry} from '../../save/PlayerEntry';
 
 const NUMBER_FIELD_FALLBACKS = {
   cameraView: 0,
@@ -12,14 +9,10 @@ const NUMBER_FIELD_FALLBACKS = {
 
 const NO_HOST_POSITION = -1;
 
-const applyHostAndFallbacks = (player: LegacyCompatiblePlayer, host: boolean): Player =>
+const applyHostAndFallbacks = (player: PlayerEntry, host: boolean): PlayerEntry =>
   ({...NUMBER_FIELD_FALLBACKS, ...player, host});
 
-/**
- * @see @RULE.PlayersAreDeduplicatedByName, @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate,
- * @DECISION.MissingPlayerFieldsAreWrittenAsZero
- */
-export function mergePlayers(playersA: LegacyCompatiblePlayer[], playersB: LegacyCompatiblePlayer[]): EntriesByOrigin<Player> {
+export function mergePlayers(playersA: readonly PlayerEntry[], playersB: readonly PlayerEntry[]): EntriesByOrigin<PlayerEntry> {
   const playersFromBNotInA = playersB.filter(playerB =>
     !playersA.some(playerA => playerA.name === playerB.name)
   );

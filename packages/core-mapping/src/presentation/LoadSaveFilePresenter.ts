@@ -1,12 +1,15 @@
-import {LoadAndValidateSaveFilePresenterPort} from "../application/ports/LoadAndValidateSaveFilePresenterPort";
-import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveParseError, SaveWarning} from "shared-save-processing/gameDefinitions";
+import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
+import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {LoadSaveFileViewModel} from "./viewModels/LoadSaveFileViewModel";
 import {formatValidationError} from "./formatValidationError";
-import {formatErrorLocation} from "./formatErrorLocation";
+import {formatUnreadableLine} from "./formatUnreadableLine";
 import {formatSaveWarning} from "./formatSaveWarning";
+import {formatUniqueHostError} from "./formatUniqueHostError";
+import {formatJsonExtensionError} from "./formatJsonExtensionError";
+import type {SaveFileWithUnreadableLinesResponse} from "../application/responses/SaveFileWithUnreadableLinesResponse";
+import type {InvalidSaveFileResponse} from "../application/responses/InvalidSaveFileResponse";
 
-export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPort {
+export class LoadSaveFilePresenter implements SaveFileValidationPresenterPort {
   private _viewModel: LoadSaveFileViewModel;
 
   constructor() {
@@ -17,7 +20,7 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
     return this._viewModel;
   }
 
-  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarning[]): void {
+  presentInvalidSaveFile({errors, warnings}: InvalidSaveFileResponse): void {
     this._viewModel = {
       status: 'invalid',
       errors: errors.map(formatValidationError),
@@ -25,14 +28,30 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
     };
   }
 
-  /**
-   * The errors of a save that parsed name the line the parser could not read, so they reach the
-   * screen located like the validation ones.
-   */
-  presentLoadedSaveFile(errors: SaveParseError[], warnings: SaveWarning[]): void {
+  presentValidSaveFile(warnings: SaveWarningResponse[]): void {
     this._viewModel = {
       status: 'valid',
-      errors: errors.map(error => ({message: error.detail, location: formatErrorLocation(error)})),
+      errors: [],
+      warnings: warnings.map(formatSaveWarning)
+    };
+  }
+
+  presentFileWithoutJsonExtension(): void {
+    this._viewModel = {status: 'invalid', errors: [formatJsonExtensionError()], warnings: []};
+  }
+
+  presentSaveFileWithUnreadableLines({unreadableLines, warnings}: SaveFileWithUnreadableLinesResponse): void {
+    this._viewModel = {
+      status: 'invalid',
+      errors: unreadableLines.map(formatUnreadableLine),
+      warnings: warnings.map(formatSaveWarning)
+    };
+  }
+
+  presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarningResponse[]): void {
+    this._viewModel = {
+      status: 'invalid',
+      errors: [formatUniqueHostError(hostCount)],
       warnings: warnings.map(formatSaveWarning)
     };
   }

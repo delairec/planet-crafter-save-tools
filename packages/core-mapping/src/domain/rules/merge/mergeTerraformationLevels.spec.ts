@@ -1,13 +1,13 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeTerraformationLevels} from './mergeTerraformationLevels';
-import {createTerraformationLevel} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createTerraformationLevelEntry} from '../../../testing/createSaveEntries';
 
 describe('Merge terraformation levels', () => {
-  const baseTerraformationLevel = createTerraformationLevel();
+  const baseTerraformationLevel = createTerraformationLevelEntry();
 
   const toxicityLevelFromSaveA = {...baseTerraformationLevel};
 
-  const primeLevelFromSaveB = createTerraformationLevel({
+  const primeLevelFromSaveB = createTerraformationLevelEntry({
     planetId: 'Prime',
     unitOxygenLevel: 10.0,
     unitHeatLevel: 20.0,
@@ -18,7 +18,7 @@ describe('Merge terraformation levels', () => {
     unitPurificationLevel: -1.0
   });
 
-  const aqualisLevelFromSaveB = createTerraformationLevel({
+  const aqualisLevelFromSaveB = createTerraformationLevelEntry({
     planetId: 'Aqualis',
     unitOxygenLevel: 1.0,
     unitHeatLevel: 2.0,

@@ -7,7 +7,7 @@ LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
 		+ "draws power in game"
 	UNTIL "a source prices these machines, or a reading in game shows they draw no power"
 	SEEN_IN "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
-	SEEN_IN "packages/core-mapping/src/domain/energyLevels.json::GeneticManipulator1"
+	SEEN_IN "packages/data-energy/energyLevels.json::GeneticManipulator1"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "The wiki prints no energy field for these machines, and the game data export prints"
 		+ "0 for them, a value it writes for any world object without an energy field, so neither"

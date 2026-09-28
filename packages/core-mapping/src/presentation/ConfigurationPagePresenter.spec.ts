@@ -1,3 +1,4 @@
+import {UnreadableLineResponse} from "../application/responses/UnreadableLineResponse";
 import {describe, expect, it} from 'bun:test';
 import {ConfigurationPagePresenter} from "./ConfigurationPagePresenter";
 import {ConfigurationPageViewModel} from "./viewModels/ConfigurationPageViewModel";
@@ -5,27 +6,23 @@ import {AssessedSaveConfigurationResponse} from "../application/responses/Config
 
 function createAssessedSaveConfiguration(): AssessedSaveConfigurationResponse {
   return {
-    saveConfiguration: {
-      title: 'Fake Save',
-      mode: 'Standard',
-      modifiers: {terraformationPace: 2, powerConsumption: 1, gaugeDrain: 0.5, meteoOccurrence: 0.25, multiplayerFactor: 1},
-      unlocks: {
-        freeCraft: true,
-        everythingUnlocked: false,
-        spaceTrading: true,
-        oreExtractors: false,
-        teleporters: false,
-        drones: true,
-        autocrafter: false,
-        randomizedMineables: true
-      }
-    },
+    modifiers: {terraformationPace: 2, powerConsumption: 1, gaugeDrain: 0.5, meteoOccurrence: 0.25, multiplayerFactor: 1},
     modifierEffects: {
       terraformationPace: 'penalisesThePlayer',
       powerConsumption: 'gameDefault',
       gaugeDrain: 'penalisesThePlayer',
       meteoOccurrence: 'helpsThePlayer',
       multiplayerFactor: 'gameDefault'
+    },
+    unlocks: {
+      freeCraft: true,
+      everythingUnlocked: false,
+      spaceTrading: true,
+      oreExtractors: false,
+      teleporters: false,
+      drones: true,
+      autocrafter: false,
+      randomizedMineables: true
     }
   };
 }
@@ -129,6 +126,20 @@ describe('ConfigurationPagePresenter', () => {
         label: 'Drone logistics',
         badge: {value: 'Running', tone: 'positive', toneLabel: 'helps the player'}
       });
+    });
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should show the unreadable lines in place of the configuration page', () => {
+      // Arrange
+      const unreadableLines: UnreadableLineResponse[] = [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
+      const presenter = new ConfigurationPagePresenter();
+
+      // Act
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
+
+      // Assert
+      expect(presenter.viewModel).toEqual<ConfigurationPageViewModel>({progression: {fields: []}, unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 78), entry 2'}]});
     });
   });
 });

@@ -1,0 +1,13 @@
+{
+  "name": "data-world-objects",
+  "version": "1.0.0",
+  "description": "World object value tables: the label shown for each world object name and the configuration of each optimizer",
+  "changelogLine": "World object values updated",
+  "type": "module",
+  "exports": {
+    "./*": "./*.ts"
+  },
+  "scripts": {
+    "lint:types": "tsc --noEmit"
+  }
+}

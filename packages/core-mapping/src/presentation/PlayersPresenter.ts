@@ -1,7 +1,8 @@
+import {formatUnreadableLine} from "./formatUnreadableLine";
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
 import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
-import {PlayerSummaryValueObject} from "../domain/valueObjects/PlayerSummaryValueObject";
-import {WorldObjectLabel, worldObjectLabels} from "./worldObjectLabels";
+import {PlayersResponse} from "../application/responses/PlayersResponse";
+import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 import {
   playersSectionEquipmentLabel,
   playersSectionInventoryLabel,
@@ -9,6 +10,7 @@ import {
   playersSectionNoItemsMessage,
   resolvePlayersSectionUnknownItemLabel
 } from "./messages/playersSectionMessages.js";
+import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 
 export class PlayersPresenter implements PlayersPresenterPort {
   private _viewModel: PlayersViewModel;
@@ -23,30 +25,34 @@ export class PlayersPresenter implements PlayersPresenterPort {
     return this._viewModel;
   }
 
-  displayPlayers(players: PlayerSummaryValueObject[]): void {
+  displayPlayers({players, worldObjectLabels}: PlayersResponse): void {
     this._viewModel = {
       players: players.map(player => ({
         name: player.name,
         columns: [
           {
             header: playersSectionEquipmentLabel,
-            values: mapListWithEmptyMessage(player.equipment, playersSectionNoEquipmentMessage),
+            values: mapListWithEmptyMessage(player.equipment, playersSectionNoEquipmentMessage, worldObjectLabels),
           },
           {
             header: playersSectionInventoryLabel,
-            values: mapListWithEmptyMessage(player.inventory, playersSectionNoItemsMessage),
+            values: mapListWithEmptyMessage(player.inventory, playersSectionNoItemsMessage, worldObjectLabels),
           }
         ]
       }))
     };
   }
+
+  displaySaveWithUnreadableLines({unreadableLines}: UnreadableLinesResponse): void {
+    this._viewModel = {players: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
+  }
 }
 
-function mapItemNameToItemLabel(itemName: string): string {
-  const worldObjectLabel: WorldObjectLabel = worldObjectLabels[itemName];
+function mapItemNameToItemLabel(itemName: string, worldObjectLabels: WorldObjectLabelsResponse): string {
+  const worldObjectLabel: string | undefined = worldObjectLabels[itemName];
   return worldObjectLabel ?? resolvePlayersSectionUnknownItemLabel(itemName);
 }
 
-function mapListWithEmptyMessage(list: readonly string[], message: string): string[] {
-  return list.length === 0 ? [message] : list.map(mapItemNameToItemLabel);
+function mapListWithEmptyMessage(list: readonly string[], message: string, worldObjectLabels: WorldObjectLabelsResponse): string[] {
+  return list.length === 0 ? [message] : list.map((itemName) => mapItemNameToItemLabel(itemName, worldObjectLabels));
 }

@@ -1,0 +1,13 @@
+{
+  "name": "data-save-format",
+  "version": "1.0.0",
+  "description": "Save format value tables: the game releases and the legacy terrain layer properties",
+  "changelogLine": "Save format tables updated",
+  "type": "module",
+  "exports": {
+    "./*": "./*.ts"
+  },
+  "scripts": {
+    "lint:types": "tsc --noEmit"
+  }
+}

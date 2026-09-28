@@ -1,3 +1,4 @@
+import {UnreadableLineResponse} from "../application/responses/UnreadableLineResponse";
 import {describe, expect, it} from 'bun:test';
 import {PlayersMenuPresenter} from "./PlayersMenuPresenter";
 import {PlayersMenuViewModel} from "./viewModels/PlayersMenuViewModel";
@@ -32,6 +33,20 @@ describe('PlayersMenuPresenter', () => {
 
       // Assert
       expect(presenter.viewModel).toEqual<PlayersMenuViewModel>({players: [{name: 'Sakia'}]});
+    });
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should show the unreadable lines in place of the players menu', () => {
+      // Arrange
+      const unreadableLines: UnreadableLineResponse[] = [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
+      const presenter = new PlayersMenuPresenter();
+
+      // Act
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
+
+      // Assert
+      expect(presenter.viewModel).toEqual<PlayersMenuViewModel>({players: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 78), entry 2'}]});
     });
   });
 });

@@ -1,7 +1,10 @@
-import {SaveIdentityValueObject} from "../../domain/valueObjects/SaveIdentityValueObject";
+import type {UnreadableLinesResponse} from "../responses/UnreadableLinesResponse";
+import {SaveIdentityResponse} from "../responses/SaveIdentityResponse";
 
 export interface SaveIdentityPresenterPort {
-  displaySaveIdentity(saveIdentity: SaveIdentityValueObject): void;
+  displaySaveIdentity(saveIdentity: SaveIdentityResponse): void;
 
   displayUnconfiguredSaveIdentity(fileName: string): void;
+
+  displaySaveWithUnreadableLines(fileName: string, response: UnreadableLinesResponse): void;
 }

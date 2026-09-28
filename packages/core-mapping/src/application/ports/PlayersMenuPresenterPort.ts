@@ -1,5 +1,8 @@
-import {PlayerMenuEntryValueObject} from "../../domain/valueObjects/PlayerMenuEntryValueObject";
+import type {UnreadableLinesResponse} from "../responses/UnreadableLinesResponse";
+import {PlayerMenuEntryResponse} from "../responses/PlayerMenuEntryResponse";
 
 export interface PlayersMenuPresenterPort {
-  displayPlayersMenu(players: PlayerMenuEntryValueObject[]): void;
+  displayPlayersMenu(players: PlayerMenuEntryResponse[]): void;
+
+  displaySaveWithUnreadableLines(response: UnreadableLinesResponse): void;
 }

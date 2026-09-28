@@ -1,8 +1,15 @@
-import {ValidationIssue} from "./ValidationIssue";
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import type {InvalidSaveFileResponse} from "../responses/InvalidSaveFileResponse";
+import type {SaveWarningResponse} from "../responses/SaveWarningResponse";
+import type {SaveFileWithUnreadableLinesResponse} from "../responses/SaveFileWithUnreadableLinesResponse";
 
 export interface SaveFileValidationPresenterPort {
-  presentValidSaveFile(warnings: SaveWarning[]): void;
+  presentValidSaveFile(warnings: SaveWarningResponse[]): void;
 
-  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarning[]): void;
+  presentInvalidSaveFile(response: InvalidSaveFileResponse): void;
+
+  presentFileWithoutJsonExtension(): void;
+
+  presentSaveFileWithUnreadableLines(response: SaveFileWithUnreadableLinesResponse): void;
+
+  presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarningResponse[]): void;
 }

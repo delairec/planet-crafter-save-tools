@@ -1,22 +1,50 @@
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
+import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {SaveFileValidationPresenterPort} from "./ports/SaveFileValidationPresenterPort";
 import {ValidateSaveFileRequest} from "./requests/ValidateSaveFileRequest";
+import {SaveValidationResponse} from "./responses/SaveValidationResponse";
+import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
+import {detectDeclaredReleaseContradiction} from "../domain/rules/detectDeclaredReleaseContradiction";
 
 export class ValidateSaveFile {
   constructor(
     private readonly validator: SaveValidatorPort,
+    private readonly saveSectionsReader: SaveSectionsReaderPort,
+    private readonly gameReleasesReader: GameReleasesReaderPort,
     private readonly presenter: SaveFileValidationPresenterPort
   ) {
   }
 
   async execute({fileName, content}: ValidateSaveFileRequest): Promise<void> {
-    const validation = this.validator.validate(fileName, content);
-
-    if (!validation.isValid) {
-      this.presenter.presentInvalidSaveFile(validation.errors, validation.warnings);
+    if (!this.validator.hasJsonExtension(fileName)) {
+      this.presenter.presentFileWithoutJsonExtension();
       return;
     }
 
-    this.presenter.presentValidSaveFile(validation.warnings);
+    const validation = this.validator.validate(content);
+    const contradiction = detectDeclaredReleaseContradiction(validation, this.gameReleasesReader.readGameReleases());
+    const warnings: SaveValidationResponse['warnings'] = contradiction === null ? validation.warnings : [...validation.warnings, {code: 'declared-release-contradicts-content', ...contradiction}];
+
+    if (!validation.isValid) {
+      this.presenter.presentInvalidSaveFile({errors: validation.errors, warnings});
+      return;
+    }
+
+    const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
+
+    if (unreadableLines.length > 0) {
+      this.presenter.presentSaveFileWithUnreadableLines({unreadableLines, warnings});
+      return;
+    }
+
+    const uniqueHostViolation = validateUniqueHost(saveSections.getPlayers());
+
+    if (uniqueHostViolation !== null) {
+      this.presenter.presentSaveFileWithoutUniqueHost(uniqueHostViolation.hostCount, warnings);
+      return;
+    }
+
+    this.presenter.presentValidSaveFile(warnings);
   }
 }

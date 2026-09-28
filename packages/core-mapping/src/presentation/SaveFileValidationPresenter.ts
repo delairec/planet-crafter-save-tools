@@ -1,9 +1,13 @@
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
-import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {SaveFileValidationViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
+import {formatUnreadableLine} from "./formatUnreadableLine";
+import {formatUniqueHostError} from "./formatUniqueHostError";
+import {formatJsonExtensionError} from "./formatJsonExtensionError";
+import type {SaveFileWithUnreadableLinesResponse} from "../application/responses/SaveFileWithUnreadableLinesResponse";
+import type {InvalidSaveFileResponse} from "../application/responses/InvalidSaveFileResponse";
 
 export class SaveFileValidationPresenter implements SaveFileValidationPresenterPort {
   private _viewModel: SaveFileValidationViewModel;
@@ -16,14 +20,34 @@ export class SaveFileValidationPresenter implements SaveFileValidationPresenterP
     return this._viewModel;
   }
 
-  presentValidSaveFile(warnings: SaveWarning[]): void {
+  presentValidSaveFile(warnings: SaveWarningResponse[]): void {
     this._viewModel = {status: 'valid', errors: [], warnings: warnings.map(formatSaveWarning)};
   }
 
-  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarning[]): void {
+  presentInvalidSaveFile({errors, warnings}: InvalidSaveFileResponse): void {
     this._viewModel = {
       status: 'invalid',
       errors: errors.map(formatValidationError),
+      warnings: warnings.map(formatSaveWarning)
+    };
+  }
+
+  presentFileWithoutJsonExtension(): void {
+    this._viewModel = {status: 'invalid', errors: [formatJsonExtensionError()], warnings: []};
+  }
+
+  presentSaveFileWithUnreadableLines({unreadableLines, warnings}: SaveFileWithUnreadableLinesResponse): void {
+    this._viewModel = {
+      status: 'invalid',
+      errors: unreadableLines.map(formatUnreadableLine),
+      warnings: warnings.map(formatSaveWarning)
+    };
+  }
+
+  presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarningResponse[]): void {
+    this._viewModel = {
+      status: 'invalid',
+      errors: [formatUniqueHostError(hostCount)],
       warnings: warnings.map(formatSaveWarning)
     };
   }

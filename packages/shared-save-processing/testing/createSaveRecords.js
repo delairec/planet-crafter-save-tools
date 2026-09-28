@@ -1,4 +1,4 @@
-/** @import { Player, Inventory, SaveConfiguration, GlobalMetadata, TerraformationLevel, Statistics, WorldObject, MailboxMessage, StoryEvent, TerrainLayer, WorldEvent } from '../gameDefinitions' */
+/** @import { Player, Inventory, SaveConfiguration, GlobalMetadata, TerraformationLevel, Statistics, WorldObject, MailboxMessage, TerrainLayer, WorldEvent } from '../gameDefinitions' */
 
 // Single source of the factories building the individual records of a save file, in business
 // language. No other testing module defines or re-exports them: `createFakeSaveContent.js` renders
@@ -141,14 +141,6 @@ export function createWorldObject(overrides = {}) {
  */
 export function createMailboxMessage(overrides = {}) {
   return {stringId: 'MailWelcome', isRead: false, ...overrides};
-}
-
-/**
- * @param {Partial<StoryEvent>} overrides
- * @returns {StoryEvent}
- */
-export function createStoryEvent(overrides = {}) {
-  return {stringId: 'StoryFirstLaunch', ...overrides};
 }
 
 /**

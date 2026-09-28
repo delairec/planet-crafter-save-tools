@@ -1,3 +1,4 @@
+import {SaveValidationMessageViewModel} from "./SaveFileValidationViewModel";
 export type ToneViewModel = 'neutral' | 'danger' | 'positive';
 
 export interface TonedValueViewModel {
@@ -43,6 +44,7 @@ export interface UnlocksZoneViewModel {
 }
 
 export interface ConfigurationPageViewModel {
+  unreadableLines?: SaveValidationMessageViewModel[];
   progression: ProgressionZoneViewModel;
   modifiers?: ModifiersZoneViewModel;
   unlocks?: UnlocksZoneViewModel;
