@@ -24,17 +24,10 @@
 ## [Open the Save Manager in browser](https://planet-crafter-save-manager.netlify.app/) — nothing to install
 
 <p>
-  <a href="docs/assets/welcome-page-dark.png"><picture>
-    <source media="(prefers-color-scheme: light)" srcset="docs/assets/welcome-page-light-thumbnail.png">
-    <img src="docs/assets/welcome-page-dark-thumbnail.png" width="300" alt="Merging two saves in the Save Manager (full size)">
-  </picture></a>
-  <a href="docs/assets/display-page-dark.png"><picture>
-    <source media="(prefers-color-scheme: light)" srcset="docs/assets/display-page-light-thumbnail.png">
-    <img src="docs/assets/display-page-dark-thumbnail.png" width="300" alt="Looking inside a save in the Save Manager (full size)">
-  </picture></a>
+  <a href="docs/assets/home-page-light.png"><img src="docs/assets/home-page-light-thumbnail.png" width="300" alt="The home page of the Save Manager in the light theme, a save loaded and two merged saves attached (full size)"></a>
+  <a href="docs/assets/home-page-dark.png"><img src="docs/assets/home-page-dark-thumbnail.png" width="300" alt="The home page of the Save Manager in the dark theme, a save loaded and two merged saves attached (full size)"></a>
 </p>
-<p><sub>Open a screenshot at full size, or see the <a href="docs/assets/welcome-page-light.png">merge in the light theme</a>
-and the <a href="docs/assets/display-page-light.png">save view in the light theme</a>.</sub></p>
+<p><sub>Open a screenshot at full size by clicking the thumbnail.</sub></p>
 
 <br/>
 </div>
