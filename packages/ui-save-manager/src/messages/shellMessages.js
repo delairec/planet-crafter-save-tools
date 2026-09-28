@@ -7,6 +7,7 @@ export const saveGroupTitle = 'Save';
 export const playersGroupTitle = 'Players';
 
 export const mergeTwoSavesPageTitle = 'Merge two saves';
+export const loadSavePageTitle = 'Load save';
 export const loadAnotherSavePageTitle = 'Load another save';
 export const overviewPageTitle = 'Overview';
 export const configurationPageTitle = 'Configuration';
@@ -17,3 +18,6 @@ export const seeMorePlayersButtonLabel = 'See more';
 
 /** @param {string} fileName */
 export const resolveLoadedSaveTitle = (fileName) => `Loaded save: ${fileName}`;
+
+/** @param {boolean} isSaveLoaded */
+export const resolveLoadSavePageTitle = (isSaveLoaded) => isSaveLoaded ? loadAnotherSavePageTitle : loadSavePageTitle;

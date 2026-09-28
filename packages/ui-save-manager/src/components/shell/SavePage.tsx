@@ -14,7 +14,7 @@ export default function SavePage(props: SavePageProps) {
   const loadedSave = useLoadedSave();
 
   return (
-    <Show when={loadedSave.isSaveLoaded()} fallback={<Navigate href={PAGE_PATHS.overviewPath}/>}>
+    <Show when={loadedSave.isSaveLoaded()} fallback={<Navigate href={PAGE_PATHS.loadSavePath}/>}>
       <Breadcrumb group={props.group} page={props.page}/>
       {props.children}
     </Show>

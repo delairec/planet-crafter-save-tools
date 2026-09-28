@@ -37,7 +37,7 @@ test.describe('Save validation errors', () => {
   test.describe('When an invalid save file is merged with a valid one', () => {
     test('should name the rejected input and locate its errors, without offering a download', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/merge');
 
       // Act
       await mergeAndRevealTheMessages(page, invalidSaveFixturePath, validSaveFixturePath, 'save-a-errors');

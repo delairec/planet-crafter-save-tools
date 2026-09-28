@@ -48,13 +48,13 @@ test.describe('Save manager shell', () => {
       expect(shellParts).toEqual(['title', 'disclaimers', 'page', 'footer']);
     });
 
-    test('should offer the Tools group alone, holding Merge two saves and Load another save', async ({page}) => {
+    test('should offer the Tools group alone, holding Merge two saves and Load save', async ({page}) => {
       // Act
       await page.goto('/');
 
       // Assert
       await expect(findTheMenuGroupTitles(page)).toHaveText(['Tools']);
-      await expect(findTheMenu(page).getByTestId(/-page-link$/)).toHaveText(['Merge two saves', 'Load another save']);
+      await expect(findTheMenu(page).getByTestId(/-page-link$/)).toHaveText(['Merge two saves', 'Load save']);
     });
   });
 
@@ -150,19 +150,19 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Assert
-      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
+      await expect(page.getByTestId('save-configuration-summary')).toHaveText('Merged Save (Standard)');
       expect(loadedDocumentUrls).toEqual([]);
     });
   });
 
   test.describe('When a page of the save is requested with no save loaded', () => {
-    test('should open the Overview page', async ({page}) => {
+    test('should open the Load save page', async ({page}) => {
       // Act
       await page.goto('/configuration');
 
       // Assert
-      await expect(page.getByTestId('display-area')).toBeVisible();
-      await expect(findTheBreadcrumbSteps(page)).toHaveCount(0);
+      await expect(page).toHaveURL(/\/load-save$/);
+      await expect(findTheBreadcrumbSteps(page)).toHaveText(['Tools', 'Load save']);
     });
   });
 

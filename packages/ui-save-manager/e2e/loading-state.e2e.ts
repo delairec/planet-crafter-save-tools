@@ -13,7 +13,7 @@ async function chooseTheSaveToVisualizeWithTheReadsHeld(page: Page): Promise<voi
 
 async function chooseTheTwoSavesToMergeWithTheReadsHeld(page: Page): Promise<void> {
   await holdEveryFileRead(page);
-  await page.goto('/');
+  await page.goto('/merge');
   await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
 }
 
@@ -45,7 +45,7 @@ test.describe('Loading states', () => {
   });
 
   test.describe('When the display of a save file completes', () => {
-    test('should end the busy state and hand the button back', async ({page}) => {
+    test('should end the busy state and open the Overview page on the save', async ({page}) => {
       // Arrange
       await startVisualizingWithTheReadsHeld(page);
 
@@ -54,7 +54,7 @@ test.describe('Loading states', () => {
 
       // Assert
       await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
-      await expect(page.getByTestId('visualize')).toBeEnabled();
+      await expect(page).toHaveURL(/\/overview$/);
     });
   });
 

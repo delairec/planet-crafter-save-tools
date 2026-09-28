@@ -1,9 +1,5 @@
 :root {
-    --button-primary-bg-idle: color-mix(
-            in srgb,
-            var(--primary) 90%,
-            white
-    );
+    --button-primary-bg-idle: var(--primary-idle);
 
     --button-primary-bg-hover: var(--primary);
 
@@ -14,12 +10,6 @@
     );
 
     @media (prefers-color-scheme: dark) {
-        --button-primary-bg-idle: color-mix(
-                in srgb,
-                var(--primary) 90%,
-                black
-        );
-
         --button-primary-bg-disabled: color-mix(
                 in srgb,
                 var(--primary) 50%,

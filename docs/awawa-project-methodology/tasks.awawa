@@ -1089,7 +1089,7 @@ TASK FEAT119
 	SPEC "a file dropped outside every area leaves the page in place instead of opening the file"
 		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should keep the browser from opening them"
 	SPEC "every file input stays, so a file can still be picked with the keyboard"
-		IMPL "packages/ui-save-manager/src/routes/index.tsx::ref={fileInputElement}"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::ref={fileInputElement}"
 		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::ref={saveBInput}"
 	SPEC "UI scenarios on the three engines drop a file on the display area, one on a merge slot"
 		+ "and two at once on the merge section"
@@ -1687,7 +1687,7 @@ TASK FEAT134
 		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the Tools, Save and Players"
 			+ "groups of the menu in that order"
 		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should offer the Tools group alone,"
-			+ "holding Merge two saves and Load another save"
+			+ "holding Merge two saves and Load save"
 		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should offer the Overview, Configuration,"
 			+ "Power and Terraformation pages in the Save group"
 		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should end the Players group on a See more"
@@ -1898,20 +1898,53 @@ TASK FEAT136
 
 TASK FEAT137
 	TITLE "Move the merge of two saves and the loading of another save under the Tools group"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 211
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; what Load another"
 		+ "save does to an unsaved merge result is settled with the owner when the task starts"
 	SPEC "the Merge two saves page carries the merge form of today, save A and save B drop zones,"
 		+ "the swap control, the legacy format box and the Merge button, and shows the result, the"
 		+ "download and the warnings of a merge where the form is"
+		IMPL "packages/ui-save-manager/src/routes/merge.tsx::<MergeSection onMergeStarted={() =>"
+			+ "setMergeResult(null)} onMergeResult={setMergeResult}/>"
+		IMPL "packages/ui-save-manager/src/routes/merge.tsx::<MergeResultSection"
+			+ "result={mergeResult}/>"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should lead to the merge form"
+		IMPL "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::Merge two saves page"
+			+ "accessibility"
 	SPEC "a merge leaves the loaded save in memory untouched: the scenario of today that expects a"
 		+ "merge to leave no save to visualize is rewritten to that, and the scenario aligning the"
 		+ "labels of the merge form with the file input of the display is retired, the two forms no"
 		+ "longer sharing a page"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should leave the loaded save in the"
+			+ "Overview page"
 	SPEC "Load another save lets the user pick or drop a save; the new save replaces the loaded one"
 		+ "and the Overview page opens on it"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Overview page on the"
+			+ "new save"
+		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts::should display that file as if it had been"
+			+ "picked"
+		IMPL "packages/ui-save-manager/e2e/accessibility/load-save.e2e.ts::Load another save page"
+			+ "accessibility"
+	SPEC "Load save and Load another save are one page at /load-save, named by whether a save is"
+		+ "loaded, its menu entry marked current; the root address opens it, a loaded save opens"
+		+ "the Overview page at /overview, and picking a file there leaves the loaded save in place"
+		+ "until a new save validates"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should mark Load save as the current"
+			+ "page of the menu"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Load save page"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Overview page at its"
+			+ "own address"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should keep the loaded save"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveResultSection.tsx::<ValidationMessagesList"
+			+ "title={displayRouteErrorsTitle}"
 	SPEC "the merge page reads the merge result view model of today, unchanged; the drop, merge and"
 		+ "loading-state scenarios of today pass on the new pages"
+		IMPL "packages/ui-save-manager/src/routes/merge.tsx::createSignal<MergeResultViewModel |"
+			+ "null>(null)"
+		IMPL "packages/ui-save-manager/e2e/drop.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
+		IMPL "packages/ui-save-manager/e2e/loading-state.e2e.ts"
 	AFTER @TASK.FEAT135
 	WAVE @WAVE.10
 	RATIONALE "The merge form sits above the visualization today and is the first thing the page"
@@ -2398,7 +2431,7 @@ TASK TEST148
 	SPEC "an accessibility test reaches an element by its test id and asserts its role, its"
 		+ "accessible name or its label with toHaveRole, toHaveAccessibleName or"
 		+ "toHaveAccessibleDescription, so that check:locators accepts the file unchanged"
-		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::toHaveAccessibleDescription("
+		IMPL "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::toHaveAccessibleDescription("
 	SPEC "an axe audit of the page, before a save is loaded, once a save is visualized and once a"
 		+ "merge result is shown, reports no WCAG 2 A or AA violation"
 		IMPL "packages/ui-save-manager/e2e/helpers/createAWcag2Audit.ts::withTags(wcag2LevelAAndAaTags)"
@@ -2434,3 +2467,57 @@ TASK TEST148
 	SOURCE "Owner ruling at the refinement of 2026-09-28: Playwright assertions plus an axe audit,"
 		+ "one accessibility.e2e.ts split by page later, delivered on master outside any wave"
 	DELIVERED_BY 213
+
+TASK FEAT149
+	TITLE "Keep the last merged saves in a store of their own across the pages"
+	STATUS draft
+	DESC "asked by the owner in the review of pull request 211 on 2026-09-28"
+	SPEC "the result of a merge is held by a provider of its own above the routes, so that leaving"
+		+ "the Merge two saves page, Load save included, keeps a result not yet downloaded"
+	SPEC "the provider keeps the last five merged saves; a sixth merge drops the oldest"
+	AFTER @TASK.FEAT137
+	WAVE @WAVE.10
+	SOURCE "Owner review of pull request 211: a dedicated provider, the merge result kept across"
+		+ "pages, the last five produced files stacked"
+		PR 211
+
+TASK FEAT150
+	TITLE "Give the save manager a home page at the root address"
+	STATUS draft
+	DESC "asked by the owner in the review of pull request 211 on 2026-09-28; until it lands the"
+		+ "root address opens the Load save page"
+		REF @DECISION.OneLoadSavePageLoadsTheFirstAndEveryNextSave
+	SPEC "the root address opens a home page of its own instead of the Load save page"
+	AFTER @TASK.FEAT137
+	WAVE @WAVE.10
+	SOURCE "Owner review of pull request 211"
+		PR 211
+
+TASK FEAT151
+	TITLE "Offer on the Load save page to load again a save loaded before"
+	STATUS draft
+	DESC "asked by the owner in the review of pull request 211 on 2026-09-28"
+	SPEC "the Load save page offers a button that loads again a save the reader loaded before"
+	AFTER @TASK.FEAT137
+	WAVE @WAVE.10
+	SOURCE "Owner review of pull request 211"
+		PR 211
+
+TASK FIX152
+	TITLE "Keep the loaded save and the merge result when an address is entered by hand"
+	STATUS draft
+	DESC "asked by the owner in the review of pull request 211 on 2026-09-28: entering an address"
+		+ "in the address bar reloads the application and drops what is held in memory"
+	SPEC "entering the address of a page by hand while a save is loaded opens that page on the same"
+		+ "save, and a merge result not yet downloaded is still offered"
+	AFTER @TASK.FEAT137
+	WAVE @WAVE.10
+	RATIONALE "The loaded save and the merge result live in memory only; surviving a reload needs"
+		+ "them kept in the browser storage, which the reload of a save loaded before also needs,"
+		+ "so the two tasks share that storage"
+		REF @TASK.FEAT151
+		REF @TASK.FEAT149
+	SOURCE "Owner review of pull request 211: fixed in this pull request if small, a task of wave"
+		+ "10 otherwise; keeping the save across a reload needs a browser storage the pull request"
+		+ "does not have"
+		PR 211

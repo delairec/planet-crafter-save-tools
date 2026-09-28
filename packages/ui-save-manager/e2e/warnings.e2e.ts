@@ -39,7 +39,7 @@ test.describe('Save warnings', () => {
   test.describe('When a save file raising a warning is merged with a save file raising none', () => {
     test('should attribute the warning to the input that raised it and still produce a file', async ({page}) => {
       // Arrange
-      await page.goto('/');
+      await page.goto('/merge');
 
       // Act
       await mergeAndRevealTheMessages(page, legacySaveFixturePath, currentFormatSaveFixturePath, 'save-a-warnings');

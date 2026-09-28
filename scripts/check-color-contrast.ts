@@ -160,9 +160,16 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
-    description: 'a button label, and the text-selection highlight, on the accent fill',
+    description: 'a button label on the idle fill of a button, the accent darkened',
     file: 'packages/ui-save-manager/src/styles/buttons.css',
     selector: 'button, .button-link',
+    foreground: 'inverted',
+    background: 'primary-idle'
+  },
+  {
+    description: 'a button label under the pointer, on the accent fill',
+    file: 'packages/ui-save-manager/src/styles/buttons.css',
+    selector: 'button:hover, .button-link:hover',
     foreground: 'inverted',
     background: 'primary'
   },

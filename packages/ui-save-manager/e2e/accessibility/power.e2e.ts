@@ -58,7 +58,7 @@ test.describe('Power page accessibility', () => {
       const submergedMachinesNotification = page.getByTestId(/^energy-levels-notification-\d+$/)
         .filter({hasText: 'Submerged machines may distort the computed available energy.'});
       await expect(submergedMachinesNotification)
-        .toMatchAriaSnapshot('- paragraph: /^Limitation ?: Submerged machines may distort the computed available energy\\.$/');
+        .toMatchAriaSnapshot('- paragraph: /^Limitation ?:\\sSubmerged machines may distort the computed available energy\\.$/');
     });
   });
 });
