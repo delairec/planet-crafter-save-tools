@@ -122,6 +122,45 @@ test.describe('Home page', () => {
     });
   });
 
+  test.describe('When the loaded save is unloaded from its card', () => {
+    test('should name its cross Unload save', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Act
+      await page.getByTestId('application-title-link').click();
+
+      // Assert
+      await expect(page.getByTestId('home-loaded-save').getByTestId('unload-save')).toHaveAccessibleName('Unload save');
+    });
+
+    test('should forget the save and show the home page of no save', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+      await page.getByTestId('application-title-link').click();
+
+      // Act
+      await page.getByTestId('unload-save').click();
+
+      // Assert
+      await expect(page.getByTestId('home-loaded-save')).toHaveCount(0);
+      await expect(page.getByTestId(/^home-[a-z-]+-page-link$/)).toHaveText(['Merge two saves', 'Load save']);
+    });
+
+    test('should leave no save to open on the Overview page', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+      await page.getByTestId('application-title-link').click();
+      await page.getByTestId('unload-save').click();
+
+      // Act
+      await page.goto('/overview');
+
+      // Assert
+      await expect(page).toHaveURL(/\/load-save$/);
+    });
+  });
+
   test.describe('When the title of the application is clicked on another page', () => {
     test('should open the home page', async ({page}) => {
       // Arrange

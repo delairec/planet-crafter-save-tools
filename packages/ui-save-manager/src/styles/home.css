@@ -129,6 +129,20 @@
     width: 100%;
 }
 
+.home-message-actions .menu-identity .surface {
+    position: relative;
+}
+
+.home-message-actions .menu-identity-file {
+    padding-right: var(--space-xxl);
+}
+
+.home-unload-save {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+}
+
 .home-message-body {
     font-size: var(--text-lg);
     font-variant: small-caps;

@@ -1,6 +1,7 @@
 import {A} from '@solidjs/router';
 import {Show} from 'solid-js';
 import SaveIdentity from '~/components/shell/SaveIdentity';
+import IconButton from '~/components/structure/IconButton';
 import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
 import {
@@ -10,7 +11,9 @@ import {
   homeMessageTitle,
   mergeTwoSavesPageTitle,
   openOverviewLinkLabel,
-  resolveLoadSavePageTitle
+  resolveLoadSavePageTitle,
+  unloadSaveButtonLabel,
+  unloadSaveIcon
 } from '~/messages/shellMessages';
 
 export default function HomePage() {
@@ -37,6 +40,8 @@ export default function HomePage() {
             <Show when={loadedSave.isSaveLoaded() && loadedSave.viewModels.saveIdentity()}>
               {(saveIdentity) => (
                 <SaveIdentity saveIdentity={saveIdentity()} testId="home-loaded-save">
+                  <IconButton class="home-unload-save" icon={unloadSaveIcon} label={unloadSaveButtonLabel} testId="unload-save"
+                              onClick={loadedSave.unloadSave} disabled={false}/>
                   <A href={PAGE_PATHS.overviewPath} class="button-link button-link-neon-pink" data-testid="home-overview-link">{openOverviewLinkLabel}</A>
                 </SaveIdentity>
               )}

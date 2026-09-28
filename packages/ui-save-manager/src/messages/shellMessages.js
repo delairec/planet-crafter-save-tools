@@ -21,6 +21,8 @@ export const homeMessageBody = 'Welcome to the Planet Crafter Save Manager, pris
 export const homeMessageClosing = 'Keep up the good work!';
 export const homeMessageSender = 'SENTINEL CORP';
 export const openOverviewLinkLabel = 'Open the Overview';
+export const unloadSaveButtonLabel = 'Unload save';
+export const unloadSaveIcon = '✕';
 
 /** @param {string} fileName */
 export const resolveLoadedSaveTitle = (fileName) => `Loaded save: ${fileName}`;
