@@ -9,7 +9,7 @@ interface CardProps {
 
 export default function Card(props: CardProps) {
   return (
-    <div class="card">
+    <div class="card" data-testid={`${props.testId}-card`}>
       <div class="card-header">
         <h4 data-testid={`${props.testId}-title`}>{props.title}</h4>
         <Show when={props.summary}>

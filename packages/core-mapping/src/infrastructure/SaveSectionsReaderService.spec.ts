@@ -190,6 +190,16 @@ describe('SaveSectionsReaderService', () => {
         gaugeDrain: 0.3,
         meteoOccurrence: 0.4,
         multiplayerFactor: 0.5
+      },
+      unlocks: {
+        freeCraft: false,
+        everythingUnlocked: false,
+        spaceTrading: false,
+        oreExtractors: false,
+        teleporters: false,
+        drones: false,
+        autocrafter: false,
+        randomizedMineables: false
       }
     });
   });

@@ -99,6 +99,16 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
         gaugeDrain: saveConfiguration.modifierGaugeDrain,
         meteoOccurrence: saveConfiguration.modifierMeteoOccurence,
         multiplayerFactor: saveConfiguration.modifierMultiplayerTerraformationFactor
+      },
+      unlocks: {
+        freeCraft: saveConfiguration.freeCraft,
+        everythingUnlocked: saveConfiguration.unlockedEverything,
+        spaceTrading: saveConfiguration.unlockedSpaceTrading,
+        oreExtractors: saveConfiguration.unlockedOreExtrators,
+        teleporters: saveConfiguration.unlockedTeleporters,
+        drones: saveConfiguration.unlockedDrones,
+        autocrafter: saveConfiguration.unlockedAutocrafter,
+        randomizedMineables: saveConfiguration.randomizeMineables
       }
     }))[0];
   }

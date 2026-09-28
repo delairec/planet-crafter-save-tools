@@ -2837,6 +2837,8 @@ DECISION APresentationPieceLandsWithTheFirstPageThatRendersIt
 		+ "of the Configuration modifiers and unlock flags"
 		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
 		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
+		IMPL "packages/ui-save-manager/src/components/configuration/ModifiersCard.tsx::<ToneBadge"
+		IMPL "packages/ui-save-manager/src/components/configuration/UnlocksCard.tsx::<OnOffPill"
 	REJECTED "Shipping the tone badge and the on or off pill with FEAT138, ahead of any page: no"
 		+ "module would import them, which the fallow unused-file gate refuses"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -2935,3 +2937,42 @@ DECISION TheMergedSavesLiveInAStoreAboveTheRouter
 	SOURCE "Ruling taken when FEAT149 was implemented, within the owner's ask of a dedicated"
 		+ "provider above the routes"
 		PR 215
+
+DECISION TheConfigurationPageListsEightUnlockFlagsAndStatesEachToneInText
+	SPEC "the unlocks zone lists the eight flags page F of the mockup shows, in this order: free"
+		+ "craft, everything unlocked, space trading, ore extractors, teleporters, drones,"
+		+ "autocrafter, randomized mineables; the other flags of the configuration entry are not"
+		+ "listed"
+		IMPL "packages/core-mapping/src/domain/valueObjects/SaveConfigurationValueObject.ts::readonly"
+			+ "unlocks"
+		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should list each unlock"
+			+ "flag of the save with an on or off pill"
+	SPEC "the summary of the modifiers card is the note that 100 % and ×1 are the game's defaults;"
+		+ "the save name and mode stay in the save identity of the menu"
+		IMPL "packages/ui-save-manager/src/messages/configurationPageMessages.js::modifiersCardSummary"
+		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should state the game"
+			+ "defaults in the summary of the modifiers"
+	SPEC "a tone badge states its tone in visually hidden text after its value, so a screen reader"
+		+ "and a colour-blind reader get it without the colour"
+		IMPL "packages/ui-save-manager/src/components/structure/ToneBadge.tsx::visually-hidden"
+		IMPL "packages/ui-save-manager/e2e/accessibility/configuration.e2e.ts::should read the tone"
+			+ "of a modifier apart from its value"
+	SPEC "a save without statistics shows the total crafted objects as 0, as the Global progression"
+		+ "section did"
+		IMPL "packages/core-mapping/src/presentation/ConfigurationPagePresenter.spec.ts::should"
+			+ "show the progression with no crafted object counted"
+	REJECTED "Every flag of the entry, preInterplanetarySave and modded included: they describe the"
+		+ "save, not what the player unlocked, and page F does not show them"
+	REJECTED "The save name and mode as the summary of the modifiers card, as the Save"
+		+ "Configuration section had: the menu identity already names the save"
+	REJECTED "The tone as a title attribute or as colour alone: a title is not read reliably and"
+		+ "colour alone fails WCAG 1.4.1"
+	REJECTED "Hiding the crafted objects row of a save without statistics: the task keeps the"
+		+ "progression as it was"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT136
+	SOURCE "Rulings of the FEAT136 agent of 2026-09-28, checking the unlock flags against the save"
+		+ "format as the task asks"
+		PR 218
+		REF @URL.SaveManagerRedesignMockup

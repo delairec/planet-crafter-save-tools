@@ -50,3 +50,61 @@
 .card-body {
     padding: 0 var(--space-md) var(--space-md);
 }
+
+.key-values {
+    display: grid;
+    gap: var(--space-xs);
+    margin: 0;
+}
+
+.key-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+}
+
+.key-value dt {
+    color: var(--muted);
+}
+
+.key-value dd {
+    margin: 0;
+    font-weight: var(--semibold);
+    text-align: right;
+}
+
+.tone-badge,
+.on-off-pill {
+    display: inline-block;
+    padding: 0 var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: var(--semibold);
+    white-space: nowrap;
+}
+
+.tone-badge-neutral {
+    background-color: var(--elevated);
+    color: var(--muted);
+}
+
+.tone-badge-danger {
+    background-color: var(--danger-surface);
+    color: var(--danger-on-surface);
+}
+
+.tone-badge-positive {
+    background-color: var(--positive-surface);
+    color: var(--positive-on-surface);
+}
+
+.on-off-pill-on {
+    background-color: var(--positive-surface);
+    color: var(--positive-on-surface);
+}
+
+.on-off-pill-off {
+    background-color: var(--elevated);
+    color: var(--muted);
+}

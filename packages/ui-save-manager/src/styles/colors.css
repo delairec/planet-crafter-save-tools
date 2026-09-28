@@ -35,6 +35,12 @@
     --limitation: #7f4af5;
     --information: #0b6e99;
     --danger: #e01313;
+
+    /* TONS */
+    --positive-surface: #e4f3e9;
+    --danger-surface: #fde6e6;
+    --positive-on-surface: #146c35;
+    --danger-on-surface: #b91c1c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -69,5 +75,10 @@
         --limitation: #a78bfa;
         --information: #38bdf8;
         --danger: #f87171;
+
+        --positive-surface: #12301e;
+        --danger-surface: #3a1515;
+        --positive-on-surface: #4ade80;
+        --danger-on-surface: #f87171;
     }
 }

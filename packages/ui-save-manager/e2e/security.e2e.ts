@@ -35,7 +35,7 @@ function recordRequestedUrls(page: Page): string[] {
 async function loadViewAndMergeASave(page: Page): Promise<void> {
   await visualizeTheSave(page, saveAFixturePath);
   await openThePageOfTheMenu(page, 'Configuration');
-  await expect(page.getByTestId('save-configuration-summary')).toHaveText('Merged Save (Standard)');
+  await expect(page.getByTestId('modifiers-title')).toHaveText('Modifiers');
   await openThePageOfTheMenu(page, 'Merge two saves');
   await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
   await page.getByTestId('merge').click();
