@@ -9,17 +9,17 @@ interface SaveIdentityProps {
 
 export default function SaveIdentity(props: SaveIdentityProps) {
   return (
-    <section class="menu-identity" aria-label={saveIdentityLabel}>
+    <section class="menu-identity" aria-label={saveIdentityLabel} data-testid="save-identity">
       <Surface bordered>
-        <p class="menu-identity-file">{props.saveIdentity.fileName}</p>
+        <p class="menu-identity-file" data-testid="save-identity-file-name">{props.saveIdentity.fileName}</p>
         <Show when={props.saveIdentity.displayName}>
-          {(displayName) => <p class="menu-identity-detail">{displayName()}</p>}
+          {(displayName) => <p class="menu-identity-detail" data-testid="save-identity-detail">{displayName()}</p>}
         </Show>
         <Show when={props.saveIdentity.mode}>
-          {(mode) => <p class="menu-identity-detail">{mode()}</p>}
+          {(mode) => <p class="menu-identity-detail" data-testid="save-identity-detail">{mode()}</p>}
         </Show>
         <Show when={props.saveIdentity.gameRelease}>
-          {(gameRelease) => <p class="menu-identity-detail">{gameRelease()}</p>}
+          {(gameRelease) => <p class="menu-identity-detail" data-testid="save-identity-detail">{gameRelease()}</p>}
         </Show>
       </Surface>
     </section>

@@ -1,5 +1,5 @@
 import {expect, test} from '@playwright/test';
-import {findTheBreadcrumbSteps, findTheMenu, locateTheFixture, visualizeTheSave} from './scenarioSteps';
+import {findTheBreadcrumbSteps, locateTheFixture, visualizeTheSave} from './scenarioSteps';
 
 const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
 
@@ -10,11 +10,11 @@ test.describe('Players page', () => {
       await visualizeTheSave(page, otherPlayerSaveFixturePath);
 
       // Act
-      await findTheMenu(page).getByRole('button', {name: 'See more'}).click();
+      await page.getByTestId('see-more-players-button').click();
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Players', level: 3})).toBeVisible();
-      await expect(page.getByRole('heading', {name: 'Sakia', level: 4})).toBeVisible();
+      await expect(page.getByTestId('players-title')).toHaveText('Players');
+      await expect(page.getByTestId('player-name')).toContainText(['Sakia']);
     });
 
     test('should open on a breadcrumb naming the Players group and the Players page', async ({page}) => {
@@ -22,7 +22,7 @@ test.describe('Players page', () => {
       await visualizeTheSave(page, otherPlayerSaveFixturePath);
 
       // Act
-      await findTheMenu(page).getByRole('button', {name: 'See more'}).click();
+      await page.getByTestId('see-more-players-button').click();
 
       // Assert
       await expect(findTheBreadcrumbSteps(page)).toHaveText(['Players', 'All players']);

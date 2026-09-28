@@ -1,7 +1,7 @@
 import {join} from 'node:path';
 import {type Locator, type Page} from '@playwright/test';
-
-const revealMessagesLabel = 'Show details';
+import {triggerSaveFileMerge} from './helpers/triggerSaveFileMerge';
+import {visualizeSave} from './helpers/visualizeSave';
 
 export function locateTheFixture(fileName: string): string {
   return join(import.meta.dirname, 'fixtures', fileName);
@@ -9,39 +9,41 @@ export function locateTheFixture(fileName: string): string {
 
 export async function chooseTheSaveToVisualize(page: Page, saveFixturePath: string): Promise<void> {
   await page.goto('/');
-  await page.getByLabel('Save file:').setInputFiles(saveFixturePath);
+  await page.getByTestId('save-file-input').setInputFiles(saveFixturePath);
 }
 
 export async function visualizeTheSave(page: Page, saveFixturePath: string): Promise<void> {
-  await chooseTheSaveToVisualize(page, saveFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
+  await page.goto('/');
+  await visualizeSave(page, saveFixturePath);
 }
 
 export async function chooseTheTwoSavesToMerge(page: Page, saveAFixturePath: string, saveBFixturePath: string): Promise<void> {
-  await page.getByLabel('Save A:').setInputFiles(saveAFixturePath);
-  await page.getByLabel('Save B:').setInputFiles(saveBFixturePath);
+  await page.getByTestId('save-a-input').setInputFiles(saveAFixturePath);
+  await page.getByTestId('save-b-input').setInputFiles(saveBFixturePath);
 }
 
-export async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string): Promise<void> {
-  await page.getByLabel('Save file:').setInputFiles(saveFixturePath);
-  await page.getByRole('button', {name: 'Visualize'}).click();
-  await page.getByText(revealMessagesLabel).click();
+export async function visualizeAndRevealTheMessages(page: Page, saveFixturePath: string, messagesTestId: string): Promise<void> {
+  await visualizeSave(page, saveFixturePath);
+  await page.getByTestId(`${messagesTestId}-details-toggle`).click();
 }
 
-export async function mergeAndRevealTheMessages(page: Page, saveAFixturePath: string, saveBFixturePath: string): Promise<void> {
-  await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await page.getByText(revealMessagesLabel).first().click();
+export async function mergeAndRevealTheMessages(page: Page, saveAFixturePath: string, saveBFixturePath: string, messagesTestId: string): Promise<void> {
+  await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath);
+  await page.getByTestId(`${messagesTestId}-details-toggle`).click();
 }
 
 export function findTheMenu(page: Page): Locator {
-  return page.getByRole('navigation', {name: 'Menu'});
+  return page.getByTestId('menu');
+}
+
+export function findTheMenuGroupTitles(page: Page): Locator {
+  return findTheMenu(page).getByTestId('menu-group-title');
 }
 
 export async function openThePageOfTheMenu(page: Page, pageName: string): Promise<void> {
-  await findTheMenu(page).getByRole('link', {name: pageName, exact: true}).click();
+  await findTheMenu(page).getByTestId('menu-page-link').filter({hasText: new RegExp(`^${pageName}$`)}).click();
 }
 
 export function findTheBreadcrumbSteps(page: Page): Locator {
-  return page.getByRole('navigation', {name: 'Breadcrumb'}).getByRole('listitem');
+  return page.getByTestId('breadcrumb-step');
 }

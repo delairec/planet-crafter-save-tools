@@ -34,13 +34,13 @@ function recordRequestedUrls(page: Page): string[] {
 async function loadViewAndMergeASave(page: Page): Promise<void> {
   await visualizeTheSave(page, saveAFixturePath);
   await openThePageOfTheMenu(page, 'Configuration');
-  await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+  await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
   await openThePageOfTheMenu(page, 'Merge two saves');
   await chooseTheTwoSavesToMerge(page, saveAFixturePath, saveBFixturePath);
-  await page.getByRole('button', {name: 'Merge'}).click();
-  await expect(page.getByText('Merge successful!')).toBeVisible();
+  await page.getByTestId('merge-button').click();
+  await expect(page.getByTestId('merge-success-message')).toBeVisible();
   const downloadStarted = page.waitForEvent('download');
-  await page.getByRole('link', {name: 'Download'}).click();
+  await page.getByTestId('download-link').click();
   await downloadStarted;
 }
 

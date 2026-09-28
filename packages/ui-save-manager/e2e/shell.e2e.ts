@@ -1,19 +1,17 @@
 import {expect, test, type Locator, type Page} from '@playwright/test';
-import {findTheBreadcrumbSteps, findTheMenu, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
+import {findTheBreadcrumbSteps, findTheMenu, findTheMenuGroupTitles, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
 
-const disclaimersSummary = 'Click here to show privacy, security and file safety disclaimers';
-
 type ShellPart = 'title' | 'disclaimers' | 'page' | 'footer';
 
-async function readTheShellPartsFromTopToBottom(page: Page, pageContentHeading: string): Promise<ShellPart[]> {
+async function readTheShellPartsFromTopToBottom(page: Page, pageContentTestId: string): Promise<ShellPart[]> {
   const partLocators: [ShellPart, Locator][] = [
-    ['title', page.getByRole('heading', {name: 'Planet Crafter Save Manager', level: 1})],
-    ['disclaimers', page.getByText(disclaimersSummary)],
-    ['page', page.getByRole('heading', {name: pageContentHeading})],
-    ['footer', page.getByRole('contentinfo')]
+    ['title', page.getByTestId('application-title')],
+    ['disclaimers', page.getByTestId('disclaimers-toggle')],
+    ['page', page.getByTestId(pageContentTestId)],
+    ['footer', page.getByTestId('application-version')]
   ];
   const partTops = await Promise.all(partLocators.map(async ([part, locator]) => ({part, top: (await locator.boundingBox())!.y})));
 
@@ -43,7 +41,7 @@ test.describe('Save manager shell', () => {
       await page.goto('/');
 
       // Act
-      const shellParts = await readTheShellPartsFromTopToBottom(page, 'Display a save\'s data');
+      const shellParts = await readTheShellPartsFromTopToBottom(page, 'display-area');
 
       // Assert
       expect(shellParts).toEqual(['title', 'disclaimers', 'page', 'footer']);
@@ -54,8 +52,8 @@ test.describe('Save manager shell', () => {
       await page.goto('/');
 
       // Assert
-      await expect(findTheMenu(page).getByRole('group')).toHaveAccessibleName('Tools');
-      await expect(findTheMenu(page).getByRole('link')).toHaveText(['Merge two saves', 'Load another save']);
+      await expect(findTheMenuGroupTitles(page)).toHaveText(['Tools']);
+      await expect(findTheMenu(page).getByTestId('menu-page-link')).toHaveText(['Merge two saves', 'Load another save']);
     });
   });
 
@@ -65,9 +63,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(findTheMenu(page).getByRole('group').nth(2)).toHaveAccessibleName('Players');
-      await expect(findTheMenu(page).getByRole('group').nth(1)).toHaveAccessibleName('Save');
-      await expect(findTheMenu(page).getByRole('group').nth(0)).toHaveAccessibleName('Tools');
+      await expect(findTheMenuGroupTitles(page)).toHaveText(['Tools', 'Save', 'Players']);
     });
 
     test('should offer the Overview, Configuration, Power and Terraformation pages in the Save group', async ({page}) => {
@@ -75,7 +71,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(findTheMenu(page).getByRole('group', {name: 'Save', exact: true}).getByRole('link'))
+      await expect(page.getByTestId('save-menu-group').getByTestId('menu-page-link'))
         .toHaveText(['Overview', 'Configuration', 'Power', 'Terraformation']);
     });
 
@@ -84,7 +80,11 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(findTheMenu(page).getByRole('group', {name: 'Players'}).getByRole('button').last()).toHaveText('See more');
+      const playersGroup = page.getByTestId('players-menu-group');
+      const seeMoreButton = playersGroup.getByTestId('see-more-players-button');
+      await expect(seeMoreButton).toHaveText('See more');
+      expect((await seeMoreButton.boundingBox())!.y)
+        .toBeGreaterThan((await playersGroup.getByTestId('menu-player').last().boundingBox())!.y);
     });
 
     test('should show the save identity above the groups', async ({page}) => {
@@ -92,11 +92,11 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      const identityZone = findTheMenu(page).getByRole('region', {name: 'Loaded save'});
-      await expect(identityZone.getByRole('paragraph'))
-        .toHaveText(['baseline_valid.json', 'Merged Save', 'Standard', 'Game release 2.004']);
+      const identityZone = page.getByTestId('save-identity');
+      await expect(identityZone.getByTestId('save-identity-file-name')).toHaveText('baseline_valid.json');
+      await expect(identityZone.getByTestId('save-identity-detail')).toHaveText(['Merged Save', 'Standard', 'Game release 2.004']);
       expect((await identityZone.boundingBox())!.y)
-        .toBeLessThan((await findTheMenu(page).getByRole('group', {name: 'Save', exact: true}).boundingBox())!.y);
+        .toBeLessThan((await page.getByTestId('save-menu-group').boundingBox())!.y);
     });
 
     test('should list the players in the Players group', async ({page}) => {
@@ -104,7 +104,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(findTheMenu(page).getByRole('group', {name: 'Players'}).getByRole('listitem'))
+      await expect(page.getByTestId('players-menu-group').getByTestId('menu-player'))
         .toHaveText(['NikowaHostToxicity']);
     });
   });
@@ -115,7 +115,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, legacySaveFixturePath);
 
       // Assert
-      await expect(findTheMenu(page).getByRole('group', {name: 'Players'}).getByRole('listitem'))
+      await expect(page.getByTestId('players-menu-group').getByTestId('menu-player'))
         .toHaveText(['NikowaHostToxicity']);
     });
   });
@@ -127,7 +127,7 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Act
-      const shellParts = await readTheShellPartsFromTopToBottom(page, 'Global progression');
+      const shellParts = await readTheShellPartsFromTopToBottom(page, 'global-progression-title');
 
       // Assert
       expect(shellParts).toEqual(['title', 'disclaimers', 'page', 'footer']);
@@ -138,7 +138,7 @@ test.describe('Save manager shell', () => {
     test('should keep the loaded save without reading its file again nor reloading the page', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);
-      await expect(page.getByRole('heading', {name: 'Loaded save: baseline_valid.json'})).toBeVisible();
+      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
       await holdEveryFurtherFileRead(page);
       const loadedDocumentUrls = recordTheDocumentLoads(page);
       await openThePageOfTheMenu(page, 'Power');
@@ -147,7 +147,7 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Save Configuration: Merged Save (Standard)'})).toBeVisible();
+      await expect(page.getByTestId('save-configuration-title')).toHaveText('Save Configuration: Merged Save (Standard)');
       expect(loadedDocumentUrls).toEqual([]);
     });
   });
@@ -158,7 +158,7 @@ test.describe('Save manager shell', () => {
       await page.goto('/configuration');
 
       // Assert
-      await expect(page.getByRole('group', {name: 'Display a save\'s data'})).toBeVisible();
+      await expect(page.getByTestId('display-area')).toBeVisible();
       await expect(findTheBreadcrumbSteps(page)).toHaveCount(0);
     });
   });
@@ -173,7 +173,7 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Merge two saves');
 
       // Assert
-      await expect(page.getByLabel('Save A:')).toBeVisible();
+      await expect(page.getByTestId('save-a-input')).toBeVisible();
     });
   });
 
@@ -187,7 +187,7 @@ test.describe('Save manager shell', () => {
       await openThePageOfTheMenu(page, 'Load another save');
 
       // Assert
-      await expect(page.getByLabel('Save file:')).toBeVisible();
+      await expect(page.getByTestId('save-file-input')).toBeVisible();
     });
   });
 
@@ -195,13 +195,13 @@ test.describe('Save manager shell', () => {
     test('should say it was not found and lead back home', async ({page}) => {
       // Arrange
       await page.goto('/no-such-page');
-      await expect(page.getByText('Not Found')).toBeVisible();
+      await expect(page.getByTestId('not-found-title')).toHaveText('Not Found');
 
       // Act
-      await page.getByRole('link', {name: 'Back home'}).click();
+      await page.getByTestId('back-home-link').click();
 
       // Assert
-      await expect(page.getByRole('group', {name: 'Display a save\'s data'})).toBeVisible();
+      await expect(page.getByTestId('display-area')).toBeVisible();
     });
   });
 });

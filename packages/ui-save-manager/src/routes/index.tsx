@@ -99,11 +99,11 @@ export default function Home() {
       <Show when={isSaveLoaded() && file()}>
         {(loadedFile) => (
           <>
-            <h3>{resolveLoadedSaveTitle(loadedFile().name)}</h3>
+            <h3 data-testid="loaded-save-title">{resolveLoadedSaveTitle(loadedFile().name)}</h3>
             <p class="overview-pages">
-              <A href={PAGE_PATHS.configurationPath}>{configurationPageTitle}</A>
-              <A href={PAGE_PATHS.powerPath}>{powerPageTitle}</A>
-              <A href={PAGE_PATHS.terraformationPath}>{terraformationPageTitle}</A>
+              <A href={PAGE_PATHS.configurationPath} data-testid="overview-page-link">{configurationPageTitle}</A>
+              <A href={PAGE_PATHS.powerPath} data-testid="overview-page-link">{powerPageTitle}</A>
+              <A href={PAGE_PATHS.terraformationPath} data-testid="overview-page-link">{terraformationPageTitle}</A>
             </p>
           </>
         )}

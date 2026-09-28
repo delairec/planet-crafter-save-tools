@@ -1,8 +1,15 @@
-import {expect, test} from '@playwright/test';
+import {expect, test, type Locator, type Page} from '@playwright/test';
 import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 const skeoUpdateSaveFixturePath = locateTheFixture('skeo-update_valid.json');
+
+const submergedMachinesNotification = 'Submerged machines may distort the computed available energy.';
+const gameReleaseNotificationPrefix = 'Values of game release';
+
+function findTheNotifications(page: Page, notificationText: string): Locator {
+  return page.getByTestId('energy-levels-notification').filter({hasText: notificationText});
+}
 
 test.describe('Power page', () => {
   test.describe('When the Power page of a visualized save is opened', () => {
@@ -27,8 +34,8 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Skeo', level: 4})).toBeVisible();
-      await expect(page.getByText('Wind turbine T2')).toBeVisible();
+      await expect(page.getByTestId('energy-levels-planet-title')).toHaveText(['Skeo']);
+      await expect(page.getByTestId('energy-production-item-label')).toContainText(['Wind turbine T2']);
     });
 
     test('should warn once, under the Power title, that submerged machines may distort the computed available energy', async ({page}) => {
@@ -39,9 +46,9 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByRole('heading', {name: 'Power', level: 3})).toBeVisible();
-      await expect(page.getByText('Submerged machines may distort the computed available energy')).toHaveCount(1);
-      await expect(page.getByText('Submerged machines may distort the computed available energy')).toBeVisible();
+      await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
+      await expect(findTheNotifications(page, submergedMachinesNotification)).toHaveCount(1);
+      await expect(findTheNotifications(page, submergedMachinesNotification)).toBeVisible();
     });
   });
 
@@ -54,8 +61,8 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByText('Submerged machines may distort the computed available energy')).toBeVisible();
-      await expect(page.getByText('Values of game release')).toHaveCount(0);
+      await expect(findTheNotifications(page, submergedMachinesNotification)).toBeVisible();
+      await expect(findTheNotifications(page, gameReleaseNotificationPrefix)).toHaveCount(0);
     });
   });
 
@@ -68,10 +75,11 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByText('Values of game release 2.004')).toBeVisible();
-      const submergedMachinesNotificationTop = (await page.getByText('Submerged machines may distort the computed available energy').boundingBox())!.y;
-      const gameReleaseNotificationTop = (await page.getByText('Values of game release 2.004').boundingBox())!.y;
-      const firstPlanetTop = (await page.getByRole('heading', {name: 'Planet 1', level: 4}).boundingBox())!.y;
+      const gameReleaseNotification = findTheNotifications(page, gameReleaseNotificationPrefix);
+      await expect(gameReleaseNotification).toHaveText('Values of game release 2.004');
+      const submergedMachinesNotificationTop = (await findTheNotifications(page, submergedMachinesNotification).boundingBox())!.y;
+      const gameReleaseNotificationTop = (await gameReleaseNotification.boundingBox())!.y;
+      const firstPlanetTop = (await page.getByTestId('energy-levels-planet-title').first().boundingBox())!.y;
       expect(gameReleaseNotificationTop).toBeGreaterThan(submergedMachinesNotificationTop);
       expect(gameReleaseNotificationTop).toBeLessThan(firstPlanetTop);
     });
