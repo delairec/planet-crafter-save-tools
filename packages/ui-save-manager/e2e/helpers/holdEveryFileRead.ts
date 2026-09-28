@@ -3,6 +3,7 @@ import {Page} from "@playwright/test";
 declare global {
   interface Window {
     releaseTheHeldFileReads(): void;
+    holdTheFileReadsAgain(): void;
   }
 }
 
@@ -11,11 +12,15 @@ export async function holdEveryFileRead(page: Page): Promise<void> {
     const readTextOfBlob = Blob.prototype.text;
     const readArrayBufferOfBlob = Blob.prototype.arrayBuffer;
     let letTheReadsThrough = () => {};
-    const readsReleased = new Promise<void>((resolve) => {
+    const holdTheReads = () => new Promise<void>((resolve) => {
       letTheReadsThrough = resolve;
     });
+    let readsReleased = holdTheReads();
 
     window.releaseTheHeldFileReads = () => letTheReadsThrough();
+    window.holdTheFileReadsAgain = () => {
+      readsReleased = holdTheReads();
+    };
 
     Blob.prototype.text = function (this: Blob) {
       return readsReleased.then(() => readTextOfBlob.call(this));
@@ -38,4 +43,8 @@ export async function holdEveryFileRead(page: Page): Promise<void> {
 
 export async function releaseTheHeldFileReads(page: Page): Promise<void> {
   await page.evaluate(() => window.releaseTheHeldFileReads());
+}
+
+export async function holdTheFileReadsAgain(page: Page): Promise<void> {
+  await page.evaluate(() => window.holdTheFileReadsAgain());
 }
