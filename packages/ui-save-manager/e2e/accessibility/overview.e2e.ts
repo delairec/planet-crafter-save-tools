@@ -108,7 +108,7 @@ test.describe('Overview page accessibility', () => {
 
       // Assert
       await expect(page.getByTestId('display-warnings-messages')).toHaveRole('list');
-      await expect(page.getByTestId('display-warnings-message').first()).toHaveRole('listitem');
+      await expect(page.getByTestId('display-warnings-message-0')).toHaveRole('listitem');
     });
   });
 });

@@ -2634,6 +2634,7 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 		+ "a suffix, and a scenario reaches the whole list through a pattern of its test ids"
 		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"overview-page-link\""
 		IMPL "packages/ui-save-manager/src/components/shell/PlayersMenu.tsx::player-summary-"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::-message-${index()}"
 		ENFORCED_BY "packages/ui-save-manager/e2e/scenarioTest.ts::testIdsStayUnique"
 		ENFORCED_BY "scripts/check-scenario-locators.ts::UNCHECKED_TEST_IMPORT"
 	REJECTED "Locating by role, label or text: an element reached through a landmark or a list item"
@@ -2670,6 +2671,9 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 		+ "refactor, breaks no scenario, while a redesign showing new data or changing a behaviour"
 		+ "changes or adds its scenarios"
 		PR 212
+	SOURCE "Owner ruling of 2026-09-28 on the second review round: the merge warnings, repeated"
+		+ "under one test id, are given their rank in this pull request"
+		PR 211
 
 DECISION AUiTestIsEitherAScenarioOrAnAccessibilityTest
 	REJECTED "Testing accessibility as a side effect of the scenario locators: a role or label"

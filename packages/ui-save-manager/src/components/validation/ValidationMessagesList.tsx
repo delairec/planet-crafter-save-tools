@@ -23,7 +23,7 @@ export default function ValidationMessagesList(props: {
       </summary>
       <ul data-testid={`${props.testId}-messages`}>
         <For each={props.messages}>
-          {(validationMessage) => <li class="validation-message" data-testid={`${props.testId}-message`}>
+          {(validationMessage, index) => <li class="validation-message" data-testid={`${props.testId}-message-${index()}`}>
             <code>
               {validationMessage.message}
               <Show when={validationMessage.location}>
