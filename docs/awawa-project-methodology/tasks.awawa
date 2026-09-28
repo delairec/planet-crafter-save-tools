@@ -2469,14 +2469,27 @@ TASK TEST148
 	DELIVERED_BY 213
 
 TASK FEAT149
-	TITLE "Keep the last merged saves in a store of their own across the pages"
-	STATUS draft
-	DESC "asked by the owner in the review of pull request 211 on 2026-09-28"
-	SPEC "the result of a merge is held by a provider of its own above the routes, so that leaving"
-		+ "the Merge two saves page, Load save included, keeps a result not yet downloaded"
-	SPEC "the provider keeps the last five merged saves; a sixth merge drops the oldest"
+	TITLE "Keep the last five merged saves across the pages of the save manager"
+	STATUS todo
+	SPEC "leaving the Merge two saves page for any other page, Load save included, and coming back"
+		+ "shows the last merge result again, its merged save still downloadable"
+	SPEC "the last five merges that produced a file stay downloadable; a sixth drops the oldest,"
+		+ "and a merge refused by validation or failed takes no place and drops no file"
+	SPEC "the Merge two saves page shows the last merge result in full as today, and below it the"
+		+ "earlier merged saves kept, newest first, each by its file name and download link"
+	SPEC "while a merge runs, only the last merge result clears; the merged saves kept stay listed"
+		+ "and downloadable"
 	AFTER @TASK.FEAT137
 	WAVE @WAVE.10
+	RATIONALE "The Merge two saves page holds its result in a signal of its own, lost as soon as"
+		+ "the reader opens another page: a merged save not yet downloaded is gone. The owner asked"
+		+ "for a dedicated provider above the routes, beside the one that holds the loaded save,"
+		+ "keeping the merge result view model unchanged, since cli-merge reads it too. Only files"
+		+ "are kept, a failure being read once and a merge of the same two saves producing the same"
+		+ "file name; the store lives in memory, surviving a reload being FIX152's"
+		REF @TASK.FEAT137
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
+		REF @TASK.FIX152
 	SOURCE "Owner review of pull request 211: a dedicated provider, the merge result kept across"
 		+ "pages, the last five produced files stacked"
 		PR 211
