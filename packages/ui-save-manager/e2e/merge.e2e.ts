@@ -1,5 +1,6 @@
 import {readFile} from 'node:fs/promises';
-import {expect, test, type Download, type Page} from '@playwright/test';
+import {type Download, type Page} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 
 const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
 const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;

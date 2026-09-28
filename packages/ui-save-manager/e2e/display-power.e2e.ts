@@ -1,4 +1,5 @@
-import {expect, test, type Locator, type Page} from '@playwright/test';
+import {type Locator, type Page} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
@@ -8,7 +9,7 @@ const submergedMachinesNotification = 'Submerged machines may distort the comput
 const gameReleaseNotificationPrefix = 'Values of game release';
 
 function findTheNotifications(page: Page, notificationText: string): Locator {
-  return page.getByTestId('energy-levels-notification').filter({hasText: notificationText});
+  return page.getByTestId(/^energy-levels-notification-\d+$/).filter({hasText: notificationText});
 }
 
 test.describe('Power page', () => {
@@ -34,8 +35,8 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByTestId('energy-levels-planet-title')).toHaveText(['Skeo']);
-      await expect(page.getByTestId('energy-production-item-label')).toContainText(['Wind turbine T2']);
+      await expect(page.getByTestId(/^energy-levels-planet-\d+-title$/)).toHaveText(['Skeo']);
+      await expect(page.getByTestId(/^energy-production-\d+-item-label-\d+$/)).toContainText(['Wind turbine T2']);
     });
 
     test('should warn once, under the Power title, that submerged machines may distort the computed available energy', async ({page}) => {
@@ -79,7 +80,7 @@ test.describe('Power page', () => {
       await expect(gameReleaseNotification).toHaveText('Values of game release 2.004');
       const submergedMachinesNotificationTop = (await findTheNotifications(page, submergedMachinesNotification).boundingBox())!.y;
       const gameReleaseNotificationTop = (await gameReleaseNotification.boundingBox())!.y;
-      const firstPlanetTop = (await page.getByTestId('energy-levels-planet-title').first().boundingBox())!.y;
+      const firstPlanetTop = (await page.getByTestId('energy-levels-planet-0-title').boundingBox())!.y;
       expect(gameReleaseNotificationTop).toBeGreaterThan(submergedMachinesNotificationTop);
       expect(gameReleaseNotificationTop).toBeLessThan(firstPlanetTop);
     });

@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {findTheBreadcrumbSteps, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
@@ -39,8 +39,8 @@ test.describe('Configuration page', () => {
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Assert
-      const droneLogisticsField = page.getByTestId('global-progression-field').filter({hasText: 'Drone logistics'});
-      await expect(droneLogisticsField.getByTestId('global-progression-field-value')).toHaveText('Paused');
+      const droneLogisticsField = page.getByTestId(/^global-progression-field-\d+$/).filter({hasText: 'Drone logistics'});
+      await expect(droneLogisticsField.getByTestId(/^global-progression-field-\d+-value-\d+$/)).toHaveText('Paused');
     });
   });
 });

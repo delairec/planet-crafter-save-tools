@@ -1,6 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {basename} from 'node:path';
-import {expect, test, type Locator, type Page} from '@playwright/test';
+import {type Locator, type Page} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {chooseTheTwoSavesToMerge, locateTheFixture} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');

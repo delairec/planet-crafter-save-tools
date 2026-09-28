@@ -13,13 +13,13 @@ export default function SaveIdentity(props: SaveIdentityProps) {
       <Surface bordered>
         <p class="menu-identity-file" data-testid="save-identity-file-name">{props.saveIdentity.fileName}</p>
         <Show when={props.saveIdentity.displayName}>
-          {(displayName) => <p class="menu-identity-detail" data-testid="save-identity-detail">{displayName()}</p>}
+          {(displayName) => <p class="menu-identity-detail" data-testid="save-identity-display-name">{displayName()}</p>}
         </Show>
         <Show when={props.saveIdentity.mode}>
-          {(mode) => <p class="menu-identity-detail" data-testid="save-identity-detail">{mode()}</p>}
+          {(mode) => <p class="menu-identity-detail" data-testid="save-identity-mode">{mode()}</p>}
         </Show>
         <Show when={props.saveIdentity.gameRelease}>
-          {(gameRelease) => <p class="menu-identity-detail" data-testid="save-identity-detail">{gameRelease()}</p>}
+          {(gameRelease) => <p class="menu-identity-detail" data-testid="save-identity-game-release">{gameRelease()}</p>}
         </Show>
       </Surface>
     </section>

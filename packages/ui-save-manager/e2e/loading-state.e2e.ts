@@ -1,4 +1,5 @@
-import {expect, test, type Page} from '@playwright/test';
+import {type Page} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {chooseTheSaveToVisualize, chooseTheTwoSavesToMerge, locateTheFixture} from './scenarioSteps';
 
 const saveAFixturePath = locateTheFixture('baseline_valid.json');

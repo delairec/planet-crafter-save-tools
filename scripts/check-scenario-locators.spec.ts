@@ -5,6 +5,7 @@ import {checkScenarioLocators, findScenarioLocatorViolations, isScenarioFile} fr
 const ACCESSIBILITY_LOCATOR_REASON = 'a scenario designates an element by its test id, never by its role, its label or its text';
 const CSS_SELECTOR_REASON = 'a scenario designates an element by its test id, never by a CSS selector';
 const REFERENCE_SCREENSHOT_REASON = 'a scenario asserts what the screen shows in words, never against a reference screenshot';
+const UNCHECKED_TEST_REASON = 'a scenario takes its test from scenarioTest, which fails a page repeating a test id';
 
 describe('isScenarioFile', () => {
 
@@ -207,6 +208,25 @@ describe('findScenarioLocatorViolations', () => {
         {line: 1, reason: REFERENCE_SCREENSHOT_REASON},
         {line: 2, reason: REFERENCE_SCREENSHOT_REASON},
         {line: 3, reason: REFERENCE_SCREENSHOT_REASON}
+      ]);
+    });
+  });
+
+  describe('When a scenario imports its test', () => {
+    it('should report the test taken from Playwright, which leaves the uniqueness of the test ids unchecked', () => {
+      // Arrange
+      const source = [
+        "import {expect, test} from '@playwright/test';",
+        "import {type Locator, type Page} from '@playwright/test';",
+        "import {expect, test} from './scenarioTest';"
+      ].join('\n');
+
+      // Act
+      const violations = findScenarioLocatorViolations(source);
+
+      // Assert
+      expect(violations).toEqual([
+        {line: 1, reason: UNCHECKED_TEST_REASON}
       ]);
     });
   });

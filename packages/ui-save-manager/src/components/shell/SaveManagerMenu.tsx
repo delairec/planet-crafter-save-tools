@@ -26,18 +26,18 @@ export default function SaveManagerMenu() {
   return (
     <nav class="menu" aria-label={menuLabel} data-testid="menu">
       <MenuGroup title={toolsGroupTitle} testId="tools-menu-group">
-        <a href={PAGE_PATHS.mergeTwoSavesPath} data-testid="menu-page-link">{mergeTwoSavesPageTitle}</a>
-        <a href={PAGE_PATHS.loadAnotherSavePath} data-testid="menu-page-link">{loadAnotherSavePageTitle}</a>
+        <a href={PAGE_PATHS.mergeTwoSavesPath} data-testid="merge-two-saves-menu-link">{mergeTwoSavesPageTitle}</a>
+        <a href={PAGE_PATHS.loadAnotherSavePath} data-testid="load-another-save-menu-link">{loadAnotherSavePageTitle}</a>
       </MenuGroup>
       <Show when={loadedSave.isSaveLoaded()}>
         <Show when={loadedSave.viewModels.saveIdentity()}>
           {(saveIdentity) => <SaveIdentity saveIdentity={saveIdentity()}/>}
         </Show>
         <MenuGroup title={saveGroupTitle} testId="save-menu-group">
-          <A href={PAGE_PATHS.overviewPath} end data-testid="menu-page-link">{overviewPageTitle}</A>
-          <A href={PAGE_PATHS.configurationPath} data-testid="menu-page-link">{configurationPageTitle}</A>
-          <A href={PAGE_PATHS.powerPath} data-testid="menu-page-link">{powerPageTitle}</A>
-          <A href={PAGE_PATHS.terraformationPath} data-testid="menu-page-link">{terraformationPageTitle}</A>
+          <A href={PAGE_PATHS.overviewPath} end data-testid="overview-menu-link">{overviewPageTitle}</A>
+          <A href={PAGE_PATHS.configurationPath} data-testid="configuration-menu-link">{configurationPageTitle}</A>
+          <A href={PAGE_PATHS.powerPath} data-testid="power-menu-link">{powerPageTitle}</A>
+          <A href={PAGE_PATHS.terraformationPath} data-testid="terraformation-menu-link">{terraformationPageTitle}</A>
         </MenuGroup>
         <MenuGroup title={playersGroupTitle} testId="players-menu-group">
           <Show when={loadedSave.viewModels.playersMenu()}>

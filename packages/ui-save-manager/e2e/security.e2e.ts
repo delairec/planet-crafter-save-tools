@@ -1,4 +1,5 @@
-import {expect, test, type Page} from '@playwright/test';
+import {type Page} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {readSiteHeaders} from '../siteHeaders';
 import {removeScriptNonces} from '../src/lib/scriptNonce';
 import {chooseTheTwoSavesToMerge, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';

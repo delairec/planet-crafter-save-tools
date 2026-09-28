@@ -1,4 +1,5 @@
-import {expect, test, type Locator, type Page} from '@playwright/test';
+import {type Locator, type Page} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {findTheBreadcrumbSteps, findTheMenu, findTheMenuGroupTitles, locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
@@ -53,7 +54,7 @@ test.describe('Save manager shell', () => {
 
       // Assert
       await expect(findTheMenuGroupTitles(page)).toHaveText(['Tools']);
-      await expect(findTheMenu(page).getByTestId('menu-page-link')).toHaveText(['Merge two saves', 'Load another save']);
+      await expect(findTheMenu(page).getByTestId(/-menu-link$/)).toHaveText(['Merge two saves', 'Load another save']);
     });
   });
 
@@ -71,7 +72,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('save-menu-group').getByTestId('menu-page-link'))
+      await expect(page.getByTestId('save-menu-group').getByTestId(/-menu-link$/))
         .toHaveText(['Overview', 'Configuration', 'Power', 'Terraformation']);
     });
 
@@ -84,7 +85,7 @@ test.describe('Save manager shell', () => {
       const seeMoreButton = playersGroup.getByTestId('see-more-players-button');
       await expect(seeMoreButton).toHaveText('See more');
       expect((await seeMoreButton.boundingBox())!.y)
-        .toBeGreaterThan((await playersGroup.getByTestId('menu-player').last().boundingBox())!.y);
+        .toBeGreaterThan((await playersGroup.getByTestId(/^menu-player-\d+$/).last().boundingBox())!.y);
     });
 
     test('should show the save identity above the groups', async ({page}) => {
@@ -94,7 +95,9 @@ test.describe('Save manager shell', () => {
       // Assert
       const identityZone = page.getByTestId('save-identity');
       await expect(identityZone.getByTestId('save-identity-file-name')).toHaveText('baseline_valid.json');
-      await expect(identityZone.getByTestId('save-identity-detail')).toHaveText(['Merged Save', 'Standard', 'Game release 2.004']);
+      await expect(identityZone.getByTestId('save-identity-display-name')).toHaveText('Merged Save');
+      await expect(identityZone.getByTestId('save-identity-mode')).toHaveText('Standard');
+      await expect(identityZone.getByTestId('save-identity-game-release')).toHaveText('Game release 2.004');
       expect((await identityZone.boundingBox())!.y)
         .toBeLessThan((await page.getByTestId('save-menu-group').boundingBox())!.y);
     });
@@ -104,7 +107,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('players-menu-group').getByTestId('menu-player'))
+      await expect(page.getByTestId('players-menu-group').getByTestId(/^menu-player-\d+$/))
         .toHaveText(['NikowaHostToxicity']);
     });
   });
@@ -115,7 +118,7 @@ test.describe('Save manager shell', () => {
       await visualizeTheSave(page, legacySaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('players-menu-group').getByTestId('menu-player'))
+      await expect(page.getByTestId('players-menu-group').getByTestId(/^menu-player-\d+$/))
         .toHaveText(['NikowaHostToxicity']);
     });
   });

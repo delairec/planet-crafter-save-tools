@@ -37,13 +37,13 @@ export function findTheMenu(page: Page): Locator {
 }
 
 export function findTheMenuGroupTitles(page: Page): Locator {
-  return findTheMenu(page).getByTestId('menu-group-title');
+  return findTheMenu(page).getByTestId(/^[a-z]+-menu-group-title$/);
 }
 
 export async function openThePageOfTheMenu(page: Page, pageName: string): Promise<void> {
-  await findTheMenu(page).getByTestId('menu-page-link').filter({hasText: new RegExp(`^${pageName}$`)}).click();
+  await findTheMenu(page).getByTestId(/-menu-link$/).filter({hasText: new RegExp(`^${pageName}$`)}).click();
 }
 
 export function findTheBreadcrumbSteps(page: Page): Locator {
-  return page.getByTestId('breadcrumb-step');
+  return page.getByTestId(/^breadcrumb-(?:group|page)$/);
 }

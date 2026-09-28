@@ -101,9 +101,9 @@ export default function Home() {
           <>
             <h3 data-testid="loaded-save-title">{resolveLoadedSaveTitle(loadedFile().name)}</h3>
             <p class="overview-pages">
-              <A href={PAGE_PATHS.configurationPath} data-testid="overview-page-link">{configurationPageTitle}</A>
-              <A href={PAGE_PATHS.powerPath} data-testid="overview-page-link">{powerPageTitle}</A>
-              <A href={PAGE_PATHS.terraformationPath} data-testid="overview-page-link">{terraformationPageTitle}</A>
+              <A href={PAGE_PATHS.configurationPath} data-testid="configuration-overview-link">{configurationPageTitle}</A>
+              <A href={PAGE_PATHS.powerPath} data-testid="power-overview-link">{powerPageTitle}</A>
+              <A href={PAGE_PATHS.terraformationPath} data-testid="terraformation-overview-link">{terraformationPageTitle}</A>
             </p>
           </>
         )}

@@ -15,9 +15,9 @@ export default function PlayersSection(props: PlayersProps) {
         <h3 data-testid="players-title">{playersSectionTitle}</h3>
         <div class="grid-container">
           <For each={players().players}>
-            {(player) => (
+            {(player, index) => (
               <div class="grid-item">
-                <h4 data-testid="player-name">{player.name}</h4>
+                <h4 data-testid={`player-name-${index()}`}>{player.name}</h4>
                 <div class="fields-group-container">
                   <FieldsGroup columns={() => player.columns}/>
                 </div>

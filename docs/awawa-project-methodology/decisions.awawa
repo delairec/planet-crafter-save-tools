@@ -2623,11 +2623,19 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	SPEC "A test id names what the element is on the page, in kebab case, never its tag nor its"
 		+ "place in the tree"
 		IMPL "packages/ui-save-manager/src/routes/index.tsx::testId=\"display-busy-indicator\""
+	SPEC "A test id is unique on the page; an element a list repeats takes its rank in that list as"
+		+ "a suffix, and a scenario reaches the whole list through a pattern of its test ids"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::data-testid=\"overview-menu-link\""
+		IMPL "packages/ui-save-manager/src/components/shell/PlayersMenu.tsx::menu-player-"
+		ENFORCED_BY "packages/ui-save-manager/e2e/scenarioTest.ts::testIdsStayUnique"
+		ENFORCED_BY "scripts/check-scenario-locators.ts::UNCHECKED_TEST_IMPORT"
 	REJECTED "Locating by role, label or text: an element reached through a landmark or a list item"
 		+ "breaks when the layout moves, and the scenario tests accessibility as a side effect of"
 		+ "its locator"
 		REF @TASK.TEST148
 	REJECTED "Locating by CSS selector: the selector is the DOM structure"
+	REJECTED "One test id shared by the elements of a kind, told apart by their text: the test id"
+		+ "no longer designates one element, and the scenario falls back to reading the page"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "A scenario tests a user flow; the markup that draws it changes with every layout"
 		+ "review. A data-testid attribute changes nothing the user sees or uses, so it ties the"
@@ -2638,6 +2646,9 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	SOURCE "Owner ruling of 2026-09-27 ratifying TEST147: a UI test must not break on a change of"
 		+ "the DOM structure, which justifies data-testid"
 		PR 206
+	SOURCE "Owner review comment on packages/ui-save-manager/src/routes/index.tsx line 104: test"
+		+ "ids must be unique"
+		PR 212
 
 DECISION EachPageOfTheSaveManagerIsARoute
 	SPEC "each page of the save manager is a file route of its own, addressed by its URL through"

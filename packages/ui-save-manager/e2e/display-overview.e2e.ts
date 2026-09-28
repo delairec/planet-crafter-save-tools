@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {triggerSaveFileMerge} from './helpers/triggerSaveFileMerge';
 import {findTheMenuGroupTitles, locateTheFixture, visualizeTheSave} from './scenarioSteps';
 
@@ -26,7 +26,7 @@ test.describe('Overview page', () => {
 
       // Assert
       await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
-      await expect(page.getByTestId('overview-page-link')).toHaveText(['Configuration', 'Power', 'Terraformation']);
+      await expect(page.getByTestId(/-overview-link$/)).toHaveText(['Configuration', 'Power', 'Terraformation']);
     });
   });
 

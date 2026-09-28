@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test} from './scenarioTest';
 import {findTheBreadcrumbSteps, locateTheFixture, visualizeTheSave} from './scenarioSteps';
 
 const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
@@ -14,7 +14,7 @@ test.describe('Players page', () => {
 
       // Assert
       await expect(page.getByTestId('players-title')).toHaveText('Players');
-      await expect(page.getByTestId('player-name')).toContainText(['Sakia']);
+      await expect(page.getByTestId(/^player-name-\d+$/)).toContainText(['Sakia']);
     });
 
     test('should open on a breadcrumb naming the Players group and the Players page', async ({page}) => {
