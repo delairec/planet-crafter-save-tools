@@ -1,5 +1,10 @@
 # Changelog of ui-save-manager
 
+## 0.1.2 — 2026-09-28
+
+- feat(ui-save-manager): implement new save manager navigation  (#204)
+- fix(ui): let the development server apply its styles and load its toolbar (#203)
+
 ## 0.1.1 — 2026-09-26
 
 - feat(ui): display energy levels, producers, consummers and optimizers (#176)
