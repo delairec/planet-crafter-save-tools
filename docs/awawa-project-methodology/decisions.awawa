@@ -130,7 +130,6 @@ DECISION ALocationIsABusinessLabelFollowedByTheIndex
 
 DECISION BothMessageListsShareOneRendering
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.DOCS50
 	SPEC "A single component renders both lists, foldable and monospace; that rendering is never a"
 		+ "parameter of the component"
 		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::<details>"
@@ -954,7 +953,6 @@ DECISION RepositoryGuardsAreGroupedScripts
 	SPEC "The line-by-line limit of a guard is pinned by a test that names it"
 		IMPL "scripts/check-test-assertions.spec.ts::When an assertion is spread over several lines"
 	APPLIES_TO_TASK @TASK.REFACTOR59
-	APPLIES_TO_TASK @TASK.CHORE56
 	SOURCE "T12"
 		PR 40
 		PR 46
@@ -977,7 +975,6 @@ DECISION EveryPublishedCommandHasARealProcessTest
 
 DECISION MockIsolationIsAGlobalPreload
 	REJECTED "A cleanup block per spec file"
-	APPLIES_TO_TASK @TASK.DOCS50
 	SPEC "A test runner preload restores and clears the doubles after every test, declared at the"
 		+ "root and in every package whose test script runs bun test: cli-merge, cli-validate,"
 		+ "core-mapping, shared-platforms, shared-save-processing and util-types"
@@ -1019,7 +1016,6 @@ DECISION NoSaveIsCommittedToThePublicRepository
 		IMPL ".gitignore::packages/ui-save-manager/e2e/fixtures/*.json"
 		IMPL "packages/ui-save-manager/e2e/fixtures/README.md::this README is the only file of it"
 			+ "the repository tracks"
-	APPLIES_TO_TASK @TASK.TEST122
 	SOURCE "T22"
 		PR 45
 	SOURCE "Owner ruling while refining DOCS50 on 2026-09-25: the generated scenario saves need not"
@@ -1114,7 +1110,6 @@ DECISION ScenarioFixturesAreGeneratedAndReplayedByAGuard
 		IMPL "scripts/check-scenario-fixtures.ts::INPUT_DIRECTORY_PATH"
 		ENFORCED_BY "scripts/check-scenario-fixtures.spec.ts"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.TEST122
 	SOURCE "T41"
 		PR 81
 	SOURCE "Design settled while refining TEST122 on 2026-09-25"
@@ -1213,7 +1208,6 @@ DECISION AnAnchorNamesAFileTrackedByGit
 		+ "an archived entity, and the guard follows it. check:anchors checks the path of an anchor"
 		+ "alone, never its fragment, so a fragment moved with its file is the author's to verify"
 		REF @DECISION.TheEraIsNotTheArchive
-	APPLIES_TO_TASK @TASK.TEST122
 	SOURCE "Review of the target schema"
 	SOURCE "Review of FEAT93: a decision retired by the task was deleted because the guard refused"
 		+ "its archived IMPL"
@@ -1446,8 +1440,6 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
 		+ "-rendered DOM, a gap @TASK.CHORE91 studies closing with axe-core"
 		REF @TASK.CHORE91
-	APPLIES_TO_TASK @TASK.FIX53
-	APPLIES_TO_TASK @TASK.CHORE99
 	SOURCE "the launching command's defensible-option guidance, checked against the palette before"
 		+ "ratifying"
 		PR 121
@@ -1651,7 +1643,6 @@ DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
 		+ "and drifted unreported"
 	REJECTED "bun run guards as the whole local gate: the fallow audit it leaves out is a CI job of"
 		+ "its own"
-	APPLIES_TO_TASK @TASK.CHORE60
 	RATIONALE "Two of the three pull requests of the wave of 2026-09-18 arrived red on the fallow"
 		+ "CI job, the acceptance list of their prompt lacking bun run audit:quality"
 	SOURCE "Usage report of pull requests 101, 102 and 103, remediation 1"
@@ -1669,7 +1660,6 @@ DECISION ACallerReachesASaveSectionThroughASharedFunction
 		IMPL "packages/shared-save-processing/replaceSaveSection.js"
 		ENFORCED_BY "packages/shared-save-processing/replaceSaveSection.spec.js"
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
-	APPLIES_TO_TASK @TASK.REFACTOR62
 	RATIONALE "Four call sites split a save string on '@', mutated the array at a section index and"
 		+ "rejoined it by hand; a fifth caller repeating that pattern with a different mutation is"
 		+ "what this closes off"
@@ -1682,7 +1672,6 @@ DECISION ADraftTaskReportsNoFindingUntilRatified
 		+ "citing a task absent from the workspace, and exits 1 once that task is todo"
 		IMPL "docs/_schema.awawa::draft: not ratified by the user, no finding reported until"
 			+ "ratified"
-	APPLIES_TO_TASK @TASK.CHORE63
 	REJECTED "GATE warning: lint --strict promotes the L004 warning back to an error"
 	REJECTED "GATE error: it refuses a draft citing a draft of a sibling branch"
 	REJECTED "Per-rule gating tolerating L004 alone: awawa 2.7.0 has none"
@@ -1944,7 +1933,6 @@ DECISION AWaveIsPlannedOnMasterAndDeletedOnceDelivered
 		+ "master only once implemented, and no task agent reads it from master before"
 	REJECTED "naming the base in an AGENTS.md table: the prose drifted, still naming"
 		+ "integration/save-format-preserved while release-and-hardening was open"
-	APPLIES_TO_TASK @TASK.CHORE116
 	APPLIES_TO_TASK @TASK.DOCS156
 	RATIONALE "A wave planned on master is reviewed as a plan before any implementation starts, and"
 		+ "every agent launched on one of its tasks finds the task and its base in the corpus it"
@@ -1990,8 +1978,6 @@ DECISION AChangelogEntryListsOnlyUserFacingCommits
 		IMPL "scripts/release/planRelease.ts::commitSubjects: history.commitSubjects"
 		ENFORCED_BY "scripts/release/planRelease.spec.ts::When a consumer carries only maintenance"
 			+ "commits"
-	APPLIES_TO_TASK @TASK.FEAT120
-	APPLIES_TO_TASK @TASK.CHORE130
 	REJECTED "Filtering the commits when they are read: planRelease would then raise no version for"
 		+ "a tool whose commits are all chore or docs, and a bug report could name a build no"
 		+ "version tells apart"
@@ -2071,7 +2057,6 @@ DECISION UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
 		+ "case its unexecuted lines serve, never by a test that only executes them: the figure"
 		+ "finds untested use cases, it is not the aim"
 		IMPL "bunfig.toml::The figure finds use cases no test covers, it is not the aim"
-	APPLIES_TO_TASK @TASK.CHORE105
 	RATIONALE "Bun reports only the modules a test loads, so the per-module floor gates a drop in"
 		+ "one module and never sees a module no test imports; fallow's coverage-gaps rule covers"
 		+ "that one"
@@ -2106,8 +2091,6 @@ DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
 		+ "the test that reaches it"
 		IMPL "fallow.toml::plugins ="
 		IMPL "fallow-coverage-gaps.toml::entryPointRole ="
-	APPLIES_TO_TASK @TASK.CHORE105
-	APPLIES_TO_TASK @TASK.CHORE112
 	RATIONALE "Bun measures only the modules a test loads; the static check is what makes an"
 		+ "untested module fail. A spawned module is reached by a test fallow cannot see, and the"
 		+ "owner wants the list of such modules readable in one place; what the exemption costs is"
@@ -2121,7 +2104,6 @@ DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
 
 DECISION ADroppedSaveIsSelectedThroughItsFileInput
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT119
 	RESTS_ON @RULE.TheSaveOnPrimeBecomesSaveA
 	SPEC "A dropped save is written into the file input of its area, which then reports a change;"
 		+ "the drop and the pick reach the page through the same handler"
@@ -2157,7 +2139,6 @@ DECISION ADroppedSaveIsSelectedThroughItsFileInput
 
 DECISION AnIconOnlyButtonIsNamedByItsTooltip
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT119
 	SPEC "A button that shows only its icon takes its accessible name from a tooltip element it"
 		+ "points at with aria-labelledby; the tooltip shows on hover and on keyboard focus"
 		IMPL "packages/ui-save-manager/src/components/structure/IconButton.tsx::aria-labelledby={tooltipId}"
@@ -2208,7 +2189,6 @@ DECISION ALabelledControlIsDescribedByItsTooltip
 		PR 172
 
 DECISION AgentInstructionsAreWrittenInFrench
-	APPLIES_TO_TASK @TASK.DOCS50
 	SPEC "AGENTS.md and the files of agents/ are written in French, and AGENTS.md cites this"
 		+ "decision where it states the language of the repository"
 		IMPL "AGENTS.md::Ce fichier et ceux d'`agents/` restent en français"
@@ -2265,8 +2245,6 @@ DECISION TheRootCliScriptsRunTheirEntryPointDirectly
 	REJECTED "Exposing the commands through a bin of the cli- package: Bun links the bin of a"
 		+ "workspace package at the root only when the root depends on it, the entry point carries"
 		+ "no shebang, and a bin cannot pass the --import of the Node module hooks"
-	APPLIES_TO_TASK @TASK.FEAT114
-	APPLIES_TO_TASK @TASK.CHORE54
 	RATIONALE "bun run echoes the command of the script it runs, as it does for the node: scripts;"
 		+ "that one line is the package manager's under both runtimes, every other line is the"
 		+ "command's own"
@@ -2302,7 +2280,6 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 	SPEC "Only a module holding the real input and output is ignored by the coverage, listed in the"
 		+ "coveragePathIgnorePatterns of bunfig.toml"
 		IMPL "bunfig.toml::coveragePathIgnorePatterns ="
-	APPLIES_TO_TASK @TASK.TEST123
 	RATIONALE "Bun measures only what runs in the test process: the script body that runs under"
 		+ "import.meta.main is reached in-process through its injected dependencies, and what is"
 		+ "left is the real adapter, too thin to hold a use case. The hand-off itself lives in"
@@ -2550,7 +2527,6 @@ DECISION AnArgumentOfAnExportedFunctionMakesALineReachable
 	SPEC "A line only a broken test setup reaches is deleted, the library raising the failure"
 		+ "itself"
 		IMPL "scripts/release/testing/createReleaseRepository.ts::execFileSync('git', gitArguments"
-	APPLIES_TO_TASK @TASK.TEST123
 	RATIONALE "TEST123 deletes a line no input can reach; the input of a module is the arguments of"
 		+ "what it exports, not only the save a user opens, and the frontier is whether something"
 		+ "in the repository can produce the argument: the merge presenter emits the unusable"
@@ -2685,7 +2661,6 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 	REJECTED "Locating by role, label or text: an element reached through a landmark or a list item"
 		+ "breaks when the layout moves, and the scenario tests accessibility as a side effect of"
 		+ "its locator"
-		REF @TASK.TEST148
 	REJECTED "Locating by CSS selector: the selector is the DOM structure"
 	REJECTED "One test id shared by the elements of a kind, told apart by their text: the test id"
 		+ "no longer designates one element, and the scenario falls back to reading the page"
@@ -2759,11 +2734,9 @@ DECISION AUiTestIsEitherAScenarioOrAnAccessibilityTest
 		IMPL "packages/ui-save-manager/e2e/accessibility/load-save.e2e.ts::Load another save page"
 			+ "accessibility"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.TEST148
 	RATIONALE "Once the scenarios locate by test id, their locators no longer check the roles and"
 		+ "names they used to; accessibility is tested on purpose, in a category that tests nothing"
 		+ "else, rather than as a side effect of a locator"
-		REF @TASK.TEST147
 	SOURCE "Owner ruling of 2026-09-27: the UI tests that check accessibility form a category of"
 		+ "their own, the UI tests focus on the scenarios"
 		PR 206
