@@ -197,9 +197,8 @@ LIMITATION TheDownloadLinkFallsShortOfTheTextContrastAtRest
 		+ "lightens the primary background the contrast check measures at full opacity"
 	WORKAROUND "The axe audit of a merge result excludes the download link; its link role and"
 		+ "accessible name stay asserted by hand"
-	UNTIL "The integration branch of the save manager redesign carries this test and its axe audit"
-		+ "of a merge result passes without the exclusion; that pull request removes the exclusion"
-		+ "and archives this limitation"
+	STATUS archived
+	ARCHIVED_ON 2026-09-28
 	SEEN_IN "packages/ui-save-manager/src/styles/buttons.css::.button-link {"
 	SEEN_IN "packages/ui-save-manager/e2e/accessibility.e2e.ts::downloadLinkBelowTheTextContrast"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager

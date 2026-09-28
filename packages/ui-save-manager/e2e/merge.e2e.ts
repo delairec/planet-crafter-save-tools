@@ -1,11 +1,11 @@
 import {readFile} from 'node:fs/promises';
 import {type Download, type Page} from '@playwright/test';
-import {
-  baselineSaveFixturePath as saveAFixturePath,
-  legacySaveFixturePath,
-  otherPlayerSaveFixturePath as saveBFixturePath
-} from './helpers/scenarioFixturePaths';
 import {expect, test} from './scenarioTest';
+import {locateTheFixture} from './scenarioSteps';
+
+const saveAFixturePath = locateTheFixture('baseline_valid.json');
+const saveBFixturePath = locateTheFixture('other-player_valid.json');
+const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
 
 /** The name the merge gives its output, built from the two source file names. */
 const mergedFileName = 'baseline_valid-other-player_valid-merged.json';

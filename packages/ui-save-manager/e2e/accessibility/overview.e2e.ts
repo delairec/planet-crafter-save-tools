@@ -1,28 +1,18 @@
-import AxeBuilder from '@axe-core/playwright';
-import {expect, test, type Page} from '@playwright/test';
-import {holdEveryFileRead} from './helpers/holdEveryFileRead';
-import {
-  baselineSaveFixturePath as saveAFixturePath,
-  legacySaveFixturePath,
-  otherPlayerSaveFixturePath as saveBFixturePath
-} from './helpers/scenarioFixturePaths';
-import {triggerSaveFileMerge} from './helpers/triggerSaveFileMerge';
-import {visualizeSave} from './helpers/visualizeSave';
+import {type Page} from '@playwright/test';
+import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
+import {holdEveryFileRead} from '../helpers/holdEveryFileRead';
+import {triggerSaveFileMerge} from '../helpers/triggerSaveFileMerge';
+import {visualizeSave} from '../helpers/visualizeSave';
+import {expect, test} from '../scenarioTest';
+import {locateTheFixture, visualizeTheSave} from '../scenarioSteps';
 
-
-const wcag2LevelAAndAaTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa'];
-const noViolation: readonly unknown[] = [];
-// Exempted by @LIMITATION.TheDownloadLinkFallsShortOfTheTextContrastAtRest; its role and name stay asserted below.
-const downloadLinkBelowTheTextContrast = '[data-testid="download-link"]';
-
-function createAWcag2Audit(page: Page): AxeBuilder {
-  return new AxeBuilder({page}).withTags(wcag2LevelAAndAaTags);
-}
+const saveAFixturePath = locateTheFixture('baseline_valid.json');
+const saveBFixturePath = locateTheFixture('other-player_valid.json');
+const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
 
 async function showASaveVisualization(page: Page): Promise<void> {
-  await page.goto('/');
-  await visualizeSave(page, saveAFixturePath);
-  await expect(page.getByTestId('save-configuration-title')).toBeVisible();
+  await visualizeTheSave(page, saveAFixturePath);
+  await expect(page.getByTestId('loaded-save-title')).toBeVisible();
 }
 
 async function showAMergeResult(page: Page): Promise<void> {
@@ -31,7 +21,7 @@ async function showAMergeResult(page: Page): Promise<void> {
   await expect(page.getByTestId('merge-success-message')).toBeVisible();
 }
 
-test.describe('Save manager accessibility', () => {
+test.describe('Overview page accessibility', () => {
   test.describe('When the page opens before a save is loaded', () => {
     test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
       // Arrange
@@ -64,9 +54,9 @@ test.describe('Save manager accessibility', () => {
       await page.goto('/');
 
       // Assert
-      await expect(page.getByTestId('save-file-input')).toHaveAccessibleName('Save file:');
-      await expect(page.getByTestId('save-a-input')).toHaveAccessibleName('Save A:');
-      await expect(page.getByTestId('save-b-input')).toHaveAccessibleName('Save B:');
+      await expect(page.getByTestId('save-file')).toHaveAccessibleName('Save file:');
+      await expect(page.getByTestId('save-a')).toHaveAccessibleName('Save A:');
+      await expect(page.getByTestId('save-b')).toHaveAccessibleName('Save B:');
     });
 
     test('should name the buttons that run an action by their text', async ({page}) => {
@@ -74,10 +64,10 @@ test.describe('Save manager accessibility', () => {
       await page.goto('/');
 
       // Assert
-      await expect(page.getByTestId('visualize-button')).toHaveRole('button');
-      await expect(page.getByTestId('visualize-button')).toHaveAccessibleName('Visualize');
-      await expect(page.getByTestId('merge-button')).toHaveRole('button');
-      await expect(page.getByTestId('merge-button')).toHaveAccessibleName('Merge');
+      await expect(page.getByTestId('visualize')).toHaveRole('button');
+      await expect(page.getByTestId('visualize')).toHaveAccessibleName('Visualize');
+      await expect(page.getByTestId('merge')).toHaveRole('button');
+      await expect(page.getByTestId('merge')).toHaveAccessibleName('Merge');
     });
 
     test('should name the swap button by its tooltip', async ({page}) => {
@@ -85,9 +75,9 @@ test.describe('Save manager accessibility', () => {
       await page.goto('/');
 
       // Assert
-      await expect(page.getByTestId('swap-button-tooltip')).toHaveRole('tooltip');
-      await expect(page.getByTestId('swap-button')).toHaveRole('button');
-      await expect(page.getByTestId('swap-button')).toHaveAccessibleName('Swap save A and save B');
+      await expect(page.getByTestId('swap-saves-description')).toHaveRole('tooltip');
+      await expect(page.getByTestId('swap-saves')).toHaveRole('button');
+      await expect(page.getByTestId('swap-saves')).toHaveAccessibleName('Swap save A and save B');
     });
 
     test('should describe the legacy format checkbox by its tooltip', async ({page}) => {
@@ -95,7 +85,7 @@ test.describe('Save manager accessibility', () => {
       await page.goto('/');
 
       // Assert
-      await expect(page.getByTestId('prefer-legacy-format-tooltip')).toHaveRole('tooltip');
+      await expect(page.getByTestId('prefer-legacy-format-description')).toHaveRole('tooltip');
       await expect(page.getByTestId('prefer-legacy-format')).toHaveAccessibleDescription(
         'Tick this checkbox if you want to align the save format on the older version instead of the newer.'
       );
@@ -159,39 +149,15 @@ test.describe('Save manager accessibility', () => {
       // Assert
       expect(violations).toEqual(noViolation);
     });
-
-    test('should title its sections with third level headings', async ({page}) => {
-      // Act
-      await showASaveVisualization(page);
-
-      // Assert
-      await expect(page.getByTestId('save-configuration-title')).toHaveRole('heading');
-      await expect(page.getByTestId('save-configuration-title')).toHaveAccessibleName('Save Configuration: Merged Save (Standard)');
-      await expect(page.getByTestId('save-configuration-title')).toMatchAriaSnapshot('- heading [level=3]');
-      await expect(page.getByTestId('energy-levels-title')).toHaveRole('heading');
-      await expect(page.getByTestId('energy-levels-title')).toHaveAccessibleName('Power');
-      await expect(page.getByTestId('energy-levels-title')).toMatchAriaSnapshot('- heading [level=3]');
-    });
-
-    test('should title each planet with a fourth level heading', async ({page}) => {
-      // Act
-      await showASaveVisualization(page);
-
-      // Assert
-      await expect(page.getByTestId('energy-levels-planet-title').first()).toHaveRole('heading');
-      await expect(page.getByTestId('energy-levels-planet-title').first()).toHaveAccessibleName('Planet 1');
-      await expect(page.getByTestId('energy-levels-planet-title').first()).toMatchAriaSnapshot('- heading [level=4]');
-    });
   });
 
   test.describe('When the warnings of a visualized save are revealed', () => {
     test('should list each warning as a list item', async ({page}) => {
       // Arrange
-      await page.goto('/');
-      await visualizeSave(page, legacySaveFixturePath);
+      await visualizeTheSave(page, legacySaveFixturePath);
 
       // Act
-      await page.getByTestId('display-warnings-details-toggle').click();
+      await page.getByTestId('display-warnings-details').click();
 
       // Assert
       await expect(page.getByTestId('display-warnings-messages')).toHaveRole('list');
@@ -205,7 +171,7 @@ test.describe('Save manager accessibility', () => {
       await showAMergeResult(page);
 
       // Act
-      const {violations} = await createAWcag2Audit(page).exclude(downloadLinkBelowTheTextContrast).analyze();
+      const {violations} = await createAWcag2Audit(page).analyze();
 
       // Assert
       expect(violations).toEqual(noViolation);
@@ -216,8 +182,8 @@ test.describe('Save manager accessibility', () => {
       await showAMergeResult(page);
 
       // Assert
-      await expect(page.getByTestId('download-link')).toHaveRole('link');
-      await expect(page.getByTestId('download-link')).toHaveAccessibleName('Download');
+      await expect(page.getByTestId('merged-save-download')).toHaveRole('link');
+      await expect(page.getByTestId('merged-save-download')).toHaveAccessibleName('Download');
     });
   });
 });
