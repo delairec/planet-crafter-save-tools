@@ -1,49 +1,8 @@
 import {expect, test, type Page} from '@playwright/test';
+import {holdEveryFileRead, releaseTheHeldFileReads} from "./helpers/holdEveryFileRead";
+import {baselineSaveFixturePath as saveAFixturePath, otherPlayerSaveFixturePath as saveBFixturePath} from "./helpers/scenarioFixturePaths";
 import {visualizeSave} from "./helpers/visualizeSave";
 import {triggerSaveFileMerge} from "./helpers/triggerSaveFileMerge";
-
-const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
-
-declare global {
-  interface Window {
-    releaseTheHeldFileReads(): void;
-  }
-}
-
-async function holdEveryFileRead(page: Page): Promise<void> {
-  await page.addInitScript(() => {
-    const readTextOfBlob = Blob.prototype.text;
-    const readArrayBufferOfBlob = Blob.prototype.arrayBuffer;
-    let letTheReadsThrough = () => {};
-    const readsReleased = new Promise<void>((resolve) => {
-      letTheReadsThrough = resolve;
-    });
-
-    window.releaseTheHeldFileReads = () => letTheReadsThrough();
-
-    Blob.prototype.text = function (this: Blob) {
-      return readsReleased.then(() => readTextOfBlob.call(this));
-    };
-    Blob.prototype.arrayBuffer = function (this: Blob) {
-      return readsReleased.then(() => readArrayBufferOfBlob.call(this));
-    };
-    Blob.prototype.stream = function (this: Blob) {
-      const bytesRead = readsReleased.then(() => readArrayBufferOfBlob.call(this));
-
-      return new ReadableStream({
-        async start(controller) {
-          controller.enqueue(new Uint8Array(await bytesRead));
-          controller.close();
-        }
-      });
-    };
-  });
-}
-
-async function releaseTheHeldFileReads(page: Page): Promise<void> {
-  await page.evaluate(() => window.releaseTheHeldFileReads());
-}
 
 async function startVisualizingWithTheReadsHeld(page: Page): Promise<void> {
   await holdEveryFileRead(page);

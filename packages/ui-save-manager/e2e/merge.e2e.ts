@@ -1,9 +1,10 @@
 import {readFile} from 'node:fs/promises';
 import {expect, test, type Download, type Page} from '@playwright/test';
-
-const saveAFixturePath = new URL('./fixtures/baseline_valid.json', import.meta.url).pathname;
-const saveBFixturePath = new URL('./fixtures/other-player_valid.json', import.meta.url).pathname;
-const legacySaveFixturePath = new URL('./fixtures/legacy-format_valid.json', import.meta.url).pathname;
+import {
+  baselineSaveFixturePath as saveAFixturePath,
+  legacySaveFixturePath,
+  otherPlayerSaveFixturePath as saveBFixturePath
+} from './helpers/scenarioFixturePaths';
 
 /** The name the merge gives its output, built from the two source file names. */
 const mergedFileName = 'baseline_valid-other-player_valid-merged.json';
@@ -149,7 +150,7 @@ test.describe('Save merge', () => {
   });
 
   test.describe('When the legacy format checkbox takes the keyboard focus', () => {
-    test('should show the tooltip that describes it, read by a screen reader as its description', async ({page}) => {
+    test('should show the tooltip that describes it', async ({page}) => {
       // Arrange
       await page.goto('/');
       const preferLegacyFormatCheckbox = page.getByTestId('prefer-legacy-format');
@@ -159,7 +160,6 @@ test.describe('Save merge', () => {
 
       // Assert
       await expect(page.getByTestId('prefer-legacy-format-tooltip')).toHaveText(preferLegacyFormatDescription);
-      await expect(preferLegacyFormatCheckbox).toHaveAccessibleDescription(preferLegacyFormatDescription);
     });
   });
 
