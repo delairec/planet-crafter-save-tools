@@ -2496,14 +2496,29 @@ TASK FEAT149
 
 TASK FEAT150
 	TITLE "Give the save manager a home page at the root address"
-	STATUS draft
-	DESC "asked by the owner in the review of pull request 211 on 2026-09-28; until it lands the"
-		+ "root address opens the Load save page"
-		REF @DECISION.OneLoadSavePageLoadsTheFirstAndEveryNextSave
-	SPEC "the root address opens a home page of its own instead of the Load save page"
+	STATUS todo
+	SPEC "the root address opens a home page of its own, whether a save is loaded or not; it shows"
+		+ "no left menu and keeps the disclaimer the other pages show"
+	SPEC "the home page shows the name of the tool, one sentence saying what it does, and two"
+		+ "links, Merge two saves and Load save, named Load another save once a save is loaded,"
+		+ "each opening its page"
+	SPEC "once a save is loaded, the home page shows a card of the loaded save carrying the save"
+		+ "identity of the menu, its file name, display name, mode and game release, and a link to"
+		+ "its Overview page"
+	SPEC "the title of the application in the header of every page links to the home page"
 	AFTER @TASK.FEAT137
 	WAVE @WAVE.10
-	SOURCE "Owner review of pull request 211"
+	RATIONALE "The root address redirects to the Load save page until this task lands, a ruling the"
+		+ "pull request ends; the scenarios that open the root address to load a save then open the"
+		+ "Load save page by its own address. The home page stands apart from the pages the menu"
+		+ "lists, so it hides the menu rather than marking an entry of it, and the application"
+		+ "title is the way back to it. The card reuses the save identity view model the menu"
+		+ "already reads, so the task adds no view model"
+		REF @DECISION.OneLoadSavePageLoadsTheFirstAndEveryNextSave
+		REF @TASK.FEAT135
+	SOURCE "Owner review of pull request 211, then the owner's ruling of 2026-09-28 when the task"
+		+ "was refined: no left menu, the disclaimer unchanged, the save identity card with a link"
+		+ "to Overview, the application title as the way back"
 		PR 211
 
 TASK FEAT151
