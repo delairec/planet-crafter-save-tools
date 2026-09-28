@@ -49,5 +49,11 @@ signale qu'il décrit une conception abandonnée. Avant de demander une revue et
 le corps contre le journal des commits depuis la base et le réécrire si la conception a bougé ; la règle est
 générale et vit dans `~/.ai/instructions/commands.md`.
 
+**Le corps de la PR d'intégration d'une wave liste, pour la tête de sa branche, chaque PR de tâche fusionnée dedans
+avec la tâche qu'elle a livrée.** La session qui fusionne une PR de tâche dans la branche d'intégration réécrit ce
+corps dans la foulée, et la PR d'intégration reçoit son commentaire de disponibilité avant que tu la fusionnes.
+Constaté sur la PR #176 (wave 9) : son corps décrivait le premier de ses 12 commits, son titre seul avait été
+réécrit, et aucun commentaire de disponibilité n'avait été posté.
+
 Constaté le 2026-09-11 sur la PR #59 (T28), puis le 2026-09-12 sur la PR #61 (DEP2), où le corps décrivait encore
 un montage par lien symbolique abandonné trois commits plus tôt.
