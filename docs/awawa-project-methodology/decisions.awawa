@@ -1464,6 +1464,7 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "package is its driver, and the port keeps the shape of the table out of the domain"
 	SOURCE "Owner ruling during the refinement of REFACTOR163, 2026-09-29: a JSON value table is a"
 		+ "database, external to the packages that read it and read behind a port"
+		PR 238
 
 DECISION APullRequestIsCitedByItsNumberNeverByAnEntity
 	SPEC "A SOURCE born in a pull request carries its number in a PR field beside the prose; REF"
@@ -3440,6 +3441,7 @@ DECISION ADataPackageExportsItsTypeScriptModulesByPath
 	RATIONALE "The packages that read a table, core-mapping and shared-save-processing, run under"
 		+ "Bun and type-check TypeScript already"
 	SOURCE "Ruling taken while implementing REFACTOR168"
+		PR 238
 
 DECISION GameReleasesKeepsItsApiUntilTheReleaseRulesMove
 	SPEC "shared-save-processing/gameReleases.js reads the releases table through the selector of"
@@ -3452,3 +3454,4 @@ DECISION GameReleasesKeepsItsApiUntilTheReleaseRulesMove
 	RATIONALE "The table moves before the rules that read it, so that the release rules task starts"
 		+ "from a table already behind its selector"
 	SOURCE "Ruling taken while implementing REFACTOR168"
+		PR 238
