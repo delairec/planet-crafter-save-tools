@@ -3325,3 +3325,22 @@ DECISION ADomainSpecBuildsSaveEntriesWithTheBusinessBuilders
 	APPLIES_TO_TASK @TASK.REFACTOR162
 	SOURCE "Ruled while implementing the decoding of the save format"
 		PR 236
+
+DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR164
+	SPEC "Each validation issue of core-mapping is a named interface declared in a file of its own"
+		+ "under application/ports/validationIssues; ValidationIssue is the union of those"
+		+ "interfaces and declares no member inline"
+		IMPL "packages/core-mapping/src/application/ports/validationIssues"
+		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::export type"
+			+ "ValidationIssue"
+	REJECTED "Members written inline as an anonymous union of object literals: no issue has a name"
+		+ "to import, to narrow a producer to or to find a file by"
+	REJECTED "One interface holding the fields of every issue as optional: the type no longer ties"
+		+ "a code to its data"
+	RATIONALE "Each code carries data of its own, so each issue is a type of its own, named and"
+		+ "found by that name"
+	SOURCE "Owner ruling in the review: one named interface per issue, each in its own file, in a"
+		+ "subfolder grouping them"
+		PR 234
