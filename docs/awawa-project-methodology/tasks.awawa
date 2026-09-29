@@ -1003,56 +1003,89 @@ TASK DOCS156
 		PR 222
 
 TASK CHORE157
-	TITLE "chore(guards): refuse any domain import in presentation files and presenter ports"
-	STATUS draft
-	SPEC "bun run check:presentation fails on a file of a presentation directory, or a file"
-		+ "application/ports/*Presenter* of a core- package, that imports a module under domain/,"
-		+ "whatever its subdirectory, import type included"
-	SPEC "the files that import domain/ when the task lands are listed in an allow-list the guard"
-		+ "reads: a listed file is not reported, and a listed file that no longer imports domain/"
-		+ "fails the guard until its entry is removed, so the list only shrinks"
+	TITLE "chore(guards): refuse domain entities and infrastructure at the output boundary, and any"
+		+ "domain type in a presenter port"
+	STATUS todo
+	SPEC "bun run check:presentation fails on a file of a presentation directory or of"
+		+ "application/responses of a core- package that imports a module under domain/entities or"
+		+ "infrastructure/, import type included"
+	SPEC "bun run check:presentation fails on a file application/ports/*Presenter* of a core-"
+		+ "package that imports a module under domain/, whatever its subdirectory, import type"
+		+ "included"
+	SPEC "the presenter ports that import domain/ when the task lands are listed in an allow-list"
+		+ "the guard reads: a listed file is not reported, and a listed file that no longer imports"
+		+ "domain/ fails the guard until its entry is removed, so the list only shrinks"
+	SPEC "the failure message of check:presentation and its description in docs/wiki/development.md"
+		+ "state the refusals of the first two criteria"
 	SPEC "bun run guards passes on the code as it stands"
 	WAVE @WAVE.14
 	PRIORITY critical
-	DESC "guard of violation 1 of the audit, extending scripts/check-presentation-entities.ts"
-		+ "beyond domain/entities"
+	DESC "guard of violation 1 of the audit"
 	RATIONALE "The guard lands first so that no task of the wave, and no other pull request, adds a"
-		+ "domain import the output boundary task then has to remove; the allow-list is the measure"
-		+ "of what is left, and the output boundary task empties it"
+		+ "crossing the output boundary task then has to remove; the allow-list is the measure of"
+		+ "what is left, and the output boundary task empties it. A presenter receives Responses or"
+		+ "primitives; a Response holds primitives by default and a domain value object only when"
+		+ "the complexity of the data requires it, never an entity nor an infrastructure type, so a"
+		+ "presentation file may import a value object while a presenter port imports nothing from"
+		+ "the domain. On the base, only the five presenter ports taking a value object as a"
+		+ "parameter break it"
 		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+		REF @TASK.REFACTOR159
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: a Response may hold a value object,"
+		+ "never an entity"
 
 TASK CHORE158
-	TITLE "chore(guards): refuse the wire abbreviations of the save format under domain"
-	STATUS draft
-	SPEC "a guard run by bun run guards fails on a file under domain/ of a core- package that uses"
-		+ "gId, liId, woIds, siIds or linkedWo as an identifier, a property name or a property key"
-	SPEC "the files that use one of them when the task lands are listed in an allow-list the guard"
-		+ "reads: a listed file is not reported, and a listed file that no longer uses any fails"
-		+ "the guard until its entry is removed, so the list only shrinks"
+	TITLE "chore(guards): refuse the save format records and their abbreviations under domain"
+	STATUS todo
+	SPEC "bun run check:wire-format fails on a file under domain/ of a core- package that uses gId,"
+		+ "liId, woIds, siIds or linkedWo as an identifier, a property name or a property key,"
+		+ "string literal keys included; a comment is not reported"
+	SPEC "bun run check:wire-format fails on a file under domain/ of a core- package that imports"
+		+ "shared-save-processing/gameDefinitions, import type included"
+	SPEC "both refusals apply to the spec files under domain/ as to the production ones"
+	SPEC "the files each refusal reports when the task lands are listed in an allow-list of that"
+		+ "refusal, read through the allow-list mechanism of check:presentation shared by both"
+		+ "guards: a listed file is not reported, and a listed file the refusal no longer reports"
+		+ "fails the guard until its entry is removed, so each list only shrinks"
+	SPEC "the failure message of check:wire-format and its paragraph in docs/wiki/development.md"
+		+ "state the two refusals"
 	SPEC "bun run guards passes on the code as it stands"
+	AFTER @TASK.CHORE157
 	WAVE @WAVE.14
 	PRIORITY high
 	DESC "guard of violation 5 of the audit"
-	RATIONALE "Placed first for the same reason as the presentation guard: the decoding task"
-		+ "empties the allow-list, and nothing adds an abbreviation in the meantime"
+	RATIONALE "The guard lands before the decoding task so that nothing adds a save format record"
+		+ "or an abbreviation to the domain in the meantime; its allow-lists are the measure of"
+		+ "what is left, and the decoding task empties them. The abbreviations alone miss the"
+		+ "domain modules that handle a save format record without naming one, hence the refusal of"
+		+ "the import. The guard follows the presentation guard to reuse its shrinking allow-list"
+		+ "instead of writing a second one. WireAbbreviationsStayInSharedSaveProcessing already"
+		+ "requires the translation at the domain boundary; the guard makes it checked"
+		REF @TASK.CHORE157
+		REF @TASK.REFACTOR162
+		REF @DECISION.WireAbbreviationsStayInSharedSaveProcessing
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: refuse the import of the save format"
+		+ "records as well as the abbreviations, spec files included, after the presentation guard"
 
 TASK REFACTOR159
-	TITLE "refactor(core-mapping): hand the presenters application responses, never a domain type"
-	STATUS draft
-	SPEC "no presenter port and no presentation file of core-mapping imports a module under"
-		+ "domain/: each use case hands its presenter an application response, one per outcome, or"
-		+ "primitives"
+	TITLE "refactor(core-mapping): hand the presenters one application response per outcome"
+	STATUS todo
+	SPEC "no presenter port of core-mapping imports a module under domain/: each use case hands its"
+		+ "presenter an application response, one per outcome, or primitives"
 	SPEC "the allow-list of check:presentation is empty and removed, the guard running with no"
 		+ "exemption"
-	SPEC "every value object left under domain/valueObjects holds a business invariant or a"
-		+ "behaviour; PlayerMenuEntry, PlayerSummary, SaveIdentity, TerraformationLevelSummary and"
-		+ "the other projections named after a view or a port are application responses or view"
-		+ "models"
+	SPEC "PlayerMenuEntry, PlayerSummary, SaveIdentity and TerraformationLevelSummary are"
+		+ "application responses holding primitives, built by their use case, and no longer value"
+		+ "objects of the domain; no entity builds a projection for a presenter"
+	SPEC "EnergyLevels is an application response built by its use case, which may hold the planet"
+		+ "energy value objects the domain computes"
 	SPEC "a save loaded with unreadable lines reaches the presenter through an outcome of its own,"
 		+ "distinct from a save loaded with warnings only, and is never rendered valid"
-	SPEC "APresenterReceivesAValueObjectNeverAnEntity is rewritten in place to the new boundary or"
-		+ "archived; a departure from an instructions rule the rewritten decision keeps is named in"
-		+ "its DEROGATES"
+	SPEC "APresenterReceivesAValueObjectNeverAnEntity is archived"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
 	AFTER @TASK.CHORE157
@@ -1062,8 +1095,23 @@ TASK REFACTOR159
 	RATIONALE "The three violations are one boundary: the value objects of violation 2 are the"
 		+ "types that cross it in violation 1, and the load outcome of violation 9 is one of the"
 		+ "responses that replace them. Every later task of the wave that adds an outcome writes it"
-		+ "as a response, so this one lands first"
+		+ "as a response, so this one lands first. A response holds primitives by default and a"
+		+ "domain value object only when the complexity of the data requires it, never an entity:"
+		+ "the four projections built for one presenter become responses of primitives, while the"
+		+ "value objects the planet energy grid computes and those read from the save"
+		+ "(SaveConfiguration, GlobalProgression, Statistics) stay in the domain."
+		+ "EnergyLevelsRawData belongs to the reader port task and the assertions of the value"
+		+ "object factories to the decoding task. The instructions rule objects_crossing_a_boundary"
+		+ "carries the boundary since .ai pull request 56, so the project decision stating it is"
+		+ "archived"
 		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+		REF @TASK.CHORE157
+		REF @TASK.REFACTOR161
+		REF @TASK.REFACTOR162
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the projections built for one presenter"
+		+ "become responses, the decision is archived"
 
 TASK REFACTOR160
 	TITLE "refactor(core-mapping): call the domain rules from the use cases, not from the adapters"
@@ -1106,8 +1154,10 @@ TASK REFACTOR161
 TASK REFACTOR162
 	TITLE "refactor(core-mapping): decode the save format before it reaches the domain"
 	STATUS draft
-	SPEC "the domain model of core-mapping names its data in business terms: the allow-list of the"
-		+ "wire abbreviation guard is empty and removed, the guard running with no exemption"
+	SPEC "the domain model of core-mapping names its data in business terms, with a business type"
+		+ "of its own for every save section it handles, decoded by the infrastructure: both"
+		+ "allow-lists of check:wire-format are empty and removed, the guard running with no"
+		+ "exemption"
 	SPEC "no module under domain/ splits or joins a list of the save text nor reads an empty string"
 		+ "as an absence: the infrastructure hands the domain lists as arrays and absence as"
 		+ "undefined"
@@ -1125,6 +1175,8 @@ TASK REFACTOR162
 	RATIONALE "The three violations are one boundary, the decoding of the save text: violation 10"
 		+ "escapes what the serializer encodes and violation 13 moves the shape checks to where the"
 		+ "text is decoded. The task follows the reader port, which is where the decoding lands"
+	SOURCE "Owner ruling during the refinement of CHORE158: the domain defines a business type per"
+		+ "save section instead of importing the save format records"
 
 TASK REFACTOR163
 	TITLE "refactor(core-mapping): move the game releases into the domain, shared runtime code"
@@ -1197,3 +1249,28 @@ TASK REFACTOR166
 	RATIONALE "Violation 15 is one stale comment, too small for a pull request of its own; the task"
 		+ "follows the composition root, which it extends with the factories"
 		REF @DECISION.AControllerSpecCoversWiringNotBranches
+
+TASK DOCS167
+	TITLE "docs(tasks): rewrite the tasks of the other waves to the boundaries wave 14 sets"
+	STATUS todo
+	SPEC "every draft or todo task of a wave other than 14 is reread against core-mapping as wave"
+		+ "14 leaves it, and rewritten where its TITLE, SPEC, RATIONALE or DESC names a module, a"
+		+ "type, a port, a presenter outcome or a decision that wave 14 removed, renamed or"
+		+ "archived"
+	SPEC "a rewritten task hands its presenters application responses, primitives by default, and"
+		+ "names no value object that wave 14 turned into a response"
+	SPEC "no draft or todo task references a decision archived by wave 14"
+	SPEC "awawa lint --strict . passes"
+	AFTER @TASK.REFACTOR164
+	AFTER @TASK.REFACTOR165
+	AFTER @TASK.REFACTOR166
+	RATIONALE "The tasks of the other waves were written against the boundaries wave 14 corrects:"
+		+ "presenter ports taking value objects, the players, identity and terraformation"
+		+ "projections, the energy raw data port and the decisions that entrenched them. Rewritten"
+		+ "before wave 14 lands, they would describe code that does not exist yet; left as they"
+		+ "are, they hand the delivering agent an obsolete design. The three tasks it follows are"
+		+ "the last of wave 14, every other task of the wave coming before one of them"
+		REF @WAVE.14
+		REF @TASK.REFACTOR159
+		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+	SOURCE "Owner request during the refinement of wave 14 on 2026-09-29"
