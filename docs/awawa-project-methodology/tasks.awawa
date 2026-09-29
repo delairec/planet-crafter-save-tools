@@ -1043,23 +1043,38 @@ TASK DOCS156
 		PR 222
 
 TASK CHORE157
-	TITLE "chore(guards): refuse any domain import in presentation files and presenter ports"
-	STATUS draft
-	SPEC "bun run check:presentation fails on a file of a presentation directory, or a file"
-		+ "application/ports/*Presenter* of a core- package, that imports a module under domain/,"
-		+ "whatever its subdirectory, import type included"
-	SPEC "the files that import domain/ when the task lands are listed in an allow-list the guard"
-		+ "reads: a listed file is not reported, and a listed file that no longer imports domain/"
-		+ "fails the guard until its entry is removed, so the list only shrinks"
+	TITLE "chore(guards): refuse domain entities and infrastructure at the output boundary, and any"
+		+ "domain type in a presenter port"
+	STATUS todo
+	SPEC "bun run check:presentation fails on a file of a presentation directory or of"
+		+ "application/responses of a core- package that imports a module under domain/entities or"
+		+ "infrastructure/, import type included"
+	SPEC "bun run check:presentation fails on a file application/ports/*Presenter* of a core-"
+		+ "package that imports a module under domain/, whatever its subdirectory, import type"
+		+ "included"
+	SPEC "the presenter ports that import domain/ when the task lands are listed in an allow-list"
+		+ "the guard reads: a listed file is not reported, and a listed file that no longer imports"
+		+ "domain/ fails the guard until its entry is removed, so the list only shrinks"
+	SPEC "the failure message of check:presentation and its description in docs/wiki/development.md"
+		+ "state the refusals of the first two criteria"
 	SPEC "bun run guards passes on the code as it stands"
 	WAVE @WAVE.14
 	PRIORITY critical
-	DESC "guard of violation 1 of the audit, extending scripts/check-presentation-entities.ts"
-		+ "beyond domain/entities"
+	DESC "guard of violation 1 of the audit"
 	RATIONALE "The guard lands first so that no task of the wave, and no other pull request, adds a"
-		+ "domain import the output boundary task then has to remove; the allow-list is the measure"
-		+ "of what is left, and the output boundary task empties it"
+		+ "crossing the output boundary task then has to remove; the allow-list is the measure of"
+		+ "what is left, and the output boundary task empties it. A presenter receives Responses or"
+		+ "primitives; a Response holds primitives by default and a domain value object only when"
+		+ "the complexity of the data requires it, never an entity nor an infrastructure type, so a"
+		+ "presentation file may import a value object while a presenter port imports nothing from"
+		+ "the domain. On the base, only the five presenter ports taking a value object as a"
+		+ "parameter break it"
 		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+		REF @TASK.REFACTOR159
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: a Response may hold a value object,"
+		+ "never an entity"
 
 TASK CHORE158
 	TITLE "chore(guards): refuse the wire abbreviations of the save format under domain"
