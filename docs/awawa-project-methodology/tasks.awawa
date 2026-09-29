@@ -1304,23 +1304,72 @@ TASK REFACTOR162
 		+ "task, and the written text is compared on the scenario fixtures"
 
 TASK REFACTOR163
-	TITLE "refactor(core-mapping): move the game releases into the domain, shared runtime code"
+	TITLE "refactor(core-mapping): move the game release rules into the domain, shared runtime code"
 		+ "confined to the infrastructure"
-	STATUS draft
-	SPEC "the game releases and their comparison are domain knowledge of core-mapping, their values"
-		+ "a JSON table beside the module that reads it, validated by bun run validate:tables"
-	SPEC "no module under domain/ or application/ of a core- package imports runtime code of a"
-		+ "shared- package: only import type crosses"
-	SPEC "a guard run by bun run guards fails on an import of a shared- module from domain/ or"
-		+ "application/ of a core- package that is not import type"
-	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	STATUS todo
+	SPEC "the resolution of a declared version, the comparison of game releases and the current"
+		+ "game release are domain knowledge of core-mapping: the game releases reach the domain"
+		+ "through an application port an infrastructure adapter implements with the selectors of"
+		+ "the data- package, and shared-save-processing reads the number of parts a save format"
+		+ "splits into through those selectors and resolves no declared version, a domain rule and"
+		+ "not a selector"
+	SPEC "the warning that a declared version contradicts the format the save carries is raised by"
+		+ "a domain rule the use cases that validate, load and merge a save call, no longer by the"
+		+ "parser of shared-save-processing; cli-validate, cli-merge and the save manager show it"
+		+ "as before"
+	SPEC "no module under domain/ or application/ of a core- package, spec files included, imports"
+		+ "runtime code of another workspace package: only import type crosses"
+	SPEC "a guard run by bun run guards fails on an import that is not import type of another"
+		+ "workspace package from a file under domain/ or application/ of a core- package, spec"
+		+ "files included, and carries no allow-list"
+	SPEC "the merged save file is named by an infrastructure adapter behind an application port: no"
+		+ "module under application/ of core-mapping names a file extension"
+	SPEC "the Power section names the release of its values only for a release earlier than the"
+		+ "current game release, the presenter learning it from its response and importing no"
+		+ "release constant"
+	SPEC "ASaveIsNeverDiscriminatedByItsVersionAlone,"
+		+ "AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer and"
+		+ "TheEnergyOfASaveTakesTheValuesOfItsRelease are rewritten in place, their anchors naming"
+		+ "the code as the task leaves it, the first stating where the releases are resolved and"
+		+ "where the save formats are read"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+		REF @DECISION.AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
+		REF @DECISION.TheEnergyOfASaveTakesTheValuesOfItsRelease
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
 	AFTER @TASK.REFACTOR162
+	AFTER @TASK.REFACTOR168
 	WAVE @WAVE.14
 	PRIORITY high
-	DESC "fixes violation 6 of the audit and carries the guard on shared runtime imports"
+	DESC "fixes violation 6 of the audit and carries the guard on runtime imports of other"
+		+ "workspace packages"
 	RATIONALE "The guard passes the day it lands, the task removing every runtime import it"
-		+ "refuses, so it needs no allow-list. The task follows the decoding, which rewrites the"
-		+ "merge rules that read the releases"
+		+ "refuses, so it needs no allow-list; the instructions rule"
+		+ "third_party_isolated_in_infrastructure already asks a guard of the project for it, and"
+		+ "the ruling narrows that rule to types alone, a pure helper of a shared package being a"
+		+ "runtime import all the same. The release rules follow the tables task, which puts the"
+		+ "releases table in a data- package behind a port, and the decoding, which rewrites the"
+		+ "merge rules that read the releases. Comparing two releases needs no table; resolving a"
+		+ "declared version and naming the current game release read the rows, so the adapter hands"
+		+ "them to the use case, which gives them to the rule. The current game release, the last"
+		+ "row of the table, is not the current save format, the first release writing eleven"
+		+ "parts: the constant that carried both names is split. The contradiction warning leaves"
+		+ "the parser because it resolves a declared version, a business judgement the domain now"
+		+ "owns alone, as the domain rules task took the unique host out of the adapter; the parser"
+		+ "keeps the legacy format warning, a fact of the parts count. The merged file name carries"
+		+ "an extension and filesystem-safe characters, two facts of the infrastructure, so the"
+		+ "application asks a port for it. The release comparison the merge use case makes moves"
+		+ "into the domain with the merge warnings task, which follows this one"
+		REF @TASK.REFACTOR168
+		REF @TASK.REFACTOR162
+		REF @TASK.REFACTOR160
+		REF @TASK.REFACTOR165
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the tables are databases read behind"
+		+ "ports, their data- package providing row types and selectors, the contradiction check is"
+		+ "a domain rule the use cases call, the merged file is named behind a port, the guard"
+		+ "covers spec files and every workspace package"
 
 TASK REFACTOR164
 	TITLE "refactor(core-mapping): carry validation issues as codes, their sentences built in"
@@ -1398,3 +1447,66 @@ TASK DOCS167
 		REF @WAVE.14
 		REF @TASK.REFACTOR159
 	SOURCE "Owner request during the refinement of wave 14 on 2026-09-29"
+
+TASK REFACTOR168
+	TITLE "refactor: move the value tables into data- packages the infrastructure reads through"
+		+ "application ports"
+	STATUS draft
+	SPEC "every JSON value table of the repository lives in a package whose name starts with data-,"
+		+ "holding the tables, their validate:tables script, their row types and their selectors,"
+		+ "and no business rule; the dependency matrix lets core- and shared- packages alone depend"
+		+ "on data- and data- on no workspace package, check:dependencies enforcing it"
+	SPEC "no module under domain/, application/ or presentation/ of core-mapping imports a JSON"
+		+ "table: each table reaches its use case through an application port an infrastructure"
+		+ "adapter implements, the world object labels included, which reach the presenter in the"
+		+ "response"
+	SPEC "shared-save-processing and the infrastructure adapters of core-mapping read a table"
+		+ "through the selectors of its data- package, never through the JSON file"
+	SPEC "AValueTableIsAJsonFileBesideTheModuleThatReadsIt is rewritten in place: a table lives in"
+		+ "a data- package and is read by infrastructure alone, its rejection of a home outside the"
+		+ "reading package gone; it, TheEnergyOfASaveTakesTheValuesOfItsRelease and"
+		+ "ASaveIsNeverDiscriminatedByItsVersionAlone have their anchors naming the code as the"
+		+ "task leaves it"
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+		REF @DECISION.TheEnergyOfASaveTakesTheValuesOfItsRelease
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+	SPEC "docs/wiki/architecture.md lists each data- package and the matrix line of the prefix; the"
+		+ "corpus holds a PACKAGE entity per package created"
+	SPEC "each data- package declares a changelogLine in its package.json, so that bun run release"
+		+ "lists a change of a table in the changelog of every tool that reaches it"
+	SPEC "bun run validate:tables validates every table; the specs of cli-merge and cli-validate"
+		+ "and the scenarios of ui-save-manager pass unchanged"
+	AFTER @TASK.REFACTOR161
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "to be refined with the user: the name of the data- package and whether the tables split"
+		+ "over several; follows the instructions pull request delairec/.ai#57, which adds the"
+		+ "data- package kind and the rule on database technologies; outside the numbered"
+		+ "violations of the audit"
+	RATIONALE "A JSON table imported by a module is a database read by that module: the"
+		+ "instructions rules domain_independent_of_technology and"
+		+ "repository_hides_persistence_model place such a read in an infrastructure adapter behind"
+		+ "a port of application/ports, and the owner ruled that the tables are external to the"
+		+ "packages reading them, as a database is. The data- package is the driver of that"
+		+ "database: its row types and selectors answer which rows and which value, by key or by"
+		+ "order, and interpret nothing, so that the lookups shared-save-processing and the"
+		+ "adapters share are written once; a rule naming a business outcome, resolving a declared"
+		+ "version among others, stays in the domain. Seven tables are read today: the game"
+		+ "releases and the legacy terrain layer properties by shared-save-processing, the energy"
+		+ "levels, those of release 2.004, the planet names and the optimizer configuration by"
+		+ "domain/ of core-mapping, the world object labels by presentation/. The labels follow the"
+		+ "same flow, controller, use case, port, adapter, response, presenter, rather than a"
+		+ "shortcut into presentation. The tables move before the release rules task, which then"
+		+ "reads the releases through the port this task creates instead of splitting the table"
+		+ "between the domain and shared-save-processing. The wiki keeps the dependency matrix as"
+		+ "the state of the project at implementation time, a trace that survives a pause during"
+		+ "which the instructions evolve; the instructions rule on general statements is amended"
+		+ "for it by the pull request that adds the package kind. The task follows the reader port"
+		+ "task, which leaves the composition root instantiating only, so that the adapters are"
+		+ "wired there once"
+		REF @TASK.REFACTOR163
+		REF @TASK.REFACTOR161
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+	SOURCE "Owner ruling during the refinement of REFACTOR163, 2026-09-29: a JSON value table is a"
+		+ "database, external to the packages that read it and read behind a port; the data-"
+		+ "package provides the read contract, row types and selectors"
