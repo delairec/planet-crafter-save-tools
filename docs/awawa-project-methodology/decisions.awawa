@@ -561,14 +561,32 @@ DECISION DissolvedPackagesAreNotRecreated
 DECISION WireAbbreviationsStayInSharedSaveProcessing
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.CHORE158
 	SPEC "Wire format abbreviations are tolerated only in the shared-save-processing records,"
 		+ "stated by the package description, and translated at the domain boundary"
 		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsParserService.ts"
 		IMPL "packages/shared-save-processing/package.json::Save file wire format"
+	SPEC "No file under domain/ of a core- package, spec files included, uses gId, liId, woIds,"
+		+ "siIds or linkedWo in code nor imports shared-save-processing/gameDefinitions, the files"
+		+ "listed in the two allow-lists of check:wire-format excepted until REFACTOR162 empties"
+		+ "them"
+		IMPL "scripts/check-wire-format.ts::findWireAbbreviations"
+		IMPL "scripts/check-wire-format.ts::findGameDefinitionsImports"
+		IMPL "scripts/allow-lists/domain-files-naming-wire-abbreviations.json"
+		IMPL "scripts/allow-lists/domain-files-importing-game-definitions.json"
+		ENFORCED_BY "scripts/check-wire-format.ts"
 	REJECTED "Tolerate wire abbreviations beyond this package"
 	REJECTED "A header comment in each DTO file: it names a section by an index no test holds"
+	REJECTED "Refusing the abbreviations alone: a domain module handling a save format record"
+		+ "without naming an abbreviation would pass"
+	REJECTED "Reporting every string literal equal to an abbreviation: a test title or a message"
+		+ "quoting the save format would fail the guard"
 	SOURCE "Migration"
 		PR 61
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28, guarded by"
+		+ "check:wire-format"
+		PR 222
+		PR 228
 
 DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
@@ -2978,16 +2996,21 @@ DECISION ATaskCarriesAPriorityOnTheReviewScale
 
 DECISION AGuardAllowListOnlyShrinks
 	APPLIES_TO_TASK @TASK.CHORE157
+	APPLIES_TO_TASK @TASK.CHORE158
 	SPEC "A guard exempts a file only by listing it in a JSON allow-list of scripts/allow-lists/,"
 		+ "read through scripts/shrinkingAllowList.ts"
 		IMPL "scripts/shrinkingAllowList.ts::readAllowList"
 		IMPL "scripts/check-presentation-entities.ts::ALLOW_LIST_PATH"
+		IMPL "scripts/check-wire-format.ts::ABBREVIATIONS_ALLOW_LIST_PATH"
+		IMPL "scripts/check-wire-format.ts::GAME_DEFINITIONS_ALLOW_LIST_PATH"
 		ENFORCED_BY "scripts/shrinkingAllowList.spec.ts"
 	SPEC "A listed file the guard no longer reports fails the guard until its entry is removed"
 		IMPL "scripts/shrinkingAllowList.ts::applyAllowList"
 		ENFORCED_BY "scripts/shrinkingAllowList.spec.ts"
 	SPEC "An allow-list never gains an entry: a new offending file is fixed, not listed"
 		IMPL "scripts/allow-lists/presenter-ports-importing-domain.json"
+		IMPL "scripts/allow-lists/domain-files-naming-wire-abbreviations.json"
+		IMPL "scripts/allow-lists/domain-files-importing-game-definitions.json"
 	REJECTED "The allow-list as a constant of the guard module: each new guard would rewrite the"
 		+ "mechanism"
 		REF @TASK.CHORE158
