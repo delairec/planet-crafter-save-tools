@@ -1374,21 +1374,60 @@ TASK REFACTOR163
 TASK REFACTOR164
 	TITLE "refactor(core-mapping): carry validation issues as codes, their sentences built in"
 		+ "presentation"
-	STATUS draft
-	SPEC "a ValidationIssue carries a code and its data and no sentence; every sentence shown about"
-		+ "a validation issue is built under presentation/messages of core-mapping"
+	STATUS todo
+	SPEC "a ValidationIssue of core-mapping and a SaveParseError of shared-save-processing carry a"
+		+ "code and its data and no sentence; every sentence shown about a validation issue or an"
+		+ "unreadable line is built under presentation/messages of core-mapping and reads as it"
+		+ "does today"
 	SPEC "no sentence shown to the user is built in the infrastructure of core-mapping nor in"
-		+ "shared-save-processing, verifySectionCount and the schema validation messages included"
-	SPEC "an issue locates its section by a section name the infrastructure resolved, and no"
-		+ "presentation module imports the section indexes of the save format"
-	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		+ "shared-save-processing, verifySectionCount, parseSaveSections and the entry count, float"
+		+ "serialization and file extension checks included; the message of the schema validator"
+		+ "crosses as data of the issue, with the path of the field, and is not rewritten"
+		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
+	SPEC "an issue located in the save carries the name and the index of its section, both resolved"
+		+ "by the infrastructure, and no longer the format release; no module under presentation/"
+		+ "of core-mapping imports the section indexes of the save format, spec files excepted, and"
+		+ "the location shown reads as it does today"
+	SPEC "ALocationIsABusinessLabelFollowedByTheIndex and UserTextLivesInCoreMappingPresentation"
+		+ "are rewritten in place: the first builds the location from the name and the index the"
+		+ "issue carries and drops its fallback on a bare index, the second names the validation"
+		+ "issues and the unreadable lines among the codes it turns into sentences, and their"
+		+ "anchors name the code as the task leaves it"
+		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
 	AFTER @TASK.REFACTOR160
 	WAVE @WAVE.14
 	PRIORITY high
 	DESC "fixes violations 7 and 12 of the audit"
 	RATIONALE "Both violations are the same issue type: its sentence and its location reach the"
-		+ "view as the infrastructure wrote them. The task follows the validator port, which"
-		+ "changes the issues it reports"
+		+ "view as the infrastructure wrote them. Seven places word a sentence today: the section"
+		+ "count and the unreadable line in shared-save-processing, the entry count, the schema"
+		+ "violation, the float serialization and the file extension in the infrastructure of"
+		+ "core-mapping; the presenter shows the detail as is and resolves the section name from"
+		+ "the index and the format release. Each sentence becomes a code and the data it names,"
+		+ "one code per sentence, so the structure code that carries two sentences today splits,"
+		+ "and shared-save-processing declares the codes of its parse errors as it declares those"
+		+ "of its warnings; the text of every sentence is kept, so the CLI specs and the UI"
+		+ "scenarios pin the refactoring. The owner ruled that the message of the schema validator"
+		+ "is not rewritten: one sentence per constraint of the schemas would be authored for"
+		+ "nothing while the tool speaks one language, so the issue carries the path and the"
+		+ "message as data and the presentation composes the line; a code per constraint comes with"
+		+ "translation, if it comes. The section index stays in the issue beside the name because"
+		+ "the location shows both, the decision on locations having refused the label alone; the"
+		+ "format release leaves the issue, the name being what it served to resolve. The fallback"
+		+ "on a bare index has no case left: the section count is checked before any located issue"
+		+ "exists, so every located issue belongs to a known format and its name resolves. The task"
+		+ "follows the domain rules task, which changes the issues the validator port reports"
+		REF @TASK.REFACTOR160
+		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
+		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the message of the schema validator is"
+		+ "carried as data and not rewritten, a located issue carries the name and the index of its"
+		+ "section, and the two decisions on user text and on locations are rewritten in place"
 
 TASK REFACTOR165
 	TITLE "refactor(core-mapping): let the merge rule return the warnings of the merged save"

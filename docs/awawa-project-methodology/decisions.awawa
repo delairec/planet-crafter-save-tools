@@ -3076,3 +3076,23 @@ DECISION ASaveWithUnreadableLinesIsNotLoaded
 		+ "location"
 	SOURCE "Ruled while implementing the output boundary of core-mapping"
 		PR 230
+
+DECISION TheSchemaValidationMessageIsCarriedNotRewritten
+	SPEC "A schema violation issue carries the path of the field and the message of the schema"
+		+ "validator as data; the presentation composes the line shown from the two and rewrites"
+		+ "neither"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::schemaError.message"
+		IMPL "packages/core-mapping/src/presentation/formatValidationIssue.ts"
+	REJECTED "One sentence per constraint the schemas use, built in presentation from the keyword"
+		+ "and its parameters: nine sentences authored for nothing while the tool speaks one"
+		+ "language"
+	REJECTED "The path alone under a generic sentence: the reader loses which constraint the field"
+		+ "breaks"
+	UNTIL "the tool is translated into a second language, when a code per constraint replaces the"
+		+ "message"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR164
+	RATIONALE "The audit of 2026-09-28 asked for every sentence to be born in presentation; the"
+		+ "owner kept the library message for the schema violations, a text nobody rewrites for one"
+		+ "language"
+	SOURCE "Owner ruling during the refinement of REFACTOR164, 2026-09-29"
