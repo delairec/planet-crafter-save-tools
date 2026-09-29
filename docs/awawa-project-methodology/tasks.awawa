@@ -1729,3 +1729,43 @@ TASK CHORE169
 	SOURCE "Owner ruling during the refinement of the task, 2026-09-29: a release table keeps a"
 		+ "schema of its own name reaching the shared definition; a schema names another table"
 		+ "relative to itself; priority medium"
+
+TASK REFACTOR170
+	TITLE "refactor(core-mapping): hand the presenters application responses for unreadable lines"
+		+ "and save warnings, never a record of shared-save-processing"
+	STATUS draft
+	SPEC "no presenter port and no application response of core-mapping names a type of"
+		+ "shared-save-processing: an unreadable line, a save warning and a section name reach a"
+		+ "presenter as an application response its use case builds, holding primitives"
+	SPEC "check:presentation refuses an import of shared-save-processing from a presenter port or"
+		+ "an application response, and carries no allow-list for it"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR164
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "outside the numbered violations of the audit"
+	RATIONALE "The instructions rule objects_crossing_a_boundary lets a presenter receive an"
+		+ "application Response or primitives only; a record of shared-save-processing is neither."
+		+ "The guard of CHORE157 refuses only what comes from domain/, so SaveParseError and"
+		+ "SaveWarning cross today in LoadAndValidateSaveFilePresenterPort,"
+		+ "SaveFileValidationPresenterPort, SaveFilesInvalidResponse and MergeSucceededResponse,"
+		+ "SaveSectionName in MergeWarning, and since REFACTOR161 SaveParseError in the six section"
+		+ "presenter ports. The audit of 2026-09-28 did not list it: its violation 7 concerns the"
+		+ "sentences, not the type that crosses. The task follows REFACTOR164, which reduces"
+		+ "SaveParseError and the validation issues to a code and its data, so that the responses"
+		+ "are built once from that shape. It belongs to wave 14, whose description states that the"
+		+ "presenters receive application responses, and carries high rather than critical because"
+		+ "the dependency of core- on shared- is allowed and no domain type crosses. The type-only"
+		+ "form of the imports left under application/ is REFACTOR163's. DOCS167 rewrites the other"
+		+ "waves to the boundaries wave 14 sets, so whether it follows this task is to rule at"
+		+ "refinement"
+		REF @TASK.CHORE157
+		REF @TASK.REFACTOR161
+		REF @TASK.REFACTOR163
+		REF @TASK.REFACTOR164
+		REF @TASK.DOCS167
+	SOURCE "Owner ruling during the launch of REFACTOR161, 2026-09-29: the shared-save-processing"
+		+ "records the presenter ports receive are a violation, fixed by a task of wave 14 of its"
+		+ "own rather than in the pull request of REFACTOR161"
+		PR 232
