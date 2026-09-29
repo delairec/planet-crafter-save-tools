@@ -1,119 +1,114 @@
 import {describe, expect, it} from 'bun:test';
 import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
-import {checkPresentationFiles, findEntityImports, isPresentationFile} from './check-presentation-entities.ts';
+import {checkPresentationFiles, findRefusedImports} from './check-presentation-entities.ts';
 
-describe('isPresentationFile', () => {
+const OUTPUT_BOUNDARY_REASON = 'the output boundary hands over responses, value objects or primitives, never a domain entity nor an infrastructure type';
+const PRESENTER_PORT_REASON = 'a presenter port takes application responses or primitives, nothing from domain/';
 
-  describe('When the file lives under a presentation directory', () => {
-    it('should recognise it wherever that directory sits', () => {
+describe('findRefusedImports', () => {
+
+  describe('When a file of the output boundary imports a domain entity or an infrastructure module', () => {
+    it.each([
+      ['a presenter', 'packages/core-mapping/src/presentation/PlayersPresenter.ts', "import {PlayerEntity} from '../domain/entities/PlayerEntity';", '../domain/entities/PlayerEntity'],
+      ['a view model, by a type-only import', 'packages/core-mapping/src/presentation/viewModels/PlayersViewModel.ts', "import type {PlayerEntity} from '../../domain/entities/PlayerEntity';", '../../domain/entities/PlayerEntity'],
+      ['a presenter, by a dynamic import', 'packages/core-mapping/src/presentation/PlayersPresenter.ts', "const entity = await import('../domain/entities/WorldObjectEntity');", '../domain/entities/WorldObjectEntity'],
+      ['a presenter, from infrastructure', 'packages/core-mapping/src/presentation/PlayersPresenter.ts', 'import {SaveSectionsReaderService} from "../infrastructure/SaveSectionsReaderService";', '../infrastructure/SaveSectionsReaderService'],
+      ['an application response', 'packages/core-mapping/src/application/responses/MergeResponse.ts', "import type {WorldObjectEntity} from '../../domain/entities/WorldObjectEntity';", '../../domain/entities/WorldObjectEntity'],
+      ['an application response, from infrastructure', 'packages/core-mapping/src/application/responses/MergeResponse.ts', "import type {SaveFileDto} from '../../infrastructure/dto/SaveFileDto';", '../../infrastructure/dto/SaveFileDto']
+    ])('should report %s', (_file, filePath, source, specifier) => {
       // Act
-      const isPresenter = isPresentationFile('packages/core-mapping/src/presentation/PlayersPresenter.ts');
-      const isViewModel = isPresentationFile('packages/core-mapping/src/presentation/viewModels/PlayersViewModel.ts');
+      const refusedImports = findRefusedImports(filePath, source);
 
       // Assert
-      expect(isPresenter).toBe(true);
-      expect(isViewModel).toBe(true);
+      expect(refusedImports).toEqual([{line: 1, specifier, reason: OUTPUT_BOUNDARY_REASON}]);
     });
-  });
 
-  describe('When the file lives outside a presentation directory', () => {
-    it('should leave it alone', () => {
-      // Act
-      const isUseCase = isPresentationFile('packages/core-mapping/src/application/LoadPlayersSection.ts');
-      const isInfrastructureService = isPresentationFile('packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts');
-
-      // Assert
-      expect(isUseCase).toBe(false);
-      expect(isInfrastructureService).toBe(false);
-    });
-  });
-
-  describe('When the file is generated', () => {
-    it('should leave it alone even under a presentation directory', () => {
-      // Act
-      const isInstalledDependency = isPresentationFile('packages/ui-save-manager/node_modules/x/presentation/Thing.ts');
-      const isBuildOutput = isPresentationFile('packages/core-mapping/dist/presentation/PlayersPresenter.js');
-
-      // Assert
-      expect(isInstalledDependency).toBe(false);
-      expect(isBuildOutput).toBe(false);
-    });
-  });
-});
-
-describe('findEntityImports', () => {
-
-  describe('When a file imports a domain entity', () => {
-    it('should report the line and the specifier', () => {
+    it('should report the line of the import', () => {
       // Arrange
       const source = [
         "import {PlayersViewModel} from './viewModels/PlayersViewModel';",
-        'import {PlayerEntity} from "../domain/entities/PlayerEntity";'
+        "import {PlayerEntity} from '../domain/entities/PlayerEntity';"
       ].join('\n');
 
       // Act
-      const entityImports = findEntityImports(source);
+      const refusedImports = findRefusedImports('packages/core-mapping/src/presentation/PlayersPresenter.ts', source);
 
       // Assert
-      expect(entityImports).toEqual([{line: 2, specifier: '../domain/entities/PlayerEntity'}]);
+      expect(refusedImports).toEqual([{line: 2, specifier: '../domain/entities/PlayerEntity', reason: OUTPUT_BOUNDARY_REASON}]);
     });
+  });
 
-    it('should report a type-only import', () => {
+  describe('When a file of the output boundary imports something else', () => {
+    it.each([
+      ['a value object', 'packages/core-mapping/src/presentation/PlayersPresenter.ts', "import {PlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';"],
+      ['a module whose name merely starts with entity', 'packages/core-mapping/src/presentation/PlayersPresenter.ts', "import {EntityLabels} from '../domain/entityLabels';"],
+      ['an application response', 'packages/core-mapping/src/presentation/MergeResultPresenter.ts', "import type {MergeResponse} from '../application/responses/MergeResponse';"]
+    ])('should leave %s alone', (_import, filePath, source) => {
+      // Act
+      const refusedImports = findRefusedImports(filePath, source);
+
+      // Assert
+      expect(refusedImports).toEqual([]);
+    });
+  });
+
+  describe('When a presenter port imports a module under domain/', () => {
+    it.each([
+      ['a value object', "import {PlayerSummaryValueObject} from '../../domain/valueObjects/PlayerSummaryValueObject';", '../../domain/valueObjects/PlayerSummaryValueObject'],
+      ['a value object, by a type-only import', "import type {SaveIdentityValueObject} from '../../domain/valueObjects/SaveIdentityValueObject';", '../../domain/valueObjects/SaveIdentityValueObject'],
+      ['an entity', "import type {PlayerEntity} from '../../domain/entities/PlayerEntity';", '../../domain/entities/PlayerEntity']
+    ])('should report %s', (_import, source, specifier) => {
+      // Act
+      const refusedImports = findRefusedImports('packages/core-mapping/src/application/ports/PlayersPresenterPort.ts', source);
+
+      // Assert
+      expect(refusedImports).toEqual([{line: 1, specifier, reason: PRESENTER_PORT_REASON}]);
+    });
+  });
+
+  describe('When a port that is not a presenter port imports a module under domain/', () => {
+    it('should leave it alone', () => {
       // Arrange
       const source = "import type {PlayerEntity} from '../../domain/entities/PlayerEntity';";
 
       // Act
-      const entityImports = findEntityImports(source);
+      const refusedImports = findRefusedImports('packages/core-mapping/src/application/ports/SaveSectionsReaderPort.ts', source);
 
       // Assert
-      expect(entityImports).toEqual([{line: 1, specifier: '../../domain/entities/PlayerEntity'}]);
-    });
-
-    it('should report a dynamic import', () => {
-      // Arrange
-      const source = "const entity = await import('../domain/entities/WorldObjectEntity');";
-
-      // Act
-      const entityImports = findEntityImports(source);
-
-      // Assert
-      expect(entityImports).toEqual([{line: 1, specifier: '../domain/entities/WorldObjectEntity'}]);
+      expect(refusedImports).toEqual([]);
     });
   });
 
-  describe('When a file imports something else of the domain', () => {
-    it('should leave a value object import alone', () => {
+  describe('When the file sits outside the output boundary of a core- package', () => {
+    it.each([
+      ['a use case', 'packages/core-mapping/src/application/LoadPlayersSection.ts'],
+      ['a presentation directory of a ui- package', 'packages/ui-save-manager/src/presentation/PlayersView.ts'],
+      ['an installed dependency', 'packages/core-mapping/node_modules/x/presentation/Thing.ts'],
+      ['a build output', 'packages/core-mapping/dist/presentation/PlayersPresenter.js']
+    ])('should leave %s alone', (_file, filePath) => {
       // Arrange
-      const source = "import {PlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';";
+      const source = "import {PlayerEntity} from '../domain/entities/PlayerEntity';";
 
       // Act
-      const entityImports = findEntityImports(source);
+      const refusedImports = findRefusedImports(filePath, source);
 
       // Assert
-      expect(entityImports).toEqual([]);
-    });
-
-    it('should leave a name that merely ends in Entity alone', () => {
-      // Arrange
-      const source = "import {EntityLabels} from '../domain/entityLabels';";
-
-      // Act
-      const entityImports = findEntityImports(source);
-
-      // Assert
-      expect(entityImports).toEqual([]);
+      expect(refusedImports).toEqual([]);
     });
   });
 });
 
 describe('checkPresentationFiles', () => {
+  const ALLOW_LIST_PATH = 'scripts/allow-lists/presenter-ports-importing-domain.json';
 
-  describe('When every presentation layer imports value objects only', () => {
+  describe('When no file crosses the output boundary and every presenter port importing domain/ is listed', () => {
     it('should print that nothing was found and exit with zero', async () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          'packages/core-mapping/src/presentation/PlayersPresenter.ts': "import {PlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';"
+          [ALLOW_LIST_PATH]: '["packages/core-mapping/src/application/ports/PlayersPresenterPort.ts"]',
+          'packages/core-mapping/src/presentation/PlayersPresenter.ts': "import {PlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';",
+          'packages/core-mapping/src/application/ports/PlayersPresenterPort.ts': "import {PlayerSummaryValueObject} from '../../domain/valueObjects/PlayerSummaryValueObject';"
         }
       });
 
@@ -122,18 +117,20 @@ describe('checkPresentationFiles', () => {
 
       // Assert
       expect({printed, exitCodes}).toEqual({
-        printed: ['check:presentation: no domain entity reaches a presentation layer.'],
+        printed: ['check:presentation: no domain entity nor infrastructure type crosses the output boundary, and no presenter port outside the allow-list imports domain/.'],
         exitCodes: [0]
       });
     });
   });
 
-  describe('When a presentation layer imports a domain entity', () => {
-    it('should print each offending line with its reason, then the count, and exit with one', async () => {
+  describe('When files break the two refusals', () => {
+    it('should print each offending line with its reason, then the count with both refusals, and exit with one', async () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          'packages/core-mapping/src/presentation/PlayersPresenter.ts': "import type {PlayerEntity} from '../domain/entities/PlayerEntity';"
+          [ALLOW_LIST_PATH]: '[]',
+          'packages/core-mapping/src/presentation/PlayersPresenter.ts': "import type {PlayerEntity} from '../domain/entities/PlayerEntity';",
+          'packages/core-mapping/src/application/ports/SaveIdentityPresenterPort.ts': "import {SaveIdentityValueObject} from '../../domain/valueObjects/SaveIdentityValueObject';"
         }
       });
 
@@ -143,8 +140,33 @@ describe('checkPresentationFiles', () => {
       // Assert
       expect({printed, exitCodes}).toEqual({
         printed: [
-          'packages/core-mapping/src/presentation/PlayersPresenter.ts:1: ../domain/entities/PlayerEntity\n  a presenter takes a value object, never a domain entity',
-          'check:presentation: 1 domain entity import(s) in a presentation layer.'
+          `packages/core-mapping/src/presentation/PlayersPresenter.ts:1: ../domain/entities/PlayerEntity\n  ${OUTPUT_BOUNDARY_REASON}`,
+          `packages/core-mapping/src/application/ports/SaveIdentityPresenterPort.ts:1: ../../domain/valueObjects/SaveIdentityValueObject\n  ${PRESENTER_PORT_REASON}`,
+          'check:presentation: 2 violation(s): a presentation file or an application response imports nothing from domain/entities nor infrastructure/, and a presenter port imports nothing from domain/.'
+        ],
+        exitCodes: [1]
+      });
+    });
+  });
+
+  describe('When a listed presenter port no longer imports domain/', () => {
+    it('should report its entry as one to remove and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          [ALLOW_LIST_PATH]: '["packages/core-mapping/src/application/ports/PlayersPresenterPort.ts"]',
+          'packages/core-mapping/src/application/ports/PlayersPresenterPort.ts': "import type {PlayerSummaryResponse} from '../responses/PlayerSummaryResponse';"
+        }
+      });
+
+      // Act
+      await checkPresentationFiles(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          `${ALLOW_LIST_PATH}: packages/core-mapping/src/application/ports/PlayersPresenterPort.ts is no longer reported\n  remove its entry: the allow-list only shrinks`,
+          'check:presentation: 1 violation(s): a presentation file or an application response imports nothing from domain/entities nor infrastructure/, and a presenter port imports nothing from domain/.'
         ],
         exitCodes: [1]
       });
