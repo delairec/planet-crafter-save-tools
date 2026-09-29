@@ -1237,30 +1237,71 @@ TASK REFACTOR161
 
 TASK REFACTOR162
 	TITLE "refactor(core-mapping): decode the save format before it reaches the domain"
-	STATUS draft
+	STATUS todo
 	SPEC "the domain model of core-mapping names its data in business terms, with a business type"
-		+ "of its own for every save section it handles, decoded by the infrastructure: both"
-		+ "allow-lists of check:wire-format are empty and removed, the guard running with no"
-		+ "exemption"
+		+ "of its own for every save section it handles, decoded by the infrastructure: no module"
+		+ "under domain/ imports shared-save-processing/gameDefinitions nor names a wire"
+		+ "abbreviation, both allow-lists of check:wire-format are empty and removed, the guard"
+		+ "running with no exemption"
+	SPEC "WireAbbreviationsStayInSharedSaveProcessing and AGuardAllowListOnlyShrinks are rewritten"
+		+ "in place: neither names an allow-list of check:wire-format nor this task, and their"
+		+ "anchors name the code as the task leaves it"
+		REF @DECISION.WireAbbreviationsStayInSharedSaveProcessing
+		REF @DECISION.AGuardAllowListOnlyShrinks
 	SPEC "no module under domain/ splits or joins a list of the save text nor reads an empty string"
 		+ "as an absence: the infrastructure hands the domain lists as arrays and absence as"
-		+ "undefined"
-	SPEC "the section separator of the save text is escaped by the serializer, and no module under"
-		+ "application/ names it"
-	SPEC "a domain error names the business rule broken; a shape check, a number or a string"
-		+ "expected, fails at the infrastructure boundary as a technical error"
-	SPEC "a merge of the public fixtures writes the same save text as before the task, and the"
-		+ "specs of cli-merge and cli-validate pass unchanged"
+		+ "undefined, and APlayerOnAnEmptyPlanetShowsNoPlanet keeps its ruling with anchors naming"
+		+ "the code as the task leaves it"
+		REF @DECISION.APlayerOnAnEmptyPlanetShowsNoPlanet
+	SPEC "the serializer of shared-save-processing writes no section separator inside a section:"
+		+ "every @ of an entry's text is replaced by _, whatever the field; no module under"
+		+ "application/ of core-mapping names the separator, and"
+		+ "TheMergedSaveDisplayNameComesFromTheCaller is rewritten in place to anchor that"
+		+ "replacement"
+		REF @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
+	SPEC "a domain error names the business rule broken: InvalidSaveDataError and the assertions of"
+		+ "domain/errors are gone, entities and value objects take typed input without a runtime"
+		+ "shape check, and a record whose shape the decoding cannot read fails there with a named"
+		+ "error type of infrastructure/errors, caught by nothing"
+		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType
+		REF @DECISION.AnErrorsOriginDecidesItsPath
+	SPEC "bun merge of baseline_valid.json and other-player_valid.json, as"
+		+ "generate:scenario-fixtures writes them, produces on the task branch the file it produces"
+		+ "on its base, byte for byte; the specs of cli-merge and cli-validate and the scenarios of"
+		+ "ui-save-manager pass unchanged"
 	AFTER @TASK.CHORE158
 	AFTER @TASK.REFACTOR161
+	AFTER @TASK.REFACTOR160
 	WAVE @WAVE.14
 	PRIORITY high
 	DESC "fixes violations 5, 10 and 13 of the audit"
 	RATIONALE "The three violations are one boundary, the decoding of the save text: violation 10"
-		+ "escapes what the serializer encodes and violation 13 moves the shape checks to where the"
-		+ "text is decoded. The task follows the reader port, which is where the decoding lands"
+		+ "replaces what the serializer would otherwise split on, and violation 13 moves the shape"
+		+ "checks to where the text is decoded. The id lists of inventories and world objects"
+		+ "already cross the boundary as arrays; what is left is the records themselves, imported"
+		+ "by the merge rules and the save types, the unlocked groups mergeGlobalMetadata splits"
+		+ "and joins, and the empty planet PlayerEntity reads. The save format has no escape: the"
+		+ "parser splits the text on @, so the separator is replaced, not escaped, by the module"
+		+ "that joins the sections, in shared-save-processing, which owns serialization. Replacing"
+		+ "every @ of an entry rather than the display name alone keeps any field from splitting"
+		+ "the save; measured on the eight private reference saves, none carries a @ inside a"
+		+ "section, so no real save changes by a byte. The shape checks leave the domain because"
+		+ "the instructions rule domain_error_business_meaning and the recorded decisions already"
+		+ "place a broken invariant at decoding, after validation refused what it could: nothing"
+		+ "catches InvalidSaveDataError today. The task follows the domain rules task, which takes"
+		+ "the unique host rule out of the game-definitions allow-list and touches the reader"
+		+ "adapter, so the two would otherwise conflict. No committed save is public and the"
+		+ "scenario fixtures are generated at each run, so the text written is compared between the"
+		+ "branch and its base on those, the reviewer replaying the command"
+		REF @TASK.REFACTOR160
+		REF @DECISION.SharedSaveProcessingOwnsSectionParsingAndSerialization
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
 	SOURCE "Owner ruling during the refinement of CHORE158: the domain defines a business type per"
 		+ "save section instead of importing the save format records"
+	SOURCE "Owner ruling during the refinement of the task: the serializer of"
+		+ "shared-save-processing replaces every @ of an entry, the task follows the domain rules"
+		+ "task, and the written text is compared on the scenario fixtures"
 
 TASK REFACTOR163
 	TITLE "refactor(core-mapping): move the game releases into the domain, shared runtime code"
