@@ -1146,18 +1146,43 @@ TASK REFACTOR159
 
 TASK REFACTOR160
 	TITLE "refactor(core-mapping): call the domain rules from the use cases, not from the adapters"
-	STATUS draft
+	STATUS todo
 	SPEC "no module under infrastructure/ of core-mapping imports domain/rules; validateUniqueHost"
 		+ "and resolvePlanetName are called by the use cases"
-	SPEC "SaveValidatorPort reports technical failures only: a save with more than one host reaches"
-		+ "its presenter through an outcome of its own, never as a ValidationIssue coded"
-		+ "UNIQUE_HOST"
-	SPEC "cli-validate and the save manager still report a save with more than one host, and the"
-		+ "specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.REFACTOR159
+	SPEC "SaveValidatorPort reports technical failures only: a save designating no host or more"
+		+ "than one reaches its presenter through an outcome of its own, in every flow that"
+		+ "validates, loads or merges it, never as a ValidationIssue coded UNIQUE_HOST"
+	SPEC "cli-validate refuses a save designating no host or more than one and names the host count"
+		+ "found; the save manager shows it as an error on load and on merge; the specs of"
+		+ "cli-merge and cli-validate pass unchanged"
+	SPEC "the specification area holds a RULE stating that a save designates exactly one host"
+		+ "player, applied to the players section and attested by the spec of the domain rule"
+		REF @SECTION.Players
+	SPEC "ADomainRuleIgnoresValidationVocabulary is archived, its translation by the infrastructure"
+		+ "gone with the code that carried it"
+		REF @DECISION.ADomainRuleIgnoresValidationVocabulary
+	AFTER @TASK.REFACTOR161
 	WAVE @WAVE.14
 	PRIORITY critical
 	DESC "fixes violation 3 of the audit"
+	RATIONALE "Three use cases call the validator and take the host decision after it:"
+		+ "ValidateSaveFile, LoadAndValidateSaveFile and MergeSaveFiles on each of its inputs; the"
+		+ "merged save is not checked again, the merge rule guaranteeing a single host, so a second"
+		+ "host there would be a broken invariant, never an outcome. The task follows the reader"
+		+ "port, which removes the energy raw data bag the planet name is resolved in and hands the"
+		+ "use cases the players through a port, so the unique host rule can take the player"
+		+ "entities and leave the game definitions allow-list. The decision that had the"
+		+ "infrastructure translate the violation is archived rather than rewritten: what it would"
+		+ "keep, a rule returning a failure type without code or sentence, the instructions rule"
+		+ "domain_error_business_meaning already imposes"
+		REF @TASK.REFACTOR161
+		REF @RULE.PlayersAreDeduplicatedByName
+		REF @DECISION.AnErrorsOriginDecidesItsPath
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the task follows the reader port,"
+		+ "records the unique host rule in the specification area and archives the decision on the"
+		+ "translation of a domain violation"
 
 TASK REFACTOR161
 	TITLE "refactor(core-mapping): read the save sections through a port, the composition root only"
