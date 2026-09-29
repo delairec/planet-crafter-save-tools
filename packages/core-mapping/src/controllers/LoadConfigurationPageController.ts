@@ -5,11 +5,11 @@ import {createSaveSectionsReader} from "../composition/compositionRoot";
 
 export class LoadConfigurationPageController {
   static async loadConfigurationPage(validatedContent: string): Promise<ConfigurationPageViewModel> {
-    const saveReader = createSaveSectionsReader(validatedContent);
+    const saveReader = createSaveSectionsReader();
     const presenter = new ConfigurationPagePresenter();
     const useCase = new LoadConfigurationPage(saveReader, presenter);
 
-    await useCase.execute();
+    await useCase.execute({content: validatedContent});
 
     return presenter.viewModel;
   }

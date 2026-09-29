@@ -5,11 +5,11 @@ import {createSaveSectionsReader} from '../composition/compositionRoot';
 
 export class LoadTerraformationLevelsSectionController {
   static async loadTerraformationLevelsSection(validatedContent: string): Promise<TerraformationLevelsViewModel> {
-    const saveReader = createSaveSectionsReader(validatedContent);
+    const saveReader = createSaveSectionsReader();
     const presenter = new TerraformationLevelsPresenter();
     const useCase = new LoadTerraformationLevelsSection(saveReader, presenter);
 
-    await useCase.execute();
+    await useCase.execute({content: validatedContent});
 
     return presenter.viewModel;
   }

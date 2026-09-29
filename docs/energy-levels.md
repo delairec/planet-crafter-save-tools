@@ -244,7 +244,7 @@ formalizes that production/consumption/breakdowns are scoped the same way.
 
 **Rule EN-PLANET-2 (planet label resolution):** each planet is labelled using the fixed numeric-id → name
 lookup table of `packages/core-mapping/src/domain/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`),
-looked up by `SaveSectionsReaderService.resolvePlanetLabel`. For planet ids not in that table (e.g. future
+looked up by the domain rule `resolvePlanetName`. For planet ids not in that table (e.g. future
 planets, modded content), a fallback heuristic applies: some world object `gId`s embed the planet name in
 plain text (e.g. `Seed7Humble` on planet `Humble`) — if exactly one of the save's known planet names (from
 `TerraformationLevels`) is found as a substring of a `gId` among that planet's world objects, that name is

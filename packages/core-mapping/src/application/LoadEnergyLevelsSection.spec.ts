@@ -1,35 +1,48 @@
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it, mock} from 'bun:test';
-import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
-import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
+import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
+import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {LoadEnergyLevelsSection} from "./LoadEnergyLevelsSection";
 import {
-  createEnergyLevelsRawDataValueObject,
   createPlanetWorldObjectsValueObject,
-  EnergyLevelsRawDataValueObject
-} from "../domain/valueObjects/EnergyLevelsRawDataValueObject";
+  PlanetWorldObjectsValueObject
+} from "../domain/valueObjects/PlanetWorldObjectsValueObject";
 import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
+import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
+import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
 
-class SaveSectionsReaderWithoutSaveConfiguration extends FakeSaveSectionsReaderService {
-  override getEnergyLevelsRawData(): EnergyLevelsRawDataValueObject {
-    const consumer = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
+const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
-    return createEnergyLevelsRawDataValueObject({
-      allWorldObjects: [consumer],
-      inventories: [],
-      planets: [createPlanetWorldObjectsValueObject({planetId: 1, placedWorldObjects: [consumer]})]
-    });
+class SaveSectionsWithoutSaveConfiguration extends FakeSaveSectionsMapperService {
+  override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
+    return [createPlanetWorldObjectsValueObject({planetId: 1, placedWorldObjects: [CONSUMER]})];
   }
+
+  override getWorldObjects(): WorldObjectEntity[] {
+    return [CONSUMER];
+  }
+
+  override getDeclaredVersion(): string | undefined {
+    return undefined;
+  }
+
+  override getSaveConfiguration(): undefined {
+    return undefined;
+  }
+}
+
+function createPresenter(): EnergyLevelsPresenterPort {
+  return {displayEnergyLevels: mock(), displaySaveWithUnreadableLines: mock()};
 }
 
 describe('LoadEnergyLevelsSection', () => {
   it('should present computed energy levels from parsed save', async () => {
     // Arrange
-    const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
-    const presenter = {displayEnergyLevels: mock()};
-    const useCase = new LoadEnergyLevelsSection(saveSectionsReader, presenter);
+    const presenter = createPresenter();
+    const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader(), presenter);
 
     // Act
-    await useCase.execute();
+    await useCase.execute({content: SAVE_CONTENT});
 
     // Assert
     expect(presenter.displayEnergyLevels).toHaveBeenCalledTimes(1);
@@ -63,17 +76,33 @@ describe('LoadEnergyLevelsSection', () => {
   describe('When the save carries no power consumption modifier', () => {
     it('should charge the base consumption levels, the modifier being 1', async () => {
       // Arrange
-      const presenter = {displayEnergyLevels: mock()};
-      const useCase = new LoadEnergyLevelsSection(new SaveSectionsReaderWithoutSaveConfiguration(), presenter);
+      const presenter = createPresenter();
+      const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader({saveSections: new SaveSectionsWithoutSaveConfiguration()}), presenter);
 
       // Act
-      await useCase.execute();
+      await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
       expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
         powerConsumptionModifier: 1,
         planets: [expect.objectContaining({consumption: 375.5})]
       }));
+    });
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should display the unreadable lines instead of the energy levels', async () => {
+      // Arrange
+      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const presenter = createPresenter();
+      const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader({unreadableLines}), presenter);
+
+      // Act
+      await useCase.execute({content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}]);
+      expect(presenter.displayEnergyLevels).not.toHaveBeenCalled();
     });
   });
 });

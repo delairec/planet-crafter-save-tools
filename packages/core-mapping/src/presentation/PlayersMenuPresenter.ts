@@ -1,3 +1,5 @@
+import {formatUnreadableLine} from "./formatUnreadableLine";
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {PlayersMenuViewModel} from "./viewModels/PlayersMenuViewModel";
 import {PlayersMenuPresenterPort} from "../application/ports/PlayersMenuPresenterPort";
 import {PlayerMenuEntryResponse} from "../application/responses/PlayerMenuEntryResponse";
@@ -18,5 +20,9 @@ export class PlayersMenuPresenter implements PlayersMenuPresenterPort {
         ...(player.isHost ? {hostBadge: playersMenuHostBadgeLabel} : {})
       }))
     };
+  }
+
+  displaySaveWithUnreadableLines(unreadableLines: SaveParseError[]): void {
+    this._viewModel = {players: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

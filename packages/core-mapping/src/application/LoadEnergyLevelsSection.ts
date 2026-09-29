@@ -1,4 +1,5 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {LoadSaveSectionsRequest} from "./requests/LoadSaveSectionsRequest";
 import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
 import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorldObjectName";
@@ -11,20 +12,23 @@ export class LoadEnergyLevelsSection {
   ) {
   }
 
-  async execute(): Promise<void> {
-    const {
-      allWorldObjects,
-      inventories,
-      planets,
-      declaredVersion,
-      powerConsumptionModifier = UNMODIFIED_POWER_CONSUMPTION_MODIFIER
-    } = this.saveSectionsReader.getEnergyLevelsRawData();
-    const energyLevelsOfRelease = selectEnergyLevelsOfDeclaredVersion(declaredVersion);
+  async execute({content}: LoadSaveSectionsRequest): Promise<void> {
+    const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
+
+    if (unreadableLines.length > 0) {
+      this.presenter.displaySaveWithUnreadableLines(unreadableLines);
+      return;
+    }
+
+    const allWorldObjects = saveSections.getWorldObjects();
+    const inventories = saveSections.getInventories();
+    const powerConsumptionModifier = saveSections.getSaveConfiguration()?.modifiers.powerConsumption ?? UNMODIFIED_POWER_CONSUMPTION_MODIFIER;
+    const energyLevelsOfRelease = selectEnergyLevelsOfDeclaredVersion(saveSections.getDeclaredVersion());
 
     this.presenter.displayEnergyLevels({
       gameRelease: energyLevelsOfRelease.release,
       powerConsumptionModifier,
-      planets: planets.map((planet) => new PlanetEnergyGrid(planet, allWorldObjects, inventories, energyLevelsOfRelease, powerConsumptionModifier).levels())
+      planets: saveSections.getPlacedWorldObjectsByPlanet().map((planet) => new PlanetEnergyGrid(planet, allWorldObjects, inventories, energyLevelsOfRelease, powerConsumptionModifier).levels())
     });
   }
 }
