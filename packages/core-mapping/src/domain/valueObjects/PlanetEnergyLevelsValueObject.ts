@@ -1,6 +1,5 @@
 import {EnergyBreakdownEntryValueObject} from "./EnergyBreakdownEntryValueObject";
 import {OptimizerValueObject} from "./OptimizerValueObject";
-import {assertArray, assertFiniteNumber, assertOptionalString} from "../errors/assertions";
 
 export interface PlanetEnergyLevelsValueObject {
   readonly planetId: number;
@@ -15,13 +14,13 @@ export interface PlanetEnergyLevelsValueObject {
 
 export function createPlanetEnergyLevelsValueObject(input: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsValueObject {
   return {
-    planetId: assertFiniteNumber(input.planetId, 'PlanetEnergyLevelsValueObject.planetId'),
-    planetName: assertOptionalString(input.planetName, 'PlanetEnergyLevelsValueObject.planetName'),
-    production: assertFiniteNumber(input.production, 'PlanetEnergyLevelsValueObject.production'),
-    consumption: assertFiniteNumber(input.consumption, 'PlanetEnergyLevelsValueObject.consumption'),
-    available: assertFiniteNumber(input.available, 'PlanetEnergyLevelsValueObject.available'),
-    productionBreakdown: assertArray<EnergyBreakdownEntryValueObject>(input.productionBreakdown, 'PlanetEnergyLevelsValueObject.productionBreakdown'),
-    consumptionBreakdown: assertArray<EnergyBreakdownEntryValueObject>(input.consumptionBreakdown, 'PlanetEnergyLevelsValueObject.consumptionBreakdown'),
-    optimizers: assertArray<OptimizerValueObject>(input.optimizers, 'PlanetEnergyLevelsValueObject.optimizers')
+    planetId: input.planetId,
+    planetName: input.planetName,
+    production: input.production,
+    consumption: input.consumption,
+    available: input.available,
+    productionBreakdown: input.productionBreakdown,
+    consumptionBreakdown: input.consumptionBreakdown,
+    optimizers: input.optimizers
   };
 }

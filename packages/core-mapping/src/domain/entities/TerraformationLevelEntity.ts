@@ -1,4 +1,3 @@
-import {assertFiniteNumber, assertNonEmptyString} from "../errors/assertions";
 
 export interface TerraformationLevelEntityInput {
   readonly planetId: string;
@@ -22,14 +21,14 @@ export class TerraformationLevelEntity {
   private readonly _unitPurificationLevel: number;
 
   constructor(input: TerraformationLevelEntityInput) {
-    this._planetId = assertNonEmptyString(input.planetId, 'TerraformationLevelEntity.planetId');
-    this._unitOxygenLevel = assertFiniteNumber(input.unitOxygenLevel, 'TerraformationLevelEntity.unitOxygenLevel');
-    this._unitHeatLevel = assertFiniteNumber(input.unitHeatLevel, 'TerraformationLevelEntity.unitHeatLevel');
-    this._unitPressureLevel = assertFiniteNumber(input.unitPressureLevel, 'TerraformationLevelEntity.unitPressureLevel');
-    this._unitPlantsLevel = assertFiniteNumber(input.unitPlantsLevel, 'TerraformationLevelEntity.unitPlantsLevel');
-    this._unitInsectsLevel = assertFiniteNumber(input.unitInsectsLevel, 'TerraformationLevelEntity.unitInsectsLevel');
-    this._unitAnimalsLevel = assertFiniteNumber(input.unitAnimalsLevel, 'TerraformationLevelEntity.unitAnimalsLevel');
-    this._unitPurificationLevel = assertFiniteNumber(input.unitPurificationLevel, 'TerraformationLevelEntity.unitPurificationLevel');
+    this._planetId = input.planetId;
+    this._unitOxygenLevel = input.unitOxygenLevel;
+    this._unitHeatLevel = input.unitHeatLevel;
+    this._unitPressureLevel = input.unitPressureLevel;
+    this._unitPlantsLevel = input.unitPlantsLevel;
+    this._unitInsectsLevel = input.unitInsectsLevel;
+    this._unitAnimalsLevel = input.unitAnimalsLevel;
+    this._unitPurificationLevel = input.unitPurificationLevel;
   }
 
   get planetId(): string {

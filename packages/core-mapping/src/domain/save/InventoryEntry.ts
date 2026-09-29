@@ -1,5 +1,8 @@
-import {Inventory} from 'shared-save-processing/gameDefinitions';
-
-export interface InventoryEntry extends Omit<Inventory, 'woIds'> {
-  readonly woIds: readonly number[];
+export interface InventoryEntry {
+  readonly id: number;
+  readonly worldObjectIds: readonly number[];
+  readonly size: number;
+  readonly demandGroups?: readonly string[];
+  readonly supplyGroups?: readonly string[];
+  readonly priority?: number;
 }

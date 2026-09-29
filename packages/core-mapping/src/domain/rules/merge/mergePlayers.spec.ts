@@ -1,21 +1,21 @@
 import {describe, expect, it} from 'bun:test';
-import {Player} from 'shared-save-processing/gameDefinitions';
+import {PlayerEntry} from '../../save/PlayerEntry';
 import {mergePlayers} from './mergePlayers';
-import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createPlayerEntry} from '../../../testing/createSaveEntries';
 import {EntriesByOrigin} from './EntriesByOrigin';
 
 describe('Merge players', () => {
   describe('When players are unique', () => {
     it('should keep the players of each save under their own origin', () => {
       // Arrange
-      const playerFromSaveA = createPlayer();
-      const playerFromSaveB = createPlayer({id: '76561190000000030', name: 'Chileny', host: false});
+      const playerFromSaveA = createPlayerEntry();
+      const playerFromSaveB = createPlayerEntry({id: '76561190000000030', name: 'Chileny', host: false});
 
       // Act
       const result = mergePlayers([playerFromSaveA], [playerFromSaveB]);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [{
           id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
           playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
@@ -37,14 +37,14 @@ describe('Merge players', () => {
   describe('When the same player appears in both saves with a different id', () => {
     it('should deduplicate by name and take the player from save A', () => {
       // Arrange
-      const playerInSaveA = createPlayer({id: '76561190000000002', playerGaugeOxygen: 150.0});
-      const playerInSaveB = createPlayer({id: '76561190000000003', playerGaugeOxygen: 280.0});
+      const playerInSaveA = createPlayerEntry({id: '76561190000000002', playerGaugeOxygen: 150.0});
+      const playerInSaveB = createPlayerEntry({id: '76561190000000003', playerGaugeOxygen: 280.0});
 
       // Act
       const result = mergePlayers([playerInSaveA], [playerInSaveB]);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [{
           id: '76561190000000002', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
           playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
@@ -60,14 +60,14 @@ describe('Merge players', () => {
   describe('When a player appears in both saves with the same id', () => {
     it('should take the player from save A', () => {
       // Arrange
-      const playerInSaveA = createPlayer({playerGaugeOxygen: 150.0});
-      const playerInSaveB = createPlayer({playerGaugeOxygen: 280.0, inventoryId: 99, equipmentId: 99});
+      const playerInSaveA = createPlayerEntry({playerGaugeOxygen: 150.0});
+      const playerInSaveB = createPlayerEntry({playerGaugeOxygen: 280.0, inventoryId: 99, equipmentId: 99});
 
       // Act
       const result = mergePlayers([playerInSaveA], [playerInSaveB]);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [{
           id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
           playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
@@ -83,15 +83,15 @@ describe('Merge players', () => {
   describe('When merging host status', () => {
     it('should keep save A host status and set all others to false', () => {
       // Arrange
-      const hostInSaveA = createPlayer({host: true});
-      const guestInSaveA = createPlayer({id: '76561190000000030', name: 'Chileny', host: false});
-      const hostInSaveB = createPlayer({id: '76561190000000030', name: 'Anya', host: true});
+      const hostInSaveA = createPlayerEntry({host: true});
+      const guestInSaveA = createPlayerEntry({id: '76561190000000030', name: 'Chileny', host: false});
+      const hostInSaveB = createPlayerEntry({id: '76561190000000030', name: 'Anya', host: true});
 
       // Act
       const result = mergePlayers([hostInSaveA, guestInSaveA], [hostInSaveB]);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [{
           id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
           playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
@@ -120,14 +120,14 @@ describe('Merge players', () => {
     it('should mark only the save A host', () => {
       // Arrange
       const steamIdentifierSharedByBothPlayers = '76561190000000030';
-      const hostInSaveA = createPlayer({id: steamIdentifierSharedByBothPlayers, host: true});
-      const hostInSaveB = createPlayer({id: steamIdentifierSharedByBothPlayers, name: 'Anya', host: true});
+      const hostInSaveA = createPlayerEntry({id: steamIdentifierSharedByBothPlayers, host: true});
+      const hostInSaveB = createPlayerEntry({id: steamIdentifierSharedByBothPlayers, name: 'Anya', host: true});
 
       // Act
       const result = mergePlayers([hostInSaveA], [hostInSaveB]);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [{
           id: '76561190000000030', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
           playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
@@ -150,15 +150,15 @@ describe('Merge players', () => {
     it('should mark only the player flagged as host in save A', () => {
       // Arrange
       const steamIdentifierSharedByBothPlayers = '76561190000000007';
-      const hostInSaveA = createPlayer({id: steamIdentifierSharedByBothPlayers, host: true});
-      const guestInSaveA = createPlayer({id: steamIdentifierSharedByBothPlayers, name: 'Chileny', host: false});
+      const hostInSaveA = createPlayerEntry({id: steamIdentifierSharedByBothPlayers, host: true});
+      const guestInSaveA = createPlayerEntry({id: steamIdentifierSharedByBothPlayers, name: 'Chileny', host: false});
       const noPlayersFromSaveB: never[] = [];
 
       // Act
       const result = mergePlayers([hostInSaveA, guestInSaveA], noPlayersFromSaveB);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [{
           id: '76561190000000007', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
           playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
@@ -181,13 +181,13 @@ describe('Merge players', () => {
     it('should keep the save B host', () => {
       // Arrange
       const noPlayersFromSaveA: never[] = [];
-      const hostInSaveB = createPlayer({id: '76561190000000030', name: 'Anya', host: true});
+      const hostInSaveB = createPlayerEntry({id: '76561190000000030', name: 'Anya', host: true});
 
       // Act
       const result = mergePlayers(noPlayersFromSaveA, [hostInSaveB]);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [],
         fromSaveB: [{
           id: '76561190000000030', name: 'Anya', inventoryId: 44, equipmentId: 45,
@@ -203,14 +203,14 @@ describe('Merge players', () => {
   describe('When merging planetId', () => {
     it('should preserve each player own planetId', () => {
       // Arrange
-      const hostInSaveA = createPlayer({host: true, planetId: 'Toxicity'});
-      const playerInSaveB = createPlayer({id: '76561190000000030', name: 'Chileny', host: false, planetId: 'Prime'});
+      const hostInSaveA = createPlayerEntry({host: true, planetId: 'Toxicity'});
+      const playerInSaveB = createPlayerEntry({id: '76561190000000030', name: 'Chileny', host: false, planetId: 'Prime'});
 
       // Act
       const result = mergePlayers([hostInSaveA], [playerInSaveB]);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [{
           id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
           playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',
@@ -237,14 +237,14 @@ describe('Merge players', () => {
         totalCraftedObjects: _totalCraftedObjects,
         totalTerraTokenEarned: _totalTerraTokenEarned,
         ...legacyPlayer
-      } = createPlayer();
+      } = createPlayerEntry();
       const noPlayersFromSaveB: never[] = [];
 
       // Act
       const result = mergePlayers([legacyPlayer], noPlayersFromSaveB);
 
       // Assert
-      expect<EntriesByOrigin<Player>>(result).toEqual({
+      expect<EntriesByOrigin<PlayerEntry>>(result).toEqual({
         fromSaveA: [{
           id: '76561190000000001', name: 'Nikowa', inventoryId: 44, equipmentId: 45,
           playerPosition: '1751.865,472.58,-1106.104', playerRotation: '0,0.5740051,0,-0.8188518',

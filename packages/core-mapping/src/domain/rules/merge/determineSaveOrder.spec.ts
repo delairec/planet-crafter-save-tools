@@ -1,14 +1,14 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeSaveSections} from './mergeSaveSections';
-import {createGlobalMetadata, createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createGlobalMetadataEntry, createSaveConfigurationEntry} from '../../../testing/createSaveEntries';
 import {createSaveSections} from '../../../testing/createSaveSections';
 
 describe('Determine save order', () => {
   const mergeOptions = {saveDisplayName: 'SAVE_NAME', preferLegacyFormat: false};
 
-  const primeConfig = createSaveConfiguration({planetId: 'Prime'});
-  const toxicityConfig = createSaveConfiguration({planetId: 'Toxicity'});
-  const aqualisConfig = createSaveConfiguration({planetId: 'Aqualis'});
+  const primeConfig = createSaveConfigurationEntry({planetId: 'Prime'});
+  const toxicityConfig = createSaveConfigurationEntry({planetId: 'Toxicity'});
+  const aqualisConfig = createSaveConfigurationEntry({planetId: 'Aqualis'});
 
   describe('When only the second save has Prime as planetId', () => {
     it('should return the Prime save as save A', () => {
@@ -55,8 +55,8 @@ describe('Determine save order', () => {
   describe('When both saves have Prime as planetId', () => {
     it('should return saves in the original order', () => {
       // Arrange
-      const saveA = createSaveSections({saveConfigurations: [createSaveConfiguration({planetId: 'Prime', worldSeed: 1})]});
-      const saveB = createSaveSections({saveConfigurations: [createSaveConfiguration({planetId: 'Prime', worldSeed: 2})]});
+      const saveA = createSaveSections({saveConfigurations: [createSaveConfigurationEntry({planetId: 'Prime', worldSeed: 1})]});
+      const saveB = createSaveSections({saveConfigurations: [createSaveConfigurationEntry({planetId: 'Prime', worldSeed: 2})]});
 
       // Act
       const result = mergeSaveSections(saveA, saveB, mergeOptions);
@@ -69,9 +69,9 @@ describe('Determine save order', () => {
   describe('When a save has no configuration', () => {
     it('should still promote the Prime save to save A', () => {
       // Arrange
-      const saveA = createSaveSections({globalMetadata: [createGlobalMetadata({openedInstanceSeed: 1})]});
+      const saveA = createSaveSections({globalMetadata: [createGlobalMetadataEntry({openedInstanceSeed: 1})]});
       const saveB = createSaveSections({
-        globalMetadata: [createGlobalMetadata({openedInstanceSeed: 2})],
+        globalMetadata: [createGlobalMetadataEntry({openedInstanceSeed: 2})],
         saveConfigurations: [primeConfig]
       });
 

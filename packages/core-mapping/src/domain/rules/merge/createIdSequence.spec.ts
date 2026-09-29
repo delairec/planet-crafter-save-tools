@@ -8,8 +8,8 @@ describe('Create id sequence', () => {
   describe('When the highest identifier of the merged save belongs to an inventory', () => {
     it('should start above that inventory id', () => {
       // Arrange
-      const inventories: InventoryEntry[] = [{id: 10, woIds: [], size: 20}, {id: 42, woIds: [], size: 20}];
-      const worldObjects: WorldObjectEntry[] = [{id: 7, gId: 'Iron'}];
+      const inventories: InventoryEntry[] = [{id: 10, worldObjectIds: [], size: 20}, {id: 42, worldObjectIds: [], size: 20}];
+      const worldObjects: WorldObjectEntry[] = [{id: 7, groupId: 'Iron'}];
       const idSequence = createIdSequence(inventories, worldObjects);
 
       // Act
@@ -23,8 +23,8 @@ describe('Create id sequence', () => {
   describe('When the highest identifier of the merged save belongs to a world object', () => {
     it('should start above that world object id', () => {
       // Arrange
-      const inventories: InventoryEntry[] = [{id: 42, woIds: [], size: 20}];
-      const worldObjects: WorldObjectEntry[] = [{id: 500, gId: 'Iron'}, {id: 7, gId: 'Cobalt'}];
+      const inventories: InventoryEntry[] = [{id: 42, worldObjectIds: [], size: 20}];
+      const worldObjects: WorldObjectEntry[] = [{id: 500, groupId: 'Iron'}, {id: 7, groupId: 'Cobalt'}];
       const idSequence = createIdSequence(inventories, worldObjects);
 
       // Act
@@ -53,7 +53,7 @@ describe('Create id sequence', () => {
   describe('When several identifiers are asked for', () => {
     it('should hand out increasing ids', () => {
       // Arrange
-      const inventories: InventoryEntry[] = [{id: 42, woIds: [], size: 20}];
+      const inventories: InventoryEntry[] = [{id: 42, worldObjectIds: [], size: 20}];
       const noWorldObjects: never[] = [];
       const idSequence = createIdSequence(inventories, noWorldObjects);
 

@@ -1,21 +1,21 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeGlobalMetadata} from './mergeGlobalMetadata';
 import {NoGlobalMetadataToMergeError} from '../../errors/NoGlobalMetadataToMergeError';
-import {createGlobalMetadata} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createGlobalMetadataEntry} from '../../../testing/createSaveEntries';
 
 describe('Merge global metadata', () => {
-  const metadataFromSaveA = createGlobalMetadata({
+  const metadataFromSaveA = createGlobalMetadataEntry({
     terraTokens: 122279,
     allTimeTerraTokens: 222154,
-    unlockedGroups: 'MultiToolMineSpeed1,BootsSpeed1,BootsSpeed2,SofaColored',
+    unlockedGroups: ['MultiToolMineSpeed1', 'BootsSpeed1', 'BootsSpeed2', 'SofaColored'],
     openedInstanceSeed: 0,
     openedInstanceTimeLeft: 2
   });
 
-  const metadataFromSaveB = createGlobalMetadata({
+  const metadataFromSaveB = createGlobalMetadataEntry({
     terraTokens: 10928,
     allTimeTerraTokens: 11456,
-    unlockedGroups: 'MultiToolMineSpeed1,BootsSpeed1,BedDoubleColored',
+    unlockedGroups: ['MultiToolMineSpeed1', 'BootsSpeed1', 'BedDoubleColored'],
     openedInstanceSeed: 1,
     openedInstanceTimeLeft: 5
   });
@@ -42,7 +42,7 @@ describe('Merge global metadata', () => {
       const mergeResult = mergeGlobalMetadata([metadataFromSaveA], [metadataFromSaveB]);
 
       // Assert
-      expect(mergeResult.unlockedGroups).toBe('MultiToolMineSpeed1,BootsSpeed1,BootsSpeed2,SofaColored,BedDoubleColored');
+      expect(mergeResult.unlockedGroups).toEqual(['MultiToolMineSpeed1', 'BootsSpeed1', 'BootsSpeed2', 'SofaColored', 'BedDoubleColored']);
     });
 
     it('should keep the instance seed from save A', () => {
@@ -111,7 +111,7 @@ describe('Merge global metadata', () => {
       expect(mergeResult).toEqual({
         terraTokens: 10928,
         allTimeTerraTokens: 11456,
-        unlockedGroups: 'MultiToolMineSpeed1,BootsSpeed1,BedDoubleColored',
+        unlockedGroups: ['MultiToolMineSpeed1', 'BootsSpeed1', 'BedDoubleColored'],
         openedInstanceSeed: 1,
         openedInstanceTimeLeft: 5
       });
@@ -130,7 +130,7 @@ describe('Merge global metadata', () => {
       expect(mergeResult).toEqual({
         terraTokens: 122279,
         allTimeTerraTokens: 222154,
-        unlockedGroups: 'MultiToolMineSpeed1,BootsSpeed1,BootsSpeed2,SofaColored',
+        unlockedGroups: ['MultiToolMineSpeed1', 'BootsSpeed1', 'BootsSpeed2', 'SofaColored'],
         openedInstanceSeed: 0,
         openedInstanceTimeLeft: 2
       });
@@ -155,38 +155,41 @@ describe('Merge global metadata', () => {
   describe('When unlocked groups lists are empty', () => {
     it('should return an empty list', () => {
       // Arrange
-      const metadataFromSaveAWithoutGroups = {...metadataFromSaveA, unlockedGroups: ''};
-      const metadataFromSaveBWithoutGroups = {...metadataFromSaveB, unlockedGroups: ''};
+      const noUnlockedGroups: string[] = [];
+      const metadataFromSaveAWithoutGroups = {...metadataFromSaveA, unlockedGroups: noUnlockedGroups};
+      const metadataFromSaveBWithoutGroups = {...metadataFromSaveB, unlockedGroups: noUnlockedGroups};
 
       // Act
       const mergeResult = mergeGlobalMetadata([metadataFromSaveAWithoutGroups], [metadataFromSaveBWithoutGroups]);
 
       // Assert
-      expect(mergeResult.unlockedGroups).toBe('');
+      expect(mergeResult.unlockedGroups).toEqual([]);
     });
 
     it('should ignore an empty unlocked groups list from save A', () => {
       // Arrange
-      const metadataFromSaveAWithoutGroups = {...metadataFromSaveA, unlockedGroups: ''};
-      const metadataFromSaveBWithGroups = {...metadataFromSaveB, unlockedGroups: 'GroupB'};
+      const noUnlockedGroups: string[] = [];
+      const metadataFromSaveAWithoutGroups = {...metadataFromSaveA, unlockedGroups: noUnlockedGroups};
+      const metadataFromSaveBWithGroups = {...metadataFromSaveB, unlockedGroups: ['GroupB']};
 
       // Act
       const mergeResult = mergeGlobalMetadata([metadataFromSaveAWithoutGroups], [metadataFromSaveBWithGroups]);
 
       // Assert
-      expect(mergeResult.unlockedGroups).toBe('GroupB');
+      expect(mergeResult.unlockedGroups).toEqual(['GroupB']);
     });
 
     it('should ignore an empty unlocked groups list from save B', () => {
       // Arrange
-      const metadataFromSaveAWithGroups = {...metadataFromSaveA, unlockedGroups: 'GroupA'};
-      const metadataFromSaveBWithoutGroups = {...metadataFromSaveB, unlockedGroups: ''};
+      const noUnlockedGroups: string[] = [];
+      const metadataFromSaveAWithGroups = {...metadataFromSaveA, unlockedGroups: ['GroupA']};
+      const metadataFromSaveBWithoutGroups = {...metadataFromSaveB, unlockedGroups: noUnlockedGroups};
 
       // Act
       const mergeResult = mergeGlobalMetadata([metadataFromSaveAWithGroups], [metadataFromSaveBWithoutGroups]);
 
       // Assert
-      expect(mergeResult.unlockedGroups).toBe('GroupA');
+      expect(mergeResult.unlockedGroups).toEqual(['GroupA']);
     });
   });
 });

@@ -77,7 +77,6 @@ export class FakeSaveSectionsMapperService implements SaveSectionsMapperPort {
       name: 'Chileny',
       inventory: [],
       equipment: [],
-      planetId: '',
       host: false
     })];
   }

@@ -1,12 +1,8 @@
 import {describe, expect, it} from 'bun:test';
-import {GlobalMetadata, SaveConfiguration, Statistics} from 'shared-save-processing/gameDefinitions';
-import {
-  createGlobalMetadata,
-  createPlayer,
-  createSaveConfiguration,
-  createStatistics,
-  createTerraformationLevel
-} from 'shared-save-processing/testing/createSaveRecords.js';
+import {GlobalMetadataEntry} from '../domain/save/GlobalMetadataEntry';
+import {SaveConfigurationEntry} from '../domain/save/SaveConfigurationEntry';
+import {StatisticsEntry} from '../domain/save/StatisticsEntry';
+import {createGlobalMetadataEntry, createPlayerEntry, createSaveConfigurationEntry, createStatisticsEntry, createTerraformationLevelEntry} from '../testing/createSaveEntries';
 import {SaveSectionsMapperService} from './SaveSectionsMapperService';
 import {createSaveSections} from '../testing/createSaveSections';
 import {SaveSections} from '../domain/save/SaveSections';
@@ -20,36 +16,37 @@ import {PlanetWorldObjectsValueObject} from '../domain/valueObjects/PlanetWorldO
 import {WorldObjectEntity} from '../domain/entities/WorldObjectEntity';
 import {InventoryEntity} from '../domain/entities/InventoryEntity';
 import {PlacedWorldObjectEntity} from '../domain/entities/PlacedWorldObjectEntity';
+import {UnreadableSaveEntryValueError} from './errors/UnreadableSaveEntryValueError';
 
 
 const CARRIED_WORLD_OBJECTS: WorldObjectEntry[] = [
-  {id: 79111656, gId: 'Phytoplankton3'},
-  {id: 58524136, gId: 'MagnetarQuartz'},
-  {id: 85274195, gId: 'Backpack4'},
-  {id: 48456321, gId: 'OxygenTank5'},
-  {id: 15974863, gId: 'Phytoplankton1'},
-  {id: 28491667, gId: 'PulsarQuartz'},
-  {id: 39187611, gId: 'Backpack7'},
-  {id: 65514812, gId: 'OxygenTank4'}
+  {id: 79111656, groupId: 'Phytoplankton3'},
+  {id: 58524136, groupId: 'MagnetarQuartz'},
+  {id: 85274195, groupId: 'Backpack4'},
+  {id: 48456321, groupId: 'OxygenTank5'},
+  {id: 15974863, groupId: 'Phytoplankton1'},
+  {id: 28491667, groupId: 'PulsarQuartz'},
+  {id: 39187611, groupId: 'Backpack7'},
+  {id: 65514812, groupId: 'OxygenTank4'}
 ];
 
 function createSectionsWithTwoPlayers(): SaveSections {
   return createSaveSections({
-    globalMetadata: [createGlobalMetadata()],
-    terraformationLevels: [createTerraformationLevel()],
+    globalMetadata: [createGlobalMetadataEntry()],
+    terraformationLevels: [createTerraformationLevelEntry()],
     players: [
-      createPlayer({name: 'Nikowa'}),
-      createPlayer({name: 'Chileny', inventoryId: 46, equipmentId: 47, host: false})
+      createPlayerEntry({name: 'Nikowa'}),
+      createPlayerEntry({name: 'Chileny', inventoryId: 46, equipmentId: 47, host: false})
     ],
     worldObjects: CARRIED_WORLD_OBJECTS,
     inventories: [
-      {id: 44, woIds: [79111656, 58524136], size: 20},
-      {id: 45, woIds: [85274195, 48456321], size: 10},
-      {id: 46, woIds: [15974863, 28491667], size: 20},
-      {id: 47, woIds: [39187611, 65514812], size: 10}
+      {id: 44, worldObjectIds: [79111656, 58524136], size: 20},
+      {id: 45, worldObjectIds: [85274195, 48456321], size: 10},
+      {id: 46, worldObjectIds: [15974863, 28491667], size: 20},
+      {id: 47, worldObjectIds: [39187611, 65514812], size: 10}
     ],
-    statistics: [createStatistics()],
-    saveConfigurations: [createSaveConfiguration()]
+    statistics: [createStatisticsEntry()],
+    saveConfigurations: [createSaveConfigurationEntry()]
   });
 }
 
@@ -71,7 +68,7 @@ describe('SaveSectionsMapperService', () => {
   describe('When the global metadata carries logisticsPaused', () => {
     it('should extract logisticsPaused alongside the terra tokens', () => {
       // Arrange
-      const service = new SaveSectionsMapperService(createSaveSections({globalMetadata: [createGlobalMetadata({logisticsPaused: true})]}));
+      const service = new SaveSectionsMapperService(createSaveSections({globalMetadata: [createGlobalMetadataEntry({logisticsPaused: true})]}));
 
       // Act
       const metadata = service.getGlobalProgression();
@@ -87,7 +84,7 @@ describe('SaveSectionsMapperService', () => {
   describe('When global metadata are missing', () => {
     it('should use fallback values', () => {
       // Arrange
-      const noGlobalMetadata: GlobalMetadata[] = [];
+      const noGlobalMetadata: GlobalMetadataEntry[] = [];
       const service = new SaveSectionsMapperService(createSaveSections({globalMetadata: noGlobalMetadata}));
 
       // Act
@@ -159,7 +156,7 @@ describe('SaveSectionsMapperService', () => {
   describe('When statistics are missing', () => {
     it('should return undefined', () => {
       // Arrange
-      const noStatistics: Statistics[] = [];
+      const noStatistics: StatisticsEntry[] = [];
       const service = new SaveSectionsMapperService(createSaveSections({statistics: noStatistics}));
 
       // Act
@@ -204,7 +201,7 @@ describe('SaveSectionsMapperService', () => {
   describe('When save configuration is missing', () => {
     it('should return undefined', () => {
       // Arrange
-      const noSaveConfigurations: SaveConfiguration[] = [];
+      const noSaveConfigurations: SaveConfigurationEntry[] = [];
       const service = new SaveSectionsMapperService(createSaveSections({saveConfigurations: noSaveConfigurations}));
 
       // Act
@@ -220,8 +217,8 @@ describe('SaveSectionsMapperService', () => {
       // Arrange
       const sections = createSaveSections({
         worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: 1},
-          {id: 2, gId: 'FuseEnergy1'}
+          {id: 1, groupId: 'EnergyGenerator1', position: '0,0,0', planet: 1},
+          {id: 2, groupId: 'FuseEnergy1'}
         ]
       });
       const service = new SaveSectionsMapperService(sections);
@@ -242,10 +239,10 @@ describe('SaveSectionsMapperService', () => {
       // Arrange
       const sections = createSaveSections({
         worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: 1},
-          {id: 2, gId: 'FuseEnergy1'},
-          {id: 3, gId: 'EnergyGenerator1', pos: '10,0,0'},
-          {id: 4, gId: 'EnergyGenerator1', planet: 1}
+          {id: 1, groupId: 'EnergyGenerator1', position: '0,0,0', planet: 1},
+          {id: 2, groupId: 'FuseEnergy1'},
+          {id: 3, groupId: 'EnergyGenerator1', position: '10,0,0'},
+          {id: 4, groupId: 'EnergyGenerator1', planet: 1}
         ]
       });
       const service = new SaveSectionsMapperService(sections);
@@ -267,9 +264,9 @@ describe('SaveSectionsMapperService', () => {
       // Arrange
       const sections = createSaveSections({
         worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: 1},
-          {id: 2, gId: 'Drill0', pos: '10,0,0', planet: 2},
-          {id: 3, gId: 'Heater1', pos: '20,0,0', planet: 1}
+          {id: 1, groupId: 'EnergyGenerator1', position: '0,0,0', planet: 1},
+          {id: 2, groupId: 'Drill0', position: '10,0,0', planet: 2},
+          {id: 3, groupId: 'Heater1', position: '20,0,0', planet: 1}
         ]
       });
       const service = new SaveSectionsMapperService(sections);
@@ -297,11 +294,11 @@ describe('SaveSectionsMapperService', () => {
       ]);
     });
 
-    it('should translate the save format fields of a placed world object into business terms', () => {
+    it('should map the fields of a placed world object onto its entity', () => {
       // Arrange
       const sections = createSaveSections({
         worldObjects: [
-          {id: 95585241, gId: 'Optimizer1', pos: '1751.865,-472.58,1106.104', planet: 1, liId: 100}
+          {id: 95585241, groupId: 'Optimizer1', position: '1751.865,-472.58,1106.104', planet: 1, linkedInventoryId: 100}
         ]
       });
       const service = new SaveSectionsMapperService(sections);
@@ -320,14 +317,34 @@ describe('SaveSectionsMapperService', () => {
     });
   });
 
+  describe('When a placed world object carries a position that cannot be read', () => {
+    it.each([
+      {situation: 'a coordinate that is not a number', position: '1751.865,north,1106.104'},
+      {situation: 'an empty coordinate', position: '1751.865,,1106.104'},
+      {situation: 'two coordinates', position: '1751.865,-472.58'},
+      {situation: 'four coordinates', position: '1751.865,-472.58,1106.104,0'}
+    ])('should fail with the error naming the unreadable value for $situation', ({position}) => {
+      // Arrange
+      const service = new SaveSectionsMapperService(createSaveSections({
+        worldObjects: [{id: 95585241, groupId: 'Optimizer1', position, planet: 1}]
+      }));
+
+      // Act
+      const placeWorldObjects = () => service.getPlacedWorldObjectsByPlanet();
+
+      // Assert
+      expect(placeWorldObjects).toThrow(UnreadableSaveEntryValueError);
+    });
+  });
+
   describe('When reading the inventories', () => {
     it('should hand over the inventory content as a list of world object ids', () => {
       // Arrange
       const noWorldObjectIds: number[] = [];
       const sections = createSaveSections({
         inventories: [
-          {id: 100, woIds: [20, 21], size: 3},
-          {id: 101, woIds: noWorldObjectIds, size: 1}
+          {id: 100, worldObjectIds: [20, 21], size: 3},
+          {id: 101, worldObjectIds: noWorldObjectIds, size: 1}
         ]
       });
       const service = new SaveSectionsMapperService(sections);

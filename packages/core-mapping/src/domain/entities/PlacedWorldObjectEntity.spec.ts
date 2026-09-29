@@ -1,6 +1,5 @@
 import {describe, expect, it} from 'bun:test';
 import {PlacedWorldObjectEntity} from './PlacedWorldObjectEntity';
-import {InvalidSaveDataError} from '../errors/InvalidSaveDataError';
 import {WorldObjectEntity} from './WorldObjectEntity';
 import {WorldObjectName} from '../worldObjectNames';
 
@@ -24,17 +23,6 @@ describe('PlacedWorldObjectEntity', () => {
     expect(placedWorldObject.position).toEqual([1, 2, 3]);
     expect(placedWorldObject.planetId).toBe(1);
     expect(placedWorldObject.inventoryId).toBe(5);
-  });
-
-  it('should reject a position containing NaN', () => {
-    // Arrange
-    const input = {id: '1', name: 'Drill0' as const, position: [NaN, 2, 3] as [number, number, number], planetId: 1};
-
-    // Act
-    const buildPlacedWorldObject = () => new PlacedWorldObjectEntity(input);
-
-    // Assert
-    expect(buildPlacedWorldObject).toThrow(InvalidSaveDataError);
   });
 
   describe('When asked what it does with energy', () => {

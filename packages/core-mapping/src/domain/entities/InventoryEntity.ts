@@ -1,4 +1,3 @@
-import {assertArray, assertFiniteNumber, assertNonEmptyString} from "../errors/assertions";
 
 export interface InventoryEntityInput {
   readonly id: number;
@@ -12,10 +11,9 @@ export class InventoryEntity {
   private readonly _size: number;
 
   constructor(input: InventoryEntityInput) {
-    this._worldObjectIds = assertArray<unknown>(input.worldObjectIds, 'InventoryEntity.worldObjectIds')
-      .map((worldObjectId, index) => assertNonEmptyString(worldObjectId, `InventoryEntity.worldObjectIds[${index}]`));
-    this._id = assertFiniteNumber(input.id, 'InventoryEntity.id');
-    this._size = assertFiniteNumber(input.size, 'InventoryEntity.size');
+    this._worldObjectIds = [...input.worldObjectIds];
+    this._id = input.id;
+    this._size = input.size;
   }
 
   get id(): number {
