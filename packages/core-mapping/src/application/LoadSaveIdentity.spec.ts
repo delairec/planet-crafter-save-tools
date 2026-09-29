@@ -3,7 +3,6 @@ import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderSe
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {SaveIdentityPresenterPort} from "./ports/SaveIdentityPresenterPort";
 import {LoadSaveIdentity} from "./LoadSaveIdentity";
-import {SaveIdentityValueObject} from "../domain/valueObjects/SaveIdentityValueObject";
 
 function createPresenter(): SaveIdentityPresenterPort {
   return {displaySaveIdentity: mock(), displayUnconfiguredSaveIdentity: mock()};
