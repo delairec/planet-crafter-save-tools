@@ -1,6 +1,7 @@
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSucceededResponse} from "../application/responses/MergeSucceededResponse";
 import {SaveFilesInvalidResponse} from "../application/responses/SaveFilesInvalidResponse";
+import {SaveFilesWithoutJsonExtensionResponse} from "../application/responses/SaveFilesWithoutJsonExtensionResponse";
 import {SaveFilesWithoutUniqueHostResponse} from "../application/responses/SaveFilesWithoutUniqueHostResponse";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
@@ -8,6 +9,7 @@ import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
 import {formatMergeWarning} from "./formatMergeWarning";
 import {formatUniqueHostError} from "./formatUniqueHostError";
+import {formatJsonExtensionError} from "./formatJsonExtensionError";
 import {mergedSaveUnusableMessage} from "./messages/mergeFailureMessages.js";
 
 export class MergeResultPresenter implements MergeResultPresenterPort {
@@ -46,6 +48,22 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       saveBErrors: [],
       saveAWarnings: saveAWarnings.map(formatSaveWarning),
       saveBWarnings: saveBWarnings.map(formatSaveWarning)
+    };
+  }
+
+  presentSaveFilesWithoutJsonExtension({saveAHasJsonExtension, saveBHasJsonExtension}: SaveFilesWithoutJsonExtensionResponse): void {
+    this._viewModel = {
+      status: 'validationError',
+      fileName: '',
+      content: '',
+      mergeFailureMessage: '',
+      mergeErrors: [],
+      mergeWarnings: [],
+      legacyFormatCouldBeKept: false,
+      saveAErrors: formatMissingJsonExtension(saveAHasJsonExtension),
+      saveBErrors: formatMissingJsonExtension(saveBHasJsonExtension),
+      saveAWarnings: [],
+      saveBWarnings: []
     };
   }
 
@@ -100,4 +118,8 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
 
 function formatWrongHostCount(wrongHostCount: number | undefined): SaveValidationMessageViewModel[] {
   return wrongHostCount === undefined ? [] : [formatUniqueHostError(wrongHostCount)];
+}
+
+function formatMissingJsonExtension(hasJsonExtension: boolean): SaveValidationMessageViewModel[] {
+  return hasJsonExtension ? [] : [formatJsonExtensionError()];
 }

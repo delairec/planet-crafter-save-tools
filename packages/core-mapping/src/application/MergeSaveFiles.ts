@@ -6,6 +6,7 @@ import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
 import {MergeWarning} from "./responses/MergeWarning";
+import {SaveFilesWithoutJsonExtensionResponse} from "./responses/SaveFilesWithoutJsonExtensionResponse";
 import {nameMergedFile} from "./nameMergedFile";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
@@ -22,8 +23,18 @@ export class MergeSaveFiles {
   ) {}
 
   async execute({fileNameA, contentA, fileNameB, contentB, saveDisplayName, preferLegacyFormat = false}: MergeSaveFilesRequest): Promise<void> {
-    const validationA = this.validator.validate(fileNameA, contentA);
-    const validationB = this.validator.validate(fileNameB, contentB);
+    const extensions: SaveFilesWithoutJsonExtensionResponse = {
+      saveAHasJsonExtension: this.validator.hasJsonExtension(fileNameA),
+      saveBHasJsonExtension: this.validator.hasJsonExtension(fileNameB)
+    };
+
+    if (lacksJsonExtension(extensions)) {
+      this.presenter.presentSaveFilesWithoutJsonExtension(extensions);
+      return;
+    }
+
+    const validationA = this.validator.validate(contentA);
+    const validationB = this.validator.validate(contentB);
 
     if (!validationA.isValid || !validationB.isValid) {
       this.presenter.presentSaveFilesInvalid({
@@ -57,7 +68,7 @@ export class MergeSaveFiles {
     const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, {saveDisplayName: saveDisplayName ?? stem, preferLegacyFormat}));
     const content = this.serializer.serialize(mergedSave);
 
-    const mergedSaveValidation = this.validator.validate(fileName, content);
+    const mergedSaveValidation = this.validator.validate(content);
 
     this.presenter.presentMergeSucceeded({
       fileName,
@@ -69,6 +80,10 @@ export class MergeSaveFiles {
       saveBWarnings: validationB.warnings
     });
   }
+}
+
+function lacksJsonExtension({saveAHasJsonExtension, saveBHasJsonExtension}: SaveFilesWithoutJsonExtensionResponse): boolean {
+  return !saveAHasJsonExtension || !saveBHasJsonExtension;
 }
 
 interface WrongHostCounts {

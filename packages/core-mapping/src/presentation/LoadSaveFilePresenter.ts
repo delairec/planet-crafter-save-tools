@@ -7,6 +7,7 @@ import {formatValidationError} from "./formatValidationError";
 import {formatUnreadableLine} from "./formatUnreadableLine";
 import {formatSaveWarning} from "./formatSaveWarning";
 import {formatUniqueHostError} from "./formatUniqueHostError";
+import {formatJsonExtensionError} from "./formatJsonExtensionError";
 
 export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPort {
   private _viewModel: LoadSaveFileViewModel;
@@ -33,6 +34,10 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
       errors: [],
       warnings: warnings.map(formatSaveWarning)
     };
+  }
+
+  presentFileWithoutJsonExtension(): void {
+    this._viewModel = {status: 'invalid', errors: [formatJsonExtensionError()], warnings: []};
   }
 
   presentSaveFileWithUnreadableLines(unreadableLines: UnreadableLine[], warnings: SaveWarning[]): void {

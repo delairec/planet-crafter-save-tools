@@ -8,10 +8,6 @@ describe('formatValidationError', () => {
   describe('When the issue concerns the whole file', () => {
     it.each<[ValidationIssue, SaveValidationMessageViewModel]>([
       [
-        {code: 'invalid-extension'},
-        {message: 'Invalid file extension: expected a .json file.', location: null}
-      ],
-      [
         {code: 'unexpected-section-count', foundSectionCount: 3, expectedSectionCounts: [11, 12]},
         {message: 'Expected 11 or 12 sections but found 3', location: null}
       ],

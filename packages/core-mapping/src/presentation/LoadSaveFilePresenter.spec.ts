@@ -68,18 +68,35 @@ describe('LoadSaveFilePresenter', () => {
     });
   });
 
+  describe('When presenting a file without a JSON extension', () => {
+    it('should update the view model with the invalid status and the extension error', () => {
+      // Arrange
+      const presenter = new LoadSaveFilePresenter();
+
+      // Act
+      presenter.presentFileWithoutJsonExtension();
+
+      // Assert
+      expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
+        status: 'invalid',
+        errors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
+        warnings: []
+      });
+    });
+  });
+
   describe('When presenting an invalid save file', () => {
     it('should update the view model with the invalid status and the formatted errors', () => {
       // Arrange
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION}], noWarnings);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.UNEXPECTED_SECTION_COUNT, foundSectionCount: 3, expectedSectionCounts: [11, 12]}], noWarnings);
 
       // Assert
       expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
         status: 'invalid',
-        errors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
+        errors: [{message: 'Expected 11 or 12 sections but found 3', location: null}],
         warnings: []
       });
     });

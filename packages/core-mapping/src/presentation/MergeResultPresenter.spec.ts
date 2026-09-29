@@ -170,6 +170,31 @@ describe('MergeResultPresenter', () => {
     });
   });
 
+  describe('When presenting save files of which one has no JSON extension', () => {
+    it('should report the extension error against the save at fault, as a validation error', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentSaveFilesWithoutJsonExtension({saveAHasJsonExtension: false, saveBHasJsonExtension: true});
+
+      // Assert
+      expect<MergeResultViewModel>(presenter.viewModel).toEqual({
+        status: 'validationError',
+        fileName: '',
+        content: '',
+        mergeFailureMessage: '',
+        mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
+        saveAErrors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
+        saveBErrors: [],
+        saveAWarnings: [],
+        saveBWarnings: []
+      });
+    });
+  });
+
   describe('When presenting invalid save files', () => {
     it('should update the view model with the validation error status and each save errors', () => {
       // Arrange

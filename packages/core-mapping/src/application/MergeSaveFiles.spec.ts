@@ -7,6 +7,7 @@ import {SaveSectionsSerializerPort} from './ports/SaveSectionsSerializerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
+import {SaveFilesWithoutJsonExtensionResponse} from './responses/SaveFilesWithoutJsonExtensionResponse';
 import {SaveFilesWithoutUniqueHostResponse} from './responses/SaveFilesWithoutUniqueHostResponse';
 import {MergeWarning} from './responses/MergeWarning';
 import {ValidationIssue} from './ports/ValidationIssue';
@@ -22,7 +23,6 @@ import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/Sav
 
 describe('MergeSaveFiles', () => {
 
-  const MERGED_FILE_NAME = 'Save-A-Save-B-merged.json';
   const TWO_VALID_SAVES = {fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'};
   const noErrorsFromTheMerge: ValidationIssue[] = [];
   const noMergeWarnings: MergeWarning[] = [];
@@ -32,8 +32,8 @@ describe('MergeSaveFiles', () => {
   const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResult => ({isValid: false, errors, warnings: []});
   const acceptedWith = (...warnings: SaveWarning[]): SaveValidationResult => ({isValid: true, errors: [], warnings});
 
-  const validatorAnswering = (resultsByFileName: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
-    (fileName: string) => resultsByFileName[fileName] ?? ACCEPTED;
+  const validatorAnswering = (resultsByContent: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
+    (content: string) => resultsByContent[content] ?? ACCEPTED;
 
   const parserAnswering = (savesByContent: Record<string, ParsedSaveSections>): SaveSectionsParserPort['parse'] =>
     (content: string) => savesByContent[content] ?? {sections: createSaveSections(), errors: noParseErrors};
@@ -42,18 +42,20 @@ describe('MergeSaveFiles', () => {
     (content: string) => readingsByContent[content] ?? {saveSections: new FakeSaveSectionsMapperService(), unreadableLines: noParseErrors};
 
   interface UseCaseOverrides {
+    hasJsonExtension?: SaveValidatorPort['hasJsonExtension'];
     validate?: SaveValidatorPort['validate'];
     read?: SaveSectionsReaderPort['read'];
     parse?: SaveSectionsParserPort['parse'];
   }
 
-  function createUseCase({validate = () => ACCEPTED, read = readerAnswering({}), parse = parserAnswering({})}: UseCaseOverrides = {}) {
-    const validator: SaveValidatorPort = {validate: mock(validate)};
+  function createUseCase({hasJsonExtension = () => true, validate = () => ACCEPTED, read = readerAnswering({}), parse = parserAnswering({})}: UseCaseOverrides = {}) {
+    const validator: SaveValidatorPort = {hasJsonExtension: mock(hasJsonExtension), validate: mock(validate)};
     const reader: SaveSectionsReaderPort = {read: mock(read)};
     const parser: SaveSectionsParserPort = {parse: mock(parse)};
     const serializer: SaveSectionsSerializerPort = {serialize: mock(() => 'merged content')};
     const presenter: MergeResultPresenterPort = {
       presentMergeSucceeded: mock(),
+      presentSaveFilesWithoutJsonExtension: mock(),
       presentSaveFilesInvalid: mock(),
       presentSaveFilesWithoutUniqueHost: mock(),
       presentMergedSaveUnusable: mock()
@@ -241,7 +243,7 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentA'};
       const {useCase, parser, presenter} = createUseCase({
-        validate: validatorAnswering({'Save-A.json': rejectedWith(invalidJsonError)})
+        validate: validatorAnswering({contentA: rejectedWith(invalidJsonError)})
       });
 
       // Act
@@ -258,28 +260,22 @@ describe('MergeSaveFiles', () => {
     });
   });
 
-  describe('When a save file has an invalid extension', () => {
-    it('should present a validation error result reported by the validator', async () => {
+  describe('When a save file has no JSON extension', () => {
+    it('should reject the saves before validating their content', async () => {
       // Arrange
-      const invalidExtensionError = {code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION};
-      const {useCase, validator, parser, presenter} = createUseCase({
-        validate: validatorAnswering({'Save-A.txt': rejectedWith(invalidExtensionError)})
+      const {useCase, validator, presenter} = createUseCase({
+        hasJsonExtension: (fileName: string) => fileName !== 'Save-A.txt'
       });
 
       // Act
       await useCase.execute({...TWO_VALID_SAVES, fileNameA: 'Save-A.txt'});
 
       // Assert
-      expect(validator.validate).toHaveBeenCalledTimes(2);
-      expect(validator.validate).toHaveBeenCalledWith('Save-A.txt', 'contentA');
-      expect(validator.validate).toHaveBeenCalledWith('Save-B.json', 'contentB');
-      expect(parser.parse).not.toHaveBeenCalled();
-      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
-        saveAErrors: [invalidExtensionError],
-        saveBErrors: [],
-        saveAWarnings: [],
-        saveBWarnings: []
-      } satisfies SaveFilesInvalidResponse);
+      expect(validator.validate).not.toHaveBeenCalled();
+      expect(presenter.presentSaveFilesWithoutJsonExtension).toHaveBeenCalledWith({
+        saveAHasJsonExtension: false,
+        saveBHasJsonExtension: true
+      } satisfies SaveFilesWithoutJsonExtensionResponse);
     });
   });
 
@@ -288,7 +284,7 @@ describe('MergeSaveFiles', () => {
       it('should present the warnings of each save', async () => {
         // Arrange
         const {useCase, presenter} = createUseCase({
-          validate: validatorAnswering({'Save-A.json': acceptedWith({code: 'legacy-save-format'})})
+          validate: validatorAnswering({contentA: acceptedWith({code: 'legacy-save-format'})})
         });
 
         // Act
@@ -313,8 +309,8 @@ describe('MergeSaveFiles', () => {
         const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentB'};
         const {useCase, presenter} = createUseCase({
           validate: validatorAnswering({
-            'Save-A.json': acceptedWith({code: 'legacy-save-format'}),
-            'Save-B.json': rejectedWith(invalidJsonError)
+            contentA: acceptedWith({code: 'legacy-save-format'}),
+            contentB: rejectedWith(invalidJsonError)
           })
         });
 
@@ -341,7 +337,7 @@ describe('MergeSaveFiles', () => {
       schemaMessage: "must have required property 'name'"
     };
 
-    const rejectOnlyTheMergedSave = validatorAnswering({[MERGED_FILE_NAME]: rejectedWith(schemaViolation)});
+    const rejectOnlyTheMergedSave = validatorAnswering({'merged content': rejectedWith(schemaViolation)});
 
     it('should present a success carrying the errors of the produced save', async () => {
       // Arrange
@@ -373,7 +369,7 @@ describe('MergeSaveFiles', () => {
       expect(presenter.presentSaveFilesInvalid).not.toHaveBeenCalled();
     });
 
-    it('should validate the file name and the content the serializer produced', async () => {
+    it('should validate the content the serializer produced', async () => {
       // Arrange
       const {useCase, validator} = createUseCase({validate: rejectOnlyTheMergedSave});
 
@@ -382,7 +378,7 @@ describe('MergeSaveFiles', () => {
 
       // Assert
       expect(validator.validate).toHaveBeenCalledTimes(3);
-      expect(validator.validate).toHaveBeenCalledWith('Save-A-Save-B-merged.json', 'merged content');
+      expect(validator.validate).toHaveBeenCalledWith('merged content');
     });
   });
 
@@ -437,7 +433,7 @@ describe('MergeSaveFiles', () => {
     it('should present the saves without a unique host, with the host count of the save at fault', async () => {
       // Arrange
       const {useCase, presenter} = createUseCase({
-        validate: validatorAnswering({'Save-A.json': acceptedWith({code: 'legacy-save-format'})}),
+        validate: validatorAnswering({contentA: acceptedWith({code: 'legacy-save-format'})}),
         read: readSaveAWithTwoHosts
       });
 

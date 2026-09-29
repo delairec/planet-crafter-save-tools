@@ -4,8 +4,7 @@ import {
   formatSchemaViolationMessage,
   formatTooFewSectionEntriesMessage,
   formatUnexpectedSectionCountMessage,
-  formatUnreadableLineMessage,
-  invalidExtensionMessage
+  formatUnreadableLineMessage
 } from "./messages/validationIssueMessages.js";
 
 type ValidationIssueMessageFormatters = {
@@ -13,7 +12,6 @@ type ValidationIssueMessageFormatters = {
 };
 
 const messageFormattersByIssueCode: ValidationIssueMessageFormatters = {
-  'invalid-extension': () => invalidExtensionMessage,
   'unexpected-section-count': formatUnexpectedSectionCountMessage,
   'too-few-section-entries': formatTooFewSectionEntriesMessage,
   'invalid-json': formatUnreadableLineMessage,

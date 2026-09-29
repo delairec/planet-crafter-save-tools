@@ -7,6 +7,8 @@ export interface LoadAndValidateSaveFilePresenterPort {
 
   presentLoadedSaveFile(warnings: SaveWarning[]): void;
 
+  presentFileWithoutJsonExtension(): void;
+
   presentSaveFileWithUnreadableLines(unreadableLines: UnreadableLine[], warnings: SaveWarning[]): void;
 
   presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarning[]): void;
