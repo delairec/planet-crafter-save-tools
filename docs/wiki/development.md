@@ -161,12 +161,8 @@ Fails on two refusals, both closing the output boundary of a `core-` package:
 
 Infrastructure may still build entities — that is where a save is read and validated — and the reader port still
 hands them to the application layer; only the output boundary is closed. Every `.js`, `.ts` and `.tsx` source of every
-`core-` package is scanned, outside dependencies and build outputs, and type-only and dynamic imports count.
-
-The presenter ports that still import `domain/` are listed in
-`scripts/allow-lists/presenter-ports-importing-domain.json`, which the guard reads: a listed file is not reported,
-and a listed file that no longer imports `domain/` fails the guard until its entry is removed, so the list only
-shrinks. The mechanism lives in `scripts/shrinkingAllowList.ts`, for any guard that needs an allow-list of its own.
+`core-` package is scanned, outside dependencies and build outputs, and type-only and dynamic imports count. The
+guard runs with no exemption.
 
 ```
 bun run check:wire-format
@@ -186,9 +182,10 @@ included:
 Every `.js`, `.ts` and `.tsx` source under a `domain/` directory of every `core-` package is scanned, outside
 dependencies and build outputs. The files each refusal still reports are listed in an allow-list of its own,
 `scripts/allow-lists/domain-files-naming-wire-abbreviations.json` and
-`scripts/allow-lists/domain-files-importing-game-definitions.json`, read through `scripts/shrinkingAllowList.ts` like
-the presenter ports of `check:presentation`: a file listed for one refusal is still reported for the other, and a
-listed file its refusal no longer reports fails the guard until its entry is removed, so each list only shrinks.
+`scripts/allow-lists/domain-files-importing-game-definitions.json`, read through `scripts/shrinkingAllowList.ts`,
+the mechanism any guard that needs an allow-list of its own reads: a file listed for one refusal is still reported
+for the other, and a listed file its refusal no longer reports fails the guard until its entry is removed, so each
+list only shrinks.
 
 ```
 bun run check:action-pins

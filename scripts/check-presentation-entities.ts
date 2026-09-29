@@ -1,10 +1,8 @@
 import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {reportViolations} from './specSources.ts';
-import {applyAllowList, readAllowList} from './shrinkingAllowList.ts';
 import {readImportSpecifiers} from './importSpecifiers.ts';
 
 const SOURCE_FILES_PATTERN = 'packages/*/**/*.{js,ts,tsx}';
-const ALLOW_LIST_PATH = 'scripts/allow-lists/presenter-ports-importing-domain.json';
 const GENERATED_DIRECTORY = /(?:^|\/)(?:node_modules|dist|build|coverage|\.output|\.vinxi)\//;
 
 const CHECK_NAME = 'check:presentation';
@@ -44,25 +42,15 @@ export function findRefusedImports(filePath: string, source: string): RefusedImp
 }
 
 export async function checkPresentationFiles(io: ScriptIo): Promise<void> {
-  const allowList = await readAllowList(io, ALLOW_LIST_PATH);
-  const outputBoundaryViolations = new Map<string, string[]>();
-  const presenterPortViolations = new Map<string, string[]>();
+  const violations: string[] = [];
   for await (const filePath of io.scanFiles(SOURCE_FILES_PATTERN)) {
-    const violations = findRefusedImports(filePath, await io.readText(filePath))
-      .map(({line, specifier, reason}) => `${filePath}:${line}: ${specifier}\n  ${reason}`);
-    if (violations.length === 0) {
-      continue;
-    }
-    const violationsByFile = PRESENTER_PORT_REFUSAL.appliesTo.test(filePath) ? presenterPortViolations : outputBoundaryViolations;
-    violationsByFile.set(filePath, violations);
+    violations.push(...findRefusedImports(filePath, await io.readText(filePath))
+      .map(({line, specifier, reason}) => `${filePath}:${line}: ${specifier}\n  ${reason}`));
   }
   reportViolations(io, {
     checkName: CHECK_NAME,
-    violations: [
-      ...[...outputBoundaryViolations.values()].flat(),
-      ...applyAllowList(allowList, presenterPortViolations)
-    ],
-    nothingFound: 'no domain entity nor infrastructure type crosses the output boundary, and no presenter port outside the allow-list imports domain/.',
+    violations,
+    nothingFound: 'no domain entity nor infrastructure type crosses the output boundary, and no presenter port imports domain/.',
     summarize: count => `${count} violation(s): a presentation file or an application response imports nothing from domain/entities nor infrastructure/, and a presenter port imports nothing from domain/.`
   });
 }

@@ -1012,7 +1012,6 @@ TASK CHORE157
 	SPEC "the presenter ports that import domain/ when the task lands are listed in an allow-list"
 		+ "the guard reads: a listed file is not reported, and a listed file that no longer imports"
 		+ "domain/ fails the guard until its entry is removed, so the list only shrinks"
-		IMPL "scripts/allow-lists/presenter-ports-importing-domain.json"
 		IMPL "scripts/shrinkingAllowList.ts::applyAllowList"
 		IMPL "scripts/shrinkingAllowList.spec.ts"
 	SPEC "the failure message of check:presentation and its description in docs/wiki/development.md"
