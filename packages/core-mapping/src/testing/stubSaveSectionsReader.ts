@@ -1,15 +1,19 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {SaveSectionsReaderPort, SaveSectionsReading} from "../application/ports/SaveSectionsReaderPort";
 import {SaveSectionsMapperPort} from "../application/ports/SaveSectionsMapperPort";
 import {FakeSaveSectionsMapperService} from "./FakeSaveSectionsMapperService";
 
 export const SAVE_CONTENT = 'save content';
 
-const UNEXPECTED_CONTENT_LINE: SaveParseError = {detail: `The reader stub reads only "${SAVE_CONTENT}"`};
+const UNEXPECTED_CONTENT_LINE: UnreadableLine = {
+  section: {name: 'globalMetadata', index: 0},
+  entryIndex: 0,
+  line: `The reader stub reads only "${SAVE_CONTENT}"`
+};
 
 interface SaveSectionsReaderStubOptions {
   readonly saveSections?: SaveSectionsMapperPort;
-  readonly unreadableLines?: SaveParseError[];
+  readonly unreadableLines?: UnreadableLine[];
 }
 
 export function stubSaveSectionsReader({

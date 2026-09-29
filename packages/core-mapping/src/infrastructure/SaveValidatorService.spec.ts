@@ -1,56 +1,55 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveValidatorService} from './SaveValidatorService';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
+import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 
 describe('SaveValidatorService', () => {
 
-  describe('When the file name has an invalid extension', () => {
-    it('should return an invalid result without checking the content', () => {
+  describe('When checking the extension of a file name', () => {
+    it.each([
+      ['Save-A.json', true],
+      ['Save-A.JSON', true],
+      ['Save-A.txt', false]
+    ])('should tell whether %p has a JSON extension', (fileName, expectedAnswer) => {
       // Arrange
       const service = new SaveValidatorService();
-      const content = createFakeSaveContent();
 
       // Act
-      const result = service.validate('Save-A.txt', content);
+      const hasJsonExtension = service.hasJsonExtension(fileName);
 
       // Assert
-      expect(result).toEqual({
-        isValid: false,
-        errors: [{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'}],
-        warnings: []
-      });
+      expect(hasJsonExtension).toBe(expectedAnswer);
     });
   });
 
-  describe('When the file name has a valid extension and the save content is valid', () => {
+  describe('When the save content is valid', () => {
     it('should return a valid result with no error messages', () => {
       // Arrange
       const service = new SaveValidatorService();
       const content = createFakeSaveContent();
 
       // Act
-      const result = service.validate('Save-A.json', content);
+      const result = service.validate(content);
 
       // Assert
       expect(result).toEqual({isValid: true, errors: [], warnings: []});
     });
   });
 
-  describe('When the file name has a valid extension and the save content is invalid', () => {
+  describe('When the save content is invalid', () => {
     it('should return an invalid result with the validation errors', () => {
       // Arrange
       const service = new SaveValidatorService();
       const content = 'not a valid save at all';
 
       // Act
-      const result = service.validate('Save-A.json', content);
+      const result = service.validate(content);
 
       // Assert
       expect(result).toEqual({
         isValid: false,
-        errors: [{code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected 11 or 12 sections but found 1'}],
+        errors: [{code: VALIDATION_ISSUE_CODES.UNEXPECTED_SECTION_COUNT, foundSectionCount: 1, expectedSectionCounts: [11, 12]}],
         warnings: []
       });
     });
@@ -63,7 +62,7 @@ describe('SaveValidatorService', () => {
       const content = createLegacyFakeSaveContent();
 
       // Act
-      const result = service.validate('Save-A.json', content);
+      const result = service.validate(content);
 
       // Assert
       expect(result).toEqual({isValid: true, errors: [], warnings: [{code: 'legacy-save-format'}]});
@@ -80,7 +79,7 @@ describe('SaveValidatorService', () => {
       });
 
       // Act
-      const result = service.validate('Save-A.json', content);
+      const result = service.validate(content);
 
       // Assert
       expect(result).toEqual({isValid: true, errors: [], warnings: []});

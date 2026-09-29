@@ -4,7 +4,7 @@ import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSa
 import {createFakeSaveString, createLegacyFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 import {createEquipment, createInventory, createPlayer, createSaveConfiguration, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
-import {SaveParseError} from 'shared-save-processing/gameDefinitions';
+import {UnreadableLine} from '../application/ports/SaveSectionLocation';
 import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {WorldEventEntry} from '../domain/save/WorldEventEntry';
@@ -63,7 +63,7 @@ describe('SaveSectionsParserService', () => {
       // Assert
       expect(sections.players).toEqual([player]);
       expect(sections.saveConfigurations).toEqual([saveConfiguration]);
-      expect<SaveParseError[]>(errors).toEqual([]);
+      expect<UnreadableLine[]>(errors).toEqual([]);
     });
   });
 
@@ -142,7 +142,7 @@ describe('SaveSectionsParserService', () => {
       const {errors} = service.parse(content);
 
       // Assert
-      expect(errors).toEqual([expect.objectContaining({detail: 'Invalid JSON: {not valid json'})]);
+      expect<UnreadableLine[]>(errors).toEqual([{section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{not valid json'}]);
     });
 
     describe('When the unreadable line is a world object', () => {
@@ -157,7 +157,7 @@ describe('SaveSectionsParserService', () => {
         const {errors} = service.parse(content);
 
         // Assert
-        expect(errors).toEqual([expect.objectContaining({detail: 'Invalid JSON: {not valid json'})]);
+        expect(errors).toEqual([expect.objectContaining({section: {name: 'worldObjects', index: 3}, line: '{not valid json'})]);
       });
     });
   });

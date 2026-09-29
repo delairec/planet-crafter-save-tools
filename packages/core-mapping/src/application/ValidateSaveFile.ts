@@ -13,7 +13,12 @@ export class ValidateSaveFile {
   }
 
   async execute({fileName, content}: ValidateSaveFileRequest): Promise<void> {
-    const validation = this.validator.validate(fileName, content);
+    if (!this.validator.hasJsonExtension(fileName)) {
+      this.presenter.presentFileWithoutJsonExtension();
+      return;
+    }
+
+    const validation = this.validator.validate(content);
 
     if (!validation.isValid) {
       this.presenter.presentInvalidSaveFile(validation.errors, validation.warnings);

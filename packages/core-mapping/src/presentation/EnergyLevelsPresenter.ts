@@ -1,5 +1,5 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {EnergyLevelsResponse} from "../application/responses/EnergyLevelsResponse";
 import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
 import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
@@ -53,7 +53,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     };
   }
 
-  displaySaveWithUnreadableLines(unreadableLines: SaveParseError[]): void {
+  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void {
     this._viewModel = {notifications: [], planets: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 

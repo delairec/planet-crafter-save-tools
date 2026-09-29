@@ -1,9 +1,9 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "./SaveSectionLocation";
 import {SaveSectionsMapperPort} from "./SaveSectionsMapperPort";
 
 export interface SaveSectionsReading {
   readonly saveSections: SaveSectionsMapperPort;
-  readonly unreadableLines: SaveParseError[];
+  readonly unreadableLines: UnreadableLine[];
 }
 
 export interface SaveSectionsReaderPort {

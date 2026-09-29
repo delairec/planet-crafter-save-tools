@@ -1,4 +1,4 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "./SaveSectionLocation";
 import {SaveSections} from "../../domain/save/SaveSections";
 
 /**
@@ -8,7 +8,7 @@ import {SaveSections} from "../../domain/save/SaveSections";
  */
 export interface ParsedSaveSections {
   readonly sections: SaveSections;
-  readonly errors: SaveParseError[];
+  readonly errors: UnreadableLine[];
 }
 
 export interface SaveSectionsParserPort {

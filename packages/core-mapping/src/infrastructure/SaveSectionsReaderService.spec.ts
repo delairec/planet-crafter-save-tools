@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {SaveParseError} from 'shared-save-processing/gameDefinitions';
+import {UnreadableLine} from '../application/ports/SaveSectionLocation';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
 import {SaveSectionsReaderService} from './SaveSectionsReaderService';
 import {SaveSectionsParserPort} from '../application/ports/SaveSectionsParserPort';
@@ -8,7 +8,7 @@ import {createSaveSections} from '../testing/createSaveSections';
 
 const SAVE_CONTENT = 'save content';
 
-function createParser(sections: SaveSections, errors: SaveParseError[]): SaveSectionsParserPort {
+function createParser(sections: SaveSections, errors: UnreadableLine[]): SaveSectionsParserPort {
   return {
     parse: (content: string) => content === SAVE_CONTENT ? {sections, errors} : {sections: createSaveSections(), errors: []}
   };
@@ -17,7 +17,7 @@ function createParser(sections: SaveSections, errors: SaveParseError[]): SaveSec
 describe('SaveSectionsReaderService', () => {
   it('should give access to the sections parsed from the content', () => {
     // Arrange
-    const noUnreadableLines: SaveParseError[] = [];
+    const noUnreadableLines: UnreadableLine[] = [];
     const sections = createSaveSections({players: [createPlayer({name: 'Nikowa'})]});
     const reader = new SaveSectionsReaderService(createParser(sections, noUnreadableLines));
 
@@ -30,13 +30,13 @@ describe('SaveSectionsReaderService', () => {
 
   it('should carry every line the parser could not read', () => {
     // Arrange
-    const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
     const reader = new SaveSectionsReaderService(createParser(createSaveSections(), unreadableLines));
 
     // Act
     const reading = reader.read(SAVE_CONTENT);
 
     // Assert
-    expect<SaveParseError[]>(reading.unreadableLines).toEqual([{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}]);
+    expect<UnreadableLine[]>(reading.unreadableLines).toEqual([{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]);
   });
 });

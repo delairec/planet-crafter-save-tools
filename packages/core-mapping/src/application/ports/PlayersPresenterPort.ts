@@ -1,8 +1,8 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "./SaveSectionLocation";
 import {PlayerSummaryResponse} from "../responses/PlayerSummaryResponse";
 
 export interface PlayersPresenterPort {
   displayPlayers(players: PlayerSummaryResponse[]): void;
 
-  displaySaveWithUnreadableLines(unreadableLines: SaveParseError[]): void;
+  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void;
 }

@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {validateSaveContent} from './validateSaveContent.js';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
+import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes.ts';
 import {createFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
@@ -67,7 +67,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.FIELD_OF_WRONG_TYPE, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -86,7 +86,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.FIELD_OF_WRONG_TYPE, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -101,7 +101,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toEqual([
-          {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected at least 1 entry but found 0', section: GLOBAL_METADATA_SECTION_INDEX, formatRelease: '2.004'}
+          {code: VALIDATION_ISSUE_CODES.TOO_FEW_SECTION_ENTRIES, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, foundEntryCount: 0, minimumEntryCount: 1}
         ]);
       });
     });
@@ -119,7 +119,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -149,7 +149,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.FIELD_OF_WRONG_TYPE, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -168,7 +168,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: TERRAFORMATION_LEVELS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'terraformationLevels', index: TERRAFORMATION_LEVELS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -186,7 +186,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: TERRAFORMATION_LEVELS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'terraformationLevels', index: TERRAFORMATION_LEVELS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -205,7 +205,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toContainEqual(expect.objectContaining(
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: PLAYERS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
         ));
       });
     });
@@ -221,7 +221,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: PLAYERS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_NOT_MATCHING_PATTERN, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -237,7 +237,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: PLAYERS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -276,7 +276,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 1}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 1}
         ]);
       });
     });
@@ -296,10 +296,10 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([{
-          code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
-          section: WORLD_OBJECTS_SECTION_INDEX,
+          code: VALIDATION_ISSUE_CODES.MISSING_DEPENDENT_FIELD,
+          section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX},
           entryIndex: 0,
-          detail: expect.stringContaining(`must have property ${missingProperty}`)
+          missingFieldName: missingProperty
         }]);
       });
     });
@@ -318,7 +318,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: INVENTORIES_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -334,7 +334,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: INVENTORIES_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -352,7 +352,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: STATISTICS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'statistics', index: STATISTICS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -371,7 +371,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: SAVE_CONFIGURATION_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'saveConfiguration', index: SAVE_CONFIGURATION_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -389,7 +389,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: SAVE_CONFIGURATION_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'saveConfiguration', index: SAVE_CONFIGURATION_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -407,7 +407,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: WORLD_EVENTS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_NOT_MATCHING_PATTERN, section: {name: 'worldEvents', index: WORLD_EVENTS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -427,7 +427,8 @@ describe('validateSaveContent', () => {
           expect(result.isValid).toBe(false);
           expect(result.errors).toEqual([{
             code: VALIDATION_ISSUE_CODES.FLOAT_SERIALIZATION,
-            detail: 'Field "playerGaugeOxygen" has integer value serialized without .0 suffix (got: 280)'
+            fieldName: 'playerGaugeOxygen',
+            serializedValue: '280'
           }]);
         });
       });
@@ -475,19 +476,23 @@ describe('validateSaveContent', () => {
           expect(result.errors).toEqual([
             {
               code: VALIDATION_ISSUE_CODES.FLOAT_SERIALIZATION,
-              detail: 'Field "playerGaugeOxygen" has integer value serialized without .0 suffix (got: 280)'
+              fieldName: 'playerGaugeOxygen',
+            serializedValue: '280'
             },
             {
               code: VALIDATION_ISSUE_CODES.FLOAT_SERIALIZATION,
-              detail: 'Field "playerGaugeThirst" has integer value serialized without .0 suffix (got: 100)'
+              fieldName: 'playerGaugeThirst',
+            serializedValue: '100'
             },
             {
               code: VALIDATION_ISSUE_CODES.FLOAT_SERIALIZATION,
-              detail: 'Field "playerGaugeHealth" has integer value serialized without .0 suffix (got: 72)'
+              fieldName: 'playerGaugeHealth',
+            serializedValue: '72'
             },
             {
               code: VALIDATION_ISSUE_CODES.FLOAT_SERIALIZATION,
-              detail: 'Field "playerGaugeToxic" has integer value serialized without .0 suffix (got: 0)'
+              fieldName: 'playerGaugeToxic',
+            serializedValue: '0'
             }
           ]);
         });
@@ -569,7 +574,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0, formatRelease: '1.618'}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -584,7 +589,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.UNEXPECTED_FIELD, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -599,7 +604,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_NOT_MATCHING_PATTERN, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -614,7 +619,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_WORLD_EVENTS_SECTION_INDEX, entryIndex: 0, formatRelease: '1.618'}
+          {code: VALIDATION_ISSUE_CODES.VALUE_NOT_MATCHING_PATTERN, section: {name: 'worldEvents', index: LEGACY_WORLD_EVENTS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -631,7 +636,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toEqual([
-          {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected at least 1 entry but found 0', section: GLOBAL_METADATA_SECTION_INDEX, formatRelease: '1.618'}
+          {code: VALIDATION_ISSUE_CODES.TOO_FEW_SECTION_ENTRIES, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, foundEntryCount: 0, minimumEntryCount: 1}
         ]);
       });
     });
@@ -651,7 +656,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toEqual([
-          {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {not valid json', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 0, formatRelease: '2.004'}
+          {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 0, line: '{not valid json'}
         ]);
       });
     });
@@ -670,7 +675,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toEqual([
-          {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {not valid json', section: MAILBOX_MESSAGES_SECTION_INDEX, entryIndex: 1, formatRelease: '2.004'}
+          {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'mailboxMessages', index: MAILBOX_MESSAGES_SECTION_INDEX}, entryIndex: 1, line: '{not valid json'}
         ]);
       });
     });
@@ -687,7 +692,7 @@ describe('validateSaveContent', () => {
       // Assert
       expect(result.isValid).toBe(false);
       expect(result.errors).toEqual([
-        {code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected 11 or 12 sections but found 2'}
+        {code: VALIDATION_ISSUE_CODES.UNEXPECTED_SECTION_COUNT, foundSectionCount: 2, expectedSectionCounts: [11, 12]}
       ]);
     });
   });

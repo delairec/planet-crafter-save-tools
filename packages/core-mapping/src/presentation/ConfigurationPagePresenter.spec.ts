@@ -1,4 +1,4 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {describe, expect, it} from 'bun:test';
 import {ConfigurationPagePresenter} from "./ConfigurationPagePresenter";
 import {ConfigurationPageViewModel} from "./viewModels/ConfigurationPageViewModel";
@@ -136,14 +136,14 @@ describe('ConfigurationPagePresenter', () => {
   describe('When the save has unreadable lines', () => {
     it('should show the unreadable lines in place of the configuration page', () => {
       // Arrange
-      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
       const presenter = new ConfigurationPagePresenter();
 
       // Act
       presenter.displaySaveWithUnreadableLines(unreadableLines);
 
       // Assert
-      expect(presenter.viewModel).toEqual<ConfigurationPageViewModel>({progression: {fields: []}, unreadableLines: [{message: 'Entry is not valid JSON', location: 'section 3, entry 2'}]});
+      expect(presenter.viewModel).toEqual<ConfigurationPageViewModel>({progression: {fields: []}, unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]});
     });
   });
 });
