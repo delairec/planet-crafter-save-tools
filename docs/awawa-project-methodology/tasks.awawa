@@ -1431,18 +1431,42 @@ TASK REFACTOR164
 
 TASK REFACTOR165
 	TITLE "refactor(core-mapping): let the merge rule return the warnings of the merged save"
-	STATUS draft
-	SPEC "the merge rule of the domain returns the warnings about the format of the merged save,"
-		+ "and MergeSaveFiles hands them to its presenter without comparing a release nor testing"
-		+ "terrainLayers"
-	SPEC "cli-merge and the save manager show the same merge warnings as before, and the specs of"
-		+ "cli-merge pass unchanged"
+	STATUS todo
+	SPEC "the merge rule of the domain returns, with the merged sections, the report on their"
+		+ "format: the warnings about the format written and whether the legacy format could have"
+		+ "been kept; MergeSaveFiles hands them to its presenter and computes none of them,"
+		+ "comparing no release and testing no section"
+	SPEC "the warning the merge rule returns is a type of the domain that MergeSucceededResponse"
+		+ "carries as is, no module under application/ of core-mapping declaring a merge warning of"
+		+ "its own; cli-merge and the save manager show the same merge warnings as before"
+	SPEC "AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer is rewritten in place, its anchors naming"
+		+ "the code as the task leaves it"
+		REF @DECISION.AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
+	SPEC "the specs of cli-merge and the scenarios of ui-save-manager pass unchanged"
 	AFTER @TASK.REFACTOR163
 	WAVE @WAVE.14
 	PRIORITY medium
 	DESC "fixes violation 11 of the audit"
-	RATIONALE "The release comparison the use case makes today moves into the domain with the game"
-		+ "releases, so the task follows that move"
+	RATIONALE "The use case derives four facts from the result of the merge rule: the format"
+		+ "written, the Terrain Layers section dropped, the content newer than the format, and"
+		+ "whether the legacy format could have been kept, the last one absent from the audit but a"
+		+ "release comparison all the same. The rule knows the save whose format it writes and the"
+		+ "other one at the moment it chooses, so it reports them there and the use case re-derives"
+		+ "nothing. The warning is a domain type the response carries as is, as the energy levels"
+		+ "response carries the value objects the planet energy grid computes: transposing it into"
+		+ "an application type would keep two identical unions for no transformation, and the"
+		+ "presenter imports it from the domain. The single merge warning list stays, opened by the"
+		+ "same producer. The task follows the release rules task, which moves the comparison of"
+		+ "releases into the domain and rewrites the decision on the format report once; this task"
+		+ "re-anchors it on the rule"
+		REF @TASK.REFACTOR163
+		REF @DECISION.AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
+		REF @DECISION.NoMergeWarningChannelWithoutAProducer
+		REF @DECISION.AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the rule reports whether the legacy"
+		+ "format could have been kept, and the warning is a domain type the response carries as is"
 
 TASK REFACTOR166
 	TITLE "refactor(core-mapping): inject the use cases into the controllers"
