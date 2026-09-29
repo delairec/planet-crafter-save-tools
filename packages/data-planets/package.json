@@ -1,0 +1,14 @@
+{
+  "name": "data-planets",
+  "version": "1.0.0",
+  "description": "Planet value tables: the planet names by numeric identifier",
+  "changelogLine": "Planet names updated",
+  "type": "module",
+  "exports": {
+    "./*": "./*.ts"
+  },
+  "scripts": {
+    "lint:types": "tsc --noEmit",
+    "validate:tables": "bun ../../scripts/validate-tables/validate-tables.ts planetNamesByNumericId"
+  }
+}

@@ -1,7 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {CURRENT_FORMAT_RELEASE, compareGameReleases, resolveGameRelease} from 'shared-save-processing/gameReleases.js';
-import {divergingEnergyLevelsByRelease, selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
-import {WorldObjectName} from './worldObjectNames';
+import {selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
+import {ENERGY_LEVEL_TABLES} from '../testing/energyLevelTablesFixture';
 
 describe('selectEnergyLevelsOfDeclaredVersion', () => {
 
@@ -13,7 +12,7 @@ describe('selectEnergyLevelsOfDeclaredVersion', () => {
       ['2.103', '2.102', 0.6]
     ])('should take for a save declaring %s the values of %s, OreBreaker1 drawing %p kW', (declaredVersion, expectedRelease, expectedKilowatts) => {
       // Act
-      const energyLevels = selectEnergyLevelsOfDeclaredVersion(declaredVersion);
+      const energyLevels = selectEnergyLevelsOfDeclaredVersion(declaredVersion, ENERGY_LEVEL_TABLES);
 
       // Assert
       expect(energyLevels.release).toBe(expectedRelease);
@@ -27,7 +26,7 @@ describe('selectEnergyLevelsOfDeclaredVersion', () => {
       const unreadableVersion = 'unknown';
 
       // Act
-      const energyLevels = selectEnergyLevelsOfDeclaredVersion(unreadableVersion);
+      const energyLevels = selectEnergyLevelsOfDeclaredVersion(unreadableVersion, ENERGY_LEVEL_TABLES);
 
       // Assert
       expect(energyLevels.release).toBe('2.102');
@@ -40,41 +39,10 @@ describe('selectEnergyLevelsOfDeclaredVersion', () => {
       const noDeclaredVersion = undefined;
 
       // Act
-      const energyLevels = selectEnergyLevelsOfDeclaredVersion(noDeclaredVersion);
+      const energyLevels = selectEnergyLevelsOfDeclaredVersion(noDeclaredVersion, ENERGY_LEVEL_TABLES);
 
       // Assert
       expect(energyLevels.release).toBe('2.102');
-    });
-  });
-});
-
-describe('divergingEnergyLevelsByRelease', () => {
-  const releasesOfATable = Object.keys(divergingEnergyLevelsByRelease);
-
-  it.each(releasesOfATable)('should name by %s a release of the releases table earlier than the last one', (release) => {
-    // Act
-    const resolvedRelease = resolveGameRelease(release);
-
-    // Assert
-    expect(resolvedRelease).toBe(release);
-    expect(compareGameReleases(release, CURRENT_FORMAT_RELEASE)).toBeLessThan(0);
-  });
-
-  it.each(releasesOfATable)('should hold in the table of %s only values that differ from the next newer table, or from the energy table for the newest', (release) => {
-    // Arrange
-    const rows = divergingEnergyLevelsByRelease[release] ?? [];
-    const nextNewerRelease = releasesOfATable
-      .filter((tableRelease) => compareGameReleases(tableRelease, release) > 0)
-      .sort(compareGameReleases)[0] ?? CURRENT_FORMAT_RELEASE;
-
-    // Act
-    const nextNewerEnergyLevels = selectEnergyLevelsOfDeclaredVersion(nextNewerRelease);
-
-    // Assert
-    rows.forEach((row) => {
-      const nextNewerKilowatts = nextNewerEnergyLevels[row.role as 'production' | 'consumption'][row.worldObjectName as WorldObjectName];
-      expect(nextNewerKilowatts).toBeDefined();
-      expect(nextNewerKilowatts).not.toBe(row.kilowatts);
     });
   });
 });

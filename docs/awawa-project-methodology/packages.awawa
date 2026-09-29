@@ -25,3 +25,21 @@ PACKAGE cli_validate
 PACKAGE ui_save_manager
 	DESC "SolidStart UI consuming the core-mapping controllers directly"
 	MANIFEST "packages/ui-save-manager/package.json::ui-save-manager"
+
+PACKAGE data_energy
+	DESC "the energy levels and those of an earlier release, with their row types and selectors"
+	MANIFEST "packages/data-energy/package.json::data-energy"
+
+PACKAGE data_planets
+	DESC "the planet names by numeric id, with its row type and selector"
+	MANIFEST "packages/data-planets/package.json::data-planets"
+
+PACKAGE data_world_objects
+	DESC "the world object labels and the optimizer configuration, with their row types and"
+		+ "selectors"
+	MANIFEST "packages/data-world-objects/package.json::data-world-objects"
+
+PACKAGE data_save_format
+	DESC "the game releases and the legacy terrain layer properties, with their row types and"
+		+ "selectors"
+	MANIFEST "packages/data-save-format/package.json::data-save-format"

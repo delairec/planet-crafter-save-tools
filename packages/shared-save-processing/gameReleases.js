@@ -1,7 +1,9 @@
 /** @import { SaveWarning } from './gameDefinitions' */
 
-import gameReleases from './gameReleases.json' with {type: 'json'};
+import {selectGameReleaseRows} from 'data-save-format/selectGameReleaseRows';
 import {SAVE_WARNING_CODES} from './saveWarningCodes.js';
+
+const gameReleases = selectGameReleaseRows();
 
 /** A save is asked in the format of a release the table of game releases does not hold. */
 export class UnknownFormatReleaseError extends Error {

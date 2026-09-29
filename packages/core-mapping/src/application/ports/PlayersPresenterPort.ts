@@ -1,8 +1,8 @@
 import {UnreadableLine} from "./SaveSectionLocation";
-import {PlayerSummaryResponse} from "../responses/PlayerSummaryResponse";
+import {PlayersResponse} from "../responses/PlayersResponse";
 
 export interface PlayersPresenterPort {
-  displayPlayers(players: PlayerSummaryResponse[]): void;
+  displayPlayers(response: PlayersResponse): void;
 
   displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void;
 }

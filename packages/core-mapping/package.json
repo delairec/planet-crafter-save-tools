@@ -8,14 +8,16 @@
     "test": "bun test",
     "lint:types": "tsc --noEmit",
     "generate:section-validators": "bun scripts/generate-section-validators.ts",
-    "check:section-validators": "bun scripts/check-section-validators.ts",
-    "validate:tables": "bun ../../scripts/validate-tables/validate-tables.ts src/domain/energyLevels src/domain/energyLevelsByRelease/2.004:energyLevelsOfRelease src/domain/optimizerConfig src/domain/planetNamesByNumericId src/presentation/worldObjectLabels"
+    "check:section-validators": "bun scripts/check-section-validators.ts"
   },
   "exports": {
     "./controllers/*": "./src/controllers/*.ts",
     "./presentation/viewModels/*": "./src/presentation/viewModels/*.ts"
   },
   "dependencies": {
+    "data-energy": "*",
+    "data-planets": "*",
+    "data-world-objects": "*",
     "shared-save-processing": "*"
   },
   "devDependencies": {

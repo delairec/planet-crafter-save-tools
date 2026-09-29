@@ -4,8 +4,16 @@ import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
 import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
+import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 
 const nbsp = '\u00A0';
+const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {
+  Drill2: 'Drill T3',
+  EnergyGenerator3: 'Solar panel T2',
+  EnergyGenerator5: 'Nuclear Reactor T2',
+  Optimizer2: 'Machine Optimizer T2',
+  WindTurbine1: 'Wind turbine T2'
+};
 
 describe('EnergyLevelsPresenter', () => {
   it('should initialize with default view model', () => {
@@ -27,6 +35,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: CURRENT_FORMAT_RELEASE,
       powerConsumptionModifier: 1,
+      worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [{
         planetId: 1,
         production: 80_000,
@@ -76,6 +85,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
       powerConsumptionModifier: 1,
+      worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [
         {
           planetId: 1,
@@ -110,6 +120,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
       powerConsumptionModifier: 1,
+      worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [
         {
           planetId: 1,
@@ -144,7 +155,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1, planets: []});
+      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -160,7 +171,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1, planets: []});
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -175,7 +186,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1.5, planets: []});
+      presenter.displayEnergyLevels({gameRelease: CURRENT_FORMAT_RELEASE, powerConsumptionModifier: 1.5, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -191,7 +202,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1.5, planets: []});
+      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1.5, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -208,7 +219,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1, planets: []});
+      presenter.displayEnergyLevels({gameRelease: '2.004', powerConsumptionModifier: 1, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -226,6 +237,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
       powerConsumptionModifier: 1,
+      worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [{
         planetId: 1,
         production: 590,
@@ -271,6 +283,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102',
       powerConsumptionModifier: 1,
+      worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [{
         planetId: 1,
         production: 590,

@@ -1,17 +1,18 @@
 import {compareGameReleases} from 'shared-save-processing/gameReleases.js';
 import {resolveGameReleaseOfDeclaredVersion} from './rules/resolveGameReleaseOfDeclaredVersion';
 import {WorldObjectName} from './worldObjectNames';
-import energyLevels from './energyLevels.json' with {type: 'json'};
-import energyLevelsOf2004 from './energyLevelsByRelease/2.004.json' with {type: 'json'};
+import {EnergyLevelValueObject} from './valueObjects/EnergyLevelValueObject';
 
-type EnergyLevelsByWorldObjectName = Partial<Record<WorldObjectName, number>>;
+export type EnergyLevelsByWorldObjectName = Partial<Record<WorldObjectName, number>>;
 
 type EnergyRole = 'production' | 'consumption';
 
-interface EnergyLevelRow {
-  readonly worldObjectName: string;
-  readonly role: string;
-  readonly kilowatts: number;
+/** The rows of an earlier release whose value differs from the next newer table; each table also applies to every release before its own. */
+export type DivergingEnergyLevelsByRelease = Readonly<Partial<Record<string, readonly EnergyLevelValueObject[]>>>;
+
+export interface EnergyLevelTables {
+  readonly energyLevels: readonly EnergyLevelValueObject[];
+  readonly divergingEnergyLevelsByRelease: DivergingEnergyLevelsByRelease;
 }
 
 export interface EnergyLevelsOfRelease {
@@ -20,12 +21,7 @@ export interface EnergyLevelsOfRelease {
   readonly consumption: EnergyLevelsByWorldObjectName;
 }
 
-/** The rows of an earlier release whose value differs from the next newer table; each table also applies to every release before its own. */
-export const divergingEnergyLevelsByRelease: Readonly<Partial<Record<string, readonly EnergyLevelRow[]>>> = {
-  '2.004': energyLevelsOf2004
-};
-
-function selectRowsOfRelease(release: string): readonly EnergyLevelRow[] {
+function selectRowsOfRelease(release: string, {energyLevels, divergingEnergyLevelsByRelease}: EnergyLevelTables): readonly EnergyLevelValueObject[] {
   const cascadingRows = Object.entries(divergingEnergyLevelsByRelease)
     .filter(([tableRelease]) => compareGameReleases(tableRelease, release) >= 0)
     .sort(([releaseA], [releaseB]) => compareGameReleases(releaseB, releaseA))
@@ -34,15 +30,15 @@ function selectRowsOfRelease(release: string): readonly EnergyLevelRow[] {
   return [...energyLevels, ...cascadingRows];
 }
 
-function selectEnergyLevelsByRole(role: EnergyRole, rows: readonly EnergyLevelRow[]): EnergyLevelsByWorldObjectName {
+function selectEnergyLevelsByRole(role: EnergyRole, rows: readonly EnergyLevelValueObject[]): EnergyLevelsByWorldObjectName {
   return Object.fromEntries(
     rows.filter((row) => row.role === role).map((row) => [row.worldObjectName, row.kilowatts])
   );
 }
 
-export function selectEnergyLevelsOfDeclaredVersion(declaredVersion: string | undefined): EnergyLevelsOfRelease {
+export function selectEnergyLevelsOfDeclaredVersion(declaredVersion: string | undefined, tables: EnergyLevelTables): EnergyLevelsOfRelease {
   const release = resolveGameReleaseOfDeclaredVersion(declaredVersion);
-  const rows = selectRowsOfRelease(release);
+  const rows = selectRowsOfRelease(release, tables);
 
   return {
     release,
@@ -50,5 +46,3 @@ export function selectEnergyLevelsOfDeclaredVersion(declaredVersion: string | un
     consumption: selectEnergyLevelsByRole('consumption', rows)
   };
 }
-
-export const energyProductionLevelsByWorldObjectName = selectEnergyLevelsByRole('production', energyLevels);
