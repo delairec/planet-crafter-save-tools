@@ -127,7 +127,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, fieldPath: '', schemaMessage: "must have required property 'name'"}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, fieldPath: '', missingFieldName: 'name'}],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
@@ -158,7 +158,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 12, fieldPath: '', schemaMessage: 'must have required property gId'}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 12, fieldPath: '', missingFieldName: 'gId'}],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
@@ -166,7 +166,7 @@ describe('MergeResultPresenter', () => {
       });
 
       // Assert
-      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.mergeErrors).toEqual([{message: 'must have required property gId', location: 'World objects (section 3), entry 12'}]);
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.mergeErrors).toEqual([{message: "must have required property 'gId'", location: 'World objects (section 3), entry 12'}]);
     });
   });
 
@@ -250,14 +250,14 @@ describe('MergeResultPresenter', () => {
       // Act
       presenter.presentSaveFilesInvalid({
         saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 1, line: '{ broken'}],
-        saveBErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0, fieldPath: '', schemaMessage: 'must have required property gId'}],
+        saveBErrors: [{code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0, fieldPath: '', missingFieldName: 'gId'}],
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAErrors).toEqual([{message: 'Invalid JSON: { broken', location: 'Players (section 2), entry 1'}]);
-      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBErrors).toEqual([{message: 'must have required property gId', location: 'Inventories (section 4), entry 0'}]);
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBErrors).toEqual([{message: "must have required property 'gId'", location: 'Inventories (section 4), entry 0'}]);
     });
   });
 

@@ -1,10 +1,16 @@
 import {ValidationIssue, ValidationIssueCode} from "../application/ports/ValidationIssue";
 import {
+  formatFieldOfWrongTypeMessage,
   formatFloatSerializationMessage,
-  formatSchemaViolationMessage,
+  formatMissingDependentFieldMessage,
+  formatMissingFieldMessage,
   formatTooFewSectionEntriesMessage,
+  formatUnexpectedFieldMessage,
   formatUnexpectedSectionCountMessage,
-  formatUnreadableLineMessage
+  formatUnreadableLineMessage,
+  formatValueAboveMaximumMessage,
+  formatValueBelowMinimumMessage,
+  formatValueNotMatchingPatternMessage
 } from "./messages/validationIssueMessages.js";
 
 type ValidationIssueMessageFormatters = {
@@ -15,7 +21,13 @@ const messageFormattersByIssueCode: ValidationIssueMessageFormatters = {
   'unexpected-section-count': formatUnexpectedSectionCountMessage,
   'too-few-section-entries': formatTooFewSectionEntriesMessage,
   'invalid-json': formatUnreadableLineMessage,
-  'schema-violation': formatSchemaViolationMessage,
+  'field-of-wrong-type': formatFieldOfWrongTypeMessage,
+  'missing-field': formatMissingFieldMessage,
+  'unexpected-field': formatUnexpectedFieldMessage,
+  'value-below-minimum': formatValueBelowMinimumMessage,
+  'value-above-maximum': formatValueAboveMaximumMessage,
+  'value-not-matching-pattern': formatValueNotMatchingPatternMessage,
+  'missing-dependent-field': formatMissingDependentFieldMessage,
   'float-serialization': formatFloatSerializationMessage
 };
 

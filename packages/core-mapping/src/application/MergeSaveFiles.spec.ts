@@ -329,15 +329,15 @@ describe('MergeSaveFiles', () => {
   });
 
   describe('When the merged save does not pass validation', () => {
-    const schemaViolation: ValidationIssue = {
-      code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
+    const missingPlayerName: ValidationIssue = {
+      code: VALIDATION_ISSUE_CODES.MISSING_FIELD,
       section: {name: 'players', index: PLAYERS_SECTION_INDEX},
       entryIndex: 0,
       fieldPath: '',
-      schemaMessage: "must have required property 'name'"
+      missingFieldName: 'name'
     };
 
-    const rejectOnlyTheMergedSave = validatorAnswering({'merged content': rejectedWith(schemaViolation)});
+    const rejectOnlyTheMergedSave = validatorAnswering({'merged content': rejectedWith(missingPlayerName)});
 
     it('should present a success carrying the errors of the produced save', async () => {
       // Arrange
@@ -350,7 +350,7 @@ describe('MergeSaveFiles', () => {
       expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
         fileName: 'Save-A-Save-B-merged.json',
         content: 'merged content',
-        mergeErrors: [schemaViolation],
+        mergeErrors: [missingPlayerName],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: [],

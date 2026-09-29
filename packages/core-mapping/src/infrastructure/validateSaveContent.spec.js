@@ -67,7 +67,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.FIELD_OF_WRONG_TYPE, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -86,7 +86,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.FIELD_OF_WRONG_TYPE, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -119,7 +119,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -149,7 +149,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.FIELD_OF_WRONG_TYPE, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -168,7 +168,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'terraformationLevels', index: TERRAFORMATION_LEVELS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'terraformationLevels', index: TERRAFORMATION_LEVELS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -186,7 +186,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'terraformationLevels', index: TERRAFORMATION_LEVELS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'terraformationLevels', index: TERRAFORMATION_LEVELS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -205,7 +205,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toContainEqual(expect.objectContaining(
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
         ));
       });
     });
@@ -221,7 +221,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_NOT_MATCHING_PATTERN, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -237,7 +237,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -276,7 +276,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 1}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 1}
         ]);
       });
     });
@@ -296,10 +296,10 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([{
-          code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
+          code: VALIDATION_ISSUE_CODES.MISSING_DEPENDENT_FIELD,
           section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX},
           entryIndex: 0,
-          schemaMessage: expect.stringContaining(`must have property ${missingProperty}`)
+          missingFieldName: missingProperty
         }]);
       });
     });
@@ -318,7 +318,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -334,7 +334,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -352,7 +352,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'statistics', index: STATISTICS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'statistics', index: STATISTICS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -371,7 +371,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'saveConfiguration', index: SAVE_CONFIGURATION_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'saveConfiguration', index: SAVE_CONFIGURATION_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -389,7 +389,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'saveConfiguration', index: SAVE_CONFIGURATION_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_BELOW_MINIMUM, section: {name: 'saveConfiguration', index: SAVE_CONFIGURATION_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -407,7 +407,7 @@ describe('validateSaveContent', () => {
         // Assert
         expect(result.isValid).toBe(false);
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'worldEvents', index: WORLD_EVENTS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_NOT_MATCHING_PATTERN, section: {name: 'worldEvents', index: WORLD_EVENTS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -574,7 +574,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -589,7 +589,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.UNEXPECTED_FIELD, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -604,7 +604,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_NOT_MATCHING_PATTERN, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });
@@ -619,7 +619,7 @@ describe('validateSaveContent', () => {
 
         // Assert
         expect(result.errors).toMatchObject([
-          {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'worldEvents', index: LEGACY_WORLD_EVENTS_SECTION_INDEX}, entryIndex: 0}
+          {code: VALIDATION_ISSUE_CODES.VALUE_NOT_MATCHING_PATTERN, section: {name: 'worldEvents', index: LEGACY_WORLD_EVENTS_SECTION_INDEX}, entryIndex: 0}
         ]);
       });
     });

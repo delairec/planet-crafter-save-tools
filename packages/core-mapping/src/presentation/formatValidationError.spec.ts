@@ -31,7 +31,7 @@ describe('formatValidationError', () => {
         {message: 'Invalid JSON: {"id":1,', location: 'World objects (section 3), entry 2'}
       ],
       [
-        {code: 'schema-violation', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '/name', schemaMessage: 'must be string'},
+        {code: 'field-of-wrong-type', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '/name', expectedType: 'string'},
         {message: '/name must be string', location: 'Players (section 2), entry 3'}
       ]
     ])('should report the location of %p alongside its message', (issue, expectedError) => {
@@ -58,15 +58,54 @@ describe('formatValidationError', () => {
     });
   });
 
-  describe('When the schema violation concerns the whole entry', () => {
-    it('should show the message of the schema validator as it wrote it', () => {
+  describe('When the entry breaks a constraint of its schema', () => {
+    it.each<[ValidationIssue, string]>([
+      [
+        {code: 'field-of-wrong-type', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/playerGaugeOxygen', expectedType: 'number'},
+        '/playerGaugeOxygen must be number'
+      ],
+      [
+        {code: 'missing-field', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/inventory', missingFieldName: 'size'},
+        "/inventory must have required property 'size'"
+      ],
+      [
+        {code: 'unexpected-field', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/inventory', unexpectedFieldName: 'opacity'},
+        '/inventory must NOT have additional properties'
+      ],
+      [
+        {code: 'value-below-minimum', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/playerGaugeOxygen', minimum: 0},
+        '/playerGaugeOxygen must be >= 0'
+      ],
+      [
+        {code: 'value-above-maximum', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/playerGaugeOxygen', maximum: 100},
+        '/playerGaugeOxygen must be <= 100'
+      ],
+      [
+        {code: 'value-not-matching-pattern', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/playerPosition', pattern: '^-?[0-9]+$'},
+        '/playerPosition must match pattern "^-?[0-9]+$"'
+      ],
+      [
+        {code: 'missing-dependent-field', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/linkedObject', missingFieldName: 'liId', dependingFieldName: 'liPlanet'},
+        '/linkedObject must have property liId when property liPlanet is present'
+      ]
+    ])('should show the path of the field followed by the constraint of %p', (issue, expectedMessage) => {
+      // Act
+      const error = formatValidationError(issue);
+
+      // Assert
+      expect(error.message).toBe(expectedMessage);
+    });
+  });
+
+  describe('When the constraint concerns the whole entry', () => {
+    it('should show the constraint alone', () => {
       // Act
       const error = formatValidationError({
-        code: 'schema-violation',
+        code: 'missing-field',
         section: {name: 'players', index: 2},
         entryIndex: 0,
         fieldPath: '',
-        schemaMessage: "must have required property 'name'"
+        missingFieldName: 'name'
       });
 
       // Assert

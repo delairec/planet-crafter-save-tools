@@ -27,11 +27,68 @@ export function formatUnreadableLineMessage({line}) {
 }
 
 /**
- * @param {{fieldPath: string, schemaMessage: string | undefined}} schemaViolation
+ * @param {string} fieldPath
+ * @param {string} constraint
  * @returns {string}
  */
-export function formatSchemaViolationMessage({fieldPath, schemaMessage}) {
-  return `${fieldPath} ${schemaMessage}`.trim();
+function formatEntryFieldMessage(fieldPath, constraint) {
+  return `${fieldPath} ${constraint}`.trim();
+}
+
+/**
+ * @param {{fieldPath: string, expectedType: string}} fieldOfWrongType
+ * @returns {string}
+ */
+export function formatFieldOfWrongTypeMessage({fieldPath, expectedType}) {
+  return formatEntryFieldMessage(fieldPath, `must be ${expectedType}`);
+}
+
+/**
+ * @param {{fieldPath: string, missingFieldName: string}} missingField
+ * @returns {string}
+ */
+export function formatMissingFieldMessage({fieldPath, missingFieldName}) {
+  return formatEntryFieldMessage(fieldPath, `must have required property '${missingFieldName}'`);
+}
+
+/**
+ * @param {{fieldPath: string}} unexpectedField
+ * @returns {string}
+ */
+export function formatUnexpectedFieldMessage({fieldPath}) {
+  return formatEntryFieldMessage(fieldPath, 'must NOT have additional properties');
+}
+
+/**
+ * @param {{fieldPath: string, minimum: number}} valueBelowMinimum
+ * @returns {string}
+ */
+export function formatValueBelowMinimumMessage({fieldPath, minimum}) {
+  return formatEntryFieldMessage(fieldPath, `must be >= ${minimum}`);
+}
+
+/**
+ * @param {{fieldPath: string, maximum: number}} valueAboveMaximum
+ * @returns {string}
+ */
+export function formatValueAboveMaximumMessage({fieldPath, maximum}) {
+  return formatEntryFieldMessage(fieldPath, `must be <= ${maximum}`);
+}
+
+/**
+ * @param {{fieldPath: string, pattern: string}} valueNotMatchingPattern
+ * @returns {string}
+ */
+export function formatValueNotMatchingPatternMessage({fieldPath, pattern}) {
+  return formatEntryFieldMessage(fieldPath, `must match pattern "${pattern}"`);
+}
+
+/**
+ * @param {{fieldPath: string, missingFieldName: string, dependingFieldName: string}} missingDependentField
+ * @returns {string}
+ */
+export function formatMissingDependentFieldMessage({fieldPath, missingFieldName, dependingFieldName}) {
+  return formatEntryFieldMessage(fieldPath, `must have property ${missingFieldName} when property ${dependingFieldName} is present`);
 }
 
 /**

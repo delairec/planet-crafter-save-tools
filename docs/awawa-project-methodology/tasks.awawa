@@ -1459,13 +1459,14 @@ TASK REFACTOR164
 		IMPL "packages/core-mapping/src/presentation/messages/validationIssueMessages.js"
 	SPEC "no sentence shown to the user is built in the infrastructure of core-mapping nor in"
 		+ "shared-save-processing, verifySectionCount, parseSaveSections and the entry count, float"
-		+ "serialization and file extension checks included; the message of the schema validator"
-		+ "crosses as data of the issue, with the path of the field, and is not rewritten"
-		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::schemaMessage:"
-			+ "schemaError.message"
+		+ "serialization and file extension checks included; a broken constraint of a section"
+		+ "schema crosses as an issue of its own, carrying the path of the field and the data of"
+		+ "the constraint, never the text of the schema validator"
+		IMPL "packages/core-mapping/src/infrastructure/mapSchemaErrorToValidationIssue.ts::export"
+			+ "function mapSchemaErrorToValidationIssue"
 		IMPL "packages/shared-save-processing/verifySectionCount.js::SAVE_PARSE_ERROR_CODES.UNEXPECTED_SECTION_COUNT"
 		IMPL "packages/core-mapping/src/infrastructure/validateFloatSerialization.ts"
-		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
+		REF @DECISION.EachBrokenSchemaConstraintIsAValidationIssueOfItsOwn
 	SPEC "an issue located in the save carries the name and the index of its section, both resolved"
 		+ "by the infrastructure, and no longer the format release; no module under presentation/"
 		+ "of core-mapping imports the section indexes of the save format, spec files excepted, and"
@@ -1500,24 +1501,26 @@ TASK REFACTOR164
 		+ "one code per sentence, so the structure code that carries two sentences today splits,"
 		+ "and shared-save-processing declares the codes of its parse errors as it declares those"
 		+ "of its warnings; the text of every sentence is kept, so the CLI specs and the UI"
-		+ "scenarios pin the refactoring. The owner ruled that the message of the schema validator"
-		+ "is not rewritten: one sentence per constraint of the schemas would be authored for"
-		+ "nothing while the tool speaks one language, so the issue carries the path and the"
-		+ "message as data and the presentation composes the line; a code per constraint comes with"
-		+ "translation, if it comes. The section index stays in the issue beside the name because"
-		+ "the location shows both, the decision on locations having refused the label alone; the"
-		+ "format release leaves the issue, the name being what it served to resolve. The fallback"
-		+ "on a bare index has no case left: the section count is checked before any located issue"
-		+ "exists, so every located issue belongs to a known format and its name resolves. The task"
-		+ "follows the domain rules task, which changes the issues the validator port reports"
+		+ "scenarios pin the refactoring. The text of the schema validator says how a violation was"
+		+ "detected, not what is invalid, so each constraint the section validators report is an"
+		+ "issue of its own and the presentation words it as the validator did. The section index"
+		+ "stays in the issue beside the name because the location shows both, the decision on"
+		+ "locations having refused the label alone; the format release leaves the issue, the name"
+		+ "being what it served to resolve. The fallback on a bare index has no case left: the"
+		+ "section count is checked before any located issue exists, so every located issue belongs"
+		+ "to a known format and its name resolves. The task follows the domain rules task, which"
+		+ "changes the issues the validator port reports"
 		REF @TASK.REFACTOR160
-		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
+		REF @DECISION.EachBrokenSchemaConstraintIsAValidationIssueOfItsOwn
 		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
-	SOURCE "Owner ruling during the refinement of the task: the message of the schema validator is"
-		+ "carried as data and not rewritten, a located issue carries the name and the index of its"
-		+ "section, and the two decisions on user text and on locations are rewritten in place"
+	SOURCE "Owner ruling during the refinement of the task: a located issue carries the name and"
+		+ "the index of its section, and the two decisions on user text and on locations are"
+		+ "rewritten in place"
+	SOURCE "Owner ruling in the review: a broken schema constraint is an issue of its own, the text"
+		+ "of the schema validator not carried"
+		PR 234
 	DELIVERED_BY 234
 
 TASK REFACTOR165

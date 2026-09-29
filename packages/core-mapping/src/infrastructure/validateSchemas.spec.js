@@ -28,7 +28,7 @@ describe('validateSchemas', () => {
   });
 
   describe('When a section entry violates its schema', () => {
-    it('should return a schema-violation issue located at its section and entry index', () => {
+    it('should return the issue of the constraint it breaks, located at its section and entry index', () => {
       // Arrange
       const {name: _, ...playerWithoutName} = createPlayer();
       // @ts-expect-error intentionally missing the required name to test validation
@@ -39,7 +39,7 @@ describe('validateSchemas', () => {
 
       // Assert
       expect(issues).toMatchObject([
-        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, fieldPath: ''}
+        {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, fieldPath: ''}
       ]);
     });
   });
@@ -118,7 +118,7 @@ describe('createSectionEntryValidator', () => {
   });
 
   describe('When a world object violates the schema of its section', () => {
-    it('should return a schema-violation issue located at the world objects section of its format and the position of the entry', () => {
+    it('should return the issue of the constraint it breaks, located at the world objects section of its format and the position of the entry', () => {
       // Arrange
       const validateWorldObject = createSectionEntryValidator('1.618', WORLD_OBJECTS_SECTION_INDEX);
       const {gId: _, ...worldObjectWithoutGameId} = createWorldObject();
@@ -129,7 +129,7 @@ describe('createSectionEntryValidator', () => {
 
       // Assert
       expect(issues).toMatchObject([
-        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: positionInTheSection, fieldPath: ''}
+        {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: positionInTheSection, fieldPath: ''}
       ]);
     });
   });
@@ -155,7 +155,7 @@ describe('createSectionEntryValidator', () => {
 
       // Assert
       expect(issues).toMatchObject([
-        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
+        {code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
       ]);
     });
   });

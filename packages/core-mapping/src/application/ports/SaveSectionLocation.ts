@@ -16,3 +16,9 @@ export interface UnreadableLine {
   readonly entryIndex: number;
   readonly line: string;
 }
+
+export interface SaveEntryField {
+  readonly section: SaveSectionLocation;
+  readonly entryIndex: number;
+  readonly fieldPath: string;
+}
