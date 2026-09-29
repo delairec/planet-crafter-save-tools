@@ -1,5 +1,4 @@
 import {GlobalMetadataEntry} from '../domain/save/GlobalMetadataEntry';
-import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {MailboxMessageEntry} from '../domain/save/MailboxMessageEntry';
 import {PlayerEntry} from '../domain/save/PlayerEntry';
 import {SaveConfigurationEntry} from '../domain/save/SaveConfigurationEntry';
@@ -8,7 +7,6 @@ import {StoryEventEntry} from '../domain/save/StoryEventEntry';
 import {TerraformationLevelEntry} from '../domain/save/TerraformationLevelEntry';
 import {TerrainLayerEntry} from '../domain/save/TerrainLayerEntry';
 import {WorldEventEntry} from '../domain/save/WorldEventEntry';
-import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 
 export function createPlayerEntry(overrides: Partial<PlayerEntry> = {}): PlayerEntry {
   return {
@@ -29,14 +27,6 @@ export function createPlayerEntry(overrides: Partial<PlayerEntry> = {}): PlayerE
     totalTerraTokenEarned: 9000,
     ...overrides
   };
-}
-
-export function createInventoryEntry(overrides: Partial<InventoryEntry> = {}): InventoryEntry {
-  return {id: 44, worldObjectIds: [79111656, 58524136], size: 20, ...overrides};
-}
-
-export function createEquipmentEntry(overrides: Partial<InventoryEntry> = {}): InventoryEntry {
-  return {id: 45, worldObjectIds: [85274195, 48456321], size: 10, ...overrides};
 }
 
 export function createSaveConfigurationEntry(overrides: Partial<SaveConfigurationEntry> = {}): SaveConfigurationEntry {
@@ -96,10 +86,6 @@ export function createTerraformationLevelEntry(overrides: Partial<Terraformation
 
 export function createStatisticsEntry(overrides: Partial<StatisticsEntry> = {}): StatisticsEntry {
   return {craftedObjects: 10, totalSaveFileLoad: 5, totalSaveFileTime: 3600, ...overrides};
-}
-
-export function createWorldObjectEntry(overrides: Partial<WorldObjectEntry> = {}): WorldObjectEntry {
-  return {id: 79111656, groupId: 'Phytoplankton3', ...overrides};
 }
 
 export function createMailboxMessageEntry(overrides: Partial<MailboxMessageEntry> = {}): MailboxMessageEntry {
