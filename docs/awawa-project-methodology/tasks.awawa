@@ -1470,22 +1470,59 @@ TASK REFACTOR165
 
 TASK REFACTOR166
 	TITLE "refactor(core-mapping): inject the use cases into the controllers"
-	STATUS draft
-	SPEC "a controller of core-mapping receives its use case, or the factory building it, from the"
-		+ "composition root, and instantiates no adapter"
-	SPEC "a controller spec runs against a test double of its use case, without the real"
-		+ "infrastructure; AControllerSpecCoversWiringNotBranches is rewritten or archived to match"
-	SPEC "no JSDoc of core-mapping cites an instructions file that does not exist,"
-		+ "infrastructure.md included"
+	STATUS todo
+	SPEC "a controller of core-mapping is a class whose constructor takes the factory that builds"
+		+ "its use case around the presenter the controller provides; it imports no infrastructure"
+		+ "module and instantiates no adapter"
+	SPEC "the CLIs and the save manager keep importing core-mapping/controllers/X: each controller"
+		+ "module exports, next to the class, the controller wired with the factory the composition"
+		+ "root exports, and the composition root imports no controller"
+	SPEC "that ruling is recorded as a DECISION applying to the task, its rejected alternatives"
+		+ "being the composition root building and exporting the wired controllers, which moves the"
+		+ "import path the CLIs keep by TheModulesTheClisImportKeepTheirContract, and controller"
+		+ "functions taking their use case from their caller"
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
+	SPEC "a controller spec runs against a test double of its use case factory, no controller spec"
+		+ "reaching the real infrastructure; AControllerSpecCoversWiringNotBranches is archived"
+		REF @DECISION.AControllerSpecCoversWiringNotBranches
+	SPEC "no module of core-mapping carries an explanatory comment, JSDoc blocks included: the"
+		+ "comments left are the annotations a tool reads, a JSDoc tag typing a JavaScript module"
+		+ "or a directive the compiler or the audit reads (ts-expect-error, ts-nocheck,"
+		+ "fallow-ignore-file), and the provenance header of a generated or regenerated file"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
 	AFTER @TASK.REFACTOR161
+	AFTER @TASK.REFACTOR168
 	WAVE @WAVE.14
 	PRIORITY low
 	DESC "fixes violations 14 and 15 of the audit"
-	RATIONALE "Violation 15 is one stale comment, too small for a pull request of its own; the task"
-		+ "follows the composition root, which it extends with the factories"
+	RATIONALE "Violation 15 is one stale comment, too small for a pull request of its own, and the"
+		+ "instructions rule no_explanatory_comment forbids the whole block it sits in, not the"
+		+ "reference alone, so the task removes every explanatory comment of the package rather"
+		+ "than one: 68 JSDoc blocks in 39 files and a few line comments, measured on the base, the"
+		+ "annotations a tool reads and the provenance headers staying. The controllers keep their"
+		+ "import path because the CLIs reach them by it and"
+		+ "TheModulesTheClisImportKeepTheirContract keeps that contract; the composition root"
+		+ "building the controllers would either move the export to composition/ or import the"
+		+ "class it wires from the module that imports it back, an import cycle, so the composition"
+		+ "root exports the use case factories and each controller module wires its own class with"
+		+ "them. The spec of a controller then needs no infrastructure, so the decision that made"
+		+ "it cross the whole wiring has no object left and the instructions rule controller_test"
+		+ "says what remains to verify; the wiring itself stays covered end to end by the specs of"
+		+ "the CLIs and the scenarios of the save manager. The task follows the reader port task,"
+		+ "which changes what the six section use cases are built from, and the value tables task,"
+		+ "which wires its adapters in the same composition root, so that the factories are"
+		+ "rewritten once"
+		REF @TASK.REFACTOR161
+		REF @TASK.REFACTOR168
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
 		REF @DECISION.AControllerSpecCoversWiringNotBranches
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the controller modules keep their"
+		+ "import path and export the controller wired with the factories of the composition root,"
+		+ "the decision on controller specs is archived, every explanatory comment of core-mapping"
+		+ "goes, and the task follows the value tables task"
 
 TASK DOCS167
 	TITLE "docs(tasks): rewrite the tasks of the other waves to the boundaries wave 14 sets"
