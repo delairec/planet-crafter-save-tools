@@ -1,6 +1,6 @@
 import {type Page} from '@playwright/test';
-import {createAColorRulesAudit} from '../helpers/createAColorRulesAudit';
 import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
+import {describeTheColorRulesAuditInTheDarkColorScheme} from '../helpers/describeTheColorRulesAuditInTheDarkColorScheme';
 import {holdEveryFileRead} from '../helpers/holdEveryFileRead';
 import {triggerSaveFileMerge} from '../helpers/triggerSaveFileMerge';
 import {expect, test} from '../scenarioTest';
@@ -9,8 +9,12 @@ import {locateTheFixture} from '../scenarioSteps';
 const saveAFixturePath = locateTheFixture('baseline_valid.json');
 const saveBFixturePath = locateTheFixture('other-player_valid.json');
 
-async function showAMergeResult(page: Page): Promise<void> {
+async function openTheMergePage(page: Page): Promise<void> {
   await page.goto('/merge');
+}
+
+async function showAMergeResult(page: Page): Promise<void> {
+  await openTheMergePage(page);
   await triggerSaveFileMerge(page, saveAFixturePath, saveBFixturePath);
   await expect(page.getByTestId('merge-success-message')).toBeVisible();
 }
@@ -25,7 +29,7 @@ test.describe('Merge two saves page accessibility', () => {
   test.describe('When the page opens', () => {
     test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
       // Arrange
-      await page.goto('/merge');
+      await openTheMergePage(page);
 
       // Act
       const {violations} = await createAWcag2Audit(page).analyze();
@@ -34,20 +38,7 @@ test.describe('Merge two saves page accessibility', () => {
       expect(violations).toEqual(noViolation);
     });
 
-    test.describe('When the dark color scheme is preferred', () => {
-      test.use({colorScheme: 'dark'});
-
-      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
-        // Arrange
-        await page.goto('/merge');
-
-        // Act
-        const {violations} = await createAColorRulesAudit(page).analyze();
-
-        // Assert
-        expect(violations).toEqual(noViolation);
-      });
-    });
+    describeTheColorRulesAuditInTheDarkColorScheme(openTheMergePage);
 
     test('should title the merge form with a second level heading', async ({page}) => {
       // Act
@@ -138,20 +129,7 @@ test.describe('Merge two saves page accessibility', () => {
       expect(violations).toEqual(noViolation);
     });
 
-    test.describe('When the dark color scheme is preferred', () => {
-      test.use({colorScheme: 'dark'});
-
-      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
-        // Arrange
-        await showAMergeResult(page);
-
-        // Act
-        const {violations} = await createAColorRulesAudit(page).analyze();
-
-        // Assert
-        expect(violations).toEqual(noViolation);
-      });
-    });
+    describeTheColorRulesAuditInTheDarkColorScheme(showAMergeResult);
 
     test('should offer the merged save as a download link', async ({page}) => {
       // Act
@@ -175,20 +153,7 @@ test.describe('Merge two saves page accessibility', () => {
       expect(violations).toEqual(noViolation);
     });
 
-    test.describe('When the dark color scheme is preferred', () => {
-      test.use({colorScheme: 'dark'});
-
-      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
-        // Arrange
-        await showTwoMergeResults(page);
-
-        // Act
-        const {violations} = await createAColorRulesAudit(page).analyze();
-
-        // Assert
-        expect(violations).toEqual(noViolation);
-      });
-    });
+    describeTheColorRulesAuditInTheDarkColorScheme(showTwoMergeResults);
 
     test('should title the earlier merged saves with a third level heading', async ({page}) => {
       // Act

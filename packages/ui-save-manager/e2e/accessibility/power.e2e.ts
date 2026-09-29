@@ -1,6 +1,6 @@
 import {type Page} from '@playwright/test';
-import {createAColorRulesAudit} from '../helpers/createAColorRulesAudit';
 import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
+import {describeTheColorRulesAuditInTheDarkColorScheme} from '../helpers/describeTheColorRulesAuditInTheDarkColorScheme';
 import {expect, test} from '../scenarioTest';
 import {locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from '../scenarioSteps';
 
@@ -26,20 +26,7 @@ test.describe('Power page accessibility', () => {
       expect(violations).toEqual(noViolation);
     });
 
-    test.describe('When the dark color scheme is preferred', () => {
-      test.use({colorScheme: 'dark'});
-
-      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
-        // Arrange
-        await openThePowerPageOfAVisualizedSave(page);
-
-        // Act
-        const {violations} = await createAColorRulesAudit(page).analyze();
-
-        // Assert
-        expect(violations).toEqual(noViolation);
-      });
-    });
+    describeTheColorRulesAuditInTheDarkColorScheme(openThePowerPageOfAVisualizedSave);
 
     test('should title the power with a third level heading', async ({page}) => {
       // Act

@@ -1,6 +1,6 @@
 import {type Page} from '@playwright/test';
-import {createAColorRulesAudit} from '../helpers/createAColorRulesAudit';
 import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
+import {describeTheColorRulesAuditInTheDarkColorScheme} from '../helpers/describeTheColorRulesAuditInTheDarkColorScheme';
 import {holdEveryFileRead} from '../helpers/holdEveryFileRead';
 import {visualizeSave} from '../helpers/visualizeSave';
 import {expect, test} from '../scenarioTest';
@@ -8,6 +8,10 @@ import {locateTheFixture, visualizeTheSave} from '../scenarioSteps';
 
 const saveAFixturePath = locateTheFixture('baseline_valid.json');
 const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
+
+async function openTheLoadSavePage(page: Page): Promise<void> {
+  await page.goto('/load-save');
+}
 
 async function showASaveVisualization(page: Page): Promise<void> {
   await visualizeTheSave(page, saveAFixturePath);
@@ -18,7 +22,7 @@ test.describe('Overview page accessibility', () => {
   test.describe('When the page opens before a save is loaded', () => {
     test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
       // Arrange
-      await page.goto('/load-save');
+      await openTheLoadSavePage(page);
 
       // Act
       const {violations} = await createAWcag2Audit(page).analyze();
@@ -27,20 +31,7 @@ test.describe('Overview page accessibility', () => {
       expect(violations).toEqual(noViolation);
     });
 
-    test.describe('When the dark color scheme is preferred', () => {
-      test.use({colorScheme: 'dark'});
-
-      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
-        // Arrange
-        await page.goto('/load-save');
-
-        // Act
-        const {violations} = await createAColorRulesAudit(page).analyze();
-
-        // Assert
-        expect(violations).toEqual(noViolation);
-      });
-    });
+    describeTheColorRulesAuditInTheDarkColorScheme(openTheLoadSavePage);
 
     test('should name the display area as a group', async ({page}) => {
       // Act
@@ -113,20 +104,7 @@ test.describe('Overview page accessibility', () => {
       expect(violations).toEqual(noViolation);
     });
 
-    test.describe('When the dark color scheme is preferred', () => {
-      test.use({colorScheme: 'dark'});
-
-      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
-        // Arrange
-        await showASaveVisualization(page);
-
-        // Act
-        const {violations} = await createAColorRulesAudit(page).analyze();
-
-        // Assert
-        expect(violations).toEqual(noViolation);
-      });
-    });
+    describeTheColorRulesAuditInTheDarkColorScheme(showASaveVisualization);
   });
 
   test.describe('When the warnings of a visualized save are revealed', () => {
