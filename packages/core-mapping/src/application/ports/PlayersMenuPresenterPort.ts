@@ -1,5 +1,5 @@
-import {PlayerMenuEntryValueObject} from "../../domain/valueObjects/PlayerMenuEntryValueObject";
+import {PlayerMenuEntryResponse} from "../responses/PlayerMenuEntryResponse";
 
 export interface PlayersMenuPresenterPort {
-  displayPlayersMenu(players: PlayerMenuEntryValueObject[]): void;
+  displayPlayersMenu(players: PlayerMenuEntryResponse[]): void;
 }

@@ -4,5 +4,7 @@ import {SaveParseError, SaveWarning} from "shared-save-processing/gameDefinition
 export interface LoadAndValidateSaveFilePresenterPort {
   presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarning[]): void;
 
-  presentLoadedSaveFile(errors: SaveParseError[], warnings: SaveWarning[]): void;
+  presentLoadedSaveFile(warnings: SaveWarning[]): void;
+
+  presentSaveFileWithUnreadableLines(unreadableLines: SaveParseError[], warnings: SaveWarning[]): void;
 }

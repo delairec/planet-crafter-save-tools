@@ -25,7 +25,11 @@ function setupUseCase({
     validate: mock(() => ({isValid: validationErrors.length === 0, errors: validationErrors, warnings: validationWarnings}))
   };
   const parser: SaveSectionsParserPort = {parse: mock(() => parsedSaveSections)};
-  const presenter: LoadAndValidateSaveFilePresenterPort = {presentInvalidSaveFile: mock(), presentLoadedSaveFile: mock()};
+  const presenter: LoadAndValidateSaveFilePresenterPort = {
+    presentInvalidSaveFile: mock(),
+    presentLoadedSaveFile: mock(),
+    presentSaveFileWithUnreadableLines: mock()
+  };
 
   return {useCase: new LoadAndValidateSaveFile(validator, parser, presenter), validator, parser, presenter};
 }
@@ -44,6 +48,7 @@ describe('LoadAndValidateSaveFile', () => {
       // Assert
       expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith(validationErrors, []);
       expect(presenter.presentLoadedSaveFile).not.toHaveBeenCalled();
+      expect(presenter.presentSaveFileWithUnreadableLines).not.toHaveBeenCalled();
       expect(parser.parse).not.toHaveBeenCalled();
     });
   });
@@ -51,7 +56,23 @@ describe('LoadAndValidateSaveFile', () => {
   describe('When the save file is valid', () => {
     it('should parse the content and present the loaded save file', async () => {
       // Arrange
-      const {useCase, parser, presenter} = setupUseCase({
+      const {useCase, parser, presenter} = setupUseCase();
+
+      // Act
+      await useCase.execute({fileName: 'Save-A.json', content: 'content'});
+
+      // Assert
+      expect(parser.parse).toHaveBeenCalledWith('content');
+      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith([]);
+      expect(presenter.presentInvalidSaveFile).not.toHaveBeenCalled();
+      expect(presenter.presentSaveFileWithUnreadableLines).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('When the parser cannot read some lines of a valid save file', () => {
+    it('should present the save file with its unreadable lines, never as a loaded save file', async () => {
+      // Arrange
+      const {useCase, presenter} = setupUseCase({
         parsedSaveSections: {sections: loadedSections, errors: [{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}]}
       });
 
@@ -59,9 +80,23 @@ describe('LoadAndValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
-      expect(parser.parse).toHaveBeenCalledWith('content');
-      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith([{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}], []);
+      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2}], []);
+      expect(presenter.presentLoadedSaveFile).not.toHaveBeenCalled();
       expect(presenter.presentInvalidSaveFile).not.toHaveBeenCalled();
+    });
+
+    it('should keep the warnings alongside the unreadable lines', async () => {
+      // Arrange
+      const {useCase, presenter} = setupUseCase({
+        validationWarnings: [{code: 'legacy-save-format'}],
+        parsedSaveSections: {sections: loadedSections, errors: [{detail: 'Expected 11 sections but found 2'}]}
+      });
+
+      // Act
+      await useCase.execute({fileName: 'Save-A.json', content: 'content'});
+
+      // Assert
+      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Expected 11 sections but found 2'}], [{code: 'legacy-save-format'}]);
     });
   });
 
@@ -74,7 +109,7 @@ describe('LoadAndValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: 'content'});
 
       // Assert
-      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith([], [{code: 'legacy-save-format'}]);
+      expect(presenter.presentLoadedSaveFile).toHaveBeenCalledWith([{code: 'legacy-save-format'}]);
     });
 
     it('should present the warnings of an invalid save file too', async () => {

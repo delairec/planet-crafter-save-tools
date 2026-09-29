@@ -1,6 +1,6 @@
 import {PlayersPresenterPort} from './ports/PlayersPresenterPort';
 import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
-import {createPlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';
+import {PlayerSummaryResponse} from './responses/PlayerSummaryResponse';
 
 export class LoadPlayersSection {
   constructor(
@@ -9,7 +9,7 @@ export class LoadPlayersSection {
   ) {}
 
   async execute(): Promise<void> {
-    const players = this.saveSectionsReader.getPlayers().map((player) => createPlayerSummaryValueObject({
+    const players = this.saveSectionsReader.getPlayers().map((player): PlayerSummaryResponse => ({
       name: player.name,
       inventory: player.inventory,
       equipment: player.equipment

@@ -237,8 +237,8 @@ HUD production value (24075.45 kW) for a real save containing 2 active Optimizer
 **Rule EN-PLANET-1 (per-planet scoping, resolved):** each planet has its own independent power grid in-game.
 Steps 1–7 above are therefore applied **once per distinct `WorldObject.planet`** rather than once globally:
 positioned world objects are grouped by `planet` first, and production, consumption, available, breakdowns
-and Optimizers are all computed from each planet's own subset only (`SaveSectionsReaderService.getEnergyLevels`
-returns `EnergyLevelsValueObject.planets`, one entry per planet). Optimizer targeting was already restricted to
+and Optimizers are all computed from each planet's own subset only (`LoadEnergyLevelsSection` hands the presenter
+`EnergyLevelsResponse.planets`, one entry per planet). Optimizer targeting was already restricted to
 producers on the same `planet` (Rule EN-OPT-2), so no cross-planet leakage was possible there; this rule only
 formalizes that production/consumption/breakdowns are scoped the same way.
 

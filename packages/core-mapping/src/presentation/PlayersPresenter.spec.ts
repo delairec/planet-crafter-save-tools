@@ -1,7 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {PlayersPresenter} from './PlayersPresenter';
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
-import {createPlayerSummaryValueObject} from "../domain/valueObjects/PlayerSummaryValueObject";
 
 describe('PlayersPresenter', () => {
   it('should initialize with default view model', () => {
@@ -17,12 +16,8 @@ describe('PlayersPresenter', () => {
   it('should present all players', () => {
     // Arrange
     const presenter = new PlayersPresenter();
-    const playerNikowa = createPlayerSummaryValueObject({
-      name: 'Nikowa',
-      inventory: ['Phytoplankton3', 'MagnetarQuartz'],
-      equipment: ['Backpack4', 'OxygenTank5']
-    });
-    const playerChileny = createPlayerSummaryValueObject({name: 'Chileny', inventory: [], equipment: []});
+    const playerNikowa = {name: 'Nikowa', inventory: ['Phytoplankton3', 'MagnetarQuartz'], equipment: ['Backpack4', 'OxygenTank5']};
+    const playerChileny = {name: 'Chileny', inventory: [], equipment: []};
 
     // Act
     presenter.displayPlayers([playerNikowa, playerChileny]);
@@ -62,7 +57,7 @@ describe('PlayersPresenter', () => {
     it('should use a placeholder value', () => {
       // Arrange
       const presenter = new PlayersPresenter();
-      const playerNikowa = createPlayerSummaryValueObject({name: 'Nikowa', inventory: ['Phytoplankton99'], equipment: ['Backpack99']});
+      const playerNikowa = {name: 'Nikowa', inventory: ['Phytoplankton99'], equipment: ['Backpack99']};
 
       // Act
       presenter.displayPlayers([playerNikowa]);

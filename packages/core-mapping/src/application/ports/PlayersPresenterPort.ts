@@ -1,5 +1,5 @@
-import {PlayerSummaryValueObject} from "../../domain/valueObjects/PlayerSummaryValueObject";
+import {PlayerSummaryResponse} from "../responses/PlayerSummaryResponse";
 
 export interface PlayersPresenterPort {
-  displayPlayers(players: PlayerSummaryValueObject[]): void;
+  displayPlayers(players: PlayerSummaryResponse[]): void;
 }

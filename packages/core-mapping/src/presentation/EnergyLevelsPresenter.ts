@@ -1,4 +1,4 @@
-import {EnergyLevelsValueObject} from "../domain/valueObjects/EnergyLevelsValueObject";
+import {EnergyLevelsResponse} from "../application/responses/EnergyLevelsResponse";
 import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
 import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
 import {OptimizerValueObject} from "../domain/valueObjects/OptimizerValueObject";
@@ -44,14 +44,14 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     return this._viewModel;
   }
 
-  displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void {
+  displayEnergyLevels(energyLevels: EnergyLevelsResponse): void {
     this._viewModel = {
       notifications: this.buildNotifications(energyLevels),
       planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
     };
   }
 
-  private buildNotifications(energyLevels: EnergyLevelsValueObject): NotificationViewModel[] {
+  private buildNotifications(energyLevels: EnergyLevelsResponse): NotificationViewModel[] {
     const notifications: NotificationViewModel[] = [submergedMachinesNotification];
 
     if (energyLevels.gameRelease !== CURRENT_FORMAT_RELEASE) {

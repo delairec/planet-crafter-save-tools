@@ -1,5 +1,5 @@
 import {TerraformationLevelsViewModel} from "./viewModels/TerraformationLevelsViewModel";
-import {TerraformationLevelSummaryValueObject} from "../domain/valueObjects/TerraformationLevelSummaryValueObject";
+import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
 import {TerraformationLevelsPresenterPort} from "../application/ports/TerraformationLevelsPresenterPort";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
@@ -71,7 +71,7 @@ export class TerraformationLevelsPresenter implements TerraformationLevelsPresen
     return this._viewModel;
   }
 
-  displayTerraformationLevels(levels: TerraformationLevelSummaryValueObject[]): void {
+  displayTerraformationLevels(levels: TerraformationLevelSummaryResponse[]): void {
     this._viewModel = {
       planets: levels.map(level => ({
         name: level.planetId,

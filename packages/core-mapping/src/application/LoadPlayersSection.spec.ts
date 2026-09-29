@@ -3,28 +3,24 @@ import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderSe
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {PlayersPresenterPort} from "./ports/PlayersPresenterPort";
 import {LoadPlayersSection} from './LoadPlayersSection';
-import {createPlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';
+import {PlayerSummaryResponse} from './responses/PlayerSummaryResponse';
 
 describe('LoadPlayersSection', () => {
   it('should present all players from the parsed save', async () => {
     // Arrange
     const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
-    const presenter: PlayersPresenterPort = {displayPlayers: mock()};
+    const displayPlayers = mock<PlayersPresenterPort['displayPlayers']>();
+    const presenter: PlayersPresenterPort = {displayPlayers};
     const useCase = new LoadPlayersSection(saveSectionsReader, presenter);
 
     // Act
     await useCase.execute();
 
     // Assert
-    expect(presenter.displayPlayers).toHaveBeenCalledTimes(1);
-    expect(presenter.displayPlayers).toHaveBeenCalledWith([createPlayerSummaryValueObject({
-      name: 'Nikowa',
-      equipment: [],
-      inventory: []
-    }), createPlayerSummaryValueObject({
-      name: 'Chileny',
-      equipment: [],
-      inventory: []
-    })]);
+    expect(displayPlayers).toHaveBeenCalledTimes(1);
+    expect<PlayerSummaryResponse[]>(displayPlayers.mock.calls[0][0]).toEqual([
+      {name: 'Nikowa', equipment: [], inventory: []},
+      {name: 'Chileny', equipment: [], inventory: []}
+    ]);
   });
 });

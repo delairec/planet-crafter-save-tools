@@ -1,7 +1,6 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {SaveIdentityPresenterPort} from "./ports/SaveIdentityPresenterPort";
 import {LoadSaveIdentityRequest} from "./requests/LoadSaveIdentityRequest";
-import {createSaveIdentityValueObject} from "../domain/valueObjects/SaveIdentityValueObject";
 import {resolveGameReleaseOfDeclaredVersion} from "../domain/rules/resolveGameReleaseOfDeclaredVersion";
 
 export class LoadSaveIdentity {
@@ -18,11 +17,11 @@ export class LoadSaveIdentity {
       return;
     }
 
-    this.presenter.displaySaveIdentity(createSaveIdentityValueObject({
+    this.presenter.displaySaveIdentity({
       fileName: request.fileName,
       displayName: saveConfiguration.title,
       mode: saveConfiguration.mode,
       gameRelease: resolveGameReleaseOfDeclaredVersion(this.saveSectionsReader.getDeclaredVersion())
-    }));
+    });
   }
 }
