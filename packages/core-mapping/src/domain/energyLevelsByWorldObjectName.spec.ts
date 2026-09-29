@@ -1,8 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
-import {readGameEnergyTables} from '../testing/readGameEnergyTables';
-
-const GAME_ENERGY_TABLES = readGameEnergyTables();
+import {ENERGY_LEVEL_TABLES} from '../testing/energyLevelTablesFixture';
 
 describe('selectEnergyLevelsOfDeclaredVersion', () => {
 
@@ -14,7 +12,7 @@ describe('selectEnergyLevelsOfDeclaredVersion', () => {
       ['2.103', '2.102', 0.6]
     ])('should take for a save declaring %s the values of %s, OreBreaker1 drawing %p kW', (declaredVersion, expectedRelease, expectedKilowatts) => {
       // Act
-      const energyLevels = selectEnergyLevelsOfDeclaredVersion(declaredVersion, GAME_ENERGY_TABLES);
+      const energyLevels = selectEnergyLevelsOfDeclaredVersion(declaredVersion, ENERGY_LEVEL_TABLES);
 
       // Assert
       expect(energyLevels.release).toBe(expectedRelease);
@@ -28,7 +26,7 @@ describe('selectEnergyLevelsOfDeclaredVersion', () => {
       const unreadableVersion = 'unknown';
 
       // Act
-      const energyLevels = selectEnergyLevelsOfDeclaredVersion(unreadableVersion, GAME_ENERGY_TABLES);
+      const energyLevels = selectEnergyLevelsOfDeclaredVersion(unreadableVersion, ENERGY_LEVEL_TABLES);
 
       // Assert
       expect(energyLevels.release).toBe('2.102');
@@ -41,7 +39,7 @@ describe('selectEnergyLevelsOfDeclaredVersion', () => {
       const noDeclaredVersion = undefined;
 
       // Act
-      const energyLevels = selectEnergyLevelsOfDeclaredVersion(noDeclaredVersion, GAME_ENERGY_TABLES);
+      const energyLevels = selectEnergyLevelsOfDeclaredVersion(noDeclaredVersion, ENERGY_LEVEL_TABLES);
 
       // Assert
       expect(energyLevels.release).toBe('2.102');

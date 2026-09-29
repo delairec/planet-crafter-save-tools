@@ -3,7 +3,7 @@ import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
 import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
 import {PlayersResponse} from "../application/responses/PlayersResponse";
-import {WorldObjectLabels} from "../application/ports/WorldObjectLabelsReaderPort";
+import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 import {
   playersSectionEquipmentLabel,
   playersSectionInventoryLabel,
@@ -48,11 +48,11 @@ export class PlayersPresenter implements PlayersPresenterPort {
   }
 }
 
-function mapItemNameToItemLabel(itemName: string, worldObjectLabels: WorldObjectLabels): string {
+function mapItemNameToItemLabel(itemName: string, worldObjectLabels: WorldObjectLabelsResponse): string {
   const worldObjectLabel: string | undefined = worldObjectLabels[itemName];
   return worldObjectLabel ?? resolvePlayersSectionUnknownItemLabel(itemName);
 }
 
-function mapListWithEmptyMessage(list: readonly string[], message: string, worldObjectLabels: WorldObjectLabels): string[] {
+function mapListWithEmptyMessage(list: readonly string[], message: string, worldObjectLabels: WorldObjectLabelsResponse): string[] {
   return list.length === 0 ? [message] : list.map((itemName) => mapItemNameToItemLabel(itemName, worldObjectLabels));
 }

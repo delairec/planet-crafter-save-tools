@@ -5,9 +5,10 @@ import {PlayersPresenterPort} from "./ports/PlayersPresenterPort";
 import {LoadPlayersSection} from './LoadPlayersSection';
 import {PlayersResponse} from './responses/PlayersResponse';
 import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
-import {WorldObjectLabels, WorldObjectLabelsReaderPort} from './ports/WorldObjectLabelsReaderPort';
+import {WorldObjectLabelsReaderPort} from './ports/WorldObjectLabelsReaderPort';
+import {WorldObjectLabelsResponse} from './responses/WorldObjectLabelsResponse';
 
-const WORLD_OBJECT_LABELS: WorldObjectLabels = {Backpack4: 'Backpack T4'};
+const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {Backpack4: 'Backpack T4'};
 
 function createPresenter(): PlayersPresenterPort {
   return {displayPlayers: mock(), displaySaveWithUnreadableLines: mock()};

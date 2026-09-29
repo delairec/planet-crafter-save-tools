@@ -11,9 +11,9 @@ This is a Bun workspace monorepo, organized around package prefixes:
 | `cli-merge`              | Thin CLI: parses `--input`/`--output`/`--prefer-legacy` arguments and delegates to `core-mapping`.                                   |
 | `cli-validate`           | Thin CLI: parses `--file` argument and delegates to `core-mapping`.                                                                  |
 | `ui-save-manager`        | SolidStart UI to visualize save files, consuming `core-mapping` controllers.                                                         |
-| `data-energy`            | Energy levels, those of an earlier release and the optimizer configuration: JSON tables, row types and selectors.                    |
+| `data-energy`            | Energy levels and those of an earlier release: JSON tables, row types and selectors.                                                 |
 | `data-planets`           | Planet names by numeric id: JSON table, row type and selector.                                                                       |
-| `data-world-objects`     | World object labels: JSON table, row type and selector.                                                                              |
+| `data-world-objects`     | World object labels and optimizer configuration: JSON tables, row types and selectors.                                               |
 | `data-save-format`       | Game releases and legacy terrain layer properties: JSON tables, row types and selectors.                                             |
 
 The prefix of a package name sets what it is allowed to depend on. A type-only import counts as a dependency.

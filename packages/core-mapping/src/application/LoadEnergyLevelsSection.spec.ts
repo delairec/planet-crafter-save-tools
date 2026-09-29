@@ -12,9 +12,12 @@ import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
 import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
-import {WorldObjectLabels, WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
-import {EnergyLevelsReaderService} from "../infrastructure/EnergyLevelsReaderService";
-import {PlanetNamesReaderService} from "../infrastructure/PlanetNamesReaderService";
+import {WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
+import {EnergyLevelsReaderPort} from "./ports/EnergyLevelsReaderPort";
+import {OptimizerRangesReaderPort} from "./ports/OptimizerRangesReaderPort";
+import {PlanetNamesReaderPort} from "./ports/PlanetNamesReaderPort";
+import {WorldObjectLabelsResponse} from "./responses/WorldObjectLabelsResponse";
+import {EnergyLevelValueObject} from "../domain/valueObjects/EnergyLevelValueObject";
 
 const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
@@ -70,21 +73,27 @@ class SaveSectionsWithPlanetsToName extends FakeSaveSectionsMapperService {
   }
 }
 
-const WORLD_OBJECT_LABELS: WorldObjectLabels = {Drill4: 'Drill T5'};
+const ENERGY_LEVELS: readonly EnergyLevelValueObject[] = [
+  {worldObjectName: 'EnergyGenerator1', role: 'production', kilowatts: 1.2},
+  {worldObjectName: 'EnergyGenerator6', role: 'production', kilowatts: 1_485},
+  {worldObjectName: 'Drill4', role: 'consumption', kilowatts: 375.5}
+];
+
+const PLANET_NAMES_BY_NUMERIC_ID: Readonly<Record<number, string>> = {[PRIME_PLANET_NUMERIC_ID]: 'Prime'};
+
+const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {Drill4: 'Drill T5'};
 
 function createPresenter(): EnergyLevelsPresenterPort {
   return {displayEnergyLevels: mock(), displaySaveWithUnreadableLines: mock()};
 }
 
 function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: EnergyLevelsPresenterPort): LoadEnergyLevelsSection {
+  const energyLevelsReader: EnergyLevelsReaderPort = {readEnergyLevels: () => ENERGY_LEVELS, readDivergingEnergyLevelsByRelease: () => ({})};
+  const optimizerRangesReader: OptimizerRangesReaderPort = {readOptimizerRanges: () => ({})};
+  const planetNamesReader: PlanetNamesReaderPort = {findPlanetNameOfNumericId: (numericId) => PLANET_NAMES_BY_NUMERIC_ID[numericId]};
   const worldObjectLabelsReader: WorldObjectLabelsReaderPort = {readWorldObjectLabels: () => WORLD_OBJECT_LABELS};
 
-  return new LoadEnergyLevelsSection({
-    saveSectionsReader,
-    energyLevelsReader: new EnergyLevelsReaderService(),
-    planetNamesReader: new PlanetNamesReaderService(),
-    worldObjectLabelsReader
-  }, presenter);
+  return new LoadEnergyLevelsSection({saveSectionsReader, energyLevelsReader, optimizerRangesReader, planetNamesReader, worldObjectLabelsReader}, presenter);
 }
 
 describe('LoadEnergyLevelsSection', () => {

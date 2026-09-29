@@ -1,8 +1,8 @@
 import {selectWorldObjectLabelRows} from "data-world-objects/selectWorldObjectLabelRows";
-import {WorldObjectLabels, WorldObjectLabelsReaderPort} from "../application/ports/WorldObjectLabelsReaderPort";
+import {WorldObjectLabelsReaderPort} from "../application/ports/WorldObjectLabelsReaderPort";
 
 export class WorldObjectLabelsReaderService implements WorldObjectLabelsReaderPort {
-  readWorldObjectLabels(): WorldObjectLabels {
+  readWorldObjectLabels(): Readonly<Record<string, string>> {
     return Object.fromEntries(
       selectWorldObjectLabelRows().map((row) => [row.worldObjectName, row.label])
     );

@@ -4,10 +4,10 @@ import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
 import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
-import {WorldObjectLabels} from "../application/ports/WorldObjectLabelsReaderPort";
+import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 
 const nbsp = '\u00A0';
-const WORLD_OBJECT_LABELS: WorldObjectLabels = {
+const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {
   Drill2: 'Drill T3',
   EnergyGenerator3: 'Solar panel T2',
   EnergyGenerator5: 'Nuclear Reactor T2',

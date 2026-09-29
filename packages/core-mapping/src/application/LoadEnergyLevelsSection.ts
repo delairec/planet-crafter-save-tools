@@ -1,5 +1,6 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {EnergyLevelsReaderPort} from "./ports/EnergyLevelsReaderPort";
+import {OptimizerRangesReaderPort} from "./ports/OptimizerRangesReaderPort";
 import {PlanetNamesReaderPort} from "./ports/PlanetNamesReaderPort";
 import {WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
 import {LoadSaveSectionsRequest} from "./requests/LoadSaveSectionsRequest";
@@ -13,6 +14,7 @@ import {createPlanetWorldObjectsValueObject, PlanetWorldObjectsValueObject} from
 export interface LoadEnergyLevelsSectionReaders {
   readonly saveSectionsReader: SaveSectionsReaderPort;
   readonly energyLevelsReader: EnergyLevelsReaderPort;
+  readonly optimizerRangesReader: OptimizerRangesReaderPort;
   readonly planetNamesReader: PlanetNamesReaderPort;
   readonly worldObjectLabelsReader: WorldObjectLabelsReaderPort;
 }
@@ -20,15 +22,17 @@ export interface LoadEnergyLevelsSectionReaders {
 export class LoadEnergyLevelsSection {
   private readonly saveSectionsReader: SaveSectionsReaderPort;
   private readonly energyLevelsReader: EnergyLevelsReaderPort;
+  private readonly optimizerRangesReader: OptimizerRangesReaderPort;
   private readonly planetNamesReader: PlanetNamesReaderPort;
   private readonly worldObjectLabelsReader: WorldObjectLabelsReaderPort;
 
   constructor(
-    {saveSectionsReader, energyLevelsReader, planetNamesReader, worldObjectLabelsReader}: LoadEnergyLevelsSectionReaders,
+    {saveSectionsReader, energyLevelsReader, optimizerRangesReader, planetNamesReader, worldObjectLabelsReader}: LoadEnergyLevelsSectionReaders,
     private readonly presenter: EnergyLevelsPresenterPort
   ) {
     this.saveSectionsReader = saveSectionsReader;
     this.energyLevelsReader = energyLevelsReader;
+    this.optimizerRangesReader = optimizerRangesReader;
     this.planetNamesReader = planetNamesReader;
     this.worldObjectLabelsReader = worldObjectLabelsReader;
   }
@@ -48,7 +52,7 @@ export class LoadEnergyLevelsSection {
       energyLevels: this.energyLevelsReader.readEnergyLevels(),
       divergingEnergyLevelsByRelease: this.energyLevelsReader.readDivergingEnergyLevelsByRelease()
     });
-    const optimizerRanges = this.energyLevelsReader.readOptimizerRanges();
+    const optimizerRanges = this.optimizerRangesReader.readOptimizerRanges();
     const knownPlanetNames = [...new Set(saveSections.getTerraformationLevels().map((level) => level.planetId))];
 
     this.presenter.displayEnergyLevels({

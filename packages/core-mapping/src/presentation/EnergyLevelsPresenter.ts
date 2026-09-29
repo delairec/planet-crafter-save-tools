@@ -13,7 +13,7 @@ import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
-import {WorldObjectLabels} from "../application/ports/WorldObjectLabelsReaderPort";
+import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
 import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
 import {
@@ -79,7 +79,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     return notifications;
   }
 
-  private buildPlanet(planet: PlanetEnergyLevelsValueObject, worldObjectLabels: WorldObjectLabels): PlanetEnergyLevelsViewModel {
+  private buildPlanet(planet: PlanetEnergyLevelsValueObject, worldObjectLabels: WorldObjectLabelsResponse): PlanetEnergyLevelsViewModel {
     return {
       planetId: planet.planetName ?? resolveEnergyLevelsSectionUnnamedPlanetName(planet.planetId),
       energyLevels: {
@@ -104,7 +104,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     };
   }
 
-  private buildBreakdownRows(breakdown: readonly EnergyBreakdownEntryValueObject[], worldObjectLabels: WorldObjectLabels): EnergyBreakdownRowViewModel[] {
+  private buildBreakdownRows(breakdown: readonly EnergyBreakdownEntryValueObject[], worldObjectLabels: WorldObjectLabelsResponse): EnergyBreakdownRowViewModel[] {
     return breakdown.map((entry): EnergyBreakdownRowViewModel => ({
       label: worldObjectLabels[entry.name],
       quantity: formatNumber(entry.quantity),
@@ -113,7 +113,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     }));
   }
 
-  private buildOptimizers(optimizers: readonly OptimizerValueObject[], worldObjectLabels: WorldObjectLabels): OptimizerViewModel[] {
+  private buildOptimizers(optimizers: readonly OptimizerValueObject[], worldObjectLabels: WorldObjectLabelsResponse): OptimizerViewModel[] {
     return optimizers.map((optimizer): OptimizerViewModel => ({
       label: worldObjectLabels[optimizer.name],
       fuseCount: formatNumber(optimizer.fuseCount),

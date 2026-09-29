@@ -1459,6 +1459,10 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "together"
 	REJECTED "A TypeScript literal with satisfies: a second home for the rows"
 	REJECTED "A markdown source registry of the energy values: the source is a column of the row"
+	REJECTED "The optimizer configuration in data-energy: an optimizer holding a fuse of another"
+		+ "kind boosts machines that are no energy producers"
+	REJECTED "The optimizer configuration in data-save-format: it describes world objects of the"
+		+ "game, not the format of a save"
 	APPLIES_TO_TASK @TASK.REFACTOR168
 	RATIONALE "A JSON table imported by a module is a database read by that module; the data-"
 		+ "package is its driver, and the port keeps the shape of the table out of the domain"
@@ -1595,8 +1599,8 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 		+ "table, in the same group as a machine with an unprinted value, and is not counted among"
 		+ "the placed machines whose energy is unknown"
 		IMPL "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
-		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.spec.ts::should neither produce nor"
-			+ "charge for the world objects without a known energy level"
+		IMPL "packages/core-mapping/src/infrastructure/EnergyLevelsReaderService.spec.ts::should"
+			+ "neither produce nor charge for the world objects without a known energy level"
 		IMPL "docs/energy-levels.md::Skeo update (game v2.103), read 2026-09-21"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "A placed machine whose cost the sources leave undecided may draw power in game, so"

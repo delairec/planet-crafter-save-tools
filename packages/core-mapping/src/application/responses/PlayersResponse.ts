@@ -1,7 +1,7 @@
 import {PlayerSummaryResponse} from "./PlayerSummaryResponse";
-import {WorldObjectLabels} from "../ports/WorldObjectLabelsReaderPort";
+import {WorldObjectLabelsResponse} from "./WorldObjectLabelsResponse";
 
 export interface PlayersResponse {
   readonly players: readonly PlayerSummaryResponse[];
-  readonly worldObjectLabels: WorldObjectLabels;
+  readonly worldObjectLabels: WorldObjectLabelsResponse;
 }

@@ -1,6 +1,7 @@
 import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsViewModel";
 import {
   createEnergyLevelsReader,
+  createOptimizerRangesReader,
   createPlanetNamesReader,
   createSaveSectionsReader,
   createWorldObjectLabelsReader
@@ -15,6 +16,7 @@ export class LoadEnergyLevelsSectionController {
     const useCase = new LoadEnergyLevelsSection({
       saveSectionsReader: createSaveSectionsReader(),
       energyLevelsReader: createEnergyLevelsReader(),
+      optimizerRangesReader: createOptimizerRangesReader(),
       planetNamesReader: createPlanetNamesReader(),
       worldObjectLabelsReader: createWorldObjectLabelsReader()
     }, presenter);

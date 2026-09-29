@@ -54,7 +54,7 @@ on the very defect the rule describes, and must not be titled as if it could.
 
 **What the versioned guard covers.** `worldObjectNames.ts` declares every known `gId` in exactly one of three
 groups — producing energy, consuming energy, or without a known energy level (section 6) — and
-`PlanetEnergyGrid.spec.ts` asserts the two directions of that
+`EnergyLevelsReaderService.spec.ts` asserts, on the table the adapter reads, the two directions of that
 partition: every name of the producing and consuming groups yields a strictly positive level, and no name of the
 third group yields any. Consequences: removing a table entry turns the suite red (including the entry of a machine
 that has no sibling tier, `Beacon` or `ComAntenna`, which the earlier by-family guard let through), pricing a name
@@ -160,7 +160,7 @@ placed inside an Optimizer.
 
 **Rule EN-OPT-1 (capacity):** the fuse slots, the maximum number of machines affected and the radius of each
 Optimizer tier are the rows of
-[`packages/core-mapping/src/domain/optimizerConfig.json`](../packages/core-mapping/src/domain/optimizerConfig.json)
+[`packages/data-world-objects/optimizerConfig.json`](../packages/data-world-objects/optimizerConfig.json)
 (`@DATATABLE.OptimizerConfiguration`).
 
 **Rule EN-OPT-2 (targeting):** An Optimizer boosts the **closest** machines of the type matching its fuse(s),

@@ -2,9 +2,9 @@ import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {describe, expect, it} from 'bun:test';
 import {PlayersPresenter} from './PlayersPresenter';
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
-import {WorldObjectLabels} from '../application/ports/WorldObjectLabelsReaderPort';
+import {WorldObjectLabelsResponse} from '../application/responses/WorldObjectLabelsResponse';
 
-const WORLD_OBJECT_LABELS: WorldObjectLabels = {
+const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {
   Backpack4: 'Backpack T4',
   MagnetarQuartz: 'Magnetar Quartz',
   OxygenTank5: 'Oxygen tank T5',

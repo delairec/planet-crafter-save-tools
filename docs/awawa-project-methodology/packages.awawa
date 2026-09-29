@@ -27,8 +27,7 @@ PACKAGE ui_save_manager
 	MANIFEST "packages/ui-save-manager/package.json::ui-save-manager"
 
 PACKAGE data_energy
-	DESC "the energy levels, those of an earlier release and the optimizer configuration, with"
-		+ "their row types and selectors"
+	DESC "the energy levels and those of an earlier release, with their row types and selectors"
 	MANIFEST "packages/data-energy/package.json::data-energy"
 
 PACKAGE data_planets
@@ -36,7 +35,8 @@ PACKAGE data_planets
 	MANIFEST "packages/data-planets/package.json::data-planets"
 
 PACKAGE data_world_objects
-	DESC "the world object labels, with its row type and selector"
+	DESC "the world object labels and the optimizer configuration, with their row types and"
+		+ "selectors"
 	MANIFEST "packages/data-world-objects/package.json::data-world-objects"
 
 PACKAGE data_save_format

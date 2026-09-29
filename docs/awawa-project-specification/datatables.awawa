@@ -12,7 +12,7 @@ DATATABLE WorldObjectLabels
 	DESC "the display label of each world object name"
 
 DATATABLE OptimizerConfiguration
-	TABLE "packages/data-energy/optimizerConfig.json"
+	TABLE "packages/data-world-objects/optimizerConfig.json"
 	KEY worldObjectName
 	JSON_SCHEMA "scripts/validate-tables/schemas/optimizerConfig.schema.json"
 	DESC "fuse slots, capacity in boosted machines and radius in meters of each optimizer tier"
