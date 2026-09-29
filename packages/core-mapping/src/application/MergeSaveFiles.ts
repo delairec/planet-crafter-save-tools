@@ -1,6 +1,7 @@
 import {compareGameReleases} from "shared-save-processing/gameReleases.js";
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
+import {SaveSectionsReaderPort, SaveSectionsReading} from "./ports/SaveSectionsReaderPort";
 import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
@@ -10,10 +11,12 @@ import {sanitizeSaveDisplayName} from "./sanitizeSaveDisplayName";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 import {SaveSections} from "../domain/save/SaveSections";
+import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
 
 export class MergeSaveFiles {
   constructor(
     private readonly validator: SaveValidatorPort,
+    private readonly saveSectionsReader: SaveSectionsReaderPort,
     private readonly parser: SaveSectionsParserPort,
     private readonly serializer: SaveSectionsSerializerPort,
     private readonly presenter: MergeResultPresenterPort
@@ -33,13 +36,23 @@ export class MergeSaveFiles {
       return;
     }
 
-    const saveA = this.parser.parse(contentA);
-    const saveB = this.parser.parse(contentB);
+    const readingA = this.saveSectionsReader.read(contentA);
+    const readingB = this.saveSectionsReader.read(contentB);
 
-    if (saveA.errors.length > 0 || saveB.errors.length > 0) {
+    if (readingA.unreadableLines.length > 0 || readingB.unreadableLines.length > 0) {
       this.presenter.presentMergedSaveUnusable();
       return;
     }
+
+    const wrongHostCounts = findWrongHostCounts(readingA, readingB);
+
+    if (wrongHostCounts !== null) {
+      this.presenter.presentSaveFilesWithoutUniqueHost({...wrongHostCounts, saveAWarnings: validationA.warnings, saveBWarnings: validationB.warnings});
+      return;
+    }
+
+    const saveA = this.parser.parse(contentA);
+    const saveB = this.parser.parse(contentB);
 
     const {fileName, stem} = nameMergedFile({fileNameA, fileNameB});
     const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, {saveDisplayName: sanitizeSaveDisplayName(saveDisplayName ?? stem), preferLegacyFormat}));
@@ -57,6 +70,22 @@ export class MergeSaveFiles {
       saveBWarnings: validationB.warnings
     });
   }
+}
+
+interface WrongHostCounts {
+  saveAWrongHostCount?: number;
+  saveBWrongHostCount?: number;
+}
+
+function findWrongHostCounts(readingA: SaveSectionsReading, readingB: SaveSectionsReading): WrongHostCounts | null {
+  const violationA = validateUniqueHost(readingA.saveSections.getPlayers());
+  const violationB = validateUniqueHost(readingB.saveSections.getPlayers());
+
+  if (violationA === null && violationB === null) {
+    return null;
+  }
+
+  return {saveAWrongHostCount: violationA?.hostCount, saveBWrongHostCount: violationB?.hostCount};
 }
 
 function reportMergedSaveFormat(sectionsA: SaveSections, sectionsB: SaveSections, mergedSave: SaveSections): MergeWarning[] {

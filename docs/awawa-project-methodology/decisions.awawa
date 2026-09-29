@@ -166,6 +166,8 @@ DECISION UiSaveManagerHasOneUiErrorIdiom
 		PR 58
 
 DECISION ADomainRuleIgnoresValidationVocabulary
+	STATUS archived
+	ARCHIVED_ON 2026-09-29
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SPEC "No file of the domain imports application"
 		IMPL "packages/core-mapping/src/domain"
@@ -3067,12 +3069,16 @@ DECISION AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
 DECISION ASaveWithUnreadableLinesIsNotLoaded
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR159
-	SPEC "LoadAndValidateSaveFile calls presentSaveFileWithUnreadableLines when the parser reports"
-		+ "at least one error, presentLoadedSaveFile otherwise; the loaded outcome carries warnings"
-		+ "only"
+	SPEC "LoadAndValidateSaveFile and ValidateSaveFile call presentSaveFileWithUnreadableLines when"
+		+ "the section reader reports at least one unreadable line, and never present that save as"
+		+ "loaded or valid; the loaded outcome carries warnings only"
 		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.ts"
 		IMPL "packages/core-mapping/src/application/ports/LoadAndValidateSaveFilePresenterPort.ts::presentSaveFileWithUnreadableLines"
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts"
+		IMPL "packages/core-mapping/src/application/ports/SaveFileValidationPresenterPort.ts::presentSaveFileWithUnreadableLines"
 		ENFORCED_BY "packages/core-mapping/src/application/LoadAndValidateSaveFile.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/application/ValidateSaveFile.spec.ts::should present"
+			+ "the save file with its unreadable lines, never as a valid save file"
 	SPEC "LoadSaveFilePresenter renders the unreadable lines outcome with the invalid status and"
 		+ "each line located; the valid status is reserved to the loaded outcome"
 		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.ts::presentSaveFileWithUnreadableLines"
@@ -3086,6 +3092,7 @@ DECISION ASaveWithUnreadableLinesIsNotLoaded
 		+ "location"
 	SOURCE "Ruled while implementing the output boundary of core-mapping"
 		PR 230
+	SOURCE "Rewritten when the use cases read the save through the section reader to check its host"
 
 DECISION TheSchemaValidationMessageIsCarriedNotRewritten
 	SPEC "A schema violation issue carries the path of the field and the message of the schema"
@@ -3144,3 +3151,43 @@ DECISION ASectionUseCaseReportsTheLinesItCannotRead
 	SOURCE "Owner ruling during the wave launch: the save manager shows the unreadable lines in"
 		+ "place of the section"
 		PR 232
+
+DECISION AMergeReadsEachInputThroughTheSectionReaderForItsHost
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR160
+	SPEC "MergeSaveFiles reads each validated input through the section reader port to check its"
+		+ "host, then parses it for the merge; the reader is never fed the sections the parser"
+		+ "returned"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::this.saveSectionsReader.read(contentA)"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::this.parser.parse(contentA)"
+		ENFORCED_BY "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should present"
+			+ "the saves without a unique host, with the host count of the save at fault"
+	REJECTED "A reader port method mapping the sections already parsed: a second entry point on the"
+		+ "port to save one read, cheaper than the validation each input already goes through"
+	REJECTED "Checking the host on the merged save only: the merge rule leaves a single host, so an"
+		+ "input at fault would never be reported"
+		REF @RULE.PlayersAreDeduplicatedByName
+	RATIONALE "The read is deterministic and its cost stays below that of the validation run on the"
+		+ "same input"
+	SOURCE "Ruled while implementing REFACTOR160"
+
+DECISION TheHostIsCheckedOnlyOnceValidationAcceptsTheSave
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR160
+	SPEC "ValidateSaveFile, LoadAndValidateSaveFile and MergeSaveFiles check the unique host only"
+		+ "once the validator accepted the save and the section reader read every line; a save"
+		+ "refused by validation reports its validation errors alone, a host violation included"
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts::validateUniqueHost(saveSections.getPlayers())"
+		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.ts::validateUniqueHost(saveSections.getPlayers())"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::findWrongHostCounts(readingA,"
+			+ "readingB)"
+		ENFORCED_BY "packages/core-mapping/src/application/ValidateSaveFile.spec.ts::should present"
+			+ "an invalid save file with the validation errors and never read the content"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadAndValidateSaveFile.spec.ts::should"
+			+ "present an invalid save file with the validation errors and never read the content"
+	REJECTED "Reading the players of a save validation refused, to report its host violation beside"
+		+ "the validation errors as the validator did before: the reader would map entries the"
+		+ "schema has refused"
+	RATIONALE "Before REFACTOR160 the validator appended the host violation to the schema errors of"
+		+ "the same save; the violation now shows once the schema errors are fixed"
+	SOURCE "Ruled while implementing REFACTOR160"

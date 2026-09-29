@@ -10,6 +10,7 @@ import {
 import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
+import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
 
 const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
@@ -28,6 +29,40 @@ class SaveSectionsWithoutSaveConfiguration extends FakeSaveSectionsMapperService
 
   override getSaveConfiguration(): undefined {
     return undefined;
+  }
+}
+
+const PRIME_PLANET_NUMERIC_ID = -1140328421;
+const UNKNOWN_PLANET_NUMERIC_ID = 1;
+
+class SaveSectionsWithPlanetsToName extends FakeSaveSectionsMapperService {
+  override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
+    return [
+      createPlanetWorldObjectsValueObject({
+        planetId: PRIME_PLANET_NUMERIC_ID,
+        placedWorldObjects: [new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator1' as const, position: [0, 0, 0], planetId: PRIME_PLANET_NUMERIC_ID})]
+      }),
+      createPlanetWorldObjectsValueObject({
+        planetId: UNKNOWN_PLANET_NUMERIC_ID,
+        placedWorldObjects: [
+          new PlacedWorldObjectEntity({id: '2', name: 'Seed7Humble' as const, position: [0, 0, 0], planetId: UNKNOWN_PLANET_NUMERIC_ID}),
+          new PlacedWorldObjectEntity({id: '3', name: 'EnergyGenerator1' as const, position: [10, 0, 0], planetId: UNKNOWN_PLANET_NUMERIC_ID})
+        ]
+      })
+    ];
+  }
+
+  override getTerraformationLevels(): TerraformationLevelEntity[] {
+    return [new TerraformationLevelEntity({
+      planetId: 'Humble',
+      unitOxygenLevel: 0,
+      unitHeatLevel: 0,
+      unitPressureLevel: 0,
+      unitPlantsLevel: 0,
+      unitInsectsLevel: 0,
+      unitAnimalsLevel: 0,
+      unitPurificationLevel: 0
+    })];
   }
 }
 
@@ -103,6 +138,36 @@ describe('LoadEnergyLevelsSection', () => {
       // Assert
       expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}]);
       expect(presenter.displayEnergyLevels).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('When it names the planets of the save', () => {
+    it('should name a planet from its numeric id (Rule EN-PLANET-3)', async () => {
+      // Arrange
+      const presenter = createPresenter();
+      const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader({saveSections: new SaveSectionsWithPlanetsToName()}), presenter);
+
+      // Act
+      await useCase.execute({content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
+        planets: [expect.objectContaining({planetId: PRIME_PLANET_NUMERIC_ID, planetName: 'Prime'}), expect.anything()]
+      }));
+    });
+
+    it('should offer the terraformed planet names as hints when the numeric id is unknown (Rule EN-PLANET-2)', async () => {
+      // Arrange
+      const presenter = createPresenter();
+      const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader({saveSections: new SaveSectionsWithPlanetsToName()}), presenter);
+
+      // Act
+      await useCase.execute({content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
+        planets: [expect.anything(), expect.objectContaining({planetId: UNKNOWN_PLANET_NUMERIC_ID, planetName: 'Humble'})]
+      }));
     });
   });
 });

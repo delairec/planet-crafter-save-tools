@@ -3,8 +3,7 @@ export const VALIDATION_ISSUE_CODES = {
   INVALID_STRUCTURE: 'invalid-structure',
   INVALID_JSON: 'invalid-json',
   SCHEMA_VIOLATION: 'schema-violation',
-  FLOAT_SERIALIZATION: 'float-serialization',
-  UNIQUE_HOST: 'unique-host'
+  FLOAT_SERIALIZATION: 'float-serialization'
 } as const;
 
 export type ValidationIssueCode = typeof VALIDATION_ISSUE_CODES[keyof typeof VALIDATION_ISSUE_CODES];

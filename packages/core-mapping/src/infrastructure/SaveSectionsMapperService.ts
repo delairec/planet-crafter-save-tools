@@ -16,7 +16,6 @@ import {
   createPlanetWorldObjectsValueObject
 } from "../domain/valueObjects/PlanetWorldObjectsValueObject";
 import {WorldObjectName} from "../domain/worldObjectNames";
-import {resolvePlanetName} from "../domain/rules/resolvePlanetName";
 
 function parsePosition(position: string): [number, number, number] {
   const [x, y, z] = position.split(',').map(Number);
@@ -116,27 +115,16 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
       (worldObject) => worldObject.pos !== undefined && worldObject.planet !== undefined
     );
 
-    const placedWorldObjectsByPlanet = new Map<number, { raw: WorldObjectEntry; entity: PlacedWorldObjectEntity }[]>();
+    const placedWorldObjectsByPlanet = new Map<number, PlacedWorldObjectEntity[]>();
     for (const worldObject of positionedWorldObjects) {
       const entity = this.toPlacedWorldObjectEntity(worldObject);
-      const planetId = entity.planetId;
-      const worldObjectsOnPlanet = placedWorldObjectsByPlanet.get(planetId) ?? [];
-      worldObjectsOnPlanet.push({raw: worldObject, entity});
-      placedWorldObjectsByPlanet.set(planetId, worldObjectsOnPlanet);
+      const worldObjectsOnPlanet = placedWorldObjectsByPlanet.get(entity.planetId) ?? [];
+      worldObjectsOnPlanet.push(entity);
+      placedWorldObjectsByPlanet.set(entity.planetId, worldObjectsOnPlanet);
     }
 
-    const knownPlanetNames = [...new Set(this.sections.terraformationLevels.map((level) => level.planetId))];
-
     return [...placedWorldObjectsByPlanet.entries()]
-      .map(([planetId, placedWorldObjectsOnPlanet]) => createPlanetWorldObjectsValueObject({
-        planetId,
-        planetName: resolvePlanetName(
-          planetId,
-          placedWorldObjectsOnPlanet.map(({raw}) => raw.gId),
-          knownPlanetNames
-        ),
-        placedWorldObjects: placedWorldObjectsOnPlanet.map(({entity}) => entity)
-      }));
+      .map(([planetId, placedWorldObjects]) => createPlanetWorldObjectsValueObject({planetId, placedWorldObjects}));
   }
 
   getWorldObjects(): WorldObjectEntity[] {

@@ -591,3 +591,21 @@ RULE EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
 	SOURCE "Owner review of 2026-09-26 of the first working version, ruled on the mockup: above 100"
 		+ "% penalises for a percentage, below 1 for a coefficient"
 		REF @URL.SaveManagerRedesignMockup
+
+RULE ASaveDesignatesExactlyOneHostPlayer
+	HOLDS_FOR all
+	DOMAIN format
+	SPEC "a save holding at least one player entry flags exactly one of them as host"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts::When"
+			+ "exactly one player is host"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts::When no"
+			+ "player is host"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts::When more"
+			+ "than one player is host"
+	SPEC "a save holding no player entry designates no host and breaks no rule"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts::When there"
+			+ "are no players"
+	APPLIES_TO_SECTION @SECTION.Players
+	SOURCE "Owner ruling during the refinement of REFACTOR160: the unique host check the validator"
+		+ "carried is a statement about the save, recorded in the specification area"
+		PR 231

@@ -494,61 +494,27 @@ describe('validateSaveContent', () => {
       });
     });
 
-    describe('When validating the unique host rule', () => {
-      describe('When no player is host', () => {
-        it('should report an error', () => {
-          // Arrange
-          const save = createFakeSaveContent({players: [createPlayer({host: false})]});
-
-          // Act
-          const result = validateSaveContent(save);
-
-          // Assert
-          expect(result.isValid).toBe(false);
-          expect(result.errors).toEqual([
-            {code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 0'}
-          ]);
+    describe('When the save designates no host or more than one', () => {
+      it('should accept the save, the host count being a business rule and not a technical failure', () => {
+        // Arrange
+        const firstPlayer = createPlayer();
+        const secondPlayer = createPlayer({
+          id: '76561190000000030',
+          name: 'Chileny',
+          inventoryId: 3,
+          equipmentId: 4,
+          host: true
         });
-      });
-
-      describe('When more than one player is host', () => {
-        it('should report an error', () => {
-          // Arrange
-          const firstPlayer = createPlayer();
-          const secondPlayer = createPlayer({
-            id: '76561190000000030',
-            name: 'Chileny',
-            inventoryId: 3,
-            equipmentId: 4,
-            host: true
-          });
-          const save = createFakeSaveContent({
-            players: [firstPlayer, secondPlayer],
-            inventories: [createInventory(), createEquipment(), createInventory({id: 3, woIds: '', size: 20}), createEquipment({id: 4, woIds: '', size: 10})]
-          });
-
-          // Act
-          const result = validateSaveContent(save);
-
-          // Assert
-          expect(result.isValid).toBe(false);
-          expect(result.errors).toEqual([
-            {code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2'}
-          ]);
+        const save = createFakeSaveContent({
+          players: [firstPlayer, secondPlayer],
+          inventories: [createInventory(), createEquipment(), createInventory({id: 3, woIds: '', size: 20}), createEquipment({id: 4, woIds: '', size: 10})]
         });
-      });
 
-      describe('When exactly one player is host', () => {
-        it('should not report a host error', () => {
-          // Arrange
-          const save = createFakeSaveContent();
+        // Act
+        const result = validateSaveContent(save);
 
-          // Act
-          const result = validateSaveContent(save);
-
-          // Assert
-          expect(result.errors).toEqual([]);
-        });
+        // Assert
+        expect(result).toEqual({isValid: true, errors: [], warnings: []});
       });
     });
 

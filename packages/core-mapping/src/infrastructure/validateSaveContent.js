@@ -1,7 +1,6 @@
 /**
  * @import { SaveParseError, SaveWarning } from 'shared-save-processing/gameDefinitions'
  * @import { ValidationIssue } from '../application/ports/ValidationIssue'
- * @import { UniqueHostViolation } from '../domain/rules/validateUniqueHost'
  */
 
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
@@ -9,7 +8,6 @@ import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
 import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
-import {validateUniqueHost} from '../domain/rules/validateUniqueHost.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
 
 /**
@@ -45,23 +43,7 @@ export function validateSaveContent(saveContent) {
   errors.push(...worldObjectIssues);
   errors.push(...validateFloatSerialization(saveContent));
 
-  const uniqueHostViolation = validateUniqueHost(/** @type {Parameters<typeof validateUniqueHost>[0]} */ (sections[sectionIndexes.players]));
-  if (uniqueHostViolation !== null) {
-    errors.push(toUniqueHostIssue(uniqueHostViolation));
-  }
-
   return {isValid: errors.length === 0, errors, warnings};
-}
-
-/**
- * @param {UniqueHostViolation} violation
- * @returns {ValidationIssue}
- */
-function toUniqueHostIssue({hostCount}) {
-  return {
-    code: VALIDATION_ISSUE_CODES.UNIQUE_HOST,
-    detail: `Expected exactly one host player, found ${hostCount}`
-  };
 }
 
 /**
