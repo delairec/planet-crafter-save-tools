@@ -6,7 +6,8 @@ import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
 import {MergeWarning} from "./responses/MergeWarning";
-import {SaveFilesWithoutJsonExtensionResponse} from "./responses/SaveFilesWithoutJsonExtensionResponse";
+import {SaveFileFindings} from "./responses/SaveFileFindings";
+import {SaveValidationResult} from "./ports/SaveValidationResult";
 import {nameMergedFile} from "./nameMergedFile";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
@@ -23,26 +24,11 @@ export class MergeSaveFiles {
   ) {}
 
   async execute({fileNameA, contentA, fileNameB, contentB, saveDisplayName, preferLegacyFormat = false}: MergeSaveFilesRequest): Promise<void> {
-    const extensions: SaveFilesWithoutJsonExtensionResponse = {
-      saveAHasJsonExtension: this.validator.hasJsonExtension(fileNameA),
-      saveBHasJsonExtension: this.validator.hasJsonExtension(fileNameB)
-    };
+    const validationA = this.validateSaveFile(fileNameA, contentA);
+    const validationB = this.validateSaveFile(fileNameB, contentB);
 
-    if (lacksJsonExtension(extensions)) {
-      this.presenter.presentSaveFilesWithoutJsonExtension(extensions);
-      return;
-    }
-
-    const validationA = this.validator.validate(contentA);
-    const validationB = this.validator.validate(contentB);
-
-    if (!validationA.isValid || !validationB.isValid) {
-      this.presenter.presentSaveFilesInvalid({
-        saveAErrors: validationA.errors,
-        saveBErrors: validationB.errors,
-        saveAWarnings: validationA.warnings,
-        saveBWarnings: validationB.warnings
-      });
+    if (!isMergeable(validationA) || !isMergeable(validationB)) {
+      this.presenter.presentSaveFilesInvalid({saveA: reportFindings(validationA), saveB: reportFindings(validationB)});
       return;
     }
 
@@ -80,10 +66,30 @@ export class MergeSaveFiles {
       saveBWarnings: validationB.warnings
     });
   }
+
+  private validateSaveFile(fileName: string, content: string): SaveFileValidation {
+    if (!this.validator.hasJsonExtension(fileName)) {
+      return {hasJsonExtension: false};
+    }
+
+    return {hasJsonExtension: true, ...this.validator.validate(content)};
+  }
 }
 
-function lacksJsonExtension({saveAHasJsonExtension, saveBHasJsonExtension}: SaveFilesWithoutJsonExtensionResponse): boolean {
-  return !saveAHasJsonExtension || !saveBHasJsonExtension;
+type ValidatedSaveFile = {hasJsonExtension: true} & SaveValidationResult;
+
+type SaveFileValidation = {hasJsonExtension: false} | ValidatedSaveFile;
+
+function isMergeable(validation: SaveFileValidation): validation is ValidatedSaveFile {
+  return validation.hasJsonExtension && validation.isValid;
+}
+
+function reportFindings(validation: SaveFileValidation): SaveFileFindings {
+  if (!validation.hasJsonExtension) {
+    return {hasJsonExtension: false};
+  }
+
+  return {hasJsonExtension: true, errors: validation.errors, warnings: validation.warnings};
 }
 
 interface WrongHostCounts {

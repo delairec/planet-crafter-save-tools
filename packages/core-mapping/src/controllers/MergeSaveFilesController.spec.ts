@@ -48,6 +48,51 @@ describe('MergeSaveFilesController', () => {
     });
   });
 
+  describe('When one save lacks the JSON extension and the other is invalid', () => {
+    it('should report the extension error against the first save and the validation errors against the second', async () => {
+      // Arrange
+      const contentA = createFakeSaveContent();
+      const contentB = 'not a valid save at all';
+
+      // Act
+      const viewModel = await MergeSaveFilesController.mergeSaveFiles({
+        fileNameA: 'Standard-1.txt',
+        contentA,
+        fileNameB: 'Standard-2.json',
+        contentB
+      });
+
+      // Assert
+      expect(viewModel.status).toBe('validationError');
+      expect<SaveValidationMessageViewModel[]>(viewModel.saveAErrors).toEqual([{message: 'Invalid file extension: expected a .json file.', location: null}]);
+      expect<SaveValidationMessageViewModel[]>(viewModel.saveBErrors).toEqual([{message: 'Expected 11 or 12 sections but found 1', location: null}]);
+    });
+  });
+
+  describe('When one save lacks the JSON extension and the other carries a warning', () => {
+    it('should report the warning of the second save beside the extension error of the first', async () => {
+      // Arrange
+      const contentA = createFakeSaveContent();
+      const contentB = createLegacyFakeSaveContent();
+
+      // Act
+      const viewModel = await MergeSaveFilesController.mergeSaveFiles({
+        fileNameA: 'Standard-1.txt',
+        contentA,
+        fileNameB: 'Legacy.json',
+        contentB
+      });
+
+      // Assert
+      expect(viewModel.status).toBe('validationError');
+      expect<SaveValidationMessageViewModel[]>(viewModel.saveAErrors).toEqual([{message: 'Invalid file extension: expected a .json file.', location: null}]);
+      expect<SaveValidationMessageViewModel[]>(viewModel.saveBWarnings).toEqual([{
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
+        location: null
+      }]);
+    });
+  });
+
   describe('When a save of 1.618 is merged with a save of 2.004', () => {
     it('should write the format of 2.004 and declare a version of that format', async () => {
       // Arrange

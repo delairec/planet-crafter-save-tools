@@ -1,7 +1,7 @@
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSucceededResponse} from "../application/responses/MergeSucceededResponse";
 import {SaveFilesInvalidResponse} from "../application/responses/SaveFilesInvalidResponse";
-import {SaveFilesWithoutJsonExtensionResponse} from "../application/responses/SaveFilesWithoutJsonExtensionResponse";
+import {SaveFileFindings} from "../application/responses/SaveFileFindings";
 import {SaveFilesWithoutUniqueHostResponse} from "../application/responses/SaveFilesWithoutUniqueHostResponse";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
@@ -51,7 +51,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     };
   }
 
-  presentSaveFilesWithoutJsonExtension({saveAHasJsonExtension, saveBHasJsonExtension}: SaveFilesWithoutJsonExtensionResponse): void {
+  presentSaveFilesInvalid({saveA, saveB}: SaveFilesInvalidResponse): void {
     this._viewModel = {
       status: 'validationError',
       fileName: '',
@@ -60,26 +60,10 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       mergeErrors: [],
       mergeWarnings: [],
       legacyFormatCouldBeKept: false,
-      saveAErrors: formatMissingJsonExtension(saveAHasJsonExtension),
-      saveBErrors: formatMissingJsonExtension(saveBHasJsonExtension),
-      saveAWarnings: [],
-      saveBWarnings: []
-    };
-  }
-
-  presentSaveFilesInvalid({saveAErrors, saveBErrors, saveAWarnings, saveBWarnings}: SaveFilesInvalidResponse): void {
-    this._viewModel = {
-      status: 'validationError',
-      fileName: '',
-      content: '',
-      mergeFailureMessage: '',
-      mergeErrors: [],
-      mergeWarnings: [],
-      legacyFormatCouldBeKept: false,
-      saveAErrors: saveAErrors.map(formatValidationError),
-      saveBErrors: saveBErrors.map(formatValidationError),
-      saveAWarnings: saveAWarnings.map(formatSaveWarning),
-      saveBWarnings: saveBWarnings.map(formatSaveWarning)
+      saveAErrors: formatFindingErrors(saveA),
+      saveBErrors: formatFindingErrors(saveB),
+      saveAWarnings: formatFindingWarnings(saveA),
+      saveBWarnings: formatFindingWarnings(saveB)
     };
   }
 
@@ -120,6 +104,10 @@ function formatWrongHostCount(wrongHostCount: number | undefined): SaveValidatio
   return wrongHostCount === undefined ? [] : [formatUniqueHostError(wrongHostCount)];
 }
 
-function formatMissingJsonExtension(hasJsonExtension: boolean): SaveValidationMessageViewModel[] {
-  return hasJsonExtension ? [] : [formatJsonExtensionError()];
+function formatFindingErrors(findings: SaveFileFindings): SaveValidationMessageViewModel[] {
+  return findings.hasJsonExtension ? findings.errors.map(formatValidationError) : [formatJsonExtensionError()];
+}
+
+function formatFindingWarnings(findings: SaveFileFindings): SaveValidationMessageViewModel[] {
+  return findings.hasJsonExtension ? findings.warnings.map(formatSaveWarning) : [];
 }

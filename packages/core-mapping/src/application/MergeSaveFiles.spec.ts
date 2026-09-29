@@ -7,7 +7,6 @@ import {SaveSectionsSerializerPort} from './ports/SaveSectionsSerializerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
-import {SaveFilesWithoutJsonExtensionResponse} from './responses/SaveFilesWithoutJsonExtensionResponse';
 import {SaveFilesWithoutUniqueHostResponse} from './responses/SaveFilesWithoutUniqueHostResponse';
 import {MergeWarning} from './responses/MergeWarning';
 import {ValidationIssue} from './ports/ValidationIssue';
@@ -55,7 +54,6 @@ describe('MergeSaveFiles', () => {
     const serializer: SaveSectionsSerializerPort = {serialize: mock(() => 'merged content')};
     const presenter: MergeResultPresenterPort = {
       presentMergeSucceeded: mock(),
-      presentSaveFilesWithoutJsonExtension: mock(),
       presentSaveFilesInvalid: mock(),
       presentSaveFilesWithoutUniqueHost: mock(),
       presentMergedSaveUnusable: mock()
@@ -252,18 +250,34 @@ describe('MergeSaveFiles', () => {
       // Assert
       expect(parser.parse).not.toHaveBeenCalled();
       expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
-        saveAErrors: [invalidJsonError],
-        saveBErrors: [],
-        saveAWarnings: [],
-        saveBWarnings: []
+        saveA: {hasJsonExtension: true, errors: [invalidJsonError], warnings: []},
+        saveB: {hasJsonExtension: true, errors: [], warnings: []}
       } satisfies SaveFilesInvalidResponse);
     });
   });
 
   describe('When a save file has no JSON extension', () => {
-    it('should reject the saves before validating their content', async () => {
+    it('should present that save as without JSON extension beside the findings of the other save', async () => {
       // Arrange
-      const {useCase, validator, presenter} = createUseCase({
+      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentB'};
+      const {useCase, presenter} = createUseCase({
+        hasJsonExtension: (fileName: string) => fileName !== 'Save-A.txt',
+        validate: validatorAnswering({contentB: {isValid: false, errors: [invalidJsonError], warnings: [{code: 'legacy-save-format'}]}})
+      });
+
+      // Act
+      await useCase.execute({...TWO_VALID_SAVES, fileNameA: 'Save-A.txt'});
+
+      // Assert
+      expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
+        saveA: {hasJsonExtension: false},
+        saveB: {hasJsonExtension: true, errors: [invalidJsonError], warnings: [{code: 'legacy-save-format'}]}
+      } satisfies SaveFilesInvalidResponse);
+    });
+
+    it('should leave the content of that save unvalidated', async () => {
+      // Arrange
+      const {useCase, validator} = createUseCase({
         hasJsonExtension: (fileName: string) => fileName !== 'Save-A.txt'
       });
 
@@ -271,11 +285,7 @@ describe('MergeSaveFiles', () => {
       await useCase.execute({...TWO_VALID_SAVES, fileNameA: 'Save-A.txt'});
 
       // Assert
-      expect(validator.validate).not.toHaveBeenCalled();
-      expect(presenter.presentSaveFilesWithoutJsonExtension).toHaveBeenCalledWith({
-        saveAHasJsonExtension: false,
-        saveBHasJsonExtension: true
-      } satisfies SaveFilesWithoutJsonExtensionResponse);
+      expect(validator.validate).not.toHaveBeenCalledWith('contentA');
     });
   });
 
@@ -319,10 +329,8 @@ describe('MergeSaveFiles', () => {
 
         // Assert
         expect(presenter.presentSaveFilesInvalid).toHaveBeenCalledWith({
-          saveAErrors: [],
-          saveBErrors: [invalidJsonError],
-          saveAWarnings: [{code: 'legacy-save-format'}],
-          saveBWarnings: []
+          saveA: {hasJsonExtension: true, errors: [], warnings: [{code: 'legacy-save-format'}]},
+          saveB: {hasJsonExtension: true, errors: [invalidJsonError], warnings: []}
         } satisfies SaveFilesInvalidResponse);
       });
     });

@@ -176,7 +176,10 @@ describe('MergeResultPresenter', () => {
       const presenter = new MergeResultPresenter();
 
       // Act
-      presenter.presentSaveFilesWithoutJsonExtension({saveAHasJsonExtension: false, saveBHasJsonExtension: true});
+      presenter.presentSaveFilesInvalid({
+        saveA: {hasJsonExtension: false},
+        saveB: {hasJsonExtension: true, errors: noErrorsFromSaveB, warnings: noWarningsFromSaveB}
+      });
 
       // Assert
       expect<MergeResultViewModel>(presenter.viewModel).toEqual({
@@ -202,10 +205,12 @@ describe('MergeResultPresenter', () => {
 
       // Act
       presenter.presentSaveFilesInvalid({
-        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentA'}],
-        saveBErrors: noErrorsFromSaveB,
-        saveAWarnings: noWarningsFromSaveA,
-        saveBWarnings: noWarningsFromSaveB
+        saveA: {
+          hasJsonExtension: true,
+          errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentA'}],
+          warnings: noWarningsFromSaveA
+        },
+        saveB: {hasJsonExtension: true, errors: noErrorsFromSaveB, warnings: noWarningsFromSaveB}
       });
 
       // Assert
@@ -230,10 +235,12 @@ describe('MergeResultPresenter', () => {
 
       // Act
       presenter.presentSaveFilesInvalid({
-        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentA'}],
-        saveBErrors: noErrorsFromSaveB,
-        saveAWarnings: noWarningsFromSaveA,
-        saveBWarnings: [{code: 'legacy-save-format'}]
+        saveA: {
+          hasJsonExtension: true,
+          errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentA'}],
+          warnings: noWarningsFromSaveA
+        },
+        saveB: {hasJsonExtension: true, errors: noErrorsFromSaveB, warnings: [{code: 'legacy-save-format'}]}
       });
 
       // Assert
@@ -249,10 +256,16 @@ describe('MergeResultPresenter', () => {
 
       // Act
       presenter.presentSaveFilesInvalid({
-        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 1, line: '{ broken'}],
-        saveBErrors: [{code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0, fieldPath: '', missingFieldName: 'gId'}],
-        saveAWarnings: noWarningsFromSaveA,
-        saveBWarnings: noWarningsFromSaveB
+        saveA: {
+          hasJsonExtension: true,
+          errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 1, line: '{ broken'}],
+          warnings: noWarningsFromSaveA
+        },
+        saveB: {
+          hasJsonExtension: true,
+          errors: [{code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0, fieldPath: '', missingFieldName: 'gId'}],
+          warnings: noWarningsFromSaveB
+        }
       });
 
       // Assert
