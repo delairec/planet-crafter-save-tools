@@ -1632,23 +1632,30 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 		PR 151
 
 DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
-	SPEC "A task branch runs bun test, bun run lint:types, bun run guards, bun run audit:quality,"
-		+ "awawa fmt --check . and awawa lint --strict . green before its pull request is opened or"
-		+ "updated"
-		IMPL "agents/worktree.md::- `bun run audit:quality`"
+	SPEC "A task branch runs bun test, bun run lint:types, bun run guards, awawa fmt --check . and"
+		+ "awawa lint --strict . green before its pull request is opened or updated"
+		IMPL "agents/worktree.md::- `bun run guards`"
+	SPEC "bun run audit:quality and bun run test:ui are not run locally: the fallow and scenarios"
+		+ "jobs of the pull request are read green before it is reported ready"
+		IMPL "agents/worktree.md::ne se lancent pas en local"
 	SPEC "A wave launch prompt quotes the acceptance list of agents/worktree.md rather than a list"
 		+ "of its own"
 		IMPL "agents/worktree.md::C'est cette liste que cite le prompt de lancement d'une vague"
-	REJECTED "An acceptance list held by the wave launch prompt: it omitted bun run audit:quality"
-		+ "and drifted unreported"
-	REJECTED "bun run guards as the whole local gate: the fallow audit it leaves out is a CI job of"
-		+ "its own"
+	REJECTED "An acceptance list held by the wave launch prompt: it omitted the fallow audit and"
+		+ "drifted unreported"
+	REJECTED "bun run audit:quality in the local acceptance list: the fallow audit it chains risks"
+		+ "stopping the session by a memory shortage on the owner's machine"
 	RATIONALE "Two of the three pull requests of the wave of 2026-09-18 arrived red on the fallow"
-		+ "CI job, the acceptance list of their prompt lacking bun run audit:quality"
+		+ "CI job, the acceptance list of their prompt lacking the fallow audit; reading the job"
+		+ "green before the pull request is reported ready closes that gap without running the"
+		+ "audit on the owner's machine"
 	SOURCE "Usage report of pull requests 101, 102 and 103, remediation 1"
 		REF @USAGE_REPORT.PR101_102_103
 	SOURCE "Ruled in the pull request that delivers the task"
 		PR 128
+	SOURCE "Owner ruling of 2026-09-30 while TEST91 was delivered: the UI tests and fallow are left"
+		+ "to the CI, the general rule going to the instructions corpus"
+		PR 237
 
 DECISION ACallerReachesASaveSectionThroughASharedFunction
 	REJECTED "A read-only accessor plus a caller-side split/join to write a section back: every"
