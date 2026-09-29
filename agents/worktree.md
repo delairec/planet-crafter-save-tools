@@ -16,10 +16,12 @@ que rien ne rappelle et dont l'oubli ne produit aucune erreur, seulement un verd
    - `bun test`
    - `bun run lint:types`
    - `bun run guards`
-   - `bun run audit:quality` — la porte qualité entière, dont l'audit `fallow` que le job du même nom rejoue en CI ;
-     `guards` seul n'en est que la moitié rapide
    - `awawa fmt --check .`
    - `awawa lint --strict .`
+
+   `bun run audit:quality` et `bun run test:ui` ne se lancent pas en local
+   (@RULE.heavy_tests_not_run_locally de `~/.ai`) : leur résultat se lit sur les jobs `fallow` et `scenarios` de la
+   pull request, verts avant qu'elle soit signalée prête.
 
    C'est cette liste que cite le prompt de lancement d'une vague
    (@DECISION.ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions).

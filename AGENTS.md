@@ -80,8 +80,8 @@ Depuis la racine du dépôt (workspace Bun) :
 - `bun merge` — lance `cli-merge` (traite `input/` vers `output/`, surchargeables via `--input=`/`--output=`).
 - `bun validate -- --file=<chemin>` — lance `cli-validate` sur une save.
 - `bun run node:merge` / `bun run node:validate -- --file=<chemin>` — les mêmes outils sous Node au lieu de Bun.
-- `bun run audit:quality` — `guards` puis `fallow audit` et `fallow health` (porte qualité entière, pour une
-  copie de travail). La CI couvre le même terrain en deux jobs plutôt qu'en une commande : `guards` lance
+- `bun run audit:quality` — `guards` puis `fallow audit` et `fallow health` (porte qualité entière, qu'une
+  session d'agent ne lance pas en local : @RULE.heavy_tests_not_run_locally de `~/.ai`). La CI couvre le même terrain en deux jobs plutôt qu'en une commande : `guards` lance
   `bun run guards`, `fallow` lance l'audit et le rapport de santé via l'action, qui les cadre sur la base de la pull
   request et les rend dans le résumé du run. Ne pas rebrancher `audit:quality` tel quel dans un job : ses scripts
   fallow passent `--base master`, et un `actions/checkout` ne laisse que des références de suivi — mesuré,
