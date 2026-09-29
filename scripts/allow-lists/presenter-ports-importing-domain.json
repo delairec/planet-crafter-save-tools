@@ -1,4 +1,3 @@
 [
-  "packages/core-mapping/src/application/ports/EnergyLevelsPresenterPort.ts",
-  "packages/core-mapping/src/application/ports/TerraformationLevelsPresenterPort.ts"
+  "packages/core-mapping/src/application/ports/EnergyLevelsPresenterPort.ts"
 ]
