@@ -1187,16 +1187,23 @@ TASK REFACTOR160
 TASK REFACTOR161
 	TITLE "refactor(core-mapping): read the save sections through a port, the composition root only"
 		+ "instantiating"
-	STATUS draft
+	STATUS todo
 	SPEC "the composition root of core-mapping instantiates and wires, and parses no save content"
-	SPEC "the sections of a save come from a reader port or a loading use case that returns the"
-		+ "parse errors with them; no error of the parser is dropped on the way to a presenter"
+	SPEC "the sections of a save reach a use case through a reader port the use case calls with the"
+		+ "content it is given, never through a reader the composition root built from parsed"
+		+ "content"
+	SPEC "every use case that reads the sections of a save hands the parse errors the reader"
+		+ "reports to its presenter through an outcome of its own, whether or not validation"
+		+ "refused the save first; no error of the parser is dropped on the way to a presenter"
+	SPEC "that ruling is recorded as a DECISION applying to the task, its rejected alternative"
+		+ "being to rely on validation having refused every unreadable save"
 	SPEC "no application port returns a bag cut for one use case: getEnergyLevelsRawData and"
 		+ "EnergyLevelsRawDataValueObject are gone, and the energy use case assembles its data from"
 		+ "port methods of one concept each"
-	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place or archived, its rejection of"
-		+ "assembling in presentation dropped; a departure from an instructions rule the rewritten"
-		+ "decision keeps is named in its DEROGATES"
+	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place: it keeps the grid built once per"
+		+ "planet, drops its rejection of assembling in presentation, and its anchors name the code"
+		+ "as the task leaves it"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
 	AFTER @TASK.REFACTOR159
@@ -1204,8 +1211,29 @@ TASK REFACTOR161
 	PRIORITY critical
 	DESC "fixes violations 4 and 8 of the audit"
 	RATIONALE "The reader port of violation 4 is where the per-concept methods of violation 8 are"
-		+ "declared, so the two are one change of the same port"
+		+ "declared, so the two are one change of the same port. The instructions rule"
+		+ "port_owned_by_application settles the shape: a port holding state is obtained through a"
+		+ "call the use case makes, never built by the composition root from parsed input, so the"
+		+ "six section use cases receive the content in their request and read it through the port."
+		+ "Validation turns every line the parser cannot read into an issue, so a validated content"
+		+ "carries no parse error today; the use cases still report one through an outcome rather"
+		+ "than trusting that guarantee, so that a defect introduced in validation is caught by the"
+		+ "reading flow instead of showing a partial save as whole, and so that the case can be"
+		+ "exercised with a test double. The concepts the energy use case assembles are the placed"
+		+ "world objects by planet, every world object and the inventories; the declared version"
+		+ "and the power consumption modifier already have a method each. The planet name stays"
+		+ "resolved by the adapter behind the per-planet method until the domain rules task moves"
+		+ "the call into the use case. Parsing once per loaded save instead of once per view would"
+		+ "need a store of the loaded save on the UI side and is not in scope. No instructions rule"
+		+ "concerns an aggregate, so the rewritten decision departs from none. The decision on"
+		+ "parse errors is written at delivery, its anchors naming code that does not exist yet"
 		REF @DECISION.APlanetEnergyGridIsAnAggregate
+		REF @TASK.REFACTOR160
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: a use case reading a save defends"
+		+ "itself against an unreadable one through an outcome, whether or not validation ran"
+		+ "first; the aggregate decision is rewritten in place"
 
 TASK REFACTOR162
 	TITLE "refactor(core-mapping): decode the save format before it reaches the domain"
