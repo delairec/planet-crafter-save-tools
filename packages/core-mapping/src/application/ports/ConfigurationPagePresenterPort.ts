@@ -1,8 +1,8 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "./SaveSectionLocation";
 import {ConfigurationPageResponse} from "../responses/ConfigurationPageResponse";
 
 export interface ConfigurationPagePresenterPort {
   displayConfigurationPage(configurationPage: ConfigurationPageResponse): void;
 
-  displaySaveWithUnreadableLines(unreadableLines: SaveParseError[]): void;
+  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void;
 }

@@ -1,6 +1,7 @@
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSucceededResponse} from "../application/responses/MergeSucceededResponse";
 import {SaveFilesInvalidResponse} from "../application/responses/SaveFilesInvalidResponse";
+import {SaveFileFindings} from "../application/responses/SaveFileFindings";
 import {SaveFilesWithoutUniqueHostResponse} from "../application/responses/SaveFilesWithoutUniqueHostResponse";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
@@ -8,6 +9,7 @@ import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
 import {formatMergeWarning} from "./formatMergeWarning";
 import {formatUniqueHostError} from "./formatUniqueHostError";
+import {formatJsonExtensionError} from "./formatJsonExtensionError";
 import {mergedSaveUnusableMessage} from "./messages/mergeFailureMessages.js";
 
 export class MergeResultPresenter implements MergeResultPresenterPort {
@@ -49,7 +51,7 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
     };
   }
 
-  presentSaveFilesInvalid({saveAErrors, saveBErrors, saveAWarnings, saveBWarnings}: SaveFilesInvalidResponse): void {
+  presentSaveFilesInvalid({saveA, saveB}: SaveFilesInvalidResponse): void {
     this._viewModel = {
       status: 'validationError',
       fileName: '',
@@ -58,10 +60,10 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
       mergeErrors: [],
       mergeWarnings: [],
       legacyFormatCouldBeKept: false,
-      saveAErrors: saveAErrors.map(formatValidationError),
-      saveBErrors: saveBErrors.map(formatValidationError),
-      saveAWarnings: saveAWarnings.map(formatSaveWarning),
-      saveBWarnings: saveBWarnings.map(formatSaveWarning)
+      saveAErrors: formatFindingErrors(saveA),
+      saveBErrors: formatFindingErrors(saveB),
+      saveAWarnings: formatFindingWarnings(saveA),
+      saveBWarnings: formatFindingWarnings(saveB)
     };
   }
 
@@ -100,4 +102,12 @@ export class MergeResultPresenter implements MergeResultPresenterPort {
 
 function formatWrongHostCount(wrongHostCount: number | undefined): SaveValidationMessageViewModel[] {
   return wrongHostCount === undefined ? [] : [formatUniqueHostError(wrongHostCount)];
+}
+
+function formatFindingErrors(findings: SaveFileFindings): SaveValidationMessageViewModel[] {
+  return findings.hasJsonExtension ? findings.errors.map(formatValidationError) : [formatJsonExtensionError()];
+}
+
+function formatFindingWarnings(findings: SaveFileFindings): SaveValidationMessageViewModel[] {
+  return findings.hasJsonExtension ? findings.warnings.map(formatSaveWarning) : [];
 }

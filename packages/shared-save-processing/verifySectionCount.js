@@ -1,10 +1,11 @@
-/** @import { SaveParseError } from './gameDefinitions' */
+/** @import { UnexpectedSectionCount } from './gameDefinitions' */
 
 import {listSplitPartsCounts} from './gameReleases.js';
+import {SAVE_PARSE_ERROR_CODES} from './saveParseErrorCodes.js';
 
 /**
  * @param {string[]} rawParts - result of `save.split('@')`
- * @returns {SaveParseError[]}
+ * @returns {UnexpectedSectionCount[]}
  */
 export function verifySectionCount(rawParts) {
   const splitPartsCounts = listSplitPartsCounts();
@@ -13,5 +14,9 @@ export function verifySectionCount(rawParts) {
     return [];
   }
 
-  return [{detail: `Expected ${splitPartsCounts.join(' or ')} sections but found ${rawParts.length}`}];
+  return [{
+    code: SAVE_PARSE_ERROR_CODES.UNEXPECTED_SECTION_COUNT,
+    foundSectionCount: rawParts.length,
+    expectedSectionCounts: splitPartsCounts
+  }];
 }

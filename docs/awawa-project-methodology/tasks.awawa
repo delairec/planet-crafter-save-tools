@@ -1156,8 +1156,8 @@ TASK REFACTOR160
 	SPEC "SaveValidatorPort reports technical failures only: a save designating no host or more"
 		+ "than one reaches its presenter through an outcome of its own, in every flow that"
 		+ "validates, loads or merges it, never as a ValidationIssue coded UNIQUE_HOST"
-		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::FLOAT_SERIALIZATION:"
-			+ "'float-serialization'"
+		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::export type"
+			+ "ValidationIssue"
 		IMPL "packages/core-mapping/src/application/ports/SaveFileValidationPresenterPort.ts::presentSaveFileWithoutUniqueHost"
 		IMPL "packages/core-mapping/src/application/ports/LoadAndValidateSaveFilePresenterPort.ts::presentSaveFileWithoutUniqueHost"
 		IMPL "packages/core-mapping/src/application/ports/MergeResultPresenterPort.ts::presentSaveFilesWithoutUniqueHost"
@@ -1447,29 +1447,47 @@ TASK REFACTOR163
 TASK REFACTOR164
 	TITLE "refactor(core-mapping): carry validation issues as codes, their sentences built in"
 		+ "presentation"
-	STATUS todo
+	STATUS implemented
 	SPEC "a ValidationIssue of core-mapping and a SaveParseError of shared-save-processing carry a"
 		+ "code and its data and no sentence; every sentence shown about a validation issue or an"
 		+ "unreadable line is built under presentation/messages of core-mapping and reads as it"
 		+ "does today"
+		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::export type"
+			+ "ValidationIssue"
+		IMPL "packages/shared-save-processing/gameDefinitions/SaveParseError.ts::export type"
+			+ "SaveParseError"
+		IMPL "packages/core-mapping/src/presentation/messages/validationIssueMessages.js"
 	SPEC "no sentence shown to the user is built in the infrastructure of core-mapping nor in"
 		+ "shared-save-processing, verifySectionCount, parseSaveSections and the entry count, float"
-		+ "serialization and file extension checks included; the message of the schema validator"
-		+ "crosses as data of the issue, with the path of the field, and is not rewritten"
-		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
+		+ "serialization and file extension checks included; a broken constraint of a section"
+		+ "schema crosses as an issue of its own, carrying the path of the field and the data of"
+		+ "the constraint, never the text of the schema validator"
+		IMPL "packages/core-mapping/src/infrastructure/mapSchemaErrorToValidationIssue.ts::export"
+			+ "function mapSchemaErrorToValidationIssue"
+		IMPL "packages/shared-save-processing/verifySectionCount.js::SAVE_PARSE_ERROR_CODES.UNEXPECTED_SECTION_COUNT"
+		IMPL "packages/core-mapping/src/infrastructure/validateFloatSerialization.ts"
+		REF @DECISION.EachBrokenSchemaConstraintIsAValidationIssueOfItsOwn
 	SPEC "an issue located in the save carries the name and the index of its section, both resolved"
 		+ "by the infrastructure, and no longer the format release; no module under presentation/"
 		+ "of core-mapping imports the section indexes of the save format, spec files excepted, and"
 		+ "the location shown reads as it does today"
+		IMPL "packages/core-mapping/src/infrastructure/locateSaveSection.ts::export function"
+			+ "locateSaveSection"
+		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.ts::saveSectionLabels[name]"
 	SPEC "ALocationIsABusinessLabelFollowedByTheIndex and UserTextLivesInCoreMappingPresentation"
 		+ "are rewritten in place: the first builds the location from the name and the index the"
 		+ "issue carries and drops its fallback on a bare index, the second names the validation"
 		+ "issues and the unreadable lines among the codes it turns into sentences, and their"
 		+ "anchors name the code as the task leaves it"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::ALocationIsABusinessLabelFollowedByTheIndex"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::UserTextLivesInCoreMappingPresentation"
 		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
 		REF @DECISION.UserTextLivesInCoreMappingPresentation
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts"
 	AFTER @TASK.REFACTOR160
 	WAVE @WAVE.14
 	PRIORITY high
@@ -1483,24 +1501,27 @@ TASK REFACTOR164
 		+ "one code per sentence, so the structure code that carries two sentences today splits,"
 		+ "and shared-save-processing declares the codes of its parse errors as it declares those"
 		+ "of its warnings; the text of every sentence is kept, so the CLI specs and the UI"
-		+ "scenarios pin the refactoring. The owner ruled that the message of the schema validator"
-		+ "is not rewritten: one sentence per constraint of the schemas would be authored for"
-		+ "nothing while the tool speaks one language, so the issue carries the path and the"
-		+ "message as data and the presentation composes the line; a code per constraint comes with"
-		+ "translation, if it comes. The section index stays in the issue beside the name because"
-		+ "the location shows both, the decision on locations having refused the label alone; the"
-		+ "format release leaves the issue, the name being what it served to resolve. The fallback"
-		+ "on a bare index has no case left: the section count is checked before any located issue"
-		+ "exists, so every located issue belongs to a known format and its name resolves. The task"
-		+ "follows the domain rules task, which changes the issues the validator port reports"
+		+ "scenarios pin the refactoring. The text of the schema validator says how a violation was"
+		+ "detected, not what is invalid, so each constraint the section validators report is an"
+		+ "issue of its own and the presentation words it as the validator did. The section index"
+		+ "stays in the issue beside the name because the location shows both, the decision on"
+		+ "locations having refused the label alone; the format release leaves the issue, the name"
+		+ "being what it served to resolve. The fallback on a bare index has no case left: the"
+		+ "section count is checked before any located issue exists, so every located issue belongs"
+		+ "to a known format and its name resolves. The task follows the domain rules task, which"
+		+ "changes the issues the validator port reports"
 		REF @TASK.REFACTOR160
-		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
+		REF @DECISION.EachBrokenSchemaConstraintIsAValidationIssueOfItsOwn
 		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
-	SOURCE "Owner ruling during the refinement of the task: the message of the schema validator is"
-		+ "carried as data and not rewritten, a located issue carries the name and the index of its"
-		+ "section, and the two decisions on user text and on locations are rewritten in place"
+	SOURCE "Owner ruling during the refinement of the task: a located issue carries the name and"
+		+ "the index of its section, and the two decisions on user text and on locations are"
+		+ "rewritten in place"
+	SOURCE "Owner ruling in the review: a broken schema constraint is an issue of its own, the text"
+		+ "of the schema validator not carried"
+		PR 234
+	DELIVERED_BY 234
 
 TASK REFACTOR165
 	TITLE "refactor(core-mapping): let the merge rule return the warnings of the merged save"
@@ -1768,6 +1789,14 @@ TASK REFACTOR170
 		+ "imports another workspace package, import type and JSDoc @import included: every"
 		+ "application port declares the types it exchanges, and the infrastructure adapter maps"
 		+ "the records of shared-save-processing onto them"
+	SPEC "the validation issues, the section location and the unreadable line of core-mapping are"
+		+ "domain types under domain/, each named in business terms and stating what is invalid in"
+		+ "the save by a code and its data; the infrastructure maps what it detects onto them, and"
+		+ "application/ports/validationIssues no longer exists"
+		REF @DECISION.EachValidationIssueIsANamedInterfaceInItsOwnFile
+	SPEC "a presenter receives the validation issues and the unreadable lines inside an application"
+		+ "response its use case builds, which holds them as domain value objects; no presenter"
+		+ "port imports from domain/"
 	SPEC "the guard REFACTOR163 adds refuses any import of another workspace package, a type"
 		+ "included, from a file of a core- package outside infrastructure/, spec files and"
 		+ "testing/ included, and carries no allow-list; no other guard states the refusal"
@@ -1803,7 +1832,12 @@ TASK REFACTOR170
 		+ "double of its use case factory and needs no save content from"
 		+ "shared-save-processing/testing. It precedes REFACTOR165, which then carries the merge"
 		+ "warning of the domain in MergeSucceededResponse, and through it DOCS167. It carries high"
-		+ "rather than critical because no domain type crosses"
+		+ "rather than critical because no domain type crosses. The review of PR 234 ruled that the"
+		+ "domain says what is invalid in a save and the infrastructure how it is detected, so the"
+		+ "validation issues belong in domain/; they cross presenter ports, which import nothing"
+		+ "from domain/, so they move with the responses this task introduces, REFACTOR164 leaving"
+		+ "them in application/ports meanwhile"
+		REF @DECISION.EachValidationIssueIsANamedInterfaceInItsOwnFile
 		REF @TASK.CHORE157
 		REF @TASK.REFACTOR161
 		REF @TASK.REFACTOR162
@@ -1820,3 +1854,7 @@ TASK REFACTOR170
 		+ "reaches core-mapping by any door but the infrastructure, spec files and testing/"
 		+ "included, one guard enforcing it, the task following REFACTOR166 and preceding"
 		+ "REFACTOR165"
+	SOURCE "Owner ruling in the review of REFACTOR164: the validation issues and the section"
+		+ "location move into domain/ in this task, with the responses the presenter ports take,"
+		+ "rather than in the pull request of REFACTOR164"
+		PR 234

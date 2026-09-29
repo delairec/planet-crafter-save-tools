@@ -1,7 +1,8 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatErrorLocation} from "./formatErrorLocation";
+import {formatUnreadableLineMessage} from "./messages/validationIssueMessages.js";
 
-export function formatUnreadableLine(unreadableLine: SaveParseError): SaveValidationMessageViewModel {
-  return {message: unreadableLine.detail, location: formatErrorLocation(unreadableLine)};
+export function formatUnreadableLine(unreadableLine: UnreadableLine): SaveValidationMessageViewModel {
+  return {message: formatUnreadableLineMessage(unreadableLine), location: formatErrorLocation(unreadableLine)};
 }

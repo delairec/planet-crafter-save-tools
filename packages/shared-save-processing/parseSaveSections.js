@@ -1,7 +1,6 @@
 /// <reference path="./jsonSourceTextAccess.d.ts" />
-/** @import { ParsedSave, SaveParseError, SaveWarning } from './gameDefinitions' */
+/** @import { ParsedSave, SaveWarning, UnreadableSaveLine } from './gameDefinitions' */
 
-import {verifySectionCount} from './verifySectionCount.js';
 import {
   LEGACY_SPLIT_PARTS_COUNT,
   PLAYERS_SECTION_INDEX,
@@ -10,10 +9,8 @@ import {
 } from './sectionIndexes.js';
 import {findCarriedRelease, verifyDeclaredGameRelease} from './gameReleases.js';
 import {SAVE_WARNING_CODES} from './saveWarningCodes.js';
+import {SAVE_PARSE_ERROR_CODES} from './saveParseErrorCodes.js';
 import {keepInt64IdentifierText} from './int64Identifiers.js';
-
-/** Head of the offending line, enough to recognise it without printing a whole entry. */
-const REPORTED_LINE_LENGTH = 60;
 
 /**
  * Parses a Planet Crafter save string into every part the file carries: the eleven parts of the
@@ -36,9 +33,10 @@ export function parseSaveSections(save) {
   const rawSections = save.split('@');
 
   const formatRelease = findCarriedRelease(rawSections.length);
-  const errors = verifySectionCount(rawSections);
+  /** @type {UnreadableSaveLine[]} */
+  const errors = [];
   const sections = rawSections.map((section, sectionIndex) => {
-    const sectionReading = {section, sectionIndex, formatRelease, errors};
+    const sectionReading = {section, sectionIndex, errors};
 
     if (isWorldObjectsSection(sectionIndex)) {
       return () => createSectionEntriesGenerator(sectionReading);
@@ -119,8 +117,7 @@ function splitSectionLines(section) {
  * @typedef {object} SectionReading
  * @property {string} section
  * @property {number} sectionIndex
- * @property {string | undefined} formatRelease
- * @property {SaveParseError[]} errors - shared with the `ParsedSave` returned by `parseSaveSections`;
+ * @property {UnreadableSaveLine[]} errors - shared with the `ParsedSave` returned by `parseSaveSections`;
  * an unreadable line of the world objects section is only discovered once this generator is
  * iterated, so errors are pushed here rather than returned.
  */
@@ -129,19 +126,14 @@ function splitSectionLines(section) {
  * @param {SectionReading} sectionReading
  * @returns {Generator<unknown>}
  */
-function* createSectionEntriesGenerator({section, sectionIndex, formatRelease, errors}) {
+function* createSectionEntriesGenerator({section, sectionIndex, errors}) {
   for (const [entryIndex, line] of splitSectionLines(section).entries()) {
     let entry;
 
     try {
       entry = parseEntry(line, sectionIndex);
     } catch {
-      errors.push({
-        detail: `Invalid JSON: ${line.slice(0, REPORTED_LINE_LENGTH)}`,
-        section: sectionIndex,
-        formatRelease,
-        entryIndex
-      });
+      errors.push({code: SAVE_PARSE_ERROR_CODES.UNREADABLE_LINE, sectionIndex, entryIndex, line});
       continue;
     }
 

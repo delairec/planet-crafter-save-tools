@@ -1,13 +1,15 @@
 /**
  * @import { ParsedSections } from 'shared-save-processing/gameDefinitions'
  * @import { ValidationIssue } from '../application/ports/ValidationIssue.ts'
+ * @import { SectionEntrySchemaError } from './mapSchemaErrorToValidationIssue.ts'
  */
 
 import saveFileSchema from 'shared-save-processing/schemas/save-file.schema.json' with {type: 'json'};
 import legacySaveFileSchema from 'shared-save-processing/schemas/legacy-save-file.schema.json' with {type: 'json'};
 import {findSplitPartsCount, UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
+import {locateSaveSection} from './locateSaveSection.ts';
+import {mapSchemaErrorToValidationIssue} from './mapSchemaErrorToValidationIssue.ts';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
 import {SECTION_VALIDATORS_BY_SCHEMA_ID} from './sectionValidators.generated.js';
 
@@ -24,12 +26,6 @@ import {SECTION_VALIDATORS_BY_SCHEMA_ID} from './sectionValidators.generated.js'
  */
 
 const SAVE_FILE_SCHEMAS = /** @type {SaveFileSchema[]} */ ([saveFileSchema, legacySaveFileSchema]);
-
-/**
- * @typedef {object} SectionEntrySchemaError
- * @property {string} instancePath
- * @property {string} [message]
- */
 
 /**
  * @typedef {((entry: unknown) => boolean) & {errors?: SectionEntrySchemaError[] | null}} SectionEntryValidator
@@ -71,7 +67,7 @@ function getSectionValidator(formatRelease, sectionIndex) {
 
 /**
  * @param {ParsedSections | unknown[][]} parsedSections
- * @param {string | undefined} formatRelease
+ * @param {string} formatRelease
  * @returns {ValidationIssue[]}
  * @throws {UnexpectedSaveSectionError} when a section that should hold a list of entries does not.
  * The reader of the format guarantees it does, so this is a broken invariant of ours and never a
@@ -103,24 +99,19 @@ export function validateSchemas(parsedSections, formatRelease) {
 }
 
 /**
- * @param {string | undefined} formatRelease
+ * @param {string} formatRelease
  * @param {number} sectionIndex
  * @returns {(entry: unknown, entryIndex: number) => ValidationIssue[]}
  */
 export function createSectionEntryValidator(formatRelease, sectionIndex) {
   const validate = getSectionValidator(formatRelease, sectionIndex);
+  const section = locateSaveSection(sectionIndex, formatRelease);
 
   return (entry, entryIndex) => {
     if (validate(entry)) {
       return [];
     }
 
-    return (validate.errors ?? []).map(schemaError => ({
-      code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
-      detail: `${schemaError.instancePath} ${schemaError.message}`.trim(),
-      section: sectionIndex,
-      entryIndex,
-      formatRelease
-    }));
+    return (validate.errors ?? []).map(schemaError => mapSchemaErrorToValidationIssue(schemaError, section, entryIndex));
   };
 }

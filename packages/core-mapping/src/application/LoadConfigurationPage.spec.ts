@@ -1,4 +1,4 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "./ports/SaveSectionLocation";
 import {describe, expect, it, mock} from 'bun:test';
 import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
@@ -98,7 +98,7 @@ describe('LoadConfigurationPage', () => {
   describe('When the save has unreadable lines', () => {
     it('should display the unreadable lines instead of the configuration page', async () => {
       // Arrange
-      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
       const useCase = createUseCase(stubSaveSectionsReader({unreadableLines}), presenter);
 
@@ -106,7 +106,7 @@ describe('LoadConfigurationPage', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}]);
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]);
       expect(presenter.displayConfigurationPage).not.toHaveBeenCalled();
     });
   });

@@ -1,11 +1,13 @@
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveParseError, SaveWarning} from "shared-save-processing/gameDefinitions";
+import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {SaveFileValidationViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
 import {formatUnreadableLine} from "./formatUnreadableLine";
 import {formatUniqueHostError} from "./formatUniqueHostError";
+import {formatJsonExtensionError} from "./formatJsonExtensionError";
 
 export class SaveFileValidationPresenter implements SaveFileValidationPresenterPort {
   private _viewModel: SaveFileValidationViewModel;
@@ -30,7 +32,11 @@ export class SaveFileValidationPresenter implements SaveFileValidationPresenterP
     };
   }
 
-  presentSaveFileWithUnreadableLines(unreadableLines: SaveParseError[], warnings: SaveWarning[]): void {
+  presentFileWithoutJsonExtension(): void {
+    this._viewModel = {status: 'invalid', errors: [formatJsonExtensionError()], warnings: []};
+  }
+
+  presentSaveFileWithUnreadableLines(unreadableLines: UnreadableLine[], warnings: SaveWarning[]): void {
     this._viewModel = {
       status: 'invalid',
       errors: unreadableLines.map(formatUnreadableLine),

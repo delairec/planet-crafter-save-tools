@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveFileValidationPresenter} from './SaveFileValidationPresenter';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
+import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes';
 import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {GLOBAL_METADATA_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {SaveFileValidationViewModel, SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
@@ -36,18 +36,35 @@ describe('SaveFileValidationPresenter', () => {
     });
   });
 
+  describe('When presenting a file without a JSON extension', () => {
+    it('should update the view model with the invalid status and the extension error', () => {
+      // Arrange
+      const presenter = new SaveFileValidationPresenter();
+
+      // Act
+      presenter.presentFileWithoutJsonExtension();
+
+      // Assert
+      expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({
+        status: 'invalid',
+        errors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
+        warnings: []
+      });
+    });
+  });
+
   describe('When presenting an invalid save file', () => {
     it('should update the view model with the invalid status and the formatted errors', () => {
       // Arrange
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'}], noWarnings);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.UNEXPECTED_SECTION_COUNT, foundSectionCount: 3, expectedSectionCounts: [11, 12]}], noWarnings);
 
       // Assert
       expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({
         status: 'invalid',
-        errors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
+        errors: [{message: 'Expected 11 or 12 sections but found 3', location: null}],
         warnings: []
       });
     });
@@ -57,7 +74,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {', section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 3, formatRelease: '2.004'}], noWarnings);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 3, line: '{'}], noWarnings);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Global metadata (section 0), entry 3'}]);
@@ -68,7 +85,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}], [{code: 'legacy-save-format'}]);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 3, line: '{'}], [{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -84,7 +101,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentSaveFileWithUnreadableLines([{detail: 'Invalid JSON: {', section: GLOBAL_METADATA_SECTION_INDEX, formatRelease: '2.004', entryIndex: 0}], noWarnings);
+      presenter.presentSaveFileWithUnreadableLines([{section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0, line: '{'}], noWarnings);
 
       // Assert
       expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({

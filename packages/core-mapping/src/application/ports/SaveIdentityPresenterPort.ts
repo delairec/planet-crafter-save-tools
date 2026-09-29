@@ -1,4 +1,4 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "./SaveSectionLocation";
 import {SaveIdentityResponse} from "../responses/SaveIdentityResponse";
 
 export interface SaveIdentityPresenterPort {
@@ -6,5 +6,5 @@ export interface SaveIdentityPresenterPort {
 
   displayUnconfiguredSaveIdentity(fileName: string): void;
 
-  displaySaveWithUnreadableLines(fileName: string, unreadableLines: SaveParseError[]): void;
+  displaySaveWithUnreadableLines(fileName: string, unreadableLines: UnreadableLine[]): void;
 }

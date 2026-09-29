@@ -6,6 +6,8 @@ import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
 import {MergeWarning} from "./responses/MergeWarning";
+import {SaveFileFindings} from "./responses/SaveFileFindings";
+import {SaveValidationResult} from "./ports/SaveValidationResult";
 import {nameMergedFile} from "./nameMergedFile";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
@@ -22,16 +24,11 @@ export class MergeSaveFiles {
   ) {}
 
   async execute({fileNameA, contentA, fileNameB, contentB, saveDisplayName, preferLegacyFormat = false}: MergeSaveFilesRequest): Promise<void> {
-    const validationA = this.validator.validate(fileNameA, contentA);
-    const validationB = this.validator.validate(fileNameB, contentB);
+    const validationA = this.validateSaveFile(fileNameA, contentA);
+    const validationB = this.validateSaveFile(fileNameB, contentB);
 
-    if (!validationA.isValid || !validationB.isValid) {
-      this.presenter.presentSaveFilesInvalid({
-        saveAErrors: validationA.errors,
-        saveBErrors: validationB.errors,
-        saveAWarnings: validationA.warnings,
-        saveBWarnings: validationB.warnings
-      });
+    if (!isMergeable(validationA) || !isMergeable(validationB)) {
+      this.presenter.presentSaveFilesInvalid({saveA: reportFindings(validationA), saveB: reportFindings(validationB)});
       return;
     }
 
@@ -57,7 +54,7 @@ export class MergeSaveFiles {
     const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, {saveDisplayName: saveDisplayName ?? stem, preferLegacyFormat}));
     const content = this.serializer.serialize(mergedSave);
 
-    const mergedSaveValidation = this.validator.validate(fileName, content);
+    const mergedSaveValidation = this.validator.validate(content);
 
     this.presenter.presentMergeSucceeded({
       fileName,
@@ -69,6 +66,30 @@ export class MergeSaveFiles {
       saveBWarnings: validationB.warnings
     });
   }
+
+  private validateSaveFile(fileName: string, content: string): SaveFileValidation {
+    if (!this.validator.hasJsonExtension(fileName)) {
+      return {hasJsonExtension: false};
+    }
+
+    return {hasJsonExtension: true, ...this.validator.validate(content)};
+  }
+}
+
+type ValidatedSaveFile = {hasJsonExtension: true} & SaveValidationResult;
+
+type SaveFileValidation = {hasJsonExtension: false} | ValidatedSaveFile;
+
+function isMergeable(validation: SaveFileValidation): validation is ValidatedSaveFile {
+  return validation.hasJsonExtension && validation.isValid;
+}
+
+function reportFindings(validation: SaveFileValidation): SaveFileFindings {
+  if (!validation.hasJsonExtension) {
+    return {hasJsonExtension: false};
+  }
+
+  return {hasJsonExtension: true, errors: validation.errors, warnings: validation.warnings};
 }
 
 interface WrongHostCounts {

@@ -1,5 +1,5 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {TerraformationLevelsViewModel} from "./viewModels/TerraformationLevelsViewModel";
 import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
 import {TerraformationLevelsPresenterPort} from "../application/ports/TerraformationLevelsPresenterPort";
@@ -119,7 +119,7 @@ export class TerraformationLevelsPresenter implements TerraformationLevelsPresen
     };
   }
 
-  displaySaveWithUnreadableLines(unreadableLines: SaveParseError[]): void {
+  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void {
     this._viewModel = {planets: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

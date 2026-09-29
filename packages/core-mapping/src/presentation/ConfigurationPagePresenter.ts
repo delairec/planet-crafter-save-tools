@@ -1,5 +1,5 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {ConfigurationPagePresenterPort} from "../application/ports/ConfigurationPagePresenterPort";
 import {AssessedSaveConfigurationResponse, ConfigurationPageResponse} from "../application/responses/ConfigurationPageResponse";
 import {DifficultyModifierEffect} from "../domain/rules/assessDifficultyModifiers";
@@ -75,7 +75,7 @@ export class ConfigurationPagePresenter implements ConfigurationPagePresenterPor
     };
   }
 
-  displaySaveWithUnreadableLines(unreadableLines: SaveParseError[]): void {
+  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void {
     this._viewModel = {progression: {fields: []}, unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

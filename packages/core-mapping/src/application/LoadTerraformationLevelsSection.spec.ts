@@ -1,4 +1,4 @@
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "./ports/SaveSectionLocation";
 import {describe, expect, it, mock} from 'bun:test';
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {LoadTerraformationLevelsSection} from './LoadTerraformationLevelsSection';
@@ -38,7 +38,7 @@ describe('LoadTerraformationLevelsSection', () => {
   describe('When the save has unreadable lines', () => {
     it('should display the unreadable lines instead of the terraformation levels', async () => {
       // Arrange
-      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
       const useCase = new LoadTerraformationLevelsSection(stubSaveSectionsReader({unreadableLines}), presenter);
 
@@ -46,7 +46,7 @@ describe('LoadTerraformationLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}]);
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]);
       expect(presenter.displayTerraformationLevels).not.toHaveBeenCalled();
     });
   });

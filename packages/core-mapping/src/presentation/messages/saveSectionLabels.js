@@ -1,4 +1,4 @@
-/** @import { SaveSectionName } from 'shared-save-processing/gameDefinitions' */
+/** @import { SaveSectionName } from '../../application/ports/SaveSectionLocation' */
 
 /** @type {Record<SaveSectionName, string>} */
 export const saveSectionLabels = {
