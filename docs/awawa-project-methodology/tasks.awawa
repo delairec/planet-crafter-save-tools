@@ -1265,3 +1265,28 @@ TASK REFACTOR166
 	RATIONALE "Violation 15 is one stale comment, too small for a pull request of its own; the task"
 		+ "follows the composition root, which it extends with the factories"
 		REF @DECISION.AControllerSpecCoversWiringNotBranches
+
+TASK DOCS167
+	TITLE "docs(tasks): rewrite the tasks of the other waves to the boundaries wave 14 sets"
+	STATUS todo
+	SPEC "every draft or todo task of a wave other than 14 is reread against core-mapping as wave"
+		+ "14 leaves it, and rewritten where its TITLE, SPEC, RATIONALE or DESC names a module, a"
+		+ "type, a port, a presenter outcome or a decision that wave 14 removed, renamed or"
+		+ "archived"
+	SPEC "a rewritten task hands its presenters application responses, primitives by default, and"
+		+ "names no value object that wave 14 turned into a response"
+	SPEC "no draft or todo task references a decision archived by wave 14"
+	SPEC "awawa lint --strict . passes"
+	AFTER @TASK.REFACTOR164
+	AFTER @TASK.REFACTOR165
+	AFTER @TASK.REFACTOR166
+	RATIONALE "The tasks of the other waves were written against the boundaries wave 14 corrects:"
+		+ "presenter ports taking value objects, the players, identity and terraformation"
+		+ "projections, the energy raw data port and the decisions that entrenched them. Rewritten"
+		+ "before wave 14 lands, they would describe code that does not exist yet; left as they"
+		+ "are, they hand the delivering agent an obsolete design. The three tasks it follows are"
+		+ "the last of wave 14, every other task of the wave coming before one of them"
+		REF @WAVE.14
+		REF @TASK.REFACTOR159
+		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+	SOURCE "Owner request during the refinement of wave 14 on 2026-09-29"
