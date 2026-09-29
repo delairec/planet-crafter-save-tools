@@ -1,0 +1,15 @@
+[
+  "packages/core-mapping/src/domain/rules/merge/collectEjectedPlayerInventoryIds.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/collectEjectedPlayerInventoryIds.ts",
+  "packages/core-mapping/src/domain/rules/merge/createIdSequence.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/mergeInventories.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/mergeSaveSections.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/mergeWorldObjects.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/resolveInventoryIdConflicts.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/resolveWorldObjectIdConflicts.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/rewriteReferences.spec.ts",
+  "packages/core-mapping/src/domain/rules/merge/rewriteReferences.ts",
+  "packages/core-mapping/src/domain/save/InventoryEntry.ts",
+  "packages/core-mapping/src/domain/save/WorldObjectEntry.ts"
+]

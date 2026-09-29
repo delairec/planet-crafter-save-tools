@@ -1,13 +1,11 @@
 import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {reportViolations} from './specSources.ts';
 import {applyAllowList, readAllowList} from './shrinkingAllowList.ts';
+import {readImportSpecifiers} from './importSpecifiers.ts';
 
 const SOURCE_FILES_PATTERN = 'packages/*/**/*.{js,ts,tsx}';
 const ALLOW_LIST_PATH = 'scripts/allow-lists/presenter-ports-importing-domain.json';
 const GENERATED_DIRECTORY = /(?:^|\/)(?:node_modules|dist|build|coverage|\.output|\.vinxi)\//;
-
-const FROM_SPECIFIER_PATTERN = /\bfrom\s+['"]([^'"]+)['"]/g;
-const DYNAMIC_IMPORT_SPECIFIER_PATTERN = /\bimport\(\s*['"]([^'"]+)['"]\s*\)/g;
 
 const CHECK_NAME = 'check:presentation';
 
@@ -40,10 +38,7 @@ export function findRefusedImports(filePath: string, source: string): RefusedImp
   if (refusal === undefined || GENERATED_DIRECTORY.test(filePath)) {
     return [];
   }
-  return source.split('\n').flatMap((text, lineIndex) => [
-    ...Array.from(text.matchAll(FROM_SPECIFIER_PATTERN), match => match[1]!),
-    ...Array.from(text.matchAll(DYNAMIC_IMPORT_SPECIFIER_PATTERN), match => match[1]!)
-  ]
+  return source.split('\n').flatMap((text, lineIndex) => readImportSpecifiers(text)
     .filter(specifier => refusal.refusedSpecifier.test(specifier))
     .map(specifier => ({line: lineIndex + 1, specifier, reason: refusal.reason})));
 }
