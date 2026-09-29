@@ -66,7 +66,7 @@
     "clean:merge": "rm -rf output",
     "test:merge": "bun test --filter cli-merge",
     "validate": "bun packages/cli-validate/cli/validate-cli.js",
-    "validate:tables": "bun run --filter './packages/*' validate:tables",
+    "validate:tables": "bun scripts/validate-tables/validate-tables.ts",
     "test:validate": "bun test --filter cli-validate",
     "node:merge": "node --import ./scripts/node/register.js packages/cli-merge/cli/merge-cli.js --platform=node",
     "node:validate": "node --import ./scripts/node/register.js packages/cli-validate/cli/validate-cli.js --platform=node"

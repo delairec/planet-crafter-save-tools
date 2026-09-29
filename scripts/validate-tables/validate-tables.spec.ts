@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {createFakeScriptIo} from '../testing/createFakeScriptIo.ts';
-import {findTableViolations, TABLE_SCHEMAS_DIRECTORY, TableViolation, validateTables} from './validate-tables.ts';
+import {findTableViolations, TableViolation, validateTables} from './validate-tables.ts';
 
 const planetSchema = {
   type: 'array',
@@ -94,15 +94,17 @@ describe('findTableViolations', () => {
 });
 
 describe('validateTables', () => {
+  const schemaHeader = {$schema: 'http://json-schema.org/draft-07/schema#'};
+  const validRows = '[{"numericId": 1, "planetName": "Prime"}]';
+  const invalidRows = '[{"numericId": "one", "planetName": "Prime"}]';
 
-  describe('When every row of the table meets the schema of its name in the schema directory', () => {
+  describe('When every table of a data- package meets the schema beside it', () => {
     it('should print nothing and exit with zero', async () => {
       // Arrange
       const {io, printedErrors, exitCodes} = createFakeScriptIo({
-        commandLineArguments: ['src/domain/planets'],
         files: {
-          'src/domain/planets.json': '[{"numericId": 1, "planetName": "Prime"}]',
-          [`${TABLE_SCHEMAS_DIRECTORY}/planets.schema.json`]: JSON.stringify(planetSchema)
+          'packages/data-planets/planets.json': validRows,
+          'packages/data-planets/planets.schema.json': JSON.stringify(planetSchema)
         }
       });
 
@@ -114,14 +116,13 @@ describe('validateTables', () => {
     });
   });
 
-  describe('When a row of the table breaks the schema of its name in the schema directory', () => {
+  describe('When a row of a table breaks the schema beside it', () => {
     it('should print the table, the row and the rule it breaks, and exit with one', async () => {
       // Arrange
       const {io, printedErrors, exitCodes} = createFakeScriptIo({
-        commandLineArguments: ['src/domain/planets'],
         files: {
-          'src/domain/planets.json': '[{"numericId": "one", "planetName": "Prime"}]',
-          [`${TABLE_SCHEMAS_DIRECTORY}/planets.schema.json`]: JSON.stringify(planetSchema)
+          'packages/data-planets/planets.json': invalidRows,
+          'packages/data-planets/planets.schema.json': JSON.stringify(planetSchema)
         }
       });
 
@@ -130,20 +131,59 @@ describe('validateTables', () => {
 
       // Assert
       expect({printedErrors, exitCodes}).toEqual({
-        printedErrors: [expect.stringContaining('src/domain/planets.json row 0: /0/numericId')],
+        printedErrors: [expect.stringContaining('packages/data-planets/planets.json row 0: /0/numericId')],
         exitCodes: [1]
       });
     });
   });
 
-  describe('When the table is followed by the name of a schema of another name', () => {
-    it('should validate its rows against that schema', async () => {
+  describe('When a table has no schema of its name beside it', () => {
+    it('should name the table and the schema it lacks, and exit with one', async () => {
       // Arrange
       const {io, printedErrors, exitCodes} = createFakeScriptIo({
-        commandLineArguments: ['src/domain/2.004:planets'],
+        files: {'packages/data-planets/planets.json': validRows}
+      });
+
+      // Act
+      await validateTables(io);
+
+      // Assert
+      expect({printedErrors, exitCodes}).toEqual({
+        printedErrors: ['packages/data-planets/planets.json has no schema beside it, packages/data-planets/planets.schema.json'],
+        exitCodes: [1]
+      });
+    });
+  });
+
+  describe('When the json files of a package are its manifest, a tsconfig, schemas or files under node_modules', () => {
+    it('should take none for a table', async () => {
+      // Arrange
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
         files: {
-          'src/domain/2.004.json': '[{"numericId": "one", "planetName": "Prime"}]',
-          [`${TABLE_SCHEMAS_DIRECTORY}/planets.schema.json`]: JSON.stringify(planetSchema)
+          'packages/data-planets/package.json': '{}',
+          'packages/data-planets/tsconfig.json': '{}',
+          'packages/data-planets/tsconfig.build.json': '{}',
+          'packages/data-planets/planets.schema.json': JSON.stringify(planetSchema),
+          'packages/data-planets/node_modules/dependency/data.json': '{}'
+        }
+      });
+
+      // Act
+      await validateTables(io);
+
+      // Assert
+      expect({printedErrors, exitCodes}).toEqual({printedErrors: [], exitCodes: [0]});
+    });
+  });
+
+  describe('When the schema beside a table reaches a shared schema relative to itself', () => {
+    it('should validate the rows of the table against the shared schema', async () => {
+      // Arrange
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/data-planets/byRelease/2.004.json': invalidRows,
+          'packages/data-planets/byRelease/2.004.schema.json': JSON.stringify({...schemaHeader, $ref: '../shared.schema.json'}),
+          'packages/data-planets/shared.schema.json': JSON.stringify({...schemaHeader, $id: 'shared.schema.json', ...planetSchema})
         }
       });
 
@@ -152,7 +192,37 @@ describe('validateTables', () => {
 
       // Assert
       expect({printedErrors, exitCodes}).toEqual({
-        printedErrors: [expect.stringContaining('src/domain/2.004.json row 0: /0/numericId')],
+        printedErrors: [expect.stringContaining('packages/data-planets/byRelease/2.004.json row 0: /0/numericId')],
+        exitCodes: [1]
+      });
+    });
+  });
+
+  describe('When a shared schema names a table relative to itself', () => {
+    const sharedSchema = {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {release: {valueOfTable: {table: 'gameReleases.json', column: 'release'}}}
+      }
+    };
+
+    it('should look the values up in the table beside the shared schema', async () => {
+      // Arrange
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/data-save-format/byRelease/2.004.json': '[{"release": "1.618"}, {"release": "9.999"}]',
+          'packages/data-save-format/byRelease/2.004.schema.json': JSON.stringify({$ref: '../shared.schema.json'}),
+          'packages/data-save-format/shared.schema.json': JSON.stringify(sharedSchema)
+        }
+      });
+
+      // Act
+      await validateTables(io);
+
+      // Assert
+      expect({printedErrors, exitCodes}).toEqual({
+        printedErrors: [expect.stringContaining('packages/data-save-format/byRelease/2.004.json row 1: /1/release')],
         exitCodes: [1]
       });
     });
