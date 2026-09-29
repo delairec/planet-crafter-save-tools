@@ -42,7 +42,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'}], noWarnings);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION}], noWarnings);
 
       // Assert
       expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({
@@ -57,7 +57,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {', section: GLOBAL_METADATA_SECTION_INDEX, entryIndex: 3, formatRelease: '2.004'}], noWarnings);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 3, line: '{'}], noWarnings);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Global metadata (section 0), entry 3'}]);
@@ -68,7 +68,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}], [{code: 'legacy-save-format'}]);
+      presenter.presentInvalidSaveFile([{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 3, line: '{'}], [{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -84,7 +84,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentSaveFileWithUnreadableLines([{detail: 'Invalid JSON: {', section: GLOBAL_METADATA_SECTION_INDEX, formatRelease: '2.004', entryIndex: 0}], noWarnings);
+      presenter.presentSaveFileWithUnreadableLines([{section: {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX}, entryIndex: 0, line: '{'}], noWarnings);
 
       // Assert
       expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({

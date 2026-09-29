@@ -1,4 +1,4 @@
-/** @import { ParsedSave, SaveParseError, SaveWarning, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
+/** @import { ParsedSave, UnreadableSaveLine, SaveWarning, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
 
 import {createGlobalMetadata} from './createSaveRecords.js';
 import {CURRENT_FORMAT_RELEASE} from '../gameReleases.js';
@@ -15,7 +15,7 @@ import {CURRENT_FORMAT_RELEASE} from '../gameReleases.js';
  * @property {StoryEvent[]} [storyEvents]
  * @property {SaveConfiguration[]} [saveConfigurations]
  * @property {WorldEvent[]} [worldEvents]
- * @property {SaveParseError[]} [errors]
+ * @property {UnreadableSaveLine[]} [errors]
  * @property {SaveWarning[]} [warnings]
  */
 

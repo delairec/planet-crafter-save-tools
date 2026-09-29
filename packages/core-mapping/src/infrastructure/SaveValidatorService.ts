@@ -7,7 +7,7 @@ import {VALIDATION_ISSUE_CODES} from "../application/ports/ValidationIssue";
 export class SaveValidatorService implements SaveValidatorPort {
   validate(fileName: string, content: string): SaveValidationResult {
     if (!hasJsonExtension(fileName)) {
-      return {isValid: false, errors: [{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'}], warnings: []};
+      return {isValid: false, errors: [{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION}], warnings: []};
     }
 
     const {isValid, errors, warnings} = validateSaveContent(content);

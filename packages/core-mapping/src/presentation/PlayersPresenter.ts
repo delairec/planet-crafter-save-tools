@@ -1,5 +1,5 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {SaveParseError} from "shared-save-processing/gameDefinitions";
+import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
 import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
 import {PlayerSummaryResponse} from "../application/responses/PlayerSummaryResponse";
@@ -43,7 +43,7 @@ export class PlayersPresenter implements PlayersPresenterPort {
     };
   }
 
-  displaySaveWithUnreadableLines(unreadableLines: SaveParseError[]): void {
+  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void {
     this._viewModel = {players: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

@@ -19,6 +19,7 @@ import {
   WORLD_EVENT_CODEC,
   WORLD_OBJECT_CODEC
 } from "./saveEntryCodecs";
+import {locateUnreadableLine} from "./locateSaveSection";
 
 type SectionRecords<Record> = Iterable<Record> | (() => Iterable<Record>);
 
@@ -30,7 +31,10 @@ export class SaveSectionsParserService implements SaveSectionsParserPort {
       throw new UnknownFormatReleaseError(formatRelease);
     }
 
-    return {sections: toSaveSections(sections, formatRelease, resolveSectionIndexes(formatRelease)), errors};
+    return {
+      sections: toSaveSections(sections, formatRelease, resolveSectionIndexes(formatRelease)),
+      errors: errors.map(error => locateUnreadableLine(error, formatRelease))
+    };
   }
 }
 

@@ -180,7 +180,7 @@ describe('parseSaveSections', () => {
   });
 
   describe('When a world object line cannot be read', () => {
-    it('should record the failure with its section, its position and an excerpt of the line, once the generator is drained', () => {
+    it('should record the failure with its section, its position and the line, once the generator is drained', () => {
       // Arrange
       const save = createFakeSaveString({worldObjects: [expectedWorldObject]})
         .replace(JSON.stringify(expectedWorldObject), '{not valid json');
@@ -192,7 +192,7 @@ describe('parseSaveSections', () => {
 
       // Assert
       expect(errors).toEqual([
-        {detail: 'Invalid JSON: {not valid json', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 0, formatRelease: '2.004'}
+        {code: 'unreadable-line', sectionIndex: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 0, line: '{not valid json'}
       ]);
     });
   });
@@ -223,21 +223,8 @@ describe('parseSaveSections', () => {
     expect(worldEvents).toEqual([expectedWorldEvent]);
   });
 
-  describe('When the save does not split into the expected number of parts', () => {
-    it('should report the expected and the actual count', () => {
-      // Arrange
-      const saveOfTwoReadableParts = '{}@{}';
-
-      // Act
-      const {errors} = parseSaveSections(saveOfTwoReadableParts);
-
-      // Assert
-      expect(errors).toEqual([{detail: 'Expected 11 or 12 sections but found 2'}]);
-    });
-  });
-
   describe('When a line of a section cannot be read', () => {
-    it('should report the failure with its section, its position and an excerpt of the line', () => {
+    it('should report the failure with its section, its position and the line', () => {
       // Arrange
       const unreadableInventory = {id: 45, woIds: '', size: 20};
       const save = createFakeSaveString({inventories: [expectedInventory, unreadableInventory]})
@@ -248,7 +235,7 @@ describe('parseSaveSections', () => {
 
       // Assert
       expect(errors).toEqual([
-        {detail: 'Invalid JSON: {not valid json', section: INVENTORIES_SECTION_INDEX, entryIndex: 1, formatRelease: '2.004'}
+        {code: 'unreadable-line', sectionIndex: INVENTORIES_SECTION_INDEX, entryIndex: 1, line: '{not valid json'}
       ]);
     });
 
@@ -424,7 +411,7 @@ describe('parseSaveSections', () => {
       const {errors} = parseSaveSections(save);
 
       // Assert
-      expect(errors).toEqual([{detail: expect.stringContaining('Invalid JSON'), section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0, formatRelease: '1.618'}]);
+      expect(errors).toEqual([{code: 'unreadable-line', sectionIndex: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0, line: expect.stringMatching(/^{layerId/)}]);
     });
 
     it('should report a legacy-save-format warning code', () => {

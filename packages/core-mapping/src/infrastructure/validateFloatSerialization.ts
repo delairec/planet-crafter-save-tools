@@ -19,7 +19,8 @@ export function validateFloatSerialization(mergedSave: string): ValidationIssue[
   while ((match = regex.exec(mergedSave)) !== null) {
     issues.push({
       code: VALIDATION_ISSUE_CODES.FLOAT_SERIALIZATION,
-      detail: `Field "${match[1]}" has integer value serialized without .0 suffix (got: ${match[2] ?? ''}${match[3]})`
+      fieldName: match[1],
+      serializedValue: `${match[2] ?? ''}${match[3]}`
     });
   }
   return issues;

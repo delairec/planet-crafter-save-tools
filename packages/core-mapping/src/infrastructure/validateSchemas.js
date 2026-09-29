@@ -8,6 +8,7 @@ import legacySaveFileSchema from 'shared-save-processing/schemas/legacy-save-fil
 import {findSplitPartsCount, UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
+import {locateSaveSection} from './locateSaveSection.ts';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
 import {SECTION_VALIDATORS_BY_SCHEMA_ID} from './sectionValidators.generated.js';
 
@@ -71,7 +72,7 @@ function getSectionValidator(formatRelease, sectionIndex) {
 
 /**
  * @param {ParsedSections | unknown[][]} parsedSections
- * @param {string | undefined} formatRelease
+ * @param {string} formatRelease
  * @returns {ValidationIssue[]}
  * @throws {UnexpectedSaveSectionError} when a section that should hold a list of entries does not.
  * The reader of the format guarantees it does, so this is a broken invariant of ours and never a
@@ -103,12 +104,13 @@ export function validateSchemas(parsedSections, formatRelease) {
 }
 
 /**
- * @param {string | undefined} formatRelease
+ * @param {string} formatRelease
  * @param {number} sectionIndex
  * @returns {(entry: unknown, entryIndex: number) => ValidationIssue[]}
  */
 export function createSectionEntryValidator(formatRelease, sectionIndex) {
   const validate = getSectionValidator(formatRelease, sectionIndex);
+  const section = locateSaveSection(sectionIndex, formatRelease);
 
   return (entry, entryIndex) => {
     if (validate(entry)) {
@@ -117,10 +119,10 @@ export function createSectionEntryValidator(formatRelease, sectionIndex) {
 
     return (validate.errors ?? []).map(schemaError => ({
       code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION,
-      detail: `${schemaError.instancePath} ${schemaError.message}`.trim(),
-      section: sectionIndex,
+      section,
       entryIndex,
-      formatRelease
+      fieldPath: schemaError.instancePath,
+      schemaMessage: schemaError.message
     }));
   };
 }

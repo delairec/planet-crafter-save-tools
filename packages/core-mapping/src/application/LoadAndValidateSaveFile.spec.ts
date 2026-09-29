@@ -4,6 +4,7 @@ import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
 import {LoadAndValidateSaveFilePresenterPort} from './ports/LoadAndValidateSaveFilePresenterPort';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
+import {UnreadableLine} from './ports/SaveSectionLocation';
 import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {SAVE_CONTENT, stubSaveSectionsReader} from '../testing/stubSaveSectionsReader';
@@ -39,7 +40,7 @@ describe('LoadAndValidateSaveFile', () => {
   describe('When the save file is invalid', () => {
     it('should present an invalid save file with the validation errors and never read the content', async () => {
       // Arrange
-      const validationErrors = [{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'}];
+      const validationErrors = [{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION}];
       const {useCase, reader, presenter} = setupUseCase({validationErrors});
 
       // Act
@@ -73,7 +74,7 @@ describe('LoadAndValidateSaveFile', () => {
   describe('When the reader cannot read some lines of a valid save file', () => {
     it('should present the save file with its unreadable lines, never as a loaded save file', async () => {
       // Arrange
-      const unreadableLine = {detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2};
+      const unreadableLine: UnreadableLine = {section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'};
       const {useCase, presenter} = setupUseCase({saveSectionsReader: stubSaveSectionsReader({unreadableLines: [unreadableLine]})});
 
       // Act
@@ -89,14 +90,14 @@ describe('LoadAndValidateSaveFile', () => {
       // Arrange
       const {useCase, presenter} = setupUseCase({
         validationWarnings: [{code: 'legacy-save-format'}],
-        saveSectionsReader: stubSaveSectionsReader({unreadableLines: [{detail: 'Expected 11 sections but found 2'}]})
+        saveSectionsReader: stubSaveSectionsReader({unreadableLines: [{section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'}]})
       });
 
       // Act
       await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Expected 11 sections but found 2'}], [{code: 'legacy-save-format'}]);
+      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith([{section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'}], [{code: 'legacy-save-format'}]);
     });
   });
 
@@ -147,7 +148,7 @@ describe('LoadAndValidateSaveFile', () => {
 
     it('should present the warnings of an invalid save file too', async () => {
       // Arrange
-      const validationErrors = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: {'}];
+      const validationErrors: ValidationIssue[] = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'}];
       const {useCase, presenter} = setupUseCase({validationErrors, validationWarnings: [{code: 'legacy-save-format'}]});
 
       // Act

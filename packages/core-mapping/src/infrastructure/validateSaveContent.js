@@ -1,30 +1,40 @@
 /**
- * @import { SaveParseError, SaveWarning } from 'shared-save-processing/gameDefinitions'
+ * @import { SaveWarning, UnreadableSaveLine } from 'shared-save-processing/gameDefinitions'
  * @import { ValidationIssue } from '../application/ports/ValidationIssue'
  */
 
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
 import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
+import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
+import {locateSaveSection, locateUnreadableLine} from './locateSaveSection.ts';
 
 /**
  * @param {string} saveContent
  * @returns {{isValid: boolean, errors: ValidationIssue[], warnings: SaveWarning[]}}
  */
 export function validateSaveContent(saveContent) {
-  const sectionCountErrors = verifySectionCount(saveContent.split('@'));
-  if (sectionCountErrors.length > 0) {
+  const [sectionCountError] = verifySectionCount(saveContent.split('@'));
+  if (sectionCountError !== undefined) {
     return {
       isValid: false,
-      errors: [{code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: sectionCountErrors[0].detail}],
+      errors: [{
+        code: VALIDATION_ISSUE_CODES.UNEXPECTED_SECTION_COUNT,
+        foundSectionCount: sectionCountError.foundSectionCount,
+        expectedSectionCounts: sectionCountError.expectedSectionCounts
+      }],
       warnings: []
     };
   }
 
   const {formatRelease, sections, errors: parseErrors, warnings} = parseSaveSections(saveContent);
+  if (formatRelease === undefined) {
+    throw new UnknownFormatReleaseError(formatRelease);
+  }
+
   const sectionIndexes = resolveSectionIndexes(formatRelease);
   const worldObjectIssues = validateWorldObjectsSection(
     /** @type {() => Generator<unknown>} */ (sections[sectionIndexes.worldObjects]),
@@ -32,7 +42,7 @@ export function validateSaveContent(saveContent) {
     sectionIndexes.worldObjects
   );
 
-  const errors = parseErrors.map(toInvalidJsonIssue);
+  const errors = parseErrors.map(parseError => toInvalidJsonIssue(parseError, formatRelease));
 
   errors.push(...validateGlobalMetadataEntryCount(
     /** @type {unknown[]} */ (sections[sectionIndexes.globalMetadata]),
@@ -48,7 +58,7 @@ export function validateSaveContent(saveContent) {
 
 /**
  * @param {unknown[]} globalMetadataSection
- * @param {string | undefined} formatRelease
+ * @param {string} formatRelease
  * @param {number} sectionIndex
  * @returns {ValidationIssue[]}
  */
@@ -60,16 +70,16 @@ function validateGlobalMetadataEntryCount(globalMetadataSection, formatRelease, 
   }
 
   return [{
-    code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE,
-    detail: `Expected at least ${minItems} entry but found ${globalMetadataSection.length}`,
-    section: sectionIndex,
-    formatRelease
+    code: VALIDATION_ISSUE_CODES.TOO_FEW_SECTION_ENTRIES,
+    section: locateSaveSection(sectionIndex, formatRelease),
+    foundEntryCount: globalMetadataSection.length,
+    minimumEntryCount: minItems
   }];
 }
 
 /**
  * @param {() => Generator<unknown>} createWorldObjects
- * @param {string | undefined} formatRelease
+ * @param {string} formatRelease
  * @param {number} sectionIndex
  * @returns {ValidationIssue[]}
  */
@@ -87,9 +97,10 @@ function validateWorldObjectsSection(createWorldObjects, formatRelease, sectionI
 }
 
 /**
- * @param {SaveParseError} parseError
+ * @param {UnreadableSaveLine} parseError
+ * @param {string} formatRelease
  * @returns {ValidationIssue}
  */
-function toInvalidJsonIssue({detail, section, entryIndex, formatRelease}) {
-  return {code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail, section, entryIndex, formatRelease};
+function toInvalidJsonIssue(parseError, formatRelease) {
+  return {code: VALIDATION_ISSUE_CODES.INVALID_JSON, ...locateUnreadableLine(parseError, formatRelease)};
 }

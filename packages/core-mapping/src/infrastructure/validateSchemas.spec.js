@@ -17,10 +17,10 @@ describe('validateSchemas', () => {
   describe('When a section entry matches its schema', () => {
     it('should return no issue', () => {
       // Arrange
-      const {sections, formatRelease} = createFakeParsedSave({worldObjects: NO_WORLD_OBJECTS, players: [createPlayer()]});
+      const {sections} = createFakeParsedSave({worldObjects: NO_WORLD_OBJECTS, players: [createPlayer()]});
 
       // Act
-      const issues = validateSchemas(sections, formatRelease);
+      const issues = validateSchemas(sections, '2.004');
 
       // Assert
       expect(issues).toEqual([]);
@@ -39,7 +39,7 @@ describe('validateSchemas', () => {
 
       // Assert
       expect(issues).toMatchObject([
-        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: PLAYERS_SECTION_INDEX, entryIndex: 0, formatRelease: '2.004'}
+        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, fieldPath: ''}
       ]);
     });
   });
@@ -47,10 +47,10 @@ describe('validateSchemas', () => {
   describe('When the save carries the format of 1.618', () => {
     it('should validate its twelve parts, the Terrain Layers section included, without an issue the format alone produces', () => {
       // Arrange
-      const {sections, formatRelease} = parseSaveSections(createLegacyFakeSaveContent());
+      const {sections} = parseSaveSections(createLegacyFakeSaveContent());
 
       // Act
-      const issues = validateSchemas(sections, formatRelease);
+      const issues = validateSchemas(sections, '1.618');
 
       // Assert
       expect(issues).toEqual([]);
@@ -60,10 +60,10 @@ describe('validateSchemas', () => {
   describe('When the save carries the format of 2.004', () => {
     it('should validate its eleven parts without an issue the format alone produces', () => {
       // Arrange
-      const {sections, formatRelease} = parseSaveSections(createFakeSaveContent());
+      const {sections} = parseSaveSections(createFakeSaveContent());
 
       // Act
-      const issues = validateSchemas(sections, formatRelease);
+      const issues = validateSchemas(sections, '2.004');
 
       // Assert
       expect(issues).toEqual([]);
@@ -73,12 +73,12 @@ describe('validateSchemas', () => {
   describe('When a section holding entries did not reach it as a list', () => {
     it('should fail instead of reading it as a section without a single entry', () => {
       // Arrange
-      const {sections, formatRelease} = createFakeParsedSave({worldObjects: NO_WORLD_OBJECTS});
+      const {sections} = createFakeParsedSave({worldObjects: NO_WORLD_OBJECTS});
       // @ts-expect-error a section the reader always fills, emptied on purpose to reach the guard
       sections[STATISTICS_SECTION_INDEX] = undefined;
 
       // Act
-      const validating = () => validateSchemas(sections, formatRelease);
+      const validating = () => validateSchemas(sections, '2.004');
 
       // Assert
       expect(validating).toThrow(UnexpectedSaveSectionError);
@@ -129,7 +129,7 @@ describe('createSectionEntryValidator', () => {
 
       // Assert
       expect(issues).toMatchObject([
-        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: positionInTheSection, formatRelease: '1.618'}
+        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: positionInTheSection, fieldPath: ''}
       ]);
     });
   });
@@ -155,7 +155,7 @@ describe('createSectionEntryValidator', () => {
 
       // Assert
       expect(issues).toMatchObject([
-        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: LEGACY_TERRAIN_LAYERS_SECTION_INDEX, entryIndex: 0, formatRelease: '1.618'}
+        {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'terrainLayers', index: LEGACY_TERRAIN_LAYERS_SECTION_INDEX}, entryIndex: 0}
       ]);
     });
   });

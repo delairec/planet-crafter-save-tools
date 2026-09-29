@@ -18,7 +18,7 @@ describe('SaveValidatorService', () => {
       // Assert
       expect(result).toEqual({
         isValid: false,
-        errors: [{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION, detail: 'Invalid file extension: expected a .json file.'}],
+        errors: [{code: VALIDATION_ISSUE_CODES.INVALID_EXTENSION}],
         warnings: []
       });
     });
@@ -50,7 +50,7 @@ describe('SaveValidatorService', () => {
       // Assert
       expect(result).toEqual({
         isValid: false,
-        errors: [{code: VALIDATION_ISSUE_CODES.INVALID_STRUCTURE, detail: 'Expected 11 or 12 sections but found 1'}],
+        errors: [{code: VALIDATION_ISSUE_CODES.UNEXPECTED_SECTION_COUNT, foundSectionCount: 1, expectedSectionCounts: [11, 12]}],
         warnings: []
       });
     });

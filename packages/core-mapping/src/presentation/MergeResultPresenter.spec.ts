@@ -126,7 +126,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: "must have required property 'name'", section: PLAYERS_SECTION_INDEX, formatRelease: '2.004'}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, fieldPath: '', schemaMessage: "must have required property 'name'"}],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
@@ -139,7 +139,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeFailureMessage: '',
-        mergeErrors: [{message: "must have required property 'name'", location: 'Players (section 2)'}],
+        mergeErrors: [{message: "must have required property 'name'", location: 'Players (section 2), entry 0'}],
         mergeWarnings: [],
         legacyFormatCouldBeKept: false,
         saveAErrors: [],
@@ -157,7 +157,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 12, formatRelease: '2.004'}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 12, fieldPath: '', schemaMessage: 'must have required property gId'}],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
@@ -176,7 +176,7 @@ describe('MergeResultPresenter', () => {
 
       // Act
       presenter.presentSaveFilesInvalid({
-        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'}],
+        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentA'}],
         saveBErrors: noErrorsFromSaveB,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
@@ -191,7 +191,7 @@ describe('MergeResultPresenter', () => {
         mergeErrors: [],
         mergeWarnings: [],
         legacyFormatCouldBeKept: false,
-        saveAErrors: [{message: 'Invalid JSON: contentA', location: null}],
+        saveAErrors: [{message: 'Invalid JSON: contentA', location: 'Players (section 2), entry 0'}],
         saveBErrors: [],
         saveAWarnings: [],
         saveBWarnings: []
@@ -204,7 +204,7 @@ describe('MergeResultPresenter', () => {
 
       // Act
       presenter.presentSaveFilesInvalid({
-        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: contentA'}],
+        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentA'}],
         saveBErrors: noErrorsFromSaveB,
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: [{code: 'legacy-save-format'}]
@@ -223,8 +223,8 @@ describe('MergeResultPresenter', () => {
 
       // Act
       presenter.presentSaveFilesInvalid({
-        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, detail: 'Invalid JSON: { broken', section: PLAYERS_SECTION_INDEX, entryIndex: 1, formatRelease: '2.004'}],
-        saveBErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: 'must have required property gId', section: INVENTORIES_SECTION_INDEX, entryIndex: 0, formatRelease: '2.004'}],
+        saveAErrors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 1, line: '{ broken'}],
+        saveBErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0, fieldPath: '', schemaMessage: 'must have required property gId'}],
         saveAWarnings: noWarningsFromSaveA,
         saveBWarnings: noWarningsFromSaveB
       });

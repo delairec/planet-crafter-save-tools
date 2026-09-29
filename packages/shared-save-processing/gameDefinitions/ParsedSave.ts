@@ -10,7 +10,7 @@ import {SaveConfiguration} from "./SaveConfiguration";
 import {TerrainLayer} from "./TerrainLayer";
 import {WorldEvent} from "./WorldEvent";
 import {SaveWarning} from "./SaveWarning";
-import {SaveParseError} from "./SaveParseError";
+import {UnreadableSaveLine} from "./SaveParseError";
 
 type SectionsBeforeTerrainLayers = [
   GlobalMetadata[],
@@ -36,6 +36,6 @@ export type ParsedSave = {
   /** The release whose format the save carries; undefined when no release writes its part count. */
   formatRelease: string | undefined;
   sections: ParsedSections;
-  errors: SaveParseError[];
+  errors: UnreadableSaveLine[];
   warnings: SaveWarning[];
 };
