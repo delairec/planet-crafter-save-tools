@@ -1,4 +1,5 @@
 import {type Page} from '@playwright/test';
+import {createAColorRulesAudit} from '../helpers/createAColorRulesAudit';
 import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
 import {holdEveryFileRead} from '../helpers/holdEveryFileRead';
 import {triggerSaveFileMerge} from '../helpers/triggerSaveFileMerge';
@@ -31,6 +32,21 @@ test.describe('Merge two saves page accessibility', () => {
 
       // Assert
       expect(violations).toEqual(noViolation);
+    });
+
+    test.describe('When the dark color scheme is preferred', () => {
+      test.use({colorScheme: 'dark'});
+
+      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
+        // Arrange
+        await page.goto('/merge');
+
+        // Act
+        const {violations} = await createAColorRulesAudit(page).analyze();
+
+        // Assert
+        expect(violations).toEqual(noViolation);
+      });
     });
 
     test('should title the merge form with a second level heading', async ({page}) => {
@@ -122,6 +138,21 @@ test.describe('Merge two saves page accessibility', () => {
       expect(violations).toEqual(noViolation);
     });
 
+    test.describe('When the dark color scheme is preferred', () => {
+      test.use({colorScheme: 'dark'});
+
+      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
+        // Arrange
+        await showAMergeResult(page);
+
+        // Act
+        const {violations} = await createAColorRulesAudit(page).analyze();
+
+        // Assert
+        expect(violations).toEqual(noViolation);
+      });
+    });
+
     test('should offer the merged save as a download link', async ({page}) => {
       // Act
       await showAMergeResult(page);
@@ -142,6 +173,21 @@ test.describe('Merge two saves page accessibility', () => {
 
       // Assert
       expect(violations).toEqual(noViolation);
+    });
+
+    test.describe('When the dark color scheme is preferred', () => {
+      test.use({colorScheme: 'dark'});
+
+      test('should conform to the color rules of WCAG 2 at levels A and AA', async ({page}) => {
+        // Arrange
+        await showTwoMergeResults(page);
+
+        // Act
+        const {violations} = await createAColorRulesAudit(page).analyze();
+
+        // Assert
+        expect(violations).toEqual(noViolation);
+      });
     });
 
     test('should title the earlier merged saves with a third level heading', async ({page}) => {
