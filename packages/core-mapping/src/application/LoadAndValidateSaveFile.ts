@@ -19,7 +19,13 @@ export class LoadAndValidateSaveFile {
       return;
     }
 
-    const {errors} = this.parser.parse(content);
-    this.presenter.presentLoadedSaveFile(errors, validation.warnings);
+    const {errors: unreadableLines} = this.parser.parse(content);
+
+    if (unreadableLines.length > 0) {
+      this.presenter.presentSaveFileWithUnreadableLines(unreadableLines, validation.warnings);
+      return;
+    }
+
+    this.presenter.presentLoadedSaveFile(validation.warnings);
   }
 }

@@ -1,6 +1,6 @@
 import {SaveIdentityViewModel} from "./viewModels/SaveIdentityViewModel";
 import {SaveIdentityPresenterPort} from "../application/ports/SaveIdentityPresenterPort";
-import {SaveIdentityValueObject} from "../domain/valueObjects/SaveIdentityValueObject";
+import {SaveIdentityResponse} from "../application/responses/SaveIdentityResponse";
 import {resolveSaveIdentityGameReleaseLabel} from "./messages/saveIdentityMessages.js";
 
 export class SaveIdentityPresenter implements SaveIdentityPresenterPort {
@@ -10,7 +10,7 @@ export class SaveIdentityPresenter implements SaveIdentityPresenterPort {
     return this._viewModel;
   }
 
-  displaySaveIdentity(saveIdentity: SaveIdentityValueObject): void {
+  displaySaveIdentity(saveIdentity: SaveIdentityResponse): void {
     this._viewModel = {
       fileName: saveIdentity.fileName,
       displayName: saveIdentity.displayName,

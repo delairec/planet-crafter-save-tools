@@ -1,27 +1,53 @@
 import {describe, expect, it} from 'bun:test';
 import {LoadSaveFilePresenter} from './LoadSaveFilePresenter';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
-import {SaveParseError, SaveWarning} from 'shared-save-processing/gameDefinitions';
+import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {LoadSaveFileViewModel} from './viewModels/LoadSaveFileViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
-const noParsingErrors: SaveParseError[] = [];
 const noWarnings: SaveWarning[] = [];
 
 describe('LoadSaveFilePresenter', () => {
 
   describe('When presenting a loaded save file', () => {
-    it('should update the view model with the valid status and the parsing errors', () => {
+    it('should update the view model with the valid status and no error', () => {
       // Arrange
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile([{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2, formatRelease: '2.004'}], noWarnings);
+      presenter.presentLoadedSaveFile(noWarnings);
+
+      // Assert
+      expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({status: 'valid', errors: [], warnings: []});
+    });
+
+    it('should translate the warning codes into user messages', () => {
+      // Arrange
+      const presenter = new LoadSaveFilePresenter();
+
+      // Act
+      presenter.presentLoadedSaveFile([{code: 'legacy-save-format'}]);
+
+      // Assert
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
+        message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
+        location: null
+      }]);
+    });
+  });
+
+  describe('When presenting a save file with unreadable lines', () => {
+    it('should update the view model with the invalid status and the unreadable lines located', () => {
+      // Arrange
+      const presenter = new LoadSaveFilePresenter();
+
+      // Act
+      presenter.presentSaveFileWithUnreadableLines([{detail: 'Invalid JSON: {', section: WORLD_OBJECTS_SECTION_INDEX, entryIndex: 2, formatRelease: '2.004'}], noWarnings);
 
       // Assert
       expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
-        status: 'valid',
+        status: 'invalid',
         errors: [{message: 'Invalid JSON: {', location: 'World objects (section 3), entry 2'}],
         warnings: []
       });
@@ -32,19 +58,19 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile([{detail: 'Expected 11 sections but found 2'}], noWarnings);
+      presenter.presentSaveFileWithUnreadableLines([{detail: 'Expected 11 sections but found 2'}], noWarnings);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors)
         .toEqual([{message: 'Expected 11 sections but found 2', location: null}]);
     });
 
-    it('should translate the warning codes into user messages', () => {
+    it('should keep the warnings alongside the unreadable lines', () => {
       // Arrange
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile(noParsingErrors, [{code: 'legacy-save-format'}]);
+      presenter.presentSaveFileWithUnreadableLines([{detail: 'Expected 11 sections but found 2'}], [{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{

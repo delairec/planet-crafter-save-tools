@@ -99,16 +99,14 @@ describe('findRefusedImports', () => {
 });
 
 describe('checkPresentationFiles', () => {
-  const ALLOW_LIST_PATH = 'scripts/allow-lists/presenter-ports-importing-domain.json';
 
-  describe('When no file crosses the output boundary and every presenter port importing domain/ is listed', () => {
+  describe('When no file crosses the output boundary and no presenter port imports domain/', () => {
     it('should print that nothing was found and exit with zero', async () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          [ALLOW_LIST_PATH]: '["packages/core-mapping/src/application/ports/PlayersPresenterPort.ts"]',
           'packages/core-mapping/src/presentation/PlayersPresenter.ts': "import {PlayerSummaryValueObject} from '../domain/valueObjects/PlayerSummaryValueObject';",
-          'packages/core-mapping/src/application/ports/PlayersPresenterPort.ts': "import {PlayerSummaryValueObject} from '../../domain/valueObjects/PlayerSummaryValueObject';"
+          'packages/core-mapping/src/application/ports/PlayersPresenterPort.ts': "import type {PlayerSummaryResponse} from '../responses/PlayerSummaryResponse';"
         }
       });
 
@@ -117,7 +115,7 @@ describe('checkPresentationFiles', () => {
 
       // Assert
       expect({printed, exitCodes}).toEqual({
-        printed: ['check:presentation: no domain entity nor infrastructure type crosses the output boundary, and no presenter port outside the allow-list imports domain/.'],
+        printed: ['check:presentation: no domain entity nor infrastructure type crosses the output boundary, and no presenter port imports domain/.'],
         exitCodes: [0]
       });
     });
@@ -128,7 +126,6 @@ describe('checkPresentationFiles', () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          [ALLOW_LIST_PATH]: '[]',
           'packages/core-mapping/src/presentation/PlayersPresenter.ts': "import type {PlayerEntity} from '../domain/entities/PlayerEntity';",
           'packages/core-mapping/src/application/ports/SaveIdentityPresenterPort.ts': "import {SaveIdentityValueObject} from '../../domain/valueObjects/SaveIdentityValueObject';"
         }
@@ -143,30 +140,6 @@ describe('checkPresentationFiles', () => {
           `packages/core-mapping/src/presentation/PlayersPresenter.ts:1: ../domain/entities/PlayerEntity\n  ${OUTPUT_BOUNDARY_REASON}`,
           `packages/core-mapping/src/application/ports/SaveIdentityPresenterPort.ts:1: ../../domain/valueObjects/SaveIdentityValueObject\n  ${PRESENTER_PORT_REASON}`,
           'check:presentation: 2 violation(s): a presentation file or an application response imports nothing from domain/entities nor infrastructure/, and a presenter port imports nothing from domain/.'
-        ],
-        exitCodes: [1]
-      });
-    });
-  });
-
-  describe('When a listed presenter port no longer imports domain/', () => {
-    it('should report its entry as one to remove and exit with one', async () => {
-      // Arrange
-      const {io, printed, exitCodes} = createFakeScriptIo({
-        files: {
-          [ALLOW_LIST_PATH]: '["packages/core-mapping/src/application/ports/PlayersPresenterPort.ts"]',
-          'packages/core-mapping/src/application/ports/PlayersPresenterPort.ts': "import type {PlayerSummaryResponse} from '../responses/PlayerSummaryResponse';"
-        }
-      });
-
-      // Act
-      await checkPresentationFiles(io);
-
-      // Assert
-      expect({printed, exitCodes}).toEqual({
-        printed: [
-          `${ALLOW_LIST_PATH}: packages/core-mapping/src/application/ports/PlayersPresenterPort.ts is no longer reported\n  remove its entry: the allow-list only shrinks`,
-          'check:presentation: 1 violation(s): a presentation file or an application response imports nothing from domain/entities nor infrastructure/, and a presenter port imports nothing from domain/.'
         ],
         exitCodes: [1]
       });

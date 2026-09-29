@@ -1,5 +1,5 @@
-import {EnergyLevelsValueObject} from "../../domain/valueObjects/EnergyLevelsValueObject";
+import {EnergyLevelsResponse} from "../responses/EnergyLevelsResponse";
 
 export interface EnergyLevelsPresenterPort {
-  displayEnergyLevels(energyLevels: EnergyLevelsValueObject): void;
+  displayEnergyLevels(energyLevels: EnergyLevelsResponse): void;
 }

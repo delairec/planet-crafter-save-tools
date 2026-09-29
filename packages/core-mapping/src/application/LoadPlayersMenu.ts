@@ -1,6 +1,6 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {PlayersMenuPresenterPort} from "./ports/PlayersMenuPresenterPort";
-import {createPlayerMenuEntryValueObject} from "../domain/valueObjects/PlayerMenuEntryValueObject";
+import {PlayerMenuEntryResponse} from "./responses/PlayerMenuEntryResponse";
 
 export class LoadPlayersMenu {
   constructor(
@@ -9,7 +9,7 @@ export class LoadPlayersMenu {
   ) {}
 
   async execute(): Promise<void> {
-    const players = this.saveSectionsReader.getPlayers().map((player) => createPlayerMenuEntryValueObject({
+    const players = this.saveSectionsReader.getPlayers().map((player): PlayerMenuEntryResponse => ({
       name: player.name,
       planet: player.findPlanetStoodOn(),
       isHost: player.isHost

@@ -1,7 +1,7 @@
-import {SaveIdentityValueObject} from "../../domain/valueObjects/SaveIdentityValueObject";
+import {SaveIdentityResponse} from "../responses/SaveIdentityResponse";
 
 export interface SaveIdentityPresenterPort {
-  displaySaveIdentity(saveIdentity: SaveIdentityValueObject): void;
+  displaySaveIdentity(saveIdentity: SaveIdentityResponse): void;
 
   displayUnconfiguredSaveIdentity(fileName: string): void;
 }

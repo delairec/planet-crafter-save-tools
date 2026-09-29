@@ -1012,7 +1012,6 @@ TASK CHORE157
 	SPEC "the presenter ports that import domain/ when the task lands are listed in an allow-list"
 		+ "the guard reads: a listed file is not reported, and a listed file that no longer imports"
 		+ "domain/ fails the guard until its entry is removed, so the list only shrinks"
-		IMPL "scripts/allow-lists/presenter-ports-importing-domain.json"
 		IMPL "scripts/shrinkingAllowList.ts::applyAllowList"
 		IMPL "scripts/shrinkingAllowList.spec.ts"
 	SPEC "the failure message of check:presentation and its description in docs/wiki/development.md"
@@ -1090,21 +1089,39 @@ TASK CHORE158
 
 TASK REFACTOR159
 	TITLE "refactor(core-mapping): hand the presenters one application response per outcome"
-	STATUS todo
+	STATUS implemented
 	SPEC "no presenter port of core-mapping imports a module under domain/: each use case hands its"
 		+ "presenter an application response, one per outcome, or primitives"
+		IMPL "scripts/check-presentation-entities.ts::PRESENTER_PORT_REFUSAL"
+		IMPL "packages/core-mapping/src/application/ports"
 	SPEC "the allow-list of check:presentation is empty and removed, the guard running with no"
 		+ "exemption"
+		IMPL "scripts/check-presentation-entities.ts::checkPresentationFiles"
+		IMPL "scripts/check-presentation-entities.spec.ts"
 	SPEC "PlayerMenuEntry, PlayerSummary, SaveIdentity and TerraformationLevelSummary are"
 		+ "application responses holding primitives, built by their use case, and no longer value"
 		+ "objects of the domain; no entity builds a projection for a presenter"
+		IMPL "packages/core-mapping/src/application/responses/PlayerMenuEntryResponse.ts"
+		IMPL "packages/core-mapping/src/application/responses/PlayerSummaryResponse.ts"
+		IMPL "packages/core-mapping/src/application/responses/SaveIdentityResponse.ts"
+		IMPL "packages/core-mapping/src/application/responses/TerraformationLevelSummaryResponse.ts"
+		IMPL "packages/core-mapping/src/domain/entities/TerraformationLevelEntity.ts::get biomass()"
 	SPEC "EnergyLevels is an application response built by its use case, which may hold the planet"
 		+ "energy value objects the domain computes"
+		IMPL "packages/core-mapping/src/application/responses/EnergyLevelsResponse.ts"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
 	SPEC "a save loaded with unreadable lines reaches the presenter through an outcome of its own,"
 		+ "distinct from a save loaded with warnings only, and is never rendered valid"
+		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.ts"
+		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.ts::presentSaveFileWithUnreadableLines"
+		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.spec.ts"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts"
 	AFTER @TASK.CHORE157
+	DELIVERED_BY 230
 	WAVE @WAVE.14
 	PRIORITY critical
 	DESC "fixes violations 1, 2 and 9 of the audit"

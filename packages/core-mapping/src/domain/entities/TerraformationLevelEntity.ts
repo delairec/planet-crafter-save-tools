@@ -1,8 +1,4 @@
 import {assertFiniteNumber, assertNonEmptyString} from "../errors/assertions";
-import {
-  createTerraformationLevelSummaryValueObject,
-  TerraformationLevelSummaryValueObject
-} from "../valueObjects/TerraformationLevelSummaryValueObject";
 
 export interface TerraformationLevelEntityInput {
   readonly planetId: string;
@@ -68,21 +64,13 @@ export class TerraformationLevelEntity {
     return this._unitPurificationLevel;
   }
 
-  summarize(): TerraformationLevelSummaryValueObject {
-    const biomass = this._unitPlantsLevel + this._unitInsectsLevel + this._unitAnimalsLevel;
+  get biomass(): number {
+    return this._unitPlantsLevel + this._unitInsectsLevel + this._unitAnimalsLevel;
+  }
+
+  get terraformationIndex(): number {
     const environmental = this._unitOxygenLevel + this._unitHeatLevel + this._unitPressureLevel + this._unitPurificationLevel;
 
-    return createTerraformationLevelSummaryValueObject({
-      planetId: this._planetId,
-      unitOxygenLevel: this._unitOxygenLevel,
-      unitHeatLevel: this._unitHeatLevel,
-      unitPressureLevel: this._unitPressureLevel,
-      unitPlantsLevel: this._unitPlantsLevel,
-      unitInsectsLevel: this._unitInsectsLevel,
-      unitAnimalsLevel: this._unitAnimalsLevel,
-      unitPurificationLevel: this._unitPurificationLevel,
-      terraformationIndex: environmental + biomass,
-      biomass
-    });
+    return environmental + this.biomass;
   }
 }
