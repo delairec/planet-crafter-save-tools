@@ -25,14 +25,18 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
     };
   }
 
-  /**
-   * The errors of a save that parsed name the line the parser could not read, so they reach the
-   * screen located like the validation ones.
-   */
-  presentLoadedSaveFile(errors: SaveParseError[], warnings: SaveWarning[]): void {
+  presentLoadedSaveFile(warnings: SaveWarning[]): void {
     this._viewModel = {
       status: 'valid',
-      errors: errors.map(error => ({message: error.detail, location: formatErrorLocation(error)})),
+      errors: [],
+      warnings: warnings.map(formatSaveWarning)
+    };
+  }
+
+  presentSaveFileWithUnreadableLines(unreadableLines: SaveParseError[], warnings: SaveWarning[]): void {
+    this._viewModel = {
+      status: 'invalid',
+      errors: unreadableLines.map(unreadableLine => ({message: unreadableLine.detail, location: formatErrorLocation(unreadableLine)})),
       warnings: warnings.map(formatSaveWarning)
     };
   }
