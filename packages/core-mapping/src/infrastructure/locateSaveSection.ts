@@ -1,15 +1,11 @@
-import type {SaveSectionName, UnreadableSaveLine} from "shared-save-processing/gameDefinitions";
+import type {SaveSectionName} from "shared-save-processing/gameDefinitions";
 import {findSplitPartsCount} from "shared-save-processing/gameReleases.js";
 import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
-import {type LocatedSaveSectionName, RESERVED_SAVE_PART, type SaveSectionLocation, type UnreadableLine} from "../application/ports/SaveSectionLocation";
+import {type LocatedSaveSectionName, RESERVED_SAVE_PART, type SaveSectionLocation} from "../application/ports/SaveSectionLocation";
 import {SectionOutsideTheSaveFormatError} from "./errors/SectionOutsideTheSaveFormatError";
 
 export function locateSaveSection(sectionIndex: number, formatRelease: string): SaveSectionLocation {
   return {name: nameSaveSection(sectionIndex, formatRelease), index: sectionIndex};
-}
-
-export function locateUnreadableLine({sectionIndex, entryIndex, line}: UnreadableSaveLine, formatRelease: string): UnreadableLine {
-  return {section: locateSaveSection(sectionIndex, formatRelease), entryIndex, line};
 }
 
 function nameSaveSection(sectionIndex: number, formatRelease: string): LocatedSaveSectionName {

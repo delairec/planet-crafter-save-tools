@@ -19,7 +19,7 @@ import {
   WORLD_EVENT_CODEC,
   WORLD_OBJECT_CODEC
 } from "./saveEntryCodecs";
-import {locateUnreadableLine} from "./locateSaveSection";
+import {locateUnreadableLine} from "./locateUnreadableLine";
 
 type SectionRecords<Record> = Iterable<Record> | (() => Iterable<Record>);
 

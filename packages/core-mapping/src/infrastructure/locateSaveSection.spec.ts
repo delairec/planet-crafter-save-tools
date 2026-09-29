@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
-import {locateSaveSection, locateUnreadableLine} from './locateSaveSection';
+import {locateSaveSection} from './locateSaveSection';
 import {SectionOutsideTheSaveFormatError} from './errors/SectionOutsideTheSaveFormatError';
-import {SaveSectionLocation, UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {SaveSectionLocation} from '../application/ports/SaveSectionLocation';
 
 describe('locateSaveSection', () => {
 
@@ -52,19 +52,6 @@ describe('locateSaveSection', () => {
       // Assert
       expect(locating).toThrow(SectionOutsideTheSaveFormatError);
       expect(locating).toThrow('Unexpected save data: the format of 2.004 holds no section 42.');
-    });
-  });
-});
-
-describe('locateUnreadableLine', () => {
-
-  describe('When the parser reports a line it cannot read', () => {
-    it('should locate the line in its named section and keep the line itself', () => {
-      // Act
-      const unreadableLine = locateUnreadableLine({code: 'unreadable-line', sectionIndex: 6, entryIndex: 1, line: '{not valid json'}, '2.004');
-
-      // Assert
-      expect<UnreadableLine>(unreadableLine).toEqual({section: {name: 'mailboxMessages', index: 6}, entryIndex: 1, line: '{not valid json'});
     });
   });
 });

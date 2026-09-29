@@ -9,7 +9,8 @@ import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes.ts';
-import {locateSaveSection, locateUnreadableLine} from './locateSaveSection.ts';
+import {locateSaveSection} from './locateSaveSection.ts';
+import {locateUnreadableLine} from './locateUnreadableLine.ts';
 
 /**
  * @param {string} saveContent
