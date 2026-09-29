@@ -3093,6 +3093,7 @@ DECISION ASaveWithUnreadableLinesIsNotLoaded
 	SOURCE "Ruled while implementing the output boundary of core-mapping"
 		PR 230
 	SOURCE "Rewritten when the use cases read the save through the section reader to check its host"
+		PR 233
 
 DECISION TheSchemaValidationMessageIsCarriedNotRewritten
 	SPEC "A schema violation issue carries the path of the field and the message of the schema"
@@ -3170,6 +3171,7 @@ DECISION AMergeReadsEachInputThroughTheSectionReaderForItsHost
 	RATIONALE "The read is deterministic and its cost stays below that of the validation run on the"
 		+ "same input"
 	SOURCE "Ruled while implementing REFACTOR160"
+		PR 233
 
 DECISION TheHostIsCheckedOnlyOnceValidationAcceptsTheSave
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -3191,3 +3193,4 @@ DECISION TheHostIsCheckedOnlyOnceValidationAcceptsTheSave
 	RATIONALE "Before REFACTOR160 the validator appended the host violation to the schema errors of"
 		+ "the same save; the violation now shows once the schema errors are fixed"
 	SOURCE "Ruled while implementing REFACTOR160"
+		PR 233

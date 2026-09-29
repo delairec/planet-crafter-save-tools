@@ -1146,22 +1146,53 @@ TASK REFACTOR159
 
 TASK REFACTOR160
 	TITLE "refactor(core-mapping): call the domain rules from the use cases, not from the adapters"
-	STATUS todo
+	STATUS implemented
 	SPEC "no module under infrastructure/ of core-mapping imports domain/rules; validateUniqueHost"
 		+ "and resolvePlanetName are called by the use cases"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsMapperService.ts"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts::resolvePlanetName(planet.planetId"
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts::validateUniqueHost(saveSections.getPlayers())"
+		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.ts::validateUniqueHost(saveSections.getPlayers())"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::validateUniqueHost(readingA.saveSections.getPlayers())"
 	SPEC "SaveValidatorPort reports technical failures only: a save designating no host or more"
 		+ "than one reaches its presenter through an outcome of its own, in every flow that"
 		+ "validates, loads or merges it, never as a ValidationIssue coded UNIQUE_HOST"
+		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::FLOAT_SERIALIZATION:"
+			+ "'float-serialization'"
+		IMPL "packages/core-mapping/src/application/ports/SaveFileValidationPresenterPort.ts::presentSaveFileWithoutUniqueHost"
+		IMPL "packages/core-mapping/src/application/ports/LoadAndValidateSaveFilePresenterPort.ts::presentSaveFileWithoutUniqueHost"
+		IMPL "packages/core-mapping/src/application/ports/MergeResultPresenterPort.ts::presentSaveFilesWithoutUniqueHost"
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.spec.ts::When the save"
+			+ "designates more than one host"
+		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.spec.ts::When the save"
+			+ "designates more than one host"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::When a save designates"
+			+ "no host or more than one"
 	SPEC "cli-validate refuses a save designating no host or more than one and names the host count"
 		+ "found; the save manager shows it as an error on load and on merge; the specs of"
 		+ "cli-merge and cli-validate pass unchanged"
+		IMPL "packages/core-mapping/src/presentation/formatUniqueHostError.ts"
+		IMPL "packages/core-mapping/src/presentation/SaveFileValidationPresenter.spec.ts::When"
+			+ "presenting a save file that designates no host or more than one"
+		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.spec.ts::When presenting"
+			+ "a save file that designates no host or more than one"
+		IMPL "packages/core-mapping/src/presentation/MergeResultPresenter.spec.ts::When presenting"
+			+ "save files that designate no host or more than one"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
 	SPEC "the specification area holds a RULE stating that a save designates exactly one host"
 		+ "player, applied to the players section and attested by the spec of the domain rule"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
+			+ "ASaveDesignatesExactlyOneHostPlayer"
 		REF @SECTION.Players
 	SPEC "ADomainRuleIgnoresValidationVocabulary is archived, its translation by the infrastructure"
 		+ "gone with the code that carried it"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "ADomainRuleIgnoresValidationVocabulary"
 		REF @DECISION.ADomainRuleIgnoresValidationVocabulary
 	AFTER @TASK.REFACTOR161
+	DELIVERED_BY 233
 	WAVE @WAVE.14
 	PRIORITY critical
 	DESC "fixes violation 3 of the audit"
