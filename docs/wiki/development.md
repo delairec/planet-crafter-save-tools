@@ -148,12 +148,25 @@ the check sees what `tsc` erases.
 bun run check:presentation
 ```
 
-Fails on any import of `domain/entities/` made from a `presentation/` directory. A presenter receives a value
-object, never a domain entity: an entity carries behaviour, so a presenter holding one decides when a domain
-computation runs, and its shape follows the save format rather than what is displayed. Infrastructure may still
-build entities — that is where a save is read and validated — and the reader port still hands them to the
-application layer; only the presentation boundary is closed. Every `.js`, `.ts` and `.tsx` source of every package
-is scanned, outside dependencies and build outputs, and type-only and dynamic imports count.
+Fails on two refusals, both closing the output boundary of a `core-` package:
+
+- a file of a `presentation/` directory or of `application/responses/` that imports a module under
+  `domain/entities/` or `infrastructure/`. What crosses to a presenter is an application response, a domain value
+  object or primitives, never an entity nor an infrastructure type: an entity carries behaviour, so a presenter
+  holding one decides when a domain computation runs, and an infrastructure type ties what is displayed to the save
+  format;
+- a presenter port, a file `application/ports/*Presenter*`, that imports any module under `domain/`, whatever its
+  subdirectory. The port is the contract the use case hands its outcome through, so it takes application responses
+  or primitives only.
+
+Infrastructure may still build entities — that is where a save is read and validated — and the reader port still
+hands them to the application layer; only the output boundary is closed. Every `.js`, `.ts` and `.tsx` source of every
+`core-` package is scanned, outside dependencies and build outputs, and type-only and dynamic imports count.
+
+The presenter ports that still import `domain/` are listed in
+`scripts/allow-lists/presenter-ports-importing-domain.json`, which the guard reads: a listed file is not reported,
+and a listed file that no longer imports `domain/` fails the guard until its entry is removed, so the list only
+shrinks. The mechanism lives in `scripts/shrinkingAllowList.ts`, for any guard that needs an allow-list of its own.
 
 ```
 bun run check:action-pins
