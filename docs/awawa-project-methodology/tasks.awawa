@@ -1045,20 +1045,31 @@ TASK DOCS156
 TASK CHORE157
 	TITLE "chore(guards): refuse domain entities and infrastructure at the output boundary, and any"
 		+ "domain type in a presenter port"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun run check:presentation fails on a file of a presentation directory or of"
 		+ "application/responses of a core- package that imports a module under domain/entities or"
 		+ "infrastructure/, import type included"
+		IMPL "scripts/check-presentation-entities.ts::OUTPUT_BOUNDARY_REFUSAL"
+		IMPL "scripts/check-presentation-entities.spec.ts"
 	SPEC "bun run check:presentation fails on a file application/ports/*Presenter* of a core-"
 		+ "package that imports a module under domain/, whatever its subdirectory, import type"
 		+ "included"
+		IMPL "scripts/check-presentation-entities.ts::PRESENTER_PORT_REFUSAL"
+		IMPL "scripts/check-presentation-entities.spec.ts"
 	SPEC "the presenter ports that import domain/ when the task lands are listed in an allow-list"
 		+ "the guard reads: a listed file is not reported, and a listed file that no longer imports"
 		+ "domain/ fails the guard until its entry is removed, so the list only shrinks"
+		IMPL "scripts/allow-lists/presenter-ports-importing-domain.json"
+		IMPL "scripts/shrinkingAllowList.ts::applyAllowList"
+		IMPL "scripts/shrinkingAllowList.spec.ts"
 	SPEC "the failure message of check:presentation and its description in docs/wiki/development.md"
 		+ "state the refusals of the first two criteria"
+		IMPL "scripts/check-presentation-entities.ts::checkPresentationFiles"
+		IMPL "docs/wiki/development.md::bun run check:presentation"
 	SPEC "bun run guards passes on the code as it stands"
+		IMPL "package.json::check:presentation"
 	WAVE @WAVE.14
+	DELIVERED_BY 226
 	PRIORITY critical
 	DESC "guard of violation 1 of the audit"
 	RATIONALE "The guard lands first so that no task of the wave, and no other pull request, adds a"

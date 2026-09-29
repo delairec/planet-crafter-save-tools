@@ -714,17 +714,33 @@ DECISION APlanetEnergyGridIsAnAggregate
 
 DECISION APresenterReceivesAValueObjectNeverAnEntity
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	SPEC "No PresenterPort declares a domain entity and no presentation file imports"
-		+ "domain/entities; the use case projects the entity into a value object"
+	APPLIES_TO_TASK @TASK.CHORE157
+	SPEC "No presentation file nor application response of a core- package imports domain/entities"
+		+ "or infrastructure/; the use case projects the entity into a value object or a response"
+		IMPL "scripts/check-presentation-entities.ts::OUTPUT_BOUNDARY_REFUSAL"
 		IMPL "packages/core-mapping/src/application/ports/PlayersPresenterPort.ts::PlayerSummaryValueObject"
 		IMPL "packages/core-mapping/src/application/LoadPlayersSection.ts"
+		ENFORCED_BY "scripts/check-presentation-entities.ts"
+	SPEC "No presenter port of a core- package imports a module under domain/, the ports listed in"
+		+ "scripts/allow-lists/presenter-ports-importing-domain.json excepted until REFACTOR159"
+		+ "empties the list"
+		IMPL "scripts/check-presentation-entities.ts::PRESENTER_PORT_REFUSAL"
+		IMPL "scripts/allow-lists/presenter-ports-importing-domain.json"
 		ENFORCED_BY "scripts/check-presentation-entities.ts"
 	REJECTED "An entity never leaving domain and application: it would force validation out of the"
 		+ "constructor"
 	REJECTED "A projection method on PlayerEntity: summarize stays for entities that compute"
-	RATIONALE "A presenter holding an entity decides when a domain computation runs"
+	REJECTED "A presenter port declaring a domain value object, the previous form of this ruling:"
+		+ "the port is the contract of the use case, which hands its presenter responses or"
+		+ "primitives"
+	RATIONALE "A presenter holding an entity decides when a domain computation runs, and one"
+		+ "holding an infrastructure type displays the save format"
 	SOURCE "T15, owner review"
 		PR 72
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28, guarded by"
+		+ "check:presentation"
+		PR 222
+		PR 226
 
 DECISION SolidPropsAreReadThroughPropsNeverDestructured
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -2973,3 +2989,25 @@ DECISION ATaskCarriesAPriorityOnTheReviewScale
 		+ "takes the grade of that violation without translation."
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 221
+
+DECISION AGuardAllowListOnlyShrinks
+	APPLIES_TO_TASK @TASK.CHORE157
+	SPEC "A guard exempts a file only by listing it in a JSON allow-list of scripts/allow-lists/,"
+		+ "read through scripts/shrinkingAllowList.ts"
+		IMPL "scripts/shrinkingAllowList.ts::readAllowList"
+		IMPL "scripts/check-presentation-entities.ts::ALLOW_LIST_PATH"
+		ENFORCED_BY "scripts/shrinkingAllowList.spec.ts"
+	SPEC "A listed file the guard no longer reports fails the guard until its entry is removed"
+		IMPL "scripts/shrinkingAllowList.ts::applyAllowList"
+		ENFORCED_BY "scripts/shrinkingAllowList.spec.ts"
+	SPEC "An allow-list never gains an entry: a new offending file is fixed, not listed"
+		IMPL "scripts/allow-lists/presenter-ports-importing-domain.json"
+	REJECTED "The allow-list as a constant of the guard module: each new guard would rewrite the"
+		+ "mechanism"
+		REF @TASK.CHORE158
+	REJECTED "A baseline count of violations instead of named files: a fixed file and a new"
+		+ "offender cancel out unseen"
+	RATIONALE "An allow-list measures what a task has left to fix; it stays a measure only if"
+		+ "nothing enters it and a fixed file cannot stay listed"
+	SOURCE "Ruled while implementing the presentation guard"
+		PR 226
