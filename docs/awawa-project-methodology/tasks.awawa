@@ -820,11 +820,9 @@ TASK FEAT144
 		+ "the vitals, for a visible host, for empty equipment slots, and for the inventory to stay"
 		+ "grouped since the game does not stack items. The inventory size is in the save; the"
 		+ "gauge maxima and the slot kinds depend on the equipment worn, a table the package does"
-		+ "not hold, which is why this page comes last. The decision on presenters receiving value"
-		+ "objects anchors the players use case and port this task rewrites"
+		+ "not hold, which is why this page comes last"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
 		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		REF @SECTION.Players
 		REF @SECTION.Inventories
@@ -1005,20 +1003,31 @@ TASK DOCS156
 TASK CHORE157
 	TITLE "chore(guards): refuse domain entities and infrastructure at the output boundary, and any"
 		+ "domain type in a presenter port"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun run check:presentation fails on a file of a presentation directory or of"
 		+ "application/responses of a core- package that imports a module under domain/entities or"
 		+ "infrastructure/, import type included"
+		IMPL "scripts/check-presentation-entities.ts::OUTPUT_BOUNDARY_REFUSAL"
+		IMPL "scripts/check-presentation-entities.spec.ts"
 	SPEC "bun run check:presentation fails on a file application/ports/*Presenter* of a core-"
 		+ "package that imports a module under domain/, whatever its subdirectory, import type"
 		+ "included"
+		IMPL "scripts/check-presentation-entities.ts::PRESENTER_PORT_REFUSAL"
+		IMPL "scripts/check-presentation-entities.spec.ts"
 	SPEC "the presenter ports that import domain/ when the task lands are listed in an allow-list"
 		+ "the guard reads: a listed file is not reported, and a listed file that no longer imports"
 		+ "domain/ fails the guard until its entry is removed, so the list only shrinks"
+		IMPL "scripts/allow-lists/presenter-ports-importing-domain.json"
+		IMPL "scripts/shrinkingAllowList.ts::applyAllowList"
+		IMPL "scripts/shrinkingAllowList.spec.ts"
 	SPEC "the failure message of check:presentation and its description in docs/wiki/development.md"
 		+ "state the refusals of the first two criteria"
+		IMPL "scripts/check-presentation-entities.ts::checkPresentationFiles"
+		IMPL "docs/wiki/development.md::bun run check:presentation"
 	SPEC "bun run guards passes on the code as it stands"
+		IMPL "package.json::check:presentation"
 	WAVE @WAVE.14
+	DELIVERED_BY 226
 	PRIORITY critical
 	DESC "guard of violation 1 of the audit"
 	RATIONALE "The guard lands first so that no task of the wave, and no other pull request, adds a"
@@ -1029,7 +1038,6 @@ TASK CHORE157
 		+ "presentation file may import a value object while a presenter port imports nothing from"
 		+ "the domain. On the base, only the five presenter ports taking a value object as a"
 		+ "parameter break it"
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
 		REF @TASK.REFACTOR159
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
@@ -1085,7 +1093,6 @@ TASK REFACTOR159
 		+ "energy value objects the domain computes"
 	SPEC "a save loaded with unreadable lines reaches the presenter through an outcome of its own,"
 		+ "distinct from a save loaded with warnings only, and is never rendered valid"
-	SPEC "APresenterReceivesAValueObjectNeverAnEntity is archived"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
 	AFTER @TASK.CHORE157
@@ -1102,9 +1109,7 @@ TASK REFACTOR159
 		+ "(SaveConfiguration, GlobalProgression, Statistics) stay in the domain."
 		+ "EnergyLevelsRawData belongs to the reader port task and the assertions of the value"
 		+ "object factories to the decoding task. The instructions rule objects_crossing_a_boundary"
-		+ "carries the boundary since .ai pull request 56, so the project decision stating it is"
-		+ "archived"
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+		+ "carries the boundary since .ai pull request 56, and no project decision restates it"
 		REF @TASK.CHORE157
 		REF @TASK.REFACTOR161
 		REF @TASK.REFACTOR162
@@ -1272,5 +1277,4 @@ TASK DOCS167
 		+ "the last of wave 14, every other task of the wave coming before one of them"
 		REF @WAVE.14
 		REF @TASK.REFACTOR159
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
 	SOURCE "Owner request during the refinement of wave 14 on 2026-09-29"
