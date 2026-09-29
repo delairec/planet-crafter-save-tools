@@ -121,4 +121,24 @@ describe('LoadSaveFilePresenter', () => {
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Players (section 2), entry 1'}]);
     });
   });
+
+  describe('When presenting a save file that designates no host or more than one', () => {
+    it('should update the view model with the invalid status and the host count found', () => {
+      // Arrange
+      const presenter = new LoadSaveFilePresenter();
+
+      // Act
+      presenter.presentSaveFileWithoutUniqueHost(2, [{code: 'legacy-save-format'}]);
+
+      // Assert
+      expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
+        status: 'invalid',
+        errors: [{message: 'Expected exactly one host player, found 2', location: null}],
+        warnings: [{
+          message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
+          location: null
+        }]
+      });
+    });
+  });
 });

@@ -1,9 +1,11 @@
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import {SaveParseError, SaveWarning} from "shared-save-processing/gameDefinitions";
 import {SaveFileValidationViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
+import {formatUnreadableLine} from "./formatUnreadableLine";
+import {formatUniqueHostError} from "./formatUniqueHostError";
 
 export class SaveFileValidationPresenter implements SaveFileValidationPresenterPort {
   private _viewModel: SaveFileValidationViewModel;
@@ -24,6 +26,22 @@ export class SaveFileValidationPresenter implements SaveFileValidationPresenterP
     this._viewModel = {
       status: 'invalid',
       errors: errors.map(formatValidationError),
+      warnings: warnings.map(formatSaveWarning)
+    };
+  }
+
+  presentSaveFileWithUnreadableLines(unreadableLines: SaveParseError[], warnings: SaveWarning[]): void {
+    this._viewModel = {
+      status: 'invalid',
+      errors: unreadableLines.map(formatUnreadableLine),
+      warnings: warnings.map(formatSaveWarning)
+    };
+  }
+
+  presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarning[]): void {
+    this._viewModel = {
+      status: 'invalid',
+      errors: [formatUniqueHostError(hostCount)],
       warnings: warnings.map(formatSaveWarning)
     };
   }

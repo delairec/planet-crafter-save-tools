@@ -1,14 +1,17 @@
 import {describe, expect, it} from 'bun:test';
 import {UniqueHostViolation, validateUniqueHost} from './validateUniqueHost';
-import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
-import {Player} from 'shared-save-processing/gameDefinitions';
+import {PlayerEntity} from '../entities/PlayerEntity';
+
+function createPlayer(name: string, host: boolean): PlayerEntity {
+  return new PlayerEntity({name, inventory: [], equipment: [], planetId: 'Prime', host});
+}
 
 describe('validateUniqueHost', () => {
 
   describe('When there are no players', () => {
     it('should report no violation', () => {
       // Arrange
-      const noPlayers: Player[] = [];
+      const noPlayers: PlayerEntity[] = [];
 
       // Act
       const violation = validateUniqueHost(noPlayers);
@@ -21,7 +24,7 @@ describe('validateUniqueHost', () => {
   describe('When exactly one player is host', () => {
     it('should report no violation', () => {
       // Arrange
-      const players = [createPlayer({host: true}), createPlayer({host: false})];
+      const players = [createPlayer('Nikowa', true), createPlayer('Sakia', false)];
 
       // Act
       const violation = validateUniqueHost(players);
@@ -34,7 +37,7 @@ describe('validateUniqueHost', () => {
   describe('When no player is host', () => {
     it('should report a violation counting the hosts found', () => {
       // Arrange
-      const players = [createPlayer({host: false})];
+      const players = [createPlayer('Nikowa', false)];
 
       // Act
       const violation = validateUniqueHost(players);
@@ -47,7 +50,7 @@ describe('validateUniqueHost', () => {
   describe('When more than one player is host', () => {
     it('should report a violation counting the hosts found', () => {
       // Arrange
-      const players = [createPlayer({host: true}), createPlayer({host: true})];
+      const players = [createPlayer('Nikowa', true), createPlayer('Sakia', true)];
 
       // Act
       const violation = validateUniqueHost(players);

@@ -2,10 +2,12 @@ import {describe, expect, it, mock} from 'bun:test';
 import {MergeSaveFiles} from './MergeSaveFiles';
 import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {ParsedSaveSections, SaveSectionsParserPort} from './ports/SaveSectionsParserPort';
+import {SaveSectionsReaderPort, SaveSectionsReading} from './ports/SaveSectionsReaderPort';
 import {SaveSectionsSerializerPort} from './ports/SaveSectionsSerializerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
+import {SaveFilesWithoutUniqueHostResponse} from './responses/SaveFilesWithoutUniqueHostResponse';
 import {MergeWarning} from './responses/MergeWarning';
 import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
 import {SaveValidationResult} from './ports/SaveValidationResult';
@@ -13,6 +15,8 @@ import {SaveParseError, SaveWarning} from 'shared-save-processing/gameDefinition
 import {INVENTORIES_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createPlayer, createSaveConfiguration, createTerrainLayer} from 'shared-save-processing/testing/createSaveRecords.js';
 import {createSaveSections} from '../testing/createSaveSections';
+import {FakeSaveSectionsMapperService} from '../testing/FakeSaveSectionsMapperService';
+import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/SaveSectionsWithPlayers';
 
 describe('MergeSaveFiles', () => {
 
@@ -32,18 +36,28 @@ describe('MergeSaveFiles', () => {
   const parserAnswering = (savesByContent: Record<string, ParsedSaveSections>): SaveSectionsParserPort['parse'] =>
     (content: string) => savesByContent[content] ?? {sections: createSaveSections(), errors: noParseErrors};
 
+  const readerAnswering = (readingsByContent: Record<string, SaveSectionsReading>): SaveSectionsReaderPort['read'] =>
+    (content: string) => readingsByContent[content] ?? {saveSections: new FakeSaveSectionsMapperService(), unreadableLines: noParseErrors};
+
   interface UseCaseOverrides {
     validate?: SaveValidatorPort['validate'];
+    read?: SaveSectionsReaderPort['read'];
     parse?: SaveSectionsParserPort['parse'];
   }
 
-  function createUseCase({validate = () => ACCEPTED, parse = parserAnswering({})}: UseCaseOverrides = {}) {
+  function createUseCase({validate = () => ACCEPTED, read = readerAnswering({}), parse = parserAnswering({})}: UseCaseOverrides = {}) {
     const validator: SaveValidatorPort = {validate: mock(validate)};
+    const reader: SaveSectionsReaderPort = {read: mock(read)};
     const parser: SaveSectionsParserPort = {parse: mock(parse)};
     const serializer: SaveSectionsSerializerPort = {serialize: mock(() => 'merged content')};
-    const presenter: MergeResultPresenterPort = {presentMergeSucceeded: mock(), presentSaveFilesInvalid: mock(), presentMergedSaveUnusable: mock()};
+    const presenter: MergeResultPresenterPort = {
+      presentMergeSucceeded: mock(),
+      presentSaveFilesInvalid: mock(),
+      presentSaveFilesWithoutUniqueHost: mock(),
+      presentMergedSaveUnusable: mock()
+    };
 
-    return {useCase: new MergeSaveFiles(validator, parser, serializer, presenter), validator, parser, serializer, presenter};
+    return {useCase: new MergeSaveFiles(validator, reader, parser, serializer, presenter), validator, reader, parser, serializer, presenter};
   }
 
   describe('When both saves are valid', () => {
@@ -336,9 +350,9 @@ describe('MergeSaveFiles', () => {
   });
 
   describe('When the merged save does not pass validation', () => {
-    const uniqueHostError = {code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2'};
+    const schemaViolation = {code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: "must have required property 'name'"};
 
-    const rejectOnlyTheMergedSave = validatorAnswering({[MERGED_FILE_NAME]: rejectedWith(uniqueHostError)});
+    const rejectOnlyTheMergedSave = validatorAnswering({[MERGED_FILE_NAME]: rejectedWith(schemaViolation)});
 
     it('should present a success carrying the errors of the produced save', async () => {
       // Arrange
@@ -351,7 +365,7 @@ describe('MergeSaveFiles', () => {
       expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith({
         fileName: 'Save-A-Save-B-merged.json',
         content: 'merged content',
-        mergeErrors: [uniqueHostError],
+        mergeErrors: [schemaViolation],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: [],
@@ -385,11 +399,11 @@ describe('MergeSaveFiles', () => {
 
   describe('When a save reaches the merge with a line that cannot be read', () => {
     const unreadableLine: SaveParseError = {section: INVENTORIES_SECTION_INDEX, entryIndex: 0, detail: 'Invalid JSON: {not valid json'};
-    const parseSaveAWithAnUnreadableLine = parserAnswering({contentA: {sections: createSaveSections(), errors: [unreadableLine]}});
+    const readSaveAWithAnUnreadableLine = readerAnswering({contentA: {saveSections: new FakeSaveSectionsMapperService(), unreadableLines: [unreadableLine]}});
 
     it('should present the merged save as unusable instead of a success', async () => {
       // Arrange
-      const {useCase, presenter} = createUseCase({parse: parseSaveAWithAnUnreadableLine});
+      const {useCase, presenter} = createUseCase({read: readSaveAWithAnUnreadableLine});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -401,7 +415,7 @@ describe('MergeSaveFiles', () => {
 
     it('should not blame the input files, which validation has already accepted', async () => {
       // Arrange
-      const {useCase, presenter} = createUseCase({parse: parseSaveAWithAnUnreadableLine});
+      const {useCase, presenter} = createUseCase({read: readSaveAWithAnUnreadableLine});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -412,7 +426,7 @@ describe('MergeSaveFiles', () => {
 
     it('should not produce a save amputated of what could not be read', async () => {
       // Arrange
-      const {useCase, serializer, validator} = createUseCase({parse: parseSaveAWithAnUnreadableLine});
+      const {useCase, serializer, validator} = createUseCase({read: readSaveAWithAnUnreadableLine});
 
       // Act
       await useCase.execute(TWO_VALID_SAVES);
@@ -420,6 +434,48 @@ describe('MergeSaveFiles', () => {
       // Assert
       expect(serializer.serialize).not.toHaveBeenCalled();
       expect(validator.validate).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('When a save designates no host or more than one', () => {
+    const readSaveAWithTwoHosts = readerAnswering({
+      contentA: {
+        saveSections: new SaveSectionsWithPlayers([createPlayerFlaggedAsHost('Nikowa', true), createPlayerFlaggedAsHost('Sakia', true)]),
+        unreadableLines: noParseErrors
+      }
+    });
+
+    it('should present the saves without a unique host, with the host count of the save at fault', async () => {
+      // Arrange
+      const {useCase, presenter} = createUseCase({
+        validate: validatorAnswering({'Save-A.json': acceptedWith({code: 'legacy-save-format'})}),
+        read: readSaveAWithTwoHosts
+      });
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(presenter.presentSaveFilesWithoutUniqueHost).toHaveBeenCalledWith({
+        saveAWrongHostCount: 2,
+        saveBWrongHostCount: undefined,
+        saveAWarnings: [{code: 'legacy-save-format'}],
+        saveBWarnings: []
+      } satisfies SaveFilesWithoutUniqueHostResponse);
+      expect(presenter.presentSaveFilesInvalid).not.toHaveBeenCalled();
+      expect(presenter.presentMergeSucceeded).not.toHaveBeenCalled();
+    });
+
+    it('should not merge the saves', async () => {
+      // Arrange
+      const {useCase, parser, serializer} = createUseCase({read: readSaveAWithTwoHosts});
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(parser.parse).not.toHaveBeenCalled();
+      expect(serializer.serialize).not.toHaveBeenCalled();
     });
   });
 
