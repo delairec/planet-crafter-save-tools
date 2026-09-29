@@ -228,3 +228,51 @@ describe('validateTables', () => {
     });
   });
 });
+
+describe('validateTables when a file is missing', () => {
+
+  describe('When reading a schema that is not there rejects, as reading a missing file does', () => {
+    it('should report the table as having no schema beside it', async () => {
+      // Arrange
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
+        files: {'packages/data-planets/planets.json': '[]'}
+      });
+      const rejectingIo = {
+        ...io,
+        readText: async (file: string) => {
+          if (file.endsWith('.schema.json')) {
+            throw new Error(`ENOENT ${file}`);
+          }
+          return '[]';
+        }
+      };
+
+      // Act
+      await validateTables(rejectingIo);
+
+      // Assert
+      expect({printedErrors, exitCodes}).toEqual({
+        printedErrors: ['packages/data-planets/planets.json has no schema beside it, packages/data-planets/planets.schema.json'],
+        exitCodes: [1]
+      });
+    });
+  });
+
+  describe('When the schema beside a table reaches a shared schema that is not there', () => {
+    it('should fail naming the schema it cannot read', async () => {
+      // Arrange
+      const {io} = createFakeScriptIo({
+        files: {
+          'packages/data-planets/planets.json': '[]',
+          'packages/data-planets/planets.schema.json': JSON.stringify({$ref: './missing.schema.json'})
+        }
+      });
+
+      // Act
+      const validation = validateTables(io);
+
+      // Assert
+      await expect(validation).rejects.toThrow('packages/data-planets/missing.schema.json is not readable');
+    });
+  });
+});
