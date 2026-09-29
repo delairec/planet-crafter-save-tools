@@ -1077,19 +1077,39 @@ TASK CHORE157
 		+ "never an entity"
 
 TASK CHORE158
-	TITLE "chore(guards): refuse the wire abbreviations of the save format under domain"
-	STATUS draft
-	SPEC "a guard run by bun run guards fails on a file under domain/ of a core- package that uses"
-		+ "gId, liId, woIds, siIds or linkedWo as an identifier, a property name or a property key"
-	SPEC "the files that use one of them when the task lands are listed in an allow-list the guard"
-		+ "reads: a listed file is not reported, and a listed file that no longer uses any fails"
-		+ "the guard until its entry is removed, so the list only shrinks"
+	TITLE "chore(guards): refuse the save format records and their abbreviations under domain"
+	STATUS todo
+	SPEC "bun run check:wire-format fails on a file under domain/ of a core- package that uses gId,"
+		+ "liId, woIds, siIds or linkedWo as an identifier, a property name or a property key,"
+		+ "string literal keys included; a comment is not reported"
+	SPEC "bun run check:wire-format fails on a file under domain/ of a core- package that imports"
+		+ "shared-save-processing/gameDefinitions, import type included"
+	SPEC "both refusals apply to the spec files under domain/ as to the production ones"
+	SPEC "the files each refusal reports when the task lands are listed in an allow-list of that"
+		+ "refusal, read through the allow-list mechanism of check:presentation shared by both"
+		+ "guards: a listed file is not reported, and a listed file the refusal no longer reports"
+		+ "fails the guard until its entry is removed, so each list only shrinks"
+	SPEC "the failure message of check:wire-format and its paragraph in docs/wiki/development.md"
+		+ "state the two refusals"
 	SPEC "bun run guards passes on the code as it stands"
+	AFTER @TASK.CHORE157
 	WAVE @WAVE.14
 	PRIORITY high
 	DESC "guard of violation 5 of the audit"
-	RATIONALE "Placed first for the same reason as the presentation guard: the decoding task"
-		+ "empties the allow-list, and nothing adds an abbreviation in the meantime"
+	RATIONALE "The guard lands before the decoding task so that nothing adds a save format record"
+		+ "or an abbreviation to the domain in the meantime; its allow-lists are the measure of"
+		+ "what is left, and the decoding task empties them. The abbreviations alone miss the"
+		+ "domain modules that handle a save format record without naming one, hence the refusal of"
+		+ "the import. The guard follows the presentation guard to reuse its shrinking allow-list"
+		+ "instead of writing a second one. WireAbbreviationsStayInSharedSaveProcessing already"
+		+ "requires the translation at the domain boundary; the guard makes it checked"
+		REF @TASK.CHORE157
+		REF @TASK.REFACTOR162
+		REF @DECISION.WireAbbreviationsStayInSharedSaveProcessing
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: refuse the import of the save format"
+		+ "records as well as the abbreviations, spec files included, after the presentation guard"
 
 TASK REFACTOR159
 	TITLE "refactor(core-mapping): hand the presenters one application response per outcome"
@@ -1174,8 +1194,10 @@ TASK REFACTOR161
 TASK REFACTOR162
 	TITLE "refactor(core-mapping): decode the save format before it reaches the domain"
 	STATUS draft
-	SPEC "the domain model of core-mapping names its data in business terms: the allow-list of the"
-		+ "wire abbreviation guard is empty and removed, the guard running with no exemption"
+	SPEC "the domain model of core-mapping names its data in business terms, with a business type"
+		+ "of its own for every save section it handles, decoded by the infrastructure: both"
+		+ "allow-lists of check:wire-format are empty and removed, the guard running with no"
+		+ "exemption"
 	SPEC "no module under domain/ splits or joins a list of the save text nor reads an empty string"
 		+ "as an absence: the infrastructure hands the domain lists as arrays and absence as"
 		+ "undefined"
@@ -1193,6 +1215,8 @@ TASK REFACTOR162
 	RATIONALE "The three violations are one boundary, the decoding of the save text: violation 10"
 		+ "escapes what the serializer encodes and violation 13 moves the shape checks to where the"
 		+ "text is decoded. The task follows the reader port, which is where the decoding lands"
+	SOURCE "Owner ruling during the refinement of CHORE158: the domain defines a business type per"
+		+ "save section instead of importing the save format records"
 
 TASK REFACTOR163
 	TITLE "refactor(core-mapping): move the game releases into the domain, shared runtime code"
