@@ -17,7 +17,8 @@ describe('findWireAbbreviations', () => {
       ['as a single-quoted string literal key', "const reference = {'gId': 'Iron'};", 'gId'],
       ['as a double-quoted string literal key of a type', '  "liId"?: number;', 'liId'],
       ['as a string literal element access', "return entry['woIds'];", 'woIds'],
-      ['inside a template literal expression', 'const label = `object ${entry.gId}`;', 'gId']
+      ['inside a template literal expression', 'const label = `object ${entry.gId}`;', 'gId'],
+      ['after a division operator', 'const share = total / entry.gId;', 'gId']
     ])('should report it %s', (_usage, source, found) => {
       // Act
       const findings = findWireAbbreviations('packages/core-mapping/src/domain/save/WorldObjectEntry.ts', source);
@@ -64,6 +65,8 @@ describe('findWireAbbreviations', () => {
       ['a block comment spanning lines', '/*\n * woIds lists the objects\n */'],
       ['a string literal that is not a key', "it('should translate linkedWo', () => {});"],
       ['a string literal quoting a comment opener', "const label = '// gId';"],
+      ['the text of a template literal', 'const label = `the gId of the object`;'],
+      ['the text of a template literal left unclosed', 'const label = `the gId of the object'],
       ['a longer identifier', 'const gIdentifier = linkedWorldObject.siIdsCount;']
     ])('should leave %s alone', (_place, source) => {
       // Act
