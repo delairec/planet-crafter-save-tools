@@ -6,7 +6,6 @@
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
 import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
-import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
@@ -30,10 +29,9 @@ export function validateSaveContent(saveContent) {
     };
   }
 
-  const {formatRelease, sections, errors: parseErrors, warnings} = parseSaveSections(saveContent);
-  if (formatRelease === undefined) {
-    throw new UnknownFormatReleaseError(formatRelease);
-  }
+  const parsedSave = parseSaveSections(saveContent);
+  const formatRelease = /** @type {string} */ (parsedSave.formatRelease);
+  const {sections, errors: parseErrors, warnings} = parsedSave;
 
   const sectionIndexes = resolveSectionIndexes(formatRelease);
   const worldObjectIssues = validateWorldObjectsSection(
