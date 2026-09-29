@@ -1,19 +1,19 @@
-*Feedback for the awawa dev team · awawa 2.7.0 · 2026-09-25*
+*Feedback for the awawa dev team · awawa 2.7.0 · 2026-09-29*
 
 # awawa feedback: the overview
 
 One project — a seven-package monorepo worked daily by AI agents — moved its specification into an awawa corpus and
-reported what it met, seven times in two weeks. This page gathers the seven reports into one list: **one proposed
+reported what it met, eight times in two and a half weeks. This page gathers the eight reports into one list: **one proposed
 remediation per row, and facing it every defect or gap it would close**, whatever report raised it. Only what is
 yours to handle is kept — the binary, the schema language, the manual, the skills and the distribution. What was
 ours — our method, our starter, our conduct — stays in the reports.
 
-- **7** — reports, 2026-09-12 to 2026-09-25, all on awawa 2.7.0
-- **80** — defects or gaps raised about the tool, 7 of them with nothing asked
-- **53** — remediations once the repetitions are merged
+- **8** — reports, 2026-09-12 to 2026-09-28, all on awawa 2.7.0
+- **85** — defects or gaps raised about the tool, 7 of them with nothing asked
+- **56** — remediations once the repetitions are merged
 - **18** — remediations raised by two reports or more
 
-## The seven reports
+## The eight reports
 
 | Code | Report | Date | What it measured |
 |---|---|---|---|
@@ -24,10 +24,11 @@ ours — our method, our starter, our conduct — stays in the reports.
 | M3 | Migration 3 | 2026-09-18 | a product specification added as a second area of the same workspace: 12 sessions, 60 probe lines, 404 `awawa` calls |
 | CTX | Context savings example | 2026-09-22 | what one session loaded into the agent's context by reading the corpus and its instructions, in lines of output, and the levers that would lower it |
 | M4 | Migration 4 | 2026-09-25 | the second walk of the starter, on its version 2: a corpus built from scratch for 23 files of agent instructions, 478 statements replaced by 237 entities |
+| PR | Pull requests #113 to #219 | 2026-09-28 | a week of delivery on the corpus: 106 pull requests measured in aggregate, eleven of them collected in full — 140 transcripts, 2,891 `awawa` calls |
 
 A reference reads « report · number »: `F·02` is defect 02 of the field report, `M3·5` defect 5 of section 5 of
 Migration 3. Migration 1, the context report and Migration 4 number nothing; `M1·6` is the sixth row of the « What went wrong »
-table of Migration 1, `CTX·1` the first row of the « Additional levers » table of the context report, `M4·11` the eleventh row of the defect table of Migration 4.
+table of Migration 1, `CTX·1` the first row of the « Additional levers » table of the context report, `M4·11` the eleventh row of the defect table of Migration 4, `PR·1` the first row of the tool's « What went wrong » table of the pull-request report.
 
 ## Where to start
 
@@ -39,7 +40,7 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
    tool is the one that most often reads wrong.
 3. **Give a type its file, and `new` a destination** (R16, R17) — the last routine reason an agent opens a corpus
    file with a text tool: 4 of 11 field reports, 3 entities misfiled, and still 5 `tail` reads in the last walk.
-4. **Let listings read what the schema resolves** (R6, R7) — three reports. A `DEFAULT` is honoured by gating and
+4. **Let listings read what the schema resolves** (R6, R7) — four reports. A `DEFAULT` is honoured by gating and
    by no listing: 256 of 275 entities are counted under `(none)`, and `--where STATUS==active` selects 0 of 16 rules.
 5. **Let a slot take several types** (R23) — two reports. Today it leaves a provenance field untyped or split in
    two, and makes the 11 to 13 rules about the game unwritable under a required `anchor`.
@@ -53,17 +54,19 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R3 | `context` prints the `STATUS` and the archive date of a suppressed target, or expands it on request | `M3·4` an active entity citing an archived one gets `// suppressed: @X` and loses its body, with no reason and no date | M3 |
 | R4 | `context` opens on a one-line summary: edges in, edges out, anchors | `F·14` a package of twelve lines for a disconnected entity looks like any other; a whole area stayed disconnected for days | F |
 | R5 | The `skipped` and `not expanded` footers print counts, never a name the body already printed; the enumeration moves to `--json` | `M3·13` three `skipped` lines are 20.7 % of the largest package of the corpus, 3 559 of 17 154 characters · `M4·18` at `--depth 1` the `not expanded` footer names again the 155 rules and 5 packages the body printed, 22 518 bytes for the entry package · `M4·19` `--skip` on a reference field saves 24 % of the package, its footer still naming the 160 skipped targets | M3, M4 |
-| R6 | `--where` reads nested fields, fields declared only in a `WHEN` block, and `DEFAULT` values | `M2·2` a default cannot be selected on · `M2·9` a nested field is « not a field of » its type · `M2·19` a `WHEN`-only field is unknown until one entity writes it · `M2·17` an edge defaulted by `DEFAULT @X` is invisible to `refs`, `status` and `--where` · `M4·11` `--where STATUS==active` selects 0 of 16 rules whose `STATUS` is the default, while `WHEN STATUS active` fires on them | M2, M4 |
-| R7 | `status` counts a defaulted `STATUS` under its default | `M2·2` `status` prints `(none)` for an entity that omits a defaulted `STATUS` · `M3·12` the `active` column is 0 on every row, 256 of 275 entities under `(none)` · `M4·11` `status .` prints `active 0` and `(none) 10` | M2, M3, M4 |
-| R8 | `--where` matches a substring and the identity — `FIELD~=text`, `NAME~=text` | `F·11` equality alone cannot query a free-text field · `M1·8` four grammars of `SOURCE` in two days, none selectable · `M2·13` no listing by name prefix | M1, F, M2 |
+| R6 | `--where` reads nested fields, fields declared only in a `WHEN` block, and `DEFAULT` values | `M2·2` a default cannot be selected on · `M2·9` a nested field is « not a field of » its type · `M2·19` a `WHEN`-only field is unknown until one entity writes it · `M2·17` an edge defaulted by `DEFAULT @X` is invisible to `refs`, `status` and `--where` · `M4·11` `--where STATUS==active` selects 0 of 16 rules whose `STATUS` is the default, while `WHEN STATUS active` fires on them · `PR·1` no `--where STATUS==<default>` matches the 299 of 375 entities at their default | M2, M4, PR |
+| R7 | `status` counts a defaulted `STATUS` under its default | `M2·2` `status` prints `(none)` for an entity that omits a defaulted `STATUS` · `M3·12` the `active` column is 0 on every row, 256 of 275 entities under `(none)` · `M4·11` `status .` prints `active 0` and `(none) 10` · `PR·1` 299 of 375 entities under `(none)`, 137 of them decisions, met again in the sixth report running | M2, M3, M4, PR |
+| R8 | `--where` matches a substring and the identity — `FIELD~=text`, `NAME~=text` | `F·11` equality alone cannot query a free-text field · `M1·8` four grammars of `SOURCE` in two days, none selectable · `M2·13` no listing by name prefix · `PR·4` no command searches field text: 62 of 214 corpus reads outside the tool were `grep` or `git grep` for a text | M1, F, M2, PR |
 | R9 | `status TYPE --by FIELD` prints one count per declared value, zero included | `M3·11` a declared enum value carried by 0 of 21 entities read like a value in use through four steps and four reviews | M3 |
-| R10 | `status TYPE --json --fields` returns the field values of every entity of a type; `show` takes several targets | `IDE·01` a table of 232 entities costs 232 walks of the workspace, 4.4 s · `M3` usage: 35 `show` invocations in one audit session · `M4·4` an audit of 220 entities needs one `show --json` per entity from a script | IDE, M3, M4 |
+| R10 | `status TYPE --json --fields` returns the field values of every entity of a type; `show` takes several targets | `IDE·01` a table of 232 entities costs 232 walks of the workspace, 4.4 s · `M3` usage: 35 `show` invocations in one audit session · `M4·4` an audit of 220 entities needs one `show --json` per entity from a script · `PR·4` the next free task number read by a `git grep` over every ref, the `AFTER` of three tasks by one `show --json` each | IDE, M3, M4, PR |
 | R11 | `show TYPE --json --resolved` returns the schema of a type as resolved — `INCLUDE`, `WHEN` and wildcard fields | `IDE·02` the resolved schema is reachable only through an entity of the type, so a type at zero entities has no columns | IDE |
 | R12 | A reachable target for the wildcard entry — a bare `show SCHEMA`, or a documented escape for `*` | `F·12` `@SCHEMA.*` is listed and no target reaches it: the one entry that can only be read by opening the file | F |
 | R13 | `show TARGET --json` returns typed atoms — kind, text, unescaped value, resolved target | `IDE·03` atoms come back as source text, so a view must carry the token rules itself | IDE |
 | R14 | `statuses` in `status --json` keeps to the declared values, per type, and lists undeclared ones apart | `IDE·04` an invalid `STATUS` value joins the lifecycle list as one more stage | IDE |
 | R15 | On an unresolved name in a git checkout, name the commit that removed it, or say « never written » | `F·05` a deleted entity is indistinguishable from one never written, 3 / 11 | F |
 | R51 | `show` takes `--skip CATEGORY`, as `context` does | `CTX·1` a task read by `show` carries its `RATIONALE` and `SOURCE`: about 60 lines where only its `SPEC` lines were used | CTX |
+| R56 | `lint --closure` takes `--skip CATEGORY`, as `context` does | `PR·3` the closure footer carries the provenance hub: 111 to 132 names for four tasks, and it scales with the hub, not the task | PR |
+| R57 | `status --where FIELD==VALUE` without a type selects across the types that declare the field | `PR·5` `status --where STATUS==archived .` exits 2: a cleanup lists one type at a time | PR |
 
 ## Writing a corpus
 
@@ -76,6 +79,7 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R20 | `fmt` writes entities in a canonical order — by name, or by a declared sort key | `M2·22` two pull requests appending to the same file conflict at rebase, one conflict per pair | M2 |
 | R21 | `diff --git <rev> [PATH]` reads the old side from the repository | `F·09` entity-level diff needs a copy made before editing; a session that forgets loses it, 2 / 11 | F |
 | R22 | Declared extra paths are scanned for `@TYPE.Name` mentions: `refs` lists them, `lint` reports an unresolved one, `fmt --rename` rewrites them | `M3·10` at the deletion of a document `lint` saw 6 of 45 citation sites; 51 identity mentions in code and README that a rename leaves stale in silence | M3 |
+| R55 | `fmt` takes `--width N` or `--no-wrap` | `PR·2` strings wrapped at about 95 columns: 24 to 322 of the corpus lines each sampled pull request added are continuations, 44 % on one of them | PR |
 
 ## The schema language
 
@@ -147,13 +151,13 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 ## What holds
 
 Every report lists what worked on the same footing as what did not: 8 mechanisms in Migration 1, 18 in the field
-report, 25 in Migration 2, 6 in the IDE report, 24 in Migration 3; Migration 4 lists defects only. Three held in all eleven reports of the field
+report, 25 in Migration 2, 6 in the IDE report, 24 in Migration 3, 8 in the pull-request report; Migration 4 lists defects only. Three held in all eleven reports of the field
 report: anchor and reference integrity, a required `REJECTED` on a decision, and closure integrity. The remediations
-above are asked of a tool that carried the method through four migrations.
+above are asked of a tool that carried the method through four migrations and 106 pull requests in a week.
 
 ---
 
-*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example and on 2026-09-25 with Migration 4,
-all written on awawa 2.7.0. One defect was probed again for this
+*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example, on 2026-09-25 with Migration 4
+and on 2026-09-29 with the pull-request report of 2026-09-28, all written on awawa 2.7.0. One defect was probed again for this
 page and withdrawn, `M2·15`; every other figure keeps the perimeter of the report it comes from, and a claim wrong
 at the source is wrong here.*

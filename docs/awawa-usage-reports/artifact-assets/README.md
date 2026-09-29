@@ -13,7 +13,7 @@ https://raw.githubusercontent.com/delairec/planet-crafter-save-tools/master/docs
 
 | File                                    | Content                                                                                                                                                                                                     |
 |-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `awawa-feedback-overview.md`            | The overview the page opens on, as written: every proposed remediation of the seven reports, facing the defects it closes.                                                                                  |
+| `awawa-feedback-overview.md`            | The overview the page opens on, as written: every proposed remediation of the eight reports, facing the defects it closes.                                                                                  |
 | `awawa-usage-reports.zip`               | The eleven usage reports aggregated by the field report of the page, as they were sent.                                                                                                                     |
 | `awawa-migration-feedback.md`           | The Markdown export of the Migration 1 report, as the page generates it.                                                                                                                                    |
 | `awawa-migration-2-feedback.md`         | The Markdown export of the Migration 2 report, as the page generates it.                                                                                                                                    |
@@ -26,6 +26,7 @@ https://raw.githubusercontent.com/delairec/planet-crafter-save-tools/master/docs
 | `awawa-ide-plugins-report.md`           | The Markdown export of the IDE plugins report, as the page generates it.                                                                                                                                    |
 | `awawa-ide-plugins-report-2.md`         | The second IDE plugins report, as written: the page's « IDE plugins 2 » tab is built from it.                                                                                                                |
 | `2026-09-22-corpus-reading-cost.md`     | The context savings example, as written: the page's « Context savings example » tab and the CTX row of its overview are built from it.                                                                      |
+| `awawa-pull-requests-113-219-report.md` | The usage report on pull requests 113 to 219, rewritten for the page: its « Pull requests report » tab and the PR row of its overview are built from it. The report as written stays in `pull-requests/`.    |
 
 The awawa team reads these files outside the repository: no file here carries a
 relative link, which would resolve to nothing for them.
