@@ -1447,29 +1447,46 @@ TASK REFACTOR163
 TASK REFACTOR164
 	TITLE "refactor(core-mapping): carry validation issues as codes, their sentences built in"
 		+ "presentation"
-	STATUS todo
+	STATUS implemented
 	SPEC "a ValidationIssue of core-mapping and a SaveParseError of shared-save-processing carry a"
 		+ "code and its data and no sentence; every sentence shown about a validation issue or an"
 		+ "unreadable line is built under presentation/messages of core-mapping and reads as it"
 		+ "does today"
+		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::export type"
+			+ "ValidationIssue"
+		IMPL "packages/shared-save-processing/gameDefinitions/SaveParseError.ts::export type"
+			+ "SaveParseError"
+		IMPL "packages/core-mapping/src/presentation/messages/validationIssueMessages.js"
 	SPEC "no sentence shown to the user is built in the infrastructure of core-mapping nor in"
 		+ "shared-save-processing, verifySectionCount, parseSaveSections and the entry count, float"
 		+ "serialization and file extension checks included; the message of the schema validator"
 		+ "crosses as data of the issue, with the path of the field, and is not rewritten"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::schemaMessage:"
+			+ "schemaError.message"
+		IMPL "packages/shared-save-processing/verifySectionCount.js::SAVE_PARSE_ERROR_CODES.UNEXPECTED_SECTION_COUNT"
+		IMPL "packages/core-mapping/src/infrastructure/validateFloatSerialization.ts"
 		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
 	SPEC "an issue located in the save carries the name and the index of its section, both resolved"
 		+ "by the infrastructure, and no longer the format release; no module under presentation/"
 		+ "of core-mapping imports the section indexes of the save format, spec files excepted, and"
 		+ "the location shown reads as it does today"
+		IMPL "packages/core-mapping/src/infrastructure/locateSaveSection.ts::export function"
+			+ "locateSaveSection"
+		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.ts::saveSectionLabels[name]"
 	SPEC "ALocationIsABusinessLabelFollowedByTheIndex and UserTextLivesInCoreMappingPresentation"
 		+ "are rewritten in place: the first builds the location from the name and the index the"
 		+ "issue carries and drops its fallback on a bare index, the second names the validation"
 		+ "issues and the unreadable lines among the codes it turns into sentences, and their"
 		+ "anchors name the code as the task leaves it"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::ALocationIsABusinessLabelFollowedByTheIndex"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::UserTextLivesInCoreMappingPresentation"
 		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
 		REF @DECISION.UserTextLivesInCoreMappingPresentation
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts"
 	AFTER @TASK.REFACTOR160
 	WAVE @WAVE.14
 	PRIORITY high
@@ -1501,6 +1518,7 @@ TASK REFACTOR164
 	SOURCE "Owner ruling during the refinement of the task: the message of the schema validator is"
 		+ "carried as data and not rewritten, a located issue carries the name and the index of its"
 		+ "section, and the two decisions on user text and on locations are rewritten in place"
+	DELIVERED_BY 234
 
 TASK REFACTOR165
 	TITLE "refactor(core-mapping): let the merge rule return the warnings of the merged save"
