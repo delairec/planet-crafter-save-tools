@@ -5,6 +5,7 @@ import {LoadSaveFileViewModel} from "./viewModels/LoadSaveFileViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatUnreadableLine} from "./formatUnreadableLine";
 import {formatSaveWarning} from "./formatSaveWarning";
+import {formatUniqueHostError} from "./formatUniqueHostError";
 
 export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPort {
   private _viewModel: LoadSaveFileViewModel;
@@ -37,6 +38,14 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
     this._viewModel = {
       status: 'invalid',
       errors: unreadableLines.map(formatUnreadableLine),
+      warnings: warnings.map(formatSaveWarning)
+    };
+  }
+
+  presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarning[]): void {
+    this._viewModel = {
+      status: 'invalid',
+      errors: [formatUniqueHostError(hostCount)],
       warnings: warnings.map(formatSaveWarning)
     };
   }

@@ -77,4 +77,38 @@ describe('SaveFileValidationPresenter', () => {
       }]);
     });
   });
+
+  describe('When presenting a save file with unreadable lines', () => {
+    it('should update the view model with the invalid status and each unreadable line located', () => {
+      // Arrange
+      const presenter = new SaveFileValidationPresenter();
+
+      // Act
+      presenter.presentSaveFileWithUnreadableLines([{detail: 'Invalid JSON: {', section: GLOBAL_METADATA_SECTION_INDEX, formatRelease: '2.004', entryIndex: 0}], noWarnings);
+
+      // Assert
+      expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({
+        status: 'invalid',
+        errors: [{message: 'Invalid JSON: {', location: 'Global metadata (section 0), entry 0'}],
+        warnings: []
+      });
+    });
+  });
+
+  describe('When presenting a save file that designates no host or more than one', () => {
+    it('should update the view model with the invalid status and the host count found', () => {
+      // Arrange
+      const presenter = new SaveFileValidationPresenter();
+
+      // Act
+      presenter.presentSaveFileWithoutUniqueHost(0, noWarnings);
+
+      // Assert
+      expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({
+        status: 'invalid',
+        errors: [{message: 'Expected exactly one host player, found 0', location: null}],
+        warnings: []
+      });
+    });
+  });
 });

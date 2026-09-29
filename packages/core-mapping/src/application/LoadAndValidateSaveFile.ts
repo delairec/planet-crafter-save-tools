@@ -1,12 +1,13 @@
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
-import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
+import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {LoadAndValidateSaveFilePresenterPort} from "./ports/LoadAndValidateSaveFilePresenterPort";
 import {LoadAndValidateSaveFileRequest} from "./requests/LoadAndValidateSaveFileRequest";
+import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
 
 export class LoadAndValidateSaveFile {
   constructor(
     private readonly validator: SaveValidatorPort,
-    private readonly parser: SaveSectionsParserPort,
+    private readonly saveSectionsReader: SaveSectionsReaderPort,
     private readonly presenter: LoadAndValidateSaveFilePresenterPort
   ) {
   }
@@ -19,10 +20,17 @@ export class LoadAndValidateSaveFile {
       return;
     }
 
-    const {errors: unreadableLines} = this.parser.parse(content);
+    const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
 
     if (unreadableLines.length > 0) {
       this.presenter.presentSaveFileWithUnreadableLines(unreadableLines, validation.warnings);
+      return;
+    }
+
+    const uniqueHostViolation = validateUniqueHost(saveSections.getPlayers());
+
+    if (uniqueHostViolation !== null) {
+      this.presenter.presentSaveFileWithoutUniqueHost(uniqueHostViolation.hostCount, validation.warnings);
       return;
     }
 

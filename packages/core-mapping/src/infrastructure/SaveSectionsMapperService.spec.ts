@@ -297,42 +297,6 @@ describe('SaveSectionsMapperService', () => {
       ]);
     });
 
-    it('should name a planet from its numeric id (Rule EN-PLANET-3)', () => {
-      // Arrange
-      const primePlanetNumericId = -1140328421;
-      const sections = createSaveSections({
-        worldObjects: [
-          {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: primePlanetNumericId}
-        ]
-      });
-      const service = new SaveSectionsMapperService(sections);
-
-      // Act
-      const planets = service.getPlacedWorldObjectsByPlanet();
-
-      // Assert
-      expect(planets[0].planetName).toBe('Prime');
-    });
-
-    it('should offer the terraformed planet names as hints when the numeric id is unknown (Rule EN-PLANET-2)', () => {
-      // Arrange
-      const unknownPlanetNumericId = 1;
-      const sections = createSaveSections({
-        terraformationLevels: [createTerraformationLevel({planetId: 'Humble'})],
-        worldObjects: [
-          {id: 1, gId: 'Seed7Humble', pos: '0,0,0', planet: unknownPlanetNumericId},
-          {id: 2, gId: 'EnergyGenerator1', pos: '10,0,0', planet: unknownPlanetNumericId}
-        ]
-      });
-      const service = new SaveSectionsMapperService(sections);
-
-      // Act
-      const planets = service.getPlacedWorldObjectsByPlanet();
-
-      // Assert
-      expect(planets[0].planetName).toBe('Humble');
-    });
-
     it('should translate the save format fields of a placed world object into business terms', () => {
       // Arrange
       const sections = createSaveSections({

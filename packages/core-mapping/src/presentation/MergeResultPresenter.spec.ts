@@ -126,7 +126,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.UNIQUE_HOST, detail: 'Expected exactly one host player, found 2', section: PLAYERS_SECTION_INDEX, formatRelease: '2.004'}],
+        mergeErrors: [{code: VALIDATION_ISSUE_CODES.SCHEMA_VIOLATION, detail: "must have required property 'name'", section: PLAYERS_SECTION_INDEX, formatRelease: '2.004'}],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
@@ -139,7 +139,7 @@ describe('MergeResultPresenter', () => {
         fileName: 'merged.json',
         content: 'merged content',
         mergeFailureMessage: '',
-        mergeErrors: [{message: 'Expected exactly one host player, found 2', location: 'Players (section 2)'}],
+        mergeErrors: [{message: "must have required property 'name'", location: 'Players (section 2)'}],
         mergeWarnings: [],
         legacyFormatCouldBeKept: false,
         saveAErrors: [],
@@ -269,6 +269,38 @@ describe('MergeResultPresenter', () => {
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveAErrors).toEqual([]);
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.saveBErrors).toEqual([]);
+    });
+  });
+
+  describe('When presenting save files that designate no host or more than one', () => {
+    it('should report the host count found against the save at fault, as a validation error', () => {
+      // Arrange
+      const presenter = new MergeResultPresenter();
+
+      // Act
+      presenter.presentSaveFilesWithoutUniqueHost({
+        saveBWrongHostCount: 2,
+        saveAWarnings: [{code: 'legacy-save-format'}],
+        saveBWarnings: noWarningsFromSaveB
+      });
+
+      // Assert
+      expect<MergeResultViewModel>(presenter.viewModel).toEqual({
+        status: 'validationError',
+        fileName: '',
+        content: '',
+        mergeFailureMessage: '',
+        mergeErrors: [],
+        mergeWarnings: [],
+        legacyFormatCouldBeKept: false,
+        saveAErrors: [],
+        saveBErrors: [{message: 'Expected exactly one host player, found 2', location: null}],
+        saveAWarnings: [{
+          message: 'This save was written by version 1.618 of the game or earlier, in the format that still carries the Terrain Layers section.',
+          location: null
+        }],
+        saveBWarnings: []
+      });
     });
   });
 });

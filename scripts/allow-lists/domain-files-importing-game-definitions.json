@@ -16,8 +16,6 @@
   "packages/core-mapping/src/domain/rules/merge/mergeWorldEvents.ts",
   "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.spec.ts",
   "packages/core-mapping/src/domain/rules/merge/rewriteReferences.ts",
-  "packages/core-mapping/src/domain/rules/validateUniqueHost.spec.ts",
-  "packages/core-mapping/src/domain/rules/validateUniqueHost.ts",
   "packages/core-mapping/src/domain/save/InventoryEntry.ts",
   "packages/core-mapping/src/domain/save/SaveSections.ts",
   "packages/core-mapping/src/domain/save/WorldObjectEntry.ts"
