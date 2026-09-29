@@ -13,11 +13,12 @@ const RELATIVE_OR_ALIASED_SPECIFIER = /^[./~]/;
  * The dependency matrix of the repository, by package name prefix.
  */
 const DEPENDENCY_MATRIX: DependencyMatrix = {
-  'core-': ['shared-', 'util-'],
+  'core-': ['shared-', 'util-', 'data-'],
   'util-': [],
   'cli-': ['shared-', 'util-', 'core-'],
   'ui-': ['shared-', 'util-', 'core-'],
-  'shared-': ['util-']
+  'shared-': ['util-', 'data-'],
+  'data-': []
 };
 
 export interface WorkspacePackage {

@@ -13,7 +13,7 @@ import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
-import {worldObjectLabels} from "./worldObjectLabels";
+import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
 import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
 import {
@@ -49,7 +49,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
   displayEnergyLevels(energyLevels: EnergyLevelsResponse): void {
     this._viewModel = {
       notifications: this.buildNotifications(energyLevels),
-      planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet))
+      planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet, energyLevels.worldObjectLabels))
     };
   }
 
@@ -79,7 +79,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     return notifications;
   }
 
-  private buildPlanet(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsViewModel {
+  private buildPlanet(planet: PlanetEnergyLevelsValueObject, worldObjectLabels: WorldObjectLabelsResponse): PlanetEnergyLevelsViewModel {
     return {
       planetId: planet.planetName ?? resolveEnergyLevelsSectionUnnamedPlanetName(planet.planetId),
       energyLevels: {
@@ -98,13 +98,13 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
           }
         ]
       },
-      productionBreakdown: this.buildBreakdownRows(planet.productionBreakdown),
-      consumptionBreakdown: this.buildBreakdownRows(planet.consumptionBreakdown),
-      optimizers: this.buildOptimizers(planet.optimizers)
+      productionBreakdown: this.buildBreakdownRows(planet.productionBreakdown, worldObjectLabels),
+      consumptionBreakdown: this.buildBreakdownRows(planet.consumptionBreakdown, worldObjectLabels),
+      optimizers: this.buildOptimizers(planet.optimizers, worldObjectLabels)
     };
   }
 
-  private buildBreakdownRows(breakdown: readonly EnergyBreakdownEntryValueObject[]): EnergyBreakdownRowViewModel[] {
+  private buildBreakdownRows(breakdown: readonly EnergyBreakdownEntryValueObject[], worldObjectLabels: WorldObjectLabelsResponse): EnergyBreakdownRowViewModel[] {
     return breakdown.map((entry): EnergyBreakdownRowViewModel => ({
       label: worldObjectLabels[entry.name],
       quantity: formatNumber(entry.quantity),
@@ -113,7 +113,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     }));
   }
 
-  private buildOptimizers(optimizers: readonly OptimizerValueObject[]): OptimizerViewModel[] {
+  private buildOptimizers(optimizers: readonly OptimizerValueObject[], worldObjectLabels: WorldObjectLabelsResponse): OptimizerViewModel[] {
     return optimizers.map((optimizer): OptimizerViewModel => ({
       label: worldObjectLabels[optimizer.name],
       fuseCount: formatNumber(optimizer.fuseCount),

@@ -63,7 +63,7 @@ describe('findTableViolations', () => {
       items: {
         type: 'object',
         properties: {
-          release: {valueOfTable: {table: 'packages/shared-save-processing/gameReleases.json', column: 'release'}}
+          release: {valueOfTable: {table: 'packages/data-save-format/gameReleases.json', column: 'release'}}
         }
       }
     };
