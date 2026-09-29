@@ -5,11 +5,11 @@ import {createSaveSectionsReader} from "../composition/compositionRoot";
 
 export class LoadPlayersMenuController {
   static async loadPlayersMenu(validatedContent: string): Promise<PlayersMenuViewModel> {
-    const saveReader = createSaveSectionsReader(validatedContent);
+    const saveReader = createSaveSectionsReader();
     const presenter = new PlayersMenuPresenter();
     const useCase = new LoadPlayersMenu(saveReader, presenter);
 
-    await useCase.execute();
+    await useCase.execute({content: validatedContent});
 
     return presenter.viewModel;
   }

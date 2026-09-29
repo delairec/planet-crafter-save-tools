@@ -19,8 +19,6 @@ export function createSaveSectionsSerializer(): SaveSectionsSerializerPort {
   return new SaveSectionsSerializerService();
 }
 
-export function createSaveSectionsReader(validatedContent: string): SaveSectionsReaderPort {
-  const {sections} = createSaveSectionsParser().parse(validatedContent);
-
-  return new SaveSectionsReaderService(sections);
+export function createSaveSectionsReader(): SaveSectionsReaderPort {
+  return new SaveSectionsReaderService(createSaveSectionsParser());
 }

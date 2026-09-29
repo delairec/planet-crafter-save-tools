@@ -1,17 +1,21 @@
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
-import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {LoadTerraformationLevelsSection} from './LoadTerraformationLevelsSection';
+import {TerraformationLevelsPresenterPort} from './ports/TerraformationLevelsPresenterPort';
+
+function createPresenter(): TerraformationLevelsPresenterPort {
+  return {displayTerraformationLevels: mock(), displaySaveWithUnreadableLines: mock()};
+}
 
 describe('LoadTerraformationLevelsSection', () => {
   it('should present all terraformation levels from the parsed save', async () => {
     // Arrange
-    const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
-    const presenter = {displayTerraformationLevels: mock()};
-    const useCase = new LoadTerraformationLevelsSection(saveSectionsReader, presenter);
+    const presenter = createPresenter();
+    const useCase = new LoadTerraformationLevelsSection(stubSaveSectionsReader(), presenter);
 
     // Act
-    await useCase.execute();
+    await useCase.execute({content: SAVE_CONTENT});
 
     // Assert
     expect(presenter.displayTerraformationLevels).toHaveBeenCalledTimes(1);
@@ -29,5 +33,21 @@ describe('LoadTerraformationLevelsSection', () => {
         biomass: 1_500
       }
     ]);
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should display the unreadable lines instead of the terraformation levels', async () => {
+      // Arrange
+      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const presenter = createPresenter();
+      const useCase = new LoadTerraformationLevelsSection(stubSaveSectionsReader({unreadableLines}), presenter);
+
+      // Act
+      await useCase.execute({content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}]);
+      expect(presenter.displayTerraformationLevels).not.toHaveBeenCalled();
+    });
   });
 });

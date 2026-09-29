@@ -5,7 +5,7 @@ import {PlacedWorldObjectEntity} from './entities/PlacedWorldObjectEntity';
 import {WorldObjectEntity} from './entities/WorldObjectEntity';
 import {InventoryEntity} from './entities/InventoryEntity';
 import {WorldObjectName, worldObjectNamesByEnergyRole} from './worldObjectNames';
-import {createPlanetWorldObjectsValueObject} from './valueObjects/EnergyLevelsRawDataValueObject';
+import {createPlanetWorldObjectsValueObject} from './valueObjects/PlanetWorldObjectsValueObject';
 
 const PLANET_ID = 1;
 

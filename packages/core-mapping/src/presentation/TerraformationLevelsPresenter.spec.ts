@@ -1,3 +1,4 @@
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it} from 'bun:test';
 import {TerraformationLevelsPresenter} from './TerraformationLevelsPresenter';
 import {TerraformationLevelsViewModel} from './viewModels/TerraformationLevelsViewModel';
@@ -122,6 +123,20 @@ describe('TerraformationLevelsPresenter', () => {
           biomass: `344.344${nbsp}kg`
         }
       ],
+    });
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should show the unreadable lines in place of the terraformation levels', () => {
+      // Arrange
+      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const presenter = new TerraformationLevelsPresenter();
+
+      // Act
+      presenter.displaySaveWithUnreadableLines(unreadableLines);
+
+      // Assert
+      expect(presenter.viewModel).toEqual<TerraformationLevelsViewModel>({planets: [], unreadableLines: [{message: 'Entry is not valid JSON', location: 'section 3, entry 2'}]});
     });
   });
 });

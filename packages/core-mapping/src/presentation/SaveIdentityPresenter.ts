@@ -1,3 +1,5 @@
+import {formatUnreadableLine} from "./formatUnreadableLine";
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {SaveIdentityViewModel} from "./viewModels/SaveIdentityViewModel";
 import {SaveIdentityPresenterPort} from "../application/ports/SaveIdentityPresenterPort";
 import {SaveIdentityResponse} from "../application/responses/SaveIdentityResponse";
@@ -21,5 +23,9 @@ export class SaveIdentityPresenter implements SaveIdentityPresenterPort {
 
   displayUnconfiguredSaveIdentity(fileName: string): void {
     this._viewModel = {fileName};
+  }
+
+  displaySaveWithUnreadableLines(fileName: string, unreadableLines: SaveParseError[]): void {
+    this._viewModel = {fileName, unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

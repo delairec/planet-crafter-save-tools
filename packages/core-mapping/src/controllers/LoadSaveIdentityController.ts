@@ -5,11 +5,11 @@ import {createSaveSectionsReader} from "../composition/compositionRoot";
 
 export class LoadSaveIdentityController {
   static async loadSaveIdentity(validatedContent: string, fileName: string): Promise<SaveIdentityViewModel> {
-    const saveReader = createSaveSectionsReader(validatedContent);
+    const saveReader = createSaveSectionsReader();
     const presenter = new SaveIdentityPresenter();
     const useCase = new LoadSaveIdentity(saveReader, presenter);
 
-    await useCase.execute({fileName});
+    await useCase.execute({content: validatedContent, fileName});
 
     return presenter.viewModel;
   }

@@ -1,3 +1,4 @@
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it} from 'bun:test';
 import {PlayersMenuPresenter} from "./PlayersMenuPresenter";
 import {PlayersMenuViewModel} from "./viewModels/PlayersMenuViewModel";
@@ -32,6 +33,20 @@ describe('PlayersMenuPresenter', () => {
 
       // Assert
       expect(presenter.viewModel).toEqual<PlayersMenuViewModel>({players: [{name: 'Sakia'}]});
+    });
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should show the unreadable lines in place of the players menu', () => {
+      // Arrange
+      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const presenter = new PlayersMenuPresenter();
+
+      // Act
+      presenter.displaySaveWithUnreadableLines(unreadableLines);
+
+      // Assert
+      expect(presenter.viewModel).toEqual<PlayersMenuViewModel>({players: [], unreadableLines: [{message: 'Entry is not valid JSON', location: 'section 3, entry 2'}]});
     });
   });
 });
