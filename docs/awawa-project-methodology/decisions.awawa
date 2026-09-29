@@ -680,14 +680,20 @@ DECISION AnUnknownCliFlagIsAUsageError
 DECISION SectionControllersReceiveTheValidatedText
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	SPEC "Each section controller takes the save text and gets its reader from the composition"
-		+ "root; the UI knows no representation of the sections"
-		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::createSaveSectionsReader"
+	SPEC "Each section controller hands the save text to its use case in the request, and the"
+		+ "composition root builds the reader port without any content; the UI knows no"
+		+ "representation of the sections"
+		IMPL "packages/core-mapping/src/controllers/LoadEnergyLevelsSectionController.ts::execute({content:"
+			+ "validatedContent})"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::createSaveSectionsReader():"
+			+ "SaveSectionsReaderPort"
 	REJECTED "An opaque save identifier with a registry in core-mapping: state in a stateless"
 		+ "package"
 	RATIONALE "A second parse is deterministic and costs about 12 ms per section on a 2 MB save"
 	SOURCE "Owner ruling"
 		PR 65
+	SOURCE "Rewritten with the section reader port: the use case reads the content it is given"
+		PR 232
 
 DECISION BehaviourMovesOntoTheEntityAndTheRuleAsksIt
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -3121,14 +3127,20 @@ DECISION ASectionUseCaseReportsTheLinesItCannotRead
 		ENFORCED_BY "packages/core-mapping/src/application/LoadSaveIdentity.spec.ts"
 		ENFORCED_BY "packages/core-mapping/src/application/LoadTerraformationLevelsSection.spec.ts"
 	SPEC "the presenter of a section carries the unreadable lines, each located, in its view model;"
-		+ "the save manager shows them in place of the section"
+		+ "when that list is not empty, SectionState renders the section title and each line with"
+		+ "its location in the danger style, instead of the section"
 		IMPL "packages/core-mapping/src/presentation/formatUnreadableLine.ts"
 		IMPL "packages/ui-save-manager/src/components/structure/SectionState.tsx::unreadableLines"
 	REJECTED "Relying on validation having refused every unreadable save: a defect in validation"
 		+ "would show a partial save as whole, and the case could not be exercised with a test"
 		+ "double"
+	REJECTED "Leaving unreadableLines unrendered: the section would show an unreadable save as"
+		+ "empty"
 	RATIONALE "Validation turns every line the parser cannot read into an issue, so a validated"
 		+ "content carries no parse error today; the outcome is the defence against a defect"
 		+ "introduced there"
 	SOURCE "Owner ruling during the refinement of the section reader port, implemented with it"
+		PR 232
+	SOURCE "Owner ruling during the wave launch: the save manager shows the unreadable lines in"
+		+ "place of the section"
 		PR 232

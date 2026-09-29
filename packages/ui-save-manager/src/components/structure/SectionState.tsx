@@ -14,6 +14,10 @@ interface SectionStateProps<ViewModel extends SectionViewModel> {
   children: (viewModel: Accessor<ViewModel>) => JSX.Element;
 }
 
+function findUnreadableLines(viewModel: SectionViewModel): SaveValidationMessageViewModel[] | undefined {
+  return viewModel.unreadableLines?.length ? viewModel.unreadableLines : undefined;
+}
+
 export default function SectionState<ViewModel extends SectionViewModel>(props: SectionStateProps<ViewModel>) {
   createEffect(() => {
     if (props.resource.error) {
@@ -27,7 +31,7 @@ export default function SectionState<ViewModel extends SectionViewModel>(props: 
             fallback={<><h3>{props.title}</h3><p class="text-color-danger">{sectionLoadingErrorMessage}</p></>}>
         <Show when={props.resource()}>
           {(viewModel) => (
-            <Show when={viewModel().unreadableLines}
+            <Show when={findUnreadableLines(viewModel())}
                   fallback={props.children(viewModel)}>
               {(unreadableLines) => <>
                 <h3>{props.title}</h3>
