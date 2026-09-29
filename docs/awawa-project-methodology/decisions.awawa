@@ -74,6 +74,8 @@ DECISION ABrokenInvariantFailsWithANamedErrorType
 			+ "fail with the error naming the unreadable value for $situation"
 	REJECTED "A domain error for a shape check (InvalidSaveDataError): a finite number or a"
 		+ "non-empty string is no business rule, and nothing caught it"
+	SOURCE "Owner ruling on the Clean Architecture audit: the shape checks move to the decoding"
+		PR 236
 	SPEC "The JSDoc of the error carries the instruction: fix what let the data through, never"
 		+ "soften the guard"
 		IMPL "packages/core-mapping/src/infrastructure/errors/UnexpectedSaveSectionError.ts::never"
@@ -1327,6 +1329,9 @@ DECISION TheMergedSaveDisplayNameComesFromTheCaller
 	REJECTED "Escaping @ instead of replacing it: the parser splits the text on @ and knows no"
 		+ "escape"
 	REJECTED "Replacing @ in the display name alone: any other field holding @ would split the save"
+	SOURCE "Owner ruling during the refinement of REFACTOR162: the serializer of"
+		+ "shared-save-processing replaces every @ of an entry"
+		PR 236
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	REJECTED "Refusing a folder name holding @: the merge would fail on a name the save format can"
 		+ "carry once replaced"
@@ -3221,6 +3226,7 @@ DECISION ASaveEntryKeepsTheFieldOrderItWasReadIn
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR162
 	SOURCE "Ruled while implementing the decoding of the save format"
+		PR 236
 
 DECISION ACoordinateTextCrossesTheDomainUndecoded
 	SPEC "The position, rotation, count, panels and color of a save entry reach the domain as the"
@@ -3236,6 +3242,7 @@ DECISION ACoordinateTextCrossesTheDomainUndecoded
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR162
 	SOURCE "Ruled while implementing the decoding of the save format"
+		PR 236
 
 DECISION ADomainSpecBuildsSaveEntriesWithTheBusinessBuilders
 	SPEC "The domain and application specs of core-mapping build save entries with the builders of"
@@ -3250,3 +3257,4 @@ DECISION ADomainSpecBuildsSaveEntriesWithTheBusinessBuilders
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR162
 	SOURCE "Ruled while implementing the decoding of the save format"
+		PR 236

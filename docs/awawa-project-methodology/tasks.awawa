@@ -1282,42 +1282,67 @@ TASK REFACTOR161
 
 TASK REFACTOR162
 	TITLE "refactor(core-mapping): decode the save format before it reaches the domain"
-	STATUS todo
+	STATUS implemented
 	SPEC "the domain model of core-mapping names its data in business terms, with a business type"
 		+ "of its own for every save section it handles, decoded by the infrastructure: no module"
 		+ "under domain/ imports shared-save-processing/gameDefinitions nor names a wire"
 		+ "abbreviation, both allow-lists of check:wire-format are empty and removed, the guard"
 		+ "running with no exemption"
+		IMPL "packages/core-mapping/src/domain/save/SaveSections.ts"
+		IMPL "packages/core-mapping/src/infrastructure/saveEntryCodecs.ts"
+		IMPL "scripts/check-wire-format.ts::findGameDefinitionsImports"
 	SPEC "WireAbbreviationsStayInSharedSaveProcessing and AGuardAllowListOnlyShrinks are rewritten"
 		+ "in place: neither names an allow-list of check:wire-format nor this task, and their"
 		+ "anchors name the code as the task leaves it"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "WireAbbreviationsStayInSharedSaveProcessing"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION AGuardAllowListOnlyShrinks"
 		REF @DECISION.WireAbbreviationsStayInSharedSaveProcessing
 		REF @DECISION.AGuardAllowListOnlyShrinks
 	SPEC "no module under domain/ splits or joins a list of the save text nor reads an empty string"
 		+ "as an absence: the infrastructure hands the domain lists as arrays and absence as"
 		+ "undefined, and APlayerOnAnEmptyPlanetShowsNoPlanet keeps its ruling with anchors naming"
 		+ "the code as the task leaves it"
+		IMPL "packages/core-mapping/src/domain/rules/merge/mergeGlobalMetadata.ts::unlockedGroups:"
+			+ "[]"
+		IMPL "packages/core-mapping/src/infrastructure/saveEntryCodecs.ts::planetStoodOn"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "APlayerOnAnEmptyPlanetShowsNoPlanet"
 		REF @DECISION.APlayerOnAnEmptyPlanetShowsNoPlanet
 	SPEC "the serializer of shared-save-processing writes no section separator inside a section:"
 		+ "every @ of an entry's text is replaced by _, whatever the field; no module under"
 		+ "application/ of core-mapping names the separator, and"
 		+ "TheMergedSaveDisplayNameComesFromTheCaller is rewritten in place to anchor that"
 		+ "replacement"
+		IMPL "packages/shared-save-processing/serializeSave.js::replaceSeparator"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "TheMergedSaveDisplayNameComesFromTheCaller"
 		REF @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
 	SPEC "a domain error names the business rule broken: InvalidSaveDataError and the assertions of"
 		+ "domain/errors are gone, entities and value objects take typed input without a runtime"
 		+ "shape check, and a record whose shape the decoding cannot read fails there with a named"
 		+ "error type of infrastructure/errors, caught by nothing"
+		IMPL "packages/core-mapping/src/infrastructure/errors/UnexpectedSaveEntryFieldError.ts::extends"
+			+ "Error"
+		IMPL "packages/core-mapping/src/infrastructure/errors/UnreadableSaveEntryValueError.ts::never"
+			+ "soften the guard"
+		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::this._planetId ="
+			+ "input.planetId"
 		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType
 		REF @DECISION.AnErrorsOriginDecidesItsPath
 	SPEC "bun merge of baseline_valid.json and other-player_valid.json, as"
 		+ "generate:scenario-fixtures writes them, produces on the task branch the file it produces"
 		+ "on its base, byte for byte; the specs of cli-merge and cli-validate and the scenarios of"
 		+ "ui-save-manager pass unchanged"
+		IMPL "scripts/generate-scenario-fixtures.ts"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts"
 	AFTER @TASK.CHORE158
 	AFTER @TASK.REFACTOR161
 	AFTER @TASK.REFACTOR160
 	WAVE @WAVE.14
+	DELIVERED_BY 236
 	PRIORITY high
 	DESC "fixes violations 5, 10 and 13 of the audit"
 	RATIONALE "The three violations are one boundary, the decoding of the save text: violation 10"
