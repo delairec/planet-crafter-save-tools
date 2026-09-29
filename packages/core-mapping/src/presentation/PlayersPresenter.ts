@@ -1,6 +1,6 @@
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
 import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
-import {PlayerSummaryValueObject} from "../domain/valueObjects/PlayerSummaryValueObject";
+import {PlayerSummaryResponse} from "../application/responses/PlayerSummaryResponse";
 import {WorldObjectLabel, worldObjectLabels} from "./worldObjectLabels";
 import {
   playersSectionEquipmentLabel,
@@ -23,7 +23,7 @@ export class PlayersPresenter implements PlayersPresenterPort {
     return this._viewModel;
   }
 
-  displayPlayers(players: PlayerSummaryValueObject[]): void {
+  displayPlayers(players: PlayerSummaryResponse[]): void {
     this._viewModel = {
       players: players.map(player => ({
         name: player.name,
