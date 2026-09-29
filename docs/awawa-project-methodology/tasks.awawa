@@ -1146,32 +1146,64 @@ TASK REFACTOR159
 
 TASK REFACTOR160
 	TITLE "refactor(core-mapping): call the domain rules from the use cases, not from the adapters"
-	STATUS draft
+	STATUS todo
 	SPEC "no module under infrastructure/ of core-mapping imports domain/rules; validateUniqueHost"
 		+ "and resolvePlanetName are called by the use cases"
-	SPEC "SaveValidatorPort reports technical failures only: a save with more than one host reaches"
-		+ "its presenter through an outcome of its own, never as a ValidationIssue coded"
-		+ "UNIQUE_HOST"
-	SPEC "cli-validate and the save manager still report a save with more than one host, and the"
-		+ "specs of cli-merge and cli-validate pass unchanged"
-	AFTER @TASK.REFACTOR159
+	SPEC "SaveValidatorPort reports technical failures only: a save designating no host or more"
+		+ "than one reaches its presenter through an outcome of its own, in every flow that"
+		+ "validates, loads or merges it, never as a ValidationIssue coded UNIQUE_HOST"
+	SPEC "cli-validate refuses a save designating no host or more than one and names the host count"
+		+ "found; the save manager shows it as an error on load and on merge; the specs of"
+		+ "cli-merge and cli-validate pass unchanged"
+	SPEC "the specification area holds a RULE stating that a save designates exactly one host"
+		+ "player, applied to the players section and attested by the spec of the domain rule"
+		REF @SECTION.Players
+	SPEC "ADomainRuleIgnoresValidationVocabulary is archived, its translation by the infrastructure"
+		+ "gone with the code that carried it"
+		REF @DECISION.ADomainRuleIgnoresValidationVocabulary
+	AFTER @TASK.REFACTOR161
 	WAVE @WAVE.14
 	PRIORITY critical
 	DESC "fixes violation 3 of the audit"
+	RATIONALE "Three use cases call the validator and take the host decision after it:"
+		+ "ValidateSaveFile, LoadAndValidateSaveFile and MergeSaveFiles on each of its inputs; the"
+		+ "merged save is not checked again, the merge rule guaranteeing a single host, so a second"
+		+ "host there would be a broken invariant, never an outcome. The task follows the reader"
+		+ "port, which removes the energy raw data bag the planet name is resolved in and hands the"
+		+ "use cases the players through a port, so the unique host rule can take the player"
+		+ "entities and leave the game definitions allow-list. The decision that had the"
+		+ "infrastructure translate the violation is archived rather than rewritten: what it would"
+		+ "keep, a rule returning a failure type without code or sentence, the instructions rule"
+		+ "domain_error_business_meaning already imposes"
+		REF @TASK.REFACTOR161
+		REF @RULE.PlayersAreDeduplicatedByName
+		REF @DECISION.AnErrorsOriginDecidesItsPath
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the task follows the reader port,"
+		+ "records the unique host rule in the specification area and archives the decision on the"
+		+ "translation of a domain violation"
 
 TASK REFACTOR161
 	TITLE "refactor(core-mapping): read the save sections through a port, the composition root only"
 		+ "instantiating"
-	STATUS draft
+	STATUS todo
 	SPEC "the composition root of core-mapping instantiates and wires, and parses no save content"
-	SPEC "the sections of a save come from a reader port or a loading use case that returns the"
-		+ "parse errors with them; no error of the parser is dropped on the way to a presenter"
+	SPEC "the sections of a save reach a use case through a reader port the use case calls with the"
+		+ "content it is given, never through a reader the composition root built from parsed"
+		+ "content"
+	SPEC "every use case that reads the sections of a save hands the parse errors the reader"
+		+ "reports to its presenter through an outcome of its own, whether or not validation"
+		+ "refused the save first; no error of the parser is dropped on the way to a presenter"
+	SPEC "that ruling is recorded as a DECISION applying to the task, its rejected alternative"
+		+ "being to rely on validation having refused every unreadable save"
 	SPEC "no application port returns a bag cut for one use case: getEnergyLevelsRawData and"
 		+ "EnergyLevelsRawDataValueObject are gone, and the energy use case assembles its data from"
 		+ "port methods of one concept each"
-	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place or archived, its rejection of"
-		+ "assembling in presentation dropped; a departure from an instructions rule the rewritten"
-		+ "decision keeps is named in its DEROGATES"
+	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place: it keeps the grid built once per"
+		+ "planet, drops its rejection of assembling in presentation, and its anchors name the code"
+		+ "as the task leaves it"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
 	AFTER @TASK.REFACTOR159
@@ -1179,107 +1211,318 @@ TASK REFACTOR161
 	PRIORITY critical
 	DESC "fixes violations 4 and 8 of the audit"
 	RATIONALE "The reader port of violation 4 is where the per-concept methods of violation 8 are"
-		+ "declared, so the two are one change of the same port"
+		+ "declared, so the two are one change of the same port. The instructions rule"
+		+ "port_owned_by_application settles the shape: a port holding state is obtained through a"
+		+ "call the use case makes, never built by the composition root from parsed input, so the"
+		+ "six section use cases receive the content in their request and read it through the port."
+		+ "Validation turns every line the parser cannot read into an issue, so a validated content"
+		+ "carries no parse error today; the use cases still report one through an outcome rather"
+		+ "than trusting that guarantee, so that a defect introduced in validation is caught by the"
+		+ "reading flow instead of showing a partial save as whole, and so that the case can be"
+		+ "exercised with a test double. The concepts the energy use case assembles are the placed"
+		+ "world objects by planet, every world object and the inventories; the declared version"
+		+ "and the power consumption modifier already have a method each. The planet name stays"
+		+ "resolved by the adapter behind the per-planet method until the domain rules task moves"
+		+ "the call into the use case. Parsing once per loaded save instead of once per view would"
+		+ "need a store of the loaded save on the UI side and is not in scope. No instructions rule"
+		+ "concerns an aggregate, so the rewritten decision departs from none. The decision on"
+		+ "parse errors is written at delivery, its anchors naming code that does not exist yet"
 		REF @DECISION.APlanetEnergyGridIsAnAggregate
+		REF @TASK.REFACTOR160
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: a use case reading a save defends"
+		+ "itself against an unreadable one through an outcome, whether or not validation ran"
+		+ "first; the aggregate decision is rewritten in place"
 
 TASK REFACTOR162
 	TITLE "refactor(core-mapping): decode the save format before it reaches the domain"
-	STATUS draft
+	STATUS todo
 	SPEC "the domain model of core-mapping names its data in business terms, with a business type"
-		+ "of its own for every save section it handles, decoded by the infrastructure: both"
-		+ "allow-lists of check:wire-format are empty and removed, the guard running with no"
-		+ "exemption"
+		+ "of its own for every save section it handles, decoded by the infrastructure: no module"
+		+ "under domain/ imports shared-save-processing/gameDefinitions nor names a wire"
+		+ "abbreviation, both allow-lists of check:wire-format are empty and removed, the guard"
+		+ "running with no exemption"
+	SPEC "WireAbbreviationsStayInSharedSaveProcessing and AGuardAllowListOnlyShrinks are rewritten"
+		+ "in place: neither names an allow-list of check:wire-format nor this task, and their"
+		+ "anchors name the code as the task leaves it"
+		REF @DECISION.WireAbbreviationsStayInSharedSaveProcessing
+		REF @DECISION.AGuardAllowListOnlyShrinks
 	SPEC "no module under domain/ splits or joins a list of the save text nor reads an empty string"
 		+ "as an absence: the infrastructure hands the domain lists as arrays and absence as"
-		+ "undefined"
-	SPEC "the section separator of the save text is escaped by the serializer, and no module under"
-		+ "application/ names it"
-	SPEC "a domain error names the business rule broken; a shape check, a number or a string"
-		+ "expected, fails at the infrastructure boundary as a technical error"
-	SPEC "a merge of the public fixtures writes the same save text as before the task, and the"
-		+ "specs of cli-merge and cli-validate pass unchanged"
+		+ "undefined, and APlayerOnAnEmptyPlanetShowsNoPlanet keeps its ruling with anchors naming"
+		+ "the code as the task leaves it"
+		REF @DECISION.APlayerOnAnEmptyPlanetShowsNoPlanet
+	SPEC "the serializer of shared-save-processing writes no section separator inside a section:"
+		+ "every @ of an entry's text is replaced by _, whatever the field; no module under"
+		+ "application/ of core-mapping names the separator, and"
+		+ "TheMergedSaveDisplayNameComesFromTheCaller is rewritten in place to anchor that"
+		+ "replacement"
+		REF @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
+	SPEC "a domain error names the business rule broken: InvalidSaveDataError and the assertions of"
+		+ "domain/errors are gone, entities and value objects take typed input without a runtime"
+		+ "shape check, and a record whose shape the decoding cannot read fails there with a named"
+		+ "error type of infrastructure/errors, caught by nothing"
+		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType
+		REF @DECISION.AnErrorsOriginDecidesItsPath
+	SPEC "bun merge of baseline_valid.json and other-player_valid.json, as"
+		+ "generate:scenario-fixtures writes them, produces on the task branch the file it produces"
+		+ "on its base, byte for byte; the specs of cli-merge and cli-validate and the scenarios of"
+		+ "ui-save-manager pass unchanged"
 	AFTER @TASK.CHORE158
 	AFTER @TASK.REFACTOR161
+	AFTER @TASK.REFACTOR160
 	WAVE @WAVE.14
 	PRIORITY high
 	DESC "fixes violations 5, 10 and 13 of the audit"
 	RATIONALE "The three violations are one boundary, the decoding of the save text: violation 10"
-		+ "escapes what the serializer encodes and violation 13 moves the shape checks to where the"
-		+ "text is decoded. The task follows the reader port, which is where the decoding lands"
+		+ "replaces what the serializer would otherwise split on, and violation 13 moves the shape"
+		+ "checks to where the text is decoded. The id lists of inventories and world objects"
+		+ "already cross the boundary as arrays; what is left is the records themselves, imported"
+		+ "by the merge rules and the save types, the unlocked groups mergeGlobalMetadata splits"
+		+ "and joins, and the empty planet PlayerEntity reads. The save format has no escape: the"
+		+ "parser splits the text on @, so the separator is replaced, not escaped, by the module"
+		+ "that joins the sections, in shared-save-processing, which owns serialization. Replacing"
+		+ "every @ of an entry rather than the display name alone keeps any field from splitting"
+		+ "the save; measured on the eight private reference saves, none carries a @ inside a"
+		+ "section, so no real save changes by a byte. The shape checks leave the domain because"
+		+ "the instructions rule domain_error_business_meaning and the recorded decisions already"
+		+ "place a broken invariant at decoding, after validation refused what it could: nothing"
+		+ "catches InvalidSaveDataError today. The task follows the domain rules task, which takes"
+		+ "the unique host rule out of the game-definitions allow-list and touches the reader"
+		+ "adapter, so the two would otherwise conflict. No committed save is public and the"
+		+ "scenario fixtures are generated at each run, so the text written is compared between the"
+		+ "branch and its base on those, the reviewer replaying the command"
+		REF @TASK.REFACTOR160
+		REF @DECISION.SharedSaveProcessingOwnsSectionParsingAndSerialization
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
 	SOURCE "Owner ruling during the refinement of CHORE158: the domain defines a business type per"
 		+ "save section instead of importing the save format records"
+	SOURCE "Owner ruling during the refinement of the task: the serializer of"
+		+ "shared-save-processing replaces every @ of an entry, the task follows the domain rules"
+		+ "task, and the written text is compared on the scenario fixtures"
 
 TASK REFACTOR163
-	TITLE "refactor(core-mapping): move the game releases into the domain, shared runtime code"
+	TITLE "refactor(core-mapping): move the game release rules into the domain, shared runtime code"
 		+ "confined to the infrastructure"
-	STATUS draft
-	SPEC "the game releases and their comparison are domain knowledge of core-mapping, their values"
-		+ "a JSON table beside the module that reads it, validated by bun run validate:tables"
-	SPEC "no module under domain/ or application/ of a core- package imports runtime code of a"
-		+ "shared- package: only import type crosses"
-	SPEC "a guard run by bun run guards fails on an import of a shared- module from domain/ or"
-		+ "application/ of a core- package that is not import type"
-	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	STATUS todo
+	SPEC "the resolution of a declared version, the comparison of game releases and the current"
+		+ "game release are domain knowledge of core-mapping: the game releases reach the domain"
+		+ "through an application port an infrastructure adapter implements with the selectors of"
+		+ "the data- package, and shared-save-processing reads the number of parts a save format"
+		+ "splits into through those selectors and resolves no declared version, a domain rule and"
+		+ "not a selector"
+	SPEC "the warning that a declared version contradicts the format the save carries is raised by"
+		+ "a domain rule the use cases that validate, load and merge a save call, no longer by the"
+		+ "parser of shared-save-processing; cli-validate, cli-merge and the save manager show it"
+		+ "as before"
+	SPEC "no module under domain/ or application/ of a core- package, spec files included, imports"
+		+ "runtime code of another workspace package: only import type crosses"
+	SPEC "a guard run by bun run guards fails on an import that is not import type of another"
+		+ "workspace package from a file under domain/ or application/ of a core- package, spec"
+		+ "files included, and carries no allow-list"
+	SPEC "the merged save file is named by an infrastructure adapter behind an application port: no"
+		+ "module under application/ of core-mapping names a file extension"
+	SPEC "the Power section names the release of its values only for a release earlier than the"
+		+ "current game release, the presenter learning it from its response and importing no"
+		+ "release constant"
+	SPEC "ASaveIsNeverDiscriminatedByItsVersionAlone,"
+		+ "AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer and"
+		+ "TheEnergyOfASaveTakesTheValuesOfItsRelease are rewritten in place, their anchors naming"
+		+ "the code as the task leaves it, the first stating where the releases are resolved and"
+		+ "where the save formats are read"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+		REF @DECISION.AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
+		REF @DECISION.TheEnergyOfASaveTakesTheValuesOfItsRelease
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
 	AFTER @TASK.REFACTOR162
+	AFTER @TASK.REFACTOR168
 	WAVE @WAVE.14
 	PRIORITY high
-	DESC "fixes violation 6 of the audit and carries the guard on shared runtime imports"
+	DESC "fixes violation 6 of the audit and carries the guard on runtime imports of other"
+		+ "workspace packages"
 	RATIONALE "The guard passes the day it lands, the task removing every runtime import it"
-		+ "refuses, so it needs no allow-list. The task follows the decoding, which rewrites the"
-		+ "merge rules that read the releases"
+		+ "refuses, so it needs no allow-list; the instructions rule"
+		+ "third_party_isolated_in_infrastructure already asks a guard of the project for it, and"
+		+ "the ruling narrows that rule to types alone, a pure helper of a shared package being a"
+		+ "runtime import all the same. The release rules follow the tables task, which puts the"
+		+ "releases table in a data- package behind a port, and the decoding, which rewrites the"
+		+ "merge rules that read the releases. Comparing two releases needs no table; resolving a"
+		+ "declared version and naming the current game release read the rows, so the adapter hands"
+		+ "them to the use case, which gives them to the rule. The current game release, the last"
+		+ "row of the table, is not the current save format, the first release writing eleven"
+		+ "parts: the constant that carried both names is split. The contradiction warning leaves"
+		+ "the parser because it resolves a declared version, a business judgement the domain now"
+		+ "owns alone, as the domain rules task took the unique host out of the adapter; the parser"
+		+ "keeps the legacy format warning, a fact of the parts count. The merged file name carries"
+		+ "an extension and filesystem-safe characters, two facts of the infrastructure, so the"
+		+ "application asks a port for it. The release comparison the merge use case makes moves"
+		+ "into the domain with the merge warnings task, which follows this one"
+		REF @TASK.REFACTOR168
+		REF @TASK.REFACTOR162
+		REF @TASK.REFACTOR160
+		REF @TASK.REFACTOR165
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the tables are databases read behind"
+		+ "ports, their data- package providing row types and selectors, the contradiction check is"
+		+ "a domain rule the use cases call, the merged file is named behind a port, the guard"
+		+ "covers spec files and every workspace package"
 
 TASK REFACTOR164
 	TITLE "refactor(core-mapping): carry validation issues as codes, their sentences built in"
 		+ "presentation"
-	STATUS draft
-	SPEC "a ValidationIssue carries a code and its data and no sentence; every sentence shown about"
-		+ "a validation issue is built under presentation/messages of core-mapping"
+	STATUS todo
+	SPEC "a ValidationIssue of core-mapping and a SaveParseError of shared-save-processing carry a"
+		+ "code and its data and no sentence; every sentence shown about a validation issue or an"
+		+ "unreadable line is built under presentation/messages of core-mapping and reads as it"
+		+ "does today"
 	SPEC "no sentence shown to the user is built in the infrastructure of core-mapping nor in"
-		+ "shared-save-processing, verifySectionCount and the schema validation messages included"
-	SPEC "an issue locates its section by a section name the infrastructure resolved, and no"
-		+ "presentation module imports the section indexes of the save format"
-	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		+ "shared-save-processing, verifySectionCount, parseSaveSections and the entry count, float"
+		+ "serialization and file extension checks included; the message of the schema validator"
+		+ "crosses as data of the issue, with the path of the field, and is not rewritten"
+		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
+	SPEC "an issue located in the save carries the name and the index of its section, both resolved"
+		+ "by the infrastructure, and no longer the format release; no module under presentation/"
+		+ "of core-mapping imports the section indexes of the save format, spec files excepted, and"
+		+ "the location shown reads as it does today"
+	SPEC "ALocationIsABusinessLabelFollowedByTheIndex and UserTextLivesInCoreMappingPresentation"
+		+ "are rewritten in place: the first builds the location from the name and the index the"
+		+ "issue carries and drops its fallback on a bare index, the second names the validation"
+		+ "issues and the unreadable lines among the codes it turns into sentences, and their"
+		+ "anchors name the code as the task leaves it"
+		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
 	AFTER @TASK.REFACTOR160
 	WAVE @WAVE.14
 	PRIORITY high
 	DESC "fixes violations 7 and 12 of the audit"
 	RATIONALE "Both violations are the same issue type: its sentence and its location reach the"
-		+ "view as the infrastructure wrote them. The task follows the validator port, which"
-		+ "changes the issues it reports"
+		+ "view as the infrastructure wrote them. Seven places word a sentence today: the section"
+		+ "count and the unreadable line in shared-save-processing, the entry count, the schema"
+		+ "violation, the float serialization and the file extension in the infrastructure of"
+		+ "core-mapping; the presenter shows the detail as is and resolves the section name from"
+		+ "the index and the format release. Each sentence becomes a code and the data it names,"
+		+ "one code per sentence, so the structure code that carries two sentences today splits,"
+		+ "and shared-save-processing declares the codes of its parse errors as it declares those"
+		+ "of its warnings; the text of every sentence is kept, so the CLI specs and the UI"
+		+ "scenarios pin the refactoring. The owner ruled that the message of the schema validator"
+		+ "is not rewritten: one sentence per constraint of the schemas would be authored for"
+		+ "nothing while the tool speaks one language, so the issue carries the path and the"
+		+ "message as data and the presentation composes the line; a code per constraint comes with"
+		+ "translation, if it comes. The section index stays in the issue beside the name because"
+		+ "the location shows both, the decision on locations having refused the label alone; the"
+		+ "format release leaves the issue, the name being what it served to resolve. The fallback"
+		+ "on a bare index has no case left: the section count is checked before any located issue"
+		+ "exists, so every located issue belongs to a known format and its name resolves. The task"
+		+ "follows the domain rules task, which changes the issues the validator port reports"
+		REF @TASK.REFACTOR160
+		REF @DECISION.TheSchemaValidationMessageIsCarriedNotRewritten
+		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the message of the schema validator is"
+		+ "carried as data and not rewritten, a located issue carries the name and the index of its"
+		+ "section, and the two decisions on user text and on locations are rewritten in place"
 
 TASK REFACTOR165
 	TITLE "refactor(core-mapping): let the merge rule return the warnings of the merged save"
-	STATUS draft
-	SPEC "the merge rule of the domain returns the warnings about the format of the merged save,"
-		+ "and MergeSaveFiles hands them to its presenter without comparing a release nor testing"
-		+ "terrainLayers"
-	SPEC "cli-merge and the save manager show the same merge warnings as before, and the specs of"
-		+ "cli-merge pass unchanged"
+	STATUS todo
+	SPEC "the merge rule of the domain returns, with the merged sections, the report on their"
+		+ "format: the warnings about the format written and whether the legacy format could have"
+		+ "been kept; MergeSaveFiles hands them to its presenter and computes none of them,"
+		+ "comparing no release and testing no section"
+	SPEC "the warning the merge rule returns is a type of the domain that MergeSucceededResponse"
+		+ "carries as is, no module under application/ of core-mapping declaring a merge warning of"
+		+ "its own; cli-merge and the save manager show the same merge warnings as before"
+	SPEC "AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer is rewritten in place, its anchors naming"
+		+ "the code as the task leaves it"
+		REF @DECISION.AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
+	SPEC "the specs of cli-merge and the scenarios of ui-save-manager pass unchanged"
 	AFTER @TASK.REFACTOR163
 	WAVE @WAVE.14
 	PRIORITY medium
 	DESC "fixes violation 11 of the audit"
-	RATIONALE "The release comparison the use case makes today moves into the domain with the game"
-		+ "releases, so the task follows that move"
+	RATIONALE "The use case derives four facts from the result of the merge rule: the format"
+		+ "written, the Terrain Layers section dropped, the content newer than the format, and"
+		+ "whether the legacy format could have been kept, the last one absent from the audit but a"
+		+ "release comparison all the same. The rule knows the save whose format it writes and the"
+		+ "other one at the moment it chooses, so it reports them there and the use case re-derives"
+		+ "nothing. The warning is a domain type the response carries as is, as the energy levels"
+		+ "response carries the value objects the planet energy grid computes: transposing it into"
+		+ "an application type would keep two identical unions for no transformation, and the"
+		+ "presenter imports it from the domain. The single merge warning list stays, opened by the"
+		+ "same producer. The task follows the release rules task, which moves the comparison of"
+		+ "releases into the domain and rewrites the decision on the format report once; this task"
+		+ "re-anchors it on the rule"
+		REF @TASK.REFACTOR163
+		REF @DECISION.AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
+		REF @DECISION.NoMergeWarningChannelWithoutAProducer
+		REF @DECISION.AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the rule reports whether the legacy"
+		+ "format could have been kept, and the warning is a domain type the response carries as is"
 
 TASK REFACTOR166
 	TITLE "refactor(core-mapping): inject the use cases into the controllers"
-	STATUS draft
-	SPEC "a controller of core-mapping receives its use case, or the factory building it, from the"
-		+ "composition root, and instantiates no adapter"
-	SPEC "a controller spec runs against a test double of its use case, without the real"
-		+ "infrastructure; AControllerSpecCoversWiringNotBranches is rewritten or archived to match"
-	SPEC "no JSDoc of core-mapping cites an instructions file that does not exist,"
-		+ "infrastructure.md included"
+	STATUS todo
+	SPEC "a controller of core-mapping is a class whose constructor takes the factory that builds"
+		+ "its use case around the presenter the controller provides; it imports no infrastructure"
+		+ "module and instantiates no adapter"
+	SPEC "the CLIs and the save manager keep importing core-mapping/controllers/X: each controller"
+		+ "module exports, next to the class, the controller wired with the factory the composition"
+		+ "root exports, and the composition root imports no controller"
+	SPEC "that ruling is recorded as a DECISION applying to the task, its rejected alternatives"
+		+ "being the composition root building and exporting the wired controllers, which moves the"
+		+ "import path the CLIs keep by TheModulesTheClisImportKeepTheirContract, and controller"
+		+ "functions taking their use case from their caller"
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
+	SPEC "a controller spec runs against a test double of its use case factory, no controller spec"
+		+ "reaching the real infrastructure; AControllerSpecCoversWiringNotBranches is archived"
+		REF @DECISION.AControllerSpecCoversWiringNotBranches
+	SPEC "no module of core-mapping carries an explanatory comment, JSDoc blocks included: the"
+		+ "comments left are the annotations a tool reads, a JSDoc tag typing a JavaScript module"
+		+ "or a directive the compiler or the audit reads (ts-expect-error, ts-nocheck,"
+		+ "fallow-ignore-file), and the provenance header of a generated or regenerated file"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
 	AFTER @TASK.REFACTOR161
+	AFTER @TASK.REFACTOR168
 	WAVE @WAVE.14
 	PRIORITY low
 	DESC "fixes violations 14 and 15 of the audit"
-	RATIONALE "Violation 15 is one stale comment, too small for a pull request of its own; the task"
-		+ "follows the composition root, which it extends with the factories"
+	RATIONALE "Violation 15 is one stale comment, too small for a pull request of its own, and the"
+		+ "instructions rule no_explanatory_comment forbids the whole block it sits in, not the"
+		+ "reference alone, so the task removes every explanatory comment of the package rather"
+		+ "than one: 68 JSDoc blocks in 39 files and a few line comments, measured on the base, the"
+		+ "annotations a tool reads and the provenance headers staying. The controllers keep their"
+		+ "import path because the CLIs reach them by it and"
+		+ "TheModulesTheClisImportKeepTheirContract keeps that contract; the composition root"
+		+ "building the controllers would either move the export to composition/ or import the"
+		+ "class it wires from the module that imports it back, an import cycle, so the composition"
+		+ "root exports the use case factories and each controller module wires its own class with"
+		+ "them. The spec of a controller then needs no infrastructure, so the decision that made"
+		+ "it cross the whole wiring has no object left and the instructions rule controller_test"
+		+ "says what remains to verify; the wiring itself stays covered end to end by the specs of"
+		+ "the CLIs and the scenarios of the save manager. The task follows the reader port task,"
+		+ "which changes what the six section use cases are built from, and the value tables task,"
+		+ "which wires its adapters in the same composition root, so that the factories are"
+		+ "rewritten once"
+		REF @TASK.REFACTOR161
+		REF @TASK.REFACTOR168
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
 		REF @DECISION.AControllerSpecCoversWiringNotBranches
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the controller modules keep their"
+		+ "import path and export the controller wired with the factories of the composition root,"
+		+ "the decision on controller specs is archived, every explanatory comment of core-mapping"
+		+ "goes, and the task follows the value tables task"
 
 TASK DOCS167
 	TITLE "docs(tasks): rewrite the tasks of the other waves to the boundaries wave 14 sets"
@@ -1304,3 +1547,138 @@ TASK DOCS167
 		REF @WAVE.14
 		REF @TASK.REFACTOR159
 	SOURCE "Owner request during the refinement of wave 14 on 2026-09-29"
+
+TASK REFACTOR168
+	TITLE "refactor: move the value tables into data- packages the infrastructure reads through"
+		+ "application ports"
+	STATUS todo
+	SPEC "every JSON value table of the repository lives in the data- package of the domain it"
+		+ "serves, one of four: data-energy holds the energy levels, those of release 2.004 and the"
+		+ "optimizer configuration, data-world-objects the world object labels, data-planets the"
+		+ "planet names, data-save-format the game releases and the legacy terrain layer"
+		+ "properties; each holds its tables, their row types and their selectors, and no business"
+		+ "rule, and declares the validate:tables script naming its tables; the dependency matrix"
+		+ "lets core- and shared- packages alone depend on data- and data- on no workspace package,"
+		+ "check:dependencies enforcing it"
+	SPEC "no module under domain/, application/ or presentation/ of core-mapping imports a JSON"
+		+ "table, and no module under domain/ or application/ imports anything of a data- package,"
+		+ "a type included: each table reaches its use case through an application port declaring"
+		+ "its own types, which an infrastructure adapter implements with the selectors of the"
+		+ "data- package, the world object labels included, which reach the presenter in the"
+		+ "response"
+	SPEC "shared-save-processing and the infrastructure adapters of core-mapping read a table"
+		+ "through the selectors of its data- package, never through the JSON file"
+	SPEC "AValueTableIsAJsonFileBesideTheModuleThatReadsIt is rewritten in place: a table lives in"
+		+ "the data- package of the domain it serves and is read by infrastructure alone, its"
+		+ "rejection of a home outside the reading package replaced by the rejection of one package"
+		+ "for every table, which the prefix matrix could not keep shared-save-processing out of,"
+		+ "and of one package per table, which parts the energy table from the table of a release"
+		+ "validated against it; it, TheEnergyOfASaveTakesTheValuesOfItsRelease and"
+		+ "ASaveIsNeverDiscriminatedByItsVersionAlone have their anchors naming the code as the"
+		+ "task leaves it"
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+		REF @DECISION.TheEnergyOfASaveTakesTheValuesOfItsRelease
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+	SPEC "every DATATABLE names its table at its new path, and every other anchor of the corpus"
+		+ "naming a moved file names its new path, check:anchors passing"
+	SPEC "docs/wiki/architecture.md lists each data- package and the matrix line of the prefix; the"
+		+ "corpus holds a PACKAGE entity per package created"
+	SPEC "each data- package declares a changelogLine in its package.json, so that bun run release"
+		+ "lists a change of a table in the changelog of every tool that reaches it"
+	SPEC "bun run validate:tables validates every table; the specs of cli-merge and cli-validate"
+		+ "and the scenarios of ui-save-manager pass unchanged"
+	AFTER @TASK.REFACTOR161
+	AFTER @TASK.REFACTOR162
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "outside the numbered violations of the audit"
+	RATIONALE "A JSON table imported by a module is a database read by that module: the"
+		+ "instructions rule data_reached_through_a_port places such a read in an infrastructure"
+		+ "adapter behind a port of application/ports, and the owner ruled that the tables are"
+		+ "external to the packages reading them, as a database is. The data- package is the driver"
+		+ "of that database: its row types and selectors answer which rows and which value, by key"
+		+ "or by order, and interpret nothing, so that the lookups shared-save-processing and the"
+		+ "adapters share are written once; a rule naming a business outcome, resolving a declared"
+		+ "version among others, stays in the domain. The port declares its own types so that a row"
+		+ "type, the shape of the table, reaches neither the domain nor the application, the"
+		+ "adapter translating. Seven tables exist today: the game releases, read by"
+		+ "shared-save-processing; the energy levels, those of release 2.004, the planet names and"
+		+ "the optimizer configuration, read by domain/ of core-mapping; the world object labels,"
+		+ "read by presentation/; and the legacy terrain layer properties, read by no module and"
+		+ "only validated, which move all the same. The packages are cut by the domain the tables"
+		+ "serve, the energy tables kept together because the table of a release is validated"
+		+ "against the energy table and both feed one rule. The labels follow the same flow,"
+		+ "controller, use case, port, adapter, response, presenter, rather than a shortcut into"
+		+ "presentation. The JSON Schemas stay in scripts/validate-tables/ and each package names"
+		+ "its tables in its validate:tables script until the guard task that follows discovers"
+		+ "them. The tables move before the release rules task, which then puts the releases behind"
+		+ "a port of its own, implemented with the selectors of data-save-format, instead of"
+		+ "splitting the table between the domain and shared-save-processing. The wiki keeps the"
+		+ "dependency matrix as the state of the project at implementation time, a trace that"
+		+ "survives a pause during which the instructions evolve; the instructions rule on general"
+		+ "statements is amended for it by the pull request that adds the package kind. The task"
+		+ "follows the reader port task, which leaves the composition root instantiating only, so"
+		+ "that the adapters are wired there once, and the decoding task, which rewrites the inputs"
+		+ "of the entities this task hands the table values to, so that the two changes do not meet"
+		+ "in a rebase"
+		REF @TASK.REFACTOR163
+		REF @TASK.REFACTOR161
+		REF @TASK.REFACTOR162
+		REF @TASK.CHORE169
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+	SOURCE "Owner ruling during the refinement of REFACTOR163, 2026-09-29: a JSON value table is a"
+		+ "database, external to the packages that read it and read behind a port; the data-"
+		+ "package provides the read contract, row types and selectors"
+	SOURCE "Owner ruling during the refinement of the task, 2026-09-29: four data- packages cut by"
+		+ "the domain the tables serve, the energy tables together; the port declares its own"
+		+ "types; the guard discovers the tables of the data- packages in a task of its own; the"
+		+ "task follows the decoding task"
+
+TASK CHORE169
+	TITLE "chore(guards): validate:tables discovers the tables of every data- package"
+	STATUS todo
+	SPEC "every JSON value table of a data- package has its JSON Schema beside it, under the"
+		+ "table's own name, and bun run validate:tables finds every table of every data- package"
+		+ "by that schema: a table is any .json file of a data- package outside node_modules that"
+		+ "is neither its manifest, nor a tsconfig, nor a schema, and adding a table or a data-"
+		+ "package changes neither the script nor a manifest"
+	SPEC "a table of a data- package with no schema of its name beside it fails bun run"
+		+ "validate:tables"
+	SPEC "no package declares a validate:tables script, the root script running the discovery once"
+	SPEC "a schema several tables share, the one of the energy levels of a release first, is"
+		+ "written once in its package and reached from the schema of each table's name, so that no"
+		+ "rule of the rows is stated twice"
+	SPEC "a schema names another table relative to itself, never from the repository root, the"
+		+ "schema of the energy levels of a release naming the energy levels table so"
+	SPEC "AValueTableIsAJsonFileBesideTheModuleThatReadsIt is rewritten in place: its line on"
+		+ "scripts/validate-tables/schemas/ and its rejection of a schema beside its table gone,"
+		+ "the schema beside its table stated with the shared schema and the relative reference,"
+		+ "the one directory of schemas beside the script rejected in its turn, its anchors naming"
+		+ "the code as the task leaves it; every DATATABLE names its schema at its new path,"
+		+ "check:anchors passing"
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+	AFTER @TASK.REFACTOR168
+	WAVE @WAVE.14
+	PRIORITY medium
+	DESC "outside the numbered violations of the audit"
+	RATIONALE "The tables task lists the tables of each data- package in its validate:tables"
+		+ "script, as the packages do today; once every table lives in a data- package, the guard"
+		+ "can find them by the schema beside each, so that a new table or a new package is guarded"
+		+ "without a line added anywhere. The instructions rule"
+		+ "data_package_holds_tables_and_selectors places the validation of a table in its package,"
+		+ "which the schema beside the table satisfies. The schema sits under the table's name so"
+		+ "that the discovery needs no manifest; a table whose rows share a schema with others, the"
+		+ "table of a release, keeps a schema of its own name that reaches the shared one, so that"
+		+ "a new release adds a table and a one-line schema and describes its rows nowhere. A"
+		+ "schema naming another table relative to itself keeps the data- package readable without"
+		+ "the layout of the repository, the guard resolving from the directory of the schema. The"
+		+ "task carries a medium priority: it fixes no numbered violation, but it closes the move"
+		+ "of the tables, which leaves each package naming its own tables until the guard discovers"
+		+ "them"
+		REF @TASK.REFACTOR168
+	SOURCE "Owner ruling during the refinement of REFACTOR168, 2026-09-29: the validation script"
+		+ "scans the data- packages, finds the schemas and validates the tables, so that a new"
+		+ "data- package needs no change of the script"
+	SOURCE "Owner ruling during the refinement of the task, 2026-09-29: a release table keeps a"
+		+ "schema of its own name reaching the shared definition; a schema names another table"
+		+ "relative to itself; priority medium"
