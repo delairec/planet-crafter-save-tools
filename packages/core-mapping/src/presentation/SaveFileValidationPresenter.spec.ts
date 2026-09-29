@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveFileValidationPresenter} from './SaveFileValidationPresenter';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
+import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes';
 import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {GLOBAL_METADATA_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {SaveFileValidationViewModel, SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';

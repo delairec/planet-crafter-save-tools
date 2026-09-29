@@ -1,4 +1,4 @@
-import {VALIDATION_ISSUE_CODES} from "../application/ports/ValidationIssue.ts";
+import {VALIDATION_ISSUE_CODES} from "../application/ports/validationIssueCodes.ts";
 import type {ValidationIssue} from "../application/ports/ValidationIssue.ts";
 
 /** Gauge and level fields must always serialize with a decimal point, even for whole values. */

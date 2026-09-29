@@ -1156,7 +1156,7 @@ TASK REFACTOR160
 	SPEC "SaveValidatorPort reports technical failures only: a save designating no host or more"
 		+ "than one reaches its presenter through an outcome of its own, in every flow that"
 		+ "validates, loads or merges it, never as a ValidationIssue coded UNIQUE_HOST"
-		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::FLOAT_SERIALIZATION:"
+		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::code:"
 			+ "'float-serialization'"
 		IMPL "packages/core-mapping/src/application/ports/SaveFileValidationPresenterPort.ts::presentSaveFileWithoutUniqueHost"
 		IMPL "packages/core-mapping/src/application/ports/LoadAndValidateSaveFilePresenterPort.ts::presentSaveFileWithoutUniqueHost"

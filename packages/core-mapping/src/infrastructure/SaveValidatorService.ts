@@ -2,7 +2,7 @@ import {hasJsonExtension} from "shared-save-processing/jsonExtension.js";
 import {validateSaveContent} from "./validateSaveContent.js";
 import {SaveValidatorPort} from "../application/ports/SaveValidatorPort";
 import {SaveValidationResult} from "../application/ports/SaveValidationResult";
-import {VALIDATION_ISSUE_CODES} from "../application/ports/ValidationIssue";
+import {VALIDATION_ISSUE_CODES} from "../application/ports/validationIssueCodes";
 
 export class SaveValidatorService implements SaveValidatorPort {
   validate(fileName: string, content: string): SaveValidationResult {

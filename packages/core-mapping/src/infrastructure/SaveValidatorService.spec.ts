@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveValidatorService} from './SaveValidatorService';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue';
+import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 

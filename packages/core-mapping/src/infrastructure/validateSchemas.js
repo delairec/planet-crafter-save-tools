@@ -7,7 +7,7 @@ import saveFileSchema from 'shared-save-processing/schemas/save-file.schema.json
 import legacySaveFileSchema from 'shared-save-processing/schemas/legacy-save-file.schema.json' with {type: 'json'};
 import {findSplitPartsCount, UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/ValidationIssue.ts';
+import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes.ts';
 import {locateSaveSection} from './locateSaveSection.ts';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
 import {SECTION_VALIDATORS_BY_SCHEMA_ID} from './sectionValidators.generated.js';
