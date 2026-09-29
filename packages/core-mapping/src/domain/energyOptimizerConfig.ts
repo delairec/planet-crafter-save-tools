@@ -1,9 +1,4 @@
 import {WorldObjectName} from "./worldObjectNames";
-import optimizerConfig from './optimizerConfig.json' with {type: 'json'};
-
-export const OPTIMIZER_CONFIG_BY_NAME: Partial<Record<WorldObjectName, { radius: number; maxMachines: number }>> = Object.fromEntries(
-  optimizerConfig.map((optimizer) => [optimizer.worldObjectName, {radius: optimizer.radius, maxMachines: optimizer.maxMachines}])
-);
 
 export const ENERGY_FUSE_NAME: WorldObjectName = 'FuseEnergy1';
 

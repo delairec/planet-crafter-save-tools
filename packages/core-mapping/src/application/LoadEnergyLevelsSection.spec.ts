@@ -11,6 +11,10 @@ import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntit
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
 import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
+import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {WorldObjectLabels, WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
+import {EnergyLevelsReaderService} from "../infrastructure/EnergyLevelsReaderService";
+import {PlanetNamesReaderService} from "../infrastructure/PlanetNamesReaderService";
 
 const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
@@ -66,15 +70,28 @@ class SaveSectionsWithPlanetsToName extends FakeSaveSectionsMapperService {
   }
 }
 
+const WORLD_OBJECT_LABELS: WorldObjectLabels = {Drill4: 'Drill T5'};
+
 function createPresenter(): EnergyLevelsPresenterPort {
   return {displayEnergyLevels: mock(), displaySaveWithUnreadableLines: mock()};
+}
+
+function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: EnergyLevelsPresenterPort): LoadEnergyLevelsSection {
+  const worldObjectLabelsReader: WorldObjectLabelsReaderPort = {readWorldObjectLabels: () => WORLD_OBJECT_LABELS};
+
+  return new LoadEnergyLevelsSection({
+    saveSectionsReader,
+    energyLevelsReader: new EnergyLevelsReaderService(),
+    planetNamesReader: new PlanetNamesReaderService(),
+    worldObjectLabelsReader
+  }, presenter);
 }
 
 describe('LoadEnergyLevelsSection', () => {
   it('should present computed energy levels from parsed save', async () => {
     // Arrange
     const presenter = createPresenter();
-    const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader(), presenter);
+    const useCase = createUseCase(stubSaveSectionsReader(), presenter);
 
     // Act
     await useCase.execute({content: SAVE_CONTENT});
@@ -104,7 +121,8 @@ describe('LoadEnergyLevelsSection', () => {
           totalLevel: 187.75
         }],
         optimizers: []
-      }]
+      }],
+      worldObjectLabels: WORLD_OBJECT_LABELS
     });
   });
 
@@ -112,7 +130,7 @@ describe('LoadEnergyLevelsSection', () => {
     it('should charge the base consumption levels, the modifier being 1', async () => {
       // Arrange
       const presenter = createPresenter();
-      const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader({saveSections: new SaveSectionsWithoutSaveConfiguration()}), presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new SaveSectionsWithoutSaveConfiguration()}), presenter);
 
       // Act
       await useCase.execute({content: SAVE_CONTENT});
@@ -130,7 +148,7 @@ describe('LoadEnergyLevelsSection', () => {
       // Arrange
       const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
-      const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader({unreadableLines}), presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({unreadableLines}), presenter);
 
       // Act
       await useCase.execute({content: SAVE_CONTENT});
@@ -145,7 +163,7 @@ describe('LoadEnergyLevelsSection', () => {
     it('should name a planet from its numeric id (Rule EN-PLANET-3)', async () => {
       // Arrange
       const presenter = createPresenter();
-      const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader({saveSections: new SaveSectionsWithPlanetsToName()}), presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new SaveSectionsWithPlanetsToName()}), presenter);
 
       // Act
       await useCase.execute({content: SAVE_CONTENT});
@@ -159,7 +177,7 @@ describe('LoadEnergyLevelsSection', () => {
     it('should offer the terraformed planet names as hints when the numeric id is unknown (Rule EN-PLANET-2)', async () => {
       // Arrange
       const presenter = createPresenter();
-      const useCase = new LoadEnergyLevelsSection(stubSaveSectionsReader({saveSections: new SaveSectionsWithPlanetsToName()}), presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new SaveSectionsWithPlanetsToName()}), presenter);
 
       // Act
       await useCase.execute({content: SAVE_CONTENT});

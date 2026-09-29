@@ -2,8 +2,8 @@ import {formatUnreadableLine} from "./formatUnreadableLine";
 import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
 import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
-import {PlayerSummaryResponse} from "../application/responses/PlayerSummaryResponse";
-import {WorldObjectLabel, worldObjectLabels} from "./worldObjectLabels";
+import {PlayersResponse} from "../application/responses/PlayersResponse";
+import {WorldObjectLabels} from "../application/ports/WorldObjectLabelsReaderPort";
 import {
   playersSectionEquipmentLabel,
   playersSectionInventoryLabel,
@@ -25,18 +25,18 @@ export class PlayersPresenter implements PlayersPresenterPort {
     return this._viewModel;
   }
 
-  displayPlayers(players: PlayerSummaryResponse[]): void {
+  displayPlayers({players, worldObjectLabels}: PlayersResponse): void {
     this._viewModel = {
       players: players.map(player => ({
         name: player.name,
         columns: [
           {
             header: playersSectionEquipmentLabel,
-            values: mapListWithEmptyMessage(player.equipment, playersSectionNoEquipmentMessage),
+            values: mapListWithEmptyMessage(player.equipment, playersSectionNoEquipmentMessage, worldObjectLabels),
           },
           {
             header: playersSectionInventoryLabel,
-            values: mapListWithEmptyMessage(player.inventory, playersSectionNoItemsMessage),
+            values: mapListWithEmptyMessage(player.inventory, playersSectionNoItemsMessage, worldObjectLabels),
           }
         ]
       }))
@@ -48,11 +48,11 @@ export class PlayersPresenter implements PlayersPresenterPort {
   }
 }
 
-function mapItemNameToItemLabel(itemName: string): string {
-  const worldObjectLabel: WorldObjectLabel = worldObjectLabels[itemName];
+function mapItemNameToItemLabel(itemName: string, worldObjectLabels: WorldObjectLabels): string {
+  const worldObjectLabel: string | undefined = worldObjectLabels[itemName];
   return worldObjectLabel ?? resolvePlayersSectionUnknownItemLabel(itemName);
 }
 
-function mapListWithEmptyMessage(list: readonly string[], message: string): string[] {
-  return list.length === 0 ? [message] : list.map(mapItemNameToItemLabel);
+function mapListWithEmptyMessage(list: readonly string[], message: string, worldObjectLabels: WorldObjectLabels): string[] {
+  return list.length === 0 ? [message] : list.map((itemName) => mapItemNameToItemLabel(itemName, worldObjectLabels));
 }

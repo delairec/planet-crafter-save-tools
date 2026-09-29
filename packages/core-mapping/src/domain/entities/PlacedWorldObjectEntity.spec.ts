@@ -2,6 +2,8 @@ import {describe, expect, it} from 'bun:test';
 import {PlacedWorldObjectEntity} from './PlacedWorldObjectEntity';
 import {WorldObjectEntity} from './WorldObjectEntity';
 import {WorldObjectName} from '../worldObjectNames';
+import {EnergyLevelsByWorldObjectName} from '../energyLevelsByWorldObjectName';
+import {OptimizerRangeValueObject} from '../valueObjects/OptimizerRangeValueObject';
 
 describe('PlacedWorldObjectEntity', () => {
   it('should expose the placement it was built from', () => {
@@ -25,68 +27,12 @@ describe('PlacedWorldObjectEntity', () => {
     expect(placedWorldObject.inventoryId).toBe(5);
   });
 
-  describe('When asked what it does with energy', () => {
-    it('should report the production level of the machine it is', () => {
-      // Arrange
-      const producer = new PlacedWorldObjectEntity({
-        id: '1', name: 'EnergyGenerator1' as WorldObjectName, position: [0, 0, 0], planetId: 1
-      });
-
-      // Act
-      const {energyProductionLevel} = producer;
-
-      // Assert
-      expect(energyProductionLevel).toBe(1.2);
-    });
-
-    it('should report no production level for a machine that draws power', () => {
-      // Arrange
-      const consumer = new PlacedWorldObjectEntity({
-        id: '1', name: 'Drill0' as WorldObjectName, position: [0, 0, 0], planetId: 1
-      });
-
-      // Act
-      const {energyProductionLevel} = consumer;
-
-      // Assert
-      expect(energyProductionLevel).toBeUndefined();
-    });
-  });
-
-  describe('When it is one of the optimizer machines', () => {
-    it('should be an optimizer', () => {
-      // Arrange
-      const optimizer = new PlacedWorldObjectEntity({
-        id: '1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1
-      });
-
-      // Act
-      const anOptimizer = optimizer.isOptimizer();
-
-      // Assert
-      expect(anOptimizer).toBe(true);
-    });
-  });
-
-  describe('When it is any other machine', () => {
-    it('should not be an optimizer', () => {
-      // Arrange
-      const drill = new PlacedWorldObjectEntity({
-        id: '2', name: 'Drill0' as WorldObjectName, position: [0, 0, 0], planetId: 1
-      });
-
-      // Act
-      const anOptimizer = drill.isOptimizer();
-
-      // Assert
-      expect(anOptimizer).toBe(false);
-    });
-  });
-
   describe('When an optimizer picks the producers it boosts', () => {
     const optimizer = new PlacedWorldObjectEntity({
       id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1
     });
+    const range: OptimizerRangeValueObject = {radius: 120, maxMachines: 5};
+    const productionLevels: EnergyLevelsByWorldObjectName = {EnergyGenerator1: 1.2};
 
     function producerAt(id: string, distance: number, planetId = 1): PlacedWorldObjectEntity {
       return new PlacedWorldObjectEntity({
@@ -99,7 +45,7 @@ describe('PlacedWorldObjectEntity', () => {
       const producer = producerAt('prod-1', 119);
 
       // Act
-      const boostedProducers = optimizer.boostedProducersAmong([producer]);
+      const boostedProducers = optimizer.boostedProducersAmong([producer], range, productionLevels);
 
       // Assert
       expect(boostedProducers).toEqual([producer]);
@@ -110,7 +56,7 @@ describe('PlacedWorldObjectEntity', () => {
       const producer = producerAt('prod-1', 121);
 
       // Act
-      const boostedProducers = optimizer.boostedProducersAmong([producer]);
+      const boostedProducers = optimizer.boostedProducersAmong([producer], range, productionLevels);
 
       // Assert
       expect(boostedProducers).toEqual([]);
@@ -121,7 +67,7 @@ describe('PlacedWorldObjectEntity', () => {
       const producer = producerAt('prod-1', 10, 2);
 
       // Act
-      const boostedProducers = optimizer.boostedProducersAmong([producer]);
+      const boostedProducers = optimizer.boostedProducersAmong([producer], range, productionLevels);
 
       // Assert
       expect(boostedProducers).toEqual([]);
@@ -134,7 +80,7 @@ describe('PlacedWorldObjectEntity', () => {
       });
 
       // Act
-      const boostedProducers = optimizer.boostedProducersAmong([drill]);
+      const boostedProducers = optimizer.boostedProducersAmong([drill], range, productionLevels);
 
       // Assert
       expect(boostedProducers).toEqual([]);
@@ -152,27 +98,12 @@ describe('PlacedWorldObjectEntity', () => {
       // Act
       const boostedProducers = optimizer.boostedProducersAmong([
         producerAtSixty, producerAtTen, producerAtFifty, producerAtTwenty, producerAtForty, producerAtThirty
-      ]);
+      ], range, productionLevels);
 
       // Assert
       expect(boostedProducers).toEqual([
         producerAtTen, producerAtTwenty, producerAtThirty, producerAtForty, producerAtFifty
       ]);
-    });
-
-    describe('When it is not an optimizer', () => {
-      it('should boost nothing', () => {
-        // Arrange
-        const drill = new PlacedWorldObjectEntity({
-          id: 'drill-1', name: 'Drill0' as WorldObjectName, position: [0, 0, 0], planetId: 1
-        });
-
-        // Act
-        const boostedProducers = drill.boostedProducersAmong([producerAt('prod-1', 10)]);
-
-        // Assert
-        expect(boostedProducers).toEqual([]);
-      });
     });
   });
 

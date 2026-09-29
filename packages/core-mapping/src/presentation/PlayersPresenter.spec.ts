@@ -2,6 +2,14 @@ import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {describe, expect, it} from 'bun:test';
 import {PlayersPresenter} from './PlayersPresenter';
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
+import {WorldObjectLabels} from '../application/ports/WorldObjectLabelsReaderPort';
+
+const WORLD_OBJECT_LABELS: WorldObjectLabels = {
+  Backpack4: 'Backpack T4',
+  MagnetarQuartz: 'Magnetar Quartz',
+  OxygenTank5: 'Oxygen tank T5',
+  Phytoplankton3: 'Phytoplankton C'
+};
 
 describe('PlayersPresenter', () => {
   it('should initialize with default view model', () => {
@@ -21,7 +29,7 @@ describe('PlayersPresenter', () => {
     const playerChileny = {name: 'Chileny', inventory: [], equipment: []};
 
     // Act
-    presenter.displayPlayers([playerNikowa, playerChileny]);
+    presenter.displayPlayers({players: [playerNikowa, playerChileny], worldObjectLabels: WORLD_OBJECT_LABELS});
 
     // Assert
     expect(presenter.viewModel).toEqual<PlayersViewModel>({
@@ -61,7 +69,7 @@ describe('PlayersPresenter', () => {
       const playerNikowa = {name: 'Nikowa', inventory: ['Phytoplankton99'], equipment: ['Backpack99']};
 
       // Act
-      presenter.displayPlayers([playerNikowa]);
+      presenter.displayPlayers({players: [playerNikowa], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel).toEqual<PlayersViewModel>({

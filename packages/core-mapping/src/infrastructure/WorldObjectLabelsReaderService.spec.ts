@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {WorldObjectName, worldObjectNamesByEnergyRole} from '../domain/worldObjectNames';
-import {worldObjectLabels} from './worldObjectLabels';
+import {WorldObjectLabelsReaderService} from './WorldObjectLabelsReaderService';
 
 const knownWorldObjectNames: readonly string[] = [
   ...worldObjectNamesByEnergyRole.producing,
@@ -8,7 +8,8 @@ const knownWorldObjectNames: readonly string[] = [
   ...worldObjectNamesByEnergyRole.withoutKnownEnergyLevel
 ];
 
-describe('worldObjectLabels', () => {
+describe('WorldObjectLabelsReaderService', () => {
+  const worldObjectLabels = new WorldObjectLabelsReaderService().readWorldObjectLabels();
 
   describe('When every known world object name is looked up', () => {
     it('should find a label for each of them', () => {

@@ -49,7 +49,7 @@ SHAPE task_id
 
 SHAPE package_name
 	DESC "the manifest name of the package, underscore where the manifest has a hyphen"
-	MATCH "(core|util|cli|ui|shared)(_[a-z0-9]+)+"
+	MATCH "(core|util|cli|ui|shared|data)(_[a-z0-9]+)+"
 
 SHAPE date
 	DESC "a calendar day, YYYY-MM-DD"

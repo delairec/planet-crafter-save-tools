@@ -366,9 +366,9 @@ RULE APlanetNumericIdIsStableAcrossSaves
 	DOMAIN format
 	SPEC "the numeric planet id a world object and a world event carry is the same value in every"
 		+ "save, being derived neither from the world seed nor from the content of the save"
-		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.json::-1140328421"
+		ATTESTED_BY "packages/data-planets/planetNamesByNumericId.json::-1140328421"
 		ATTESTED_BY "packages/shared-save-processing/schemas/section9-world-events.schema.json::planet"
-		ATTESTED_BY "packages/core-mapping/src/domain/planetNamesByNumericId.json::-440810600"
+		ATTESTED_BY "packages/data-planets/planetNamesByNumericId.json::-440810600"
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	APPLIES_TO_SECTION @SECTION.WorldEvents
 	VALUES_FROM @DATATABLE.PlanetNamesByNumericId
@@ -436,7 +436,7 @@ RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 		ATTESTED_BY "packages/shared-save-processing/testing/createSaveRecords.js::PC-Toxicity-Layer2"
 	SPEC "the game writes the six properties of the table in every Terrain Layers entry it writes,"
 		+ "and no other"
-		ATTESTED_BY "packages/shared-save-processing/legacyTerrainLayerProperties.json::colorCustomLerp"
+		ATTESTED_BY "packages/data-save-format/legacyTerrainLayerProperties.json::colorCustomLerp"
 	VALUES_FROM @DATATABLE.LegacyTerrainLayerProperties
 	APPLIES_TO_SECTION @SECTION.TerrainLayers
 	SOURCE "Extracted from the section index module and the legacy normalisation on 2026-09-23"

@@ -1,4 +1,5 @@
 import {selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
+import {readGameEnergyTables} from '../testing/readGameEnergyTables';
 import {describe, expect, it} from 'bun:test';
 import {PlanetEnergyGrid} from './PlanetEnergyGrid';
 import {PlacedWorldObjectEntity} from './entities/PlacedWorldObjectEntity';
@@ -8,6 +9,7 @@ import {WorldObjectName, worldObjectNamesByEnergyRole} from './worldObjectNames'
 import {createPlanetWorldObjectsValueObject} from './valueObjects/PlanetWorldObjectsValueObject';
 
 const PLANET_ID = 1;
+const GAME_ENERGY_TABLES = readGameEnergyTables();
 
 function placedWorldObject(
   id: string,
@@ -29,26 +31,28 @@ function gridOf(
   inventories: readonly InventoryEntity[] = [],
   planetName?: string
 ): PlanetEnergyGrid {
-  return new PlanetEnergyGrid(
-    createPlanetWorldObjectsValueObject({planetId: PLANET_ID, planetName, placedWorldObjects}),
+  return new PlanetEnergyGrid({
+    planet: createPlanetWorldObjectsValueObject({planetId: PLANET_ID, planetName, placedWorldObjects}),
     allWorldObjects,
     inventories,
-    selectEnergyLevelsOfDeclaredVersion('2.103'),
-    1
-  );
+    energyLevels: selectEnergyLevelsOfDeclaredVersion('2.103', GAME_ENERGY_TABLES),
+    optimizerRanges: GAME_ENERGY_TABLES.optimizerRanges,
+    powerConsumptionModifier: 1
+  });
 }
 
 function gridOfSaveWithPowerConsumptionModifier(
   placedWorldObjects: readonly PlacedWorldObjectEntity[],
   powerConsumptionModifier: number
 ): PlanetEnergyGrid {
-  return new PlanetEnergyGrid(
-    createPlanetWorldObjectsValueObject({planetId: PLANET_ID, placedWorldObjects}),
-    placedWorldObjects,
-    [],
-    selectEnergyLevelsOfDeclaredVersion('2.103'),
+  return new PlanetEnergyGrid({
+    planet: createPlanetWorldObjectsValueObject({planetId: PLANET_ID, placedWorldObjects}),
+    allWorldObjects: placedWorldObjects,
+    inventories: [],
+    energyLevels: selectEnergyLevelsOfDeclaredVersion('2.103', GAME_ENERGY_TABLES),
+    optimizerRanges: GAME_ENERGY_TABLES.optimizerRanges,
     powerConsumptionModifier
-  );
+  });
 }
 
 describe('PlanetEnergyGrid', () => {

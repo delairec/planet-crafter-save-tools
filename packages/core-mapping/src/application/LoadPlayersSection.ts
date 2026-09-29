@@ -1,11 +1,13 @@
 import {PlayersPresenterPort} from './ports/PlayersPresenterPort';
 import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
+import {WorldObjectLabelsReaderPort} from './ports/WorldObjectLabelsReaderPort';
 import {LoadSaveSectionsRequest} from './requests/LoadSaveSectionsRequest';
 import {PlayerSummaryResponse} from './responses/PlayerSummaryResponse';
 
 export class LoadPlayersSection {
   constructor(
     private readonly saveSectionsReader: SaveSectionsReaderPort,
+    private readonly worldObjectLabelsReader: WorldObjectLabelsReaderPort,
     private readonly presenter: PlayersPresenterPort,
   ) {}
 
@@ -23,6 +25,6 @@ export class LoadPlayersSection {
       equipment: player.equipment
     }));
 
-    this.presenter.displayPlayers(players);
+    this.presenter.displayPlayers({players, worldObjectLabels: this.worldObjectLabelsReader.readWorldObjectLabels()});
   }
 }
