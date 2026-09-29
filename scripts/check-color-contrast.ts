@@ -356,6 +356,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
+    description: 'the links of the overview to the pages of the save, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
+    selector: '.overview-pages a',
+    foreground: 'content',
+    background: 'canvas'
+  },
+  {
     description: 'the file name of a merged save attached to the home message, on its chip',
     file: 'packages/ui-save-manager/src/styles/home.css',
     selector: '.home-message-attachment-download',

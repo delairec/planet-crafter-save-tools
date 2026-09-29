@@ -493,18 +493,22 @@ TASK FEAT82
 TASK TEST91
 	TITLE "the axe audits of the accessibility tests replay the color rules in the dark color"
 		+ "scheme"
-	STATUS todo
+	STATUS implemented
 	SPEC "every state an accessibility test audits in the light color scheme is audited again with"
 		+ "the page in the dark color scheme, against the color-contrast and link-in-text-block"
 		+ "rules of axe-core alone"
+		IMPL "packages/ui-save-manager/e2e/helpers/createAColorRulesAudit.ts::withRules(colorRules)"
 	SPEC "the dark audits live in the accessibility tests of"
 		+ "packages/ui-save-manager/e2e/accessibility/, in the file of the page they audit, and run"
 		+ "with bun run test:ui on the three engines; no new Playwright project and no new test"
 		+ "layer"
+		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::describeTheColorRulesAuditInTheDarkColorScheme(showASaveVisualization)"
 	SPEC "a violation the dark audits find is fixed in the same pull request; no rule is silenced"
 		+ "and no element is excluded"
+		IMPL "packages/ui-save-manager/src/styles/shell/shell.css::.overview-pages a"
 	SPEC "@DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest states that the color rules of"
 		+ "the axe audit are replayed in the dark color scheme, anchored on the dark audits"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::are replayed on"
 		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
 	RATIONALE "check:contrast reads the token pairs of colors.css in both themes but sees nothing"
 		+ "of the rendered DOM: the download link of the merge result passed the catalog at white"
@@ -535,6 +539,7 @@ TASK TEST91
 	SOURCE "Owner rescoping, 2026-09-29, after pull request 213 delivered the light-scheme audits:"
 		+ "no report, no choice, the dark scheme alone remains"
 		PR 213
+	DELIVERED_BY 237
 
 TASK FEAT131
 	TITLE "Show the terraformation stage of each planet as a badge on its overview card"

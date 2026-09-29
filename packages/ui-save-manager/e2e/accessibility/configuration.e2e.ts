@@ -1,5 +1,6 @@
 import {type Page} from '@playwright/test';
 import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
+import {describeTheColorRulesAuditInTheDarkColorScheme} from '../helpers/describeTheColorRulesAuditInTheDarkColorScheme';
 import {expect, test} from '../scenarioTest';
 import {locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from '../scenarioSteps';
 
@@ -23,6 +24,8 @@ test.describe('Configuration page accessibility', () => {
       // Assert
       expect(violations).toEqual(noViolation);
     });
+
+    describeTheColorRulesAuditInTheDarkColorScheme(openTheConfigurationPageOfAVisualizedSave);
 
     test('should title the page with a third level heading', async ({page}) => {
       // Act
