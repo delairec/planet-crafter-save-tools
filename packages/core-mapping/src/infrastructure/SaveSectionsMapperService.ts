@@ -1,5 +1,5 @@
 import {Player, TerraformationLevel} from 'shared-save-processing/gameDefinitions';
-import {SaveSectionsPort} from '../application/ports/SaveSectionsPort';
+import {SaveSectionsMapperPort} from '../application/ports/SaveSectionsMapperPort';
 import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {SaveSections} from '../domain/save/SaveSections';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
@@ -23,7 +23,7 @@ function parsePosition(position: string): [number, number, number] {
   return [x, y, z];
 }
 
-export class SaveSectionsService implements SaveSectionsPort {
+export class SaveSectionsMapperService implements SaveSectionsMapperPort {
 
   constructor(private readonly sections: SaveSections) {
   }

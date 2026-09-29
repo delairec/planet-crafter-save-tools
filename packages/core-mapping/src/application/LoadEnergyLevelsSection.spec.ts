@@ -1,6 +1,6 @@
 import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveSectionsService} from "../testing/FakeSaveSectionsService";
+import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {LoadEnergyLevelsSection} from "./LoadEnergyLevelsSection";
 import {
@@ -13,7 +13,7 @@ import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
 
 const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
-class SaveSectionsWithoutSaveConfiguration extends FakeSaveSectionsService {
+class SaveSectionsWithoutSaveConfiguration extends FakeSaveSectionsMapperService {
   override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
     return [createPlanetWorldObjectsValueObject({planetId: 1, placedWorldObjects: [CONSUMER]})];
   }

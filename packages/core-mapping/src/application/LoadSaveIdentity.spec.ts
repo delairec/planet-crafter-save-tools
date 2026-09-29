@@ -1,6 +1,6 @@
 import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveSectionsService} from "../testing/FakeSaveSectionsService";
+import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {SaveIdentityPresenterPort} from "./ports/SaveIdentityPresenterPort";
 import {LoadSaveIdentity} from "./LoadSaveIdentity";
@@ -30,7 +30,7 @@ describe('LoadSaveIdentity', () => {
   describe('When the save declares no version', () => {
     it('should present the current format release', async () => {
       // Arrange
-      const saveSections = new FakeSaveSectionsService();
+      const saveSections = new FakeSaveSectionsMapperService();
       saveSections.getDeclaredVersion = () => undefined;
       const presenter = createPresenter();
       const useCase = new LoadSaveIdentity(stubSaveSectionsReader({saveSections}), presenter);
@@ -51,7 +51,7 @@ describe('LoadSaveIdentity', () => {
   describe('When the save has no configuration entry', () => {
     it('should present the file name alone', async () => {
       // Arrange
-      const saveSections = new FakeSaveSectionsService();
+      const saveSections = new FakeSaveSectionsMapperService();
       saveSections.getSaveConfiguration = () => undefined;
       const presenter = createPresenter();
       const useCase = new LoadSaveIdentity(stubSaveSectionsReader({saveSections}), presenter);

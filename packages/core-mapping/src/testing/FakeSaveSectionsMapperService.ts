@@ -1,4 +1,4 @@
-import {SaveSectionsPort} from "../application/ports/SaveSectionsPort";
+import {SaveSectionsMapperPort} from "../application/ports/SaveSectionsMapperPort";
 import {createGlobalProgressionValueObject, GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {PlayerEntity} from "../domain/entities/PlayerEntity";
 import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
@@ -15,7 +15,7 @@ import {InventoryEntity} from "../domain/entities/InventoryEntity";
 const PRODUCER = new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator6' as const, position: [0, 0, 0], planetId: 1});
 const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
-export class FakeSaveSectionsService implements SaveSectionsPort {
+export class FakeSaveSectionsMapperService implements SaveSectionsMapperPort {
   getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
     return [createPlanetWorldObjectsValueObject({
       planetId: 1,

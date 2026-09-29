@@ -7,7 +7,7 @@ import {PlanetWorldObjectsValueObject} from "../../domain/valueObjects/PlanetWor
 import {WorldObjectEntity} from "../../domain/entities/WorldObjectEntity";
 import {InventoryEntity} from "../../domain/entities/InventoryEntity";
 
-export interface SaveSectionsPort {
+export interface SaveSectionsMapperPort {
   getPlayers(): PlayerEntity[];
 
   getGlobalProgression(): GlobalProgressionValueObject;

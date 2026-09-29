@@ -1,6 +1,6 @@
 import {SaveSectionsReaderPort, SaveSectionsReading} from '../application/ports/SaveSectionsReaderPort';
 import {SaveSectionsParserPort} from '../application/ports/SaveSectionsParserPort';
-import {SaveSectionsService} from './SaveSectionsService';
+import {SaveSectionsMapperService} from './SaveSectionsMapperService';
 
 export class SaveSectionsReaderService implements SaveSectionsReaderPort {
 
@@ -10,6 +10,6 @@ export class SaveSectionsReaderService implements SaveSectionsReaderPort {
   read(content: string): SaveSectionsReading {
     const {sections, errors} = this.parser.parse(content);
 
-    return {saveSections: new SaveSectionsService(sections), unreadableLines: errors};
+    return {saveSections: new SaveSectionsMapperService(sections), unreadableLines: errors};
   }
 }

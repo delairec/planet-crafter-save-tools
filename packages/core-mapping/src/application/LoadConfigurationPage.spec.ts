@@ -1,6 +1,6 @@
 import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveSectionsService} from "../testing/FakeSaveSectionsService";
+import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {ConfigurationPagePresenterPort} from "./ports/ConfigurationPagePresenterPort";
@@ -58,7 +58,7 @@ describe('LoadConfigurationPage', () => {
   describe('When the save has no statistics', () => {
     it('should present the global progression without statistics', async () => {
       // Arrange
-      const saveSections = new FakeSaveSectionsService();
+      const saveSections = new FakeSaveSectionsMapperService();
       saveSections.getStatistics = () => undefined;
       const presenter = createPresenter();
       const useCase = createUseCase(stubSaveSectionsReader({saveSections}), presenter);
@@ -78,7 +78,7 @@ describe('LoadConfigurationPage', () => {
   describe('When the save has no configuration entry', () => {
     it('should present the progression without a save configuration', async () => {
       // Arrange
-      const saveSections = new FakeSaveSectionsService();
+      const saveSections = new FakeSaveSectionsMapperService();
       saveSections.getSaveConfiguration = () => undefined;
       const presenter = createPresenter();
       const useCase = createUseCase(stubSaveSectionsReader({saveSections}), presenter);

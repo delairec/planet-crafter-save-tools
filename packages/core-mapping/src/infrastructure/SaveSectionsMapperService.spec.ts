@@ -7,7 +7,7 @@ import {
   createStatistics,
   createTerraformationLevel
 } from 'shared-save-processing/testing/createSaveRecords.js';
-import {SaveSectionsService} from './SaveSectionsService';
+import {SaveSectionsMapperService} from './SaveSectionsMapperService';
 import {createSaveSections} from '../testing/createSaveSections';
 import {SaveSections} from '../domain/save/SaveSections';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
@@ -53,11 +53,11 @@ function createSectionsWithTwoPlayers(): SaveSections {
   });
 }
 
-describe('SaveSectionsService', () => {
+describe('SaveSectionsMapperService', () => {
 
   it('should extract global metadata', () => {
     // Arrange
-    const service = new SaveSectionsService(createSectionsWithTwoPlayers());
+    const service = new SaveSectionsMapperService(createSectionsWithTwoPlayers());
 
     // Act
     const metadata = service.getGlobalProgression();
@@ -71,7 +71,7 @@ describe('SaveSectionsService', () => {
   describe('When the global metadata carries logisticsPaused', () => {
     it('should extract logisticsPaused alongside the terra tokens', () => {
       // Arrange
-      const service = new SaveSectionsService(createSaveSections({globalMetadata: [createGlobalMetadata({logisticsPaused: true})]}));
+      const service = new SaveSectionsMapperService(createSaveSections({globalMetadata: [createGlobalMetadata({logisticsPaused: true})]}));
 
       // Act
       const metadata = service.getGlobalProgression();
@@ -88,7 +88,7 @@ describe('SaveSectionsService', () => {
     it('should use fallback values', () => {
       // Arrange
       const noGlobalMetadata: GlobalMetadata[] = [];
-      const service = new SaveSectionsService(createSaveSections({globalMetadata: noGlobalMetadata}));
+      const service = new SaveSectionsMapperService(createSaveSections({globalMetadata: noGlobalMetadata}));
 
       // Act
       const metadata = service.getGlobalProgression();
@@ -102,7 +102,7 @@ describe('SaveSectionsService', () => {
 
   it('should extract players section', () => {
     // Arrange
-    const service = new SaveSectionsService(createSectionsWithTwoPlayers());
+    const service = new SaveSectionsMapperService(createSectionsWithTwoPlayers());
 
     // Act
     const players = service.getPlayers();
@@ -125,7 +125,7 @@ describe('SaveSectionsService', () => {
 
   it('should extract terraformation levels', () => {
     // Arrange
-    const service = new SaveSectionsService(createSectionsWithTwoPlayers());
+    const service = new SaveSectionsMapperService(createSectionsWithTwoPlayers());
 
     // Act
     const levels = service.getTerraformationLevels();
@@ -145,7 +145,7 @@ describe('SaveSectionsService', () => {
 
   it('should extract statistics', () => {
     // Arrange
-    const service = new SaveSectionsService(createSectionsWithTwoPlayers());
+    const service = new SaveSectionsMapperService(createSectionsWithTwoPlayers());
 
     // Act
     const statistics = service.getStatistics();
@@ -160,7 +160,7 @@ describe('SaveSectionsService', () => {
     it('should return undefined', () => {
       // Arrange
       const noStatistics: Statistics[] = [];
-      const service = new SaveSectionsService(createSaveSections({statistics: noStatistics}));
+      const service = new SaveSectionsMapperService(createSaveSections({statistics: noStatistics}));
 
       // Act
       const statistics = service.getStatistics();
@@ -172,7 +172,7 @@ describe('SaveSectionsService', () => {
 
   it('should extract save configuration', () => {
     // Arrange
-    const service = new SaveSectionsService(createSectionsWithTwoPlayers());
+    const service = new SaveSectionsMapperService(createSectionsWithTwoPlayers());
 
     // Act
     const saveConfiguration = service.getSaveConfiguration();
@@ -205,7 +205,7 @@ describe('SaveSectionsService', () => {
     it('should return undefined', () => {
       // Arrange
       const noSaveConfigurations: SaveConfiguration[] = [];
-      const service = new SaveSectionsService(createSaveSections({saveConfigurations: noSaveConfigurations}));
+      const service = new SaveSectionsMapperService(createSaveSections({saveConfigurations: noSaveConfigurations}));
 
       // Act
       const saveConfiguration = service.getSaveConfiguration();
@@ -224,7 +224,7 @@ describe('SaveSectionsService', () => {
           {id: 2, gId: 'FuseEnergy1'}
         ]
       });
-      const service = new SaveSectionsService(sections);
+      const service = new SaveSectionsMapperService(sections);
 
       // Act
       const worldObjects = service.getWorldObjects();
@@ -248,7 +248,7 @@ describe('SaveSectionsService', () => {
           {id: 4, gId: 'EnergyGenerator1', planet: 1}
         ]
       });
-      const service = new SaveSectionsService(sections);
+      const service = new SaveSectionsMapperService(sections);
 
       // Act
       const planets = service.getPlacedWorldObjectsByPlanet();
@@ -272,7 +272,7 @@ describe('SaveSectionsService', () => {
           {id: 3, gId: 'Heater1', pos: '20,0,0', planet: 1}
         ]
       });
-      const service = new SaveSectionsService(sections);
+      const service = new SaveSectionsMapperService(sections);
 
       // Act
       const planets = service.getPlacedWorldObjectsByPlanet();
@@ -305,7 +305,7 @@ describe('SaveSectionsService', () => {
           {id: 1, gId: 'EnergyGenerator1', pos: '0,0,0', planet: primePlanetNumericId}
         ]
       });
-      const service = new SaveSectionsService(sections);
+      const service = new SaveSectionsMapperService(sections);
 
       // Act
       const planets = service.getPlacedWorldObjectsByPlanet();
@@ -324,7 +324,7 @@ describe('SaveSectionsService', () => {
           {id: 2, gId: 'EnergyGenerator1', pos: '10,0,0', planet: unknownPlanetNumericId}
         ]
       });
-      const service = new SaveSectionsService(sections);
+      const service = new SaveSectionsMapperService(sections);
 
       // Act
       const planets = service.getPlacedWorldObjectsByPlanet();
@@ -340,7 +340,7 @@ describe('SaveSectionsService', () => {
           {id: 95585241, gId: 'Optimizer1', pos: '1751.865,-472.58,1106.104', planet: 1, liId: 100}
         ]
       });
-      const service = new SaveSectionsService(sections);
+      const service = new SaveSectionsMapperService(sections);
 
       // Act
       const planets = service.getPlacedWorldObjectsByPlanet();
@@ -366,7 +366,7 @@ describe('SaveSectionsService', () => {
           {id: 101, woIds: noWorldObjectIds, size: 1}
         ]
       });
-      const service = new SaveSectionsService(sections);
+      const service = new SaveSectionsMapperService(sections);
 
       // Act
       const inventories = service.getInventories();

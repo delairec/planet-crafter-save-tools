@@ -1209,7 +1209,7 @@ TASK REFACTOR161
 	SPEC "no application port returns a bag cut for one use case: getEnergyLevelsRawData and"
 		+ "EnergyLevelsRawDataValueObject are gone, and the energy use case assembles its data from"
 		+ "port methods of one concept each"
-		IMPL "packages/core-mapping/src/application/ports/SaveSectionsPort.ts::getPlacedWorldObjectsByPlanet"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsMapperPort.ts::getPlacedWorldObjectsByPlanet"
 		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
 	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place: it keeps the grid built once per"
 		+ "planet, drops its rejection of assembling in presentation, and its anchors name the code"

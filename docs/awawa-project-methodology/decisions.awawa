@@ -730,7 +730,7 @@ DECISION APlanetEnergyGridIsAnAggregate
 			+ "PlanetEnergyLevelsValueObject"
 		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts::new"
 			+ "PlanetEnergyGrid("
-		IMPL "packages/core-mapping/src/application/ports/SaveSectionsPort.ts::getPlacedWorldObjectsByPlanet"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsMapperPort.ts::getPlacedWorldObjectsByPlanet"
 	REJECTED "Energy rules taking the same triple of lists: an unnamed object, and the boosts"
 		+ "computed three times per planet"
 	SOURCE "T15, owner review"
