@@ -1,5 +1,6 @@
 import {type Page} from '@playwright/test';
 import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
+import {describeTheColorRulesAuditInTheDarkColorScheme} from '../helpers/describeTheColorRulesAuditInTheDarkColorScheme';
 import {expect, test} from '../scenarioTest';
 import {locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from '../scenarioSteps';
 
@@ -24,6 +25,8 @@ test.describe('Power page accessibility', () => {
       // Assert
       expect(violations).toEqual(noViolation);
     });
+
+    describeTheColorRulesAuditInTheDarkColorScheme(openThePowerPageOfAVisualizedSave);
 
     test('should title the power with a third level heading', async ({page}) => {
       // Act
