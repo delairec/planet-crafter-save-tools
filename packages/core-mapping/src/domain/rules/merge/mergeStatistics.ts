@@ -1,11 +1,11 @@
-import {Statistics} from 'shared-save-processing/gameDefinitions';
+import {StatisticsEntry} from '../../save/StatisticsEntry';
 
-const NO_STATISTICS_CONTRIBUTION: Statistics = {craftedObjects: 0, totalSaveFileLoad: 0, totalSaveFileTime: 0};
+const NO_STATISTICS_CONTRIBUTION: StatisticsEntry = {craftedObjects: 0, totalSaveFileLoad: 0, totalSaveFileTime: 0};
 
 /**
  * @see @RULE.StatisticsAreSummed
  */
-export function mergeStatistics([statisticsA]: Statistics[], [statisticsB]: Statistics[]): Statistics | undefined {
+export function mergeStatistics([statisticsA]: readonly StatisticsEntry[], [statisticsB]: readonly StatisticsEntry[]): StatisticsEntry | undefined {
   if (!statisticsA && !statisticsB) {
     return undefined;
   }

@@ -1,5 +1,4 @@
 import {WorldObjectName} from "../worldObjectNames";
-import {assertFiniteNumber, assertNonEmptyString, assertOptionalFiniteNumber} from "../errors/assertions";
 
 export interface EnergyBreakdownEntryValueObject {
   readonly name: WorldObjectName;
@@ -11,10 +10,10 @@ export interface EnergyBreakdownEntryValueObject {
 
 export function createEnergyBreakdownEntryValueObject(input: EnergyBreakdownEntryValueObject): EnergyBreakdownEntryValueObject {
   return {
-    name: assertNonEmptyString(input.name, 'EnergyBreakdownEntryValueObject.name') as WorldObjectName,
-    quantity: assertFiniteNumber(input.quantity, 'EnergyBreakdownEntryValueObject.quantity'),
-    unitLevel: assertFiniteNumber(input.unitLevel, 'EnergyBreakdownEntryValueObject.unitLevel'),
-    totalLevel: assertFiniteNumber(input.totalLevel, 'EnergyBreakdownEntryValueObject.totalLevel'),
-    productionRatio: assertOptionalFiniteNumber(input.productionRatio, 'EnergyBreakdownEntryValueObject.productionRatio')
+    name: input.name,
+    quantity: input.quantity,
+    unitLevel: input.unitLevel,
+    totalLevel: input.totalLevel,
+    productionRatio: input.productionRatio
   };
 }

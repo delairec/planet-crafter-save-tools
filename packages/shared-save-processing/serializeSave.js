@@ -20,6 +20,8 @@ import {LEGACY_SPLIT_PARTS_COUNT} from './sectionIndexes.js';
  * @property {WorldEvent[]} worldEvents
  */
 
+const SECTION_SEPARATOR_CHARACTER = '@';
+const SECTION_SEPARATOR_REPLACEMENT = '_';
 const SECTION_SEPARATOR = '\n@\n';
 const ENTRY_SEPARATOR = '|\n';
 const SAVE_TERMINATOR = '\n@';
@@ -32,9 +34,12 @@ const SAVE_TERMINATOR = '\n@';
  * @returns {string}
  */
 export function serializeSave({formatRelease, terrainLayers = [], metadata, terraformationLevels, players, worldObjects, inventories, statistics, mailboxes, storyEvents, saveConfigurations, worldEvents}) {
-  const serialize = (entries) => entries.map(entry => JSON.stringify(entry)).join(ENTRY_SEPARATOR);
-  const serializeWithFloats = (entries) => entries.map(entry => stringifyEntry(entry)).join(ENTRY_SEPARATOR);
-  const serializeSingle = (entry) => entry ? JSON.stringify(entry) : '';
+  const replaceSeparator = (text) => text.replaceAll(SECTION_SEPARATOR_CHARACTER, SECTION_SEPARATOR_REPLACEMENT);
+  const serializeEntry = (entry) => replaceSeparator(JSON.stringify(entry));
+  const serializeEntryWithFloats = (entry) => replaceSeparator(stringifyEntry(entry));
+  const serialize = (entries) => entries.map(serializeEntry).join(ENTRY_SEPARATOR);
+  const serializeWithFloats = (entries) => entries.map(serializeEntryWithFloats).join(ENTRY_SEPARATOR);
+  const serializeSingle = (entry) => entry ? serializeEntry(entry) : '';
 
   const sections = [
     serialize(metadata),

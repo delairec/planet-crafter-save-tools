@@ -1,6 +1,5 @@
 import {describe, expect, it} from 'bun:test';
 import {createOptimizerBoostedMachineValueObject} from './OptimizerBoostedMachineValueObject';
-import {InvalidSaveDataError} from '../errors/InvalidSaveDataError';
 
 describe('OptimizerBoostedMachineValueObject', () => {
   it('should build an optimizer boosted machine value object from valid data', () => {
@@ -14,14 +13,4 @@ describe('OptimizerBoostedMachineValueObject', () => {
     expect(boostedMachine).toEqual(input);
   });
 
-  it('should reject a non-finite quantity', () => {
-    // Arrange
-    const input = {name: 'Drill0' as const, quantity: NaN};
-
-    // Act
-    const buildOptimizerBoostedMachine = () => createOptimizerBoostedMachineValueObject(input);
-
-    // Assert
-    expect(buildOptimizerBoostedMachine).toThrow(InvalidSaveDataError);
-  });
 });

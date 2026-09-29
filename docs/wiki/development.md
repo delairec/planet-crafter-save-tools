@@ -180,12 +180,7 @@ included:
   names no abbreviation.
 
 Every `.js`, `.ts` and `.tsx` source under a `domain/` directory of every `core-` package is scanned, outside
-dependencies and build outputs. The files each refusal still reports are listed in an allow-list of its own,
-`scripts/allow-lists/domain-files-naming-wire-abbreviations.json` and
-`scripts/allow-lists/domain-files-importing-game-definitions.json`, read through `scripts/shrinkingAllowList.ts`,
-the mechanism any guard that needs an allow-list of its own reads: a file listed for one refusal is still reported
-for the other, and a listed file its refusal no longer reports fails the guard until its entry is removed, so each
-list only shrinks.
+dependencies and build outputs. The guard runs with no exemption.
 
 ```
 bun run check:action-pins

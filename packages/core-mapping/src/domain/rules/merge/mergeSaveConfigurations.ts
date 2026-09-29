@@ -1,4 +1,4 @@
-import {SaveConfiguration} from 'shared-save-processing/gameDefinitions';
+import {SaveConfigurationEntry} from '../../save/SaveConfigurationEntry';
 
 export interface SaveConfigurationOverrides {
   saveDisplayName: string;
@@ -9,10 +9,10 @@ export interface SaveConfigurationOverrides {
  * @see @RULE.SaveConfigurationComesFromSaveA, @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
  */
 export function mergeSaveConfigurations(
-  [saveConfigurationA]: SaveConfiguration[],
-  [saveConfigurationB]: SaveConfiguration[],
+  [saveConfigurationA]: readonly SaveConfigurationEntry[],
+  [saveConfigurationB]: readonly SaveConfigurationEntry[],
   {saveDisplayName, declaredVersion}: SaveConfigurationOverrides
-): SaveConfiguration | undefined {
+): SaveConfigurationEntry | undefined {
   const saveConfiguration = saveConfigurationA ?? saveConfigurationB;
   if (!saveConfiguration) {
     return undefined;

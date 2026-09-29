@@ -1,4 +1,4 @@
-import {Player} from 'shared-save-processing/gameDefinitions';
+import {PlayerEntry} from '../../save/PlayerEntry';
 import {EntriesByOrigin} from './EntriesByOrigin';
 import {InventoryEntry} from '../../save/InventoryEntry';
 import {WorldObjectEntry} from '../../save/WorldObjectEntry';
@@ -17,7 +17,7 @@ export interface IdRemappings {
  *
  * @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
  */
-export function rewritePlayerReferences(players: EntriesByOrigin<Player>, remappings: IdRemappings): EntriesByOrigin<Player> {
+export function rewritePlayerReferences(players: EntriesByOrigin<PlayerEntry>, remappings: IdRemappings): EntriesByOrigin<PlayerEntry> {
   return {
     fromSaveA: players.fromSaveA,
     fromSaveB: players.fromSaveB.map(player => ({
@@ -34,10 +34,10 @@ export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<World
     fromSaveA: worldObjects.fromSaveA,
     fromSaveB: worldObjects.fromSaveB.map(worldObject => ({
       ...worldObject,
-      liId: remapOptionalId(worldObject.liId, remappings.inventoryIds),
-      siIds: remapOptionalIdList(worldObject.siIds, remappings.inventoryIds),
-      linkedWo: remapOptionalId(worldObject.linkedWo, remappings.worldObjectIds),
-      woIds: remapOptionalIdList(worldObject.woIds, remappings.worldObjectIds)
+      linkedInventoryId: remapOptionalId(worldObject.linkedInventoryId, remappings.inventoryIds),
+      subInventoryIds: remapOptionalIdList(worldObject.subInventoryIds, remappings.inventoryIds),
+      linkedWorldObjectId: remapOptionalId(worldObject.linkedWorldObjectId, remappings.worldObjectIds),
+      heldWorldObjectIds: remapOptionalIdList(worldObject.heldWorldObjectIds, remappings.worldObjectIds)
     }))
   };
 }
@@ -56,7 +56,7 @@ export function rewriteInventoryReferences(inventories: EntriesByOrigin<Inventor
     fromSaveA: inventories.fromSaveA,
     fromSaveB: inventories.fromSaveB.map(inventory => ({
       ...inventory,
-      woIds: remapIdList(inventory.woIds, remappings.worldObjectIds)
+      worldObjectIds: remapIdList(inventory.worldObjectIds, remappings.worldObjectIds)
     }))
   };
 }

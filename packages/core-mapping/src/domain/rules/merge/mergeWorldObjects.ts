@@ -8,7 +8,7 @@ export function mergeWorldObjects(worldObjectsA: readonly WorldObjectEntry[], wo
   const fromSaveA: WorldObjectEntry[] = [];
   const positionKeysFromA = new Set<string>();
   for (const worldObject of worldObjectsA) {
-    if (worldObject.pos) {
+    if (worldObject.position) {
       positionKeysFromA.add(buildWorldObjectPositionKey(worldObject));
     }
     fromSaveA.push(worldObject);
@@ -20,7 +20,7 @@ export function mergeWorldObjects(worldObjectsA: readonly WorldObjectEntry[], wo
       continue;
     }
 
-    if (!worldObject.pos || !positionKeysFromA.has(buildWorldObjectPositionKey(worldObject))) {
+    if (!worldObject.position || !positionKeysFromA.has(buildWorldObjectPositionKey(worldObject))) {
       fromSaveB.push(worldObject);
     }
   }
@@ -29,5 +29,5 @@ export function mergeWorldObjects(worldObjectsA: readonly WorldObjectEntry[], wo
 }
 
 function buildWorldObjectPositionKey(worldObject: WorldObjectEntry): string {
-  return `${worldObject.planet ?? ''}:${worldObject.pos}`;
+  return `${worldObject.planet ?? ''}:${worldObject.position}`;
 }

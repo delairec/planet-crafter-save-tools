@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeSaveSections} from './mergeSaveSections';
-import {createPlayer, createSaveConfiguration, createTerrainLayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createPlayerEntry, createSaveConfigurationEntry, createTerrainLayerEntry} from '../../../testing/createSaveEntries';
 import {createSaveSections} from '../../../testing/createSaveSections';
 import {InventoryEntry} from '../../save/InventoryEntry';
 import {WorldObjectEntry} from '../../save/WorldObjectEntry';
@@ -11,12 +11,12 @@ describe('Merge saves', () => {
   describe('When both saves carry entries in the sections holding identifiers', () => {
     it('should keep the origin of players, inventories and world objects', () => {
       // Arrange
-      const playerFromSaveA = createPlayer({host: false, id: '1', name: 'PlayerA', inventoryId: 10, equipmentId: 11});
-      const playerFromSaveB = createPlayer({host: false, id: '2', name: 'PlayerB', inventoryId: 20, equipmentId: 21});
-      const inventoryFromSaveA: InventoryEntry = {id: 10, woIds: [], size: 20};
-      const inventoryFromSaveB: InventoryEntry = {id: 20, woIds: [], size: 20};
-      const worldObjectFromSaveA: WorldObjectEntry = {id: 100, gId: 'Container2', pos: '1,0,1'};
-      const worldObjectFromSaveB: WorldObjectEntry = {id: 200, gId: 'VegetubeOutside1', pos: '5,0,5'};
+      const playerFromSaveA = createPlayerEntry({host: false, id: '1', name: 'PlayerA', inventoryId: 10, equipmentId: 11});
+      const playerFromSaveB = createPlayerEntry({host: false, id: '2', name: 'PlayerB', inventoryId: 20, equipmentId: 21});
+      const inventoryFromSaveA: InventoryEntry = {id: 10, worldObjectIds: [], size: 20};
+      const inventoryFromSaveB: InventoryEntry = {id: 20, worldObjectIds: [], size: 20};
+      const worldObjectFromSaveA: WorldObjectEntry = {id: 100, groupId: 'Container2', position: '1,0,1'};
+      const worldObjectFromSaveB: WorldObjectEntry = {id: 200, groupId: 'VegetubeOutside1', position: '5,0,5'};
 
       const sectionsA = createSaveSections({
         players: [playerFromSaveA],
@@ -42,11 +42,11 @@ describe('Merge saves', () => {
   describe('When the two saves carry different formats', () => {
     it('should carry the format written, its Terrain Layers section and the version of the save whose format it is', () => {
       // Arrange
-      const layerOfSaveA = createTerrainLayer({layerId: 'PC-Toxicity-Layer1'});
+      const layerOfSaveA = createTerrainLayerEntry({layerId: 'PC-Toxicity-Layer1'});
       const sectionsA = createSaveSections({
-        formatRelease: '1.618', terrainLayers: [layerOfSaveA], saveConfigurations: [createSaveConfiguration({version: '1.618'})]
+        formatRelease: '1.618', terrainLayers: [layerOfSaveA], saveConfigurations: [createSaveConfigurationEntry({version: '1.618'})]
       });
-      const sectionsB = createSaveSections({formatRelease: '2.004', saveConfigurations: [createSaveConfiguration({version: '2.103'})]});
+      const sectionsB = createSaveSections({formatRelease: '2.004', saveConfigurations: [createSaveConfigurationEntry({version: '2.103'})]});
 
       // Act
       const result = mergeSaveSections(sectionsA, sectionsB, mergeOptions);

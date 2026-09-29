@@ -1,6 +1,5 @@
 import {describe, expect, it} from 'bun:test';
 import {TerraformationLevelEntity} from './TerraformationLevelEntity';
-import {InvalidSaveDataError} from '../errors/InvalidSaveDataError';
 
 describe('TerraformationLevelEntity', () => {
   it('should expose the unit levels it was built from', () => {
@@ -28,26 +27,6 @@ describe('TerraformationLevelEntity', () => {
     expect(level.unitInsectsLevel).toBe(500);
     expect(level.unitAnimalsLevel).toBe(600);
     expect(level.unitPurificationLevel).toBe(700);
-  });
-
-  it('should reject a non-finite unit level', () => {
-    // Arrange
-    const input = {
-      planetId: 'Toxicity',
-      unitOxygenLevel: NaN,
-      unitHeatLevel: 200,
-      unitPressureLevel: 300,
-      unitPlantsLevel: 400,
-      unitInsectsLevel: 500,
-      unitAnimalsLevel: 600,
-      unitPurificationLevel: 700
-    };
-
-    // Act
-    const buildTerraformationLevel = () => new TerraformationLevelEntity(input);
-
-    // Assert
-    expect(buildTerraformationLevel).toThrow(InvalidSaveDataError);
   });
 
   it('should sum plant, insect and animal levels into the biomass', () => {

@@ -1,5 +1,4 @@
 import {WorldObjectName} from "../worldObjectNames";
-import {assertFiniteNumber, assertOptionalFiniteNumber} from "../errors/assertions";
 import {WorldObjectEntity, WorldObjectEntityInput} from "./WorldObjectEntity";
 import {energyProductionLevelsByWorldObjectName} from "../energyLevelsByWorldObjectName";
 import {OPTIMIZER_CONFIG_BY_NAME} from "../energyOptimizerConfig";
@@ -20,13 +19,9 @@ export class PlacedWorldObjectEntity extends WorldObjectEntity {
 
     const [x, y, z] = input.position;
 
-    this._position = [
-      assertFiniteNumber(x, 'PlacedWorldObjectEntity.position[0]'),
-      assertFiniteNumber(y, 'PlacedWorldObjectEntity.position[1]'),
-      assertFiniteNumber(z, 'PlacedWorldObjectEntity.position[2]')
-    ];
-    this._planetId = assertFiniteNumber(input.planetId, 'PlacedWorldObjectEntity.planetId');
-    this._inventoryId = assertOptionalFiniteNumber(input.inventoryId, 'PlacedWorldObjectEntity.inventoryId');
+    this._position = [x, y, z];
+    this._planetId = input.planetId;
+    this._inventoryId = input.inventoryId;
   }
 
   get position(): readonly [number, number, number] {

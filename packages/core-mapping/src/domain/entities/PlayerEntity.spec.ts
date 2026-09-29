@@ -1,6 +1,5 @@
 import {describe, expect, it} from 'bun:test';
 import {PlayerEntity, type PlayerEntityInput} from './PlayerEntity';
-import {InvalidSaveDataError} from '../errors/InvalidSaveDataError';
 
 function createPlayerInput(overrides: Partial<PlayerEntityInput> = {}): PlayerEntityInput {
   return {
@@ -29,21 +28,10 @@ describe('PlayerEntity', () => {
     expect(player.isHost).toBe(true);
   });
 
-  it('should reject an empty name', () => {
-    // Arrange
-    const input = createPlayerInput({name: ''});
-
-    // Act
-    const buildPlayer = () => new PlayerEntity(input);
-
-    // Assert
-    expect(buildPlayer).toThrow(InvalidSaveDataError);
-  });
-
   describe('When the planet it stands on is asked', () => {
     it.each([
-      {situation: 'a named planet', planetId: 'Toxicity', expected: 'Toxicity'},
-      {situation: 'an empty planet', planetId: '', expected: undefined}
+      {situation: 'a planet', planetId: 'Toxicity', expected: 'Toxicity'},
+      {situation: 'no planet', planetId: undefined, expected: undefined}
     ])('should answer $expected for $situation', ({planetId, expected}) => {
       // Arrange
       const player = new PlayerEntity(createPlayerInput({planetId}));

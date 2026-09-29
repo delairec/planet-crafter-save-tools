@@ -1,16 +1,16 @@
 import {describe, expect, it} from 'bun:test';
-import {Player} from 'shared-save-processing/gameDefinitions';
+import {PlayerEntry} from '../../save/PlayerEntry';
 import {collectEjectedPlayerInventoryIds} from './collectEjectedPlayerInventoryIds';
 import {InventoryEntry} from '../../save/InventoryEntry';
-import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createPlayerEntry} from '../../../testing/createSaveEntries';
 
 describe('collectEjectedPlayerInventoryIds', () => {
   describe('When no player in save B shares a name with a player in save A', () => {
     it('should return empty inventory and world object id sets', () => {
       // Arrange
-      const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
-      const playersB: Player[] = [createPlayer({name: 'Chileny', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: InventoryEntry[] = [{id: 50, woIds: [900, 901], size: 20}];
+      const playersA: PlayerEntry[] = [createPlayerEntry({name: 'Nikowa'})];
+      const playersB: PlayerEntry[] = [createPlayerEntry({name: 'Chileny', inventoryId: 50, equipmentId: 51})];
+      const inventoriesB: InventoryEntry[] = [{id: 50, worldObjectIds: [900, 901], size: 20}];
 
       // Act
       const result = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);
@@ -24,8 +24,8 @@ describe('collectEjectedPlayerInventoryIds', () => {
   describe('When a player in save B shares a name with a player in save A', () => {
     it('should collect the inventory and equipment ids of the ejected player from save B', () => {
       // Arrange
-      const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
-      const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
+      const playersA: PlayerEntry[] = [createPlayerEntry({name: 'Nikowa'})];
+      const playersB: PlayerEntry[] = [createPlayerEntry({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
       const inventoriesB: InventoryEntry[] = [];
 
       // Act
@@ -37,11 +37,11 @@ describe('collectEjectedPlayerInventoryIds', () => {
 
     it('should collect the world object ids held in the ejected player inventory and equipment from save B', () => {
       // Arrange
-      const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
-      const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
+      const playersA: PlayerEntry[] = [createPlayerEntry({name: 'Nikowa'})];
+      const playersB: PlayerEntry[] = [createPlayerEntry({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
       const inventoriesB: InventoryEntry[] = [
-        {id: 50, woIds: [900, 901], size: 20},
-        {id: 51, woIds: [902], size: 10}
+        {id: 50, worldObjectIds: [900, 901], size: 20},
+        {id: 51, worldObjectIds: [902], size: 10}
       ];
 
       // Act
@@ -53,14 +53,14 @@ describe('collectEjectedPlayerInventoryIds', () => {
 
     it('should not collect world object ids from an inventory that does not belong to an ejected player', () => {
       // Arrange
-      const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
-      const playersB: Player[] = [
-        createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51}),
-        createPlayer({id: '999', name: 'Chileny', inventoryId: 60, equipmentId: 61})
+      const playersA: PlayerEntry[] = [createPlayerEntry({name: 'Nikowa'})];
+      const playersB: PlayerEntry[] = [
+        createPlayerEntry({name: 'Nikowa', inventoryId: 50, equipmentId: 51}),
+        createPlayerEntry({id: '999', name: 'Chileny', inventoryId: 60, equipmentId: 61})
       ];
       const inventoriesB: InventoryEntry[] = [
-        {id: 50, woIds: [900], size: 20},
-        {id: 60, woIds: [901], size: 20}
+        {id: 50, worldObjectIds: [900], size: 20},
+        {id: 60, worldObjectIds: [901], size: 20}
       ];
 
       // Act
@@ -74,9 +74,9 @@ describe('collectEjectedPlayerInventoryIds', () => {
   describe('When an ejected player inventory has no world objects', () => {
     it('should not add any world object id for that inventory', () => {
       // Arrange
-      const playersA: Player[] = [createPlayer({name: 'Nikowa'})];
-      const playersB: Player[] = [createPlayer({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
-      const inventoriesB: InventoryEntry[] = [{id: 50, woIds: [], size: 20}];
+      const playersA: PlayerEntry[] = [createPlayerEntry({name: 'Nikowa'})];
+      const playersB: PlayerEntry[] = [createPlayerEntry({name: 'Nikowa', inventoryId: 50, equipmentId: 51})];
+      const inventoriesB: InventoryEntry[] = [{id: 50, worldObjectIds: [], size: 20}];
 
       // Act
       const result = collectEjectedPlayerInventoryIds(playersA, playersB, inventoriesB);

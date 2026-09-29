@@ -1,11 +1,8 @@
 import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {reportViolations} from './specSources.ts';
-import {applyAllowList, readAllowList} from './shrinkingAllowList.ts';
 import {readImportSpecifiers} from './importSpecifiers.ts';
 
 const SOURCE_FILES_PATTERN = 'packages/*/**/*.{js,ts,tsx}';
-const ABBREVIATIONS_ALLOW_LIST_PATH = 'scripts/allow-lists/domain-files-naming-wire-abbreviations.json';
-const GAME_DEFINITIONS_ALLOW_LIST_PATH = 'scripts/allow-lists/domain-files-importing-game-definitions.json';
 const GENERATED_DIRECTORY = /(?:^|\/)(?:node_modules|dist|build|coverage|\.output|\.vinxi)\//;
 const DOMAIN_FILE = /^packages\/core-[^/]+\/(?:.*\/)?domain\//;
 
@@ -201,29 +198,19 @@ function formatFindings(filePath: string, findings: WireFormatFinding[]): string
   return findings.map(({line, found, reason}) => `${filePath}:${line}: ${found}\n  ${reason}`);
 }
 
-function collectViolations(violationsByFile: Map<string, string[]>, filePath: string, violations: string[]): void {
-  if (violations.length > 0) {
-    violationsByFile.set(filePath, violations);
-  }
-}
-
 export async function checkWireFormat(io: ScriptIo): Promise<void> {
-  const abbreviationsAllowList = await readAllowList(io, ABBREVIATIONS_ALLOW_LIST_PATH);
-  const gameDefinitionsAllowList = await readAllowList(io, GAME_DEFINITIONS_ALLOW_LIST_PATH);
-  const abbreviationViolations = new Map<string, string[]>();
-  const importViolations = new Map<string, string[]>();
+  const violations: string[] = [];
   for await (const filePath of io.scanFiles(SOURCE_FILES_PATTERN)) {
     const source = await io.readText(filePath);
-    collectViolations(abbreviationViolations, filePath, formatFindings(filePath, findWireAbbreviations(filePath, source)));
-    collectViolations(importViolations, filePath, formatFindings(filePath, findGameDefinitionsImports(filePath, source)));
+    violations.push(
+      ...formatFindings(filePath, findWireAbbreviations(filePath, source)),
+      ...formatFindings(filePath, findGameDefinitionsImports(filePath, source))
+    );
   }
   reportViolations(io, {
     checkName: CHECK_NAME,
-    violations: [
-      ...applyAllowList(abbreviationsAllowList, abbreviationViolations),
-      ...applyAllowList(gameDefinitionsAllowList, importViolations)
-    ],
-    nothingFound: 'no domain file outside the allow-lists names a save format abbreviation or imports shared-save-processing/gameDefinitions.',
+    violations,
+    nothingFound: 'no domain file names a save format abbreviation or imports shared-save-processing/gameDefinitions.',
     summarize: count => `${count} violation(s): a domain file names no save format abbreviation (${WIRE_ABBREVIATIONS.join(', ')}) and imports nothing from shared-save-processing/gameDefinitions.`
   });
 }

@@ -13,7 +13,7 @@ import {ValidationIssue, VALIDATION_ISSUE_CODES} from './ports/ValidationIssue';
 import {SaveValidationResult} from './ports/SaveValidationResult';
 import {SaveParseError, SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {INVENTORIES_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
-import {createPlayer, createSaveConfiguration, createTerrainLayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createPlayerEntry, createSaveConfigurationEntry, createTerrainLayerEntry} from '../testing/createSaveEntries';
 import {createSaveSections} from '../testing/createSaveSections';
 import {FakeSaveSectionsMapperService} from '../testing/FakeSaveSectionsMapperService';
 import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/SaveSectionsWithPlayers';
@@ -82,12 +82,12 @@ describe('MergeSaveFiles', () => {
 
     it('should hand the serializer the sections merged from both saves, with their identifier conflicts resolved', async () => {
       // Arrange
-      const playerFromSaveA = createPlayer({id: '1', name: 'Nikowa', inventoryId: 10, equipmentId: 11});
-      const playerFromSaveB = createPlayer({id: '2', name: 'Sakia', inventoryId: 10, equipmentId: 11, host: false});
+      const playerFromSaveA = createPlayerEntry({id: '1', name: 'Nikowa', inventoryId: 10, equipmentId: 11});
+      const playerFromSaveB = createPlayerEntry({id: '2', name: 'Sakia', inventoryId: 10, equipmentId: 11, host: false});
       const {useCase, serializer} = createUseCase({
         parse: parserAnswering({
-          contentA: {sections: createSaveSections({players: [playerFromSaveA], inventories: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}]}), errors: noParseErrors},
-          contentB: {sections: createSaveSections({players: [playerFromSaveB], inventories: [{id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10}]}), errors: noParseErrors}
+          contentA: {sections: createSaveSections({players: [playerFromSaveA], inventories: [{id: 10, worldObjectIds: [], size: 20}, {id: 11, worldObjectIds: [], size: 10}]}), errors: noParseErrors},
+          contentB: {sections: createSaveSections({players: [playerFromSaveB], inventories: [{id: 10, worldObjectIds: [], size: 20}, {id: 11, worldObjectIds: [], size: 10}]}), errors: noParseErrors}
         })
       });
 
@@ -98,8 +98,8 @@ describe('MergeSaveFiles', () => {
       expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
         players: [playerFromSaveA, {...playerFromSaveB, inventoryId: 12, equipmentId: 13}],
         inventories: [
-          {id: 10, woIds: [], size: 20}, {id: 11, woIds: [], size: 10},
-          {id: 12, woIds: [], size: 20}, {id: 13, woIds: [], size: 10}
+          {id: 10, worldObjectIds: [], size: 20}, {id: 11, worldObjectIds: [], size: 10},
+          {id: 12, worldObjectIds: [], size: 20}, {id: 13, worldObjectIds: [], size: 10}
         ]
       }));
     });
@@ -110,7 +110,7 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const {useCase, serializer} = createUseCase({
         parse: parserAnswering({
-          contentA: {sections: createSaveSections({saveConfigurations: [createSaveConfiguration({saveDisplayName: 'Save A'})]}), errors: noParseErrors}
+          contentA: {sections: createSaveSections({saveConfigurations: [createSaveConfigurationEntry({saveDisplayName: 'Save A'})]}), errors: noParseErrors}
         })
       });
 
@@ -129,7 +129,7 @@ describe('MergeSaveFiles', () => {
       // Arrange
       const {useCase, serializer} = createUseCase({
         parse: parserAnswering({
-          contentA: {sections: createSaveSections({saveConfigurations: [createSaveConfiguration({saveDisplayName: 'Save A'})]}), errors: noParseErrors}
+          contentA: {sections: createSaveSections({saveConfigurations: [createSaveConfigurationEntry({saveDisplayName: 'Save A'})]}), errors: noParseErrors}
         })
       });
 
@@ -143,28 +143,9 @@ describe('MergeSaveFiles', () => {
     });
   });
 
-  describe('When the requested display name holds the section separator of the save format', () => {
-    it('should give the merged save that display name with each separator replaced', async () => {
-      // Arrange
-      const {useCase, serializer} = createUseCase({
-        parse: parserAnswering({
-          contentA: {sections: createSaveSections({saveConfigurations: [createSaveConfiguration({saveDisplayName: 'Save A'})]}), errors: noParseErrors}
-        })
-      });
-
-      // Act
-      await useCase.execute({...TWO_VALID_SAVES, saveDisplayName: 'Alpha@Beta@Gamma'});
-
-      // Assert
-      expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
-        saveConfigurations: [expect.objectContaining({saveDisplayName: 'Alpha_Beta_Gamma'})]
-      }));
-    });
-  });
-
   describe('When the two saves carry different formats', () => {
     const parseALegacySaveAAndACurrentSaveB = parserAnswering({
-      contentA: {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayer()]}), errors: noParseErrors},
+      contentA: {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()]}), errors: noParseErrors},
       contentB: {sections: createSaveSections({formatRelease: '2.004'}), errors: noParseErrors}
     });
 
@@ -206,7 +187,7 @@ describe('MergeSaveFiles', () => {
         // Assert
         expect(serializer.serialize).toHaveBeenCalledWith(expect.objectContaining({
           formatRelease: '1.618',
-          terrainLayers: [createTerrainLayer()]
+          terrainLayers: [createTerrainLayerEntry()]
         }));
       });
 
@@ -242,7 +223,7 @@ describe('MergeSaveFiles', () => {
   describe('When the two saves carry the legacy format', () => {
     it('should not state that the legacy format could have been kept, no format being lost', async () => {
       // Arrange
-      const legacySave: ParsedSaveSections = {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayer()]}), errors: noParseErrors};
+      const legacySave: ParsedSaveSections = {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()]}), errors: noParseErrors};
       const {useCase, presenter} = createUseCase({parse: parserAnswering({contentA: legacySave, contentB: legacySave})});
 
       // Act

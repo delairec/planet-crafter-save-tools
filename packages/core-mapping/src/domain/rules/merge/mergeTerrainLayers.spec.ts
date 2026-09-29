@@ -1,12 +1,12 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeTerrainLayers} from './mergeTerrainLayers';
-import {TerrainLayer} from 'shared-save-processing/gameDefinitions';
-import {createTerrainLayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {TerrainLayerEntry} from '../../save/TerrainLayerEntry';
+import {createTerrainLayerEntry} from '../../../testing/createSaveEntries';
 import {createSaveSections} from '../../../testing/createSaveSections';
 
 describe('Merge terrain layers', () => {
-  const layerOfMainSave = createTerrainLayer({layerId: 'PC-Toxicity-Layer1'});
-  const layerOfSecondarySave = createTerrainLayer({layerId: 'PC-Toxicity-Layer2'});
+  const layerOfMainSave = createTerrainLayerEntry({layerId: 'PC-Toxicity-Layer1'});
+  const layerOfSecondarySave = createTerrainLayerEntry({layerId: 'PC-Toxicity-Layer2'});
 
   describe('When the format written carries no Terrain Layers section', () => {
     it('should drop the section', () => {
@@ -33,7 +33,7 @@ describe('Merge terrain layers', () => {
         const terrainLayers = mergeTerrainLayers(mainSave, secondarySave, mainSave);
 
         // Assert
-        expect<TerrainLayer[] | undefined>(terrainLayers).toEqual([{
+        expect<readonly TerrainLayerEntry[] | undefined>(terrainLayers).toEqual([{
           layerId: 'PC-Toxicity-Layer1', planet: 110910045, colorBase: '0.5-0.5-0.5-1', colorCustom: '1-1-1-1',
           colorBaseLerp: 100, colorCustomLerp: 0
         }]);
@@ -50,7 +50,7 @@ describe('Merge terrain layers', () => {
         const terrainLayers = mergeTerrainLayers(mainSave, secondarySave, mainSave);
 
         // Assert
-        expect<TerrainLayer[] | undefined>(terrainLayers).toEqual([{
+        expect<readonly TerrainLayerEntry[] | undefined>(terrainLayers).toEqual([{
           layerId: 'PC-Toxicity-Layer1', planet: 110910045, colorBase: '0.5-0.5-0.5-1', colorCustom: '1-1-1-1',
           colorBaseLerp: 100, colorCustomLerp: 0
         }]);
@@ -67,7 +67,7 @@ describe('Merge terrain layers', () => {
         const terrainLayers = mergeTerrainLayers(mainSave, secondarySave, secondarySave);
 
         // Assert
-        expect<TerrainLayer[] | undefined>(terrainLayers).toEqual([{
+        expect<readonly TerrainLayerEntry[] | undefined>(terrainLayers).toEqual([{
           layerId: 'PC-Toxicity-Layer2', planet: 110910045, colorBase: '0.5-0.5-0.5-1', colorCustom: '1-1-1-1',
           colorBaseLerp: 100, colorCustomLerp: 0
         }]);
