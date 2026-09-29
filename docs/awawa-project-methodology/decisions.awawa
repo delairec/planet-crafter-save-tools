@@ -1472,11 +1472,17 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 	REJECTED "The optimizer configuration in data-save-format: it describes world objects of the"
 		+ "game, not the format of a save"
 	APPLIES_TO_TASK @TASK.REFACTOR168
+	APPLIES_TO_TASK @TASK.CHORE169
+	APPLIES_TO_TASK @TASK.CHORE169
 	RATIONALE "A JSON table imported by a module is a database read by that module; the data-"
 		+ "package is its driver, and the port keeps the shape of the table out of the domain"
 	SOURCE "Owner ruling during the refinement of REFACTOR163, 2026-09-29: a JSON value table is a"
 		+ "database, external to the packages that read it and read behind a port"
 		PR 238
+	SOURCE "Owner ruling during the refinement of CHORE169, 2026-09-29: the schema of a table sits"
+		+ "beside it, under the table's own name, and the guard discovers the tables of the data-"
+		+ "packages by it"
+		PR 240
 
 DECISION APullRequestIsCitedByItsNumberNeverByAnEntity
 	SPEC "A SOURCE born in a pull request carries its number in a PR field beside the prose; REF"
