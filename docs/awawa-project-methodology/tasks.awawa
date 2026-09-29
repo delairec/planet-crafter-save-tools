@@ -1092,22 +1092,20 @@ TASK CHORE158
 		+ "empties the allow-list, and nothing adds an abbreviation in the meantime"
 
 TASK REFACTOR159
-	TITLE "refactor(core-mapping): hand the presenters application responses, never a domain type"
-	STATUS draft
-	SPEC "no presenter port and no presentation file of core-mapping imports a module under"
-		+ "domain/: each use case hands its presenter an application response, one per outcome, or"
-		+ "primitives"
+	TITLE "refactor(core-mapping): hand the presenters one application response per outcome"
+	STATUS todo
+	SPEC "no presenter port of core-mapping imports a module under domain/: each use case hands its"
+		+ "presenter an application response, one per outcome, or primitives"
 	SPEC "the allow-list of check:presentation is empty and removed, the guard running with no"
 		+ "exemption"
-	SPEC "every value object left under domain/valueObjects holds a business invariant or a"
-		+ "behaviour; PlayerMenuEntry, PlayerSummary, SaveIdentity, TerraformationLevelSummary and"
-		+ "the other projections named after a view or a port are application responses or view"
-		+ "models"
+	SPEC "PlayerMenuEntry, PlayerSummary, SaveIdentity and TerraformationLevelSummary are"
+		+ "application responses holding primitives, built by their use case, and no longer value"
+		+ "objects of the domain; no entity builds a projection for a presenter"
+	SPEC "EnergyLevels is an application response built by its use case, which may hold the planet"
+		+ "energy value objects the domain computes"
 	SPEC "a save loaded with unreadable lines reaches the presenter through an outcome of its own,"
 		+ "distinct from a save loaded with warnings only, and is never rendered valid"
-	SPEC "APresenterReceivesAValueObjectNeverAnEntity is rewritten in place to the new boundary or"
-		+ "archived; a departure from an instructions rule the rewritten decision keeps is named in"
-		+ "its DEROGATES"
+	SPEC "APresenterReceivesAValueObjectNeverAnEntity is archived"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
 	AFTER @TASK.CHORE157
@@ -1117,8 +1115,23 @@ TASK REFACTOR159
 	RATIONALE "The three violations are one boundary: the value objects of violation 2 are the"
 		+ "types that cross it in violation 1, and the load outcome of violation 9 is one of the"
 		+ "responses that replace them. Every later task of the wave that adds an outcome writes it"
-		+ "as a response, so this one lands first"
+		+ "as a response, so this one lands first. A response holds primitives by default and a"
+		+ "domain value object only when the complexity of the data requires it, never an entity:"
+		+ "the four projections built for one presenter become responses of primitives, while the"
+		+ "value objects the planet energy grid computes and those read from the save"
+		+ "(SaveConfiguration, GlobalProgression, Statistics) stay in the domain."
+		+ "EnergyLevelsRawData belongs to the reader port task and the assertions of the value"
+		+ "object factories to the decoding task. The instructions rule objects_crossing_a_boundary"
+		+ "carries the boundary since .ai pull request 56, so the project decision stating it is"
+		+ "archived"
 		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+		REF @TASK.CHORE157
+		REF @TASK.REFACTOR161
+		REF @TASK.REFACTOR162
+	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
+		PR 222
+	SOURCE "Owner ruling during the refinement of the task: the projections built for one presenter"
+		+ "become responses, the decision is archived"
 
 TASK REFACTOR160
 	TITLE "refactor(core-mapping): call the domain rules from the use cases, not from the adapters"
