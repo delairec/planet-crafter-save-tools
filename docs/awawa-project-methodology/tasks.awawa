@@ -1411,11 +1411,14 @@ TASK REFACTOR163
 		+ "keeps the legacy format warning, a fact of the parts count. The merged file name carries"
 		+ "an extension and filesystem-safe characters, two facts of the infrastructure, so the"
 		+ "application asks a port for it. The release comparison the merge use case makes moves"
-		+ "into the domain with the merge warnings task, which follows this one"
+		+ "into the domain with the merge warnings task, which follows this one. REFACTOR170 widens"
+		+ "the guard to type-only imports and to every layer but the infrastructure, once the last"
+		+ "import is gone"
 		REF @TASK.REFACTOR168
 		REF @TASK.REFACTOR162
 		REF @TASK.REFACTOR160
 		REF @TASK.REFACTOR165
+		REF @TASK.REFACTOR170
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
 	SOURCE "Owner ruling during the refinement of the task: the tables are databases read behind"
@@ -1496,6 +1499,7 @@ TASK REFACTOR165
 		REF @DECISION.AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 	SPEC "the specs of cli-merge and the scenarios of ui-save-manager pass unchanged"
 	AFTER @TASK.REFACTOR163
+	AFTER @TASK.REFACTOR170
 	WAVE @WAVE.14
 	PRIORITY medium
 	DESC "fixes violation 11 of the audit"
@@ -1734,3 +1738,67 @@ TASK CHORE169
 	SOURCE "Owner ruling during the refinement of the task, 2026-09-29: a release table keeps a"
 		+ "schema of its own name reaching the shared definition; a schema names another table"
 		+ "relative to itself; priority medium"
+
+TASK REFACTOR170
+	TITLE "refactor(core-mapping): import no other workspace package outside the infrastructure,"
+		+ "the presenters receiving application responses"
+	STATUS todo
+	SPEC "no presenter port and no application response of core-mapping names a type of another"
+		+ "workspace package: an unreadable line, a save warning and a section name reach a"
+		+ "presenter as an application response its use case builds, holding primitives"
+	SPEC "no module of core-mapping outside infrastructure/, spec files and testing/ included,"
+		+ "imports another workspace package, import type and JSDoc @import included: every"
+		+ "application port declares the types it exchanges, and the infrastructure adapter maps"
+		+ "the records of shared-save-processing onto them"
+	SPEC "the guard REFACTOR163 adds refuses any import of another workspace package, a type"
+		+ "included, from a file of a core- package outside infrastructure/, spec files and"
+		+ "testing/ included, and carries no allow-list; no other guard states the refusal"
+	SPEC "the failure message of that guard and its description in docs/wiki/development.md state"
+		+ "the refusal of the second criterion"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR161
+	AFTER @TASK.REFACTOR163
+	AFTER @TASK.REFACTOR164
+	AFTER @TASK.REFACTOR166
+	WAVE @WAVE.14
+	PRIORITY high
+	DESC "outside the numbered violations of the audit"
+	RATIONALE "The instructions rule objects_crossing_a_boundary lets a presenter receive an"
+		+ "application Response or primitives only; a record of shared-save-processing is neither."
+		+ "The guard of CHORE157 refuses only what comes from domain/, so SaveParseError and"
+		+ "SaveWarning cross today in LoadAndValidateSaveFilePresenterPort,"
+		+ "SaveFileValidationPresenterPort, SaveFilesInvalidResponse and MergeSucceededResponse,"
+		+ "SaveSectionName in MergeWarning, and since REFACTOR161 SaveParseError in the six section"
+		+ "presenter ports. The audit of 2026-09-28 did not list it: its violation 7 concerns the"
+		+ "sentences, not the type that crosses. The owner ruled wider than the presenters: only"
+		+ "the infrastructure imports another workspace package, a type included, which departs"
+		+ "from the instructions rule third_party_isolated_in_infrastructure as it stands, allowing"
+		+ "type-only imports of a shared- package in domain and application; the rule is amended in"
+		+ "the instructions, not derogated here. The guard is the one REFACTOR163 adds against"
+		+ "runtime imports, widened to types and to every layer but the infrastructure, so that one"
+		+ "guard states the refusal; this task carries it because it is the last to remove an"
+		+ "import. It follows REFACTOR163 and REFACTOR162 before it, which take the runtime imports"
+		+ "and the save format records out of the domain, REFACTOR164, which reduces SaveParseError"
+		+ "and the validation issues to a code and its data so that the responses are built once"
+		+ "from that shape, and REFACTOR166, after which a controller spec runs against a test"
+		+ "double of its use case factory and needs no save content from"
+		+ "shared-save-processing/testing. It precedes REFACTOR165, which then carries the merge"
+		+ "warning of the domain in MergeSucceededResponse, and through it DOCS167. It carries high"
+		+ "rather than critical because no domain type crosses"
+		REF @TASK.CHORE157
+		REF @TASK.REFACTOR161
+		REF @TASK.REFACTOR162
+		REF @TASK.REFACTOR163
+		REF @TASK.REFACTOR164
+		REF @TASK.REFACTOR165
+		REF @TASK.REFACTOR166
+		REF @TASK.DOCS167
+	SOURCE "Owner ruling during the launch of REFACTOR161, 2026-09-29: the shared-save-processing"
+		+ "records the presenter ports receive are a violation, fixed by a task of wave 14 of its"
+		+ "own rather than in the pull request of REFACTOR161"
+		PR 232
+	SOURCE "Owner ruling during the refinement of the task: no import of another workspace package"
+		+ "reaches core-mapping by any door but the infrastructure, spec files and testing/"
+		+ "included, one guard enforcing it, the task following REFACTOR166 and preceding"
+		+ "REFACTOR165"
