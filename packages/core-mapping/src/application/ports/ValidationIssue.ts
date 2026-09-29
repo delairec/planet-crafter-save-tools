@@ -1,11 +1,16 @@
-import type {SaveSectionLocation} from "./SaveSectionLocation";
+import type {InvalidExtensionIssue} from "./validationIssues/InvalidExtensionIssue";
+import type {UnexpectedSectionCountIssue} from "./validationIssues/UnexpectedSectionCountIssue";
+import type {TooFewSectionEntriesIssue} from "./validationIssues/TooFewSectionEntriesIssue";
+import type {InvalidJsonIssue} from "./validationIssues/InvalidJsonIssue";
+import type {SchemaViolationIssue} from "./validationIssues/SchemaViolationIssue";
+import type {FloatSerializationIssue} from "./validationIssues/FloatSerializationIssue";
 
 export type ValidationIssue =
-  | {code: 'invalid-extension'}
-  | {code: 'unexpected-section-count'; foundSectionCount: number; expectedSectionCounts: number[]}
-  | {code: 'too-few-section-entries'; section: SaveSectionLocation; foundEntryCount: number; minimumEntryCount: number}
-  | {code: 'invalid-json'; section: SaveSectionLocation; entryIndex: number; line: string}
-  | {code: 'schema-violation'; section: SaveSectionLocation; entryIndex: number; fieldPath: string; schemaMessage: string | undefined}
-  | {code: 'float-serialization'; fieldName: string; serializedValue: string};
+  | InvalidExtensionIssue
+  | UnexpectedSectionCountIssue
+  | TooFewSectionEntriesIssue
+  | InvalidJsonIssue
+  | SchemaViolationIssue
+  | FloatSerializationIssue;
 
 export type ValidationIssueCode = ValidationIssue['code'];
