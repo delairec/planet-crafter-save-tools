@@ -1,12 +1,14 @@
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
+import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
+import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {ConfigurationPagePresenterPort} from "./ports/ConfigurationPagePresenterPort";
 import {LoadConfigurationPage} from "./LoadConfigurationPage";
 import {ConfigurationPageResponse} from "./responses/ConfigurationPageResponse";
 
 function createPresenter(): ConfigurationPagePresenterPort {
-  return {displayConfigurationPage: mock()};
+  return {displayConfigurationPage: mock(), displaySaveWithUnreadableLines: mock()};
 }
 
 function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: ConfigurationPagePresenterPort): LoadConfigurationPage {
@@ -17,10 +19,10 @@ describe('LoadConfigurationPage', () => {
   it('should present the global progression, the statistics and the assessed save configuration', async () => {
     // Arrange
     const presenter = createPresenter();
-    const useCase = createUseCase(new FakeSaveSectionsReaderService(), presenter);
+    const useCase = createUseCase(stubSaveSectionsReader(), presenter);
 
     // Act
-    await useCase.execute();
+    await useCase.execute({content: SAVE_CONTENT});
 
     // Assert
     expect(presenter.displayConfigurationPage).toHaveBeenCalledWith({
@@ -56,13 +58,13 @@ describe('LoadConfigurationPage', () => {
   describe('When the save has no statistics', () => {
     it('should present the global progression without statistics', async () => {
       // Arrange
-      const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
-      saveSectionsReader.getStatistics = () => undefined;
+      const saveSections = new FakeSaveSectionsMapperService();
+      saveSections.getStatistics = () => undefined;
       const presenter = createPresenter();
-      const useCase = createUseCase(saveSectionsReader, presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections}), presenter);
 
       // Act
-      await useCase.execute();
+      await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
       expect(presenter.displayConfigurationPage).toHaveBeenCalledWith({
@@ -76,13 +78,13 @@ describe('LoadConfigurationPage', () => {
   describe('When the save has no configuration entry', () => {
     it('should present the progression without a save configuration', async () => {
       // Arrange
-      const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
-      saveSectionsReader.getSaveConfiguration = () => undefined;
+      const saveSections = new FakeSaveSectionsMapperService();
+      saveSections.getSaveConfiguration = () => undefined;
       const presenter = createPresenter();
-      const useCase = createUseCase(saveSectionsReader, presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections}), presenter);
 
       // Act
-      await useCase.execute();
+      await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
       expect(presenter.displayConfigurationPage).toHaveBeenCalledWith({
@@ -90,6 +92,22 @@ describe('LoadConfigurationPage', () => {
         statistics: {totalCraftedObjects: 10},
         assessedSaveConfiguration: undefined
       } satisfies ConfigurationPageResponse);
+    });
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should display the unreadable lines instead of the configuration page', async () => {
+      // Arrange
+      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const presenter = createPresenter();
+      const useCase = createUseCase(stubSaveSectionsReader({unreadableLines}), presenter);
+
+      // Act
+      await useCase.execute({content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}]);
+      expect(presenter.displayConfigurationPage).not.toHaveBeenCalled();
     });
   });
 });

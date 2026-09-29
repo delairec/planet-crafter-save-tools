@@ -6,11 +6,11 @@ import {LoadEnergyLevelsSection} from "../application/LoadEnergyLevelsSection";
 export class LoadEnergyLevelsSectionController {
 
   static async loadEnergyLevelsSection(validatedContent: string): Promise<EnergyLevelsViewModel> {
-    const saveReader = createSaveSectionsReader(validatedContent);
+    const saveReader = createSaveSectionsReader();
     const presenter = new EnergyLevelsPresenter();
     const useCase = new LoadEnergyLevelsSection(saveReader, presenter);
 
-    await useCase.execute();
+    await useCase.execute({content: validatedContent});
 
     return presenter.viewModel;
   }

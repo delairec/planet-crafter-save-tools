@@ -1187,26 +1187,42 @@ TASK REFACTOR160
 TASK REFACTOR161
 	TITLE "refactor(core-mapping): read the save sections through a port, the composition root only"
 		+ "instantiating"
-	STATUS todo
+	STATUS implemented
 	SPEC "the composition root of core-mapping instantiates and wires, and parses no save content"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::createSaveSectionsReader"
 	SPEC "the sections of a save reach a use case through a reader port the use case calls with the"
 		+ "content it is given, never through a reader the composition root built from parsed"
 		+ "content"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsReaderPort.ts::read(content:"
+			+ "string)"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsReaderService.ts"
+		IMPL "packages/core-mapping/src/application/requests/LoadSaveSectionsRequest.ts"
 	SPEC "every use case that reads the sections of a save hands the parse errors the reader"
 		+ "reports to its presenter through an outcome of its own, whether or not validation"
 		+ "refused the save first; no error of the parser is dropped on the way to a presenter"
+		IMPL "packages/core-mapping/src/application/ports"
+		IMPL "packages/core-mapping/src/presentation/formatUnreadableLine.ts"
+		IMPL "packages/ui-save-manager/src/components/structure/SectionState.tsx::unreadableLines"
 	SPEC "that ruling is recorded as a DECISION applying to the task, its rejected alternative"
 		+ "being to rely on validation having refused every unreadable save"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::ASectionUseCaseReportsTheLinesItCannotRead"
 	SPEC "no application port returns a bag cut for one use case: getEnergyLevelsRawData and"
 		+ "EnergyLevelsRawDataValueObject are gone, and the energy use case assembles its data from"
 		+ "port methods of one concept each"
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsMapperPort.ts::getPlacedWorldObjectsByPlanet"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
 	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place: it keeps the grid built once per"
 		+ "planet, drops its rejection of assembling in presentation, and its anchors name the code"
 		+ "as the task leaves it"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::APlanetEnergyGridIsAnAggregate"
 		REF @DECISION.APlanetEnergyGridIsAnAggregate
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts"
 	AFTER @TASK.REFACTOR159
+	DELIVERED_BY 232
 	WAVE @WAVE.14
 	PRIORITY critical
 	DESC "fixes violations 4 and 8 of the audit"

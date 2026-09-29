@@ -1,4 +1,4 @@
-import {PlanetWorldObjectsValueObject} from "./valueObjects/EnergyLevelsRawDataValueObject";
+import {PlanetWorldObjectsValueObject} from "./valueObjects/PlanetWorldObjectsValueObject";
 import {PlacedWorldObjectEntity} from "./entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "./entities/WorldObjectEntity";
 import {InventoryEntity} from "./entities/InventoryEntity";

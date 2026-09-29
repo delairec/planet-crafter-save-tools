@@ -3,7 +3,7 @@ import {ValidationIssue} from "../application/ports/ValidationIssue";
 import {SaveParseError, SaveWarning} from "shared-save-processing/gameDefinitions";
 import {LoadSaveFileViewModel} from "./viewModels/LoadSaveFileViewModel";
 import {formatValidationError} from "./formatValidationError";
-import {formatErrorLocation} from "./formatErrorLocation";
+import {formatUnreadableLine} from "./formatUnreadableLine";
 import {formatSaveWarning} from "./formatSaveWarning";
 
 export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPort {
@@ -36,7 +36,7 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
   presentSaveFileWithUnreadableLines(unreadableLines: SaveParseError[], warnings: SaveWarning[]): void {
     this._viewModel = {
       status: 'invalid',
-      errors: unreadableLines.map(unreadableLine => ({message: unreadableLine.detail, location: formatErrorLocation(unreadableLine)})),
+      errors: unreadableLines.map(formatUnreadableLine),
       warnings: warnings.map(formatSaveWarning)
     };
   }

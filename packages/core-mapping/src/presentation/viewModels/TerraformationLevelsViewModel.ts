@@ -1,6 +1,8 @@
+import {SaveValidationMessageViewModel} from "./SaveFileValidationViewModel";
 import {TableViewModel} from "./TableViewModel";
 
 export interface TerraformationLevelsViewModel {
+  unreadableLines?: SaveValidationMessageViewModel[];
   planets: PlanetLevelsViewModel[]
 }
 

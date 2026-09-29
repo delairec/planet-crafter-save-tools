@@ -680,14 +680,20 @@ DECISION AnUnknownCliFlagIsAUsageError
 DECISION SectionControllersReceiveTheValidatedText
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	SPEC "Each section controller takes the save text and gets its reader from the composition"
-		+ "root; the UI knows no representation of the sections"
-		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::createSaveSectionsReader"
+	SPEC "Each section controller hands the save text to its use case in the request, and the"
+		+ "composition root builds the reader port without any content; the UI knows no"
+		+ "representation of the sections"
+		IMPL "packages/core-mapping/src/controllers/LoadEnergyLevelsSectionController.ts::execute({content:"
+			+ "validatedContent})"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::createSaveSectionsReader():"
+			+ "SaveSectionsReaderPort"
 	REJECTED "An opaque save identifier with a registry in core-mapping: state in a stateless"
 		+ "package"
 	RATIONALE "A second parse is deterministic and costs about 12 ms per section on a 2 MB save"
 	SOURCE "Owner ruling"
 		PR 65
+	SOURCE "Rewritten with the section reader port: the use case reads the content it is given"
+		PR 232
 
 DECISION BehaviourMovesOntoTheEntityAndTheRuleAsksIt
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -722,12 +728,16 @@ DECISION APlanetEnergyGridIsAnAggregate
 		+ "the complete PlanetEnergyLevelsValueObject through levels()"
 		IMPL "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::levels():"
 			+ "PlanetEnergyLevelsValueObject"
-		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts::new"
+			+ "PlanetEnergyGrid("
+		IMPL "packages/core-mapping/src/application/ports/SaveSectionsMapperPort.ts::getPlacedWorldObjectsByPlanet"
 	REJECTED "Energy rules taking the same triple of lists: an unnamed object, and the boosts"
 		+ "computed three times per planet"
-	REJECTED "Assembling the planet levels in presentation: a presenter would compute the grid"
 	SOURCE "T15, owner review"
 		PR 72
+	SOURCE "Rewritten with the section reader port: the use case builds one grid per planet the"
+		+ "port returns"
+		PR 232
 
 DECISION APresenterReceivesAValueObjectNeverAnEntity
 	STATUS archived
@@ -3096,3 +3106,41 @@ DECISION TheSchemaValidationMessageIsCarriedNotRewritten
 		+ "owner kept the library message for the schema violations, a text nobody rewrites for one"
 		+ "language"
 	SOURCE "Owner ruling during the refinement of REFACTOR164, 2026-09-29"
+
+DECISION ASectionUseCaseReportsTheLinesItCannotRead
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.REFACTOR161
+	SPEC "a use case reading the sections of a save calls displaySaveWithUnreadableLines when the"
+		+ "reader reports at least one unreadable line, and no other presenter method, whether or"
+		+ "not validation refused the save first"
+		IMPL "packages/core-mapping/src/application/LoadConfigurationPage.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/application/LoadPlayersMenu.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/application/LoadPlayersSection.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/application/LoadSaveIdentity.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/application/LoadTerraformationLevelsSection.ts::displaySaveWithUnreadableLines"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadConfigurationPage.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadEnergyLevelsSection.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadPlayersMenu.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadPlayersSection.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadSaveIdentity.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/application/LoadTerraformationLevelsSection.spec.ts"
+	SPEC "the presenter of a section carries the unreadable lines, each located, in its view model;"
+		+ "when that list is not empty, SectionState renders the section title and each line with"
+		+ "its location in the danger style, instead of the section"
+		IMPL "packages/core-mapping/src/presentation/formatUnreadableLine.ts"
+		IMPL "packages/ui-save-manager/src/components/structure/SectionState.tsx::unreadableLines"
+	REJECTED "Relying on validation having refused every unreadable save: a defect in validation"
+		+ "would show a partial save as whole, and the case could not be exercised with a test"
+		+ "double"
+	REJECTED "Leaving unreadableLines unrendered: the section would show an unreadable save as"
+		+ "empty"
+	RATIONALE "Validation turns every line the parser cannot read into an issue, so a validated"
+		+ "content carries no parse error today; the outcome is the defence against a defect"
+		+ "introduced there"
+	SOURCE "Owner ruling during the refinement of the section reader port, implemented with it"
+		PR 232
+	SOURCE "Owner ruling during the wave launch: the save manager shows the unreadable lines in"
+		+ "place of the section"
+		PR 232

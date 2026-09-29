@@ -1,36 +1,38 @@
-import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPort";
+import {SaveSectionsMapperPort} from "../application/ports/SaveSectionsMapperPort";
 import {createGlobalProgressionValueObject, GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {PlayerEntity} from "../domain/entities/PlayerEntity";
 import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
 import {createStatisticsValueObject, StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {createSaveConfigurationValueObject, SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
 import {
-  createEnergyLevelsRawDataValueObject,
   createPlanetWorldObjectsValueObject,
-  EnergyLevelsRawDataValueObject
-} from "../domain/valueObjects/EnergyLevelsRawDataValueObject";
+  PlanetWorldObjectsValueObject
+} from "../domain/valueObjects/PlanetWorldObjectsValueObject";
 import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
+import {InventoryEntity} from "../domain/entities/InventoryEntity";
 
-export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
-  getEnergyLevelsRawData(): EnergyLevelsRawDataValueObject {
-    const producer = new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator6' as const, position: [0, 0, 0], planetId: 1});
-    const consumer = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
+const PRODUCER = new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator6' as const, position: [0, 0, 0], planetId: 1});
+const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
-    return createEnergyLevelsRawDataValueObject({
-      allWorldObjects: [new WorldObjectEntity(producer), new WorldObjectEntity(consumer)],
-      inventories: [],
-      planets: [createPlanetWorldObjectsValueObject({
-        planetId: 1,
-        planetName: undefined,
-        placedWorldObjects: [producer, consumer]
-      })],
-      declaredVersion: '2.008',
-      powerConsumptionModifier: 0.5
-    });
+export class FakeSaveSectionsMapperService implements SaveSectionsMapperPort {
+  getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
+    return [createPlanetWorldObjectsValueObject({
+      planetId: 1,
+      planetName: undefined,
+      placedWorldObjects: [PRODUCER, CONSUMER]
+    })];
   }
 
-  getSaveConfiguration(): SaveConfigurationValueObject {
+  getWorldObjects(): WorldObjectEntity[] {
+    return [new WorldObjectEntity(PRODUCER), new WorldObjectEntity(CONSUMER)];
+  }
+
+  getInventories(): InventoryEntity[] {
+    return [];
+  }
+
+  getSaveConfiguration(): SaveConfigurationValueObject | undefined {
     return createSaveConfigurationValueObject({
       mode: 'Standard',
       title: 'Fake Save',
@@ -54,7 +56,7 @@ export class FakeSaveSectionsReaderService implements SaveSectionsReaderPort {
     });
   }
 
-  getStatistics(): StatisticsValueObject {
+  getStatistics(): StatisticsValueObject | undefined {
     return createStatisticsValueObject({
       totalCraftedObjects: 10
     });

@@ -1,20 +1,23 @@
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it, mock} from 'bun:test';
-import {FakeSaveSectionsReaderService} from "../testing/FakeSaveSectionsReaderService";
-import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {PlayersPresenterPort} from "./ports/PlayersPresenterPort";
 import {LoadPlayersSection} from './LoadPlayersSection';
 import {PlayerSummaryResponse} from './responses/PlayerSummaryResponse';
 
+function createPresenter(): PlayersPresenterPort {
+  return {displayPlayers: mock(), displaySaveWithUnreadableLines: mock()};
+}
+
 describe('LoadPlayersSection', () => {
   it('should present all players from the parsed save', async () => {
     // Arrange
-    const saveSectionsReader: SaveSectionsReaderPort = new FakeSaveSectionsReaderService();
     const displayPlayers = mock<PlayersPresenterPort['displayPlayers']>();
-    const presenter: PlayersPresenterPort = {displayPlayers};
-    const useCase = new LoadPlayersSection(saveSectionsReader, presenter);
+    const presenter: PlayersPresenterPort = {displayPlayers, displaySaveWithUnreadableLines: mock()};
+    const useCase = new LoadPlayersSection(stubSaveSectionsReader(), presenter);
 
     // Act
-    await useCase.execute();
+    await useCase.execute({content: SAVE_CONTENT});
 
     // Assert
     expect(displayPlayers).toHaveBeenCalledTimes(1);
@@ -22,5 +25,21 @@ describe('LoadPlayersSection', () => {
       {name: 'Nikowa', equipment: [], inventory: []},
       {name: 'Chileny', equipment: [], inventory: []}
     ]);
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should display the unreadable lines instead of the players', async () => {
+      // Arrange
+      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const presenter = createPresenter();
+      const useCase = new LoadPlayersSection(stubSaveSectionsReader({unreadableLines}), presenter);
+
+      // Act
+      await useCase.execute({content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}]);
+      expect(presenter.displayPlayers).not.toHaveBeenCalled();
+    });
   });
 });

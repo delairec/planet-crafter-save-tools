@@ -1,3 +1,4 @@
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it} from 'bun:test';
 import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
@@ -297,5 +298,19 @@ describe('EnergyLevelsPresenter', () => {
       boostedMachines: '3 Nuclear Reactor T2, 2 Solar panel T2',
       contribution: `994.5${nbsp}kW (169%)`
     }]);
+  });
+
+  describe('When the save has unreadable lines', () => {
+    it('should show the unreadable lines in place of the energy levels', () => {
+      // Arrange
+      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const presenter = new EnergyLevelsPresenter();
+
+      // Act
+      presenter.displaySaveWithUnreadableLines(unreadableLines);
+
+      // Assert
+      expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>({notifications: [], planets: [], unreadableLines: [{message: 'Entry is not valid JSON', location: 'section 3, entry 2'}]});
+    });
   });
 });

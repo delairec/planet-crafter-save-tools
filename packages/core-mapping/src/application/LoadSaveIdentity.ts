@@ -9,19 +9,26 @@ export class LoadSaveIdentity {
     private readonly presenter: SaveIdentityPresenterPort
   ) {}
 
-  async execute(request: LoadSaveIdentityRequest): Promise<void> {
-    const saveConfiguration = this.saveSectionsReader.getSaveConfiguration();
+  async execute({content, fileName}: LoadSaveIdentityRequest): Promise<void> {
+    const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
+
+    if (unreadableLines.length > 0) {
+      this.presenter.displaySaveWithUnreadableLines(fileName, unreadableLines);
+      return;
+    }
+
+    const saveConfiguration = saveSections.getSaveConfiguration();
 
     if (!saveConfiguration) {
-      this.presenter.displayUnconfiguredSaveIdentity(request.fileName);
+      this.presenter.displayUnconfiguredSaveIdentity(fileName);
       return;
     }
 
     this.presenter.displaySaveIdentity({
-      fileName: request.fileName,
+      fileName,
       displayName: saveConfiguration.title,
       mode: saveConfiguration.mode,
-      gameRelease: resolveGameReleaseOfDeclaredVersion(this.saveSectionsReader.getDeclaredVersion())
+      gameRelease: resolveGameReleaseOfDeclaredVersion(saveSections.getDeclaredVersion())
     });
   }
 }

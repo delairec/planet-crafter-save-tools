@@ -1,3 +1,4 @@
+import {SaveParseError} from "shared-save-processing/gameDefinitions";
 import {describe, expect, it} from 'bun:test';
 import {PlayersPresenter} from './PlayersPresenter';
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
@@ -81,5 +82,18 @@ describe('PlayersPresenter', () => {
       });
     });
   });
-});
 
+  describe('When the save has unreadable lines', () => {
+    it('should show the unreadable lines in place of the players', () => {
+      // Arrange
+      const unreadableLines: SaveParseError[] = [{detail: 'Entry is not valid JSON', section: 3, entryIndex: 2}];
+      const presenter = new PlayersPresenter();
+
+      // Act
+      presenter.displaySaveWithUnreadableLines(unreadableLines);
+
+      // Assert
+      expect(presenter.viewModel).toEqual<PlayersViewModel>({players: [], unreadableLines: [{message: 'Entry is not valid JSON', location: 'section 3, entry 2'}]});
+    });
+  });
+});
