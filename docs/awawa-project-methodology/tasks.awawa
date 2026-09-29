@@ -1041,22 +1041,36 @@ TASK CHORE157
 
 TASK CHORE158
 	TITLE "chore(guards): refuse the save format records and their abbreviations under domain"
-	STATUS todo
+	STATUS implemented
 	SPEC "bun run check:wire-format fails on a file under domain/ of a core- package that uses gId,"
 		+ "liId, woIds, siIds or linkedWo as an identifier, a property name or a property key,"
 		+ "string literal keys included; a comment is not reported"
+		IMPL "scripts/check-wire-format.ts::findWireAbbreviations"
+		IMPL "scripts/check-wire-format.spec.ts"
 	SPEC "bun run check:wire-format fails on a file under domain/ of a core- package that imports"
 		+ "shared-save-processing/gameDefinitions, import type included"
+		IMPL "scripts/check-wire-format.ts::findGameDefinitionsImports"
+		IMPL "scripts/check-wire-format.spec.ts"
 	SPEC "both refusals apply to the spec files under domain/ as to the production ones"
+		IMPL "scripts/check-wire-format.ts::DOMAIN_FILE"
+		IMPL "scripts/check-wire-format.spec.ts"
 	SPEC "the files each refusal reports when the task lands are listed in an allow-list of that"
 		+ "refusal, read through the allow-list mechanism of check:presentation shared by both"
 		+ "guards: a listed file is not reported, and a listed file the refusal no longer reports"
 		+ "fails the guard until its entry is removed, so each list only shrinks"
+		IMPL "scripts/allow-lists/domain-files-naming-wire-abbreviations.json"
+		IMPL "scripts/allow-lists/domain-files-importing-game-definitions.json"
+		IMPL "scripts/check-wire-format.ts::applyAllowList"
+		IMPL "scripts/check-wire-format.spec.ts"
 	SPEC "the failure message of check:wire-format and its paragraph in docs/wiki/development.md"
 		+ "state the two refusals"
+		IMPL "scripts/check-wire-format.ts::checkWireFormat"
+		IMPL "docs/wiki/development.md::bun run check:wire-format"
 	SPEC "bun run guards passes on the code as it stands"
+		IMPL "package.json::check:wire-format"
 	AFTER @TASK.CHORE157
 	WAVE @WAVE.14
+	DELIVERED_BY 228
 	PRIORITY high
 	DESC "guard of violation 5 of the audit"
 	RATIONALE "The guard lands before the decoding task so that nothing adds a save format record"
