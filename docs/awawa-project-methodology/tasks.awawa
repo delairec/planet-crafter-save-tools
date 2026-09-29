@@ -860,11 +860,9 @@ TASK FEAT144
 		+ "the vitals, for a visible host, for empty equipment slots, and for the inventory to stay"
 		+ "grouped since the game does not stack items. The inventory size is in the save; the"
 		+ "gauge maxima and the slot kinds depend on the equipment worn, a table the package does"
-		+ "not hold, which is why this page comes last. The decision on presenters receiving value"
-		+ "objects anchors the players use case and port this task rewrites"
+		+ "not hold, which is why this page comes last"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
 		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		REF @SECTION.Players
 		REF @SECTION.Inventories
@@ -1080,7 +1078,6 @@ TASK CHORE157
 		+ "presentation file may import a value object while a presenter port imports nothing from"
 		+ "the domain. On the base, only the five presenter ports taking a value object as a"
 		+ "parameter break it"
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
 		REF @TASK.REFACTOR159
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
@@ -1136,7 +1133,6 @@ TASK REFACTOR159
 		+ "energy value objects the domain computes"
 	SPEC "a save loaded with unreadable lines reaches the presenter through an outcome of its own,"
 		+ "distinct from a save loaded with warnings only, and is never rendered valid"
-	SPEC "APresenterReceivesAValueObjectNeverAnEntity is archived"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
 	AFTER @TASK.CHORE157
@@ -1153,9 +1149,7 @@ TASK REFACTOR159
 		+ "(SaveConfiguration, GlobalProgression, Statistics) stay in the domain."
 		+ "EnergyLevelsRawData belongs to the reader port task and the assertions of the value"
 		+ "object factories to the decoding task. The instructions rule objects_crossing_a_boundary"
-		+ "carries the boundary since .ai pull request 56, so the project decision stating it is"
-		+ "archived"
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
+		+ "carries the boundary since .ai pull request 56, and no project decision restates it"
 		REF @TASK.CHORE157
 		REF @TASK.REFACTOR161
 		REF @TASK.REFACTOR162
@@ -1323,5 +1317,4 @@ TASK DOCS167
 		+ "the last of wave 14, every other task of the wave coming before one of them"
 		REF @WAVE.14
 		REF @TASK.REFACTOR159
-		REF @DECISION.APresenterReceivesAValueObjectNeverAnEntity
 	SOURCE "Owner request during the refinement of wave 14 on 2026-09-29"
