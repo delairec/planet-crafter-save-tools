@@ -33,7 +33,7 @@ describe('SaveValidatorService', () => {
       const result = service.validate(content);
 
       // Assert
-      expect(result).toEqual({isValid: true, errors: [], warnings: []});
+      expect(result).toEqual({isValid: true, errors: [], warnings: [], declaredVersion: '2.004', carriedRelease: '2.004'});
     });
   });
 
@@ -65,7 +65,7 @@ describe('SaveValidatorService', () => {
       const result = service.validate(content);
 
       // Assert
-      expect(result).toEqual({isValid: true, errors: [], warnings: [{code: 'legacy-save-format'}]});
+      expect(result).toEqual({isValid: true, errors: [], warnings: [{code: 'legacy-save-format'}], declaredVersion: '1.618', carriedRelease: '1.618'});
     });
   });
 
@@ -82,7 +82,7 @@ describe('SaveValidatorService', () => {
       const result = service.validate(content);
 
       // Assert
-      expect(result).toEqual({isValid: true, errors: [], warnings: []});
+      expect(result).toEqual({isValid: true, errors: [], warnings: [], declaredVersion: '2.102', carriedRelease: '2.004'});
     });
   });
 });

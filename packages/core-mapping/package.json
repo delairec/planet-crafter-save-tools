@@ -17,6 +17,7 @@
   "dependencies": {
     "data-energy": "*",
     "data-planets": "*",
+    "data-save-format": "*",
     "data-world-objects": "*",
     "shared-save-processing": "*"
   },

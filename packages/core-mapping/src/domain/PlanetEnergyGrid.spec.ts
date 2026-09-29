@@ -1,5 +1,6 @@
 import {selectEnergyLevelsOfDeclaredVersion} from './energyLevelsByWorldObjectName';
 import {ENERGY_LEVEL_TABLES, OPTIMIZER_RANGES} from '../testing/energyLevelTablesFixture';
+import {GAME_RELEASES} from '../testing/gameReleasesFixture';
 import {describe, expect, it} from 'bun:test';
 import {PlanetEnergyGrid} from './PlanetEnergyGrid';
 import {PlacedWorldObjectEntity} from './entities/PlacedWorldObjectEntity';
@@ -34,7 +35,7 @@ function gridOf(
     planet: createPlanetWorldObjectsValueObject({planetId: PLANET_ID, planetName, placedWorldObjects}),
     allWorldObjects,
     inventories,
-    energyLevels: selectEnergyLevelsOfDeclaredVersion('2.103', ENERGY_LEVEL_TABLES),
+    energyLevels: selectEnergyLevelsOfDeclaredVersion('2.103', ENERGY_LEVEL_TABLES, GAME_RELEASES),
     optimizerRanges: OPTIMIZER_RANGES,
     powerConsumptionModifier: 1
   });
@@ -48,7 +49,7 @@ function gridOfSaveWithPowerConsumptionModifier(
     planet: createPlanetWorldObjectsValueObject({planetId: PLANET_ID, placedWorldObjects}),
     allWorldObjects: placedWorldObjects,
     inventories: [],
-    energyLevels: selectEnergyLevelsOfDeclaredVersion('2.103', ENERGY_LEVEL_TABLES),
+    energyLevels: selectEnergyLevelsOfDeclaredVersion('2.103', ENERGY_LEVEL_TABLES, GAME_RELEASES),
     optimizerRanges: OPTIMIZER_RANGES,
     powerConsumptionModifier
   });

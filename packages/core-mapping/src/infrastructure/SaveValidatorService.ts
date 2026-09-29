@@ -9,8 +9,8 @@ export class SaveValidatorService implements SaveValidatorPort {
   }
 
   validate(content: string): SaveValidationResult {
-    const {isValid, errors, warnings} = validateSaveContent(content);
+    const {isValid, errors, warnings, declaredVersion, carriedRelease} = validateSaveContent(content);
 
-    return {isValid, errors, warnings};
+    return {isValid, errors, warnings, declaredVersion, carriedRelease};
   }
 }

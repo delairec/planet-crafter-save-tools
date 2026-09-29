@@ -1,7 +1,8 @@
-import {compareGameReleases} from 'shared-save-processing/gameReleases.js';
+import {compareGameReleases} from './rules/compareGameReleases';
 import {resolveGameReleaseOfDeclaredVersion} from './rules/resolveGameReleaseOfDeclaredVersion';
 import {WorldObjectName} from './worldObjectNames';
 import {EnergyLevelValueObject} from './valueObjects/EnergyLevelValueObject';
+import {GameReleaseValueObject} from './valueObjects/GameReleaseValueObject';
 
 export type EnergyLevelsByWorldObjectName = Partial<Record<WorldObjectName, number>>;
 
@@ -36,8 +37,8 @@ function selectEnergyLevelsByRole(role: EnergyRole, rows: readonly EnergyLevelVa
   );
 }
 
-export function selectEnergyLevelsOfDeclaredVersion(declaredVersion: string | undefined, tables: EnergyLevelTables): EnergyLevelsOfRelease {
-  const release = resolveGameReleaseOfDeclaredVersion(declaredVersion);
+export function selectEnergyLevelsOfDeclaredVersion(declaredVersion: string | undefined, tables: EnergyLevelTables, gameReleases: readonly GameReleaseValueObject[]): EnergyLevelsOfRelease {
+  const release = resolveGameReleaseOfDeclaredVersion(declaredVersion, gameReleases);
   const rows = selectRowsOfRelease(release, tables);
 
   return {

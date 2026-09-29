@@ -1,7 +1,6 @@
 /** @import { ParsedSave, UnreadableSaveLine, SaveWarning, GlobalMetadata, TerraformationLevel, Player, WorldObject, Inventory, Statistics, MailboxMessage, StoryEvent, SaveConfiguration, WorldEvent } from '../gameDefinitions' */
 
 import {createGlobalMetadata} from './createSaveRecords.js';
-import {CURRENT_FORMAT_RELEASE} from '../gameReleases.js';
 
 /**
  * @typedef {Object} FakeParsedSaveOptions
@@ -40,7 +39,7 @@ export function createFakeParsedSave({
   warnings = []
 }) {
   return {
-    formatRelease: CURRENT_FORMAT_RELEASE,
+    formatRelease: '2.004',
     errors,
     warnings,
     sections: [

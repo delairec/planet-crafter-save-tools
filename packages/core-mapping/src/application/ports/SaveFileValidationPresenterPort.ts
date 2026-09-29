@@ -1,5 +1,5 @@
 import {ValidationIssue} from "./ValidationIssue";
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import type {SaveWarning} from "shared-save-processing/gameDefinitions";
 import {UnreadableLine} from "./SaveSectionLocation";
 
 export interface SaveFileValidationPresenterPort {

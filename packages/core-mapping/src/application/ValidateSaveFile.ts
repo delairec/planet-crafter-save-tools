@@ -1,13 +1,16 @@
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {SaveFileValidationPresenterPort} from "./ports/SaveFileValidationPresenterPort";
 import {ValidateSaveFileRequest} from "./requests/ValidateSaveFileRequest";
+import {collectSaveWarnings} from "./collectSaveWarnings";
 import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
 
 export class ValidateSaveFile {
   constructor(
     private readonly validator: SaveValidatorPort,
     private readonly saveSectionsReader: SaveSectionsReaderPort,
+    private readonly gameReleasesReader: GameReleasesReaderPort,
     private readonly presenter: SaveFileValidationPresenterPort
   ) {
   }
@@ -19,26 +22,27 @@ export class ValidateSaveFile {
     }
 
     const validation = this.validator.validate(content);
+    const warnings = collectSaveWarnings(validation, this.gameReleasesReader.readGameReleases());
 
     if (!validation.isValid) {
-      this.presenter.presentInvalidSaveFile(validation.errors, validation.warnings);
+      this.presenter.presentInvalidSaveFile(validation.errors, warnings);
       return;
     }
 
     const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
 
     if (unreadableLines.length > 0) {
-      this.presenter.presentSaveFileWithUnreadableLines(unreadableLines, validation.warnings);
+      this.presenter.presentSaveFileWithUnreadableLines(unreadableLines, warnings);
       return;
     }
 
     const uniqueHostViolation = validateUniqueHost(saveSections.getPlayers());
 
     if (uniqueHostViolation !== null) {
-      this.presenter.presentSaveFileWithoutUniqueHost(uniqueHostViolation.hostCount, validation.warnings);
+      this.presenter.presentSaveFileWithoutUniqueHost(uniqueHostViolation.hostCount, warnings);
       return;
     }
 
-    this.presenter.presentValidSaveFile(validation.warnings);
+    this.presenter.presentValidSaveFile(warnings);
   }
 }

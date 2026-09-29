@@ -4,10 +4,9 @@
 import {
   LEGACY_SPLIT_PARTS_COUNT,
   PLAYERS_SECTION_INDEX,
-  SAVE_CONFIGURATION_SECTION_INDEX,
   WORLD_OBJECTS_SECTION_INDEX
 } from './sectionIndexes.js';
-import {findCarriedRelease, verifyDeclaredGameRelease} from './gameReleases.js';
+import {findCarriedRelease} from './gameReleases.js';
 import {SAVE_WARNING_CODES} from './saveWarningCodes.js';
 import {SAVE_PARSE_ERROR_CODES} from './saveParseErrorCodes.js';
 import {keepInt64IdentifierText} from './int64Identifiers.js';
@@ -19,8 +18,8 @@ import {keepInt64IdentifierText} from './int64Identifiers.js';
  * one produced by the terminating `@`. Section 3 (WorldObjects) is a Generator factory; all others
  * are arrays, Terrain Layers included.
  * A save is read by the format it carries, and `formatRelease` names the release whose format that
- * is. A save of 1.618 raises the legacy-save-format warning; the game release its version declares
- * is checked against the format it carries, and a contradiction produces a warning, never an error.
+ * is. A save of 1.618 raises the legacy-save-format warning. The game release its version declares
+ * is not read here: the use cases check it against the format the save carries.
  *
  * A line that cannot be read is reported in `errors` with its location, and never takes the
  * section holding it down with it. This module is the only place in the production code where a
@@ -44,12 +43,11 @@ export function parseSaveSections(save) {
 
     return [...createSectionEntriesGenerator(sectionReading)];
   });
-  const declaredVersion = readDeclaredVersion(sections[SAVE_CONFIGURATION_SECTION_INDEX]);
 
   return /** @type {ParsedSave} */ ({
     formatRelease,
     errors,
-    warnings: [...verifyLegacyFormat(rawSections.length), ...verifyDeclaredGameRelease(declaredVersion, rawSections.length)],
+    warnings: verifyLegacyFormat(rawSections.length),
     sections
   });
 }
@@ -60,24 +58,6 @@ export function parseSaveSections(save) {
  */
 function verifyLegacyFormat(splitPartsCount) {
   return splitPartsCount === LEGACY_SPLIT_PARTS_COUNT ? [{code: SAVE_WARNING_CODES.LEGACY_SAVE_FORMAT}] : [];
-}
-
-/**
- * @param {unknown} saveConfigurationSection
- * @returns {unknown}
- */
-function readDeclaredVersion(saveConfigurationSection) {
-  if (!Array.isArray(saveConfigurationSection)) {
-    return undefined;
-  }
-
-  const [saveConfiguration] = saveConfigurationSection;
-
-  if (typeof saveConfiguration !== 'object' || saveConfiguration === null) {
-    return undefined;
-  }
-
-  return /** @type {{version?: unknown}} */ (saveConfiguration).version;
 }
 
 function isWorldObjectsSection(sectionIndex) {

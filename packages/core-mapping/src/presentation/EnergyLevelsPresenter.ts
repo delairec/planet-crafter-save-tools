@@ -14,7 +14,6 @@ import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStra
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
 import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
-import {CURRENT_FORMAT_RELEASE} from "shared-save-processing/gameReleases.js";
 import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
 import {
   energyLevelsSectionAvailableTitle,
@@ -60,7 +59,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
   private buildNotifications(energyLevels: EnergyLevelsResponse): NotificationViewModel[] {
     const notifications: NotificationViewModel[] = [submergedMachinesNotification];
 
-    if (energyLevels.gameRelease !== CURRENT_FORMAT_RELEASE) {
+    if (energyLevels.gameReleaseIsEarlierThanCurrent) {
       notifications.push({
         severity: 'warning',
         message: resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)

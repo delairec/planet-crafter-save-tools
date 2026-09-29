@@ -1,4 +1,4 @@
-import {compareGameReleases} from 'shared-save-processing/gameReleases.js';
+import {compareGameReleases} from '../compareGameReleases';
 import {SaveSections} from '../../save/SaveSections';
 
 export function selectWrittenFormatSave(mainSave: SaveSections, secondarySave: SaveSections, preferLegacyFormat: boolean): SaveSections {

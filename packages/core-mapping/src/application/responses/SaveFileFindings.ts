@@ -1,5 +1,5 @@
 import {ValidationIssue} from "../ports/ValidationIssue";
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import type {SaveWarning} from "shared-save-processing/gameDefinitions";
 
 export type SaveFileFindings =
   | {hasJsonExtension: false}

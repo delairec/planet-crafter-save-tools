@@ -1,4 +1,4 @@
-import {SaveSectionName} from "shared-save-processing/gameDefinitions";
+import type {SaveSectionName} from "shared-save-processing/gameDefinitions";
 
 export type MergeWarning =
   | {code: 'merged-save-format'; formatRelease: string}

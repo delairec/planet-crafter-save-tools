@@ -1,5 +1,6 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {EnergyLevelsReaderPort} from "./ports/EnergyLevelsReaderPort";
+import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {OptimizerRangesReaderPort} from "./ports/OptimizerRangesReaderPort";
 import {PlanetNamesReaderPort} from "./ports/PlanetNamesReaderPort";
 import {WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
@@ -9,11 +10,13 @@ import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorldObjectName";
 import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
 import {resolvePlanetName} from "../domain/rules/resolvePlanetName";
+import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
 import {createPlanetWorldObjectsValueObject, PlanetWorldObjectsValueObject} from "../domain/valueObjects/PlanetWorldObjectsValueObject";
 
 export interface LoadEnergyLevelsSectionReaders {
   readonly saveSectionsReader: SaveSectionsReaderPort;
   readonly energyLevelsReader: EnergyLevelsReaderPort;
+  readonly gameReleasesReader: GameReleasesReaderPort;
   readonly optimizerRangesReader: OptimizerRangesReaderPort;
   readonly planetNamesReader: PlanetNamesReaderPort;
   readonly worldObjectLabelsReader: WorldObjectLabelsReaderPort;
@@ -22,16 +25,18 @@ export interface LoadEnergyLevelsSectionReaders {
 export class LoadEnergyLevelsSection {
   private readonly saveSectionsReader: SaveSectionsReaderPort;
   private readonly energyLevelsReader: EnergyLevelsReaderPort;
+  private readonly gameReleasesReader: GameReleasesReaderPort;
   private readonly optimizerRangesReader: OptimizerRangesReaderPort;
   private readonly planetNamesReader: PlanetNamesReaderPort;
   private readonly worldObjectLabelsReader: WorldObjectLabelsReaderPort;
 
   constructor(
-    {saveSectionsReader, energyLevelsReader, optimizerRangesReader, planetNamesReader, worldObjectLabelsReader}: LoadEnergyLevelsSectionReaders,
+    {saveSectionsReader, energyLevelsReader, gameReleasesReader, optimizerRangesReader, planetNamesReader, worldObjectLabelsReader}: LoadEnergyLevelsSectionReaders,
     private readonly presenter: EnergyLevelsPresenterPort
   ) {
     this.saveSectionsReader = saveSectionsReader;
     this.energyLevelsReader = energyLevelsReader;
+    this.gameReleasesReader = gameReleasesReader;
     this.optimizerRangesReader = optimizerRangesReader;
     this.planetNamesReader = planetNamesReader;
     this.worldObjectLabelsReader = worldObjectLabelsReader;
@@ -48,15 +53,17 @@ export class LoadEnergyLevelsSection {
     const allWorldObjects = saveSections.getWorldObjects();
     const inventories = saveSections.getInventories();
     const powerConsumptionModifier = saveSections.getSaveConfiguration()?.modifiers.powerConsumption ?? UNMODIFIED_POWER_CONSUMPTION_MODIFIER;
+    const gameReleases = this.gameReleasesReader.readGameReleases();
     const energyLevels = selectEnergyLevelsOfDeclaredVersion(saveSections.getDeclaredVersion(), {
       energyLevels: this.energyLevelsReader.readEnergyLevels(),
       divergingEnergyLevelsByRelease: this.energyLevelsReader.readDivergingEnergyLevelsByRelease()
-    });
+    }, gameReleases);
     const optimizerRanges = this.optimizerRangesReader.readOptimizerRanges();
     const knownPlanetNames = [...new Set(saveSections.getTerraformationLevels().map((level) => level.planetId))];
 
     this.presenter.displayEnergyLevels({
       gameRelease: energyLevels.release,
+      gameReleaseIsEarlierThanCurrent: precedesCurrentGameRelease(energyLevels.release, gameReleases),
       powerConsumptionModifier,
       planets: saveSections.getPlacedWorldObjectsByPlanet()
         .map((planet) => this.nameThePlanet(planet, knownPlanetNames))

@@ -1,18 +1,20 @@
-import {compareGameReleases} from "shared-save-processing/gameReleases.js";
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
 import {SaveSectionsReaderPort, SaveSectionsReading} from "./ports/SaveSectionsReaderPort";
 import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
+import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
+import {MergedFileNamerPort} from "./ports/MergedFileNamerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
 import {MergeWarning} from "./responses/MergeWarning";
 import {SaveFileFindings} from "./responses/SaveFileFindings";
 import {SaveValidationResult} from "./ports/SaveValidationResult";
-import {nameMergedFile} from "./nameMergedFile";
+import {collectSaveWarnings} from "./collectSaveWarnings";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 import {SaveSections} from "../domain/save/SaveSections";
 import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
+import {compareGameReleases} from "../domain/rules/compareGameReleases";
 
 export class MergeSaveFiles {
   constructor(
@@ -20,6 +22,8 @@ export class MergeSaveFiles {
     private readonly saveSectionsReader: SaveSectionsReaderPort,
     private readonly parser: SaveSectionsParserPort,
     private readonly serializer: SaveSectionsSerializerPort,
+    private readonly gameReleasesReader: GameReleasesReaderPort,
+    private readonly mergedFileNamer: MergedFileNamerPort,
     private readonly presenter: MergeResultPresenterPort
   ) {}
 
@@ -50,7 +54,7 @@ export class MergeSaveFiles {
     const saveA = this.parser.parse(contentA);
     const saveB = this.parser.parse(contentB);
 
-    const {fileName, stem} = nameMergedFile({fileNameA, fileNameB});
+    const {fileName, stem} = this.mergedFileNamer.nameMergedFile({fileNameA, fileNameB});
     const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, {saveDisplayName: saveDisplayName ?? stem, preferLegacyFormat}));
     const content = this.serializer.serialize(mergedSave);
 
@@ -72,7 +76,9 @@ export class MergeSaveFiles {
       return {hasJsonExtension: false};
     }
 
-    return {hasJsonExtension: true, ...this.validator.validate(content)};
+    const validation = this.validator.validate(content);
+
+    return {hasJsonExtension: true, ...validation, warnings: collectSaveWarnings(validation, this.gameReleasesReader.readGameReleases())};
   }
 }
 
