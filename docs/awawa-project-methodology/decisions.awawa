@@ -3052,6 +3052,7 @@ DECISION AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
 		+ "objects_crossing_a_boundary carries the boundary; this decision fixes where each of the"
 		+ "five types went"
 	SOURCE "Ruled while implementing the output boundary of core-mapping"
+		PR 230
 
 DECISION ASaveWithUnreadableLinesIsNotLoaded
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -3074,3 +3075,4 @@ DECISION ASaveWithUnreadableLinesIsNotLoaded
 		+ "loaded, so the load page keeps the save loaded before it and lists the lines with their"
 		+ "location"
 	SOURCE "Ruled while implementing the output boundary of core-mapping"
+		PR 230
