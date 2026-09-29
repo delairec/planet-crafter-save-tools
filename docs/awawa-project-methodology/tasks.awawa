@@ -1786,6 +1786,14 @@ TASK REFACTOR170
 		+ "imports another workspace package, import type and JSDoc @import included: every"
 		+ "application port declares the types it exchanges, and the infrastructure adapter maps"
 		+ "the records of shared-save-processing onto them"
+	SPEC "the validation issues, the section location and the unreadable line of core-mapping are"
+		+ "domain types under domain/, each named in business terms and stating what is invalid in"
+		+ "the save by a code and its data; the infrastructure maps what it detects onto them, and"
+		+ "application/ports/validationIssues no longer exists"
+		REF @DECISION.EachValidationIssueIsANamedInterfaceInItsOwnFile
+	SPEC "a presenter receives the validation issues and the unreadable lines inside an application"
+		+ "response its use case builds, which holds them as domain value objects; no presenter"
+		+ "port imports from domain/"
 	SPEC "the guard REFACTOR163 adds refuses any import of another workspace package, a type"
 		+ "included, from a file of a core- package outside infrastructure/, spec files and"
 		+ "testing/ included, and carries no allow-list; no other guard states the refusal"
@@ -1821,7 +1829,12 @@ TASK REFACTOR170
 		+ "double of its use case factory and needs no save content from"
 		+ "shared-save-processing/testing. It precedes REFACTOR165, which then carries the merge"
 		+ "warning of the domain in MergeSucceededResponse, and through it DOCS167. It carries high"
-		+ "rather than critical because no domain type crosses"
+		+ "rather than critical because no domain type crosses. The review of PR 234 ruled that the"
+		+ "domain says what is invalid in a save and the infrastructure how it is detected, so the"
+		+ "validation issues belong in domain/; they cross presenter ports, which import nothing"
+		+ "from domain/, so they move with the responses this task introduces, REFACTOR164 leaving"
+		+ "them in application/ports meanwhile"
+		REF @DECISION.EachValidationIssueIsANamedInterfaceInItsOwnFile
 		REF @TASK.CHORE157
 		REF @TASK.REFACTOR161
 		REF @TASK.REFACTOR162
@@ -1838,3 +1851,7 @@ TASK REFACTOR170
 		+ "reaches core-mapping by any door but the infrastructure, spec files and testing/"
 		+ "included, one guard enforcing it, the task following REFACTOR166 and preceding"
 		+ "REFACTOR165"
+	SOURCE "Owner ruling in the review of REFACTOR164: the validation issues and the section"
+		+ "location move into domain/ in this task, with the responses the presenter ports take,"
+		+ "rather than in the pull request of REFACTOR164"
+		PR 234
