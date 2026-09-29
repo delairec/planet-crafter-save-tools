@@ -104,6 +104,42 @@ describe('serializeSave', () => {
     expect(sections[WORLD_OBJECTS_SECTION_INDEX]).toBe('{"id":1,"gId":"Tree","hunger":50.0}');
   });
 
+  describe('When an entry text holds the section separator character', () => {
+    it('should replace each of them by an underscore in a plain JSON entry, whatever the field', () => {
+      // Arrange
+      const params = {...emptyParams, saveConfigurations: [createSaveConfiguration({saveDisplayName: 'Alpha@Beta@Gamma'})], storyEvents: [{stringId: 'a@b'}]};
+
+      // Act
+      const sections = serializeSave(params).split(SECTION_SEPARATOR);
+
+      // Assert
+      expect(sections[SAVE_CONFIGURATION_SECTION_INDEX]).toContain('"saveDisplayName":"Alpha_Beta_Gamma"');
+      expect(sections[STORY_EVENTS_SECTION_INDEX]).toBe('{"stringId":"a_b"}');
+    });
+
+    it('should replace each of them by an underscore in a float-suffixed entry', () => {
+      // Arrange
+      const params = {...emptyParams, worldObjects: [{id: 1, gId: 'Tree@1', hunger: 50}]};
+
+      // Act
+      const sections = serializeSave(params).split(SECTION_SEPARATOR);
+
+      // Assert
+      expect(sections[WORLD_OBJECTS_SECTION_INDEX]).toBe('{"id":1,"gId":"Tree_1","hunger":50.0}');
+    });
+
+    it('should leave no separator inside any section of the serialized save', () => {
+      // Arrange
+      const params = {...emptyParams, players: [createPlayer({name: 'A@B'})], saveConfigurations: [createSaveConfiguration({saveDisplayName: '@'})]};
+
+      // Act
+      const sections = serializeSave(params).split(SECTION_SEPARATOR);
+
+      // Assert
+      expect(sections.slice(0, -1).filter(section => section.includes('@'))).toEqual([]);
+    });
+  });
+
   describe('When statistics is empty', () => {
     it('should serialize the statistics section as an empty string', () => {
       // Act

@@ -168,7 +168,7 @@ RULE WorldObjectsAreDeduplicatedByPlanetAndPosition
 	SPEC "when two objects share the same planet and pos, save A's object is kept and save B's"
 		+ "discarded"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldObjects.spec.ts::should"
-			+ "deduplicate by pos and keep only the one from save A"
+			+ "deduplicate by position and keep only the one from save A"
 	SPEC "the world objects held by the inventories of a player ejected from save B are removed"
 		+ "before the merge"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeWorldObjects.spec.ts::should"
@@ -402,7 +402,7 @@ RULE APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 		+ "written by 1.618 or earlier has none of them"
 		ATTESTED_BY "packages/shared-save-processing/schemas/section2-players.schema.json::\"cameraView\":"
 			+ "{"
-		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::LegacyCompatiblePlayer"
+		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::NUMBER_FIELD_FALLBACKS"
 	APPLIES_TO_SECTION @SECTION.Players
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-PLAYER-4, a"
 		+ "fact about the save left inside @RULE.PlayersAreDeduplicatedByName"

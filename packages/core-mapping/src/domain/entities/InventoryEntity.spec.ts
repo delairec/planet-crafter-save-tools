@@ -1,6 +1,5 @@
 import {describe, expect, it} from 'bun:test';
 import {InventoryEntity} from './InventoryEntity';
-import {InvalidSaveDataError} from '../errors/InvalidSaveDataError';
 
 describe('InventoryEntity', () => {
   it('should expose the contents it was built from', () => {
@@ -14,17 +13,6 @@ describe('InventoryEntity', () => {
     expect(inventory.id).toBe(42);
     expect(inventory.worldObjectIds).toEqual(['1', '2']);
     expect(inventory.size).toBe(10);
-  });
-
-  it('should reject a non-finite size', () => {
-    // Arrange
-    const input = {id: 42, worldObjectIds: ['1', '2'], size: NaN};
-
-    // Act
-    const buildInventory = () => new InventoryEntity(input);
-
-    // Assert
-    expect(buildInventory).toThrow(InvalidSaveDataError);
   });
 
   describe('When asked whether it holds a world object', () => {

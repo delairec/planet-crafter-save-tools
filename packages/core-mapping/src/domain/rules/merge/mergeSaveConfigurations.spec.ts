@@ -1,7 +1,7 @@
 import {describe, it, expect} from 'bun:test';
-import {SaveConfiguration} from 'shared-save-processing/gameDefinitions';
+import {SaveConfigurationEntry} from '../../save/SaveConfigurationEntry';
 import {mergeSaveConfigurations} from './mergeSaveConfigurations';
-import {createSaveConfiguration} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createSaveConfigurationEntry} from '../../../testing/createSaveEntries';
 
 describe('Merge save configurations', () => {
   const overrides = {saveDisplayName: 'SAVE_NAME', declaredVersion: '2.004'};
@@ -9,8 +9,8 @@ describe('Merge save configurations', () => {
   describe('When both saves have a configuration', () => {
     it('should use the saveDisplayName parameter and take save configuration from save A', () => {
       // Arrange
-      const saveConfigurationsA = [createSaveConfiguration({saveDisplayName: 'SAVE_A', planetId: 'Prime'})];
-      const saveConfigurationsB = [createSaveConfiguration({
+      const saveConfigurationsA = [createSaveConfigurationEntry({saveDisplayName: 'SAVE_A', planetId: 'Prime'})];
+      const saveConfigurationsB = [createSaveConfigurationEntry({
         saveDisplayName: 'SAVE_B', version: '1.1', worldSeed: 7, freeCraft: true, startLocationLabel: 'Crashed Ship'
       })];
 
@@ -18,7 +18,7 @@ describe('Merge save configurations', () => {
       const result = mergeSaveConfigurations(saveConfigurationsA, saveConfigurationsB, overrides);
 
       // Assert
-      expect<SaveConfiguration | undefined>(result).toEqual({
+      expect<SaveConfigurationEntry | undefined>(result).toEqual({
         saveDisplayName: 'SAVE_NAME', planetId: 'Prime', version: '2.004', mode: 'Standard', worldSeed: 42, modded: false,
         modifierTerraformationPace: 0.1, modifierPowerConsumption: 0.2, modifierGaugeDrain: 0.3,
         modifierMeteoOccurence: 0.4, modifierMultiplayerTerraformationFactor: 0.5,
@@ -33,14 +33,14 @@ describe('Merge save configurations', () => {
   describe('When save A has no configuration', () => {
     it('should fall back to save B configuration', () => {
       // Arrange
-      const noSaveConfigurationInSaveA: SaveConfiguration[] = [];
-      const saveConfigurationsB = [createSaveConfiguration({saveDisplayName: 'SAVE_B', planetId: 'Aqualis', worldSeed: 7})];
+      const noSaveConfigurationInSaveA: SaveConfigurationEntry[] = [];
+      const saveConfigurationsB = [createSaveConfigurationEntry({saveDisplayName: 'SAVE_B', planetId: 'Aqualis', worldSeed: 7})];
 
       // Act
       const result = mergeSaveConfigurations(noSaveConfigurationInSaveA, saveConfigurationsB, overrides);
 
       // Assert
-      expect<SaveConfiguration | undefined>(result).toEqual({
+      expect<SaveConfigurationEntry | undefined>(result).toEqual({
         saveDisplayName: 'SAVE_NAME', planetId: 'Aqualis', version: '2.004', mode: 'Standard', worldSeed: 7, modded: false,
         modifierTerraformationPace: 0.1, modifierPowerConsumption: 0.2, modifierGaugeDrain: 0.3,
         modifierMeteoOccurence: 0.4, modifierMultiplayerTerraformationFactor: 0.5,
@@ -55,8 +55,8 @@ describe('Merge save configurations', () => {
   describe('When both saves have no configuration', () => {
     it('should report no configuration at all', () => {
       // Arrange
-      const noSaveConfigurationInSaveA: SaveConfiguration[] = [];
-      const noSaveConfigurationInSaveB: SaveConfiguration[] = [];
+      const noSaveConfigurationInSaveA: SaveConfigurationEntry[] = [];
+      const noSaveConfigurationInSaveB: SaveConfigurationEntry[] = [];
 
       // Act
       const result = mergeSaveConfigurations(noSaveConfigurationInSaveA, noSaveConfigurationInSaveB, overrides);
@@ -69,8 +69,8 @@ describe('Merge save configurations', () => {
   describe('When the save whose format is written declares another version than save A', () => {
     it('should declare the version of that save', () => {
       // Arrange
-      const saveConfigurationsA = [createSaveConfiguration({version: '1.618'})];
-      const saveConfigurationsB = [createSaveConfiguration({version: '2.103'})];
+      const saveConfigurationsA = [createSaveConfigurationEntry({version: '1.618'})];
+      const saveConfigurationsB = [createSaveConfigurationEntry({version: '2.103'})];
 
       // Act
       const result = mergeSaveConfigurations(saveConfigurationsA, saveConfigurationsB, {saveDisplayName: 'SAVE_NAME', declaredVersion: '2.103'});
@@ -83,8 +83,8 @@ describe('Merge save configurations', () => {
   describe('When the save whose format is written declares no version', () => {
     it('should keep the version of the configuration used', () => {
       // Arrange
-      const saveConfigurationsA = [createSaveConfiguration({version: '2.103'})];
-      const noSaveConfigurationInSaveB: SaveConfiguration[] = [];
+      const saveConfigurationsA = [createSaveConfigurationEntry({version: '2.103'})];
+      const noSaveConfigurationInSaveB: SaveConfigurationEntry[] = [];
       const noDeclaredVersion = undefined;
 
       // Act

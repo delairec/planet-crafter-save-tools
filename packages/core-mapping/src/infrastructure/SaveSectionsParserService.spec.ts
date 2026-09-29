@@ -7,6 +7,7 @@ import {createEquipment, createInventory, createPlayer, createSaveConfiguration,
 import {SaveParseError} from 'shared-save-processing/gameDefinitions';
 import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {InventoryEntry} from '../domain/save/InventoryEntry';
+import {WorldEventEntry} from '../domain/save/WorldEventEntry';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 
 describe('SaveSectionsParserService', () => {
@@ -23,13 +24,13 @@ describe('SaveSectionsParserService', () => {
       const {sections} = service.parse(content);
 
       // Assert
-      expect<InventoryEntry[]>(sections.inventories).toEqual([
-        {id: 10, woIds: [100, 101], size: 20},
-        {id: 11, woIds: [], size: 10}
+      expect<readonly InventoryEntry[]>(sections.inventories).toEqual([
+        {id: 10, worldObjectIds: [100, 101], size: 20},
+        {id: 11, worldObjectIds: [], size: 10}
       ]);
     });
 
-    it('should hand over the world objects with their identifier lists as numbers and their absent lists still absent', () => {
+    it('should hand over the world objects in business terms, their identifier lists as numbers and their absent lists still absent', () => {
       // Arrange
       const service = new SaveSectionsParserService();
       const content = createFakeSaveString({
@@ -43,9 +44,9 @@ describe('SaveSectionsParserService', () => {
       const {sections} = service.parse(content);
 
       // Assert
-      expect<WorldObjectEntry[]>([...sections.worldObjects]).toEqual([
-        {id: 100, gId: 'Farm1', siIds: [10, 11], woIds: [200]},
-        {id: 200, gId: 'Container2', liId: 10}
+      expect<readonly WorldObjectEntry[]>(sections.worldObjects).toEqual([
+        {id: 100, groupId: 'Farm1', subInventoryIds: [10, 11], heldWorldObjectIds: [200]},
+        {id: 200, groupId: 'Container2', linkedInventoryId: 10}
       ]);
     });
 
@@ -79,7 +80,7 @@ describe('SaveSectionsParserService', () => {
       const {sections} = service.parse(content);
 
       // Assert
-      expect(sections.worldEvents).toEqual([{planet: 110910045, seed: 7, pos: '0,0,0'}]);
+      expect<readonly WorldEventEntry[]>(sections.worldEvents).toEqual([{planet: 110910045, seed: 7, position: '0,0,0'}]);
     });
 
     it('should hand over its Terrain Layers section and name the release whose format it carries', () => {

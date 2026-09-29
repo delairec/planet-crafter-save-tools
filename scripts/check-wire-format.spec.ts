@@ -160,20 +160,15 @@ describe('findGameDefinitionsImports', () => {
 });
 
 describe('checkWireFormat', () => {
-  const ABBREVIATIONS_ALLOW_LIST_PATH = 'scripts/allow-lists/domain-files-naming-wire-abbreviations.json';
-  const GAME_DEFINITIONS_ALLOW_LIST_PATH = 'scripts/allow-lists/domain-files-importing-game-definitions.json';
   const SUMMARY = 'a domain file names no save format abbreviation (gId, liId, woIds, siIds, linkedWo) and imports nothing from shared-save-processing/gameDefinitions.';
 
-  describe('When every domain file breaking a refusal is listed in the allow-list of that refusal', () => {
+  describe('When no domain file breaks a refusal', () => {
     it('should print that nothing was found and exit with zero', async () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          [ABBREVIATIONS_ALLOW_LIST_PATH]: '["packages/core-mapping/src/domain/save/WorldObjectEntry.ts"]',
-          [GAME_DEFINITIONS_ALLOW_LIST_PATH]: '["packages/core-mapping/src/domain/rules/merge/mergePlayers.ts"]',
-          'packages/core-mapping/src/domain/save/WorldObjectEntry.ts': 'const gId = entry.groupId;',
-          'packages/core-mapping/src/domain/rules/merge/mergePlayers.ts': "import {Player} from 'shared-save-processing/gameDefinitions';",
-          'packages/core-mapping/src/domain/rules/mergeWorldEvents.ts': "import {WorldEventEntity} from '../entities/WorldEventEntity';"
+          'packages/core-mapping/src/domain/rules/mergeWorldEvents.ts': "import {WorldEventEntity} from '../entities/WorldEventEntity';",
+          'packages/core-mapping/src/infrastructure/dto/WorldObjectDto.ts': 'const gId = entry.gId;'
         }
       });
 
@@ -182,7 +177,7 @@ describe('checkWireFormat', () => {
 
       // Assert
       expect({printed, exitCodes}).toEqual({
-        printed: ['check:wire-format: no domain file outside the allow-lists names a save format abbreviation or imports shared-save-processing/gameDefinitions.'],
+        printed: ['check:wire-format: no domain file names a save format abbreviation or imports shared-save-processing/gameDefinitions.'],
         exitCodes: [0]
       });
     });
@@ -193,8 +188,6 @@ describe('checkWireFormat', () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          [ABBREVIATIONS_ALLOW_LIST_PATH]: '[]',
-          [GAME_DEFINITIONS_ALLOW_LIST_PATH]: '[]',
           'packages/core-mapping/src/domain/save/WorldObjectEntry.ts': 'const gId = entry.groupId;',
           'packages/core-mapping/src/domain/rules/merge/mergePlayers.ts': "import {Player} from 'shared-save-processing/gameDefinitions';"
         }
@@ -215,13 +208,11 @@ describe('checkWireFormat', () => {
     });
   });
 
-  describe('When a file is listed in the allow-list of one refusal and breaks the other', () => {
-    it('should report the refusal it is not listed for', async () => {
+  describe('When one file breaks both refusals', () => {
+    it('should report both of them', async () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          [ABBREVIATIONS_ALLOW_LIST_PATH]: '["packages/core-mapping/src/domain/save/InventoryEntry.ts"]',
-          [GAME_DEFINITIONS_ALLOW_LIST_PATH]: '[]',
           'packages/core-mapping/src/domain/save/InventoryEntry.ts': "import {Inventory} from 'shared-save-processing/gameDefinitions';\nconst woIds = inventory.woIds;"
         }
       });
@@ -232,35 +223,10 @@ describe('checkWireFormat', () => {
       // Assert
       expect({printed, exitCodes}).toEqual({
         printed: [
+          `packages/core-mapping/src/domain/save/InventoryEntry.ts:2: woIds\n  ${ABBREVIATION_REASON}`,
+          `packages/core-mapping/src/domain/save/InventoryEntry.ts:2: woIds\n  ${ABBREVIATION_REASON}`,
           `packages/core-mapping/src/domain/save/InventoryEntry.ts:1: shared-save-processing/gameDefinitions\n  ${GAME_DEFINITIONS_REASON}`,
-          `check:wire-format: 1 violation(s): ${SUMMARY}`
-        ],
-        exitCodes: [1]
-      });
-    });
-  });
-
-  describe('When a listed file is no longer reported by its refusal', () => {
-    it('should report each entry to remove and exit with one', async () => {
-      // Arrange
-      const {io, printed, exitCodes} = createFakeScriptIo({
-        files: {
-          [ABBREVIATIONS_ALLOW_LIST_PATH]: '["packages/core-mapping/src/domain/save/WorldObjectEntry.ts"]',
-          [GAME_DEFINITIONS_ALLOW_LIST_PATH]: '["packages/core-mapping/src/domain/rules/merge/mergePlayers.ts"]',
-          'packages/core-mapping/src/domain/save/WorldObjectEntry.ts': 'const groupId = entry.groupId;',
-          'packages/core-mapping/src/domain/rules/merge/mergePlayers.ts': "import {PlayerEntry} from '../../save/PlayerEntry';"
-        }
-      });
-
-      // Act
-      await checkWireFormat(io);
-
-      // Assert
-      expect({printed, exitCodes}).toEqual({
-        printed: [
-          `${ABBREVIATIONS_ALLOW_LIST_PATH}: packages/core-mapping/src/domain/save/WorldObjectEntry.ts is no longer reported\n  remove its entry: the allow-list only shrinks`,
-          `${GAME_DEFINITIONS_ALLOW_LIST_PATH}: packages/core-mapping/src/domain/rules/merge/mergePlayers.ts is no longer reported\n  remove its entry: the allow-list only shrinks`,
-          `check:wire-format: 2 violation(s): ${SUMMARY}`
+          `check:wire-format: 3 violation(s): ${SUMMARY}`
         ],
         exitCodes: [1]
       });

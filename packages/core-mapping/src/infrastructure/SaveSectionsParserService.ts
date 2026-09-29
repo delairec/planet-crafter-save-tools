@@ -1,40 +1,26 @@
 import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
-import {parseIdList} from "shared-save-processing/idList.js";
 import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
 import {UnknownFormatReleaseError} from "shared-save-processing/gameReleases.js";
-import {
-  GlobalMetadata,
-  Inventory,
-  MailboxMessage,
-  ParsedSections,
-  Player,
-  SaveConfiguration,
-  SaveSectionIndexes,
-  Statistics,
-  StoryEvent,
-  TerraformationLevel,
-  TerrainLayer,
-  WorldEvent,
-  WorldObject
-} from "shared-save-processing/gameDefinitions";
+import {ParsedSections, SaveSectionIndexes} from "shared-save-processing/gameDefinitions";
 import {ParsedSaveSections, SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
-import {InventoryEntry} from "../domain/save/InventoryEntry";
 import {SaveSections} from "../domain/save/SaveSections";
-import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
+import {
+  decodeEntry,
+  EntryCodec,
+  GLOBAL_METADATA_CODEC,
+  INVENTORY_CODEC,
+  MAILBOX_MESSAGE_CODEC,
+  PLAYER_CODEC,
+  SAVE_CONFIGURATION_CODEC,
+  STATISTICS_CODEC,
+  STORY_EVENT_CODEC,
+  TERRAFORMATION_LEVEL_CODEC,
+  TERRAIN_LAYER_CODEC,
+  WORLD_EVENT_CODEC,
+  WORLD_OBJECT_CODEC
+} from "./saveEntryCodecs";
 
-interface ParsedSectionContents {
-  globalMetadata: GlobalMetadata[];
-  terraformationLevels: TerraformationLevel[];
-  players: Player[];
-  worldObjects: () => Generator<WorldObject>;
-  inventories: Inventory[];
-  statistics: Statistics[];
-  mailboxMessages: MailboxMessage[];
-  storyEvents: StoryEvent[];
-  saveConfiguration: SaveConfiguration[];
-  terrainLayers: TerrainLayer[];
-  worldEvents: WorldEvent[];
-}
+type SectionRecords<Record> = Iterable<Record> | (() => Iterable<Record>);
 
 export class SaveSectionsParserService implements SaveSectionsParserPort {
   parse(content: string): ParsedSaveSections {
@@ -49,43 +35,23 @@ export class SaveSectionsParserService implements SaveSectionsParserPort {
 }
 
 function toSaveSections(sections: ParsedSections, formatRelease: string, sectionIndexes: SaveSectionIndexes): SaveSections {
-  function readSection<Name extends Exclude<keyof ParsedSectionContents, 'terrainLayers'>>(name: Name): ParsedSectionContents[Name] {
-    return sections[sectionIndexes[name]] as ParsedSectionContents[Name];
-  }
-
-  function readTerrainLayers(): TerrainLayer[] | undefined {
-    const {terrainLayers: terrainLayersIndex} = sectionIndexes;
-    return terrainLayersIndex === undefined ? undefined : sections[terrainLayersIndex] as TerrainLayer[];
+  function readSection<Record extends object, Entry>(codec: EntryCodec<Record, Entry>): Entry[] {
+    const records = sections[sectionIndexes[codec.section] as number] as SectionRecords<Record>;
+    return Array.from(typeof records === 'function' ? records() : records, record => decodeEntry(record, codec));
   }
 
   return {
     formatRelease,
-    globalMetadata: readSection('globalMetadata'),
-    terraformationLevels: readSection('terraformationLevels'),
-    players: readSection('players'),
-    worldObjects: [...readSection('worldObjects')()].map(toWorldObjectEntry),
-    inventories: readSection('inventories').map(toInventoryEntry),
-    statistics: readSection('statistics'),
-    mailboxes: readSection('mailboxMessages'),
-    storyEvents: readSection('storyEvents'),
-    saveConfigurations: readSection('saveConfiguration'),
-    terrainLayers: readTerrainLayers(),
-    worldEvents: readSection('worldEvents')
+    globalMetadata: readSection(GLOBAL_METADATA_CODEC),
+    terraformationLevels: readSection(TERRAFORMATION_LEVEL_CODEC),
+    players: readSection(PLAYER_CODEC),
+    worldObjects: readSection(WORLD_OBJECT_CODEC),
+    inventories: readSection(INVENTORY_CODEC),
+    statistics: readSection(STATISTICS_CODEC),
+    mailboxes: readSection(MAILBOX_MESSAGE_CODEC),
+    storyEvents: readSection(STORY_EVENT_CODEC),
+    saveConfigurations: readSection(SAVE_CONFIGURATION_CODEC),
+    terrainLayers: sectionIndexes.terrainLayers === undefined ? undefined : readSection(TERRAIN_LAYER_CODEC),
+    worldEvents: readSection(WORLD_EVENT_CODEC)
   };
-}
-
-function toInventoryEntry(inventory: Inventory): InventoryEntry {
-  return {...inventory, woIds: parseIdList(inventory.woIds)};
-}
-
-function toWorldObjectEntry(worldObject: WorldObject): WorldObjectEntry {
-  return {
-    ...worldObject,
-    siIds: parseOptionalIdList(worldObject.siIds),
-    woIds: parseOptionalIdList(worldObject.woIds)
-  };
-}
-
-function parseOptionalIdList(idList: string | undefined): number[] | undefined {
-  return idList === undefined ? undefined : parseIdList(idList);
 }

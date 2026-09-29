@@ -1,7 +1,8 @@
-import {Player, TerraformationLevel} from 'shared-save-processing/gameDefinitions';
 import {SaveSectionsMapperPort} from '../application/ports/SaveSectionsMapperPort';
 import {InventoryEntry} from '../domain/save/InventoryEntry';
+import {PlayerEntry} from '../domain/save/PlayerEntry';
 import {SaveSections} from '../domain/save/SaveSections';
+import {TerraformationLevelEntry} from '../domain/save/TerraformationLevelEntry';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 import {GlobalProgressionValueObject, createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {PlayerEntity} from "../domain/entities/PlayerEntity";
@@ -16,10 +17,22 @@ import {
   createPlanetWorldObjectsValueObject
 } from "../domain/valueObjects/PlanetWorldObjectsValueObject";
 import {WorldObjectName} from "../domain/worldObjectNames";
+import {UnreadableSaveEntryValueError} from "./errors/UnreadableSaveEntryValueError";
+
+const POSITION_SEPARATOR = ',';
+const POSITION_AXES = 3;
 
 function parsePosition(position: string): [number, number, number] {
-  const [x, y, z] = position.split(',').map(Number);
+  const coordinates = position.split(POSITION_SEPARATOR).map(readCoordinate);
+  if (coordinates.length !== POSITION_AXES || !coordinates.every(Number.isFinite)) {
+    throw new UnreadableSaveEntryValueError('worldObjects', 'pos', position);
+  }
+  const [x, y, z] = coordinates;
   return [x, y, z];
+}
+
+function readCoordinate(coordinate: string): number {
+  return coordinate.trim() === '' ? Number.NaN : Number(coordinate);
 }
 
 export class SaveSectionsMapperService implements SaveSectionsMapperPort {
@@ -45,7 +58,7 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
   getPlayers(): PlayerEntity[] {
     const inventories = this.getInventories();
 
-    return this.sections.players.map((player: Player): PlayerEntity => {
+    return this.sections.players.map((player: PlayerEntry): PlayerEntity => {
       const playerInventory = inventories.find(inventory => inventory.id === player.inventoryId);
       const playerEquipment = inventories.find(inventory => inventory.id === player.equipmentId);
 
@@ -68,7 +81,7 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
   }
 
   getTerraformationLevels(): TerraformationLevelEntity[] {
-    return this.sections.terraformationLevels.map((level: TerraformationLevel): TerraformationLevelEntity => new TerraformationLevelEntity({
+    return this.sections.terraformationLevels.map((level: TerraformationLevelEntry): TerraformationLevelEntity => new TerraformationLevelEntity({
       planetId: level.planetId,
       unitOxygenLevel: level.unitOxygenLevel,
       unitHeatLevel: level.unitHeatLevel,
@@ -112,7 +125,7 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
 
   getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
     const positionedWorldObjects = this.sections.worldObjects.filter(
-      (worldObject) => worldObject.pos !== undefined && worldObject.planet !== undefined
+      (worldObject) => worldObject.position !== undefined && worldObject.planet !== undefined
     );
 
     const placedWorldObjectsByPlanet = new Map<number, PlacedWorldObjectEntity[]>();
@@ -130,14 +143,14 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
   getWorldObjects(): WorldObjectEntity[] {
     return this.sections.worldObjects.map((worldObject) => new WorldObjectEntity({
       id: String(worldObject.id),
-      name: worldObject.gId as WorldObjectName
+      name: worldObject.groupId as WorldObjectName
     }));
   }
 
   getInventories(): InventoryEntity[] {
     return this.sections.inventories.map((inventory: InventoryEntry): InventoryEntity => new InventoryEntity({
       id: inventory.id,
-      worldObjectIds: inventory.woIds.map(String),
+      worldObjectIds: inventory.worldObjectIds.map(String),
       size: inventory.size
     }));
   }
@@ -145,10 +158,10 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
   private toPlacedWorldObjectEntity(worldObject: WorldObjectEntry): PlacedWorldObjectEntity {
     return new PlacedWorldObjectEntity({
       id: String(worldObject.id),
-      name: worldObject.gId as WorldObjectName,
-      position: parsePosition(worldObject.pos!),
+      name: worldObject.groupId as WorldObjectName,
+      position: parsePosition(worldObject.position!),
       planetId: worldObject.planet!,
-      inventoryId: worldObject.liId
+      inventoryId: worldObject.linkedInventoryId
     });
   }
 
@@ -156,7 +169,7 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
     const result: WorldObjectEntity[] = [];
     for (const worldObject of this.sections.worldObjects) {
       if (ids.includes(String(worldObject.id))) {
-        result.push(new WorldObjectEntity({id: String(worldObject.id), name: worldObject.gId as WorldObjectName}));
+        result.push(new WorldObjectEntity({id: String(worldObject.id), name: worldObject.groupId as WorldObjectName}));
       }
     }
     return result;
