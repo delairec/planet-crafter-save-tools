@@ -1,6 +1,5 @@
 [
   "packages/core-mapping/src/application/ports/EnergyLevelsPresenterPort.ts",
-  "packages/core-mapping/src/application/ports/PlayersMenuPresenterPort.ts",
   "packages/core-mapping/src/application/ports/PlayersPresenterPort.ts",
   "packages/core-mapping/src/application/ports/SaveIdentityPresenterPort.ts",
   "packages/core-mapping/src/application/ports/TerraformationLevelsPresenterPort.ts"
