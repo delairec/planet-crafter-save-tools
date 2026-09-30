@@ -1,17 +1,17 @@
 import {Accessor, createContext, createResource, createSignal, JSX, Resource} from "solid-js";
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
-import {loadConfigurationPageController} from "core-mapping/controllers/LoadConfigurationPageController";
-import {loadPlayersSectionController} from "core-mapping/controllers/LoadPlayersSectionController";
 import {
+  loadConfigurationPageController,
+  loadEnergyLevelsSectionController,
+  loadPlayersMenuController,
+  loadPlayersSectionController,
+  loadSaveIdentityController,
   loadTerraformationLevelsSectionController
-} from "core-mapping/controllers/LoadTerraformationLevelsSectionController";
-import {loadEnergyLevelsSectionController} from "core-mapping/controllers/LoadEnergyLevelsSectionController";
+} from "core-mapping/composition/compositionRoot";
 import {ConfigurationPageViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {TerraformationLevelsViewModel} from "core-mapping/presentation/viewModels/TerraformationLevelsViewModel";
 import {PlayersViewModel} from "core-mapping/presentation/viewModels/PlayersViewModel";
-import {loadSaveIdentityController} from "core-mapping/controllers/LoadSaveIdentityController";
-import {loadPlayersMenuController} from "core-mapping/controllers/LoadPlayersMenuController";
 import {SaveIdentityViewModel} from "core-mapping/presentation/viewModels/SaveIdentityViewModel";
 import {PlayersMenuViewModel} from "core-mapping/presentation/viewModels/PlayersMenuViewModel";
 

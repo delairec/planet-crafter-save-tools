@@ -1,5 +1,5 @@
 import {createSignal, onCleanup, onMount, Show} from 'solid-js';
-import {loadAndValidateSaveFileController} from 'core-mapping/controllers/LoadAndValidateSaveFileController';
+import {loadAndValidateSaveFileController} from 'core-mapping/composition/compositionRoot';
 import {SaveValidationMessageViewModel} from 'core-mapping/presentation/viewModels/SaveFileValidationViewModel';
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';

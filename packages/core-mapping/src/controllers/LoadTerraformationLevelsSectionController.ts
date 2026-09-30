@@ -3,7 +3,6 @@ import {TerraformationLevelsPresenter} from '../presentation/TerraformationLevel
 import {TerraformationLevelsPresenterPort} from '../application/ports/TerraformationLevelsPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {UseCaseFactory} from './UseCaseFactory';
-import {createLoadTerraformationLevelsSection} from '../composition/compositionRoot';
 
 export class LoadTerraformationLevelsSectionController {
   constructor(private readonly createLoadTerraformationLevelsSection: UseCaseFactory<TerraformationLevelsPresenterPort, LoadSaveSectionsRequest>) {
@@ -18,5 +17,3 @@ export class LoadTerraformationLevelsSectionController {
     return presenter.viewModel;
   }
 }
-
-export const loadTerraformationLevelsSectionController = new LoadTerraformationLevelsSectionController(createLoadTerraformationLevelsSection);

@@ -3,7 +3,6 @@ import {ConfigurationPagePresenter} from "../presentation/ConfigurationPagePrese
 import {ConfigurationPagePresenterPort} from "../application/ports/ConfigurationPagePresenterPort";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
-import {createLoadConfigurationPage} from "../composition/compositionRoot";
 
 export class LoadConfigurationPageController {
   constructor(private readonly createLoadConfigurationPage: UseCaseFactory<ConfigurationPagePresenterPort, LoadSaveSectionsRequest>) {
@@ -18,5 +17,3 @@ export class LoadConfigurationPageController {
     return presenter.viewModel;
   }
 }
-
-export const loadConfigurationPageController = new LoadConfigurationPageController(createLoadConfigurationPage);

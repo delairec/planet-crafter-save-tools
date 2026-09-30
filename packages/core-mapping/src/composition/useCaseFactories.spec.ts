@@ -13,9 +13,9 @@ import {
   createLoadPlayersSection,
   createLoadSaveIdentity,
   createLoadTerraformationLevelsSection
-} from './compositionRoot';
+} from './useCaseFactories';
 
-describe('compositionRoot', () => {
+describe('useCaseFactories', () => {
   describe('When the save manager loads the configuration page', () => {
     it('should present the progression read from the save', async () => {
       // Arrange

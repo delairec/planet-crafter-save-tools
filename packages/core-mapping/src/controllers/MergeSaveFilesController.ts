@@ -3,7 +3,6 @@ import {MergeResultPresenter} from "../presentation/MergeResultPresenter";
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "../application/requests/MergeSaveFilesRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
-import {createMergeSaveFiles} from "../composition/compositionRoot";
 
 export class MergeSaveFilesController {
   constructor(private readonly createMergeSaveFiles: UseCaseFactory<MergeResultPresenterPort, MergeSaveFilesRequest>) {
@@ -18,5 +17,3 @@ export class MergeSaveFilesController {
     return presenter.viewModel;
   }
 }
-
-export const mergeSaveFilesController = new MergeSaveFilesController(createMergeSaveFiles);

@@ -1,7 +1,7 @@
 /** @import { MergeResultViewModel } from 'core-mapping/presentation/viewModels/MergeResultViewModel' */
 
 import {beforeEach, describe, expect, it, mock, spyOn} from 'bun:test';
-import {mergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesController';
+import {mergeSaveFilesController} from 'core-mapping/composition/compositionRoot';
 import {initMergeCli, UNEXPECTED_ERROR_EXIT_CODE} from './initMergeCli.js';
 import {
   FAKE_SAVE_STRING_A,

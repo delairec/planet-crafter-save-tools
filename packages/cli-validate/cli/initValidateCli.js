@@ -1,4 +1,4 @@
-import {validateSaveFileController} from 'core-mapping/controllers/ValidateSaveFileController';
+import {validateSaveFileController} from 'core-mapping/composition/compositionRoot';
 import {parseValidateCliArguments} from './parseValidateCliArguments.js';
 import {renderHelp, renderMissingFile, renderSaveErrors, renderSaveIsValid, renderSaveWarnings, renderUnknownArguments, renderVersion} from './renderValidateCliOutput.js';
 

@@ -3,7 +3,6 @@ import {PlayersPresenter} from '../presentation/PlayersPresenter';
 import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {UseCaseFactory} from './UseCaseFactory';
-import {createLoadPlayersSection} from '../composition/compositionRoot';
 
 export class LoadPlayersSectionController {
   constructor(private readonly createLoadPlayersSection: UseCaseFactory<PlayersPresenterPort, LoadSaveSectionsRequest>) {
@@ -18,5 +17,3 @@ export class LoadPlayersSectionController {
     return presenter.viewModel;
   }
 }
-
-export const loadPlayersSectionController = new LoadPlayersSectionController(createLoadPlayersSection);

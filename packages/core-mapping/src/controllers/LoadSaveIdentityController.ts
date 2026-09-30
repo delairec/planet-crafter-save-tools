@@ -3,7 +3,6 @@ import {SaveIdentityPresenter} from "../presentation/SaveIdentityPresenter";
 import {SaveIdentityPresenterPort} from "../application/ports/SaveIdentityPresenterPort";
 import {LoadSaveIdentityRequest} from "../application/requests/LoadSaveIdentityRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
-import {createLoadSaveIdentity} from "../composition/compositionRoot";
 
 export class LoadSaveIdentityController {
   constructor(private readonly createLoadSaveIdentity: UseCaseFactory<SaveIdentityPresenterPort, LoadSaveIdentityRequest>) {
@@ -18,5 +17,3 @@ export class LoadSaveIdentityController {
     return presenter.viewModel;
   }
 }
-
-export const loadSaveIdentityController = new LoadSaveIdentityController(createLoadSaveIdentity);

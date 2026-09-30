@@ -1,5 +1,5 @@
 import {createSignal, Show} from 'solid-js';
-import {mergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesController';
+import {mergeSaveFilesController} from 'core-mapping/composition/compositionRoot';
 import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeResultViewModel';
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';

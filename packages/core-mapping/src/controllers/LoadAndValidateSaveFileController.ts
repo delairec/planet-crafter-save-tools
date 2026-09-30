@@ -3,7 +3,6 @@ import {LoadSaveFilePresenter} from "../presentation/LoadSaveFilePresenter";
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import {ValidateSaveFileRequest} from "../application/requests/ValidateSaveFileRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
-import {createValidateSaveFile} from "../composition/compositionRoot";
 
 export class LoadAndValidateSaveFileController {
   constructor(private readonly createValidateSaveFile: UseCaseFactory<SaveFileValidationPresenterPort, ValidateSaveFileRequest>) {
@@ -19,5 +18,3 @@ export class LoadAndValidateSaveFileController {
     return presenter.viewModel;
   }
 }
-
-export const loadAndValidateSaveFileController = new LoadAndValidateSaveFileController(createValidateSaveFile);

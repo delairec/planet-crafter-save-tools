@@ -3,7 +3,6 @@ import {PlayersMenuPresenter} from "../presentation/PlayersMenuPresenter";
 import {PlayersMenuPresenterPort} from "../application/ports/PlayersMenuPresenterPort";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
-import {createLoadPlayersMenu} from "../composition/compositionRoot";
 
 export class LoadPlayersMenuController {
   constructor(private readonly createLoadPlayersMenu: UseCaseFactory<PlayersMenuPresenterPort, LoadSaveSectionsRequest>) {
@@ -18,5 +17,3 @@ export class LoadPlayersMenuController {
     return presenter.viewModel;
   }
 }
-
-export const loadPlayersMenuController = new LoadPlayersMenuController(createLoadPlayersMenu);
