@@ -1,13 +1,14 @@
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
-import {ValidationIssue} from "../application/ports/ValidationIssue";
+import {ValidationIssue} from "../domain/validation/ValidationIssue";
 import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {SaveFileValidationViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatValidationError} from "./formatValidationError";
 import {formatSaveWarning} from "./formatSaveWarning";
 import {formatUnreadableLine} from "./formatUnreadableLine";
 import {formatUniqueHostError} from "./formatUniqueHostError";
 import {formatJsonExtensionError} from "./formatJsonExtensionError";
+import type {SaveFileWithUnreadableLinesResponse} from "../application/responses/SaveFileWithUnreadableLinesResponse";
+import type {InvalidSaveFileResponse} from "../application/responses/InvalidSaveFileResponse";
 
 export class SaveFileValidationPresenter implements SaveFileValidationPresenterPort {
   private _viewModel: SaveFileValidationViewModel;
@@ -24,7 +25,7 @@ export class SaveFileValidationPresenter implements SaveFileValidationPresenterP
     this._viewModel = {status: 'valid', errors: [], warnings: warnings.map(formatSaveWarning)};
   }
 
-  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarningResponse[]): void {
+  presentInvalidSaveFile({errors, warnings}: InvalidSaveFileResponse): void {
     this._viewModel = {
       status: 'invalid',
       errors: errors.map(formatValidationError),
@@ -36,7 +37,7 @@ export class SaveFileValidationPresenter implements SaveFileValidationPresenterP
     this._viewModel = {status: 'invalid', errors: [formatJsonExtensionError()], warnings: []};
   }
 
-  presentSaveFileWithUnreadableLines(unreadableLines: UnreadableLine[], warnings: SaveWarningResponse[]): void {
+  presentSaveFileWithUnreadableLines({unreadableLines, warnings}: SaveFileWithUnreadableLinesResponse): void {
     this._viewModel = {
       status: 'invalid',
       errors: unreadableLines.map(formatUnreadableLine),

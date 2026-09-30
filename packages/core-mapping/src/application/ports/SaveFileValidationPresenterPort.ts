@@ -1,15 +1,15 @@
-import {ValidationIssue} from "./ValidationIssue";
+import type {InvalidSaveFileResponse} from "../responses/InvalidSaveFileResponse";
 import type {SaveWarningResponse} from "../responses/SaveWarningResponse";
-import {UnreadableLine} from "./SaveSectionLocation";
+import type {SaveFileWithUnreadableLinesResponse} from "../responses/SaveFileWithUnreadableLinesResponse";
 
 export interface SaveFileValidationPresenterPort {
   presentValidSaveFile(warnings: SaveWarningResponse[]): void;
 
-  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarningResponse[]): void;
+  presentInvalidSaveFile(response: InvalidSaveFileResponse): void;
 
   presentFileWithoutJsonExtension(): void;
 
-  presentSaveFileWithUnreadableLines(unreadableLines: UnreadableLine[], warnings: SaveWarningResponse[]): void;
+  presentSaveFileWithUnreadableLines(response: SaveFileWithUnreadableLinesResponse): void;
 
   presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarningResponse[]): void;
 }

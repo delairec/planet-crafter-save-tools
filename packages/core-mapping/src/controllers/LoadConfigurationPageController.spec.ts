@@ -2,7 +2,7 @@ import {describe, expect, it, mock} from 'bun:test';
 import {LoadConfigurationPageController} from './LoadConfigurationPageController';
 import {ConfigurationPagePresenterPort} from '../application/ports/ConfigurationPagePresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
-import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
 import {ConfigurationPagePresenter} from '../presentation/ConfigurationPagePresenter';
 
 type ExecuteLoadConfigurationPage = (request: LoadSaveSectionsRequest, presenter: ConfigurationPagePresenterPort) => Promise<void>;
@@ -29,7 +29,7 @@ describe('LoadConfigurationPageController', () => {
     const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
     const controller = createController(async (_request, presenter) => {
       await Promise.resolve();
-      presenter.displaySaveWithUnreadableLines(unreadableLines);
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
     });
 
     // Act

@@ -1,6 +1,6 @@
 /**
  * @import { ParsedSections } from 'shared-save-processing/gameDefinitions'
- * @import { ValidationIssue } from '../application/ports/ValidationIssue.ts'
+ * @import { ValidationIssue } from '../domain/validation/ValidationIssue.ts'
  * @import { SectionEntrySchemaError } from './mapSchemaErrorToValidationIssue.ts'
  */
 

@@ -1,4 +1,4 @@
-import {ValidationIssue, ValidationIssueCode} from "../application/ports/ValidationIssue";
+import {ValidationIssue, ValidationIssueCode} from "../domain/validation/ValidationIssue";
 import {
   formatFieldOfWrongTypeMessage,
   formatFloatSerializationMessage,

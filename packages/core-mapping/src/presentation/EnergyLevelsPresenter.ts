@@ -1,5 +1,4 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {EnergyLevelsResponse} from "../application/responses/EnergyLevelsResponse";
 import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
 import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
@@ -25,6 +24,7 @@ import {
   resolveEnergyLevelsSectionPowerConsumptionModifierNotification,
   resolveEnergyLevelsSectionUnnamedPlanetName
 } from "./messages/energyLevelsSectionMessages.js";
+import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 
 const submergedMachinesNotification: NotificationViewModel = {
   severity: 'limitation',
@@ -52,7 +52,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     };
   }
 
-  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void {
+  displaySaveWithUnreadableLines({unreadableLines}: UnreadableLinesResponse): void {
     this._viewModel = {notifications: [], planets: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 

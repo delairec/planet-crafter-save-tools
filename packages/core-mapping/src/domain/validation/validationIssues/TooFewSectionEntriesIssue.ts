@@ -1,4 +1,4 @@
-import type {SaveSectionLocation} from "../SaveSectionLocation";
+import type {SaveSectionLocation} from "../../save/SaveSectionLocation";
 
 export interface TooFewSectionEntriesIssue {
   readonly code: 'too-few-section-entries';

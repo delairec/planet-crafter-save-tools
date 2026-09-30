@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
+import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {describe, expect, it} from 'bun:test';
 import {TerraformationLevelsPresenter} from './TerraformationLevelsPresenter';
 import {TerraformationLevelsViewModel} from './viewModels/TerraformationLevelsViewModel';
@@ -133,7 +133,7 @@ describe('TerraformationLevelsPresenter', () => {
       const presenter = new TerraformationLevelsPresenter();
 
       // Act
-      presenter.displaySaveWithUnreadableLines(unreadableLines);
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
 
       // Assert
       expect(presenter.viewModel).toEqual<TerraformationLevelsViewModel>({planets: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]});

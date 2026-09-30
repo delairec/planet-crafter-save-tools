@@ -1,8 +1,8 @@
 import {describe, expect, it} from 'bun:test';
 import {mapSchemaErrorToValidationIssue, SectionEntrySchemaError} from './mapSchemaErrorToValidationIssue';
 import {UnknownSchemaConstraintError} from './errors/UnknownSchemaConstraintError';
-import {ValidationIssue} from '../application/ports/ValidationIssue';
-import {SaveSectionLocation} from '../application/ports/SaveSectionLocation';
+import {ValidationIssue} from '../domain/validation/ValidationIssue';
+import {SaveSectionLocation} from '../domain/save/SaveSectionLocation';
 
 const playersSection: SaveSectionLocation = {name: 'players', index: 2};
 const fourthEntry = 3;

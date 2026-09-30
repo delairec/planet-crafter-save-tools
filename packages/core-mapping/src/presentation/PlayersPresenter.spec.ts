@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
+import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {describe, expect, it} from 'bun:test';
 import {PlayersPresenter} from './PlayersPresenter';
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
@@ -98,7 +98,7 @@ describe('PlayersPresenter', () => {
       const presenter = new PlayersPresenter();
 
       // Act
-      presenter.displaySaveWithUnreadableLines(unreadableLines);
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
 
       // Assert
       expect(presenter.viewModel).toEqual<PlayersViewModel>({players: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]});

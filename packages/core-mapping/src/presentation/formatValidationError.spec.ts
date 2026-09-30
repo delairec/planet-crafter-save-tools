@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {formatValidationError} from './formatValidationError';
-import {ValidationIssue} from '../application/ports/ValidationIssue';
+import {ValidationIssue} from '../domain/validation/ValidationIssue';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 describe('formatValidationError', () => {

@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
+import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {describe, expect, it} from 'bun:test';
 import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
@@ -320,7 +320,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displaySaveWithUnreadableLines(unreadableLines);
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
 
       // Assert
       expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>({notifications: [], planets: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]});

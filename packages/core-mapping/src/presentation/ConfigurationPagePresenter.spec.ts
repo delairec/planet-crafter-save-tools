@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
+import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {describe, expect, it} from 'bun:test';
 import {ConfigurationPagePresenter} from "./ConfigurationPagePresenter";
 import {ConfigurationPageViewModel} from "./viewModels/ConfigurationPageViewModel";
@@ -140,7 +140,7 @@ describe('ConfigurationPagePresenter', () => {
       const presenter = new ConfigurationPagePresenter();
 
       // Act
-      presenter.displaySaveWithUnreadableLines(unreadableLines);
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
 
       // Assert
       expect(presenter.viewModel).toEqual<ConfigurationPageViewModel>({progression: {fields: []}, unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]});

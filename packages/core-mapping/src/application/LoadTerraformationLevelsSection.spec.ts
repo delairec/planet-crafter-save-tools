@@ -1,4 +1,4 @@
-import {UnreadableLine} from "./ports/SaveSectionLocation";
+import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {describe, expect, it, mock} from 'bun:test';
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {LoadTerraformationLevelsSection} from './LoadTerraformationLevelsSection';
@@ -46,7 +46,7 @@ describe('LoadTerraformationLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith([{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]);
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]});
       expect(presenter.displayTerraformationLevels).not.toHaveBeenCalled();
     });
   });

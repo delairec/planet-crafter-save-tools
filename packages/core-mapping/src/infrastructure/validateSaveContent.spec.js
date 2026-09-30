@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {validateSaveContent} from './validateSaveContent.js';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes.ts';
+import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes.ts';
 import {createFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';

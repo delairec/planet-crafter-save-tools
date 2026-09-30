@@ -1,4 +1,4 @@
-/** @import { SaveSectionName } from '../../application/ports/SaveSectionLocation' */
+/** @import { SaveSectionName } from '../../domain/save/SaveSectionLocation' */
 
 /** @type {Record<SaveSectionName, string>} */
 export const saveSectionLabels = {

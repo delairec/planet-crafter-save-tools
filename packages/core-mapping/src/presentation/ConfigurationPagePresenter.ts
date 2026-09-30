@@ -1,5 +1,4 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {ConfigurationPagePresenterPort} from "../application/ports/ConfigurationPagePresenterPort";
 import {AssessedSaveConfigurationResponse, ConfigurationPageResponse} from "../application/responses/ConfigurationPageResponse";
 import {DifficultyModifierEffect} from "../domain/rules/assessDifficultyModifiers";
@@ -44,6 +43,7 @@ import {
   configurationPageUnlockOffLabel,
   configurationPageUnlockOnLabel
 } from "./messages/configurationPageMessages.js";
+import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 
 const NO_CRAFTED_OBJECT_COUNTED = 0;
 
@@ -75,7 +75,7 @@ export class ConfigurationPagePresenter implements ConfigurationPagePresenterPor
     };
   }
 
-  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void {
+  displaySaveWithUnreadableLines({unreadableLines}: UnreadableLinesResponse): void {
     this._viewModel = {progression: {fields: []}, unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

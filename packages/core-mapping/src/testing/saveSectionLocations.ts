@@ -4,7 +4,7 @@ import {
   PLAYERS_SECTION_INDEX,
   WORLD_OBJECTS_SECTION_INDEX
 } from "shared-save-processing/sectionIndexes.js";
-import {SaveSectionLocation} from "../application/ports/SaveSectionLocation";
+import {SaveSectionLocation} from "../domain/save/SaveSectionLocation";
 
 export const GLOBAL_METADATA_SECTION: SaveSectionLocation = {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX};
 export const PLAYERS_SECTION: SaveSectionLocation = {name: 'players', index: PLAYERS_SECTION_INDEX};

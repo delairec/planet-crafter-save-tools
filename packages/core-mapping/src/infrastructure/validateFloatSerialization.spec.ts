@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {validateFloatSerialization} from './validateFloatSerialization';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes';
+import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
 
 describe('validateFloatSerialization', () => {
 

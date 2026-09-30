@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
+import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPort";
 import {SaveSectionsReadingResponse} from "../application/responses/SaveSectionsReadingResponse";
 import {SaveSectionsMapperPort} from "../application/ports/SaveSectionsMapperPort";

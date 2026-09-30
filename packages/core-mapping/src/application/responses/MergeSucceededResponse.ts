@@ -1,4 +1,4 @@
-import {ValidationIssue} from "../ports/ValidationIssue";
+import {ValidationIssue} from "../../domain/validation/ValidationIssue";
 import {MergeWarningResponse} from "./MergeWarningResponse";
 import type {SaveWarningResponse} from "./SaveWarningResponse";
 

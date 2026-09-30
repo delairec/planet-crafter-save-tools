@@ -1,4 +1,4 @@
-import type {SaveSectionName} from "shared-save-processing/gameDefinitions";
+import type {SaveSectionName} from "../../domain/save/SaveSectionLocation";
 
 export type MergeWarningResponse =
   | {code: 'merged-save-format'; formatRelease: string}

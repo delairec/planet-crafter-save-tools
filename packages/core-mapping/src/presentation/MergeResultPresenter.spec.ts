@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {MergeResultPresenter} from './MergeResultPresenter';
-import {ValidationIssue} from '../application/ports/ValidationIssue';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes';
+import {ValidationIssue} from '../domain/validation/ValidationIssue';
+import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
 import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';

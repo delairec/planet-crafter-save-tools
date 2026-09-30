@@ -2,7 +2,7 @@ import {describe, expect, it, mock} from 'bun:test';
 import {LoadPlayersMenuController} from './LoadPlayersMenuController';
 import {PlayersMenuPresenterPort} from '../application/ports/PlayersMenuPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
-import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
 import {PlayersMenuPresenter} from '../presentation/PlayersMenuPresenter';
 
 type ExecuteLoadPlayersMenu = (request: LoadSaveSectionsRequest, presenter: PlayersMenuPresenterPort) => Promise<void>;
@@ -29,7 +29,7 @@ describe('LoadPlayersMenuController', () => {
     const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
     const controller = createController(async (_request, presenter) => {
       await Promise.resolve();
-      presenter.displaySaveWithUnreadableLines(unreadableLines);
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
     });
 
     // Act

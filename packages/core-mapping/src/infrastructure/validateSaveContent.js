@@ -1,6 +1,6 @@
 /**
  * @import { SaveWarning, UnreadableSaveLine } from 'shared-save-processing/gameDefinitions'
- * @import { ValidationIssue } from '../application/ports/ValidationIssue'
+ * @import { ValidationIssue } from '../domain/validation/ValidationIssue'
  */
 
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
@@ -8,7 +8,7 @@ import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
 import {resolveSectionIndexes, SAVE_CONFIGURATION_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes.ts';
+import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes.ts';
 import {locateSaveSection} from './locateSaveSection.ts';
 import {locateUnreadableLine} from './locateUnreadableLine.ts';
 

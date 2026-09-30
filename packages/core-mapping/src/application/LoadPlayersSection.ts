@@ -15,7 +15,7 @@ export class LoadPlayersSection {
     const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
 
     if (unreadableLines.length > 0) {
-      this.presenter.displaySaveWithUnreadableLines(unreadableLines);
+      this.presenter.displaySaveWithUnreadableLines({unreadableLines});
       return;
     }
 

@@ -1,4 +1,4 @@
-import type {SaveEntryField} from "../SaveSectionLocation";
+import type {SaveEntryField} from "../../save/SaveSectionLocation";
 
 export interface FieldOfWrongTypeIssue extends SaveEntryField {
   readonly code: 'field-of-wrong-type';

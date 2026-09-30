@@ -1,4 +1,4 @@
-import type {SaveEntryField} from "../SaveSectionLocation";
+import type {SaveEntryField} from "../../save/SaveSectionLocation";
 
 export interface MissingFieldIssue extends SaveEntryField {
   readonly code: 'missing-field';

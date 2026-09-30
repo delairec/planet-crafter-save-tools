@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
 import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
 import {SaveSectionsReaderService} from './SaveSectionsReaderService';
 import {SaveSectionsParserPort} from '../application/ports/SaveSectionsParserPort';
