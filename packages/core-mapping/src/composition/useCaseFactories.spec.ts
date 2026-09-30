@@ -1,5 +1,5 @@
 import {describe, expect, it, mock} from 'bun:test';
-import {createFakeSaveContent} from '../infrastructure/testing/createFakeSaveContent';
+import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {ConfigurationPagePresenterPort} from '../application/ports/ConfigurationPagePresenterPort';
 import {EnergyLevelsPresenterPort} from '../application/ports/EnergyLevelsPresenterPort';
 import {PlayersMenuPresenterPort} from '../application/ports/PlayersMenuPresenterPort';

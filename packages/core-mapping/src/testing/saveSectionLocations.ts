@@ -1,12 +1,12 @@
-export {
-  GLOBAL_METADATA_SECTION,
-  INVENTORIES_SECTION,
-  LEGACY_RESERVED_TRAILING_PART,
-  LEGACY_TERRAIN_LAYERS_SECTION,
-  LEGACY_WORLD_EVENTS_SECTION,
-  MAILBOX_MESSAGES_SECTION,
-  PLAYERS_SECTION,
-  RESERVED_TRAILING_PART,
-  WORLD_EVENTS_SECTION,
-  WORLD_OBJECTS_SECTION
-} from "../infrastructure/testing/saveSectionLocations";
+import {
+  GLOBAL_METADATA_SECTION_INDEX,
+  INVENTORIES_SECTION_INDEX,
+  PLAYERS_SECTION_INDEX,
+  WORLD_OBJECTS_SECTION_INDEX
+} from "shared-save-processing/sectionIndexes.js";
+import {SaveSectionLocation} from "../domain/save/SaveSectionLocation";
+
+export const GLOBAL_METADATA_SECTION: SaveSectionLocation = {name: 'globalMetadata', index: GLOBAL_METADATA_SECTION_INDEX};
+export const PLAYERS_SECTION: SaveSectionLocation = {name: 'players', index: PLAYERS_SECTION_INDEX};
+export const WORLD_OBJECTS_SECTION: SaveSectionLocation = {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX};
+export const INVENTORIES_SECTION: SaveSectionLocation = {name: 'inventories', index: INVENTORIES_SECTION_INDEX};

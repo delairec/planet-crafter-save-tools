@@ -2,7 +2,6 @@ import {describe, expect, it} from 'bun:test';
 import {formatValidationError} from './formatValidationError';
 import {ValidationIssue} from '../domain/validation/ValidationIssue';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
-import {GLOBAL_METADATA_SECTION, PLAYERS_SECTION, WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
 
 describe('formatValidationError', () => {
 
@@ -28,12 +27,12 @@ describe('formatValidationError', () => {
   describe('When the issue was found in a save entry', () => {
     it.each<[ValidationIssue, SaveValidationMessageViewModel]>([
       [
-        {code: 'invalid-json', section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{"id":1,'},
-        {message: 'Invalid JSON: {"id":1,', location: `World objects (section ${WORLD_OBJECTS_SECTION.index}), entry 2`}
+        {code: 'invalid-json', section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{"id":1,'},
+        {message: 'Invalid JSON: {"id":1,', location: 'World objects (section 3), entry 2'}
       ],
       [
-        {code: 'field-of-wrong-type', section: PLAYERS_SECTION, entryIndex: 3, fieldPath: '/name', expectedType: 'string'},
-        {message: '/name must be string', location: `Players (section ${PLAYERS_SECTION.index}), entry 3`}
+        {code: 'field-of-wrong-type', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '/name', expectedType: 'string'},
+        {message: '/name must be string', location: 'Players (section 2), entry 3'}
       ]
     ])('should report the location of %p alongside its message', (issue, expectedError) => {
       // Act
@@ -49,44 +48,44 @@ describe('formatValidationError', () => {
       // Act
       const error = formatValidationError({
         code: 'too-few-section-entries',
-        section: GLOBAL_METADATA_SECTION,
+        section: {name: 'globalMetadata', index: 0},
         foundEntryCount: 0,
         minimumEntryCount: 1
       });
 
       // Assert
-      expect<SaveValidationMessageViewModel>(error).toEqual({message: 'Expected at least 1 entry but found 0', location: `Global metadata (section ${GLOBAL_METADATA_SECTION.index})`});
+      expect<SaveValidationMessageViewModel>(error).toEqual({message: 'Expected at least 1 entry but found 0', location: 'Global metadata (section 0)'});
     });
   });
 
   describe('When the entry breaks a constraint of its schema', () => {
     it.each<[ValidationIssue, string]>([
       [
-        {code: 'field-of-wrong-type', section: PLAYERS_SECTION, entryIndex: 0, fieldPath: '/playerGaugeOxygen', expectedType: 'number'},
+        {code: 'field-of-wrong-type', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/playerGaugeOxygen', expectedType: 'number'},
         '/playerGaugeOxygen must be number'
       ],
       [
-        {code: 'missing-field', section: PLAYERS_SECTION, entryIndex: 0, fieldPath: '/inventory', missingFieldName: 'size'},
+        {code: 'missing-field', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/inventory', missingFieldName: 'size'},
         "/inventory must have required property 'size'"
       ],
       [
-        {code: 'unexpected-field', section: PLAYERS_SECTION, entryIndex: 0, fieldPath: '/inventory', unexpectedFieldName: 'opacity'},
+        {code: 'unexpected-field', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/inventory', unexpectedFieldName: 'opacity'},
         '/inventory must NOT have additional properties'
       ],
       [
-        {code: 'value-below-minimum', section: PLAYERS_SECTION, entryIndex: 0, fieldPath: '/playerGaugeOxygen', minimum: 0},
+        {code: 'value-below-minimum', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/playerGaugeOxygen', minimum: 0},
         '/playerGaugeOxygen must be >= 0'
       ],
       [
-        {code: 'value-above-maximum', section: PLAYERS_SECTION, entryIndex: 0, fieldPath: '/playerGaugeOxygen', maximum: 100},
+        {code: 'value-above-maximum', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/playerGaugeOxygen', maximum: 100},
         '/playerGaugeOxygen must be <= 100'
       ],
       [
-        {code: 'value-not-matching-pattern', section: PLAYERS_SECTION, entryIndex: 0, fieldPath: '/playerPosition', pattern: '^-?[0-9]+$'},
+        {code: 'value-not-matching-pattern', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/playerPosition', pattern: '^-?[0-9]+$'},
         '/playerPosition must match pattern "^-?[0-9]+$"'
       ],
       [
-        {code: 'missing-dependent-field', section: PLAYERS_SECTION, entryIndex: 0, fieldPath: '/linkedObject', missingFieldName: 'liId', dependingFieldName: 'liPlanet'},
+        {code: 'missing-dependent-field', section: {name: 'players', index: 2}, entryIndex: 0, fieldPath: '/linkedObject', missingFieldName: 'liId', dependingFieldName: 'liPlanet'},
         '/linkedObject must have property liId when property liPlanet is present'
       ]
     ])('should show the path of the field followed by the constraint of %p', (issue, expectedMessage) => {
@@ -103,7 +102,7 @@ describe('formatValidationError', () => {
       // Act
       const error = formatValidationError({
         code: 'missing-field',
-        section: PLAYERS_SECTION,
+        section: {name: 'players', index: 2},
         entryIndex: 0,
         fieldPath: '',
         missingFieldName: 'name'
@@ -119,7 +118,7 @@ describe('formatValidationError', () => {
       // Act
       const error = formatValidationError({
         code: 'invalid-json',
-        section: WORLD_OBJECTS_SECTION,
+        section: {name: 'worldObjects', index: 3},
         entryIndex: 0,
         line: '{"id":123456789,"gId":"Iron","liId":0,"liGrps":"","pos":"1.0,2.0,3.0","rot":"0.0,0.0,0.0,1.0"'
       });

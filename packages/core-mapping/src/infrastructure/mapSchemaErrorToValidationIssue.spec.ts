@@ -3,9 +3,8 @@ import {mapSchemaErrorToValidationIssue, SectionEntrySchemaError} from './mapSch
 import {UnknownSchemaConstraintError} from './errors/UnknownSchemaConstraintError';
 import {ValidationIssue} from '../domain/validation/ValidationIssue';
 import {SaveSectionLocation} from '../domain/save/SaveSectionLocation';
-import {PLAYERS_SECTION} from './testing/saveSectionLocations';
 
-const playersSection: SaveSectionLocation = PLAYERS_SECTION;
+const playersSection: SaveSectionLocation = {name: 'players', index: 2};
 const fourthEntry = 3;
 const firstEntry = 0;
 
@@ -16,37 +15,37 @@ describe('mapSchemaErrorToValidationIssue', () => {
       [
         'a field of the wrong type',
         {instancePath: '/name', keyword: 'type', params: {type: 'string'}},
-        {code: 'field-of-wrong-type', section: PLAYERS_SECTION, entryIndex: 3, fieldPath: '/name', expectedType: 'string'}
+        {code: 'field-of-wrong-type', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '/name', expectedType: 'string'}
       ],
       [
         'a missing field',
         {instancePath: '', keyword: 'required', params: {missingProperty: 'host'}},
-        {code: 'missing-field', section: PLAYERS_SECTION, entryIndex: 3, fieldPath: '', missingFieldName: 'host'}
+        {code: 'missing-field', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '', missingFieldName: 'host'}
       ],
       [
         'a field the schema does not declare',
         {instancePath: '', keyword: 'additionalProperties', params: {additionalProperty: 'opacity'}},
-        {code: 'unexpected-field', section: PLAYERS_SECTION, entryIndex: 3, fieldPath: '', unexpectedFieldName: 'opacity'}
+        {code: 'unexpected-field', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '', unexpectedFieldName: 'opacity'}
       ],
       [
         'a value below its minimum',
         {instancePath: '/playerGaugeOxygen', keyword: 'minimum', params: {comparison: '>=', limit: 0}},
-        {code: 'value-below-minimum', section: PLAYERS_SECTION, entryIndex: 3, fieldPath: '/playerGaugeOxygen', minimum: 0}
+        {code: 'value-below-minimum', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '/playerGaugeOxygen', minimum: 0}
       ],
       [
         'a value above its maximum',
         {instancePath: '/playerGaugeOxygen', keyword: 'maximum', params: {comparison: '<=', limit: 100}},
-        {code: 'value-above-maximum', section: PLAYERS_SECTION, entryIndex: 3, fieldPath: '/playerGaugeOxygen', maximum: 100}
+        {code: 'value-above-maximum', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '/playerGaugeOxygen', maximum: 100}
       ],
       [
         'a value that does not match its pattern',
         {instancePath: '/playerPosition', keyword: 'pattern', params: {pattern: '^-?[0-9]+$'}},
-        {code: 'value-not-matching-pattern', section: PLAYERS_SECTION, entryIndex: 3, fieldPath: '/playerPosition', pattern: '^-?[0-9]+$'}
+        {code: 'value-not-matching-pattern', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '/playerPosition', pattern: '^-?[0-9]+$'}
       ],
       [
         'a field missing beside the field that requires it',
         {instancePath: '', keyword: 'dependencies', params: {property: 'liPlanet', missingProperty: 'liId', depsCount: 1, deps: 'liId'}},
-        {code: 'missing-dependent-field', section: PLAYERS_SECTION, entryIndex: 3, fieldPath: '', missingFieldName: 'liId', dependingFieldName: 'liPlanet'}
+        {code: 'missing-dependent-field', section: {name: 'players', index: 2}, entryIndex: 3, fieldPath: '', missingFieldName: 'liId', dependingFieldName: 'liPlanet'}
       ]
     ])('should state %s as its own issue, at the field and the entry it concerns', (_constraint, schemaError, expectedIssue) => {
       // Act

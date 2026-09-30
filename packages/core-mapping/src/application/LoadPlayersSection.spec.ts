@@ -7,7 +7,6 @@ import {PlayersResponse} from './responses/PlayersResponse';
 import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
 import {WorldObjectLabelsReaderPort} from './ports/WorldObjectLabelsReaderPort';
 import {WorldObjectLabelsResponse} from './responses/WorldObjectLabelsResponse';
-import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
 
 const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {Backpack4: 'Backpack T4'};
 
@@ -45,7 +44,7 @@ describe('LoadPlayersSection', () => {
   describe('When the save has unreadable lines', () => {
     it('should display the unreadable lines instead of the players', async () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
       const useCase = createUseCase(stubSaveSectionsReader({unreadableLines}), presenter);
 
@@ -53,7 +52,7 @@ describe('LoadPlayersSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}]});
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]});
       expect(presenter.displayPlayers).not.toHaveBeenCalled();
     });
   });

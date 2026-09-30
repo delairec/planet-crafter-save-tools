@@ -2,7 +2,6 @@ import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {describe, expect, it} from 'bun:test';
 import {PlayersMenuPresenter} from "./PlayersMenuPresenter";
 import {PlayersMenuViewModel} from "./viewModels/PlayersMenuViewModel";
-import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
 
 describe('PlayersMenuPresenter', () => {
   it('should show the players menu', () => {
@@ -40,14 +39,14 @@ describe('PlayersMenuPresenter', () => {
   describe('When the save has unreadable lines', () => {
     it('should show the unreadable lines in place of the players menu', () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
       const presenter = new PlayersMenuPresenter();
 
       // Act
       presenter.displaySaveWithUnreadableLines({unreadableLines});
 
       // Assert
-      expect(presenter.viewModel).toEqual<PlayersMenuViewModel>({players: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: `World objects (section ${WORLD_OBJECTS_SECTION.index}), entry 2`}]});
+      expect(presenter.viewModel).toEqual<PlayersMenuViewModel>({players: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]});
     });
   });
 });
