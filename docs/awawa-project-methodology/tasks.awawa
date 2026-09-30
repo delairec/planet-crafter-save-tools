@@ -2031,3 +2031,30 @@ TASK REFACTOR170
 		+ "infrastructure knows the section indexes; the composition root carries no unit test; the"
 		+ "section validators are generated in shared-save-processing"
 		PR 245
+
+TASK FIX171
+	TITLE "Tone the difficulty modifiers of the Configuration page the right way round"
+	STATUS todo
+	SPEC "Terraformation Pace is in the positive tone above 100 % and in the danger tone below 100"
+		+ "%"
+	SPEC "Power Consumption and Meteo Occurrence are in the danger tone above 100 % and in the"
+		+ "positive tone below 100 %"
+	SPEC "Gauge Drain and Multiplayer Factor are in the danger tone above ×1 and in the positive"
+		+ "tone below ×1"
+	SPEC "every modifier at 100 % or ×1 is in the neutral tone, the game's default"
+	SPEC "the rule on the direction of each difficulty modifier states these directions"
+		REF @RULE.EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
+	WAVE @WAVE.14
+	RATIONALE "The rule ruled on 2026-09-26 makes the terraformation pace penalise above 1 and the"
+		+ "gauge drain and the multiplayer factor below 1: those three are reversed, the power"
+		+ "consumption and the meteo occurrence keep their direction, which the consumption rule"
+		+ "bears out. The pull request that delivers the task amends the rule with the page. The"
+		+ "task is outside the audit the wave fixes; the owner embarks it in wave 14, whose branch"
+		+ "already reshaped the presenter of the Configuration page"
+		REF @RULE.EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
+		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
+		REF @WAVE.14
+	SOURCE "Owner's rulings of 2026-10-01: only the terraformation pace helps the player above 100"
+		+ "%, the power consumption and the meteo occurrence penalise above 100 %, every"
+		+ "coefficient helps below 1 and penalises above 1, 100 % and ×1 being the base state; the"
+		+ "task goes in wave 14"
