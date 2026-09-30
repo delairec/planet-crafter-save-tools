@@ -1,4 +1,4 @@
-import {ValidateSaveFileController} from 'core-mapping/controllers/ValidateSaveFileController';
+import {validateSaveFileController} from 'core-mapping/controllers/ValidateSaveFileController';
 import {parseValidateCliArguments} from './parseValidateCliArguments.js';
 import {renderHelp, renderMissingFile, renderSaveErrors, renderSaveIsValid, renderSaveWarnings, renderUnknownArguments, renderVersion} from './renderValidateCliOutput.js';
 
@@ -39,7 +39,7 @@ export function initValidateCli({readTextFile, exitProcess}, argv = [], release)
     }
 
     const save = await readTextFile(filePath);
-    const {status, errors, warnings} = await ValidateSaveFileController.validateSaveFile(filePath, save);
+    const {status, errors, warnings} = await validateSaveFileController.validateSaveFile(filePath, save);
 
     renderSaveWarnings(warnings);
 

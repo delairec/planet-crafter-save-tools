@@ -1,63 +1,45 @@
-import {describe, expect, it} from 'bun:test';
-import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {describe, expect, it, mock} from 'bun:test';
 import {LoadTerraformationLevelsSectionController} from './LoadTerraformationLevelsSectionController';
+import {TerraformationLevelsPresenterPort} from '../application/ports/TerraformationLevelsPresenterPort';
+import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
+import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {TerraformationLevelsPresenter} from '../presentation/TerraformationLevelsPresenter';
 import {TerraformationLevelsViewModel} from '../presentation/viewModels/TerraformationLevelsViewModel';
 
-const nbsp = '\u00A0';
+type ExecuteLoadTerraformationLevelsSection = (request: LoadSaveSectionsRequest, presenter: TerraformationLevelsPresenterPort) => Promise<void>;
+
+function createController(execute: ExecuteLoadTerraformationLevelsSection): LoadTerraformationLevelsSectionController {
+  return new LoadTerraformationLevelsSectionController((presenter) => ({execute: (request) => execute(request, presenter)}));
+}
 
 describe('LoadTerraformationLevelsSectionController', () => {
-  it('should present terraformation levels from the parsed save', async () => {
+  it('should hand its use case the validated content, with the presenter of the terraformation levels', async () => {
     // Arrange
-    const validatedContent = createFakeSaveContent();
+    const execute = mock<ExecuteLoadTerraformationLevelsSection>(async () => {});
+    const controller = createController(execute);
 
     // Act
-    const viewModel = await LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(validatedContent);
+    await controller.loadTerraformationLevelsSection('validated content');
+
+    // Assert
+    expect(execute).toHaveBeenCalledWith({content: 'validated content'}, expect.any(TerraformationLevelsPresenter));
+  });
+
+  it('should return the view model its presenter holds once the use case has run', async () => {
+    // Arrange
+    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+    const controller = createController(async (_request, presenter) => {
+      await Promise.resolve();
+      presenter.displaySaveWithUnreadableLines(unreadableLines);
+    });
+
+    // Act
+    const viewModel = await controller.loadTerraformationLevelsSection('validated content');
 
     // Assert
     expect(viewModel).toEqual<TerraformationLevelsViewModel>({
-      planets: [
-        {
-          name: 'Toxicity',
-          environmentalLevels: {
-            columns: [
-              {
-                header: 'O²',
-                values: [`100${nbsp}ppq`]
-              },
-              {
-                header: 'Heat',
-                values: [`200${nbsp}pK`]
-              },
-              {
-                header: 'Pressure',
-                values: [`300${nbsp}nPa`]
-              },
-              {
-                header: 'Purification',
-                values: [`700${nbsp}Pu`]
-              }
-            ]
-          },
-          organicLevels: {
-            columns: [
-              {
-                header: 'Plants',
-                values: [`400${nbsp}g`]
-              },
-              {
-                header: 'Insects',
-                values: [`500${nbsp}g`]
-              },
-              {
-                header: 'Animals',
-                values: [`600${nbsp}g`]
-              },
-            ]
-          },
-          terraformationIndex: `2.8${nbsp}kTi`,
-          biomass: `1.5${nbsp}kg`
-        }
-      ],
+      planets: [],
+      unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]
     });
   });
 });

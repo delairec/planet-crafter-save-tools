@@ -263,8 +263,6 @@ RULE SaveConfigurationComesFromSaveA
 		+ "written, so a merge of two saves of the same format declares the version of save A"
 		ATTESTED_BY "packages/core-mapping/src/domain/rules/merge/mergeSaveConfigurations.spec.ts::should"
 			+ "declare the version of that save"
-		ATTESTED_BY "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::should"
-			+ "write the format of 2.004 and declare a version of that format"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-CFG-1 and GR-CFG-3); GR-CFG-2 moved"
 		+ "to @DECISION.TheMergedSaveDisplayNameComesFromTheCaller"

@@ -1,30 +1,22 @@
 import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsViewModel";
-import {
-  createEnergyLevelsReader,
-  createGameReleasesReader,
-  createOptimizerRangesReader,
-  createPlanetNamesReader,
-  createSaveSectionsReader,
-  createWorldObjectLabelsReader
-} from "../composition/compositionRoot";
 import {EnergyLevelsPresenter} from "../presentation/EnergyLevelsPresenter";
-import {LoadEnergyLevelsSection} from "../application/LoadEnergyLevelsSection";
+import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
+import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
+import {UseCaseFactory} from "../application/UseCaseFactory";
+import {createLoadEnergyLevelsSection} from "../composition/compositionRoot";
 
 export class LoadEnergyLevelsSectionController {
+  constructor(private readonly createLoadEnergyLevelsSection: UseCaseFactory<EnergyLevelsPresenterPort, LoadSaveSectionsRequest>) {
+  }
 
-  static async loadEnergyLevelsSection(validatedContent: string): Promise<EnergyLevelsViewModel> {
+  async loadEnergyLevelsSection(validatedContent: string): Promise<EnergyLevelsViewModel> {
     const presenter = new EnergyLevelsPresenter();
-    const useCase = new LoadEnergyLevelsSection({
-      saveSectionsReader: createSaveSectionsReader(),
-      energyLevelsReader: createEnergyLevelsReader(),
-      gameReleasesReader: createGameReleasesReader(),
-      optimizerRangesReader: createOptimizerRangesReader(),
-      planetNamesReader: createPlanetNamesReader(),
-      worldObjectLabelsReader: createWorldObjectLabelsReader()
-    }, presenter);
+    const useCase = this.createLoadEnergyLevelsSection(presenter);
 
     await useCase.execute({content: validatedContent});
 
     return presenter.viewModel;
   }
 }
+
+export const loadEnergyLevelsSectionController = new LoadEnergyLevelsSectionController(createLoadEnergyLevelsSection);

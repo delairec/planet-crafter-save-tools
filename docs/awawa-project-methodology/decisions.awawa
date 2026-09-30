@@ -1006,6 +1006,8 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 		PR 144
 
 DECISION AControllerSpecCoversWiringNotBranches
+	STATUS archived
+	ARCHIVED_ON 2026-09-30
 	REJECTED "Covering business branches from controller specs: every rule change would cost twice"
 	REJECTED "Keeping the shortest failure: it short-circuits before the use case and leaves the"
 		+ "wiring untested"
@@ -3458,8 +3460,8 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 		+ "other its validation errors and warnings, both in the one outcome of invalid saves"
 		IMPL "packages/core-mapping/src/application/responses/SaveFileFindingsResponse.ts::export"
 			+ "type SaveFileFindingsResponse"
-		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::When one save"
-			+ "lacks the JSON extension and the other is invalid"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should present that"
+			+ "save as without JSON extension beside the findings of the other save"
 	SPEC "application/ports/validationIssues is a transitional home: the issues, the section"
 		+ "location and the unreadable line move into domain/ with REFACTOR170, which hands them to"
 		+ "the presenters inside application responses"
@@ -3584,3 +3586,36 @@ DECISION TheMergeUseCaseChoosesTheSuffixOfTheMergedFileName
 	SOURCE "Owner ruling in the review: the -merged suffix is a business decision passed as a"
 		+ "parameter, the .json extension stays in the service, renamed FileNameSanitizer"
 		PR 241
+
+DECISION AControllerIsBuiltAroundItsUseCaseFactory
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR166
+	SPEC "a controller of core-mapping is a class whose constructor takes the factory building its"
+		+ "use case around the presenter the controller provides; it imports no infrastructure"
+		+ "module and instantiates no adapter"
+		IMPL "packages/core-mapping/src/application/UseCaseFactory.ts::export type UseCaseFactory"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.ts::constructor(private"
+			+ "readonly createMergeSaveFiles"
+	SPEC "each controller module exports, next to its class, the controller wired with the use case"
+		+ "factory the composition root exports, and the composition root imports no controller"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.ts::export const"
+			+ "mergeSaveFilesController"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::export function"
+			+ "createMergeSaveFiles"
+	SPEC "a controller spec mounts its controller on a test double of the use case factory and"
+		+ "reaches no infrastructure"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::function"
+			+ "createController"
+	REJECTED "The composition root building and exporting the wired controllers: the export moves"
+		+ "to composition/, against the import path the CLIs keep, or the root imports the class"
+		+ "from the module that imports it back, an import cycle"
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
+	REJECTED "Controller functions taking their use case from their caller: every CLI and the save"
+		+ "manager would wire core-mapping themselves"
+	REJECTED "Static controllers calling the factories of the composition root: a controller spec"
+		+ "could only cross the real infrastructure"
+	RATIONALE "The CLIs and the save manager reach a controller by its module path, so the module"
+		+ "keeps it and exports the wired controller; the wiring stays covered end to end by the"
+		+ "specs of the CLIs and the scenarios of the save manager"
+	SOURCE "Owner ruling during the refinement of the task: the controller modules keep their"
+		+ "import path and export the controller wired with the factories of the composition root"

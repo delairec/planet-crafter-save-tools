@@ -1,17 +1,17 @@
 import {Accessor, createContext, createResource, createSignal, JSX, Resource} from "solid-js";
 import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
-import {LoadConfigurationPageController} from "core-mapping/controllers/LoadConfigurationPageController";
-import {LoadPlayersSectionController} from "core-mapping/controllers/LoadPlayersSectionController";
+import {loadConfigurationPageController} from "core-mapping/controllers/LoadConfigurationPageController";
+import {loadPlayersSectionController} from "core-mapping/controllers/LoadPlayersSectionController";
 import {
-  LoadTerraformationLevelsSectionController
+  loadTerraformationLevelsSectionController
 } from "core-mapping/controllers/LoadTerraformationLevelsSectionController";
-import {LoadEnergyLevelsSectionController} from "core-mapping/controllers/LoadEnergyLevelsSectionController";
+import {loadEnergyLevelsSectionController} from "core-mapping/controllers/LoadEnergyLevelsSectionController";
 import {ConfigurationPageViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
 import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
 import {TerraformationLevelsViewModel} from "core-mapping/presentation/viewModels/TerraformationLevelsViewModel";
 import {PlayersViewModel} from "core-mapping/presentation/viewModels/PlayersViewModel";
-import {LoadSaveIdentityController} from "core-mapping/controllers/LoadSaveIdentityController";
-import {LoadPlayersMenuController} from "core-mapping/controllers/LoadPlayersMenuController";
+import {loadSaveIdentityController} from "core-mapping/controllers/LoadSaveIdentityController";
+import {loadPlayersMenuController} from "core-mapping/controllers/LoadPlayersMenuController";
 import {SaveIdentityViewModel} from "core-mapping/presentation/viewModels/SaveIdentityViewModel";
 import {PlayersMenuViewModel} from "core-mapping/presentation/viewModels/PlayersMenuViewModel";
 
@@ -49,17 +49,17 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
   const validatedContent = () => validatedSave()?.content ?? null;
 
   const [configurationPage] = createResource(validatedContent,
-    (content) => LoadConfigurationPageController.loadConfigurationPage(content));
+    (content) => loadConfigurationPageController.loadConfigurationPage(content));
   const [energyLevels] = createResource(validatedContent,
-    (content) => LoadEnergyLevelsSectionController.loadEnergyLevelsSection(content));
+    (content) => loadEnergyLevelsSectionController.loadEnergyLevelsSection(content));
   const [terraformationLevels] = createResource(validatedContent,
-    (content) => LoadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
+    (content) => loadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
   const [players] = createResource(validatedContent,
-    (content) => LoadPlayersSectionController.loadPlayersSection(content));
+    (content) => loadPlayersSectionController.loadPlayersSection(content));
   const [saveIdentity] = createResource(validatedSave,
-    ({content, fileName}) => LoadSaveIdentityController.loadSaveIdentity(content, fileName));
+    ({content, fileName}) => loadSaveIdentityController.loadSaveIdentity(content, fileName));
   const [playersMenu] = createResource(validatedContent,
-    (content) => LoadPlayersMenuController.loadPlayersMenu(content));
+    (content) => loadPlayersMenuController.loadPlayersMenu(content));
 
   const loadedSave: LoadedSave = {
     validatedSave,

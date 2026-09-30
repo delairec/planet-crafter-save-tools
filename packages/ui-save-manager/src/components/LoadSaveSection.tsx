@@ -1,5 +1,5 @@
 import {createSignal, onCleanup, onMount, Show} from 'solid-js';
-import {LoadAndValidateSaveFileController} from 'core-mapping/controllers/LoadAndValidateSaveFileController';
+import {loadAndValidateSaveFileController} from 'core-mapping/controllers/LoadAndValidateSaveFileController';
 import {SaveValidationMessageViewModel} from 'core-mapping/presentation/viewModels/SaveFileValidationViewModel';
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';
@@ -61,7 +61,7 @@ export default function LoadSaveSection(props: LoadSaveSectionProps) {
       await yieldToPaint();
 
       const content = await selectedFile.text();
-      const viewModel = await LoadAndValidateSaveFileController.loadAndValidateSaveFile(selectedFile.name, content);
+      const viewModel = await loadAndValidateSaveFileController.loadAndValidateSaveFile(selectedFile.name, content);
 
       if (!isDisposed) {
         props.onLoadResult({

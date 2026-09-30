@@ -1,16 +1,22 @@
 import {TerraformationLevelsViewModel} from '../presentation/viewModels/TerraformationLevelsViewModel';
 import {TerraformationLevelsPresenter} from '../presentation/TerraformationLevelsPresenter';
-import {LoadTerraformationLevelsSection} from '../application/LoadTerraformationLevelsSection';
-import {createSaveSectionsReader} from '../composition/compositionRoot';
+import {TerraformationLevelsPresenterPort} from '../application/ports/TerraformationLevelsPresenterPort';
+import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
+import {UseCaseFactory} from '../application/UseCaseFactory';
+import {createLoadTerraformationLevelsSection} from '../composition/compositionRoot';
 
 export class LoadTerraformationLevelsSectionController {
-  static async loadTerraformationLevelsSection(validatedContent: string): Promise<TerraformationLevelsViewModel> {
-    const saveReader = createSaveSectionsReader();
+  constructor(private readonly createLoadTerraformationLevelsSection: UseCaseFactory<TerraformationLevelsPresenterPort, LoadSaveSectionsRequest>) {
+  }
+
+  async loadTerraformationLevelsSection(validatedContent: string): Promise<TerraformationLevelsViewModel> {
     const presenter = new TerraformationLevelsPresenter();
-    const useCase = new LoadTerraformationLevelsSection(saveReader, presenter);
+    const useCase = this.createLoadTerraformationLevelsSection(presenter);
 
     await useCase.execute({content: validatedContent});
 
     return presenter.viewModel;
   }
 }
+
+export const loadTerraformationLevelsSectionController = new LoadTerraformationLevelsSectionController(createLoadTerraformationLevelsSection);
