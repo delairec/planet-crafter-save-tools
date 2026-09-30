@@ -22,7 +22,7 @@ describe('assessDifficultyModifiers', () => {
   });
 
   describe('When every modifier is above one', () => {
-    it('should assess the percentages as penalising and the coefficients as helping the player', () => {
+    it('should assess the terraformation pace as helping and the other modifiers as penalising the player', () => {
       // Arrange
       const modifiers = {terraformationPace: 2, powerConsumption: 1.5, gaugeDrain: 3, meteoOccurrence: 1.01, multiplayerFactor: 2};
 
@@ -31,17 +31,17 @@ describe('assessDifficultyModifiers', () => {
 
       // Assert
       expect<DifficultyModifierEffects>(effects).toEqual({
-        terraformationPace: 'penalisesThePlayer',
+        terraformationPace: 'helpsThePlayer',
         powerConsumption: 'penalisesThePlayer',
-        gaugeDrain: 'helpsThePlayer',
+        gaugeDrain: 'penalisesThePlayer',
         meteoOccurrence: 'penalisesThePlayer',
-        multiplayerFactor: 'helpsThePlayer'
+        multiplayerFactor: 'penalisesThePlayer'
       });
     });
   });
 
   describe('When every modifier is below one', () => {
-    it('should assess the percentages as helping and the coefficients as penalising the player', () => {
+    it('should assess the terraformation pace as penalising and the other modifiers as helping the player', () => {
       // Arrange
       const modifiers = {terraformationPace: 0.5, powerConsumption: 0, gaugeDrain: 0, meteoOccurrence: 0.99, multiplayerFactor: 0.5};
 
@@ -50,11 +50,11 @@ describe('assessDifficultyModifiers', () => {
 
       // Assert
       expect<DifficultyModifierEffects>(effects).toEqual({
-        terraformationPace: 'helpsThePlayer',
+        terraformationPace: 'penalisesThePlayer',
         powerConsumption: 'helpsThePlayer',
-        gaugeDrain: 'penalisesThePlayer',
+        gaugeDrain: 'helpsThePlayer',
         meteoOccurrence: 'helpsThePlayer',
-        multiplayerFactor: 'penalisesThePlayer'
+        multiplayerFactor: 'helpsThePlayer'
       });
     });
   });
