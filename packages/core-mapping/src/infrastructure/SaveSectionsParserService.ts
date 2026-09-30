@@ -3,7 +3,7 @@ import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
 import {UnknownFormatReleaseError} from "shared-save-processing/gameReleases.js";
 import {ParsedSections, SaveSectionIndexes} from "shared-save-processing/gameDefinitions";
 import {SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
-import {ParsedSaveSections} from "../application/ports/ParsedSaveSections";
+import {ParsedSaveSections} from "../application/responses/ParsedSaveSections";
 import {SaveSections} from "../domain/save/SaveSections";
 import {
   decodeEntry,

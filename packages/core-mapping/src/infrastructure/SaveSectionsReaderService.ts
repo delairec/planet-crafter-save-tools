@@ -1,5 +1,5 @@
 import {SaveSectionsReaderPort} from '../application/ports/SaveSectionsReaderPort';
-import {SaveSectionsReading} from '../application/ports/SaveSectionsReading';
+import {SaveSectionsReading} from '../application/responses/SaveSectionsReading';
 import {SaveSectionsParserPort} from '../application/ports/SaveSectionsParserPort';
 import {SaveSectionsMapperService} from './SaveSectionsMapperService';
 

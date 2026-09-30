@@ -94,10 +94,10 @@ DECISION ABrokenInvariantFailsWithANamedErrorType
 DECISION ValidationIsTheSingleSourceOfWarnings
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SPEC "The validation result carries the warnings, never the parser"
-		IMPL "packages/core-mapping/src/application/ports/SaveValidationResult.ts::warnings:"
+		IMPL "packages/core-mapping/src/application/responses/SaveValidationResult.ts::warnings:"
 			+ "SaveWarning[]"
-		IMPL "packages/core-mapping/src/application/ports/ParsedSaveSections.ts::the single source"
-			+ "of warnings"
+		IMPL "packages/core-mapping/src/application/responses/ParsedSaveSections.ts::readonly"
+			+ "errors: UnreadableLine[]"
 	SPEC "Validation runs first in the four flows, and warnings are reported on every outcome,"
 		+ "invalid saves and successful merges included"
 		IMPL "packages/core-mapping/src/application"
@@ -3529,7 +3529,7 @@ DECISION TheValidatorReportsTheReleasesTheUseCasesJudge
 		+ "declares and the release whose format it carries, and the use cases that validate, load"
 		+ "and merge a save append after the validator warnings the contradiction a domain rule"
 		+ "finds between them"
-		IMPL "packages/core-mapping/src/application/ports/SaveValidationResult.ts::carriedRelease?:"
+		IMPL "packages/core-mapping/src/application/responses/SaveValidationResult.ts::carriedRelease?:"
 		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js::carriedRelease:"
 			+ "formatRelease"
 		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts::detectDeclaredReleaseContradiction(validation,"

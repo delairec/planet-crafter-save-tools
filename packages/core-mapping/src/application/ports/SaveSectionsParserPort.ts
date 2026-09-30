@@ -1,4 +1,4 @@
-import {ParsedSaveSections} from "./ParsedSaveSections";
+import {ParsedSaveSections} from "../responses/ParsedSaveSections";
 
 export interface SaveSectionsParserPort {
   parse(content: string): ParsedSaveSections;

@@ -3,7 +3,7 @@ import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {SaveFileValidationPresenterPort} from "./ports/SaveFileValidationPresenterPort";
 import {ValidateSaveFileRequest} from "./requests/ValidateSaveFileRequest";
-import {SaveValidationResult} from "./ports/SaveValidationResult";
+import {SaveValidationResult} from "./responses/SaveValidationResult";
 import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
 import {detectDeclaredReleaseContradiction} from "../domain/rules/detectDeclaredReleaseContradiction";
 

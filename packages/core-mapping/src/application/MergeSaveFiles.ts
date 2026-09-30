@@ -1,7 +1,7 @@
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
-import {SaveSectionsReading} from "./ports/SaveSectionsReading";
+import {SaveSectionsReading} from "./responses/SaveSectionsReading";
 import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {MergedFileNamerPort} from "./ports/MergedFileNamerPort";
@@ -9,7 +9,7 @@ import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
 import {MergeWarning} from "./responses/MergeWarning";
 import {SaveFileFindings} from "./responses/SaveFileFindings";
-import {SaveValidationResult} from "./ports/SaveValidationResult";
+import {SaveValidationResult} from "./responses/SaveValidationResult";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 import {SaveSections} from "../domain/save/SaveSections";
