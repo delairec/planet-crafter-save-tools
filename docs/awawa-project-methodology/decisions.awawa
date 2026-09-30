@@ -926,9 +926,9 @@ DECISION ThePrivateContextHoldsOnlySavesAndPlans
 		PR 61
 
 DECISION NameMergedFileEscapesControlCharacters
-	SPEC "MergedFileNamerService.ts writes its control-character class as escape sequences, never"
+	SPEC "FileNameSanitizerService.ts writes its control-character class as escape sequences, never"
 		+ "as raw bytes"
-		IMPL "packages/core-mapping/src/infrastructure/MergedFileNamerService.ts::function"
+		IMPL "packages/core-mapping/src/infrastructure/FileNameSanitizerService.ts::function"
 			+ "sanitizeFileName"
 	REJECTED "Promoting it to a general or project rule: it happened once, and git showed it as a"
 		+ "binary diff"
@@ -3556,4 +3556,28 @@ DECISION TheValidatorReportsTheReleasesTheUseCasesJudge
 		+ "on its single pass; the judgement that they contradict each other needs the releases"
 		+ "table, which reaches the use case through its port"
 	SOURCE "Agent ruling while implementing REFACTOR163"
+		PR 241
+
+DECISION TheMergeUseCaseChoosesTheSuffixOfTheMergedFileName
+	SPEC "MergeSaveFiles names the merged file by handing the file name sanitizer port both source"
+		+ "file names and the suffix -merged, a constant of the use case"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::const"
+			+ "MERGED_FILE_NAME_SUFFIX"
+		ENFORCED_BY "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should name the"
+			+ "merged file after both source files, marked as merged"
+	SPEC "the file name sanitizer knows nothing of merging: it joins the sanitized source file"
+		+ "names, appends the suffix it receives and the .json extension"
+		IMPL "packages/core-mapping/src/infrastructure/FileNameSanitizerService.ts::export class"
+			+ "FileNameSanitizerService"
+		ENFORCED_BY "packages/core-mapping/src/infrastructure/FileNameSanitizerService.spec.ts"
+	REJECTED "MergedFileNamerService composing <A>-<B>-merged.json itself: marking the file as"
+		+ "merged is a business decision, and a service that sanitizes a file name has no reason to"
+		+ "know where the name comes from"
+	REJECTED "The use case composing the whole file name, extension included: a module under"
+		+ "application/ would name a file extension"
+		REF @TASK.REFACTOR163
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR163
+	SOURCE "Owner ruling in the review: the -merged suffix is a business decision passed as a"
+		+ "parameter, the .json extension stays in the service, renamed FileNameSanitizer"
 		PR 241

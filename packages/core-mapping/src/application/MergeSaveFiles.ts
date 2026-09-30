@@ -4,7 +4,7 @@ import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {SaveSectionsReading} from "./responses/SaveSectionsReading";
 import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
-import {MergedFileNamerPort} from "./ports/MergedFileNamerPort";
+import {FileNameSanitizerPort} from "./ports/FileNameSanitizerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
 import {MergeWarning} from "./responses/MergeWarning";
@@ -17,6 +17,8 @@ import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
 import {compareGameReleases} from "../domain/rules/compareGameReleases";
 import {detectDeclaredReleaseContradiction} from "../domain/rules/detectDeclaredReleaseContradiction";
 
+const MERGED_FILE_NAME_SUFFIX = '-merged';
+
 export class MergeSaveFiles {
   constructor(
     private readonly validator: SaveValidatorPort,
@@ -24,7 +26,7 @@ export class MergeSaveFiles {
     private readonly parser: SaveSectionsParserPort,
     private readonly serializer: SaveSectionsSerializerPort,
     private readonly gameReleasesReader: GameReleasesReaderPort,
-    private readonly mergedFileNamer: MergedFileNamerPort,
+    private readonly fileNameSanitizer: FileNameSanitizerPort,
     private readonly presenter: MergeResultPresenterPort
   ) {}
 
@@ -55,7 +57,7 @@ export class MergeSaveFiles {
     const saveA = this.parser.parse(contentA);
     const saveB = this.parser.parse(contentB);
 
-    const {fileName, stem} = this.mergedFileNamer.nameMergedFile({fileNameA, fileNameB});
+    const {fileName, stem} = this.fileNameSanitizer.sanitize({sourceFileNames: [fileNameA, fileNameB], suffix: MERGED_FILE_NAME_SUFFIX});
     const mergedSave = resolveIdConflicts(mergeSaveSections(saveA.sections, saveB.sections, {saveDisplayName: saveDisplayName ?? stem, preferLegacyFormat}));
     const content = this.serializer.serialize(mergedSave);
 

@@ -20,7 +20,7 @@ import {createPlayerEntry, createSaveConfigurationEntry, createTerrainLayerEntry
 import {createSaveSections} from '../testing/createSaveSections';
 import {INVENTORIES_SECTION, PLAYERS_SECTION} from '../testing/saveSectionLocations';
 import {stubGameReleasesReader} from '../testing/stubGameReleasesReader';
-import {MergedFileNamerPort} from './ports/MergedFileNamerPort';
+import {FileNameSanitizerPort} from './ports/FileNameSanitizerPort';
 import {FakeSaveSectionsMapperService} from '../testing/FakeSaveSectionsMapperService';
 import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/SaveSectionsWithPlayers';
 
@@ -56,7 +56,7 @@ describe('MergeSaveFiles', () => {
     const reader: SaveSectionsReaderPort = {read: mock(read)};
     const parser: SaveSectionsParserPort = {parse: mock(parse)};
     const serializer: SaveSectionsSerializerPort = {serialize: mock(() => 'merged content')};
-    const mergedFileNamer: MergedFileNamerPort = {nameMergedFile: () => ({fileName: 'Save-A-Save-B-merged.json', stem: 'Save-A-Save-B-merged'})};
+    const fileNameSanitizer: FileNameSanitizerPort = {sanitize: mock(() => ({fileName: 'Save-A-Save-B-merged.json', stem: 'Save-A-Save-B-merged'}))};
     const presenter: MergeResultPresenterPort = {
       presentMergeSucceeded: mock(),
       presentSaveFilesInvalid: mock(),
@@ -64,7 +64,7 @@ describe('MergeSaveFiles', () => {
       presentMergedSaveUnusable: mock()
     };
 
-    return {useCase: new MergeSaveFiles(validator, reader, parser, serializer, stubGameReleasesReader(), mergedFileNamer, presenter), validator, reader, parser, serializer, presenter};
+    return {useCase: new MergeSaveFiles(validator, reader, parser, serializer, stubGameReleasesReader(), fileNameSanitizer, presenter), validator, reader, parser, serializer, fileNameSanitizer, presenter};
   }
 
   describe('When the release a save declares contradicts the format it carries', () => {
@@ -103,6 +103,17 @@ describe('MergeSaveFiles', () => {
         saveAWarnings: [],
         saveBWarnings: []
       } satisfies MergeSucceededResponse);
+    });
+
+    it('should name the merged file after both source files, marked as merged', async () => {
+      // Arrange
+      const {useCase, fileNameSanitizer} = createUseCase();
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(fileNameSanitizer.sanitize).toHaveBeenCalledWith({sourceFileNames: ['Save-A.json', 'Save-B.json'], suffix: '-merged'});
     });
 
     it('should hand the serializer the sections merged from both saves, with their identifier conflicts resolved', async () => {

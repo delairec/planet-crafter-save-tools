@@ -1,7 +1,7 @@
 import {MergeResultViewModel} from "../presentation/viewModels/MergeResultViewModel";
 import {
   createGameReleasesReader,
-  createMergedFileNamer,
+  createFileNameSanitizer,
   createSaveSectionsParser,
   createSaveSectionsReader,
   createSaveSectionsSerializer,
@@ -18,7 +18,7 @@ export class MergeSaveFilesController {
     const parser = createSaveSectionsParser();
     const serializer = createSaveSectionsSerializer();
     const presenter = new MergeResultPresenter();
-    const useCase = new MergeSaveFiles(validator, saveSectionsReader, parser, serializer, createGameReleasesReader(), createMergedFileNamer(), presenter);
+    const useCase = new MergeSaveFiles(validator, saveSectionsReader, parser, serializer, createGameReleasesReader(), createFileNameSanitizer(), presenter);
 
     await useCase.execute(request);
 

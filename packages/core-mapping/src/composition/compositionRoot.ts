@@ -15,9 +15,9 @@ import {OptimizerRangesReaderPort} from "../application/ports/OptimizerRangesRea
 import {PlanetNamesReaderPort} from "../application/ports/PlanetNamesReaderPort";
 import {WorldObjectLabelsReaderPort} from "../application/ports/WorldObjectLabelsReaderPort";
 import {GameReleasesReaderService} from "../infrastructure/GameReleasesReaderService";
-import {MergedFileNamerService} from "../infrastructure/MergedFileNamerService";
+import {FileNameSanitizerService} from "../infrastructure/FileNameSanitizerService";
 import {GameReleasesReaderPort} from "../application/ports/GameReleasesReaderPort";
-import {MergedFileNamerPort} from "../application/ports/MergedFileNamerPort";
+import {FileNameSanitizerPort} from "../application/ports/FileNameSanitizerPort";
 
 export function createSaveValidator(): SaveValidatorPort {
   return new SaveValidatorService();
@@ -55,6 +55,6 @@ export function createGameReleasesReader(): GameReleasesReaderPort {
   return new GameReleasesReaderService();
 }
 
-export function createMergedFileNamer(): MergedFileNamerPort {
-  return new MergedFileNamerService();
+export function createFileNameSanitizer(): FileNameSanitizerPort {
+  return new FileNameSanitizerService();
 }
