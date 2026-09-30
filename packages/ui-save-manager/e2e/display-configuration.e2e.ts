@@ -58,7 +58,7 @@ test.describe('Configuration page', () => {
       await expect(page.getByTestId('modifiers-summary')).toHaveText("100\u00A0% and ×1 are the game's defaults");
     });
 
-    test('should show a percentage modifier below 100 % as helping the player', async ({page}) => {
+    test('should show the terraformation pace below 100 % as penalising the player', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);
 
@@ -68,10 +68,10 @@ test.describe('Configuration page', () => {
       // Assert
       const terraformationPace = page.getByTestId(/^modifier-\d+$/).filter({hasText: 'Terraformation Pace'});
       await expect(terraformationPace.getByTestId(/^modifier-\d+-badge$/)).toContainText('10\u00A0%');
-      await expect(terraformationPace.getByTestId(/^modifier-\d+-badge-tone$/)).toHaveText(', helps the player');
+      await expect(terraformationPace.getByTestId(/^modifier-\d+-badge-tone$/)).toHaveText(', penalises the player');
     });
 
-    test('should show a coefficient modifier below 1 as penalising the player', async ({page}) => {
+    test('should show the gauge drain below ×1 as helping the player', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);
 
@@ -81,7 +81,7 @@ test.describe('Configuration page', () => {
       // Assert
       const gaugeDrain = page.getByTestId(/^modifier-\d+$/).filter({hasText: 'Gauge Drain'});
       await expect(gaugeDrain.getByTestId(/^modifier-\d+-badge$/)).toContainText('×\u00A00.3');
-      await expect(gaugeDrain.getByTestId(/^modifier-\d+-badge-tone$/)).toHaveText(', penalises the player');
+      await expect(gaugeDrain.getByTestId(/^modifier-\d+-badge-tone$/)).toHaveText(', helps the player');
     });
 
     test('should list each unlock flag of the save with an on or off pill', async ({page}) => {

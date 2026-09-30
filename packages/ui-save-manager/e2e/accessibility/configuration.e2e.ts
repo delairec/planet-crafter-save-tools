@@ -53,7 +53,7 @@ test.describe('Configuration page accessibility', () => {
 
       // Assert
       const terraformationPace = page.getByTestId(/^modifier-\d+$/).filter({hasText: 'Terraformation Pace'});
-      await expect(terraformationPace.getByTestId(/^modifier-\d+-badge$/)).toHaveText('10\u00A0%, helps the player');
+      await expect(terraformationPace.getByTestId(/^modifier-\d+-badge$/)).toHaveText('10\u00A0%, penalises the player');
     });
 
     test('should title the global progression with a fourth level heading', async ({page}) => {
