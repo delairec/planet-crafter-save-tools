@@ -26,12 +26,15 @@ TASK FEAT69
 	RATIONALE "The display flow keeps the loaded save as its raw text and re-parses it once per"
 		+ "section, so nothing holds a save an edit could reach; the serializer is reachable from"
 		+ "the merge alone, and every domain entity is read-only. An editable draft is therefore a"
-		+ "use case of core-mapping beside MergeSaveFiles, holding the parsed sections, taking"
-		+ "typed operations and giving back a new save text, so that the user interface holds edit"
-		+ "state and no save format knowledge. Exporting the unedited draft byte for byte is what"
-		+ "proves the draft loses nothing the loaded save carried, the float suffix and the int64"
-		+ "player identifier first; it closes the key order and unknown property questions the"
-		+ "round trip tests leave open. The rest of wave 6 edits fields through this draft"
+		+ "use case of core-mapping beside MergeSaveFiles, holding the sections"
+		+ "SaveSectionsReaderPort reads, decoded into the business types of the domain, taking"
+		+ "typed operations and giving back a new save text through SaveSectionsSerializerPort as"
+		+ "the merge does, so that the user interface holds edit state and no save format"
+		+ "knowledge. Exporting the unedited draft byte for byte is what proves the draft loses"
+		+ "nothing the loaded save carried, the float suffix and the int64 player identifier first,"
+		+ "through the decoding and the encoding of each entry by the infrastructure; it closes the"
+		+ "key order and unknown property questions the round trip tests leave open. The rest of"
+		+ "wave 6 edits fields through this draft"
 		REF @PACKAGE.core_mapping
 		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
 		REF @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
@@ -86,7 +89,7 @@ TASK FEAT71
 	SPEC "exporting validates the edited save and offers it through the download path of the"
 		+ "package, under a name distinct from the loaded one"
 	SPEC "an export the validation refuses offers no download and shows the located messages the"
-		+ "validator produced"
+		+ "presentation of core-mapping builds from the issues the validator reports"
 	AFTER @TASK.FEAT69
 	AFTER @TASK.FEAT70
 	WAVE @WAVE.6
@@ -95,10 +98,12 @@ TASK FEAT71
 		+ "draft, and exports through the download path extracted from the merge result rather than"
 		+ "inventing a second one. An export the validator refuses offers nothing to download: the"
 		+ "failure notice follows the single error idiom of the package, under the button that"
-		+ "produced it, and the located messages are the ones the single validator produced"
+		+ "produced it, and the located messages are the sentences the presentation of core-mapping"
+		+ "builds from the codes the single validator reports"
 		REF @PACKAGE.ui_save_manager
 		REF @DECISION.UiSaveManagerHasOneUiErrorIdiom
 		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
 		REF @TASK.FEAT69
 		REF @TASK.FEAT70
 	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
@@ -172,9 +177,13 @@ TASK FEAT74
 		+ "filtered on the name typed, and the responsibility for picking a name that makes sense"
 		+ "in an inventory stays with the user; a category tree would need a table that does not"
 		+ "exist. The energy table covers 111 of those names and says nothing of the others, so it"
-		+ "is no substitute"
+		+ "is no substitute. The table lives in data-world-objects and reaches a use case through"
+		+ "WorldObjectLabelsReaderPort, the labels reaching the presenter in its response as they"
+		+ "reach the Players and Power pages, never through an import of the table outside the"
+		+ "infrastructure"
 		REF @DATATABLE.WorldObjectLabels
 		REF @DATATABLE.EnergyLevels
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		REF @TASK.FEAT75
 	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
 		+ "108: editing an inventory needs a list of the available objects and a filter on the name"
@@ -204,9 +213,10 @@ TASK FEAT75
 		+ "fact. Adding an item mints an identifier above the maximum of the two sections sharing"
 		+ "the numbering space, as the merge sequence does, uniqueness over the union being no"
 		+ "property of a save the game itself writes. The display resolves an item identifier to"
-		+ "its world object name and drops the identifier, so the section needs a reader carrying"
-		+ "the cell, the identifier and the name. Removing an item drops the world object too, no"
-		+ "reader tolerating an inventory naming an identifier no world object carries"
+		+ "its world object name and drops the identifier, so the use case hands its presenter a"
+		+ "response carrying the cell, the identifier and the name as primitives. Removing an item"
+		+ "drops the world object too, no reader tolerating an inventory naming an identifier no"
+		+ "world object carries"
 		REF @SECTION.Inventories
 		REF @SECTION.WorldObjects
 		REF @SECTION.Players
@@ -253,10 +263,11 @@ TASK FEAT77
 	STATUS draft
 	SPEC "every issue the validator reports names the section it concerns, and the ones bearing on"
 		+ "one entry name that entry in a single index space, whichever code they carry"
-	SPEC "an issue bearing on one field names that field as a value of its own, and not only inside"
-		+ "the sentence shown on screen"
-	SPEC "a float serialization issue and a unique host issue each name the entry they concern,"
-		+ "where today they name nothing"
+	SPEC "a float serialization issue names the section and the entry it concerns, as the issues of"
+		+ "a section schema do with their section location and their entry index"
+	SPEC "a save designating no host or more than one reaches its presenter through an outcome"
+		+ "naming the player entries designated host, where today that outcome carries their count"
+		+ "only"
 	SPEC "the sentences the command line and the save manager display for an invalid save are"
 		+ "unchanged"
 	WAVE @WAVE.7
@@ -264,18 +275,21 @@ TASK FEAT77
 		+ "issue cannot say which. The two codes that carry an entryIndex do not count in the same"
 		+ "space: the unreadable line carries its rank among the lines of the section, the schema"
 		+ "violation its rank among the readable entries alone, so one unreadable line above a"
-		+ "violation shifts every index below it and a repair would rewrite the wrong entry. The"
-		+ "field is only present inside the detail sentence, which presentation treats as opaque"
-		+ "text. The float serialization and unique host checks carry no location at all, the first"
-		+ "because it scans the raw text and the second because it counts across the whole players"
-		+ "section. Nothing here changes what the validator accepts or refuses, so the single"
-		+ "source of warnings stays one source and the four flows keep their verdict; only the"
-		+ "shape of an issue grows. This is the precondition of the fix catalogue and of everything"
-		+ "the rest of the wave applies"
+		+ "violation shifts every index below it and a repair would rewrite the wrong entry. Since"
+		+ "wave 14 an issue carries a code and its data, no sentence: the issues of a section"
+		+ "schema carry their section, their entry and the path of their field, and the float"
+		+ "serialization issue its field and its value but no section nor entry, because it scans"
+		+ "the raw text. A save designating no host or more than one is no longer an issue: it"
+		+ "reaches its presenter through an outcome of its own carrying the host count, which names"
+		+ "no player entry. Nothing here changes what the validator accepts or refuses, so the"
+		+ "single source of warnings stays one source and the four flows keep their verdict; only"
+		+ "the shape of an issue grows. This is the precondition of the fix catalogue and of"
+		+ "everything the rest of the wave applies"
 		REF @COMMAND.ValidateSave
 		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
 		REF @RULE.ASectionLineIsOneJsonEntry
 		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
+		REF @RULE.ASaveDesignatesExactlyOneHostPlayer
 		REF @SECTION.Players
 		REF @PACKAGE.core_mapping
 	SOURCE "User ruling of 2026-09-21 on pull request #108: its wave 7 tasks are rejected; the"
@@ -305,15 +319,17 @@ TASK FEAT78
 	WAVE @WAVE.7
 	RATIONALE "The table the user confirms is this plan, so the plan is built before any UI exists"
 		+ "and is tested without one. Building it needs the sections of a save the validator"
-		+ "rejects, which no use case exposes today: display and merge both return before calling"
-		+ "the parser when validation fails, while the parser itself never refuses a save, records"
-		+ "the lines it cannot read and returns every other one. The plan therefore reads the"
-		+ "issues from the validator, the single source, and the sections from the parser, and"
-		+ "pairs them; it invents no detection of its own. Two defects need no fix code at all, the"
-		+ "unreadable line being already dropped by the parser and the float suffix being already"
-		+ "written back by the serializer, which is why the plan is worth its own task before"
-		+ "anything is applied. A defect with no known fix stays visible: a repair that hides what"
-		+ "it cannot mend is worse than one that mends nothing"
+		+ "rejects, which no use case exposes today: the use cases that load and merge a save"
+		+ "return before reading its sections when validation fails, while SaveSectionsReaderPort"
+		+ "never refuses a save: a line it cannot parse and an entry it cannot decode into the"
+		+ "business types of the domain come back as unreadable lines, every other entry decoded."
+		+ "The plan therefore reads the issues from the validator, the single source, and the"
+		+ "sections through that reader port, and pairs them; it invents no detection of its own."
+		+ "Two defects need no fix code at all, the unreadable line and the undecodable entry being"
+		+ "already dropped by the reader and the float suffix being already written back by the"
+		+ "serializer, which is why the plan is worth its own task before anything is applied. A"
+		+ "defect with no known fix stays visible: a repair that hides what it cannot mend is worse"
+		+ "than one that mends nothing"
 		REF @COMMAND.ValidateSave
 		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
 		REF @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
@@ -347,18 +363,20 @@ TASK FEAT79
 		+ "the result says that the terrain layers are not carried over"
 	AFTER @TASK.FEAT78
 	WAVE @WAVE.7
-	RATIONALE "This is where the repair writes. The whole result is produced by parsing the"
-		+ "rejected save, applying the selected fixes to the parsed sections and serializing them"
-		+ "again, so the two defects the round trip already mends cost no fix code and the third,"
-		+ "several host players, is a single assignment on the players section. Serializing is what"
-		+ "makes the repair risky rather than the fixes: the entry serializer refuses a nested"
-		+ "value, so a save whose corruption is a nested field cannot be written at all and has to"
-		+ "come back as a named failure instead of a thrown error; the identifier of a player is"
-		+ "written as its exact decimal text and must not be parsed into a number on the way"
-		+ "through; and the serializer writes ten sections, so a legacy save is converted whether"
-		+ "or not the user asked. The result is validated again before it is handed back, exactly"
-		+ "as the merge validates its own output, and what remains is reported rather than"
-		+ "swallowed"
+	RATIONALE "This is where the repair writes. The whole result is produced by reading the"
+		+ "rejected save through SaveSectionsReaderPort, applying the selected fixes to the"
+		+ "sections decoded into the business types of the domain and serializing them again"
+		+ "through SaveSectionsSerializerPort, so the two defects the round trip already mends cost"
+		+ "no fix code and the third, several host players, is a single assignment on the players"
+		+ "section. Serializing is what makes the repair risky rather than the fixes: an entry the"
+		+ "decoding cannot read comes back from the reader as an unreadable line and never reaches"
+		+ "the entry serializer, which refuses a nested value, and whether every nested field is"
+		+ "such an entry is measured at refinement, a save the serializer still refuses coming back"
+		+ "as a named failure instead of a thrown error; the identifier of a player is written as"
+		+ "its exact decimal text and must not be parsed into a number on the way through; and the"
+		+ "serializer writes ten sections, so a legacy save is converted whether or not the user"
+		+ "asked. The result is validated again before it is handed back, exactly as the merge"
+		+ "validates its own output, and what remains is reported rather than swallowed"
 		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
 		REF @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
 		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
@@ -466,8 +484,9 @@ TASK FEAT82
 		+ "tolerates broken and what fix each defect calls for are established when the task is"
 		+ "refined"
 	SPEC "a link from one object of a save to another that names an identifier nothing carries is"
-		+ "reported by the validator with the entry it sits in, the equipment identifier of a"
-		+ "player naming no inventory being the first case"
+		+ "reported by a domain rule the use cases that validate, load and merge a save call after"
+		+ "validation, as they call the unique host rule, with the entry it sits in, the equipment"
+		+ "identifier of a player naming no inventory being the first case"
 	SPEC "each defect so reported enters the repair plan, with a fix or as not repairable"
 		+ "automatically"
 	AFTER @TASK.FEAT80
@@ -475,11 +494,14 @@ TASK FEAT82
 		+ "entry against another, so a save whose player names an equipment inventory that does not"
 		+ "exist is accepted today. The owner expects the repair to earn its keep on the coherence"
 		+ "of the data rather than on its shape, in a second step once the minimal repair of wave 7"
-		+ "is delivered. The check enters the single validator, which changes the verdict of the"
-		+ "display, merge and validate flows for a save accepted today, a cost to weigh at"
-		+ "refinement. A repeated identifier is no such defect, the game itself writing collisions"
-		+ "between inventories and world objects; a link that leads nowhere is"
+		+ "is delivered. Since wave 14 the validator port reports technical failures only and a"
+		+ "rule across the entries of a save is a domain rule the use cases call, the unique host"
+		+ "rule first, so the check is one such rule; it changes the verdict of the display, merge"
+		+ "and validate flows for a save accepted today, a cost to weigh at refinement. A repeated"
+		+ "identifier is no such defect, the game itself writing collisions between inventories and"
+		+ "world objects; a link that leads nowhere is"
 		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
+		REF @RULE.ASaveDesignatesExactlyOneHostPlayer
 		REF @RULE.IdentifiersAreSharedByInventoriesAndWorldObjects
 		REF @SECTION.Players
 		REF @SECTION.Inventories
@@ -548,7 +570,9 @@ TASK FEAT131
 		+ "their thresholds and the value they are read from are established when the task starts"
 	SPEC "the overview card of a planet carries a badge naming the terraformation stage the planet"
 		+ "has reached, read from its terraformation levels"
-	SPEC "the stages and their thresholds are a value table, one row per stage"
+	SPEC "the stages and their thresholds are a value table of a data- package, one row per stage,"
+		+ "read by an infrastructure adapter behind an application port; the stage reaches the"
+		+ "presenter as a primitive of the response its use case builds"
 	RATIONALE "The save manager knows no stage: it prints the Terraformation Index of a planet as a"
 		+ "number, and the reader has to know the thresholds of the game to tell where a planet"
 		+ "stands. The redesign puts the terraformation data first on the planet cards of the"
@@ -599,8 +623,8 @@ TASK FEAT139
 	SPEC "the balance of a planet is a rule of the domain, recorded as a RULE of the specification"
 		+ "area: deficit when the available power is negative, tight when it is below a tenth of"
 		+ "the production, surplus otherwise, a planet producing nothing being in deficit when it"
-		+ "consumes and balanced otherwise; the presenter maps it to a word and a tone, the word"
-		+ "being shown"
+		+ "consumes and balanced otherwise; the use case hands it to the presenter as a primitive"
+		+ "of its response, and the presenter maps it to a word and a tone, the word being shown"
 	SPEC "the optimizers come before the breakdown, under a header counting them and their boost"
 		+ "with its share of production, as a table of optimizer, energy fuses held over the fuse"
 		+ "slots of its tier, boosted machines and contribution with its share of production"
@@ -608,8 +632,9 @@ TASK FEAT139
 		+ "largest total first, ending on a total row, under a line counting the producers, the"
 		+ "consumers and the optimizers; the cards of today disappear"
 	SPEC "the Power page reads one view model, the notifications and one zone per planet, built by"
-		+ "one presenter from one use case; the planet zone is built by a presentation helper the"
-		+ "planet page and the overview reuse"
+		+ "one presenter from the application response of one use case, plain records of primitives"
+		+ "with no value object of the domain, as EnergyLevelsResponse is; the planet zone is built"
+		+ "by a presentation helper the planet page and the overview reuse"
 	SPEC "the Power section controller, presenter and view model of today are retired, every module"
 		+ "left without an importer is deleted, and the anchors and the wording of the decisions"
 		+ "naming them are rewritten"
@@ -621,9 +646,11 @@ TASK FEAT139
 		+ "about the game, so the domain decides it on the planet energy grid and the presenter"
 		+ "only renders it. The planet zone of this view model is what the planet page shows in its"
 		+ "Power tab and what the overview cards summarise, so the helper that builds it is shared"
-		+ "by the three views. The fuse slots of a tier are in the optimizer configuration table"
-		+ "and reach no view model today. Three decisions anchor the energy section component and"
-		+ "presenter this task removes"
+		+ "by the three views. The fuse slots of a tier are in the optimizer configuration table of"
+		+ "data-world-objects, read behind an application port as every value table is, and reach"
+		+ "no response today. The balance and every figure cross to the presenter as primitives of"
+		+ "the response, the planet energy value objects staying in the domain. Three decisions"
+		+ "anchor the energy section component and presenter this task removes"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
@@ -631,6 +658,8 @@ TASK FEAT139
 		REF @DECISION.TheEnergyOfASaveTakesTheValuesOfItsRelease
 		REF @DECISION.TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
 		REF @DECISION.APlanetEnergyGridIsAnAggregate
+		REF @DECISION.AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
+		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		REF @LIMITATION.SubmergedMachinesAreCountedAsDrawingPower
 		REF @PACKAGE.core_mapping
 		REF @PACKAGE.ui_save_manager
@@ -807,8 +836,10 @@ TASK FEAT144
 		+ "named by its kind and marked Empty; the inventory groups the items by kind with their"
 		+ "count, under a caption counting the items, the slots and the kinds, and ends on an Empty"
 		+ "slots chip counting the free slots"
-	SPEC "the kind of each slot is a value table of the domain, the counts and the percentages are"
-		+ "computed by the use case from domain values, and the presenter renders them"
+	SPEC "the kind of each slot is a value table of a data- package, read by an infrastructure"
+		+ "adapter behind an application port; the use case computes the counts and the percentages"
+		+ "from domain values and hands them to the presenter as primitives of its application"
+		+ "response, and the presenter renders them"
 	SPEC "the Players page reads one view model, one card per player, built by one presenter from"
 		+ "one use case; the Players section controller, presenter and view model of today are"
 		+ "retired, every module left without an importer is deleted, and the anchors and the"
@@ -824,6 +855,7 @@ TASK FEAT144
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
+		REF @DECISION.AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
 		REF @SECTION.Players
 		REF @SECTION.Inventories
 		REF @PACKAGE.core_mapping
@@ -835,15 +867,18 @@ TASK FEAT144
 TASK FEAT145
 	TITLE "Close the transition: no section controller exported, the export boundary guarded"
 	STATUS todo
-	DESC "ratified on the reviewed plan on 2026-09-27 without refinement; the guard is a check of"
-		+ "the dependencies script or a rule of the package manifest, chosen when the task starts"
-	SPEC "core-mapping exports no section controller and no section view model: every exported"
-		+ "controller serves one page or one zone of the save manager, or a CLI, and a guard of the"
-		+ "repository refuses a new Load*SectionController"
+	DESC "ratified on the reviewed plan on 2026-09-27 without refinement; the guard reads the"
+		+ "controllers of core-mapping or the wired controllers its composition root exports,"
+		+ "chosen when the task starts"
+	SPEC "the composition root of core-mapping exports no wired section controller and the package"
+		+ "exports no section view model: every wired controller serves one page or one zone of the"
+		+ "save manager, or a CLI, and a guard of the repository refuses a new"
+		+ "Load*SectionController"
 	SPEC "the generic table view model and the field group components of today are gone from"
 		+ "core-mapping and from the UI, and the coverage gates of the repository stay green"
-	SPEC "the controllers and view models the CLIs import are unchanged, and the specs of cli-merge"
-		+ "and cli-validate pass unchanged"
+	SPEC "the controller methods and view models the CLIs call are unchanged, the CLIs importing"
+		+ "the wired controllers from the composition root, and the specs of cli-merge and"
+		+ "cli-validate pass unchanged"
 	AFTER @TASK.FEAT139
 	AFTER @TASK.FEAT141
 	AFTER @TASK.FEAT142
