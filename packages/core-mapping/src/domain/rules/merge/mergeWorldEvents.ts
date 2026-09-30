@@ -1,8 +1,5 @@
 import {WorldEventEntry} from '../../save/WorldEventEntry';
 
-/**
- * @see @RULE.WorldEventsAreDeduplicatedByPlanetSeedAndPosition
- */
 export function mergeWorldEvents(worldEventsA: readonly WorldEventEntry[], worldEventsB: readonly WorldEventEntry[]): WorldEventEntry[] {
   const worldEventsFromBNotInA = worldEventsB.filter(eventB =>
     !worldEventsA.some(eventA =>

@@ -36,7 +36,6 @@ const SECTION_VALIDATORS = /** @type {Record<string, SectionEntryValidator | und
 /**
  * @param {string | undefined} formatRelease
  * @returns {SaveFileSchema}
- * @throws {UnknownFormatReleaseError}
  */
 export function findSaveFileSchema(formatRelease) {
   const splitPartsCount = formatRelease === undefined ? undefined : findSplitPartsCount(formatRelease);
@@ -69,9 +68,6 @@ function getSectionValidator(formatRelease, sectionIndex) {
  * @param {ParsedSections | unknown[][]} parsedSections
  * @param {string} formatRelease
  * @returns {ValidationIssue[]}
- * @throws {UnexpectedSaveSectionError} when a section that should hold a list of entries does not.
- * The reader of the format guarantees it does, so this is a broken invariant of ours and never a
- * malformed save.
  */
 export function validateSchemas(parsedSections, formatRelease) {
   const worldObjectsSectionIndex = resolveSectionIndexes(formatRelease).worldObjects;

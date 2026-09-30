@@ -8,15 +8,6 @@ export interface IdRemappings {
   readonly worldObjectIds: ReadonlyMap<number, number>;
 }
 
-/**
- * Points every save B back-reference at the identifiers save B entries were given.
- *
- * Save A entries are never rewritten: their identifiers are authoritative, so a reference they
- * carry still designates the same entry after the merge. That is what makes the rewriting
- * save-origin-aware without having to guess where an entry came from.
- *
- * @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
- */
 export function rewritePlayerReferences(players: EntriesByOrigin<PlayerEntry>, remappings: IdRemappings): EntriesByOrigin<PlayerEntry> {
   return {
     fromSaveA: players.fromSaveA,
@@ -28,7 +19,6 @@ export function rewritePlayerReferences(players: EntriesByOrigin<PlayerEntry>, r
   };
 }
 
-/** @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide */
 export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<WorldObjectEntry>, remappings: IdRemappings): EntriesByOrigin<WorldObjectEntry> {
   return {
     fromSaveA: worldObjects.fromSaveA,
@@ -42,15 +32,6 @@ export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<World
   };
 }
 
-/**
- * Rewrites the contents of every save B inventory, so an inventory keeps holding the world objects
- * it held whatever identifiers they were given.
- *
- * A save A inventory only ever lists save A world objects, whose identifiers are authoritative and
- * never change, so it is left alone.
- *
- * @see @RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide
- */
 export function rewriteInventoryReferences(inventories: EntriesByOrigin<InventoryEntry>, remappings: IdRemappings): EntriesByOrigin<InventoryEntry> {
   return {
     fromSaveA: inventories.fromSaveA,
@@ -65,12 +46,10 @@ function remapId(id: number, remapping: ReadonlyMap<number, number>): number {
   return remapping.get(id) ?? id;
 }
 
-/** A field absent from the save stays absent: `undefined` is dropped when the entry is serialized. */
 function remapOptionalId(id: number | undefined, remapping: ReadonlyMap<number, number>): number | undefined {
   return id === undefined ? undefined : remapId(id, remapping);
 }
 
-/** A field absent from the save stays absent: `undefined` is dropped when the entry is serialized. */
 function remapOptionalIdList(idList: readonly number[] | undefined, remapping: ReadonlyMap<number, number>): readonly number[] | undefined {
   return idList === undefined ? undefined : remapIdList(idList, remapping);
 }

@@ -5,9 +5,6 @@ export interface SaveConfigurationOverrides {
   declaredVersion: string | undefined;
 }
 
-/**
- * @see @RULE.SaveConfigurationComesFromSaveA, @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
- */
 export function mergeSaveConfigurations(
   [saveConfigurationA]: readonly SaveConfigurationEntry[],
   [saveConfigurationB]: readonly SaveConfigurationEntry[],

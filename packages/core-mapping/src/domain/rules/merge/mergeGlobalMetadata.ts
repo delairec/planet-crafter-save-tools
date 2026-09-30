@@ -9,9 +9,6 @@ const NO_METADATA_CONTRIBUTION: GlobalMetadataEntry = {
   openedInstanceTimeLeft: 0,
 };
 
-/**
- * @see @RULE.GlobalMetadataIsSummedAndUnioned
- */
 export function mergeGlobalMetadata([metadataA]: readonly GlobalMetadataEntry[], [metadataB]: readonly GlobalMetadataEntry[]): GlobalMetadataEntry {
   if (metadataA === undefined && metadataB === undefined) {
     throw new NoGlobalMetadataToMergeError();

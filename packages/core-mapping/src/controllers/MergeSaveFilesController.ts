@@ -1,24 +1,16 @@
 import {MergeResultViewModel} from "../presentation/viewModels/MergeResultViewModel";
-import {
-  createGameReleasesReader,
-  createFileNameSanitizer,
-  createSaveSectionsParser,
-  createSaveSectionsReader,
-  createSaveSectionsSerializer,
-  createSaveValidator
-} from "../composition/compositionRoot";
 import {MergeResultPresenter} from "../presentation/MergeResultPresenter";
-import {MergeSaveFiles} from "../application/MergeSaveFiles";
+import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "../application/requests/MergeSaveFilesRequest";
+import {UseCaseFactory} from "./UseCaseFactory";
 
 export class MergeSaveFilesController {
-  static async mergeSaveFiles(request: MergeSaveFilesRequest): Promise<MergeResultViewModel> {
-    const validator = createSaveValidator();
-    const saveSectionsReader = createSaveSectionsReader();
-    const parser = createSaveSectionsParser();
-    const serializer = createSaveSectionsSerializer();
+  constructor(private readonly createMergeSaveFiles: UseCaseFactory<MergeResultPresenterPort, MergeSaveFilesRequest>) {
+  }
+
+  async mergeSaveFiles(request: MergeSaveFilesRequest): Promise<MergeResultViewModel> {
     const presenter = new MergeResultPresenter();
-    const useCase = new MergeSaveFiles(validator, saveSectionsReader, parser, serializer, createGameReleasesReader(), createFileNameSanitizer(), presenter);
+    const useCase = this.createMergeSaveFiles(presenter);
 
     await useCase.execute(request);
 

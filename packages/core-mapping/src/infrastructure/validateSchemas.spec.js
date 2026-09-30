@@ -9,7 +9,7 @@ import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-pr
 import {createPlayer, createTerrainLayer, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 
-/** @returns {Generator<never>} the world objects section of a fake save that holds none */
+/** @returns {Generator<never>} */
 const NO_WORLD_OBJECTS = function* () {};
 
 describe('validateSchemas', () => {

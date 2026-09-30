@@ -212,6 +212,31 @@ describe('SaveSectionsMapperService', () => {
     });
   });
 
+  it('should read the game version the save declares', () => {
+    // Arrange
+    const service = new SaveSectionsMapperService(createSaveSections({saveConfigurations: [createSaveConfigurationEntry({version: '1.002'})]}));
+
+    // Act
+    const declaredVersion = service.getDeclaredVersion();
+
+    // Assert
+    expect(declaredVersion).toBe('1.002');
+  });
+
+  describe('When the save declares no configuration', () => {
+    it('should declare no game version', () => {
+      // Arrange
+      const noSaveConfigurations: SaveConfigurationEntry[] = [];
+      const service = new SaveSectionsMapperService(createSaveSections({saveConfigurations: noSaveConfigurations}));
+
+      // Act
+      const declaredVersion = service.getDeclaredVersion();
+
+      // Assert
+      expect(declaredVersion).toBeUndefined();
+    });
+  });
+
   describe('When reading the world objects', () => {
     it('should keep every world object, placed or carried', () => {
       // Arrange

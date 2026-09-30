@@ -1,58 +1,41 @@
-import {describe, expect, it} from 'bun:test';
-import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsViewModel";
-import {createFakeSaveContent} from "shared-save-processing/testing/createFakeSaveContent.js";
-import {LoadEnergyLevelsSectionController} from "./LoadEnergyLevelsSectionController";
+import {describe, expect, it, mock} from 'bun:test';
+import {LoadEnergyLevelsSectionController} from './LoadEnergyLevelsSectionController';
+import {EnergyLevelsPresenterPort} from '../application/ports/EnergyLevelsPresenterPort';
+import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
+import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {EnergyLevelsPresenter} from '../presentation/EnergyLevelsPresenter';
 
-const nbsp = '\u00A0';
+type ExecuteLoadEnergyLevelsSection = (request: LoadSaveSectionsRequest, presenter: EnergyLevelsPresenterPort) => Promise<void>;
+
+function createController(execute: ExecuteLoadEnergyLevelsSection): LoadEnergyLevelsSectionController {
+  return new LoadEnergyLevelsSectionController((presenter) => ({execute: (request) => execute(request, presenter)}));
+}
 
 describe('LoadEnergyLevelsSectionController', () => {
-  it('should present computed energy levels from the parsed save', async () => {
+  it('should hand its use case the validated content, with the presenter of the energy levels', async () => {
     // Arrange
-    const validatedContent = createFakeSaveContent();
+    const execute = mock<ExecuteLoadEnergyLevelsSection>(async () => {});
+    const controller = createController(execute);
 
     // Act
-    const viewModel = await LoadEnergyLevelsSectionController.loadEnergyLevelsSection(validatedContent);
+    await controller.loadEnergyLevelsSection('validated content');
 
     // Assert
-    expect(viewModel).toEqual<EnergyLevelsViewModel>({
-      notifications: [
-        {severity: 'limitation', message: 'Submerged machines may distort the computed available energy.'},
-        {severity: 'warning', message: 'Values of game release 2.004'},
-        {severity: 'information', message: "Consumption applies the save's Power Consumption modifier: 20%"}
-      ],
-      planets: [{
-        planetId: 'Planet 1',
-        energyLevels: {
-          columns: [
-            {
-              header: 'Production',
-              values: [`2,220.2${nbsp}kW`]
-            },
-            {
-              header: 'Consumption',
-              values: [`0.3${nbsp}kW`]
-            },
-            {
-              header: 'Available',
-              values: [`2,219.9${nbsp}kW`]
-            }
-          ]
-        },
-        productionBreakdown: [
-          {label: 'Nuclear Fusion generator', quantity: '1', unitLevel: `1,485${nbsp}kW`, totalLevel: `1,485${nbsp}kW (67%)`},
-          {label: 'Nuclear Reactor T2', quantity: '1', unitLevel: `331.5${nbsp}kW`, totalLevel: `331.5${nbsp}kW (15%)`},
-          {label: 'Wind turbine T2', quantity: '1', unitLevel: `290${nbsp}kW`, totalLevel: `290${nbsp}kW (13%)`},
-          {label: 'Nuclear Reactor T1', quantity: '1', unitLevel: `86.5${nbsp}kW`, totalLevel: `86.5${nbsp}kW (4%)`},
-          {label: 'Solar panel T2', quantity: '1', unitLevel: `19.5${nbsp}kW`, totalLevel: `19.5${nbsp}kW (1%)`},
-          {label: 'Solar panel T1', quantity: '1', unitLevel: `6.5${nbsp}kW`, totalLevel: `6.5${nbsp}kW (0%)`},
-          {label: 'Wind turbine', quantity: '1', unitLevel: `1.2${nbsp}kW`, totalLevel: `1.2${nbsp}kW (0%)`}
-        ],
-        consumptionBreakdown: [
-          {label: 'Heater T1', quantity: '1', unitLevel: `0.2${nbsp}kW`, totalLevel: `0.2${nbsp}kW`},
-          {label: 'Drill T1', quantity: '1', unitLevel: `0.1${nbsp}kW`, totalLevel: `0.1${nbsp}kW`}
-        ],
-        optimizers: []
-      }]
+    expect(execute).toHaveBeenCalledWith({content: 'validated content'}, expect.any(EnergyLevelsPresenter));
+  });
+
+  it('should return the view model its presenter holds once the use case has run', async () => {
+    // Arrange
+    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+    const controller = createController(async (_request, presenter) => {
+      await Promise.resolve();
+      presenter.displaySaveWithUnreadableLines(unreadableLines);
     });
+
+    // Act
+    const viewModel = await controller.loadEnergyLevelsSection('validated content');
+
+    // Assert
+    expect(viewModel.unreadableLines).toHaveLength(1);
   });
 });

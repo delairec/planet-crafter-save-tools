@@ -1,13 +1,16 @@
 import {SaveIdentityViewModel} from "../presentation/viewModels/SaveIdentityViewModel";
 import {SaveIdentityPresenter} from "../presentation/SaveIdentityPresenter";
-import {LoadSaveIdentity} from "../application/LoadSaveIdentity";
-import {createGameReleasesReader, createSaveSectionsReader} from "../composition/compositionRoot";
+import {SaveIdentityPresenterPort} from "../application/ports/SaveIdentityPresenterPort";
+import {LoadSaveIdentityRequest} from "../application/requests/LoadSaveIdentityRequest";
+import {UseCaseFactory} from "./UseCaseFactory";
 
 export class LoadSaveIdentityController {
-  static async loadSaveIdentity(validatedContent: string, fileName: string): Promise<SaveIdentityViewModel> {
-    const saveReader = createSaveSectionsReader();
+  constructor(private readonly createLoadSaveIdentity: UseCaseFactory<SaveIdentityPresenterPort, LoadSaveIdentityRequest>) {
+  }
+
+  async loadSaveIdentity(validatedContent: string, fileName: string): Promise<SaveIdentityViewModel> {
     const presenter = new SaveIdentityPresenter();
-    const useCase = new LoadSaveIdentity(saveReader, createGameReleasesReader(), presenter);
+    const useCase = this.createLoadSaveIdentity(presenter);
 
     await useCase.execute({content: validatedContent, fileName});
 

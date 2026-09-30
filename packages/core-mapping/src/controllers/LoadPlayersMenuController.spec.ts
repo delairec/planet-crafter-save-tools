@@ -1,19 +1,41 @@
-import {describe, expect, it} from 'bun:test';
-import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
+import {describe, expect, it, mock} from 'bun:test';
 import {LoadPlayersMenuController} from './LoadPlayersMenuController';
-import {PlayersMenuViewModel} from '../presentation/viewModels/PlayersMenuViewModel';
+import {PlayersMenuPresenterPort} from '../application/ports/PlayersMenuPresenterPort';
+import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
+import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {PlayersMenuPresenter} from '../presentation/PlayersMenuPresenter';
+
+type ExecuteLoadPlayersMenu = (request: LoadSaveSectionsRequest, presenter: PlayersMenuPresenterPort) => Promise<void>;
+
+function createController(execute: ExecuteLoadPlayersMenu): LoadPlayersMenuController {
+  return new LoadPlayersMenuController((presenter) => ({execute: (request) => execute(request, presenter)}));
+}
 
 describe('LoadPlayersMenuController', () => {
-  it('should present the players menu of the parsed save', async () => {
+  it('should hand its use case the validated content, with the presenter of the players menu', async () => {
     // Arrange
-    const validatedContent = createFakeSaveContent();
+    const execute = mock<ExecuteLoadPlayersMenu>(async () => {});
+    const controller = createController(execute);
 
     // Act
-    const viewModel = await LoadPlayersMenuController.loadPlayersMenu(validatedContent);
+    await controller.loadPlayersMenu('validated content');
 
     // Assert
-    expect(viewModel).toEqual<PlayersMenuViewModel>({
-      players: [{name: 'Nikowa', planet: 'Toxicity', hostBadge: 'Host'}]
+    expect(execute).toHaveBeenCalledWith({content: 'validated content'}, expect.any(PlayersMenuPresenter));
+  });
+
+  it('should return the view model its presenter holds once the use case has run', async () => {
+    // Arrange
+    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+    const controller = createController(async (_request, presenter) => {
+      await Promise.resolve();
+      presenter.displaySaveWithUnreadableLines(unreadableLines);
     });
+
+    // Act
+    const viewModel = await controller.loadPlayersMenu('validated content');
+
+    // Assert
+    expect(viewModel.unreadableLines).toHaveLength(1);
   });
 });

@@ -6,9 +6,6 @@ export interface EjectedPlayerInventoryIds {
   orphanWorldObjectIds: Set<number>;
 }
 
-/**
- * @see @RULE.PlayersAreDeduplicatedByName, @RULE.WorldObjectsAreDeduplicatedByPlanetAndPosition, @RULE.InventoriesAreKeptUnlessTheirOwnerIsEjected
- */
 export function collectEjectedPlayerInventoryIds(
   playersA: readonly PlayerEntry[],
   playersB: readonly PlayerEntry[],

@@ -1,5 +1,5 @@
 import {createSignal, Show} from 'solid-js';
-import {MergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesController';
+import {mergeSaveFilesController} from 'core-mapping/composition/compositionRoot';
 import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeResultViewModel';
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';
@@ -71,7 +71,7 @@ export default function MergeSection(props: MergeSectionProps) {
       await yieldToPaint();
 
       const [contentA, contentB] = await Promise.all([savedFileA.text(), savedFileB.text()]);
-      const viewModel = await MergeSaveFilesController.mergeSaveFiles({
+      const viewModel = await mergeSaveFilesController.mergeSaveFiles({
         fileNameA: savedFileA.name,
         contentA,
         fileNameB: savedFileB.name,

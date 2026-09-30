@@ -1,3 +1,4 @@
+import {validateSaveFileController} from 'core-mapping/composition/compositionRoot';
 import {getCliArguments} from 'shared-platforms/platform.common.js';
 import {extractPlatformParameter} from 'shared-platforms/extractPlatformParameter.js';
 import {createPlatform} from 'shared-platforms/platform.js';
@@ -10,7 +11,7 @@ const UNEXPECTED_ERROR_EXIT_CODE = 1;
 
 const cliArguments = getCliArguments();
 const platform = createPlatform(extractPlatformParameter(cliArguments));
-const {main} = initValidateCli(platform, cliArguments, cliManifest);
+const {main} = initValidateCli(platform, cliArguments, cliManifest, (filePath, save) => validateSaveFileController.validateSaveFile(filePath, save));
 
 runWhenEntryPoint(platform, {
   importMeta: import.meta,

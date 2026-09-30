@@ -1,9 +1,6 @@
 import {EntriesByOrigin} from './EntriesByOrigin';
 import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
-/**
- * @see @RULE.WorldObjectsAreDeduplicatedByPlanetAndPosition
- */
 export function mergeWorldObjects(worldObjectsA: readonly WorldObjectEntry[], worldObjectsB: readonly WorldObjectEntry[], orphanWorldObjectIds: Set<number>): EntriesByOrigin<WorldObjectEntry> {
   const fromSaveA: WorldObjectEntry[] = [];
   const positionKeysFromA = new Set<string>();

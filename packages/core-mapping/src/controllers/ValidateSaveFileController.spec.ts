@@ -1,31 +1,39 @@
-import {describe, expect, it} from 'bun:test';
+import {describe, expect, it, mock} from 'bun:test';
 import {ValidateSaveFileController} from './ValidateSaveFileController';
-import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
-import {SaveFileValidationViewModel} from '../presentation/viewModels/SaveFileValidationViewModel';
+import {SaveFileValidationPresenterPort} from '../application/ports/SaveFileValidationPresenterPort';
+import {ValidateSaveFileRequest} from '../application/requests/ValidateSaveFileRequest';
+import {SaveFileValidationPresenter} from '../presentation/SaveFileValidationPresenter';
+
+type ExecuteValidateSaveFile = (request: ValidateSaveFileRequest, presenter: SaveFileValidationPresenterPort) => Promise<void>;
+
+function createController(execute: ExecuteValidateSaveFile): ValidateSaveFileController {
+  return new ValidateSaveFileController((presenter) => ({execute: (request) => execute(request, presenter)}));
+}
 
 describe('ValidateSaveFileController', () => {
+  it('should hand its use case the file name and the content, with the presenter of the validation', async () => {
+    // Arrange
+    const execute = mock<ExecuteValidateSaveFile>(async () => {});
+    const controller = createController(execute);
 
-  describe('When the save file is valid', () => {
-    it('should return a valid view model', async () => {
-      // Act
-      const viewModel = await ValidateSaveFileController.validateSaveFile('Save-A.json', createFakeSaveContent());
+    // Act
+    await controller.validateSaveFile('Save-A.json', 'save content');
 
-      // Assert
-      expect<SaveFileValidationViewModel>(viewModel).toEqual({status: 'valid', errors: [], warnings: []});
-    });
+    // Assert
+    expect(execute).toHaveBeenCalledWith({fileName: 'Save-A.json', content: 'save content'}, expect.any(SaveFileValidationPresenter));
   });
 
-  describe('When the save file is invalid', () => {
-    it('should return an invalid view model with the validation error messages', async () => {
-      // Act
-      const viewModel = await ValidateSaveFileController.validateSaveFile('Save-A.json', 'not a valid save at all');
-
-      // Assert
-      expect<SaveFileValidationViewModel>(viewModel).toEqual({
-        status: 'invalid',
-        errors: [{message: 'Expected 11 or 12 sections but found 1', location: null}],
-        warnings: []
-      });
+  it('should return the view model its presenter holds once the use case has run', async () => {
+    // Arrange
+    const controller = createController(async (_request, presenter) => {
+      await Promise.resolve();
+      presenter.presentFileWithoutJsonExtension();
     });
+
+    // Act
+    const viewModel = await controller.validateSaveFile('Save-A.txt', 'save content');
+
+    // Assert
+    expect(viewModel.status).toBe('invalid');
   });
 });

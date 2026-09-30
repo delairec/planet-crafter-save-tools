@@ -11,7 +11,7 @@
     "check:section-validators": "bun scripts/check-section-validators.ts"
   },
   "exports": {
-    "./controllers/*": "./src/controllers/*.ts",
+    "./composition/compositionRoot": "./src/composition/compositionRoot.ts",
     "./presentation/viewModels/*": "./src/presentation/viewModels/*.ts"
   },
   "dependencies": {

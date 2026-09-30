@@ -76,11 +76,10 @@ DECISION ABrokenInvariantFailsWithANamedErrorType
 		+ "non-empty string is no business rule, and nothing caught it"
 	SOURCE "Owner ruling on the Clean Architecture audit: the shape checks move to the decoding"
 		PR 236
-	SPEC "The JSDoc of the error carries the instruction: fix what let the data through, never"
-		+ "soften the guard"
-		IMPL "packages/core-mapping/src/infrastructure/errors/UnexpectedSaveSectionError.ts::never"
-			+ "soften the guard"
 	REJECTED "Throwing a bare Error and telling the cases apart by their message"
+	REJECTED "A JSDoc on the error carrying the instruction to fix what let the data through and"
+		+ "never soften the guard: code carries no documentation block above a declaration, and the"
+		+ "named type that nothing catches already says it"
 	REJECTED "A silent fallback on the shape of the section: it left a whole section unvalidated"
 	REJECTED "Declaring a domain error in infrastructure/errors: the domain never depends on"
 		+ "infrastructure (ARCH-CA-INF-6)"
@@ -90,6 +89,8 @@ DECISION ABrokenInvariantFailsWithANamedErrorType
 		PR 48
 	SOURCE "Domain layer"
 		PR 102
+	SOURCE "The removal of the explanatory comments of core-mapping: the error types keep no JSDoc"
+		PR 244
 
 DECISION ValidationIsTheSingleSourceOfWarnings
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -351,8 +352,7 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 		IMPL "packages/core-mapping/src/domain/rules/merge/mergePlayers.ts::hostPositionInSaveA ==="
 			+ "NO_HOST_POSITION"
 	SPEC "A player identifier is never regenerated"
-		IMPL "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.ts::Players are left"
-			+ "out"
+		IMPL "packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.ts::rewritePlayerReferences(mergedSections.players"
 	REJECTED "Designating the host by identifier equality: identifiers are not unique across two"
 		+ "saves"
 	REJECTED "Designating the host by name equality: two namesakes would both come out as hosts"
@@ -604,12 +604,19 @@ DECISION BothPlatformAdaptersHonourOneSharedContract
 
 DECISION CoreMappingExportsOnlyControllersAndViewModels
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	SPEC "Only the controllers and the ViewModels are exported"
-		IMPL "packages/core-mapping/package.json::./controllers/*"
+	SPEC "Only the wired controllers, through the composition root, and the ViewModels are exported"
+		IMPL "packages/core-mapping/package.json::\"./composition/compositionRoot\":"
+			+ "\"./src/composition/compositionRoot.ts\""
 		IMPL "packages/core-mapping/package.json::./presentation/viewModels/*"
 	REJECTED "Export infrastructure modules of core-mapping to its consumers"
+	REJECTED "Exporting the composition folder by a wildcard: it exposes the use case factories,"
+		+ "with which a consumer wires core-mapping itself"
 	SOURCE "Package rule"
 		PR 61
+	SOURCE "Owner rulings on the review of the pull request delivering REFACTOR166: the wired"
+		+ "controllers are imported from the composition root, and the controllers folder is no"
+		+ "longer exported"
+		PR 244
 
 DECISION EachUseCaseResponseIsDeclaredInItsOwnFile
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -755,7 +762,7 @@ DECISION SectionControllersReceiveTheValidatedText
 		+ "representation of the sections"
 		IMPL "packages/core-mapping/src/controllers/LoadEnergyLevelsSectionController.ts::execute({content:"
 			+ "validatedContent})"
-		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::createSaveSectionsReader():"
+		IMPL "packages/core-mapping/src/composition/useCaseFactories.ts::createSaveSectionsReader():"
 			+ "SaveSectionsReaderPort"
 	REJECTED "An opaque save identifier with a registry in core-mapping: state in a stateless"
 		+ "package"
@@ -1006,6 +1013,8 @@ DECISION UiScenariosArePlaywrightSpecsOnThreeEngines
 		PR 144
 
 DECISION AControllerSpecCoversWiringNotBranches
+	STATUS archived
+	ARCHIVED_ON 2026-09-30
 	REJECTED "Covering business branches from controller specs: every rule change would cost twice"
 	REJECTED "Keeping the shortest failure: it short-circuits before the use case and leaves the"
 		+ "wiring untested"
@@ -2792,16 +2801,23 @@ DECISION AViewModelServesOneView
 
 DECISION TheModulesTheClisImportKeepTheirContract
 	SPEC "the modules a CLI reaches keep their contract through the redesign of the save manager:"
-		+ "MergeSaveFilesController and MergeResultViewModel for cli-merge,"
-		+ "ValidateSaveFileController and SaveFileValidationViewModel for cli-validate,"
-		+ "SaveValidationMessageViewModel for both; behind them formatValidationError,"
-		+ "formatValidationIssue, formatErrorLocation, formatSaveWarning, formatMergeWarning, the"
-		+ "saveWarning, mergeWarning, mergeFailure and saveSectionLabels messages, the validator,"
-		+ "parser and serializer services and shared-save-processing"
-		IMPL "packages/cli-merge/cli/initMergeCli.js::MergeSaveFilesController"
-		IMPL "packages/cli-validate/cli/initValidateCli.js::ValidateSaveFileController"
+		+ "the mergeSaveFiles method of the wired merge controller and MergeResultViewModel for"
+		+ "cli-merge, the validateSaveFile method of the wired validation controller and"
+		+ "SaveFileValidationViewModel for cli-validate, SaveValidationMessageViewModel for both;"
+		+ "behind them formatValidationError, formatValidationIssue, formatErrorLocation,"
+		+ "formatSaveWarning, formatMergeWarning, the saveWarning, mergeWarning, mergeFailure and"
+		+ "saveSectionLabels messages, the validator, parser and serializer services and"
+		+ "shared-save-processing"
+		IMPL "packages/cli-merge/cli/merge-cli.js::mergeSaveFilesController.mergeSaveFiles(request)"
+		IMPL "packages/cli-validate/cli/validate-cli.js::validateSaveFileController.validateSaveFile(filePath,"
+			+ "save)"
 		ENFORCED_BY "packages/cli-merge/cli/initMergeCli.spec.js"
 		ENFORCED_BY "packages/cli-validate/cli/initValidateCli.spec.js"
+	SPEC "the contract kept is the controller methods and their view models, not the module a"
+		+ "controller is imported from: the CLIs import the wired controllers from"
+		+ "core-mapping/composition/compositionRoot"
+		IMPL "packages/cli-merge/cli/merge-cli.js::core-mapping/composition/compositionRoot"
+		IMPL "packages/cli-validate/cli/validate-cli.js::core-mapping/composition/compositionRoot"
 	SPEC "the number formatters and the section presenters, presenter ports and view models serve"
 		+ "the save manager only and may change; a task of the redesign that touches core-mapping"
 		+ "leaves the specs of cli-merge and cli-validate unchanged and green"
@@ -2822,6 +2838,10 @@ DECISION TheModulesTheClisImportKeepTheirContract
 	SOURCE "Owner ruling of 2026-09-27 on the redesign plan: the parts of core-mapping the CLIs use"
 		+ "must not move"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner rulings on the review of the pull request delivering REFACTOR166: the wired"
+		+ "controllers are imported from the composition root, by the entry file of each CLI, which"
+		+ "hands its controller to the initialiser"
+		PR 244
 
 DECISION TheDevelopmentServerPreBundlesTheToolbarSourceMapReader
 	SPEC "the development server pre-bundles @jridgewell/trace-mapping, which the SolidStart"
@@ -3458,8 +3478,8 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 		+ "other its validation errors and warnings, both in the one outcome of invalid saves"
 		IMPL "packages/core-mapping/src/application/responses/SaveFileFindingsResponse.ts::export"
 			+ "type SaveFileFindingsResponse"
-		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::When one save"
-			+ "lacks the JSON extension and the other is invalid"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should present that"
+			+ "save as without JSON extension beside the findings of the other save"
 	SPEC "application/ports/validationIssues is a transitional home: the issues, the section"
 		+ "location and the unreadable line move into domain/ with REFACTOR170, which hands them to"
 		+ "the presenters inside application responses"
@@ -3584,3 +3604,91 @@ DECISION TheMergeUseCaseChoosesTheSuffixOfTheMergedFileName
 	SOURCE "Owner ruling in the review: the -merged suffix is a business decision passed as a"
 		+ "parameter, the .json extension stays in the service, renamed FileNameSanitizer"
 		PR 241
+
+DECISION AControllerIsBuiltAroundItsUseCaseFactory
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR166
+	SPEC "a controller of core-mapping is a class whose constructor takes the factory building its"
+		+ "use case around the presenter the controller provides; it imports no infrastructure"
+		+ "module and instantiates no adapter"
+		IMPL "packages/core-mapping/src/controllers/UseCaseFactory.ts::export type UseCaseFactory"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.ts::constructor(private"
+			+ "readonly createMergeSaveFiles"
+	SPEC "the composition root builds and exports the wired controllers, each around the factory of"
+		+ "its use case, and a controller module imports no composition module"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::export const"
+			+ "mergeSaveFilesController = new MergeSaveFilesController(createMergeSaveFiles)"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.ts::export class"
+			+ "MergeSaveFilesController"
+	SPEC "the use case factories sit in a composition module of their own, which the package does"
+		+ "not export"
+		IMPL "packages/core-mapping/src/composition/useCaseFactories.ts::export function"
+			+ "createMergeSaveFiles"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::./useCaseFactories"
+	SPEC "a controller spec mounts its controller on a test double of the use case factory and"
+		+ "reaches no infrastructure"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::function"
+			+ "createController"
+	REJECTED "Each controller module exporting, next to its class, the controller wired with the"
+		+ "factories of the composition root: the controller module imports the composition root,"
+		+ "an outer module dependencies_point_inward forbids it"
+	REJECTED "Controller functions taking their use case from their caller: every CLI and the save"
+		+ "manager would wire core-mapping themselves"
+	REJECTED "Static controllers calling the factories of the composition root: a controller spec"
+		+ "could only cross the real infrastructure"
+	RATIONALE "The composition root is the outermost module of core-mapping: it imports the"
+		+ "controllers it wires and no controller imports it back, so the controllers depend on"
+		+ "application and presentation only. Keeping the factories out of the exported module"
+		+ "leaves a consumer the wired controllers and no way to wire core-mapping itself; the"
+		+ "wiring stays covered end to end by the specs of the CLIs and the scenarios of the save"
+		+ "manager"
+	SOURCE "Owner rulings on the review of the pull request delivering REFACTOR166: the composition"
+		+ "root exports the wired controllers, each controller module keeps its class alone, and"
+		+ "the use case factories move to a composition module of their own"
+		PR 244
+
+DECISION TheCompositionRootSpecAssertsEachFactoryOnARealSave
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR166
+	SPEC "each use case factory of the core-mapping composition root that no CLI spec reaches is"
+		+ "specified by running the use case it builds on a fake save, against a presenter double,"
+		+ "and asserting the one discriminant its real adapters decide"
+		IMPL "packages/core-mapping/src/composition/useCaseFactories.spec.ts::should present the"
+			+ "game release the save declares"
+	SPEC "a line of an adapter reached only through the composition root is specified by the spec"
+		+ "of that adapter, on a fixture of the sections it maps"
+		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsMapperService.spec.ts::should"
+			+ "read the game version the save declares"
+	REJECTED "Keeping the controller specs crossing the real infrastructure for the save manager"
+		+ "flows: the task has every controller spec run on a double of its use case factory"
+		REF @DECISION.AControllerIsBuiltAroundItsUseCaseFactory
+	REJECTED "Relying on the scenarios of the save manager for the six factories it alone reaches:"
+		+ "bun test --coverage does not see a Playwright scenario, so the per-module floor fails"
+	REJECTED "Moving those factories into a module no unit test loads, ignoring useCaseFactories.ts"
+		+ "in coveragePathIgnorePatterns or lowering its floor: each hides the gap from the gate"
+		+ "instead of closing it"
+		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
+	REJECTED "A composition root spec asserting only the type of the use case a factory returns: it"
+		+ "executes the lines and asserts no outcome"
+	REJECTED "A composition root spec asserting each exported controller is wired: the type check"
+		+ "refuses a factory built around another presenter port, and the specs of the CLIs and the"
+		+ "scenarios of the save manager call every wired controller"
+	DEROGATES "@RULE.business_case_tested_once_at_lowest_level"
+	DEROGATES "@RULE.adapter_test"
+	DEROGATES "@RULE.third_party_isolated_in_infrastructure"
+	RATIONALE "Once the controllers take their use case factory, the wiring is the behaviour of the"
+		+ "composition root, so its spec owns it, and the per-module coverage floor needs a unit"
+		+ "test reaching the six factories only the save manager calls. Running their use cases on"
+		+ "the real adapters departs from business_case_tested_once_at_lowest_level, which keeps"
+		+ "the full stack to the controller specs, and from adapter_test, which never tests an"
+		+ "adapter through a use case: each scenario therefore asserts only the one discriminant"
+		+ "the wired adapter decides, the whole response staying with the use case spec and the"
+		+ "mapping with the adapter spec. The fake save it runs on comes from"
+		+ "shared-save-processing/testing, which third_party_isolated_in_infrastructure refuses"
+		+ "outside infrastructure; the composition root is the outermost module and already imports"
+		+ "every adapter, so the import reaches no inner layer"
+		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
+	SOURCE "Coverage gate failing on the first head of the pull request delivering REFACTOR166: the"
+		+ "controller specs no longer reached six factories of the composition root nor the"
+		+ "declared version read by SaveSectionsMapperService"
+		PR 244
