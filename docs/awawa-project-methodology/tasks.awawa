@@ -1869,6 +1869,9 @@ TASK REFACTOR170
 		+ "application/ports/ holds ports only: validationIssues/, ValidationIssue.ts,"
 		+ "validationIssueCodes.ts and SaveSectionLocation.ts no longer exist there"
 		REF @DECISION.EachValidationIssueIsANamedInterfaceInItsOwnFile
+	SPEC "no spec and no module of testing/ in core-mapping writes the index of a save section as a"
+		+ "literal: each reads it from the one declaration of the order of the sections, so that a"
+		+ "change of that order, as the removal of Terrain Layers made, is written in one place"
 	SPEC "a presenter receives the validation issues and the unreadable lines inside an application"
 		+ "response its use case builds, which holds them as domain value objects; no presenter"
 		+ "port imports from domain/"
@@ -1890,11 +1893,11 @@ TASK REFACTOR170
 		+ "application Response or primitives only; a record of shared-save-processing is neither."
 		+ "The guard of CHORE157 refuses only what comes from domain/, so SaveParseError and"
 		+ "SaveWarning cross today in SaveFileValidationPresenterPort,  SaveFilesInvalidResponse"
-		+ "and MergeSucceededResponse, SaveSectionName in MergeWarning, and since REFACTOR161"
-		+ "SaveParseError in the six section presenter ports. The audit of 2026-09-28 did not list"
-		+ "it: its violation 7 concerns the sentences, not the type that crosses. The owner ruled"
-		+ "wider than the presenters: only the infrastructure imports another workspace package, a"
-		+ "type included, which departs from the instructions rule"
+		+ "and MergeSucceededResponse, SaveSectionName in MergeWarningResponse, and since"
+		+ "REFACTOR161 SaveParseError in the six section presenter ports. The audit of 2026-09-28"
+		+ "did not list it: its violation 7 concerns the sentences, not the type that crosses. The"
+		+ "owner ruled wider than the presenters: only the infrastructure imports another workspace"
+		+ "package, a type included, which departs from the instructions rule"
 		+ "third_party_isolated_in_infrastructure as it stands, allowing type-only imports of a"
 		+ "shared- package in domain and application; the rule is amended in the instructions, not"
 		+ "derogated here. The guard is the one REFACTOR163 adds against runtime imports, widened"
@@ -1933,3 +1936,6 @@ TASK REFACTOR170
 		+ "location move into domain/ in this task, with the responses the presenter ports take,"
 		+ "rather than in the pull request of REFACTOR164"
 		PR 234
+	SOURCE "Owner ruling in the review of REFACTOR163: a section index is read from the constant"
+		+ "that declares the order of the sections, never restated in the test support"
+		PR 241
