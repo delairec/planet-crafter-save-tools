@@ -3,11 +3,12 @@ import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPor
 import {SaveSectionsReading} from "../application/ports/SaveSectionsReading";
 import {SaveSectionsMapperPort} from "../application/ports/SaveSectionsMapperPort";
 import {FakeSaveSectionsMapperService} from "./FakeSaveSectionsMapperService";
+import {GLOBAL_METADATA_SECTION} from "./saveSectionLocations";
 
 export const SAVE_CONTENT = 'save content';
 
 const UNEXPECTED_CONTENT_LINE: UnreadableLine = {
-  section: {name: 'globalMetadata', index: 0},
+  section: GLOBAL_METADATA_SECTION,
   entryIndex: 0,
   line: `The reader stub reads only "${SAVE_CONTENT}"`
 };

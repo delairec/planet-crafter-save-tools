@@ -18,6 +18,7 @@ import {UnreadableLine} from './ports/SaveSectionLocation';
 import type {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {createPlayerEntry, createSaveConfigurationEntry, createTerrainLayerEntry} from '../testing/createSaveEntries';
 import {createSaveSections} from '../testing/createSaveSections';
+import {INVENTORIES_SECTION, PLAYERS_SECTION} from '../testing/saveSectionLocations';
 import {stubGameReleasesReader} from '../testing/stubGameReleasesReader';
 import {MergedFileNamerPort} from './ports/MergedFileNamerPort';
 import {FakeSaveSectionsMapperService} from '../testing/FakeSaveSectionsMapperService';
@@ -261,7 +262,7 @@ describe('MergeSaveFiles', () => {
   describe('When at least one save is invalid', () => {
     it('should present a validation error result without parsing the saves for the merge', async () => {
       // Arrange
-      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 2}, entryIndex: 0, line: 'contentA'};
+      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: PLAYERS_SECTION, entryIndex: 0, line: 'contentA'};
       const {useCase, parser, presenter} = createUseCase({
         validate: validatorAnswering({contentA: rejectedWith(invalidJsonError)})
       });
@@ -281,7 +282,7 @@ describe('MergeSaveFiles', () => {
   describe('When a save file has no JSON extension', () => {
     it('should present that save as without JSON extension beside the findings of the other save', async () => {
       // Arrange
-      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 2}, entryIndex: 0, line: 'contentB'};
+      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: PLAYERS_SECTION, entryIndex: 0, line: 'contentB'};
       const {useCase, presenter} = createUseCase({
         hasJsonExtension: (fileName: string) => fileName !== 'Save-A.txt',
         validate: validatorAnswering({contentB: {isValid: false, errors: [invalidJsonError], warnings: [{code: 'legacy-save-format'}]}})
@@ -338,7 +339,7 @@ describe('MergeSaveFiles', () => {
     describe('When the merge is rejected', () => {
       it('should present the warnings of each save', async () => {
         // Arrange
-        const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 2}, entryIndex: 0, line: 'contentB'};
+        const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: PLAYERS_SECTION, entryIndex: 0, line: 'contentB'};
         const {useCase, presenter} = createUseCase({
           validate: validatorAnswering({
             contentA: acceptedWith({code: 'legacy-save-format'}),
@@ -361,7 +362,7 @@ describe('MergeSaveFiles', () => {
   describe('When the merged save does not pass validation', () => {
     const missingPlayerName: ValidationIssue = {
       code: VALIDATION_ISSUE_CODES.MISSING_FIELD,
-      section: {name: 'players', index: 2},
+      section: PLAYERS_SECTION,
       entryIndex: 0,
       fieldPath: '',
       missingFieldName: 'name'
@@ -413,7 +414,7 @@ describe('MergeSaveFiles', () => {
   });
 
   describe('When a save reaches the merge with a line that cannot be read', () => {
-    const unreadableLine: UnreadableLine = {section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{not valid json'};
+    const unreadableLine: UnreadableLine = {section: INVENTORIES_SECTION, entryIndex: 0, line: '{not valid json'};
     const readSaveAWithAnUnreadableLine = readerAnswering({contentA: {saveSections: new FakeSaveSectionsMapperService(), unreadableLines: [unreadableLine]}});
 
     it('should present the merged save as unusable instead of a success', async () => {

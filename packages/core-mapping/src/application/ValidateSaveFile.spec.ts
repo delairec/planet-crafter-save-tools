@@ -9,6 +9,7 @@ import {UnreadableLine} from './ports/SaveSectionLocation';
 import type {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {SAVE_CONTENT, stubSaveSectionsReader} from '../testing/stubSaveSectionsReader';
 import {stubGameReleasesReader} from '../testing/stubGameReleasesReader';
+import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
 import {CarriedAndDeclaredReleases} from '../domain/rules/detectDeclaredReleaseContradiction';
 import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/SaveSectionsWithPlayers';
 
@@ -78,6 +79,13 @@ describe('ValidateSaveFile', () => {
       expect(presenter.presentInvalidSaveFile).not.toHaveBeenCalled();
       expect(presenter.presentSaveFileWithoutUniqueHost).not.toHaveBeenCalled();
     });
+
+      // Act
+      await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith([unreadableLine], [{code: 'legacy-save-format'}]);
+    });
   });
 
   describe('When the file has no JSON extension', () => {
@@ -114,7 +122,7 @@ describe('ValidateSaveFile', () => {
   describe('When the reader cannot read some lines of a valid save file', () => {
     it('should present the save file with its unreadable lines, never as a valid save file', async () => {
       // Arrange
-      const unreadableLine: UnreadableLine = {section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{'};
+      const unreadableLine: UnreadableLine = {section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'};
       const {useCase, presenter} = setupUseCase({saveSectionsReader: stubSaveSectionsReader({unreadableLines: [unreadableLine]})});
 
       // Act
@@ -175,7 +183,7 @@ describe('ValidateSaveFile', () => {
 
     it('should present the warnings of an invalid save file too', async () => {
       // Arrange
-      const validationErrors: ValidationIssue[] = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{'}];
+      const validationErrors: ValidationIssue[] = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'}];
       const {useCase, presenter} = setupUseCase({validationErrors, validationWarnings: [{code: 'legacy-save-format'}]});
 
       // Act
