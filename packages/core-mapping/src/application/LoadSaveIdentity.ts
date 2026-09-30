@@ -15,7 +15,7 @@ export class LoadSaveIdentity {
     const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
 
     if (unreadableLines.length > 0) {
-      this.presenter.displaySaveWithUnreadableLines(fileName, unreadableLines);
+      this.presenter.displaySaveWithUnreadableLines(fileName, {unreadableLines});
       return;
     }
 

@@ -1,6 +1,6 @@
-import {ValidationIssue} from "../ports/ValidationIssue";
-import type {SaveWarning} from "shared-save-processing/gameDefinitions";
+import {ValidationIssue} from "../../domain/validation/ValidationIssue";
+import type {SaveWarningResponse} from "./SaveWarningResponse";
 
 export type SaveFileFindingsResponse =
   | {hasJsonExtension: false}
-  | {hasJsonExtension: true; errors: ValidationIssue[]; warnings: SaveWarning[]};
+  | {hasJsonExtension: true; errors: ValidationIssue[]; warnings: SaveWarningResponse[]};

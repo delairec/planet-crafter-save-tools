@@ -1,6 +1,15 @@
-import type {SaveSectionName} from "shared-save-processing/gameDefinitions";
-
-export type {SaveSectionName};
+export type SaveSectionName =
+  | 'globalMetadata'
+  | 'terraformationLevels'
+  | 'players'
+  | 'worldObjects'
+  | 'inventories'
+  | 'statistics'
+  | 'mailboxMessages'
+  | 'storyEvents'
+  | 'saveConfiguration'
+  | 'terrainLayers'
+  | 'worldEvents';
 
 export const RESERVED_SAVE_PART = 'reserved';
 

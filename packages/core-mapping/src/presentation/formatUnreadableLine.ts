@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
+import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatErrorLocation} from "./formatErrorLocation";
 import {formatUnreadableLineMessage} from "./messages/validationIssueMessages.js";

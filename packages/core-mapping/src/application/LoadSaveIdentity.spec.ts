@@ -1,4 +1,4 @@
-import {UnreadableLine} from "./ports/SaveSectionLocation";
+import {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {describe, expect, it, mock} from 'bun:test';
 import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
@@ -78,7 +78,7 @@ describe('LoadSaveIdentity', () => {
       await useCase.execute({content: SAVE_CONTENT, fileName: 'Standard-1.json'});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith('Standard-1.json', [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}]);
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith('Standard-1.json', {unreadableLines: [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}]});
       expect(presenter.displaySaveIdentity).not.toHaveBeenCalled();
     });
   });

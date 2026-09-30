@@ -6,9 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "bun test",
-    "lint:types": "tsc --noEmit",
-    "generate:section-validators": "bun scripts/generate-section-validators.ts",
-    "check:section-validators": "bun scripts/check-section-validators.ts"
+    "lint:types": "tsc --noEmit"
   },
   "exports": {
     "./composition/compositionRoot": "./src/composition/compositionRoot.ts",
@@ -20,8 +18,5 @@
     "data-save-format": "*",
     "data-world-objects": "*",
     "shared-save-processing": "*"
-  },
-  "devDependencies": {
-    "ajv": "^8.20.0"
   }
 }

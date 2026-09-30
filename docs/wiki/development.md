@@ -168,19 +168,24 @@ guard runs with no exemption.
 bun run check:wire-format
 ```
 
-Fails on two refusals, both keeping the save format out of the `domain/` directory of a `core-` package, spec files
-included:
-
-- a file that uses a save format abbreviation — `gId`, `liId`, `woIds`, `siIds` or `linkedWo` — as an identifier,
-  a property name or a property key, string literal keys included. The domain names the business concept; the
-  abbreviation is tolerated only in the save format records and is translated at the domain boundary. Comments and
-  string literals that are not keys are not reported;
-- a file that imports `shared-save-processing/gameDefinitions`, or one of its modules, type-only and dynamic imports
-  included. Those are the save format records: a domain module handling one depends on the save format even when it
-  names no abbreviation.
+Fails on a file under the `domain/` directory of a `core-` package, spec files included, that uses a save format
+abbreviation — `gId`, `liId`, `woIds`, `siIds` or `linkedWo` — as an identifier, a property name or a property key,
+string literal keys included. The domain names the business concept; the abbreviation is tolerated only in the save
+format records and is translated at the domain boundary. Comments and string literals that are not keys are not
+reported. An import of the save format records themselves is refused by `check:workspace-imports`.
 
 Every `.js`, `.ts` and `.tsx` source under a `domain/` directory of every `core-` package is scanned, outside
 dependencies and build outputs. The guard runs with no exemption.
+
+```
+bun run check:workspace-imports
+```
+
+Fails on any file of a `core-` package outside its `infrastructure/` directory that imports another workspace
+package, spec files and `testing/` included. A value import, a type-only import, a re-export, a dynamic import and a
+JSDoc `@import` all count. The application declares the types its ports exchange and the domain its own business
+types; the infrastructure adapter maps the records of the other package onto them, so only the infrastructure knows
+that package. The guard carries no allow-list.
 
 ```
 bun run check:action-pins

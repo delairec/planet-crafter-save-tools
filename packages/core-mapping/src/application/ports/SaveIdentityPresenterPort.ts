@@ -1,4 +1,4 @@
-import {UnreadableLine} from "./SaveSectionLocation";
+import type {UnreadableLinesResponse} from "../responses/UnreadableLinesResponse";
 import {SaveIdentityResponse} from "../responses/SaveIdentityResponse";
 
 export interface SaveIdentityPresenterPort {
@@ -6,5 +6,5 @@ export interface SaveIdentityPresenterPort {
 
   displayUnconfiguredSaveIdentity(fileName: string): void;
 
-  displaySaveWithUnreadableLines(fileName: string, unreadableLines: UnreadableLine[]): void;
+  displaySaveWithUnreadableLines(fileName: string, response: UnreadableLinesResponse): void;
 }

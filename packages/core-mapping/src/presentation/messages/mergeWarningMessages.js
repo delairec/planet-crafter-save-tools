@@ -1,4 +1,4 @@
-/** @import { SaveSectionName } from 'shared-save-processing/gameDefinitions' */
+/** @import { SaveSectionName } from '../../domain/save/SaveSectionLocation' */
 import {saveSectionLabels} from './saveSectionLabels.js';
 
 export const unknownMergeWarningMessage = 'The merge raised a warning that has no description.';

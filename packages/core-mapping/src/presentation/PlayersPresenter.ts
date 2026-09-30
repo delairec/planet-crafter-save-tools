@@ -1,5 +1,4 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {PlayersViewModel} from './viewModels/PlayersViewModel';
 import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
 import {PlayersResponse} from "../application/responses/PlayersResponse";
@@ -11,6 +10,7 @@ import {
   playersSectionNoItemsMessage,
   resolvePlayersSectionUnknownItemLabel
 } from "./messages/playersSectionMessages.js";
+import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 
 export class PlayersPresenter implements PlayersPresenterPort {
   private _viewModel: PlayersViewModel;
@@ -43,7 +43,7 @@ export class PlayersPresenter implements PlayersPresenterPort {
     };
   }
 
-  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void {
+  displaySaveWithUnreadableLines({unreadableLines}: UnreadableLinesResponse): void {
     this._viewModel = {players: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

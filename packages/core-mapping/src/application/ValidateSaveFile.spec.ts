@@ -3,10 +3,10 @@ import {ValidateSaveFile} from './ValidateSaveFile';
 import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {SaveFileValidationPresenterPort} from './ports/SaveFileValidationPresenterPort';
 import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
-import {ValidationIssue} from './ports/ValidationIssue';
-import {VALIDATION_ISSUE_CODES} from './ports/validationIssueCodes';
-import {UnreadableLine} from './ports/SaveSectionLocation';
-import type {SaveWarning} from 'shared-save-processing/gameDefinitions';
+import {ValidationIssue} from '../domain/validation/ValidationIssue';
+import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
+import type {SaveWarningResponse} from "./responses/SaveWarningResponse";
 import {SAVE_CONTENT, stubSaveSectionsReader} from '../testing/stubSaveSectionsReader';
 import {stubGameReleasesReader} from '../testing/stubGameReleasesReader';
 import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
@@ -16,7 +16,7 @@ import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/Sav
 interface UseCaseOverrides {
   fileHasJsonExtension?: boolean;
   validationErrors?: ValidationIssue[];
-  validationWarnings?: SaveWarning[];
+  validationWarnings?: SaveWarningResponse[];
   declaredAndCarriedReleases?: CarriedAndDeclaredReleases;
   saveSectionsReader?: SaveSectionsReaderPort;
 }
@@ -92,7 +92,7 @@ describe('ValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith([unreadableLine], [{code: 'legacy-save-format'}]);
+      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [unreadableLine], warnings: [{code: 'legacy-save-format'}]});
     });
   });
 
@@ -121,7 +121,7 @@ describe('ValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith(validationErrors, []);
+      expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith({errors: validationErrors, warnings: []});
       expect(presenter.presentValidSaveFile).not.toHaveBeenCalled();
       expect(reader.read).not.toHaveBeenCalled();
     });
@@ -137,7 +137,7 @@ describe('ValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith([unreadableLine], []);
+      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [unreadableLine], warnings: []});
       expect(presenter.presentValidSaveFile).not.toHaveBeenCalled();
       expect(presenter.presentSaveFileWithoutUniqueHost).not.toHaveBeenCalled();
     });
@@ -198,7 +198,7 @@ describe('ValidateSaveFile', () => {
       await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith(validationErrors, [{code: 'legacy-save-format'}]);
+      expect(presenter.presentInvalidSaveFile).toHaveBeenCalledWith({errors: validationErrors, warnings: [{code: 'legacy-save-format'}]});
     });
   });
 });

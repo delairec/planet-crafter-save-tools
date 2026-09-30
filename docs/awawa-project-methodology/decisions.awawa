@@ -96,7 +96,7 @@ DECISION ValidationIsTheSingleSourceOfWarnings
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SPEC "The validation result carries the warnings, never the parser"
 		IMPL "packages/core-mapping/src/application/responses/SaveValidationResponse.ts::warnings:"
-			+ "SaveWarning[]"
+			+ "SaveWarningResponse[]"
 		IMPL "packages/core-mapping/src/application/responses/ParsedSaveSectionsResponse.ts::readonly"
 			+ "errors: UnreadableLine[]"
 	SPEC "Validation runs first in the four flows, and warnings are reported on every outcome,"
@@ -121,7 +121,7 @@ DECISION UserTextLivesInCoreMappingPresentation
 	SPEC "A validation issue and a parse error carry a code and its data, never a sentence; neither"
 		+ "the infrastructure of core-mapping nor shared-save-processing builds a sentence shown to"
 		+ "the user"
-		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::export type"
+		IMPL "packages/core-mapping/src/domain/validation/ValidationIssue.ts::export type"
 			+ "ValidationIssue"
 		IMPL "packages/shared-save-processing/gameDefinitions/SaveParseError.ts::export type"
 			+ "SaveParseError"
@@ -149,7 +149,7 @@ DECISION ALocationIsABusinessLabelFollowedByTheIndex
 		+ "under presentation imports the section indexes of the save format"
 		IMPL "packages/core-mapping/src/infrastructure/locateSaveSection.ts::export function"
 			+ "locateSaveSection"
-		IMPL "packages/core-mapping/src/application/ports/SaveSectionLocation.ts::export interface"
+		IMPL "packages/core-mapping/src/domain/save/SaveSectionLocation.ts::export interface"
 			+ "SaveSectionLocation"
 		ENFORCED_BY "packages/core-mapping/src/infrastructure/locateSaveSection.spec.ts::When the"
 			+ "two save formats place different sections at the index"
@@ -161,7 +161,7 @@ DECISION ALocationIsABusinessLabelFollowedByTheIndex
 			+ "error was found in a save entry"
 	SPEC "The empty part closing the save is named reserved by the infrastructure and shown by its"
 		+ "index alone, section N, as it read before the name was carried"
-		IMPL "packages/core-mapping/src/application/ports/SaveSectionLocation.ts::RESERVED_SAVE_PART"
+		IMPL "packages/core-mapping/src/domain/save/SaveSectionLocation.ts::RESERVED_SAVE_PART"
 		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.ts::name ==="
 			+ "RESERVED_SAVE_PART"
 		ENFORCED_BY "packages/core-mapping/src/presentation/formatErrorLocation.spec.ts::When the"
@@ -643,15 +643,20 @@ DECISION WireAbbreviationsStayInSharedSaveProcessing
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.CHORE158
+	APPLIES_TO_TASK @TASK.REFACTOR170
 	SPEC "Wire format abbreviations are tolerated only in the shared-save-processing records,"
 		+ "stated by the package description, and translated at the domain boundary"
 		IMPL "packages/core-mapping/src/infrastructure/saveEntryCodecs.ts"
 		IMPL "packages/shared-save-processing/package.json::Save file wire format"
 	SPEC "No file under domain/ of a core- package, spec files included, uses gId, liId, woIds,"
-		+ "siIds or linkedWo in code nor imports shared-save-processing/gameDefinitions"
+		+ "siIds or linkedWo in code"
 		IMPL "scripts/check-wire-format.ts::findWireAbbreviations"
-		IMPL "scripts/check-wire-format.ts::findGameDefinitionsImports"
 		ENFORCED_BY "scripts/check-wire-format.ts"
+	SPEC "No file of a core- package outside infrastructure/ imports"
+		+ "shared-save-processing/gameDefinitions, and check:workspace-imports alone states that"
+		+ "refusal, as part of its refusal of any other workspace package"
+		IMPL "scripts/check-workspace-imports.ts::export function findWorkspacePackageImports"
+		ENFORCED_BY "scripts/check-workspace-imports.spec.ts"
 	REJECTED "Tolerate wire abbreviations beyond this package"
 	REJECTED "A header comment in each DTO file: it names a section by an index no test holds"
 	REJECTED "Refusing the abbreviations alone: a domain module handling a save format record"
@@ -664,6 +669,9 @@ DECISION WireAbbreviationsStayInSharedSaveProcessing
 		+ "check:wire-format"
 		PR 222
 		PR 228
+	SOURCE "REFACTOR170: one guard refuses every import of another workspace package outside the"
+		+ "infrastructure"
+		PR 245
 
 DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
@@ -683,15 +691,31 @@ DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 DECISION ASectionIndexIsNeverHardCoded
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR170
 	SPEC "Section indexes and counters, legacy format and reserved part included, are declared once"
 		+ "with a name and read from their module"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::PLAYERS_SECTION_INDEX"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::SAVE_SPLIT_PARTS_COUNT"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::resolveSectionIndexes"
-	SPEC "No core-mapping spec hard-codes a section index; the number in an expected message stays"
-		+ "literal"
-		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
-	REJECTED "Tolerate a literal index in a spec"
+	SPEC "Outside infrastructure/, no module of core-mapping, spec files and testing/ included,"
+		+ "imports the declaration of the section order or restates that order: the infrastructure"
+		+ "sets the index of each section location, and the domain, the application and the"
+		+ "presentation carry it as data, so a change of that order is written in the declaration"
+		+ "alone"
+		IMPL "packages/core-mapping/src/infrastructure/locateSaveSection.ts"
+		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.ts::(section ${index})"
+	SPEC "A location built outside the infrastructure, in a spec or in testing/, carries a"
+		+ "two-digit index that is visibly not the real position of its section, and a presenter"
+		+ "spec asserts that the carried index is displayed"
+		IMPL "packages/core-mapping/src/presentation/SaveFileValidationPresenter.spec.ts::should"
+			+ "tell where in the save each error was found"
+	REJECTED "The real indexes written as data in the specs: they restate the order the"
+		+ "infrastructure alone keeps"
+	REJECTED "Reading each index of the specs from the declaration of the section order: a spec"
+		+ "outside the infrastructure would know that order"
+	REJECTED "A test-support module under infrastructure/testing/, reached through src/testing/,"
+		+ "that reads the declaration of the section order for the specs: it carries the order out"
+		+ "of the infrastructure; refused by the owner, never to be proposed again"
 	REJECTED "Compose the expected message from the index module: the expectation would compute"
 		+ "what it pins"
 	REJECTED "Renaming sections to parts and data sections: section is the word of the public"
@@ -703,6 +727,8 @@ DECISION ASectionIndexIsNeverHardCoded
 		PR 47
 		PR 82
 		PR 141
+	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30"
+		PR 245
 
 DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 	UNTIL "fallow follows the @import tag"
@@ -2053,21 +2079,31 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 		PR 144
 
 DECISION TheSectionValidatorsAreGeneratedAndVersioned
-	SPEC "The section validators are Ajv standalone code generated from the JSON Schemas of"
-		+ "shared-save-processing into core-mapping and versioned; the CLI and the web UI validate"
-		+ "through that module, and no schema is compiled at run time"
-		IMPL "packages/core-mapping/scripts/generate-section-validators.ts::standaloneCode"
-		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::./sectionValidators.generated.js"
+	SPEC "The section validators are Ajv standalone code that shared-save-processing, which owns"
+		+ "the JSON Schemas, generates from them, versions and exports; the infrastructure of"
+		+ "core-mapping imports that module, the CLI and the web UI validate through it, and no"
+		+ "schema is compiled at run time"
+		IMPL "packages/shared-save-processing/scripts/generate-section-validators.ts::standaloneCode"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::shared-save-processing/sectionValidators.generated.js"
 	SPEC "bun run guards fails when the versioned module differs from what the generator writes"
-		IMPL "packages/core-mapping/scripts/check-section-validators.ts"
-		ENFORCED_BY "packages/core-mapping/scripts/check-section-validators.spec.ts"
+		IMPL "packages/shared-save-processing/scripts/check-section-validators.ts"
+		ENFORCED_BY "packages/shared-save-processing/scripts/check-section-validators.spec.ts"
+	SPEC "Ajv is a development dependency of shared-save-processing alone: the generated module"
+		+ "imports no Ajv runtime helper"
+		IMPL "packages/shared-save-processing/package.json::ajv"
 	REJECTED "A Vite plugin generating the validators at build time: the CLI would keep a second"
 		+ "path compiling at run time"
 	REJECTED "An unversioned generation: bun test and the CLI would depend on a step having run"
+	REJECTED "Generating from core-mapping/scripts/: a core- package would import the schemas of"
+		+ "another workspace package outside its infrastructure"
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR170
 	RATIONALE "Ajv compiles a schema with new Function, which the content security policy of the"
 		+ "web UI refuses without 'unsafe-eval'"
 	SOURCE "Refinement of FIX104 with the user on 2026-09-24"
+	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30"
+		PR 245
 
 DECISION TheScheduledDependencyAuditRunsMonthly
 	SPEC "The scheduled run of the Dependencies workflow audits the dependencies once a month"
@@ -2472,7 +2508,7 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 		+ "receives, and the test passes a fake"
 		IMPL "scripts/specSources.ts::readOwnSourceFiles(io: ScriptIo"
 		IMPL "scripts/scriptIo.ts::export interface ScriptIo"
-		IMPL "packages/core-mapping/scripts/sectionValidatorsFile.ts::export interface"
+		IMPL "packages/shared-save-processing/scripts/sectionValidatorsFile.ts::export interface"
 			+ "SectionValidatorsFileIo"
 	SPEC "The entry of a script hands its main function and import.meta.main to runAsEntryPoint,"
 		+ "which alone gives it the input and output of the process"
@@ -2480,8 +2516,8 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 		IMPL "scripts/scriptIo.ts::export function runAsEntryPoint"
 		IMPL "scripts/generate-scenario-fixtures.ts::await runAsEntryPointWith(import.meta.main,"
 			+ "generateScenarioFixtures, console.log)"
-		IMPL "packages/core-mapping/scripts/sectionValidatorsFile.ts::export async function"
-			+ "runAsEntryPoint"
+		IMPL "packages/shared-save-processing/scripts/sectionValidatorsFile.ts::export async"
+			+ "function runAsEntryPoint"
 	SPEC "Only a module holding the real input and output is ignored by the coverage, listed in the"
 		+ "coveragePathIgnorePatterns of bunfig.toml"
 		IMPL "bunfig.toml::coveragePathIgnorePatterns ="
@@ -3298,7 +3334,7 @@ DECISION EachBrokenSchemaConstraintIsAValidationIssueOfItsOwn
 		+ "constraint, never the text of the schema validator"
 		IMPL "packages/core-mapping/src/infrastructure/mapSchemaErrorToValidationIssue.ts::export"
 			+ "function mapSchemaErrorToValidationIssue"
-		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::export type"
+		IMPL "packages/core-mapping/src/domain/validation/ValidationIssue.ts::export type"
 			+ "ValidationIssue"
 		ENFORCED_BY "packages/core-mapping/src/infrastructure/mapSchemaErrorToValidationIssue.spec.ts::When"
 			+ "the schema validator reports a constraint a validation issue states"
@@ -3445,7 +3481,8 @@ DECISION ADomainSpecBuildsSaveEntriesWithTheBusinessBuilders
 		+ "core-mapping/src/testing/createSaveEntries.ts, in business names; the infrastructure"
 		+ "specs build save format records with createSaveRecords"
 		IMPL "packages/core-mapping/src/testing/createSaveEntries.ts"
-		ENFORCED_BY "scripts/check-wire-format.ts::findGameDefinitionsImports"
+		ENFORCED_BY "scripts/check-workspace-imports.ts::export function"
+			+ "findWorkspacePackageImports"
 	REJECTED "Deriving the entries by decoding the records of createSaveRecords: test support"
 		+ "outside infrastructure would import another workspace package"
 	REJECTED "Entry builders in shared-save-processing/testing: a shared package would know the"
@@ -3462,8 +3499,8 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 	SPEC "Each validation issue of core-mapping is a named interface declared in a file of its own,"
 		+ "in a folder grouping them; ValidationIssue is the union of those interfaces and declares"
 		+ "no member inline"
-		IMPL "packages/core-mapping/src/application/ports/validationIssues"
-		IMPL "packages/core-mapping/src/application/ports/ValidationIssue.ts::export type"
+		IMPL "packages/core-mapping/src/domain/validation/validationIssues"
+		IMPL "packages/core-mapping/src/domain/validation/ValidationIssue.ts::export type"
 			+ "ValidationIssue"
 	SPEC "A validation issue states what is invalid in the save, by a code and its data; how it was"
 		+ "detected (the JSON parser, the schema validator) stays in the infrastructure, which maps"
@@ -3480,11 +3517,6 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 			+ "type SaveFileFindingsResponse"
 		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should present that"
 			+ "save as without JSON extension beside the findings of the other save"
-	SPEC "application/ports/validationIssues is a transitional home: the issues, the section"
-		+ "location and the unreadable line move into domain/ with REFACTOR170, which hands them to"
-		+ "the presenters inside application responses"
-		IMPL "packages/core-mapping/src/application/ports/validationIssues"
-		REF @TASK.REFACTOR170
 	REJECTED "Members written inline as an anonymous union of object literals: no issue has a name"
 		+ "to import, to narrow a producer to or to find a file by"
 	REJECTED "One interface holding the fields of every issue as optional: the type no longer ties"
@@ -3504,7 +3536,6 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 	REJECTED "The move into domain/ in the pull request of REFACTOR164: the presenter ports receive"
 		+ "the issues and import nothing from domain/ until REFACTOR170 gives them responses"
 		REF @TASK.REFACTOR170
-	DEROGATES "@RULE.application_holds_use_cases_ports_requests_responses"
 	RATIONALE "Each code carries data of its own, so each issue is a type of its own, named and"
 		+ "found by that name. The domain says what is invalid, the infrastructure how it is"
 		+ "detected. The issues stay beside the ports, against the rule that the folder holds ports"
@@ -3647,48 +3678,31 @@ DECISION AControllerIsBuiltAroundItsUseCaseFactory
 		+ "the use case factories move to a composition module of their own"
 		PR 244
 
-DECISION TheCompositionRootSpecAssertsEachFactoryOnARealSave
+DECISION TheCompositionRootIsWiringAndCarriesNoUnitTest
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.REFACTOR166
-	SPEC "each use case factory of the core-mapping composition root that no CLI spec reaches is"
-		+ "specified by running the use case it builds on a fake save, against a presenter double,"
-		+ "and asserting the one discriminant its real adapters decide"
-		IMPL "packages/core-mapping/src/composition/useCaseFactories.spec.ts::should present the"
-			+ "game release the save declares"
-	SPEC "a line of an adapter reached only through the composition root is specified by the spec"
+	APPLIES_TO_TASK @TASK.REFACTOR170
+	SPEC "The composition root of core-mapping only assembles concrete implementations, and no unit"
+		+ "test is written for it"
+		IMPL "packages/core-mapping/src/composition/useCaseFactories.ts"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts"
+	SPEC "The composition root is left out of the coverage gate"
+		IMPL "bunfig.toml::packages/core-mapping/src/composition/**"
+	SPEC "A factory that comes to hold a business rule, a validation, a transformation or a"
+		+ "calculation moves that logic into application/ or domain/"
+		IMPL "packages/core-mapping/src/composition/useCaseFactories.ts"
+	SPEC "A line of an adapter reached only through the composition root is specified by the spec"
 		+ "of that adapter, on a fixture of the sections it maps"
 		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsMapperService.spec.ts::should"
 			+ "read the game version the save declares"
-	REJECTED "Keeping the controller specs crossing the real infrastructure for the save manager"
-		+ "flows: the task has every controller spec run on a double of its use case factory"
-		REF @DECISION.AControllerIsBuiltAroundItsUseCaseFactory
-	REJECTED "Relying on the scenarios of the save manager for the six factories it alone reaches:"
-		+ "bun test --coverage does not see a Playwright scenario, so the per-module floor fails"
-	REJECTED "Moving those factories into a module no unit test loads, ignoring useCaseFactories.ts"
-		+ "in coveragePathIgnorePatterns or lowering its floor: each hides the gap from the gate"
-		+ "instead of closing it"
-		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
-	REJECTED "A composition root spec asserting only the type of the use case a factory returns: it"
-		+ "executes the lines and asserts no outcome"
-	REJECTED "A composition root spec asserting each exported controller is wired: the type check"
-		+ "refuses a factory built around another presenter port, and the specs of the CLIs and the"
-		+ "scenarios of the save manager call every wired controller"
-	DEROGATES "@RULE.business_case_tested_once_at_lowest_level"
-	DEROGATES "@RULE.adapter_test"
-	DEROGATES "@RULE.third_party_isolated_in_infrastructure"
-	RATIONALE "Once the controllers take their use case factory, the wiring is the behaviour of the"
-		+ "composition root, so its spec owns it, and the per-module coverage floor needs a unit"
-		+ "test reaching the six factories only the save manager calls. Running their use cases on"
-		+ "the real adapters departs from business_case_tested_once_at_lowest_level, which keeps"
-		+ "the full stack to the controller specs, and from adapter_test, which never tests an"
-		+ "adapter through a use case: each scenario therefore asserts only the one discriminant"
-		+ "the wired adapter decides, the whole response staying with the use case spec and the"
-		+ "mapping with the adapter spec. The fake save it runs on comes from"
-		+ "shared-save-processing/testing, which third_party_isolated_in_infrastructure refuses"
-		+ "outside infrastructure; the composition root is the outermost module and already imports"
-		+ "every adapter, so the import reaches no inner layer"
-		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
-	SOURCE "Coverage gate failing on the first head of the pull request delivering REFACTOR166: the"
-		+ "controller specs no longer reached six factories of the composition root nor the"
-		+ "declared version read by SaveSectionsMapperService"
+	REJECTED "A composition spec running each use case factory on a real or a fake save only to"
+		+ "satisfy coverage, the previous form of this ruling: it tests the adapters through a use"
+		+ "case and imports another workspace package outside the infrastructure"
+	REJECTED "A test such as toBeDefined() that executes the wiring and asserts nothing"
+	RATIONALE "Wiring is no behaviour: the type check refuses a factory built around another port,"
+		+ "and the specs of the CLIs and the scenarios of the save manager call every wired"
+		+ "controller"
+	SOURCE "Coverage gate failing on the first head of the pull request delivering REFACTOR166"
 		PR 244
+	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30, reversing the ruling of the"
+		+ "pull request delivering REFACTOR166"
+		PR 245

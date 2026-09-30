@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {locateSaveSection} from './locateSaveSection';
 import {SectionOutsideTheSaveFormatError} from './errors/SectionOutsideTheSaveFormatError';
-import {SaveSectionLocation} from '../application/ports/SaveSectionLocation';
+import {SaveSectionLocation} from '../domain/save/SaveSectionLocation';
 
 describe('locateSaveSection', () => {
 

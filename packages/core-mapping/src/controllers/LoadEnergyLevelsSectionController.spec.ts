@@ -2,7 +2,7 @@ import {describe, expect, it, mock} from 'bun:test';
 import {LoadEnergyLevelsSectionController} from './LoadEnergyLevelsSectionController';
 import {EnergyLevelsPresenterPort} from '../application/ports/EnergyLevelsPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
-import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
 import {EnergyLevelsPresenter} from '../presentation/EnergyLevelsPresenter';
 
 type ExecuteLoadEnergyLevelsSection = (request: LoadSaveSectionsRequest, presenter: EnergyLevelsPresenterPort) => Promise<void>;
@@ -26,10 +26,10 @@ describe('LoadEnergyLevelsSectionController', () => {
 
   it('should return the view model its presenter holds once the use case has run', async () => {
     // Arrange
-    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
     const controller = createController(async (_request, presenter) => {
       await Promise.resolve();
-      presenter.displaySaveWithUnreadableLines(unreadableLines);
+      presenter.displaySaveWithUnreadableLines({unreadableLines});
     });
 
     // Act

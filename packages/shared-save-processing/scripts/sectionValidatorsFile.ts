@@ -6,7 +6,7 @@ export interface SectionValidatorsFileIo {
   exit: (code: number) => void;
 }
 
-export const SECTION_VALIDATORS_PATH = new URL('../src/infrastructure/sectionValidators.generated.js', import.meta.url).pathname;
+export const SECTION_VALIDATORS_PATH = new URL('../sectionValidators.generated.js', import.meta.url).pathname;
 
 const PROCESS_IO: SectionValidatorsFileIo = {
   readVersionedSource: async () => {

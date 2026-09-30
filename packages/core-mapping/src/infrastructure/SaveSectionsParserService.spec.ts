@@ -4,7 +4,7 @@ import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSa
 import {createFakeSaveString, createLegacyFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 import {createEquipment, createInventory, createPlayer, createSaveConfiguration, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
-import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
 import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {WorldEventEntry} from '../domain/save/WorldEventEntry';

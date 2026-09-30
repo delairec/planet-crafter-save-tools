@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../ports/SaveSectionLocation";
+import {UnreadableLine} from "../../domain/save/SaveSectionLocation";
 import {SaveSections} from "../../domain/save/SaveSections";
 
 export interface ParsedSaveSectionsResponse {

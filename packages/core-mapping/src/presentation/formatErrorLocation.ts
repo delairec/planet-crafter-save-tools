@@ -1,4 +1,4 @@
-import {RESERVED_SAVE_PART, SaveSectionLocation} from "../application/ports/SaveSectionLocation";
+import {RESERVED_SAVE_PART, SaveSectionLocation} from "../domain/save/SaveSectionLocation";
 import {saveSectionLabels} from "./messages/saveSectionLabels.js";
 
 interface ErrorLocation {

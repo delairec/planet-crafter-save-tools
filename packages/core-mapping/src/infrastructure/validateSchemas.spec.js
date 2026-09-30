@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {createSectionEntryValidator, validateSchemas} from './validateSchemas.js';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
-import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes.ts';
+import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes.ts';
 import {LEGACY_TERRAIN_LAYERS_SECTION_INDEX, PLAYERS_SECTION_INDEX, RESERVED_TRAILING_SECTION_INDEX, STATISTICS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {createFakeParsedSave} from 'shared-save-processing/testing/createFakeParsedSave.js';

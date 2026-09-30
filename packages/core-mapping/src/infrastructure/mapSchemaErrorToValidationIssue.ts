@@ -1,6 +1,6 @@
-import type {SaveEntryField, SaveSectionLocation} from "../application/ports/SaveSectionLocation";
-import type {ValidationIssue} from "../application/ports/ValidationIssue";
-import {VALIDATION_ISSUE_CODES} from "../application/ports/validationIssueCodes";
+import type {SaveEntryField, SaveSectionLocation} from "../domain/save/SaveSectionLocation";
+import type {ValidationIssue} from "../domain/validation/ValidationIssue";
+import {VALIDATION_ISSUE_CODES} from "../domain/validation/validationIssueCodes";
 import {UnknownSchemaConstraintError} from "./errors/UnknownSchemaConstraintError";
 
 export interface SectionEntrySchemaError {

@@ -1,5 +1,5 @@
-import {VALIDATION_ISSUE_CODES} from "../application/ports/validationIssueCodes.ts";
-import type {ValidationIssue} from "../application/ports/ValidationIssue.ts";
+import {VALIDATION_ISSUE_CODES} from "../domain/validation/validationIssueCodes.ts";
+import type {ValidationIssue} from "../domain/validation/ValidationIssue.ts";
 
 const FLOAT_FIELDS = new Set([
   'unitOxygenLevel', 'unitHeatLevel', 'unitPressureLevel', 'unitPlantsLevel',

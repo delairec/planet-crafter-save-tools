@@ -1,9 +1,8 @@
 import {describe, expect, it} from 'bun:test';
 import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
-import {checkWireFormat, findGameDefinitionsImports, findWireAbbreviations} from './check-wire-format.ts';
+import {checkWireFormat, findWireAbbreviations} from './check-wire-format.ts';
 
 const ABBREVIATION_REASON = 'the domain names the business concept, never the save format abbreviation: translate it at the domain boundary';
-const GAME_DEFINITIONS_REASON = 'the domain handles its own types, never the save format records of shared-save-processing/gameDefinitions';
 
 describe('findWireAbbreviations', () => {
 
@@ -97,70 +96,8 @@ describe('findWireAbbreviations', () => {
   });
 });
 
-describe('findGameDefinitionsImports', () => {
-
-  describe('When a domain file imports shared-save-processing/gameDefinitions', () => {
-    it.each([
-      ['by a value import', "import {Player} from 'shared-save-processing/gameDefinitions';", 'shared-save-processing/gameDefinitions'],
-      ['by a type-only import', 'import type {Player} from "shared-save-processing/gameDefinitions";', 'shared-save-processing/gameDefinitions'],
-      ['by a dynamic import', "const records = await import('shared-save-processing/gameDefinitions');", 'shared-save-processing/gameDefinitions'],
-      ['by a re-export', "export type {Inventory} from 'shared-save-processing/gameDefinitions';", 'shared-save-processing/gameDefinitions'],
-      ['by one of its modules', "import {WorldObject} from 'shared-save-processing/gameDefinitions/WorldObject.ts';", 'shared-save-processing/gameDefinitions/WorldObject.ts']
-    ])('should report it %s', (_import, source, found) => {
-      // Act
-      const findings = findGameDefinitionsImports('packages/core-mapping/src/domain/rules/merge/mergePlayers.ts', source);
-
-      // Assert
-      expect(findings).toEqual([{line: 1, found, reason: GAME_DEFINITIONS_REASON}]);
-    });
-
-    it('should report the last line of an import spread over several lines, in a spec file', () => {
-      // Arrange
-      const source = [
-        'import {',
-        '  Player,',
-        '  TerrainLayer',
-        "} from 'shared-save-processing/gameDefinitions';"
-      ].join('\n');
-
-      // Act
-      const findings = findGameDefinitionsImports('packages/core-mapping/src/domain/rules/merge/resolveIdConflicts.spec.ts', source);
-
-      // Assert
-      expect(findings).toEqual([{line: 4, found: 'shared-save-processing/gameDefinitions', reason: GAME_DEFINITIONS_REASON}]);
-    });
-  });
-
-  describe('When a domain file imports something else', () => {
-    it.each([
-      ['another module of shared-save-processing', "import {createSaveRecords} from 'shared-save-processing/testing/createSaveRecords.js';"],
-      ['a module whose name merely starts with gameDefinitions', "import {x} from 'shared-save-processing/gameDefinitionsIndex';"],
-      ['a commented-out import', "// import {Player} from 'shared-save-processing/gameDefinitions';"]
-    ])('should leave %s alone', (_import, source) => {
-      // Act
-      const findings = findGameDefinitionsImports('packages/core-mapping/src/domain/rules/merge/mergePlayers.ts', source);
-
-      // Assert
-      expect(findings).toEqual([]);
-    });
-  });
-
-  describe('When the file sits outside domain/ of a core- package', () => {
-    it('should leave it alone', () => {
-      // Arrange
-      const source = "import {Player} from 'shared-save-processing/gameDefinitions';";
-
-      // Act
-      const findings = findGameDefinitionsImports('packages/core-mapping/src/infrastructure/SaveSectionsParserService.ts', source);
-
-      // Assert
-      expect(findings).toEqual([]);
-    });
-  });
-});
-
 describe('checkWireFormat', () => {
-  const SUMMARY = 'a domain file names no save format abbreviation (gId, liId, woIds, siIds, linkedWo) and imports nothing from shared-save-processing/gameDefinitions.';
+  const SUMMARY = 'a domain file names no save format abbreviation (gId, liId, woIds, siIds, linkedWo).';
 
   describe('When no domain file breaks a refusal', () => {
     it('should print that nothing was found and exit with zero', async () => {
@@ -177,19 +114,19 @@ describe('checkWireFormat', () => {
 
       // Assert
       expect({printed, exitCodes}).toEqual({
-        printed: ['check:wire-format: no domain file names a save format abbreviation or imports shared-save-processing/gameDefinitions.'],
+        printed: ['check:wire-format: no domain file names a save format abbreviation.'],
         exitCodes: [0]
       });
     });
   });
 
-  describe('When domain files break the two refusals', () => {
-    it('should print each offending line with its reason, then the count with both refusals, and exit with one', async () => {
+  describe('When domain files name save format abbreviations', () => {
+    it('should print each offending line with its reason, then the count, and exit with one', async () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
           'packages/core-mapping/src/domain/save/WorldObjectEntry.ts': 'const gId = entry.groupId;',
-          'packages/core-mapping/src/domain/rules/merge/mergePlayers.ts': "import {Player} from 'shared-save-processing/gameDefinitions';"
+          'packages/core-mapping/src/domain/save/InventoryEntry.ts': 'const woIds = inventory.woIds;'
         }
       });
 
@@ -200,32 +137,8 @@ describe('checkWireFormat', () => {
       expect({printed, exitCodes}).toEqual({
         printed: [
           `packages/core-mapping/src/domain/save/WorldObjectEntry.ts:1: gId\n  ${ABBREVIATION_REASON}`,
-          `packages/core-mapping/src/domain/rules/merge/mergePlayers.ts:1: shared-save-processing/gameDefinitions\n  ${GAME_DEFINITIONS_REASON}`,
-          `check:wire-format: 2 violation(s): ${SUMMARY}`
-        ],
-        exitCodes: [1]
-      });
-    });
-  });
-
-  describe('When one file breaks both refusals', () => {
-    it('should report both of them', async () => {
-      // Arrange
-      const {io, printed, exitCodes} = createFakeScriptIo({
-        files: {
-          'packages/core-mapping/src/domain/save/InventoryEntry.ts': "import {Inventory} from 'shared-save-processing/gameDefinitions';\nconst woIds = inventory.woIds;"
-        }
-      });
-
-      // Act
-      await checkWireFormat(io);
-
-      // Assert
-      expect({printed, exitCodes}).toEqual({
-        printed: [
-          `packages/core-mapping/src/domain/save/InventoryEntry.ts:2: woIds\n  ${ABBREVIATION_REASON}`,
-          `packages/core-mapping/src/domain/save/InventoryEntry.ts:2: woIds\n  ${ABBREVIATION_REASON}`,
-          `packages/core-mapping/src/domain/save/InventoryEntry.ts:1: shared-save-processing/gameDefinitions\n  ${GAME_DEFINITIONS_REASON}`,
+          `packages/core-mapping/src/domain/save/InventoryEntry.ts:1: woIds\n  ${ABBREVIATION_REASON}`,
+          `packages/core-mapping/src/domain/save/InventoryEntry.ts:1: woIds\n  ${ABBREVIATION_REASON}`,
           `check:wire-format: 3 violation(s): ${SUMMARY}`
         ],
         exitCodes: [1]

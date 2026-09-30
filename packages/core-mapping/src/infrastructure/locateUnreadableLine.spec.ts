@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {locateUnreadableLine} from './locateUnreadableLine';
-import {UnreadableLine} from '../application/ports/SaveSectionLocation';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
 
 describe('locateUnreadableLine', () => {
 

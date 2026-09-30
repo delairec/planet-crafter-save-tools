@@ -27,14 +27,14 @@ export class ValidateSaveFile {
     const warnings: SaveValidationResponse['warnings'] = contradiction === null ? validation.warnings : [...validation.warnings, {code: 'declared-release-contradicts-content', ...contradiction}];
 
     if (!validation.isValid) {
-      this.presenter.presentInvalidSaveFile(validation.errors, warnings);
+      this.presenter.presentInvalidSaveFile({errors: validation.errors, warnings});
       return;
     }
 
     const {saveSections, unreadableLines} = this.saveSectionsReader.read(content);
 
     if (unreadableLines.length > 0) {
-      this.presenter.presentSaveFileWithUnreadableLines(unreadableLines, warnings);
+      this.presenter.presentSaveFileWithUnreadableLines({unreadableLines, warnings});
       return;
     }
 

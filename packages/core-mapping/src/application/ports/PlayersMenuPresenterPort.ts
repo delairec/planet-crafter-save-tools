@@ -1,8 +1,8 @@
-import {UnreadableLine} from "./SaveSectionLocation";
+import type {UnreadableLinesResponse} from "../responses/UnreadableLinesResponse";
 import {PlayerMenuEntryResponse} from "../responses/PlayerMenuEntryResponse";
 
 export interface PlayersMenuPresenterPort {
   displayPlayersMenu(players: PlayerMenuEntryResponse[]): void;
 
-  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void;
+  displaySaveWithUnreadableLines(response: UnreadableLinesResponse): void;
 }

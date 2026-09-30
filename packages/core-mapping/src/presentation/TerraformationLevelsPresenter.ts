@@ -1,5 +1,4 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {TerraformationLevelsViewModel} from "./viewModels/TerraformationLevelsViewModel";
 import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
 import {TerraformationLevelsPresenterPort} from "../application/ports/TerraformationLevelsPresenterPort";
@@ -17,6 +16,7 @@ import {
   terraformationLevelsSectionPurificationUnit,
   terraformationLevelsSectionTerraformationIndexUnit
 } from "./messages/terraformationLevelsSectionMessages.js";
+import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 
 export class TerraformationLevelsPresenter implements TerraformationLevelsPresenterPort {
   private _viewModel: TerraformationLevelsViewModel;
@@ -119,7 +119,7 @@ export class TerraformationLevelsPresenter implements TerraformationLevelsPresen
     };
   }
 
-  displaySaveWithUnreadableLines(unreadableLines: UnreadableLine[]): void {
+  displaySaveWithUnreadableLines({unreadableLines}: UnreadableLinesResponse): void {
     this._viewModel = {planets: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
 }

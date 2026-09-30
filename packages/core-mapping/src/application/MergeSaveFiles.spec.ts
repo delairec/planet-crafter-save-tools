@@ -11,11 +11,11 @@ import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {SaveFilesWithoutUniqueHostResponse} from './responses/SaveFilesWithoutUniqueHostResponse';
 import {MergeWarningResponse} from './responses/MergeWarningResponse';
-import {ValidationIssue} from './ports/ValidationIssue';
-import {VALIDATION_ISSUE_CODES} from './ports/validationIssueCodes';
+import {ValidationIssue} from '../domain/validation/ValidationIssue';
+import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
 import {SaveValidationResponse} from './responses/SaveValidationResponse';
-import {UnreadableLine} from './ports/SaveSectionLocation';
-import type {SaveWarning} from 'shared-save-processing/gameDefinitions';
+import {UnreadableLine} from '../domain/save/SaveSectionLocation';
+import type {SaveWarningResponse} from "./responses/SaveWarningResponse";
 import {createPlayerEntry, createSaveConfigurationEntry, createTerrainLayerEntry} from '../testing/createSaveEntries';
 import {createSaveSections} from '../testing/createSaveSections';
 import {INVENTORIES_SECTION, PLAYERS_SECTION} from '../testing/saveSectionLocations';
@@ -33,7 +33,7 @@ describe('MergeSaveFiles', () => {
 
   const ACCEPTED: SaveValidationResponse = {isValid: true, errors: [], warnings: []};
   const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResponse => ({isValid: false, errors, warnings: []});
-  const acceptedWith = (...warnings: SaveWarning[]): SaveValidationResponse => ({isValid: true, errors: [], warnings});
+  const acceptedWith = (...warnings: SaveWarningResponse[]): SaveValidationResponse => ({isValid: true, errors: [], warnings});
 
   const validatorAnswering = (resultsByContent: Record<string, SaveValidationResponse>): SaveValidatorPort['validate'] =>
     (content: string) => resultsByContent[content] ?? ACCEPTED;

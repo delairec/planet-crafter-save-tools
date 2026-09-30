@@ -1,4 +1,4 @@
-import {ValidationIssue} from "../application/ports/ValidationIssue";
+import {ValidationIssue} from "../domain/validation/ValidationIssue";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatValidationIssue} from "./formatValidationIssue";
 import {formatErrorLocation} from "./formatErrorLocation";
