@@ -13,8 +13,14 @@ interface Refusal {
   reason: string;
 }
 
-const OUTPUT_BOUNDARY_REFUSAL: Refusal = {
-  appliesTo: /^packages\/core-[^/]+\/(?:.*\/)?(?:presentation\/|application\/responses\/)/,
+const PRESENTATION_DOMAIN_REFUSAL: Refusal = {
+  appliesTo: /^packages\/core-[^/]+\/(?:.*\/)?presentation\//,
+  refusedSpecifier: /(?:^|\/)(?:domain|infrastructure)(?:\/|$)/,
+  reason: 'a presentation file reads application responses and primitives, nothing from domain/ nor infrastructure/'
+};
+
+const RESPONSE_OUTPUT_BOUNDARY_REFUSAL: Refusal = {
+  appliesTo: /^packages\/core-[^/]+\/(?:.*\/)?application\/responses\//,
   refusedSpecifier: /(?:^|\/)(?:domain\/entities|infrastructure)(?:\/|$)/,
   reason: 'the output boundary hands over responses, value objects or primitives, never a domain entity nor an infrastructure type'
 };
@@ -38,7 +44,7 @@ export interface RefusedImport {
 }
 
 export function findRefusedImports(filePath: string, source: string): RefusedImport[] {
-  const refusal = [OUTPUT_BOUNDARY_REFUSAL, PRESENTER_PORT_REFUSAL, CONTROLLER_PRESENTER_REFUSAL].find(candidate => candidate.appliesTo.test(filePath));
+  const refusal = [PRESENTATION_DOMAIN_REFUSAL, RESPONSE_OUTPUT_BOUNDARY_REFUSAL, PRESENTER_PORT_REFUSAL, CONTROLLER_PRESENTER_REFUSAL].find(candidate => candidate.appliesTo.test(filePath));
   if (refusal === undefined || GENERATED_DIRECTORY.test(filePath)) {
     return [];
   }
@@ -56,8 +62,8 @@ export async function checkPresentationFiles(io: ScriptIo): Promise<void> {
   reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
-    nothingFound: 'no domain entity nor infrastructure type crosses the output boundary, and no presenter port imports domain/.',
-    summarize: count => `${count} violation(s): a presentation file or an application response imports nothing from domain/entities nor infrastructure/, and a presenter port imports nothing from domain/.`
+    nothingFound: 'no presentation file imports domain/ nor infrastructure/, no application response imports a domain entity nor infrastructure/, no presenter port imports domain/, and no controller imports a concrete presenter.',
+    summarize: count => `${count} violation(s): a presentation file imports nothing from domain/ nor infrastructure/, an application response imports nothing from domain/entities nor infrastructure/, a presenter port imports nothing from domain/, and a controller imports no concrete presenter.`
   });
 }
 
