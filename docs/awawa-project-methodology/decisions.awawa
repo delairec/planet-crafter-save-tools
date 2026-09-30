@@ -1473,7 +1473,6 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		+ "game, not the format of a save"
 	APPLIES_TO_TASK @TASK.REFACTOR168
 	APPLIES_TO_TASK @TASK.CHORE169
-	APPLIES_TO_TASK @TASK.CHORE169
 	RATIONALE "A JSON table imported by a module is a database read by that module; the data-"
 		+ "package is its driver, and the port keeps the shape of the table out of the domain"
 	SOURCE "Owner ruling during the refinement of REFACTOR163, 2026-09-29: a JSON value table is a"
