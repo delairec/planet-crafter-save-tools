@@ -20,7 +20,7 @@ describe('Determine save order', () => {
       const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
-      expect(result.saveConfiguration?.planetId).toBe('Prime');
+      expect(result.sections.saveConfiguration?.planetId).toBe('Prime');
     });
   });
 
@@ -34,7 +34,7 @@ describe('Determine save order', () => {
       const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
-      expect(result.saveConfiguration?.planetId).toBe('Prime');
+      expect(result.sections.saveConfiguration?.planetId).toBe('Prime');
     });
   });
 
@@ -48,7 +48,7 @@ describe('Determine save order', () => {
       const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
-      expect(result.saveConfiguration?.planetId).toBe('Toxicity');
+      expect(result.sections.saveConfiguration?.planetId).toBe('Toxicity');
     });
   });
 
@@ -62,7 +62,7 @@ describe('Determine save order', () => {
       const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
-      expect(result.saveConfiguration?.worldSeed).toBe(1);
+      expect(result.sections.saveConfiguration?.worldSeed).toBe(1);
     });
   });
 
@@ -79,7 +79,7 @@ describe('Determine save order', () => {
       const result = mergeSaveSections(saveA, saveB, mergeOptions);
 
       // Assert
-      expect(result.globalMetadata.openedInstanceSeed).toBe(2);
+      expect(result.sections.globalMetadata.openedInstanceSeed).toBe(2);
     });
   });
 });

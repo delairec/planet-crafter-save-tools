@@ -10,7 +10,7 @@ import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {SaveFilesWithoutUniqueHostResponse} from './responses/SaveFilesWithoutUniqueHostResponse';
-import {MergeWarningResponse} from './responses/MergeWarningResponse';
+import {MergeWarning} from '../domain/rules/merge/MergeWarning';
 import {ValidationIssue} from '../domain/validation/ValidationIssue';
 import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
 import {SaveValidationResponse} from './responses/SaveValidationResponse';
@@ -28,7 +28,7 @@ describe('MergeSaveFiles', () => {
 
   const TWO_VALID_SAVES = {fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'};
   const noErrorsFromTheMerge: ValidationIssue[] = [];
-  const noMergeWarnings: MergeWarningResponse[] = [];
+  const noMergeWarnings: MergeWarning[] = [];
   const noParseErrors: UnreadableLine[] = [];
 
   const ACCEPTED: SaveValidationResponse = {isValid: true, errors: [], warnings: []};
@@ -185,7 +185,7 @@ describe('MergeSaveFiles', () => {
       contentB: {sections: createSaveSections({formatRelease: '2.004'}), errors: noParseErrors}
     });
 
-    it('should report the format written and the Terrain Layers section writing it dropped', async () => {
+    it('should present the report the merge makes on the format it wrote', async () => {
       // Arrange
       const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
 
@@ -197,19 +197,9 @@ describe('MergeSaveFiles', () => {
         mergeWarnings: [
           {code: 'merged-save-format', formatRelease: '2.004'},
           {code: 'merged-save-section-dropped', section: 'terrainLayers'}
-        ]
+        ],
+        legacyFormatCouldBeKept: true
       }));
-    });
-
-    it('should state that the legacy format could have been kept', async () => {
-      // Arrange
-      const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
-
-      // Act
-      await useCase.execute(TWO_VALID_SAVES);
-
-      // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({legacyFormatCouldBeKept: true}));
     });
 
     describe('When the merge asks for the legacy format', () => {
@@ -226,47 +216,6 @@ describe('MergeSaveFiles', () => {
           terrainLayers: [createTerrainLayerEntry()]
         }));
       });
-
-      it('should report the legacy format written, no section dropped, and the content the earlier release may not know', async () => {
-        // Arrange
-        const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
-
-        // Act
-        await useCase.execute({...TWO_VALID_SAVES, preferLegacyFormat: true});
-
-        // Assert
-        expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({
-          mergeWarnings: [
-            {code: 'merged-save-format', formatRelease: '1.618'},
-            {code: 'merged-save-content-newer-than-format', formatRelease: '1.618', contentRelease: '2.004'}
-          ]
-        }));
-      });
-
-      it('should not state that the legacy format could have been kept, the merge having kept it', async () => {
-        // Arrange
-        const {useCase, presenter} = createUseCase({parse: parseALegacySaveAAndACurrentSaveB});
-
-        // Act
-        await useCase.execute({...TWO_VALID_SAVES, preferLegacyFormat: true});
-
-        // Assert
-        expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({legacyFormatCouldBeKept: false}));
-      });
-    });
-  });
-
-  describe('When the two saves carry the legacy format', () => {
-    it('should not state that the legacy format could have been kept, no format being lost', async () => {
-      // Arrange
-      const legacySave: ParsedSaveSectionsResponse = {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()]}), errors: noParseErrors};
-      const {useCase, presenter} = createUseCase({parse: parserAnswering({contentA: legacySave, contentB: legacySave})});
-
-      // Act
-      await useCase.execute(TWO_VALID_SAVES);
-
-      // Assert
-      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({legacyFormatCouldBeKept: false}));
     });
   });
 

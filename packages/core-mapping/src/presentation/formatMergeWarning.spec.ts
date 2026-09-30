@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {formatMergeWarning} from './formatMergeWarning';
-import {MergeWarningResponse} from '../application/responses/MergeWarningResponse';
+import {MergeWarning} from '../domain/rules/merge/MergeWarning';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 describe('formatMergeWarning', () => {
@@ -47,7 +47,7 @@ describe('formatMergeWarning', () => {
   describe('When the warning code is unknown', () => {
     it('should return a generic sentence rather than the code', () => {
       // Arrange
-      const unknownWarning = {code: 'unheard-of-warning' as MergeWarningResponse['code']} as MergeWarningResponse;
+      const unknownWarning = {code: 'unheard-of-warning' as MergeWarning['code']} as MergeWarning;
 
       // Act
       const warning = formatMergeWarning(unknownWarning);

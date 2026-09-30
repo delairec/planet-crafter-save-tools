@@ -1560,18 +1560,31 @@ TASK REFACTOR164
 
 TASK REFACTOR165
 	TITLE "refactor(core-mapping): let the merge rule return the warnings of the merged save"
-	STATUS todo
+	STATUS implemented
 	SPEC "the merge rule of the domain returns, with the merged sections, the report on their"
 		+ "format: the warnings about the format written and whether the legacy format could have"
 		+ "been kept; MergeSaveFiles hands them to its presenter and computes none of them,"
 		+ "comparing no release and testing no section"
+		IMPL "packages/core-mapping/src/domain/rules/merge/SaveSectionsMerge.ts::export interface"
+			+ "SaveSectionsMerge"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::legacyFormatCouldBeKept:"
+			+ "sectionsMerge.legacyFormatCouldBeKept"
 	SPEC "the warning the merge rule returns is a type of the domain that MergeSucceededResponse"
 		+ "carries as is, no module under application/ of core-mapping declaring a merge warning of"
 		+ "its own; cli-merge and the save manager show the same merge warnings as before"
+		IMPL "packages/core-mapping/src/domain/rules/merge/MergeWarning.ts::export type"
+			+ "MergeWarning"
+		IMPL "packages/core-mapping/src/application/responses/MergeSucceededResponse.ts::mergeWarnings:"
+			+ "readonly MergeWarning[]"
 	SPEC "AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer is rewritten in place, its anchors naming"
 		+ "the code as the task leaves it"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer"
 		REF @DECISION.AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 	SPEC "the specs of cli-merge and the scenarios of ui-save-manager pass unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts"
+	DELIVERED_BY 246
 	AFTER @TASK.REFACTOR163
 	AFTER @TASK.REFACTOR170
 	WAVE @WAVE.14

@@ -4,12 +4,12 @@ import {ValidationIssue} from '../domain/validation/ValidationIssue';
 import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
 import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
-import {MergeWarningResponse} from '../application/responses/MergeWarningResponse';
+import {MergeWarning} from '../domain/rules/merge/MergeWarning';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noErrorsFromSaveB: ValidationIssue[] = [];
 const noErrorsFromTheMerge: ValidationIssue[] = [];
-const noMergeWarnings: MergeWarningResponse[] = [];
+const noMergeWarnings: MergeWarning[] = [];
 const noWarningsFromSaveA: SaveWarningResponse[] = [];
 const noWarningsFromSaveB: SaveWarningResponse[] = [];
 
