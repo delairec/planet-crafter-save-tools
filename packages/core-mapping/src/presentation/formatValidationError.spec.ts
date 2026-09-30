@@ -1,12 +1,12 @@
 import {describe, expect, it} from 'bun:test';
 import {formatValidationError} from './formatValidationError';
-import {ValidationIssue} from '../domain/validation/ValidationIssue';
+import type {ValidationIssueResponse} from '../application/responses/ValidationIssueResponse';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 describe('formatValidationError', () => {
 
   describe('When the issue concerns the whole file', () => {
-    it.each<[ValidationIssue, SaveValidationMessageViewModel]>([
+    it.each<[ValidationIssueResponse, SaveValidationMessageViewModel]>([
       [
         {code: 'unexpected-section-count', foundSectionCount: 3, expectedSectionCounts: [11, 12]},
         {message: 'Expected 11 or 12 sections but found 3', location: null}
@@ -25,7 +25,7 @@ describe('formatValidationError', () => {
   });
 
   describe('When the issue was found in a save entry', () => {
-    it.each<[ValidationIssue, SaveValidationMessageViewModel]>([
+    it.each<[ValidationIssueResponse, SaveValidationMessageViewModel]>([
       [
         {code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{"id":1,'},
         {message: 'Invalid JSON: {"id":1,', location: 'World objects (section 78), entry 2'}
@@ -59,7 +59,7 @@ describe('formatValidationError', () => {
   });
 
   describe('When the entry breaks a constraint of its schema', () => {
-    it.each<[ValidationIssue, string]>([
+    it.each<[ValidationIssueResponse, string]>([
       [
         {code: 'field-of-wrong-type', section: {name: 'players', index: 77}, entryIndex: 0, fieldPath: '/playerGaugeOxygen', expectedType: 'number'},
         '/playerGaugeOxygen must be number'

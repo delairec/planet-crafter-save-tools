@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../domain/save/SaveSectionLocation";
+import {UnreadableLineResponse} from "../application/responses/UnreadableLineResponse";
 import {describe, expect, it} from 'bun:test';
 import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
@@ -35,6 +35,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false,
       powerConsumptionModifier: 1,
+      powerConsumptionIsModified: false,
       worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [{
         planetId: 1,
@@ -85,6 +86,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false,
       powerConsumptionModifier: 1,
+      powerConsumptionIsModified: false,
       worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [
         {
@@ -120,6 +122,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false,
       powerConsumptionModifier: 1,
+      powerConsumptionIsModified: false,
       worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [
         {
@@ -155,7 +158,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.004', gameReleaseIsEarlierThanCurrent: true, powerConsumptionModifier: 1, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
+      presenter.displayEnergyLevels({gameRelease: '2.004', gameReleaseIsEarlierThanCurrent: true, powerConsumptionModifier: 1, powerConsumptionIsModified: false, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -171,7 +174,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false, powerConsumptionModifier: 1, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
+      presenter.displayEnergyLevels({gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false, powerConsumptionModifier: 1, powerConsumptionIsModified: false, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -186,7 +189,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false, powerConsumptionModifier: 1.5, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
+      presenter.displayEnergyLevels({gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false, powerConsumptionModifier: 1.5, powerConsumptionIsModified: true, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -202,7 +205,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.004', gameReleaseIsEarlierThanCurrent: true, powerConsumptionModifier: 1.5, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
+      presenter.displayEnergyLevels({gameRelease: '2.004', gameReleaseIsEarlierThanCurrent: true, powerConsumptionModifier: 1.5, powerConsumptionIsModified: true, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -219,7 +222,7 @@ describe('EnergyLevelsPresenter', () => {
       const presenter = new EnergyLevelsPresenter();
 
       // Act
-      presenter.displayEnergyLevels({gameRelease: '2.004', gameReleaseIsEarlierThanCurrent: true, powerConsumptionModifier: 1, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
+      presenter.displayEnergyLevels({gameRelease: '2.004', gameReleaseIsEarlierThanCurrent: true, powerConsumptionModifier: 1, powerConsumptionIsModified: false, planets: [], worldObjectLabels: WORLD_OBJECT_LABELS});
 
       // Assert
       expect(presenter.viewModel.notifications).toEqual<NotificationViewModel[]>([
@@ -237,6 +240,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false,
       powerConsumptionModifier: 1,
+      powerConsumptionIsModified: false,
       worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [{
         planetId: 1,
@@ -283,6 +287,7 @@ describe('EnergyLevelsPresenter', () => {
     presenter.displayEnergyLevels({
       gameRelease: '2.102', gameReleaseIsEarlierThanCurrent: false,
       powerConsumptionModifier: 1,
+      powerConsumptionIsModified: false,
       worldObjectLabels: WORLD_OBJECT_LABELS,
       planets: [{
         planetId: 1,
@@ -316,7 +321,7 @@ describe('EnergyLevelsPresenter', () => {
   describe('When the save has unreadable lines', () => {
     it('should show the unreadable lines in place of the energy levels', () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLineResponse[] = [{code: 'invalid-json', section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
       const presenter = new EnergyLevelsPresenter();
 
       // Act

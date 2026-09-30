@@ -30,13 +30,13 @@ describe('SaveSectionsReaderService', () => {
 
   it('should carry every line the parser could not read', () => {
     // Arrange
-    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+    const unreadableLines: UnreadableLine[] = [{code: 'invalid-json', section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
     const reader = new SaveSectionsReaderService(createParser(createSaveSections(), unreadableLines));
 
     // Act
     const reading = reader.read(SAVE_CONTENT);
 
     // Assert
-    expect<UnreadableLine[]>(reading.unreadableLines).toEqual([{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]);
+    expect<UnreadableLine[]>(reading.unreadableLines).toEqual([{code: 'invalid-json', section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]);
   });
 });

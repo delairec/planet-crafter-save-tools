@@ -12,6 +12,16 @@ import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionM
 import {resolvePlanetName} from "../domain/rules/resolvePlanetName";
 import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
 import {createPlanetWorldObjectsValueObject, PlanetWorldObjectsValueObject} from "../domain/valueObjects/PlanetWorldObjectsValueObject";
+import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
+import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
+import {OptimizerValueObject} from "../domain/valueObjects/OptimizerValueObject";
+import {OptimizerBoostedMachineValueObject} from "../domain/valueObjects/OptimizerBoostedMachineValueObject";
+import {
+  EnergyBreakdownEntryResponse,
+  OptimizerBoostedMachineResponse,
+  OptimizerResponse,
+  PlanetEnergyLevelsResponse
+} from "./responses/EnergyLevelsResponse";
 
 export interface LoadEnergyLevelsSectionReaders {
   readonly saveSectionsReader: SaveSectionsReaderPort;
@@ -65,9 +75,11 @@ export class LoadEnergyLevelsSection {
       gameRelease: energyLevels.release,
       gameReleaseIsEarlierThanCurrent: precedesCurrentGameRelease(energyLevels.release, gameReleases),
       powerConsumptionModifier,
+      powerConsumptionIsModified: powerConsumptionModifier !== UNMODIFIED_POWER_CONSUMPTION_MODIFIER,
       planets: saveSections.getPlacedWorldObjectsByPlanet()
         .map((planet) => this.nameThePlanet(planet, knownPlanetNames))
-        .map((planet) => new PlanetEnergyGrid({planet, allWorldObjects, inventories, energyLevels, optimizerRanges, powerConsumptionModifier}).levels()),
+        .map((planet) => new PlanetEnergyGrid({planet, allWorldObjects, inventories, energyLevels, optimizerRanges, powerConsumptionModifier}).levels())
+        .map(describePlanetEnergyLevels),
       worldObjectLabels: this.worldObjectLabelsReader.readWorldObjectLabels()
     });
   }
@@ -82,4 +94,41 @@ export class LoadEnergyLevelsSection {
       )
     });
   }
+}
+
+function describePlanetEnergyLevels(planet: PlanetEnergyLevelsValueObject): PlanetEnergyLevelsResponse {
+  return {
+    planetId: planet.planetId,
+    planetName: planet.planetName,
+    production: planet.production,
+    consumption: planet.consumption,
+    available: planet.available,
+    productionBreakdown: planet.productionBreakdown.map(describeEnergyBreakdownEntry),
+    consumptionBreakdown: planet.consumptionBreakdown.map(describeEnergyBreakdownEntry),
+    optimizers: planet.optimizers.map(describeOptimizer)
+  };
+}
+
+function describeEnergyBreakdownEntry(entry: EnergyBreakdownEntryValueObject): EnergyBreakdownEntryResponse {
+  return {
+    name: entry.name,
+    quantity: entry.quantity,
+    unitLevel: entry.unitLevel,
+    totalLevel: entry.totalLevel,
+    productionRatio: entry.productionRatio
+  };
+}
+
+function describeOptimizer(optimizer: OptimizerValueObject): OptimizerResponse {
+  return {
+    name: optimizer.name,
+    fuseCount: optimizer.fuseCount,
+    boostedMachines: optimizer.boostedMachines.map(describeOptimizerBoostedMachine),
+    contribution: optimizer.contribution,
+    productionRatio: optimizer.productionRatio
+  };
+}
+
+function describeOptimizerBoostedMachine(machine: OptimizerBoostedMachineValueObject): OptimizerBoostedMachineResponse {
+  return {name: machine.name, quantity: machine.quantity};
 }

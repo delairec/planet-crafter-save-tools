@@ -1,17 +1,14 @@
 import {LoadSaveFileViewModel} from "../presentation/viewModels/LoadSaveFileViewModel";
-import {LoadSaveFilePresenter} from "../presentation/LoadSaveFilePresenter";
-import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import {ValidateSaveFileRequest} from "../application/requests/ValidateSaveFileRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
 
 export class LoadAndValidateSaveFileController {
-  constructor(private readonly createValidateSaveFile: UseCaseFactory<SaveFileValidationPresenterPort, ValidateSaveFileRequest>) {
+  constructor(private readonly createValidateSaveFile: UseCaseFactory<ValidateSaveFileRequest, LoadSaveFileViewModel>) {
   }
 
   async loadAndValidateSaveFile(fileName: string, content: string): Promise<LoadSaveFileViewModel> {
     const request: ValidateSaveFileRequest = {fileName, content};
-    const presenter = new LoadSaveFilePresenter();
-    const useCase = this.createValidateSaveFile(presenter);
+    const {useCase, presenter} = this.createValidateSaveFile();
 
     await useCase.execute(request);
 

@@ -20,7 +20,10 @@ export interface SaveSectionLocation {
   readonly index: number;
 }
 
+export type UnreadableLineCode = 'invalid-json' | 'undecodable-entry';
+
 export interface UnreadableLine {
+  readonly code: UnreadableLineCode;
   readonly section: SaveSectionLocation;
   readonly entryIndex: number;
   readonly line: string;

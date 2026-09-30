@@ -8,6 +8,7 @@ import {GLOBAL_METADATA_SECTION} from "./saveSectionLocations";
 export const SAVE_CONTENT = 'save content';
 
 const UNEXPECTED_CONTENT_LINE: UnreadableLine = {
+  code: 'invalid-json',
   section: GLOBAL_METADATA_SECTION,
   entryIndex: 0,
   line: `The reader stub reads only "${SAVE_CONTENT}"`

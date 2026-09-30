@@ -1,6 +1,6 @@
-import {ValidationIssue} from "../../domain/validation/ValidationIssue";
+import type {ValidationIssueResponse} from "./ValidationIssueResponse";
 import type {SaveWarningResponse} from "./SaveWarningResponse";
 
 export type SaveFileFindingsResponse =
-  | {hasJsonExtension: false}
-  | {hasJsonExtension: true; errors: ValidationIssue[]; warnings: SaveWarningResponse[]};
+  | {readonly hasJsonExtension: false}
+  | {readonly hasJsonExtension: true; readonly errors: readonly ValidationIssueResponse[]; readonly warnings: readonly SaveWarningResponse[]};

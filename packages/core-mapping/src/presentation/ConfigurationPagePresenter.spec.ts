@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../domain/save/SaveSectionLocation";
+import {UnreadableLineResponse} from "../application/responses/UnreadableLineResponse";
 import {describe, expect, it} from 'bun:test';
 import {ConfigurationPagePresenter} from "./ConfigurationPagePresenter";
 import {ConfigurationPageViewModel} from "./viewModels/ConfigurationPageViewModel";
@@ -6,27 +6,23 @@ import {AssessedSaveConfigurationResponse} from "../application/responses/Config
 
 function createAssessedSaveConfiguration(): AssessedSaveConfigurationResponse {
   return {
-    saveConfiguration: {
-      title: 'Fake Save',
-      mode: 'Standard',
-      modifiers: {terraformationPace: 2, powerConsumption: 1, gaugeDrain: 0.5, meteoOccurrence: 0.25, multiplayerFactor: 1},
-      unlocks: {
-        freeCraft: true,
-        everythingUnlocked: false,
-        spaceTrading: true,
-        oreExtractors: false,
-        teleporters: false,
-        drones: true,
-        autocrafter: false,
-        randomizedMineables: true
-      }
-    },
+    modifiers: {terraformationPace: 2, powerConsumption: 1, gaugeDrain: 0.5, meteoOccurrence: 0.25, multiplayerFactor: 1},
     modifierEffects: {
       terraformationPace: 'penalisesThePlayer',
       powerConsumption: 'gameDefault',
       gaugeDrain: 'penalisesThePlayer',
       meteoOccurrence: 'helpsThePlayer',
       multiplayerFactor: 'gameDefault'
+    },
+    unlocks: {
+      freeCraft: true,
+      everythingUnlocked: false,
+      spaceTrading: true,
+      oreExtractors: false,
+      teleporters: false,
+      drones: true,
+      autocrafter: false,
+      randomizedMineables: true
     }
   };
 }
@@ -136,7 +132,7 @@ describe('ConfigurationPagePresenter', () => {
   describe('When the save has unreadable lines', () => {
     it('should show the unreadable lines in place of the configuration page', () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLineResponse[] = [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
       const presenter = new ConfigurationPagePresenter();
 
       // Act

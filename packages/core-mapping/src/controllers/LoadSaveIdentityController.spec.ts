@@ -1,39 +1,40 @@
 import {describe, expect, it, mock} from 'bun:test';
 import {LoadSaveIdentityController} from './LoadSaveIdentityController';
-import {SaveIdentityPresenterPort} from '../application/ports/SaveIdentityPresenterPort';
 import {LoadSaveIdentityRequest} from '../application/requests/LoadSaveIdentityRequest';
-import {SaveIdentityPresenter} from '../presentation/SaveIdentityPresenter';
+import {SaveIdentityViewModel} from '../presentation/viewModels/SaveIdentityViewModel';
 
-type ExecuteLoadSaveIdentity = (request: LoadSaveIdentityRequest, presenter: SaveIdentityPresenterPort) => Promise<void>;
+type ExecuteLoadSaveIdentity = (request: LoadSaveIdentityRequest) => Promise<void>;
 
-function createController(execute: ExecuteLoadSaveIdentity): LoadSaveIdentityController {
-  return new LoadSaveIdentityController((presenter) => ({execute: (request) => execute(request, presenter)}));
+function createController(execute: ExecuteLoadSaveIdentity, presenter: {viewModel: SaveIdentityViewModel}): LoadSaveIdentityController {
+  return new LoadSaveIdentityController(() => ({useCase: {execute}, presenter}));
 }
 
 describe('LoadSaveIdentityController', () => {
-  it('should hand its use case the validated content and the file name, with the presenter of the save identity', async () => {
+  it('should hand its use case the validated content and the file name', async () => {
     // Arrange
     const execute = mock<ExecuteLoadSaveIdentity>(async () => {});
-    const controller = createController(execute);
+    const controller = createController(execute, {viewModel: {fileName: 'Standard-1.json'}});
 
     // Act
     await controller.loadSaveIdentity('validated content', 'Standard-1.json');
 
     // Assert
-    expect(execute).toHaveBeenCalledWith({content: 'validated content', fileName: 'Standard-1.json'}, expect.any(SaveIdentityPresenter));
+    expect(execute).toHaveBeenCalledWith({content: 'validated content', fileName: 'Standard-1.json'});
   });
 
   it('should return the view model its presenter holds once the use case has run', async () => {
     // Arrange
-    const controller = createController(async (_request, presenter) => {
+    const presenter: {viewModel: SaveIdentityViewModel} = {viewModel: {fileName: 'Standard-1.json'}};
+    const viewModelAfterRun: SaveIdentityViewModel = {fileName: 'Standard-1.json', displayName: 'Merged Save'};
+    const controller = createController(async () => {
       await Promise.resolve();
-      presenter.displaySaveIdentity({fileName: 'Standard-1.json', displayName: 'Merged Save', mode: 'Standard', gameRelease: '2.004'});
-    });
+      presenter.viewModel = viewModelAfterRun;
+    }, presenter);
 
     // Act
     const viewModel = await controller.loadSaveIdentity('validated content', 'Standard-1.json');
 
     // Assert
-    expect(viewModel.displayName).toBe('Merged Save');
+    expect(viewModel).toBe(viewModelAfterRun);
   });
 });

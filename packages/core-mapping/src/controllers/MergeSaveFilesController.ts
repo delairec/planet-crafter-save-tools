@@ -1,16 +1,13 @@
 import {MergeResultViewModel} from "../presentation/viewModels/MergeResultViewModel";
-import {MergeResultPresenter} from "../presentation/MergeResultPresenter";
-import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "../application/requests/MergeSaveFilesRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
 
 export class MergeSaveFilesController {
-  constructor(private readonly createMergeSaveFiles: UseCaseFactory<MergeResultPresenterPort, MergeSaveFilesRequest>) {
+  constructor(private readonly createMergeSaveFiles: UseCaseFactory<MergeSaveFilesRequest, MergeResultViewModel>) {
   }
 
   async mergeSaveFiles(request: MergeSaveFilesRequest): Promise<MergeResultViewModel> {
-    const presenter = new MergeResultPresenter();
-    const useCase = this.createMergeSaveFiles(presenter);
+    const {useCase, presenter} = this.createMergeSaveFiles();
 
     await useCase.execute(request);
 

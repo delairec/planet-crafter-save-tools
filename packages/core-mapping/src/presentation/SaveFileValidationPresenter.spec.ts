@@ -1,6 +1,5 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveFileValidationPresenter} from './SaveFileValidationPresenter';
-import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
 import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {SaveFileValidationViewModel, SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
@@ -58,7 +57,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.UNEXPECTED_SECTION_COUNT, foundSectionCount: 3, expectedSectionCounts: [11, 12]}], warnings: noWarnings});
+      presenter.presentInvalidSaveFile({errors: [{code: 'unexpected-section-count', foundSectionCount: 3, expectedSectionCounts: [11, 12]}], warnings: noWarnings});
 
       // Assert
       expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({
@@ -73,7 +72,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'globalMetadata', index: 75}, entryIndex: 3, line: '{'}], warnings: noWarnings});
+      presenter.presentInvalidSaveFile({errors: [{code: 'invalid-json', section: {name: 'globalMetadata', index: 75}, entryIndex: 3, line: '{'}], warnings: noWarnings});
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Global metadata (section 75), entry 3'}]);
@@ -84,7 +83,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'globalMetadata', index: 75}, entryIndex: 3, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
+      presenter.presentInvalidSaveFile({errors: [{code: 'invalid-json', section: {name: 'globalMetadata', index: 75}, entryIndex: 3, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -100,7 +99,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'globalMetadata', index: 75}, entryIndex: 0, line: '{'}], warnings: noWarnings});
+      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{code: 'invalid-json', section: {name: 'globalMetadata', index: 75}, entryIndex: 0, line: '{'}], warnings: noWarnings});
 
       // Assert
       expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({

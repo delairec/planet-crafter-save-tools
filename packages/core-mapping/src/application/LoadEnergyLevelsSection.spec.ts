@@ -19,8 +19,28 @@ import {OptimizerRangesReaderPort} from "./ports/OptimizerRangesReaderPort";
 import {PlanetNamesReaderPort} from "./ports/PlanetNamesReaderPort";
 import {WorldObjectLabelsResponse} from "./responses/WorldObjectLabelsResponse";
 import {EnergyLevelValueObject} from "../domain/valueObjects/EnergyLevelValueObject";
+import {InventoryEntity} from "../domain/entities/InventoryEntity";
+import {OPTIMIZER_RANGES} from "../testing/energyLevelTablesFixture";
 
 const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
+
+const OPTIMIZER = new PlacedWorldObjectEntity({id: '3', name: 'Optimizer1' as const, position: [0, 0, 0], planetId: 1, inventoryId: 99});
+const BOOSTED_GENERATOR = new PlacedWorldObjectEntity({id: '4', name: 'EnergyGenerator1' as const, position: [1, 0, 0], planetId: 1});
+const ENERGY_FUSE = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as const});
+
+class SaveSectionsWithAnOptimizer extends FakeSaveSectionsMapperService {
+  override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
+    return [createPlanetWorldObjectsValueObject({planetId: 1, placedWorldObjects: [OPTIMIZER, BOOSTED_GENERATOR]})];
+  }
+
+  override getWorldObjects(): WorldObjectEntity[] {
+    return [OPTIMIZER, BOOSTED_GENERATOR, ENERGY_FUSE];
+  }
+
+  override getInventories(): InventoryEntity[] {
+    return [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
+  }
+}
 
 class SaveSectionsWithoutSaveConfiguration extends FakeSaveSectionsMapperService {
   override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
@@ -90,7 +110,7 @@ function createPresenter(): EnergyLevelsPresenterPort {
 
 function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: EnergyLevelsPresenterPort): LoadEnergyLevelsSection {
   const energyLevelsReader: EnergyLevelsReaderPort = {readEnergyLevels: () => ENERGY_LEVELS, readDivergingEnergyLevelsByRelease: () => ({})};
-  const optimizerRangesReader: OptimizerRangesReaderPort = {readOptimizerRanges: () => ({})};
+  const optimizerRangesReader: OptimizerRangesReaderPort = {readOptimizerRanges: () => OPTIMIZER_RANGES};
   const planetNamesReader: PlanetNamesReaderPort = {findPlanetNameOfNumericId: (numericId) => PLANET_NAMES_BY_NUMERIC_ID[numericId]};
   const worldObjectLabelsReader: WorldObjectLabelsReaderPort = {readWorldObjectLabels: () => WORLD_OBJECT_LABELS};
 
@@ -112,6 +132,7 @@ describe('LoadEnergyLevelsSection', () => {
       gameRelease: '2.004',
       gameReleaseIsEarlierThanCurrent: true,
       powerConsumptionModifier: 0.5,
+      powerConsumptionIsModified: true,
       planets: [{
         planetId: 1,
         planetName: undefined,
@@ -149,7 +170,32 @@ describe('LoadEnergyLevelsSection', () => {
       // Assert
       expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
         powerConsumptionModifier: 1,
+        powerConsumptionIsModified: false,
         planets: [expect.objectContaining({consumption: 375.5})]
+      }));
+    });
+  });
+
+  describe('When a planet carries an energy optimizer', () => {
+    it('should present the optimizer with the machine it boosts and the production it contributes', async () => {
+      // Arrange
+      const presenter = createPresenter();
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new SaveSectionsWithAnOptimizer()}), presenter);
+
+      // Act
+      await useCase.execute({content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
+        planets: [expect.objectContaining({
+          optimizers: [{
+            name: 'Optimizer1',
+            fuseCount: 1,
+            boostedMachines: [{name: 'EnergyGenerator1', quantity: 1}],
+            contribution: 0.6,
+            productionRatio: 0.33333333333333337
+          }]
+        })]
       }));
     });
   });
@@ -157,7 +203,7 @@ describe('LoadEnergyLevelsSection', () => {
   describe('When the save has unreadable lines', () => {
     it('should display the unreadable lines instead of the energy levels', async () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLine[] = [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
       const useCase = createUseCase(stubSaveSectionsReader({unreadableLines}), presenter);
 
@@ -165,7 +211,7 @@ describe('LoadEnergyLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}]});
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}]});
       expect(presenter.displayEnergyLevels).not.toHaveBeenCalled();
     });
   });

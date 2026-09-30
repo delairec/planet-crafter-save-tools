@@ -142,7 +142,7 @@ describe('SaveSectionsParserService', () => {
       const {errors} = service.parse(content);
 
       // Assert
-      expect<UnreadableLine[]>(errors).toEqual([{section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{not valid json'}]);
+      expect<UnreadableLine[]>(errors).toEqual([{code: 'invalid-json', section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{not valid json'}]);
     });
 
     describe('When the unreadable line is a world object', () => {
@@ -158,6 +158,83 @@ describe('SaveSectionsParserService', () => {
 
         // Assert
         expect(errors).toEqual([expect.objectContaining({section: {name: 'worldObjects', index: 3}, line: '{not valid json'})]);
+      });
+    });
+  });
+
+  describe('When a save carries an entry the format cannot decode', () => {
+    it('should report the entry as an unreadable line and leave it out of its section', () => {
+      // Arrange
+      const service = new SaveSectionsParserService();
+      const content = createFakeSaveString({
+        worldObjects: [
+          createWorldObject({id: 79111656, gId: 'Phytoplankton3', pos: '1751.865,north,1106.104', planet: 1}),
+          createWorldObject({id: 58524136, gId: 'MagnetarQuartz'})
+        ]
+      });
+
+      // Act
+      const {sections, errors} = service.parse(content);
+
+      // Assert
+      expect<UnreadableLine[]>(errors).toEqual([{
+        code: 'undecodable-entry',
+        section: {name: 'worldObjects', index: 3},
+        entryIndex: 0,
+        line: '{"id":79111656,"gId":"Phytoplankton3","pos":"1751.865,north,1106.104","planet":1}'
+      }]);
+      expect<readonly WorldObjectEntry[]>(sections.worldObjects).toEqual([{id: 58524136, groupId: 'MagnetarQuartz'}]);
+    });
+
+    it('should report an entry carrying a field its section does not know', () => {
+      // Arrange
+      const service = new SaveSectionsParserService();
+      const inventoryWithForeignField = {...createInventory({id: 44, woIds: '', size: 20}), foreignField: 3};
+      const content = createFakeSaveString({inventories: [inventoryWithForeignField]});
+
+      // Act
+      const {errors} = service.parse(content);
+
+      // Assert
+      expect<UnreadableLine[]>(errors).toEqual([{code: 'undecodable-entry', section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{"id":44,"woIds":"","size":20,"foreignField":3}'}]);
+    });
+
+    it('should report an entry whose identifier list is not a text', () => {
+      // Arrange
+      const service = new SaveSectionsParserService();
+      const content = createFakeSaveString({inventories: [createInventory({id: 44, woIds: '', size: 20})]}).replace('"woIds":""', '"woIds":5');
+
+      // Act
+      const {errors} = service.parse(content);
+
+      // Assert
+      expect<UnreadableLine[]>(errors).toEqual([{code: 'undecodable-entry', section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{"id":44,"woIds":5,"size":20}'}]);
+    });
+
+    describe('When an unreadable line precedes the entry in its section', () => {
+      it('should locate the entry at the line the save holds it', () => {
+        // Arrange
+        const service = new SaveSectionsParserService();
+        const content = createFakeSaveString({
+          worldObjects: [
+            createWorldObject({id: 85274195, gId: 'Backpack4'}),
+            createWorldObject({id: 79111656, gId: 'Phytoplankton3', pos: '1751.865,north,1106.104', planet: 1})
+          ]
+        }).replace('{"id":85274195,"gId":"Backpack4"}', '{not valid json');
+
+        // Act
+        const {errors} = service.parse(content);
+
+        // Assert
+        expect<UnreadableLine[]>(errors).toEqual([
+          {code: 'invalid-json', section: {name: 'worldObjects', index: 3}, entryIndex: 0, line: '{not valid json'},
+          {
+            code: 'undecodable-entry',
+            section: {name: 'worldObjects', index: 3},
+            entryIndex: 1,
+            line: '{"id":79111656,"gId":"Phytoplankton3","pos":"1751.865,north,1106.104","planet":1}'
+          }
+        ]);
       });
     });
   });

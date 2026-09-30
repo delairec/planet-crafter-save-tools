@@ -374,7 +374,7 @@ describe('MergeSaveFiles', () => {
   });
 
   describe('When a save reaches the merge with a line that cannot be read', () => {
-    const unreadableLine: UnreadableLine = {section: INVENTORIES_SECTION, entryIndex: 0, line: '{not valid json'};
+    const unreadableLine: UnreadableLine = {code: 'invalid-json', section: INVENTORIES_SECTION, entryIndex: 0, line: '{not valid json'};
     const readSaveAWithAnUnreadableLine = readerAnswering({contentA: {saveSections: new FakeSaveSectionsMapperService(), unreadableLines: [unreadableLine]}});
 
     it('should present the merged save as unusable instead of a success', async () => {

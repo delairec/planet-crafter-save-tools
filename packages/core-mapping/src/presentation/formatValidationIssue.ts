@@ -1,4 +1,4 @@
-import {ValidationIssue, ValidationIssueCode} from "../domain/validation/ValidationIssue";
+import type {ValidationIssueResponse} from "../application/responses/ValidationIssueResponse";
 import {
   formatFieldOfWrongTypeMessage,
   formatFloatSerializationMessage,
@@ -7,20 +7,20 @@ import {
   formatTooFewSectionEntriesMessage,
   formatUnexpectedFieldMessage,
   formatUnexpectedSectionCountMessage,
-  formatUnreadableLineMessage,
+  formatInvalidJsonMessage,
   formatValueAboveMaximumMessage,
   formatValueBelowMinimumMessage,
   formatValueNotMatchingPatternMessage
 } from "./messages/validationIssueMessages.js";
 
 type ValidationIssueMessageFormatters = {
-  [Code in ValidationIssueCode]: (issue: Extract<ValidationIssue, {code: Code}>) => string
+  [Code in ValidationIssueResponse['code']]: (issue: Extract<ValidationIssueResponse, {code: Code}>) => string
 };
 
 const messageFormattersByIssueCode: ValidationIssueMessageFormatters = {
   'unexpected-section-count': formatUnexpectedSectionCountMessage,
   'too-few-section-entries': formatTooFewSectionEntriesMessage,
-  'invalid-json': formatUnreadableLineMessage,
+  'invalid-json': formatInvalidJsonMessage,
   'field-of-wrong-type': formatFieldOfWrongTypeMessage,
   'missing-field': formatMissingFieldMessage,
   'unexpected-field': formatUnexpectedFieldMessage,
@@ -31,8 +31,8 @@ const messageFormattersByIssueCode: ValidationIssueMessageFormatters = {
   'float-serialization': formatFloatSerializationMessage
 };
 
-export function formatValidationIssue(issue: ValidationIssue): string {
-  const formatMessage = messageFormattersByIssueCode[issue.code] as (issue: ValidationIssue) => string;
+export function formatValidationIssue(issue: ValidationIssueResponse): string {
+  const formatMessage = messageFormattersByIssueCode[issue.code] as (issue: ValidationIssueResponse) => string;
 
   return formatMessage(issue);
 }

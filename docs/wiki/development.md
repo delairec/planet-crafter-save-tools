@@ -148,16 +148,18 @@ the check sees what `tsc` erases.
 bun run check:presentation
 ```
 
-Fails on two refusals, both closing the output boundary of a `core-` package:
+Fails on four refusals, closing the output boundary of a `core-` package and the way from a controller to a presenter:
 
-- a file of a `presentation/` directory or of `application/responses/` that imports a module under
-  `domain/entities/` or `infrastructure/`. What crosses to a presenter is an application response, a domain value
-  object or primitives, never an entity nor an infrastructure type: an entity carries behaviour, so a presenter
-  holding one decides when a domain computation runs, and an infrastructure type ties what is displayed to the save
-  format;
+- a file of a `presentation/` directory, specs included, that imports any module under `domain/` or
+  `infrastructure/`, whatever its subdirectory. A presenter reads application responses and primitives only: a domain
+  type carries behaviour, so a presenter holding one decides when a domain computation runs, and an infrastructure
+  type ties what is displayed to the save format;
+- a file of `application/responses/` that imports a module under `domain/entities/` or `infrastructure/`;
 - a presenter port, a file `application/ports/*Presenter*`, that imports any module under `domain/`, whatever its
   subdirectory. The port is the contract the use case hands its outcome through, so it takes application responses
-  or primitives only.
+  or primitives only;
+- a file of `controllers/` that imports a concrete presenter. A controller knows the view model type only: the
+  composition root creates the presenter and hands it over with the use case.
 
 Infrastructure may still build entities — that is where a save is read and validated — and the reader port still
 hands them to the application layer; only the output boundary is closed. Every `.js`, `.ts` and `.tsx` source of every

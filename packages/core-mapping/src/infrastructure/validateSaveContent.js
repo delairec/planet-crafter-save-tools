@@ -121,5 +121,5 @@ function validateWorldObjectsSection(createWorldObjects, formatRelease, sectionI
  * @returns {ValidationIssue}
  */
 function toInvalidJsonIssue(parseError, formatRelease) {
-  return {code: VALIDATION_ISSUE_CODES.INVALID_JSON, ...locateUnreadableLine(parseError, formatRelease)};
+  return {...locateUnreadableLine(parseError, formatRelease), code: VALIDATION_ISSUE_CODES.INVALID_JSON};
 }

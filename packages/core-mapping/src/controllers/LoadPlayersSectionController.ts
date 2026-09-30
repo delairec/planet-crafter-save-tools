@@ -1,16 +1,13 @@
 import {PlayersViewModel} from '../presentation/viewModels/PlayersViewModel';
-import {PlayersPresenter} from '../presentation/PlayersPresenter';
-import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {UseCaseFactory} from './UseCaseFactory';
 
 export class LoadPlayersSectionController {
-  constructor(private readonly createLoadPlayersSection: UseCaseFactory<PlayersPresenterPort, LoadSaveSectionsRequest>) {
+  constructor(private readonly createLoadPlayersSection: UseCaseFactory<LoadSaveSectionsRequest, PlayersViewModel>) {
   }
 
   async loadPlayersSection(validatedContent: string): Promise<PlayersViewModel> {
-    const presenter = new PlayersPresenter();
-    const useCase = this.createLoadPlayersSection(presenter);
+    const {useCase, presenter} = this.createLoadPlayersSection();
 
     await useCase.execute({content: validatedContent});
 

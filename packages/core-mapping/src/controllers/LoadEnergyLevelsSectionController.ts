@@ -1,16 +1,13 @@
 import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsViewModel";
-import {EnergyLevelsPresenter} from "../presentation/EnergyLevelsPresenter";
-import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
 
 export class LoadEnergyLevelsSectionController {
-  constructor(private readonly createLoadEnergyLevelsSection: UseCaseFactory<EnergyLevelsPresenterPort, LoadSaveSectionsRequest>) {
+  constructor(private readonly createLoadEnergyLevelsSection: UseCaseFactory<LoadSaveSectionsRequest, EnergyLevelsViewModel>) {
   }
 
   async loadEnergyLevelsSection(validatedContent: string): Promise<EnergyLevelsViewModel> {
-    const presenter = new EnergyLevelsPresenter();
-    const useCase = this.createLoadEnergyLevelsSection(presenter);
+    const {useCase, presenter} = this.createLoadEnergyLevelsSection();
 
     await useCase.execute({content: validatedContent});
 

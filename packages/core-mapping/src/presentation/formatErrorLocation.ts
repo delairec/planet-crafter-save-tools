@@ -1,8 +1,8 @@
-import {RESERVED_SAVE_PART, SaveSectionLocation} from "../domain/save/SaveSectionLocation";
+import {RESERVED_SAVE_PART, type SaveSectionLocationResponse} from "../application/responses/SaveSectionLocationResponse";
 import {saveSectionLabels} from "./messages/saveSectionLabels.js";
 
 interface ErrorLocation {
-  readonly section: SaveSectionLocation;
+  readonly section: SaveSectionLocationResponse;
   readonly entryIndex?: number;
 }
 
@@ -16,7 +16,7 @@ export function formatErrorLocation({section, entryIndex}: ErrorLocation): strin
   return `${sectionLocation}, entry ${entryIndex}`;
 }
 
-function formatSectionLocation({name, index}: SaveSectionLocation): string {
+function formatSectionLocation({name, index}: SaveSectionLocationResponse): string {
   if (name === RESERVED_SAVE_PART) {
     return `section ${index}`;
   }

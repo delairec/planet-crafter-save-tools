@@ -1,41 +1,40 @@
 import {describe, expect, it, mock} from 'bun:test';
 import {LoadPlayersMenuController} from './LoadPlayersMenuController';
-import {PlayersMenuPresenterPort} from '../application/ports/PlayersMenuPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
-import {UnreadableLine} from '../domain/save/SaveSectionLocation';
-import {PlayersMenuPresenter} from '../presentation/PlayersMenuPresenter';
+import {PlayersMenuViewModel} from '../presentation/viewModels/PlayersMenuViewModel';
 
-type ExecuteLoadPlayersMenu = (request: LoadSaveSectionsRequest, presenter: PlayersMenuPresenterPort) => Promise<void>;
+type ExecuteLoadPlayersMenu = (request: LoadSaveSectionsRequest) => Promise<void>;
 
-function createController(execute: ExecuteLoadPlayersMenu): LoadPlayersMenuController {
-  return new LoadPlayersMenuController((presenter) => ({execute: (request) => execute(request, presenter)}));
+function createController(execute: ExecuteLoadPlayersMenu, presenter: {viewModel: PlayersMenuViewModel}): LoadPlayersMenuController {
+  return new LoadPlayersMenuController(() => ({useCase: {execute}, presenter}));
 }
 
 describe('LoadPlayersMenuController', () => {
-  it('should hand its use case the validated content, with the presenter of the players menu', async () => {
+  it('should hand its use case the validated content', async () => {
     // Arrange
     const execute = mock<ExecuteLoadPlayersMenu>(async () => {});
-    const controller = createController(execute);
+    const controller = createController(execute, {viewModel: {players: []}});
 
     // Act
     await controller.loadPlayersMenu('validated content');
 
     // Assert
-    expect(execute).toHaveBeenCalledWith({content: 'validated content'}, expect.any(PlayersMenuPresenter));
+    expect(execute).toHaveBeenCalledWith({content: 'validated content'});
   });
 
   it('should return the view model its presenter holds once the use case has run', async () => {
     // Arrange
-    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
-    const controller = createController(async (_request, presenter) => {
+    const presenter: {viewModel: PlayersMenuViewModel} = {viewModel: {players: []}};
+    const viewModelAfterRun: PlayersMenuViewModel = {players: [], unreadableLines: [{message: 'Unreadable line', location: null}]};
+    const controller = createController(async () => {
       await Promise.resolve();
-      presenter.displaySaveWithUnreadableLines({unreadableLines});
-    });
+      presenter.viewModel = viewModelAfterRun;
+    }, presenter);
 
     // Act
     const viewModel = await controller.loadPlayersMenu('validated content');
 
     // Assert
-    expect(viewModel.unreadableLines).toHaveLength(1);
+    expect(viewModel).toBe(viewModelAfterRun);
   });
 });

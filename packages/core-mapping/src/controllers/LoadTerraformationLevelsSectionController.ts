@@ -1,16 +1,13 @@
 import {TerraformationLevelsViewModel} from '../presentation/viewModels/TerraformationLevelsViewModel';
-import {TerraformationLevelsPresenter} from '../presentation/TerraformationLevelsPresenter';
-import {TerraformationLevelsPresenterPort} from '../application/ports/TerraformationLevelsPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {UseCaseFactory} from './UseCaseFactory';
 
 export class LoadTerraformationLevelsSectionController {
-  constructor(private readonly createLoadTerraformationLevelsSection: UseCaseFactory<TerraformationLevelsPresenterPort, LoadSaveSectionsRequest>) {
+  constructor(private readonly createLoadTerraformationLevelsSection: UseCaseFactory<LoadSaveSectionsRequest, TerraformationLevelsViewModel>) {
   }
 
   async loadTerraformationLevelsSection(validatedContent: string): Promise<TerraformationLevelsViewModel> {
-    const presenter = new TerraformationLevelsPresenter();
-    const useCase = this.createLoadTerraformationLevelsSection(presenter);
+    const {useCase, presenter} = this.createLoadTerraformationLevelsSection();
 
     await useCase.execute({content: validatedContent});
 

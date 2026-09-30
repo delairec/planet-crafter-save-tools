@@ -44,7 +44,7 @@ describe('LoadPlayersSection', () => {
   describe('When the save has unreadable lines', () => {
     it('should display the unreadable lines instead of the players', async () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLine[] = [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
       const useCase = createUseCase(stubSaveSectionsReader({unreadableLines}), presenter);
 
@@ -52,7 +52,7 @@ describe('LoadPlayersSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}]});
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}]});
       expect(presenter.displayPlayers).not.toHaveBeenCalled();
     });
   });

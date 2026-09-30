@@ -1,16 +1,13 @@
 import {PlayersMenuViewModel} from "../presentation/viewModels/PlayersMenuViewModel";
-import {PlayersMenuPresenter} from "../presentation/PlayersMenuPresenter";
-import {PlayersMenuPresenterPort} from "../application/ports/PlayersMenuPresenterPort";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
 import {UseCaseFactory} from "./UseCaseFactory";
 
 export class LoadPlayersMenuController {
-  constructor(private readonly createLoadPlayersMenu: UseCaseFactory<PlayersMenuPresenterPort, LoadSaveSectionsRequest>) {
+  constructor(private readonly createLoadPlayersMenu: UseCaseFactory<LoadSaveSectionsRequest, PlayersMenuViewModel>) {
   }
 
   async loadPlayersMenu(validatedContent: string): Promise<PlayersMenuViewModel> {
-    const presenter = new PlayersMenuPresenter();
-    const useCase = this.createLoadPlayersMenu(presenter);
+    const {useCase, presenter} = this.createLoadPlayersMenu();
 
     await useCase.execute({content: validatedContent});
 
