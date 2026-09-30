@@ -1325,8 +1325,8 @@ TASK REFACTOR162
 		+ "error type of infrastructure/errors, caught by nothing"
 		IMPL "packages/core-mapping/src/infrastructure/errors/UnexpectedSaveEntryFieldError.ts::extends"
 			+ "Error"
-		IMPL "packages/core-mapping/src/infrastructure/errors/UnreadableSaveEntryValueError.ts::never"
-			+ "soften the guard"
+		IMPL "packages/core-mapping/src/infrastructure/errors/UnreadableSaveEntryValueError.ts::extends"
+			+ "Error"
 		IMPL "packages/core-mapping/src/domain/entities/PlayerEntity.ts::this._planetId ="
 			+ "input.planetId"
 		REF @DECISION.ABrokenInvariantFailsWithANamedErrorType

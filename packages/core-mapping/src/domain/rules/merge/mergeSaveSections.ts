@@ -20,9 +20,6 @@ export interface MergeOptions {
   preferLegacyFormat: boolean;
 }
 
-/**
- * @see @RULE.TheSaveOnPrimeBecomesSaveA
- */
 export function mergeSaveSections(sectionsA: SaveSections, sectionsB: SaveSections, {saveDisplayName, preferLegacyFormat}: MergeOptions): MergedSaveSections {
   const [mainSave, secondarySave] = determineSaveOrder(sectionsA, sectionsB);
   const writtenFormatSave = selectWrittenFormatSave(mainSave, secondarySave, preferLegacyFormat);

@@ -2,9 +2,6 @@ import {TerraformationLevelEntry} from '../../save/TerraformationLevelEntry';
 
 const PURIFICATION_SENTINEL = -1;
 
-/**
- * @see @RULE.TerraformationLevelsTakeTheHigherValue, @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
- */
 export function mergeTerraformationLevels(terraformationLevelsA: readonly TerraformationLevelEntry[], terraformationLevelsB: readonly TerraformationLevelEntry[]): TerraformationLevelEntry[] {
   const planetIds = new Set([...terraformationLevelsA, ...terraformationLevelsB].map(level => level.planetId));
 

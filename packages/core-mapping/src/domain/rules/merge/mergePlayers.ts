@@ -12,10 +12,6 @@ const NO_HOST_POSITION = -1;
 const applyHostAndFallbacks = (player: PlayerEntry, host: boolean): PlayerEntry =>
   ({...NUMBER_FIELD_FALLBACKS, ...player, host});
 
-/**
- * @see @RULE.PlayersAreDeduplicatedByName, @RULE.APlayerEntryMayOmitTheFieldsAddedByALaterUpdate,
- * @DECISION.MissingPlayerFieldsAreWrittenAsZero
- */
 export function mergePlayers(playersA: readonly PlayerEntry[], playersB: readonly PlayerEntry[]): EntriesByOrigin<PlayerEntry> {
   const playersFromBNotInA = playersB.filter(playerB =>
     !playersA.some(playerA => playerA.name === playerB.name)

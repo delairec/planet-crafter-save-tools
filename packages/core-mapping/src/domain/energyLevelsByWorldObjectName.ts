@@ -8,7 +8,6 @@ export type EnergyLevelsByWorldObjectName = Partial<Record<WorldObjectName, numb
 
 type EnergyRole = 'production' | 'consumption';
 
-/** The rows of an earlier release whose value differs from the next newer table; each table also applies to every release before its own. */
 export type DivergingEnergyLevelsByRelease = Readonly<Partial<Record<string, readonly EnergyLevelValueObject[]>>>;
 
 export interface EnergyLevelTables {

@@ -1,8 +1,5 @@
 import {MailboxMessageEntry} from '../../save/MailboxMessageEntry';
 
-/**
- * @see @RULE.MailboxMessagesAreDeduplicatedByStringId
- */
 export function mergeMailboxes(mailboxA: readonly MailboxMessageEntry[], mailboxB: readonly MailboxMessageEntry[]): MailboxMessageEntry[] {
   const messagesFromBNotInA = mailboxB.filter(messageB =>
     !mailboxA.some(messageA => messageA.stringId === messageB.stringId)
