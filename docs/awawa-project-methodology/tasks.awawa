@@ -1866,7 +1866,8 @@ TASK REFACTOR170
 	SPEC "the validation issues, the section location and the unreadable line of core-mapping are"
 		+ "domain types under domain/, each named in business terms and stating what is invalid in"
 		+ "the save by a code and its data; the infrastructure maps what it detects onto them, and"
-		+ "application/ports/validationIssues no longer exists"
+		+ "application/ports/ holds ports only: validationIssues/, ValidationIssue.ts,"
+		+ "validationIssueCodes.ts and SaveSectionLocation.ts no longer exist there"
 		REF @DECISION.EachValidationIssueIsANamedInterfaceInItsOwnFile
 	SPEC "a presenter receives the validation issues and the unreadable lines inside an application"
 		+ "response its use case builds, which holds them as domain value objects; no presenter"
