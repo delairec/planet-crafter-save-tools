@@ -3511,11 +3511,6 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 			+ "type SaveFileFindingsResponse"
 		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should present that"
 			+ "save as without JSON extension beside the findings of the other save"
-	SPEC "application/ports/validationIssues is a transitional home: the issues, the section"
-		+ "location and the unreadable line move into domain/ with REFACTOR170, which hands them to"
-		+ "the presenters inside application responses"
-		IMPL "packages/core-mapping/src/domain/validation/validationIssues"
-		REF @TASK.REFACTOR170
 	REJECTED "Members written inline as an anonymous union of object literals: no issue has a name"
 		+ "to import, to narrow a producer to or to find a file by"
 	REJECTED "One interface holding the fields of every issue as optional: the type no longer ties"
@@ -3535,7 +3530,6 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 	REJECTED "The move into domain/ in the pull request of REFACTOR164: the presenter ports receive"
 		+ "the issues and import nothing from domain/ until REFACTOR170 gives them responses"
 		REF @TASK.REFACTOR170
-	DEROGATES "@RULE.application_holds_use_cases_ports_requests_responses"
 	RATIONALE "Each code carries data of its own, so each issue is a type of its own, named and"
 		+ "found by that name. The domain says what is invalid, the infrastructure how it is"
 		+ "detected. The issues stay beside the ports, against the rule that the folder holds ports"

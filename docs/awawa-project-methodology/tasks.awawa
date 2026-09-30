@@ -1915,9 +1915,12 @@ TASK REFACTOR170
 		+ "application/ports/ holds ports only: validationIssues/, ValidationIssue.ts,"
 		+ "validationIssueCodes.ts and SaveSectionLocation.ts no longer exist there"
 		REF @DECISION.EachValidationIssueIsANamedInterfaceInItsOwnFile
-	SPEC "no spec and no module of testing/ in core-mapping writes the index of a save section as a"
-		+ "literal: each reads it from the one declaration of the order of the sections, so that a"
-		+ "change of that order, as the removal of Terrain Layers made, is written in one place"
+	SPEC "no module of core-mapping outside infrastructure/, spec files and testing/ included,"
+		+ "imports the declaration of the order of the sections or restates that order: a section"
+		+ "location carries its index as data the infrastructure sets, and a presenter spec gives a"
+		+ "location with an index and asserts that the carried index is displayed, so that a change"
+		+ "of that order, as the removal of Terrain Layers made, is written in one place, the"
+		+ "declaration the infrastructure reads"
 	SPEC "a presenter receives the validation issues and the unreadable lines inside an application"
 		+ "response its use case builds, which holds them as domain value objects; no presenter"
 		+ "port imports from domain/"
@@ -1985,3 +1988,6 @@ TASK REFACTOR170
 	SOURCE "Owner ruling in the review of REFACTOR163: a section index is read from the constant"
 		+ "that declares the order of the sections, never restated in the test support"
 		PR 241
+	SOURCE "Owner rulings during the launch of REFACTOR170, 2026-09-30: nothing outside the"
+		+ "infrastructure knows the section indexes; the composition root carries no unit test; the"
+		+ "section validators are generated in shared-save-processing"
