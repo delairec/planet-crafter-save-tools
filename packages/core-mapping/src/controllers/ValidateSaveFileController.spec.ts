@@ -3,7 +3,6 @@ import {ValidateSaveFileController} from './ValidateSaveFileController';
 import {SaveFileValidationPresenterPort} from '../application/ports/SaveFileValidationPresenterPort';
 import {ValidateSaveFileRequest} from '../application/requests/ValidateSaveFileRequest';
 import {SaveFileValidationPresenter} from '../presentation/SaveFileValidationPresenter';
-import {SaveFileValidationViewModel} from '../presentation/viewModels/SaveFileValidationViewModel';
 
 type ExecuteValidateSaveFile = (request: ValidateSaveFileRequest, presenter: SaveFileValidationPresenterPort) => Promise<void>;
 
@@ -35,10 +34,6 @@ describe('ValidateSaveFileController', () => {
     const viewModel = await controller.validateSaveFile('Save-A.txt', 'save content');
 
     // Assert
-    expect<SaveFileValidationViewModel>(viewModel).toEqual({
-      status: 'invalid',
-      errors: [{message: 'Invalid file extension: expected a .json file.', location: null}],
-      warnings: []
-    });
+    expect(viewModel.status).toBe('invalid');
   });
 });

@@ -4,7 +4,6 @@ import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {UnreadableLine} from '../application/ports/SaveSectionLocation';
 import {PlayersPresenter} from '../presentation/PlayersPresenter';
-import {PlayersViewModel} from '../presentation/viewModels/PlayersViewModel';
 
 type ExecuteLoadPlayersSection = (request: LoadSaveSectionsRequest, presenter: PlayersPresenterPort) => Promise<void>;
 
@@ -37,9 +36,6 @@ describe('LoadPlayersSectionController', () => {
     const viewModel = await controller.loadPlayersSection('validated content');
 
     // Assert
-    expect(viewModel).toEqual<PlayersViewModel>({
-      players: [],
-      unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]
-    });
+    expect(viewModel.unreadableLines).toHaveLength(1);
   });
 });

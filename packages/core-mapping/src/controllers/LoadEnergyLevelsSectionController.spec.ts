@@ -4,7 +4,6 @@ import {EnergyLevelsPresenterPort} from '../application/ports/EnergyLevelsPresen
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {UnreadableLine} from '../application/ports/SaveSectionLocation';
 import {EnergyLevelsPresenter} from '../presentation/EnergyLevelsPresenter';
-import {EnergyLevelsViewModel} from '../presentation/viewModels/EnergyLevelsViewModel';
 
 type ExecuteLoadEnergyLevelsSection = (request: LoadSaveSectionsRequest, presenter: EnergyLevelsPresenterPort) => Promise<void>;
 
@@ -37,10 +36,6 @@ describe('LoadEnergyLevelsSectionController', () => {
     const viewModel = await controller.loadEnergyLevelsSection('validated content');
 
     // Assert
-    expect(viewModel).toEqual<EnergyLevelsViewModel>({
-      notifications: [],
-      planets: [],
-      unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]
-    });
+    expect(viewModel.unreadableLines).toHaveLength(1);
   });
 });

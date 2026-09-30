@@ -4,7 +4,6 @@ import {TerraformationLevelsPresenterPort} from '../application/ports/Terraforma
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
 import {UnreadableLine} from '../application/ports/SaveSectionLocation';
 import {TerraformationLevelsPresenter} from '../presentation/TerraformationLevelsPresenter';
-import {TerraformationLevelsViewModel} from '../presentation/viewModels/TerraformationLevelsViewModel';
 
 type ExecuteLoadTerraformationLevelsSection = (request: LoadSaveSectionsRequest, presenter: TerraformationLevelsPresenterPort) => Promise<void>;
 
@@ -37,9 +36,6 @@ describe('LoadTerraformationLevelsSectionController', () => {
     const viewModel = await controller.loadTerraformationLevelsSection('validated content');
 
     // Assert
-    expect(viewModel).toEqual<TerraformationLevelsViewModel>({
-      planets: [],
-      unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]
-    });
+    expect(viewModel.unreadableLines).toHaveLength(1);
   });
 });

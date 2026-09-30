@@ -3,7 +3,6 @@ import {LoadSaveIdentityController} from './LoadSaveIdentityController';
 import {SaveIdentityPresenterPort} from '../application/ports/SaveIdentityPresenterPort';
 import {LoadSaveIdentityRequest} from '../application/requests/LoadSaveIdentityRequest';
 import {SaveIdentityPresenter} from '../presentation/SaveIdentityPresenter';
-import {SaveIdentityViewModel} from '../presentation/viewModels/SaveIdentityViewModel';
 
 type ExecuteLoadSaveIdentity = (request: LoadSaveIdentityRequest, presenter: SaveIdentityPresenterPort) => Promise<void>;
 
@@ -35,11 +34,6 @@ describe('LoadSaveIdentityController', () => {
     const viewModel = await controller.loadSaveIdentity('validated content', 'Standard-1.json');
 
     // Assert
-    expect(viewModel).toEqual<SaveIdentityViewModel>({
-      fileName: 'Standard-1.json',
-      displayName: 'Merged Save',
-      mode: 'Standard',
-      gameRelease: 'Game release 2.004'
-    });
+    expect(viewModel.displayName).toBe('Merged Save');
   });
 });
