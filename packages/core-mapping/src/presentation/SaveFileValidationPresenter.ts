@@ -1,5 +1,4 @@
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
-import {ValidationIssue} from "../domain/validation/ValidationIssue";
 import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {SaveFileValidationViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatValidationError} from "./formatValidationError";

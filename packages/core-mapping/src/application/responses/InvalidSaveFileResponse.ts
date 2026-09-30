@@ -1,7 +1,7 @@
-import type {ValidationIssue} from "../../domain/validation/ValidationIssue";
+import type {ValidationIssueResponse} from "./ValidationIssueResponse";
 import type {SaveWarningResponse} from "./SaveWarningResponse";
 
 export interface InvalidSaveFileResponse {
-  errors: ValidationIssue[];
-  warnings: SaveWarningResponse[];
+  readonly errors: readonly ValidationIssueResponse[];
+  readonly warnings: readonly SaveWarningResponse[];
 }

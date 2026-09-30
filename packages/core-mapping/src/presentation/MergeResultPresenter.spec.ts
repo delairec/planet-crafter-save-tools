@@ -1,15 +1,14 @@
 import {describe, expect, it} from 'bun:test';
 import {MergeResultPresenter} from './MergeResultPresenter';
-import {ValidationIssue} from '../domain/validation/ValidationIssue';
-import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
+import type {ValidationIssueResponse} from '../application/responses/ValidationIssueResponse';
 import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
-import {MergeWarning} from '../domain/rules/merge/MergeWarning';
+import type {MergeWarningResponse} from '../application/responses/MergeWarningResponse';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
-const noErrorsFromSaveB: ValidationIssue[] = [];
-const noErrorsFromTheMerge: ValidationIssue[] = [];
-const noMergeWarnings: MergeWarning[] = [];
+const noErrorsFromSaveB: ValidationIssueResponse[] = [];
+const noErrorsFromTheMerge: ValidationIssueResponse[] = [];
+const noMergeWarnings: MergeWarningResponse[] = [];
 const noWarningsFromSaveA: SaveWarningResponse[] = [];
 const noWarningsFromSaveB: SaveWarningResponse[] = [];
 
@@ -126,7 +125,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'players', index: 77}, entryIndex: 0, fieldPath: '', missingFieldName: 'name'}],
+        mergeErrors: [{code: 'missing-field', section: {name: 'players', index: 77}, entryIndex: 0, fieldPath: '', missingFieldName: 'name'}],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
@@ -157,7 +156,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentMergeSucceeded({
         fileName: 'merged.json',
         content: 'merged content',
-        mergeErrors: [{code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'worldObjects', index: 78}, entryIndex: 12, fieldPath: '', missingFieldName: 'gId'}],
+        mergeErrors: [{code: 'missing-field', section: {name: 'worldObjects', index: 78}, entryIndex: 12, fieldPath: '', missingFieldName: 'gId'}],
         mergeWarnings: noMergeWarnings,
         legacyFormatCouldBeKept: false,
         saveAWarnings: noWarningsFromSaveA,
@@ -206,7 +205,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentSaveFilesInvalid({
         saveA: {
           hasJsonExtension: true,
-          errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 77}, entryIndex: 0, line: 'contentA'}],
+          errors: [{code: 'invalid-json', section: {name: 'players', index: 77}, entryIndex: 0, line: 'contentA'}],
           warnings: noWarningsFromSaveA
         },
         saveB: {hasJsonExtension: true, errors: noErrorsFromSaveB, warnings: noWarningsFromSaveB}
@@ -236,7 +235,7 @@ describe('MergeResultPresenter', () => {
       presenter.presentSaveFilesInvalid({
         saveA: {
           hasJsonExtension: true,
-          errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 77}, entryIndex: 0, line: 'contentA'}],
+          errors: [{code: 'invalid-json', section: {name: 'players', index: 77}, entryIndex: 0, line: 'contentA'}],
           warnings: noWarningsFromSaveA
         },
         saveB: {hasJsonExtension: true, errors: noErrorsFromSaveB, warnings: [{code: 'legacy-save-format'}]}
@@ -257,12 +256,12 @@ describe('MergeResultPresenter', () => {
       presenter.presentSaveFilesInvalid({
         saveA: {
           hasJsonExtension: true,
-          errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 77}, entryIndex: 1, line: '{ broken'}],
+          errors: [{code: 'invalid-json', section: {name: 'players', index: 77}, entryIndex: 1, line: '{ broken'}],
           warnings: noWarningsFromSaveA
         },
         saveB: {
           hasJsonExtension: true,
-          errors: [{code: VALIDATION_ISSUE_CODES.MISSING_FIELD, section: {name: 'inventories', index: 79}, entryIndex: 0, fieldPath: '', missingFieldName: 'gId'}],
+          errors: [{code: 'missing-field', section: {name: 'inventories', index: 79}, entryIndex: 0, fieldPath: '', missingFieldName: 'gId'}],
           warnings: noWarningsFromSaveB
         }
       });

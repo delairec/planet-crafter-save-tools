@@ -1,4 +1,4 @@
-/** @import { SaveSectionName } from '../../domain/save/SaveSectionLocation' */
+/** @import { SaveSectionNameResponse } from '../../application/responses/SaveSectionNameResponse' */
 import {saveSectionLabels} from './saveSectionLabels.js';
 
 export const unknownMergeWarningMessage = 'The merge raised a warning that has no description.';
@@ -12,7 +12,7 @@ export function formatMergedSaveFormatWarningMessage({formatRelease}) {
 }
 
 /**
- * @param {{section: SaveSectionName}} droppedSection
+ * @param {{section: SaveSectionNameResponse}} droppedSection
  * @returns {string}
  */
 export function formatMergedSaveSectionDroppedWarningMessage({section}) {

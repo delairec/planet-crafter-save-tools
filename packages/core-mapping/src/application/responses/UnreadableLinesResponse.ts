@@ -1,5 +1,5 @@
-import type {UnreadableLine} from "../../domain/save/SaveSectionLocation";
+import type {UnreadableLineResponse} from "./UnreadableLineResponse";
 
 export interface UnreadableLinesResponse {
-  unreadableLines: UnreadableLine[];
+  readonly unreadableLines: readonly UnreadableLineResponse[];
 }
