@@ -38,7 +38,7 @@ describe('LoadTerraformationLevelsSection', () => {
   describe('When the save has unreadable lines', () => {
     it('should display the unreadable lines instead of the terraformation levels', async () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
       const useCase = new LoadTerraformationLevelsSection(stubSaveSectionsReader({unreadableLines}), presenter);
 
@@ -46,7 +46,7 @@ describe('LoadTerraformationLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]});
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}]});
       expect(presenter.displayTerraformationLevels).not.toHaveBeenCalled();
     });
   });

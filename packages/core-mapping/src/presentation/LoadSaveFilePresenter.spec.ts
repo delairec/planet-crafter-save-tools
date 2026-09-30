@@ -42,12 +42,12 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{'}], warnings: noWarnings});
+      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{'}], warnings: noWarnings});
 
       // Assert
       expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
         status: 'invalid',
-        errors: [{message: 'Invalid JSON: {', location: 'World objects (section 3), entry 2'}],
+        errors: [{message: 'Invalid JSON: {', location: 'World objects (section 78), entry 2'}],
         warnings: []
       });
     });
@@ -57,7 +57,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
+      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -105,7 +105,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
+      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -119,10 +119,10 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 2}, entryIndex: 1, line: '{'}], warnings: noWarnings});
+      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 77}, entryIndex: 1, line: '{'}], warnings: noWarnings});
 
       // Assert
-      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Players (section 2), entry 1'}]);
+      expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Players (section 77), entry 1'}]);
     });
   });
 

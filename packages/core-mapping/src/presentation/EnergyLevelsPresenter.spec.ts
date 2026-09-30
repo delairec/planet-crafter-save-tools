@@ -323,7 +323,7 @@ describe('EnergyLevelsPresenter', () => {
       presenter.displaySaveWithUnreadableLines({unreadableLines});
 
       // Assert
-      expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>({notifications: [], planets: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]});
+      expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>({notifications: [], planets: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 78), entry 2'}]});
     });
   });
 });
