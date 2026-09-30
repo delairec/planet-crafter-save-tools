@@ -1,5 +1,7 @@
 import {stripJsonExtension} from "shared-save-processing/jsonExtension.js";
-import {MergedFileName, MergedFileNamerPort, SourceFileNames} from "../application/ports/MergedFileNamerPort";
+import {MergedFileNamerPort} from "../application/ports/MergedFileNamerPort";
+import {SourceFileNames} from "../application/ports/SourceFileNames";
+import {MergedFileName} from "../application/ports/MergedFileName";
 
 export class MergedFileNamerService implements MergedFileNamerPort {
   nameMergedFile({fileNameA, fileNameB}: SourceFileNames): MergedFileName {

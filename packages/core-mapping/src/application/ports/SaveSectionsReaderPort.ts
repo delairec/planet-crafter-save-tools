@@ -1,10 +1,4 @@
-import {UnreadableLine} from "./SaveSectionLocation";
-import {SaveSectionsMapperPort} from "./SaveSectionsMapperPort";
-
-export interface SaveSectionsReading {
-  readonly saveSections: SaveSectionsMapperPort;
-  readonly unreadableLines: UnreadableLine[];
-}
+import {SaveSectionsReading} from "./SaveSectionsReading";
 
 export interface SaveSectionsReaderPort {
   read(content: string): SaveSectionsReading;

@@ -1,6 +1,7 @@
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
-import {SaveSectionsReaderPort, SaveSectionsReading} from "./ports/SaveSectionsReaderPort";
+import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {SaveSectionsReading} from "./ports/SaveSectionsReading";
 import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {MergedFileNamerPort} from "./ports/MergedFileNamerPort";

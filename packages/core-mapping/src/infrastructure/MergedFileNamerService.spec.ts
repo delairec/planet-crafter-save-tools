@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {MergedFileName} from '../application/ports/MergedFileNamerPort';
+import {MergedFileName} from '../application/ports/MergedFileName';
 import {MergedFileNamerService} from './MergedFileNamerService';
 
 describe('MergedFileNamerService', () => {

@@ -1,5 +1,6 @@
 import {UnreadableLine} from "../application/ports/SaveSectionLocation";
-import {SaveSectionsReaderPort, SaveSectionsReading} from "../application/ports/SaveSectionsReaderPort";
+import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPort";
+import {SaveSectionsReading} from "../application/ports/SaveSectionsReading";
 import {SaveSectionsMapperPort} from "../application/ports/SaveSectionsMapperPort";
 import {FakeSaveSectionsMapperService} from "./FakeSaveSectionsMapperService";
 
