@@ -2,11 +2,11 @@ import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
 import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
 import {UnknownFormatReleaseError} from "shared-save-processing/gameReleases.js";
 import {stringifyEntry} from "shared-save-processing/stringifyEntry.js";
-import {SAVE_PARSE_ERROR_CODES} from "shared-save-processing/saveParseErrorCodes.js";
 import {ParsedSections, SaveSectionIndexes, UnreadableSaveLine} from "shared-save-processing/gameDefinitions";
 import {SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
 import {ParsedSaveSectionsResponse} from "../application/responses/ParsedSaveSectionsResponse";
 import {SaveSections} from "../domain/save/SaveSections";
+import type {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {
   decodeEntry,
   EntryCodec,
@@ -23,6 +23,7 @@ import {
   WORLD_OBJECT_CODEC
 } from "./saveEntryCodecs";
 import {locateUnreadableLine} from "./locateUnreadableLine";
+import {locateSaveSection} from "./locateSaveSection";
 import {UnexpectedSaveEntryFieldError} from "./errors/UnexpectedSaveEntryFieldError";
 import {UnreadableSaveEntryValueError} from "./errors/UnreadableSaveEntryValueError";
 
@@ -32,7 +33,8 @@ interface SectionsReading {
   readonly sections: ParsedSections;
   readonly formatRelease: string;
   readonly sectionIndexes: SaveSectionIndexes;
-  readonly unreadableLines: UnreadableSaveLine[];
+  readonly unreadableLines: readonly UnreadableSaveLine[];
+  readonly undecodableEntries: UnreadableLine[];
 }
 
 export class SaveSectionsParserService implements SaveSectionsParserPort {
@@ -43,11 +45,12 @@ export class SaveSectionsParserService implements SaveSectionsParserPort {
       throw new UnknownFormatReleaseError(formatRelease);
     }
 
-    const saveSections = toSaveSections({sections, formatRelease, sectionIndexes: resolveSectionIndexes(formatRelease), unreadableLines: errors});
+    const undecodableEntries: UnreadableLine[] = [];
+    const saveSections = toSaveSections({sections, formatRelease, sectionIndexes: resolveSectionIndexes(formatRelease), unreadableLines: errors, undecodableEntries});
 
     return {
       sections: saveSections,
-      errors: errors.map(error => locateUnreadableLine(error, formatRelease))
+      errors: [...errors.map(error => locateUnreadableLine(error, formatRelease)), ...undecodableEntries]
     };
   }
 }
@@ -73,7 +76,7 @@ function toSaveSections(reading: SectionsReading): SaveSections {
   };
 }
 
-function decodeSection<Record extends object, Entry>({sections, sectionIndexes, unreadableLines}: SectionsReading, codec: EntryCodec<Record, Entry>): Entry[] {
+function decodeSection<Record extends object, Entry>({sections, sectionIndexes, formatRelease, unreadableLines, undecodableEntries}: SectionsReading, codec: EntryCodec<Record, Entry>): Entry[] {
   const sectionIndex = sectionIndexes[codec.section] as number;
   const records = sections[sectionIndex] as SectionRecords<Record>;
   const entries: Entry[] = [];
@@ -84,7 +87,7 @@ function decodeSection<Record extends object, Entry>({sections, sectionIndexes, 
     const entry = decodeReadableEntry(record, codec);
 
     if (entry === undefined) {
-      unreadableLines.push({code: SAVE_PARSE_ERROR_CODES.UNREADABLE_LINE, sectionIndex, entryIndex: lineIndex, line: stringifyEntry(record as {[field: string]: unknown})});
+      undecodableEntries.push({code: 'undecodable-entry', section: locateSaveSection(sectionIndex, formatRelease), entryIndex: lineIndex, line: stringifyEntry(record as {[field: string]: unknown})});
     } else {
       entries.push(entry);
     }

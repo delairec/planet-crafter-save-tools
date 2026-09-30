@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../domain/save/SaveSectionLocation";
+import {UnreadableLineResponse} from "../application/responses/UnreadableLineResponse";
 import {describe, expect, it} from 'bun:test';
 import {PlayersMenuPresenter} from "./PlayersMenuPresenter";
 import {PlayersMenuViewModel} from "./viewModels/PlayersMenuViewModel";
@@ -39,7 +39,7 @@ describe('PlayersMenuPresenter', () => {
   describe('When the save has unreadable lines', () => {
     it('should show the unreadable lines in place of the players menu', () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLineResponse[] = [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
       const presenter = new PlayersMenuPresenter();
 
       // Act

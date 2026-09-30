@@ -82,7 +82,7 @@ describe('ValidateSaveFile', () => {
 
     it('should keep the warnings alongside the unreadable lines', async () => {
       // Arrange
-      const unreadableLine: UnreadableLine = {section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'};
+      const unreadableLine: UnreadableLine = {code: 'invalid-json', section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'};
       const {useCase, presenter} = setupUseCase({
         validationWarnings: [{code: 'legacy-save-format'}],
         saveSectionsReader: stubSaveSectionsReader({unreadableLines: [unreadableLine]})
@@ -130,7 +130,7 @@ describe('ValidateSaveFile', () => {
   describe('When the reader cannot read some lines of a valid save file', () => {
     it('should present the save file with its unreadable lines, never as a valid save file', async () => {
       // Arrange
-      const unreadableLine: UnreadableLine = {section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'};
+      const unreadableLine: UnreadableLine = {code: 'invalid-json', section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'};
       const {useCase, presenter} = setupUseCase({saveSectionsReader: stubSaveSectionsReader({unreadableLines: [unreadableLine]})});
 
       // Act

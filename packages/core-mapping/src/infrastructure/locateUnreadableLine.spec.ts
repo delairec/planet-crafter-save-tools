@@ -10,7 +10,7 @@ describe('locateUnreadableLine', () => {
       const unreadableLine = locateUnreadableLine({code: 'unreadable-line', sectionIndex: 6, entryIndex: 1, line: '{not valid json'}, '2.004');
 
       // Assert
-      expect<UnreadableLine>(unreadableLine).toEqual({section: {name: 'mailboxMessages', index: 6}, entryIndex: 1, line: '{not valid json'});
+      expect<UnreadableLine>(unreadableLine).toEqual({code: 'invalid-json', section: {name: 'mailboxMessages', index: 6}, entryIndex: 1, line: '{not valid json'});
     });
   });
 });

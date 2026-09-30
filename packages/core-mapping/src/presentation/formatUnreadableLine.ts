@@ -1,8 +1,13 @@
 import type {UnreadableLineResponse} from "../application/responses/UnreadableLineResponse";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {formatErrorLocation} from "./formatErrorLocation";
-import {formatUnreadableLineMessage} from "./messages/validationIssueMessages.js";
+import {formatInvalidJsonMessage, formatUndecodableEntryMessage} from "./messages/validationIssueMessages.js";
+
+const UNREADABLE_LINE_MESSAGES = {
+  'invalid-json': formatInvalidJsonMessage,
+  'undecodable-entry': formatUndecodableEntryMessage
+};
 
 export function formatUnreadableLine(unreadableLine: UnreadableLineResponse): SaveValidationMessageViewModel {
-  return {message: formatUnreadableLineMessage(unreadableLine), location: formatErrorLocation(unreadableLine)};
+  return {message: UNREADABLE_LINE_MESSAGES[unreadableLine.code](unreadableLine), location: formatErrorLocation(unreadableLine)};
 }

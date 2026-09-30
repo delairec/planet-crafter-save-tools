@@ -19,11 +19,19 @@ export function formatTooFewSectionEntriesMessage({foundEntryCount, minimumEntry
 }
 
 /**
- * @param {{line: string}} unreadableLine
+ * @param {{line: string}} invalidJsonLine
  * @returns {string}
  */
-export function formatUnreadableLineMessage({line}) {
+export function formatInvalidJsonMessage({line}) {
   return `Invalid JSON: ${line.slice(0, REPORTED_LINE_LENGTH)}`;
+}
+
+/**
+ * @param {{line: string}} undecodableEntry
+ * @returns {string}
+ */
+export function formatUndecodableEntryMessage({line}) {
+  return `Entry the save format cannot decode: ${line.slice(0, REPORTED_LINE_LENGTH)}`;
 }
 
 /**

@@ -7,7 +7,7 @@ import {
   formatTooFewSectionEntriesMessage,
   formatUnexpectedFieldMessage,
   formatUnexpectedSectionCountMessage,
-  formatUnreadableLineMessage,
+  formatInvalidJsonMessage,
   formatValueAboveMaximumMessage,
   formatValueBelowMinimumMessage,
   formatValueNotMatchingPatternMessage
@@ -20,7 +20,7 @@ type ValidationIssueMessageFormatters = {
 const messageFormattersByIssueCode: ValidationIssueMessageFormatters = {
   'unexpected-section-count': formatUnexpectedSectionCountMessage,
   'too-few-section-entries': formatTooFewSectionEntriesMessage,
-  'invalid-json': formatUnreadableLineMessage,
+  'invalid-json': formatInvalidJsonMessage,
   'field-of-wrong-type': formatFieldOfWrongTypeMessage,
   'missing-field': formatMissingFieldMessage,
   'unexpected-field': formatUnexpectedFieldMessage,

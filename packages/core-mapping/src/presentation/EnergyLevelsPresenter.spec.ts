@@ -1,4 +1,4 @@
-import {UnreadableLine} from "../domain/save/SaveSectionLocation";
+import {UnreadableLineResponse} from "../application/responses/UnreadableLineResponse";
 import {describe, expect, it} from 'bun:test';
 import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
@@ -321,7 +321,7 @@ describe('EnergyLevelsPresenter', () => {
   describe('When the save has unreadable lines', () => {
     it('should show the unreadable lines in place of the energy levels', () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLineResponse[] = [{code: 'invalid-json', section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
       const presenter = new EnergyLevelsPresenter();
 
       // Act

@@ -99,7 +99,7 @@ describe('SaveFileValidationPresenter', () => {
       const presenter = new SaveFileValidationPresenter();
 
       // Act
-      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'globalMetadata', index: 75}, entryIndex: 0, line: '{'}], warnings: noWarnings});
+      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{code: 'invalid-json', section: {name: 'globalMetadata', index: 75}, entryIndex: 0, line: '{'}], warnings: noWarnings});
 
       // Assert
       expect<SaveFileValidationViewModel>(presenter.viewModel).toEqual({

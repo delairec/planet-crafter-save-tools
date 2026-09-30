@@ -142,7 +142,7 @@ describe('SaveSectionsParserService', () => {
       const {errors} = service.parse(content);
 
       // Assert
-      expect<UnreadableLine[]>(errors).toEqual([{section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{not valid json'}]);
+      expect<UnreadableLine[]>(errors).toEqual([{code: 'invalid-json', section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{not valid json'}]);
     });
 
     describe('When the unreadable line is a world object', () => {
@@ -178,6 +178,7 @@ describe('SaveSectionsParserService', () => {
 
       // Assert
       expect<UnreadableLine[]>(errors).toEqual([{
+        code: 'undecodable-entry',
         section: {name: 'worldObjects', index: 3},
         entryIndex: 0,
         line: '{"id":79111656,"gId":"Phytoplankton3","pos":"1751.865,north,1106.104","planet":1}'
@@ -195,7 +196,7 @@ describe('SaveSectionsParserService', () => {
       const {errors} = service.parse(content);
 
       // Assert
-      expect<UnreadableLine[]>(errors).toEqual([{section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{"id":44,"woIds":"","size":20,"foreignField":3}'}]);
+      expect<UnreadableLine[]>(errors).toEqual([{code: 'undecodable-entry', section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{"id":44,"woIds":"","size":20,"foreignField":3}'}]);
     });
 
     describe('When an unreadable line precedes the entry in its section', () => {
@@ -214,8 +215,9 @@ describe('SaveSectionsParserService', () => {
 
         // Assert
         expect<UnreadableLine[]>(errors).toEqual([
-          {section: {name: 'worldObjects', index: 3}, entryIndex: 0, line: '{not valid json'},
+          {code: 'invalid-json', section: {name: 'worldObjects', index: 3}, entryIndex: 0, line: '{not valid json'},
           {
+            code: 'undecodable-entry',
             section: {name: 'worldObjects', index: 3},
             entryIndex: 1,
             line: '{"id":79111656,"gId":"Phytoplankton3","pos":"1751.865,north,1106.104","planet":1}'
