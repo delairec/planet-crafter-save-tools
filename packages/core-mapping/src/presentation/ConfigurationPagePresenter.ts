@@ -1,10 +1,13 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
 import {ConfigurationPagePresenterPort} from "../application/ports/ConfigurationPagePresenterPort";
-import {AssessedSaveConfigurationResponse, ConfigurationPageResponse} from "../application/responses/ConfigurationPageResponse";
-import {DifficultyModifierEffect} from "../domain/rules/assessDifficultyModifiers";
-import {GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
-import {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
-import {SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
+import {
+  AssessedSaveConfigurationResponse,
+  ConfigurationPageResponse,
+  DifficultyModifierEffectResponse,
+  GlobalProgressionResponse,
+  StatisticsResponse,
+  UnlocksResponse
+} from "../application/responses/ConfigurationPageResponse";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {
@@ -49,7 +52,7 @@ const NO_CRAFTED_OBJECT_COUNTED = 0;
 
 const PERCENT_PER_RATIO = 100;
 
-const toneByModifierEffect: Record<DifficultyModifierEffect, ToneViewModel> = {
+const toneByModifierEffect: Record<DifficultyModifierEffectResponse, ToneViewModel> = {
   gameDefault: 'neutral',
   penalisesThePlayer: 'danger',
   helpsThePlayer: 'positive'
@@ -84,7 +87,7 @@ function createTonedValue(value: string, tone: ToneViewModel): TonedValueViewMod
   return {value, tone, toneLabel: toneLabelByTone[tone]};
 }
 
-function createProgressionZone(globalProgression: GlobalProgressionValueObject, statistics: StatisticsValueObject | undefined): ProgressionZoneViewModel {
+function createProgressionZone(globalProgression: GlobalProgressionResponse, statistics: StatisticsResponse | undefined): ProgressionZoneViewModel {
   const fields = [
     {
       label: configurationPageAllTimeTerraTokensLabel,
@@ -114,7 +117,7 @@ function createSaveConfigurationZones(assessedSaveConfiguration: AssessedSaveCon
   }
   return {
     modifiers: createModifiersZone(assessedSaveConfiguration),
-    unlocks: createUnlocksZone(assessedSaveConfiguration.saveConfiguration.unlocks)
+    unlocks: createUnlocksZone(assessedSaveConfiguration.unlocks)
   };
 }
 
@@ -126,8 +129,7 @@ function formatCoefficientModifier(modifier: number): string {
   return `×${NON_BREAKING_SPACE}${formatNumber(modifier)}`;
 }
 
-function createModifiersZone({saveConfiguration, modifierEffects}: AssessedSaveConfigurationResponse): ModifiersZoneViewModel {
-  const {modifiers} = saveConfiguration;
+function createModifiersZone({modifiers, modifierEffects}: AssessedSaveConfigurationResponse): ModifiersZoneViewModel {
   return {
     modifiers: [
       {
@@ -161,7 +163,7 @@ function createUnlockFlag(label: string, unlocked: boolean): UnlockFlagViewModel
   return {label, state: 'off', stateLabel: configurationPageUnlockOffLabel};
 }
 
-function createUnlocksZone(unlocks: SaveConfigurationValueObject['unlocks']): UnlocksZoneViewModel {
+function createUnlocksZone(unlocks: UnlocksResponse): UnlocksZoneViewModel {
   return {
     flags: [
       createUnlockFlag(configurationPageFreeCraftLabel, unlocks.freeCraft),

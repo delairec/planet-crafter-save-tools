@@ -29,27 +29,23 @@ describe('LoadConfigurationPage', () => {
       globalProgression: {allTimeTerraTokens: 1_234_567},
       statistics: {totalCraftedObjects: 10},
       assessedSaveConfiguration: {
-        saveConfiguration: {
-          mode: 'Standard',
-          title: 'Fake Save',
-          modifiers: {terraformationPace: 0.1, gaugeDrain: 0.2, meteoOccurrence: 0.3, multiplayerFactor: 0.4, powerConsumption: 0.5},
-          unlocks: {
-            freeCraft: false,
-            everythingUnlocked: false,
-            spaceTrading: true,
-            oreExtractors: true,
-            teleporters: false,
-            drones: true,
-            autocrafter: false,
-            randomizedMineables: false
-          }
-        },
+        modifiers: {terraformationPace: 0.1, gaugeDrain: 0.2, meteoOccurrence: 0.3, multiplayerFactor: 0.4, powerConsumption: 0.5},
         modifierEffects: {
           terraformationPace: 'helpsThePlayer',
           powerConsumption: 'helpsThePlayer',
           gaugeDrain: 'penalisesThePlayer',
           meteoOccurrence: 'helpsThePlayer',
           multiplayerFactor: 'penalisesThePlayer'
+        },
+        unlocks: {
+          freeCraft: false,
+          everythingUnlocked: false,
+          spaceTrading: true,
+          oreExtractors: true,
+          teleporters: false,
+          drones: true,
+          autocrafter: false,
+          randomizedMineables: false
         }
       }
     } satisfies ConfigurationPageResponse);
