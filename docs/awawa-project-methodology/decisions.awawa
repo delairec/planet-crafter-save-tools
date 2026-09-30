@@ -643,15 +643,20 @@ DECISION WireAbbreviationsStayInSharedSaveProcessing
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.CHORE158
+	APPLIES_TO_TASK @TASK.REFACTOR170
 	SPEC "Wire format abbreviations are tolerated only in the shared-save-processing records,"
 		+ "stated by the package description, and translated at the domain boundary"
 		IMPL "packages/core-mapping/src/infrastructure/saveEntryCodecs.ts"
 		IMPL "packages/shared-save-processing/package.json::Save file wire format"
 	SPEC "No file under domain/ of a core- package, spec files included, uses gId, liId, woIds,"
-		+ "siIds or linkedWo in code nor imports shared-save-processing/gameDefinitions"
+		+ "siIds or linkedWo in code"
 		IMPL "scripts/check-wire-format.ts::findWireAbbreviations"
-		IMPL "scripts/check-wire-format.ts::findGameDefinitionsImports"
 		ENFORCED_BY "scripts/check-wire-format.ts"
+	SPEC "No file of a core- package outside infrastructure/ imports"
+		+ "shared-save-processing/gameDefinitions, and check:workspace-imports alone states that"
+		+ "refusal, as part of its refusal of any other workspace package"
+		IMPL "scripts/check-workspace-imports.ts::export function findWorkspacePackageImports"
+		ENFORCED_BY "scripts/check-workspace-imports.spec.ts"
 	REJECTED "Tolerate wire abbreviations beyond this package"
 	REJECTED "A header comment in each DTO file: it names a section by an index no test holds"
 	REJECTED "Refusing the abbreviations alone: a domain module handling a save format record"
@@ -664,6 +669,8 @@ DECISION WireAbbreviationsStayInSharedSaveProcessing
 		+ "check:wire-format"
 		PR 222
 		PR 228
+	SOURCE "REFACTOR170: one guard refuses every import of another workspace package outside the"
+		+ "infrastructure"
 
 DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
@@ -3468,7 +3475,8 @@ DECISION ADomainSpecBuildsSaveEntriesWithTheBusinessBuilders
 		+ "core-mapping/src/testing/createSaveEntries.ts, in business names; the infrastructure"
 		+ "specs build save format records with createSaveRecords"
 		IMPL "packages/core-mapping/src/testing/createSaveEntries.ts"
-		ENFORCED_BY "scripts/check-wire-format.ts::findGameDefinitionsImports"
+		ENFORCED_BY "scripts/check-workspace-imports.ts::export function"
+			+ "findWorkspacePackageImports"
 	REJECTED "Deriving the entries by decoding the records of createSaveRecords: test support"
 		+ "outside infrastructure would import another workspace package"
 	REJECTED "Entry builders in shared-save-processing/testing: a shared package would know the"

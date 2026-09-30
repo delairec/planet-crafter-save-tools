@@ -1,6 +1,5 @@
 import {runAsEntryPoint, type ScriptIo} from './scriptIo.ts';
 import {reportViolations} from './specSources.ts';
-import {readImportSpecifiers} from './importSpecifiers.ts';
 
 const SOURCE_FILES_PATTERN = 'packages/*/**/*.{js,ts,tsx}';
 const GENERATED_DIRECTORY = /(?:^|\/)(?:node_modules|dist|build|coverage|\.output|\.vinxi)\//;
@@ -8,11 +7,9 @@ const DOMAIN_FILE = /^packages\/core-[^/]+\/(?:.*\/)?domain\//;
 
 const WIRE_ABBREVIATIONS = ['gId', 'liId', 'woIds', 'siIds', 'linkedWo'];
 const WIRE_ABBREVIATION_PATTERN = new RegExp(`\\b(?:${WIRE_ABBREVIATIONS.join('|')})\\b`, 'g');
-const REFUSED_SPECIFIER = /^shared-save-processing\/gameDefinitions(?:\/|$)/;
 
 const CHECK_NAME = 'check:wire-format';
 const ABBREVIATION_REASON = 'the domain names the business concept, never the save format abbreviation: translate it at the domain boundary';
-const GAME_DEFINITIONS_REASON = 'the domain handles its own types, never the save format records of shared-save-processing/gameDefinitions';
 
 export interface WireFormatFinding {
   line: number;
@@ -28,7 +25,6 @@ interface StringLiteral {
 
 interface ScannedSource {
   code: string;
-  withoutComments: string;
   stringLiterals: StringLiteral[];
 }
 
@@ -37,7 +33,6 @@ type BraceKind = 'block' | 'substitution';
 interface ScanState {
   source: string;
   code: string[];
-  withoutComments: string[];
   stringLiterals: StringLiteral[];
   braces: BraceKind[];
 }
@@ -70,7 +65,6 @@ function findStringClosing(source: string, from: number, quote: string): number 
 
 function scanComment(state: ScanState, from: number, end: number): number {
   blank(state.code, from, end);
-  blank(state.withoutComments, from, end);
   return end;
 }
 
@@ -136,7 +130,6 @@ function scanSource(source: string): ScannedSource {
   const state: ScanState = {
     source,
     code: source.split(''),
-    withoutComments: source.split(''),
     stringLiterals: [],
     braces: []
   };
@@ -146,7 +139,6 @@ function scanSource(source: string): ScannedSource {
   }
   return {
     code: state.code.join(''),
-    withoutComments: state.withoutComments.join(''),
     stringLiterals: state.stringLiterals
   };
 }
@@ -185,15 +177,6 @@ export function findWireAbbreviations(filePath: string, source: string): WireFor
     .map(({offset, found}) => ({line: countLine(source, offset), found, reason: ABBREVIATION_REASON}));
 }
 
-export function findGameDefinitionsImports(filePath: string, source: string): WireFormatFinding[] {
-  if (!isDomainFile(filePath)) {
-    return [];
-  }
-  return scanSource(source).withoutComments.split('\n').flatMap((text, lineIndex) => readImportSpecifiers(text)
-    .filter(specifier => REFUSED_SPECIFIER.test(specifier))
-    .map(specifier => ({line: lineIndex + 1, found: specifier, reason: GAME_DEFINITIONS_REASON})));
-}
-
 function formatFindings(filePath: string, findings: WireFormatFinding[]): string[] {
   return findings.map(({line, found, reason}) => `${filePath}:${line}: ${found}\n  ${reason}`);
 }
@@ -201,17 +184,13 @@ function formatFindings(filePath: string, findings: WireFormatFinding[]): string
 export async function checkWireFormat(io: ScriptIo): Promise<void> {
   const violations: string[] = [];
   for await (const filePath of io.scanFiles(SOURCE_FILES_PATTERN)) {
-    const source = await io.readText(filePath);
-    violations.push(
-      ...formatFindings(filePath, findWireAbbreviations(filePath, source)),
-      ...formatFindings(filePath, findGameDefinitionsImports(filePath, source))
-    );
+    violations.push(...formatFindings(filePath, findWireAbbreviations(filePath, await io.readText(filePath))));
   }
   reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
-    nothingFound: 'no domain file names a save format abbreviation or imports shared-save-processing/gameDefinitions.',
-    summarize: count => `${count} violation(s): a domain file names no save format abbreviation (${WIRE_ABBREVIATIONS.join(', ')}) and imports nothing from shared-save-processing/gameDefinitions.`
+    nothingFound: 'no domain file names a save format abbreviation.',
+    summarize: count => `${count} violation(s): a domain file names no save format abbreviation (${WIRE_ABBREVIATIONS.join(', ')}).`
   });
 }
 
