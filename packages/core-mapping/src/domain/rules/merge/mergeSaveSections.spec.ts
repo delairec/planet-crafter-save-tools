@@ -7,6 +7,9 @@ import {WorldObjectEntry} from '../../save/WorldObjectEntry';
 
 describe('Merge saves', () => {
   const mergeOptions = {saveDisplayName: 'SAVE_NAME', preferLegacyFormat: false};
+  const legacyMergeOptions = {saveDisplayName: 'SAVE_NAME', preferLegacyFormat: true};
+  const legacySaveSections = createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()]});
+  const currentSaveSections = createSaveSections({formatRelease: '2.004'});
 
   describe('When both saves carry entries in the sections holding identifiers', () => {
     it('should keep the origin of players, inventories and world objects', () => {
@@ -33,9 +36,9 @@ describe('Merge saves', () => {
       const result = mergeSaveSections(sectionsA, sectionsB, mergeOptions);
 
       // Assert
-      expect(result.players).toEqual({fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]});
-      expect(result.inventories).toEqual({fromSaveA: [inventoryFromSaveA], fromSaveB: [inventoryFromSaveB]});
-      expect(result.worldObjects).toEqual({fromSaveA: [worldObjectFromSaveA], fromSaveB: [worldObjectFromSaveB]});
+      expect(result.sections.players).toEqual({fromSaveA: [playerFromSaveA], fromSaveB: [playerFromSaveB]});
+      expect(result.sections.inventories).toEqual({fromSaveA: [inventoryFromSaveA], fromSaveB: [inventoryFromSaveB]});
+      expect(result.sections.worldObjects).toEqual({fromSaveA: [worldObjectFromSaveA], fromSaveB: [worldObjectFromSaveB]});
     });
   });
 
@@ -52,9 +55,89 @@ describe('Merge saves', () => {
       const result = mergeSaveSections(sectionsA, sectionsB, mergeOptions);
 
       // Assert
-      expect(result.formatRelease).toBe('2.004');
-      expect(result.terrainLayers).toBeUndefined();
-      expect(result.saveConfiguration?.version).toBe('2.103');
+      expect(result.sections.formatRelease).toBe('2.004');
+      expect(result.sections.terrainLayers).toBeUndefined();
+      expect(result.sections.saveConfiguration?.version).toBe('2.103');
+    });
+
+    it('should report the format written and the Terrain Layers section writing it dropped', () => {
+      // Act
+      const result = mergeSaveSections(legacySaveSections, currentSaveSections, mergeOptions);
+
+      // Assert
+      expect(result.warnings).toEqual([
+        {code: 'merged-save-format', formatRelease: '2.004'},
+        {code: 'merged-save-section-dropped', section: 'terrainLayers'}
+      ]);
+    });
+
+    it('should state that the legacy format could have been kept', () => {
+      // Act
+      const result = mergeSaveSections(legacySaveSections, currentSaveSections, mergeOptions);
+
+      // Assert
+      expect(result.legacyFormatCouldBeKept).toBe(true);
+    });
+
+    describe('When the save carrying the later format is on Prime', () => {
+      it('should report the format written and the Terrain Layers section writing it dropped', () => {
+        // Arrange
+        const currentSaveOnPrime = createSaveSections({formatRelease: '2.004', saveConfigurations: [createSaveConfigurationEntry({planetId: 'Prime'})]});
+        const legacySaveOnToxicity = createSaveSections({
+          formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()], saveConfigurations: [createSaveConfigurationEntry({planetId: 'Toxicity'})]
+        });
+
+        // Act
+        const result = mergeSaveSections(legacySaveOnToxicity, currentSaveOnPrime, mergeOptions);
+
+        // Assert
+        expect(result.warnings).toEqual([
+          {code: 'merged-save-format', formatRelease: '2.004'},
+          {code: 'merged-save-section-dropped', section: 'terrainLayers'}
+        ]);
+      });
+    });
+
+    describe('When the merge asks for the legacy format', () => {
+      it('should report the legacy format written, no section dropped, and the content the earlier release may not know', () => {
+        // Act
+        const result = mergeSaveSections(legacySaveSections, currentSaveSections, legacyMergeOptions);
+
+        // Assert
+        expect(result.warnings).toEqual([
+          {code: 'merged-save-format', formatRelease: '1.618'},
+          {code: 'merged-save-content-newer-than-format', formatRelease: '1.618', contentRelease: '2.004'}
+        ]);
+      });
+
+      it('should not state that the legacy format could have been kept, the merge having kept it', () => {
+        // Act
+        const result = mergeSaveSections(legacySaveSections, currentSaveSections, legacyMergeOptions);
+
+        // Assert
+        expect(result.legacyFormatCouldBeKept).toBe(false);
+      });
+    });
+  });
+
+  describe('When the two saves carry the same format', () => {
+    it.each([
+      {legacyFormat: 'not asked for', options: mergeOptions},
+      {legacyFormat: 'asked for', options: legacyMergeOptions}
+    ])('should report nothing on the format, the legacy format $legacyFormat', ({options}) => {
+      // Act
+      const result = mergeSaveSections(legacySaveSections, legacySaveSections, options);
+
+      // Assert
+      expect(result.warnings).toEqual([]);
+    });
+
+    it('should not state that the legacy format could have been kept, no format being lost', () => {
+      // Act
+      const result = mergeSaveSections(legacySaveSections, legacySaveSections, mergeOptions);
+
+      // Assert
+      expect(result.legacyFormatCouldBeKept).toBe(false);
     });
   });
 });
