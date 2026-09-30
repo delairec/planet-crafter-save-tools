@@ -52,20 +52,18 @@ export function validateSaveContent(saveContent) {
   errors.push(...worldObjectIssues);
   errors.push(...validateFloatSerialization(saveContent));
 
-  const declaredVersion = readDeclaredVersion(sections[SAVE_CONFIGURATION_SECTION_INDEX]);
+  const declaredVersion = readDeclaredVersion(
+    /** @type {unknown[]} */ (sections[SAVE_CONFIGURATION_SECTION_INDEX])
+  );
 
   return {isValid: errors.length === 0, errors, warnings, declaredVersion, carriedRelease: formatRelease};
 }
 
 /**
- * @param {unknown} saveConfigurationSection
+ * @param {unknown[]} saveConfigurationSection
  * @returns {string | undefined}
  */
 function readDeclaredVersion(saveConfigurationSection) {
-  if (!Array.isArray(saveConfigurationSection)) {
-    return undefined;
-  }
-
   const [saveConfiguration] = saveConfigurationSection;
 
   if (typeof saveConfiguration !== 'object' || saveConfiguration === null) {
