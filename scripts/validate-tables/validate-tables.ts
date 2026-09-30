@@ -2,8 +2,7 @@ import Ajv from 'ajv';
 import path from 'node:path';
 import {runAsEntryPoint, type ScriptIo} from '../scriptIo.ts';
 
-export interface TableViolation {
-  table: string;
+interface TableViolation {
   row: number;
   message: string;
 }
@@ -16,7 +15,7 @@ function parseRowIndex(instancePath: string): number {
   return -1;
 }
 
-export function findTableViolations(table: string, rows: unknown, schema: object): TableViolation[] {
+function findTableViolations(rows: unknown, schema: object): TableViolation[] {
   const ajv = new Ajv({allErrors: true});
   const validate = ajv.compile(schema);
   const valid = validate(rows);
@@ -25,7 +24,6 @@ export function findTableViolations(table: string, rows: unknown, schema: object
   }
   const errors = validate.errors ?? [];
   return errors.map((error) => ({
-    table,
     row: parseRowIndex(error.instancePath),
     message: `${error.instancePath || '/'} ${error.message}`
   }));
@@ -52,10 +50,6 @@ function isPlainObject(node: unknown): node is Record<string, unknown> {
   return typeof node === 'object' && node !== null && !Array.isArray(node);
 }
 
-/**
- * Reads a schema and makes it self-contained: a `$ref` relative to the schema is replaced by the schema it reaches, and a
- * `valueOfTable` by the values of the column it names, in the table it names relative to the schema.
- */
 async function readJson(io: ScriptIo, file: string): Promise<unknown> {
   const content = await readTextIfPresent(io, file);
   if (content === undefined) {
@@ -102,7 +96,6 @@ async function readSchema(io: ScriptIo, schemaFile: string, isReferenced: boolea
   return schema;
 }
 
-/** Every table of a data- package is validated against the schema beside it, named after it; a table without one fails. */
 export async function validateTables(io: ScriptIo): Promise<void> {
   let exitCode = 0;
   const tables: string[] = [];
@@ -121,7 +114,7 @@ export async function validateTables(io: ScriptIo): Promise<void> {
     }
     const rows = JSON.parse(await io.readText(table));
     const schema = await readSchema(io, schemaFile, false);
-    const violations = findTableViolations(stem, rows, schema as object);
+    const violations = findTableViolations(rows, schema as object);
     for (const violation of violations) {
       io.printError(`${table} row ${violation.row}: ${violation.message}`);
     }

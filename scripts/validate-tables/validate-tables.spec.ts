@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {createFakeScriptIo} from '../testing/createFakeScriptIo.ts';
-import {findTableViolations, TableViolation, validateTables} from './validate-tables.ts';
+import {validateTables} from './validate-tables.ts';
 
 const planetSchema = {
   type: 'array',
@@ -14,49 +14,6 @@ const planetSchema = {
     }
   }
 };
-
-describe('findTableViolations', () => {
-
-  describe('When every row meets the schema', () => {
-    it('should report no violation', () => {
-      // Arrange
-      const rows = [{numericId: 110910045, planetName: 'Toxicity'}];
-      const noViolation: TableViolation[] = [];
-
-      // Act
-      const violations = findTableViolations('planetNamesByNumericId', rows, planetSchema);
-
-      // Assert
-      expect<TableViolation[]>(violations).toEqual(noViolation);
-    });
-  });
-
-  describe('When a row lacks a required property', () => {
-    it('should report the table and the index of that row', () => {
-      // Arrange
-      const rows = [{numericId: 110910045, planetName: 'Toxicity'}, {numericId: -1140328421}];
-
-      // Act
-      const violations = findTableViolations('planetNamesByNumericId', rows, planetSchema);
-
-      // Assert
-      expect(violations).toMatchObject([{table: 'planetNamesByNumericId', row: 1}]);
-    });
-  });
-
-  describe('When the table is not an array of rows', () => {
-    it('should report the whole table, with no row index', () => {
-      // Arrange
-      const rows = {numericId: 110910045, planetName: 'Toxicity'};
-
-      // Act
-      const violations = findTableViolations('planetNamesByNumericId', rows, planetSchema);
-
-      // Assert
-      expect(violations).toMatchObject([{table: 'planetNamesByNumericId', row: -1}]);
-    });
-  });
-});
 
 describe('validateTables', () => {
   const schemaHeader = {$schema: 'http://json-schema.org/draft-07/schema#'};
@@ -97,6 +54,27 @@ describe('validateTables', () => {
       // Assert
       expect({printedErrors, exitCodes}).toEqual({
         printedErrors: [expect.stringContaining('packages/data-planets/planets.json row 0: /0/numericId')],
+        exitCodes: [1]
+      });
+    });
+  });
+
+  describe('When a table is not an array of rows', () => {
+    it('should print the whole table, with no row index, and exit with one', async () => {
+      // Arrange
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/data-planets/planets.json': '{"numericId": 1, "planetName": "Prime"}',
+          'packages/data-planets/planets.schema.json': JSON.stringify(planetSchema)
+        }
+      });
+
+      // Act
+      await validateTables(io);
+
+      // Assert
+      expect({printedErrors, exitCodes}).toEqual({
+        printedErrors: ['packages/data-planets/planets.json row -1: / must be array'],
         exitCodes: [1]
       });
     });
