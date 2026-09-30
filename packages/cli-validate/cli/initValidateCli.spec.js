@@ -1,4 +1,5 @@
 import {beforeEach, describe, expect, it, mock, spyOn} from 'bun:test';
+import {validateSaveFileController} from 'core-mapping/composition/compositionRoot';
 import {initValidateCli} from './initValidateCli.js';
 import {NON_JSON_SAVE_FILE_PATH, SAVE_FILE_PATH} from '../testing/fakePaths.js';
 import {VALID_SAVE_CONTENT} from '../testing/fakeValidSaveContent.js';
@@ -17,8 +18,12 @@ describe('Validate CLI', () => {
   let readTextFile;
   let exitProcess;
 
+  function validateWithTheWiredController(filePath, save) {
+    return validateSaveFileController.validateSaveFile(filePath, save);
+  }
+
   function initCli(argv) {
-    return initValidateCli({readTextFile, exitProcess}, argv, CLI_RELEASE);
+    return initValidateCli({readTextFile, exitProcess}, argv, CLI_RELEASE, validateWithTheWiredController);
   }
 
   beforeEach(() => {

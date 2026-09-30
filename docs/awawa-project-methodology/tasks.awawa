@@ -1615,6 +1615,7 @@ TASK REFACTOR166
 		IMPL "packages/core-mapping/src/composition/useCaseFactories.ts::export function"
 			+ "createMergeSaveFiles"
 		IMPL "packages/cli-merge/cli/merge-cli.js::core-mapping/composition/compositionRoot"
+		IMPL "packages/cli-validate/cli/validate-cli.js::core-mapping/composition/compositionRoot"
 	SPEC "that ruling is recorded as a DECISION applying to the task, its rejected alternatives"
 		+ "being each controller module exporting its wired controller, which makes it import the"
 		+ "composition root, and controller functions taking their use case from their caller;"
@@ -1635,16 +1636,22 @@ TASK REFACTOR166
 		+ "fallow-ignore-file), and the provenance header of a generated or regenerated file"
 		IMPL "packages/core-mapping/src"
 		IMPL "docs/awawa-project-methodology/decisions.awawa::ABrokenInvariantFailsWithANamedErrorType"
-	SPEC "the specs of cli-validate and the scenarios of ui-save-manager pass unchanged; the spec"
-		+ "of cli-merge changes only to hand initMergeCli the merge of the wired controller,"
-		+ "imported from the composition root"
-		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
+	SPEC "the scenarios of ui-save-manager pass unchanged; the specs of cli-merge and cli-validate"
+		+ "change only by the import of the wired controller from the composition root and the"
+		+ "function that hands it to their initialiser"
 		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts"
 		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::function mergeWithTheWiredController"
-	SPEC "initMergeCli takes the merge of two saves as a parameter with no default, and"
-		+ "merge-cli.js passes it the merge of the wired controller of core-mapping"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::function"
+			+ "validateWithTheWiredController"
+	SPEC "initMergeCli and initValidateCli take the merge of two saves and the validation of a save"
+		+ "as a parameter with no default, and merge-cli.js and validate-cli.js pass them the"
+		+ "method of the wired controller of core-mapping; initValidateCli imports no composition"
+		+ "module"
 		IMPL "packages/cli-merge/cli/initMergeCli.js::argv = [], release, mergeSaveFiles)"
 		IMPL "packages/cli-merge/cli/merge-cli.js::mergeSaveFilesController.mergeSaveFiles(request)"
+		IMPL "packages/cli-validate/cli/initValidateCli.js::argv = [], release, validateSaveFile)"
+		IMPL "packages/cli-validate/cli/validate-cli.js::validateSaveFileController.validateSaveFile(filePath,"
+			+ "save)"
 	AFTER @TASK.REFACTOR161
 	AFTER @TASK.REFACTOR168
 	DELIVERED_BY 244
@@ -1669,8 +1676,10 @@ TASK REFACTOR166
 		+ "and only its spec handed another, the seam the instructions rule"
 		+ "production_signature_not_deformed_for_test forbids; the instructions rule campsite_rule"
 		+ "puts its removal in this change, the entry file passing the controller since it already"
-		+ "creates the platform and calls the initialiser, so the spec of cli-merge changes by the"
-		+ "one function that hands it the wired controller"
+		+ "creates the platform and calls the initialiser. initValidateCli, which imported the"
+		+ "wired controller itself, takes it the same way, so the two CLIs wire their controller in"
+		+ "the same place, and the spec of each CLI changes by the one function that hands its"
+		+ "initialiser the wired controller"
 		REF @TASK.REFACTOR161
 		REF @TASK.REFACTOR168
 		REF @DECISION.TheModulesTheClisImportKeepTheirContract
@@ -1682,8 +1691,11 @@ TASK REFACTOR166
 		+ "core-mapping goes, and the task follows the value tables task"
 	SOURCE "Owner rulings on the review of the pull request delivering the task: the default merge"
 		+ "of initMergeCli is removed in it under the campsite rule, the spec of cli-merge changing"
-		+ "with it, and the composition root exports the wired controllers, each controller module"
-		+ "keeping its class alone"
+		+ "with it; initValidateCli is aligned on it, its entry file handing it the validation of"
+		+ "the wired controller and the spec of cli-validate changing with it; the composition root"
+		+ "exports the wired controllers, each controller module keeping its class alone, the use"
+		+ "case factories moving to a composition module of their own and the controllers folder no"
+		+ "longer being exported"
 		PR 244
 
 TASK DOCS167

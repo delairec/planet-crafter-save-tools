@@ -613,8 +613,9 @@ DECISION CoreMappingExportsOnlyControllersAndViewModels
 		+ "with which a consumer wires core-mapping itself"
 	SOURCE "Package rule"
 		PR 61
-	SOURCE "Owner ruling on the review of the pull request delivering REFACTOR166: the wired"
-		+ "controllers are imported from the composition root"
+	SOURCE "Owner rulings on the review of the pull request delivering REFACTOR166: the wired"
+		+ "controllers are imported from the composition root, and the controllers folder is no"
+		+ "longer exported"
 		PR 244
 
 DECISION EachUseCaseResponseIsDeclaredInItsOwnFile
@@ -2808,7 +2809,7 @@ DECISION TheModulesTheClisImportKeepTheirContract
 		+ "saveSectionLabels messages, the validator, parser and serializer services and"
 		+ "shared-save-processing"
 		IMPL "packages/cli-merge/cli/merge-cli.js::mergeSaveFilesController.mergeSaveFiles(request)"
-		IMPL "packages/cli-validate/cli/initValidateCli.js::validateSaveFileController.validateSaveFile(filePath,"
+		IMPL "packages/cli-validate/cli/validate-cli.js::validateSaveFileController.validateSaveFile(filePath,"
 			+ "save)"
 		ENFORCED_BY "packages/cli-merge/cli/initMergeCli.spec.js"
 		ENFORCED_BY "packages/cli-validate/cli/initValidateCli.spec.js"
@@ -2816,7 +2817,7 @@ DECISION TheModulesTheClisImportKeepTheirContract
 		+ "controller is imported from: the CLIs import the wired controllers from"
 		+ "core-mapping/composition/compositionRoot"
 		IMPL "packages/cli-merge/cli/merge-cli.js::core-mapping/composition/compositionRoot"
-		IMPL "packages/cli-validate/cli/initValidateCli.js::core-mapping/composition/compositionRoot"
+		IMPL "packages/cli-validate/cli/validate-cli.js::core-mapping/composition/compositionRoot"
 	SPEC "the number formatters and the section presenters, presenter ports and view models serve"
 		+ "the save manager only and may change; a task of the redesign that touches core-mapping"
 		+ "leaves the specs of cli-merge and cli-validate unchanged and green"
@@ -2837,8 +2838,9 @@ DECISION TheModulesTheClisImportKeepTheirContract
 	SOURCE "Owner ruling of 2026-09-27 on the redesign plan: the parts of core-mapping the CLIs use"
 		+ "must not move"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner ruling on the review of the pull request delivering REFACTOR166: the wired"
-		+ "controllers are imported from the composition root"
+	SOURCE "Owner rulings on the review of the pull request delivering REFACTOR166: the wired"
+		+ "controllers are imported from the composition root, by the entry file of each CLI, which"
+		+ "hands its controller to the initialiser"
 		PR 244
 
 DECISION TheDevelopmentServerPreBundlesTheToolbarSourceMapReader
@@ -3640,8 +3642,9 @@ DECISION AControllerIsBuiltAroundItsUseCaseFactory
 		+ "leaves a consumer the wired controllers and no way to wire core-mapping itself; the"
 		+ "wiring stays covered end to end by the specs of the CLIs and the scenarios of the save"
 		+ "manager"
-	SOURCE "Owner ruling on the review of the pull request delivering REFACTOR166: the composition"
-		+ "root exports the wired controllers, and each controller module keeps its class alone"
+	SOURCE "Owner rulings on the review of the pull request delivering REFACTOR166: the composition"
+		+ "root exports the wired controllers, each controller module keeps its class alone, and"
+		+ "the use case factories move to a composition module of their own"
 		PR 244
 
 DECISION TheCompositionRootSpecAssertsEachFactoryOnARealSave

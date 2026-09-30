@@ -33,7 +33,7 @@ COMMAND ValidateSave
 	INVOCATION "bun run validate"
 	DESC "reads the one save named by --file and reports, located, what does not meet the format"
 	IMPL "packages/cli-validate/cli/validate-cli.js::initValidateCli(platform, cliArguments,"
-		+ "cliManifest)"
+		+ "cliManifest,"
 	APPLIES @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	APPLIES @RULE.ASectionLineIsOneJsonEntry
 	APPLIES @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
