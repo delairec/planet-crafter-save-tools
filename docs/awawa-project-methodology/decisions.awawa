@@ -1872,6 +1872,10 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
 		+ "leaves"
 		PR 241
+	SOURCE "Rewritten in place on delivery of REFACTOR165: the merge rule reports the format, and"
+		+ "the merge warning is a domain type the response carries as is, as the owner ruled while"
+		+ "refining the task"
+		PR 246
 
 DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
 	SPEC "A task branch runs bun test, bun run lint:types, bun run guards, awawa fmt --check . and"
