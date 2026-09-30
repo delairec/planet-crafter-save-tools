@@ -3569,25 +3569,3 @@ DECISION TheValidatorReportsTheReleasesTheUseCasesJudge
 		+ "table, which reaches the use case through its port"
 	SOURCE "Agent ruling while implementing REFACTOR163"
 		PR 241
-
-DECISION OnlyImportTypeCrossesIntoTheCoreInnerLayers
-	SPEC "a file under domain/ or application/ of a core- package, spec files included, imports"
-		+ "another workspace package only by an import type or export type statement, and bun run"
-		+ "guards fails on any other form, without an allow-list"
-		IMPL "scripts/check-core-runtime-imports.ts::export function findRuntimeImports"
-		IMPL "package.json::\"check:runtime-imports\": \"bun"
-			+ "scripts/check-core-runtime-imports.ts\""
-		ENFORCED_BY "scripts/check-core-runtime-imports.spec.ts::should report %s"
-		ENFORCED_BY "scripts/check-core-runtime-imports.spec.ts::should report nothing for %s"
-	REJECTED "Accepting the inline modifier import {type X}: the statement still reads as a runtime"
-		+ "import, and whether it survives transpilation depends on the compiler's elision"
-		+ "settings, not on the line the guard reads"
-	REJECTED "An allow-list of the imports still in place: the task removes every one, so the guard"
-		+ "passes the day it lands"
-	REJECTED "Exempting spec files: a spec importing a shared helper at runtime ties the inner"
-		+ "layer's tests to that package all the same"
-	APPLIES_TO_TASK @TASK.REFACTOR163
-	RATIONALE "A JSDoc @import and a commented-out import are comments, erased before run time, so"
-		+ "the guard reads statements at the start of a line once the comments are blanked"
-	SOURCE "Agent ruling while implementing REFACTOR163"
-		PR 241
