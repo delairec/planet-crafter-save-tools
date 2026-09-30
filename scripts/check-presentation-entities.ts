@@ -25,6 +25,12 @@ const PRESENTER_PORT_REFUSAL: Refusal = {
   reason: 'a presenter port takes application responses or primitives, nothing from domain/'
 };
 
+const CONTROLLER_PRESENTER_REFUSAL: Refusal = {
+  appliesTo: /^packages\/core-[^/]+\/(?:.*\/)?controllers\//,
+  refusedSpecifier: /(?:^|\/)presentation\/[^/]*Presenter$/,
+  reason: 'a controller knows the view model type only: the composition root creates the presenter and hands it over with the use case'
+};
+
 export interface RefusedImport {
   line: number;
   specifier: string;
@@ -32,7 +38,7 @@ export interface RefusedImport {
 }
 
 export function findRefusedImports(filePath: string, source: string): RefusedImport[] {
-  const refusal = [OUTPUT_BOUNDARY_REFUSAL, PRESENTER_PORT_REFUSAL].find(candidate => candidate.appliesTo.test(filePath));
+  const refusal = [OUTPUT_BOUNDARY_REFUSAL, PRESENTER_PORT_REFUSAL, CONTROLLER_PRESENTER_REFUSAL].find(candidate => candidate.appliesTo.test(filePath));
   if (refusal === undefined || GENERATED_DIRECTORY.test(filePath)) {
     return [];
   }

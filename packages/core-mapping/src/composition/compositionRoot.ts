@@ -9,6 +9,7 @@ import {MergeSaveFilesController} from "../controllers/MergeSaveFilesController"
 import {ValidateSaveFileController} from "../controllers/ValidateSaveFileController";
 import {
   createValidateSaveFile,
+  createLoadAndValidateSaveFile,
   createMergeSaveFiles,
   createLoadConfigurationPage,
   createLoadEnergyLevelsSection,
@@ -19,7 +20,7 @@ import {
 } from "./useCaseFactories";
 
 export const validateSaveFileController = new ValidateSaveFileController(createValidateSaveFile);
-export const loadAndValidateSaveFileController = new LoadAndValidateSaveFileController(createValidateSaveFile);
+export const loadAndValidateSaveFileController = new LoadAndValidateSaveFileController(createLoadAndValidateSaveFile);
 export const mergeSaveFilesController = new MergeSaveFilesController(createMergeSaveFiles);
 export const loadConfigurationPageController = new LoadConfigurationPageController(createLoadConfigurationPage);
 export const loadEnergyLevelsSectionController = new LoadEnergyLevelsSectionController(createLoadEnergyLevelsSection);

@@ -1,41 +1,40 @@
 import {describe, expect, it, mock} from 'bun:test';
 import {LoadEnergyLevelsSectionController} from './LoadEnergyLevelsSectionController';
-import {EnergyLevelsPresenterPort} from '../application/ports/EnergyLevelsPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
-import {UnreadableLine} from '../domain/save/SaveSectionLocation';
-import {EnergyLevelsPresenter} from '../presentation/EnergyLevelsPresenter';
+import {EnergyLevelsViewModel} from '../presentation/viewModels/EnergyLevelsViewModel';
 
-type ExecuteLoadEnergyLevelsSection = (request: LoadSaveSectionsRequest, presenter: EnergyLevelsPresenterPort) => Promise<void>;
+type ExecuteLoadEnergyLevelsSection = (request: LoadSaveSectionsRequest) => Promise<void>;
 
-function createController(execute: ExecuteLoadEnergyLevelsSection): LoadEnergyLevelsSectionController {
-  return new LoadEnergyLevelsSectionController((presenter) => ({execute: (request) => execute(request, presenter)}));
+function createController(execute: ExecuteLoadEnergyLevelsSection, presenter: {viewModel: EnergyLevelsViewModel}): LoadEnergyLevelsSectionController {
+  return new LoadEnergyLevelsSectionController(() => ({useCase: {execute}, presenter}));
 }
 
 describe('LoadEnergyLevelsSectionController', () => {
-  it('should hand its use case the validated content, with the presenter of the energy levels', async () => {
+  it('should hand its use case the validated content', async () => {
     // Arrange
     const execute = mock<ExecuteLoadEnergyLevelsSection>(async () => {});
-    const controller = createController(execute);
+    const controller = createController(execute, {viewModel: {notifications: [], planets: []}});
 
     // Act
     await controller.loadEnergyLevelsSection('validated content');
 
     // Assert
-    expect(execute).toHaveBeenCalledWith({content: 'validated content'}, expect.any(EnergyLevelsPresenter));
+    expect(execute).toHaveBeenCalledWith({content: 'validated content'});
   });
 
   it('should return the view model its presenter holds once the use case has run', async () => {
     // Arrange
-    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}];
-    const controller = createController(async (_request, presenter) => {
+    const presenter: {viewModel: EnergyLevelsViewModel} = {viewModel: {notifications: [], planets: []}};
+    const viewModelAfterRun: EnergyLevelsViewModel = {notifications: [], planets: [], unreadableLines: [{message: 'Unreadable line', location: null}]};
+    const controller = createController(async () => {
       await Promise.resolve();
-      presenter.displaySaveWithUnreadableLines({unreadableLines});
-    });
+      presenter.viewModel = viewModelAfterRun;
+    }, presenter);
 
     // Act
     const viewModel = await controller.loadEnergyLevelsSection('validated content');
 
     // Assert
-    expect(viewModel.unreadableLines).toHaveLength(1);
+    expect(viewModel).toBe(viewModelAfterRun);
   });
 });

@@ -1,42 +1,49 @@
 import {describe, expect, it, mock} from 'bun:test';
 import {MergeSaveFilesController} from './MergeSaveFilesController';
-import {MergeResultPresenterPort} from '../application/ports/MergeResultPresenterPort';
 import {MergeSaveFilesRequest} from '../application/requests/MergeSaveFilesRequest';
-import {MergeResultPresenter} from '../presentation/MergeResultPresenter';
+import {MergeResultViewModel} from '../presentation/viewModels/MergeResultViewModel';
 
-type ExecuteMergeSaveFiles = (request: MergeSaveFilesRequest, presenter: MergeResultPresenterPort) => Promise<void>;
+type ExecuteMergeSaveFiles = (request: MergeSaveFilesRequest) => Promise<void>;
 
-function createController(execute: ExecuteMergeSaveFiles): MergeSaveFilesController {
-  return new MergeSaveFilesController((presenter) => ({execute: (request) => execute(request, presenter)}));
+function mergeResultViewModel(status: MergeResultViewModel['status']): MergeResultViewModel {
+  return {
+    status, fileName: '', content: '', mergeFailureMessage: '', mergeErrors: [], mergeWarnings: [], legacyFormatCouldBeKept: false,
+    saveAErrors: [], saveBErrors: [], saveAWarnings: [], saveBWarnings: []
+  };
+}
+
+function createController(execute: ExecuteMergeSaveFiles, presenter: {viewModel: MergeResultViewModel}): MergeSaveFilesController {
+  return new MergeSaveFilesController(() => ({useCase: {execute}, presenter}));
 }
 
 describe('MergeSaveFilesController', () => {
-  it('should hand its use case the request it received, with the presenter of the merge result', async () => {
+  it('should hand its use case the request it received', async () => {
     // Arrange
+    const request: MergeSaveFilesRequest = {fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B', preferLegacyFormat: true};
     const execute = mock<ExecuteMergeSaveFiles>(async () => {});
-    const controller = createController(execute);
+    const controller = createController(execute, {viewModel: mergeResultViewModel('idle')});
 
     // Act
-    await controller.mergeSaveFiles({fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B', preferLegacyFormat: true});
+    await controller.mergeSaveFiles(request);
 
     // Assert
-    expect(execute).toHaveBeenCalledWith(
-      {fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B', preferLegacyFormat: true},
-      expect.any(MergeResultPresenter)
-    );
+    expect(execute).toHaveBeenCalledWith(request);
   });
 
   it('should return the view model its presenter holds once the use case has run', async () => {
     // Arrange
-    const controller = createController(async (_request, presenter) => {
+    const request: MergeSaveFilesRequest = {fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B'};
+    const presenter: {viewModel: MergeResultViewModel} = {viewModel: mergeResultViewModel('idle')};
+    const viewModelAfterRun: MergeResultViewModel = mergeResultViewModel('mergeFailed');
+    const controller = createController(async () => {
       await Promise.resolve();
-      presenter.presentMergedSaveUnusable();
-    });
+      presenter.viewModel = viewModelAfterRun;
+    }, presenter);
 
     // Act
-    const viewModel = await controller.mergeSaveFiles({fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B'});
+    const viewModel = await controller.mergeSaveFiles(request);
 
     // Assert
-    expect(viewModel.status).toBe('mergeFailed');
+    expect(viewModel).toBe(viewModelAfterRun);
   });
 });

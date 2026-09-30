@@ -3,6 +3,7 @@ import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
 import {checkPresentationFiles, findRefusedImports} from './check-presentation-entities.ts';
 
 const OUTPUT_BOUNDARY_REASON = 'the output boundary hands over responses, value objects or primitives, never a domain entity nor an infrastructure type';
+const CONTROLLER_PRESENTER_REASON = 'a controller knows the view model type only: the composition root creates the presenter and hands it over with the use case';
 const PRESENTER_PORT_REASON = 'a presenter port takes application responses or primitives, nothing from domain/';
 
 describe('findRefusedImports', () => {
@@ -91,6 +92,51 @@ describe('findRefusedImports', () => {
 
       // Act
       const refusedImports = findRefusedImports(filePath, source);
+
+      // Assert
+      expect(refusedImports).toEqual([]);
+    });
+  });
+});
+
+describe('findRefusedImports, for a controller', () => {
+
+  describe('When a controller imports a presenter', () => {
+    it.each([
+      ['a controller', 'packages/core-mapping/src/controllers/PlayersController.ts'],
+      ['a controller spec', 'packages/core-mapping/src/controllers/PlayersController.spec.ts']
+    ])('should report the import of a presenter from %s', (_file, filePath) => {
+      // Arrange
+      const source = "import {PlayersPresenter} from '../presentation/PlayersPresenter';";
+
+      // Act
+      const refusedImports = findRefusedImports(filePath, source);
+
+      // Assert
+      expect(refusedImports).toEqual([{line: 1, specifier: '../presentation/PlayersPresenter', reason: CONTROLLER_PRESENTER_REASON}]);
+    });
+  });
+
+  describe('When a controller imports a view model or a request', () => {
+    it.each([
+      ['a view model', "import {PlayersViewModel} from '../presentation/viewModels/PlayersViewModel';"],
+      ['a request', "import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';"]
+    ])('should leave %s alone', (_import, source) => {
+      // Act
+      const refusedImports = findRefusedImports('packages/core-mapping/src/controllers/PlayersController.ts', source);
+
+      // Assert
+      expect(refusedImports).toEqual([]);
+    });
+  });
+
+  describe('When the composition root imports a presenter', () => {
+    it('should leave it alone', () => {
+      // Arrange
+      const source = "import {PlayersPresenter} from '../presentation/PlayersPresenter';";
+
+      // Act
+      const refusedImports = findRefusedImports('packages/core-mapping/src/composition/useCaseFactories.ts', source);
 
       // Assert
       expect(refusedImports).toEqual([]);

@@ -1,3 +1,8 @@
 import {UseCase} from "../application/UseCase";
 
-export type UseCaseFactory<PresenterPort, Request> = (presenter: PresenterPort) => UseCase<Request>;
+export interface UseCaseWithPresenter<Request, ViewModel> {
+  readonly useCase: UseCase<Request>;
+  readonly presenter: {readonly viewModel: ViewModel};
+}
+
+export type UseCaseFactory<Request, ViewModel> = () => UseCaseWithPresenter<Request, ViewModel>;
