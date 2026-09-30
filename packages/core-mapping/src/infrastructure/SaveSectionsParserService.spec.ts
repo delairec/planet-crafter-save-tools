@@ -199,6 +199,18 @@ describe('SaveSectionsParserService', () => {
       expect<UnreadableLine[]>(errors).toEqual([{code: 'undecodable-entry', section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{"id":44,"woIds":"","size":20,"foreignField":3}'}]);
     });
 
+    it('should report an entry whose identifier list is not a text', () => {
+      // Arrange
+      const service = new SaveSectionsParserService();
+      const content = createFakeSaveString({inventories: [createInventory({id: 44, woIds: '', size: 20})]}).replace('"woIds":""', '"woIds":5');
+
+      // Act
+      const {errors} = service.parse(content);
+
+      // Assert
+      expect<UnreadableLine[]>(errors).toEqual([{code: 'undecodable-entry', section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{"id":44,"woIds":5,"size":20}'}]);
+    });
+
     describe('When an unreadable line precedes the entry in its section', () => {
       it('should locate the entry at the line the save holds it', () => {
         // Arrange

@@ -24,8 +24,6 @@ import {
 } from "./saveEntryCodecs";
 import {locateUnreadableLine} from "./locateUnreadableLine";
 import {locateSaveSection} from "./locateSaveSection";
-import {UnexpectedSaveEntryFieldError} from "./errors/UnexpectedSaveEntryFieldError";
-import {UnreadableSaveEntryValueError} from "./errors/UnreadableSaveEntryValueError";
 
 type SectionRecords<Record> = Iterable<Record> | (() => Iterable<Record>);
 
@@ -111,10 +109,7 @@ function skipUnreadableLines(unreadableLines: readonly UnreadableSaveLine[], sec
 function decodeReadableEntry<Record extends object, Entry>(record: Record, codec: EntryCodec<Record, Entry>): Entry | undefined {
   try {
     return decodeEntry(record, codec);
-  } catch (error) {
-    if (error instanceof UnreadableSaveEntryValueError || error instanceof UnexpectedSaveEntryFieldError) {
-      return undefined;
-    }
-    throw error;
+  } catch {
+    return undefined;
   }
 }

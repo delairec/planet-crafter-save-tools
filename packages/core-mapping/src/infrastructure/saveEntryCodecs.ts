@@ -55,7 +55,10 @@ export interface EntryCodec<Record, Entry> {
 
 const idList = {
   decode: (value: unknown, location: FieldLocation): number[] => {
-    const ids = parseIdList(value as string);
+    if (typeof value !== 'string') {
+      throw new UnreadableSaveEntryValueError(location.section, location.field, value);
+    }
+    const ids = parseIdList(value);
     if (ids.some(id => !Number.isSafeInteger(id))) {
       throw new UnreadableSaveEntryValueError(location.section, location.field, value);
     }
