@@ -3,6 +3,7 @@ import {describe, expect, it, mock} from 'bun:test';
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {LoadTerraformationLevelsSection} from './LoadTerraformationLevelsSection';
 import {TerraformationLevelsPresenterPort} from './ports/TerraformationLevelsPresenterPort';
+import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
 
 function createPresenter(): TerraformationLevelsPresenterPort {
   return {displayTerraformationLevels: mock(), displaySaveWithUnreadableLines: mock()};
@@ -38,7 +39,7 @@ describe('LoadTerraformationLevelsSection', () => {
   describe('When the save has unreadable lines', () => {
     it('should display the unreadable lines instead of the terraformation levels', async () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLine[] = [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
       const useCase = new LoadTerraformationLevelsSection(stubSaveSectionsReader({unreadableLines}), presenter);
 
@@ -46,7 +47,7 @@ describe('LoadTerraformationLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]});
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}]});
       expect(presenter.displayTerraformationLevels).not.toHaveBeenCalled();
     });
   });

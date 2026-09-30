@@ -3,6 +3,7 @@ import {describe, expect, it, mock} from 'bun:test';
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {PlayersMenuPresenterPort} from "./ports/PlayersMenuPresenterPort";
 import {LoadPlayersMenu} from "./LoadPlayersMenu";
+import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
 
 function createPresenter(): PlayersMenuPresenterPort {
   return {displayPlayersMenu: mock(), displaySaveWithUnreadableLines: mock()};
@@ -27,7 +28,7 @@ describe('LoadPlayersMenu', () => {
   describe('When the save has unreadable lines', () => {
     it('should display the unreadable lines instead of the players menu', async () => {
       // Arrange
-      const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+      const unreadableLines: UnreadableLine[] = [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
       const presenter = createPresenter();
       const useCase = new LoadPlayersMenu(stubSaveSectionsReader({unreadableLines}), presenter);
 
@@ -35,7 +36,7 @@ describe('LoadPlayersMenu', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]});
+      expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}]});
       expect(presenter.displayPlayersMenu).not.toHaveBeenCalled();
     });
   });

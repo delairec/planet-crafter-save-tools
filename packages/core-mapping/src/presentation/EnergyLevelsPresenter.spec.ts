@@ -4,7 +4,7 @@ import {EnergyLevelsPresenter} from "./EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
 import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
-import {WORLD_OBJECTS_SECTION} from "../testing/saveSectionLocations";
+import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
 
 const nbsp = '\u00A0';
 const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {
@@ -323,7 +323,7 @@ describe('EnergyLevelsPresenter', () => {
       presenter.displaySaveWithUnreadableLines({unreadableLines});
 
       // Assert
-      expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>({notifications: [], planets: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: 'World objects (section 3), entry 2'}]});
+      expect(presenter.viewModel).toEqual<EnergyLevelsViewModel>({notifications: [], planets: [], unreadableLines: [{message: 'Invalid JSON: {not valid json', location: `World objects (section ${WORLD_OBJECTS_SECTION.index}), entry 2`}]});
     });
   });
 });

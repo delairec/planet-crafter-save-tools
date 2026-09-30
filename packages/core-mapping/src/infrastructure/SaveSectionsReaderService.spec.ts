@@ -5,6 +5,7 @@ import {SaveSectionsReaderService} from './SaveSectionsReaderService';
 import {SaveSectionsParserPort} from '../application/ports/SaveSectionsParserPort';
 import {SaveSections} from '../domain/save/SaveSections';
 import {createSaveSections} from '../testing/createSaveSections';
+import {WORLD_OBJECTS_SECTION} from './testing/saveSectionLocations';
 
 const SAVE_CONTENT = 'save content';
 
@@ -30,13 +31,13 @@ describe('SaveSectionsReaderService', () => {
 
   it('should carry every line the parser could not read', () => {
     // Arrange
-    const unreadableLines: UnreadableLine[] = [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}];
+    const unreadableLines: UnreadableLine[] = [{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}];
     const reader = new SaveSectionsReaderService(createParser(createSaveSections(), unreadableLines));
 
     // Act
     const reading = reader.read(SAVE_CONTENT);
 
     // Assert
-    expect<UnreadableLine[]>(reading.unreadableLines).toEqual([{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{not valid json'}]);
+    expect<UnreadableLine[]>(reading.unreadableLines).toEqual([{section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{not valid json'}]);
   });
 });

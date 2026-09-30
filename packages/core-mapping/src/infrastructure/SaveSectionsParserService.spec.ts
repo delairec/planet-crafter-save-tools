@@ -9,6 +9,7 @@ import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js'
 import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {WorldEventEntry} from '../domain/save/WorldEventEntry';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
+import {INVENTORIES_SECTION, WORLD_OBJECTS_SECTION} from './testing/saveSectionLocations';
 
 describe('SaveSectionsParserService', () => {
 
@@ -142,7 +143,7 @@ describe('SaveSectionsParserService', () => {
       const {errors} = service.parse(content);
 
       // Assert
-      expect<UnreadableLine[]>(errors).toEqual([{section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{not valid json'}]);
+      expect<UnreadableLine[]>(errors).toEqual([{section: INVENTORIES_SECTION, entryIndex: 0, line: '{not valid json'}]);
     });
 
     describe('When the unreadable line is a world object', () => {
@@ -157,7 +158,7 @@ describe('SaveSectionsParserService', () => {
         const {errors} = service.parse(content);
 
         // Assert
-        expect(errors).toEqual([expect.objectContaining({section: {name: 'worldObjects', index: 3}, line: '{not valid json'})]);
+        expect(errors).toEqual([expect.objectContaining({section: WORLD_OBJECTS_SECTION, line: '{not valid json'})]);
       });
     });
   });

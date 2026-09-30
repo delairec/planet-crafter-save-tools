@@ -82,7 +82,7 @@ describe('validateSchemas', () => {
 
       // Assert
       expect(validating).toThrow(UnexpectedSaveSectionError);
-      expect(validating).toThrow('Unexpected save data: section 5 should hold a list of entries, received undefined.');
+      expect(validating).toThrow(`Unexpected save data: section ${STATISTICS_SECTION_INDEX} should hold a list of entries, received undefined.`);
     });
   });
 });
@@ -179,7 +179,7 @@ describe('createSectionEntryValidator', () => {
       const creating = () => createSectionEntryValidator('2.004', RESERVED_TRAILING_SECTION_INDEX);
 
       // Assert
-      expect(creating).toThrow('No schema describes the entries of section 10 in the format of 2.004');
+      expect(creating).toThrow(`No schema describes the entries of section ${RESERVED_TRAILING_SECTION_INDEX} in the format of 2.004`);
     });
   });
 });
