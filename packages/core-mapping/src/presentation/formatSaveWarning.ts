@@ -1,4 +1,4 @@
-import {SaveWarning, SaveWarningCode} from "shared-save-processing/gameDefinitions";
+import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
 import {
   formatDeclaredReleaseContradictsContentWarningMessage,
@@ -7,7 +7,7 @@ import {
 } from "./messages/saveWarningMessages.js";
 
 type SaveWarningMessageFormatters = {
-  [Code in SaveWarningCode]: (warning: Extract<SaveWarning, {code: Code}>) => string
+  [Code in SaveWarningResponse['code']]: (warning: Extract<SaveWarningResponse, {code: Code}>) => string
 };
 
 const messageFormattersByWarningCode: SaveWarningMessageFormatters = {
@@ -15,8 +15,8 @@ const messageFormattersByWarningCode: SaveWarningMessageFormatters = {
   'declared-release-contradicts-content': formatDeclaredReleaseContradictsContentWarningMessage
 };
 
-export function formatSaveWarning(warning: SaveWarning): SaveValidationMessageViewModel {
-  const formatMessage = messageFormattersByWarningCode[warning.code] as ((warning: SaveWarning) => string) | undefined;
+export function formatSaveWarning(warning: SaveWarningResponse): SaveValidationMessageViewModel {
+  const formatMessage = messageFormattersByWarningCode[warning.code] as ((warning: SaveWarningResponse) => string) | undefined;
 
   return {message: formatMessage?.(warning) ?? unknownSaveWarningMessage, location: null};
 }

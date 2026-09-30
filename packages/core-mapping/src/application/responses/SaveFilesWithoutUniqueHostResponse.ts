@@ -1,8 +1,8 @@
-import type {SaveWarning} from "shared-save-processing/gameDefinitions";
+import type {SaveWarningResponse} from "./SaveWarningResponse";
 
 export interface SaveFilesWithoutUniqueHostResponse {
   saveAWrongHostCount?: number;
   saveBWrongHostCount?: number;
-  saveAWarnings: SaveWarning[];
-  saveBWarnings: SaveWarning[];
+  saveAWarnings: SaveWarningResponse[];
+  saveBWarnings: SaveWarningResponse[];
 }

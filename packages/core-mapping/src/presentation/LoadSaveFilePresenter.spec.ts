@@ -1,12 +1,12 @@
 import {describe, expect, it} from 'bun:test';
 import {LoadSaveFilePresenter} from './LoadSaveFilePresenter';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes';
-import {SaveWarning} from 'shared-save-processing/gameDefinitions';
+import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {LoadSaveFileViewModel} from './viewModels/LoadSaveFileViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
-const noWarnings: SaveWarning[] = [];
+const noWarnings: SaveWarningResponse[] = [];
 
 describe('LoadSaveFilePresenter', () => {
 

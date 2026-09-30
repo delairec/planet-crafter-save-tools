@@ -2,7 +2,7 @@ import {describe, expect, it} from 'bun:test';
 import {MergeResultPresenter} from './MergeResultPresenter';
 import {ValidationIssue} from '../application/ports/ValidationIssue';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes';
-import {SaveWarning} from 'shared-save-processing/gameDefinitions';
+import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
 import {MergeWarningResponse} from '../application/responses/MergeWarningResponse';
@@ -11,8 +11,8 @@ import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationVie
 const noErrorsFromSaveB: ValidationIssue[] = [];
 const noErrorsFromTheMerge: ValidationIssue[] = [];
 const noMergeWarnings: MergeWarningResponse[] = [];
-const noWarningsFromSaveA: SaveWarning[] = [];
-const noWarningsFromSaveB: SaveWarning[] = [];
+const noWarningsFromSaveA: SaveWarningResponse[] = [];
+const noWarningsFromSaveB: SaveWarningResponse[] = [];
 
 describe('MergeResultPresenter', () => {
 

@@ -1,6 +1,6 @@
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import {ValidationIssue} from "../application/ports/ValidationIssue";
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
 import {UnreadableLine} from "../application/ports/SaveSectionLocation";
 import {LoadSaveFileViewModel} from "./viewModels/LoadSaveFileViewModel";
 import {formatValidationError} from "./formatValidationError";
@@ -20,7 +20,7 @@ export class LoadSaveFilePresenter implements SaveFileValidationPresenterPort {
     return this._viewModel;
   }
 
-  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarning[]): void {
+  presentInvalidSaveFile(errors: ValidationIssue[], warnings: SaveWarningResponse[]): void {
     this._viewModel = {
       status: 'invalid',
       errors: errors.map(formatValidationError),
@@ -28,7 +28,7 @@ export class LoadSaveFilePresenter implements SaveFileValidationPresenterPort {
     };
   }
 
-  presentValidSaveFile(warnings: SaveWarning[]): void {
+  presentValidSaveFile(warnings: SaveWarningResponse[]): void {
     this._viewModel = {
       status: 'valid',
       errors: [],
@@ -40,7 +40,7 @@ export class LoadSaveFilePresenter implements SaveFileValidationPresenterPort {
     this._viewModel = {status: 'invalid', errors: [formatJsonExtensionError()], warnings: []};
   }
 
-  presentSaveFileWithUnreadableLines(unreadableLines: UnreadableLine[], warnings: SaveWarning[]): void {
+  presentSaveFileWithUnreadableLines(unreadableLines: UnreadableLine[], warnings: SaveWarningResponse[]): void {
     this._viewModel = {
       status: 'invalid',
       errors: unreadableLines.map(formatUnreadableLine),
@@ -48,7 +48,7 @@ export class LoadSaveFilePresenter implements SaveFileValidationPresenterPort {
     };
   }
 
-  presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarning[]): void {
+  presentSaveFileWithoutUniqueHost(hostCount: number, warnings: SaveWarningResponse[]): void {
     this._viewModel = {
       status: 'invalid',
       errors: [formatUniqueHostError(hostCount)],

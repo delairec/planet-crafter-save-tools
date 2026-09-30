@@ -6,7 +6,7 @@ import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
 import {ValidationIssue} from './ports/ValidationIssue';
 import {VALIDATION_ISSUE_CODES} from './ports/validationIssueCodes';
 import {UnreadableLine} from './ports/SaveSectionLocation';
-import type {SaveWarning} from 'shared-save-processing/gameDefinitions';
+import type {SaveWarningResponse} from "./responses/SaveWarningResponse";
 import {SAVE_CONTENT, stubSaveSectionsReader} from '../testing/stubSaveSectionsReader';
 import {stubGameReleasesReader} from '../testing/stubGameReleasesReader';
 import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
@@ -16,7 +16,7 @@ import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/Sav
 interface UseCaseOverrides {
   fileHasJsonExtension?: boolean;
   validationErrors?: ValidationIssue[];
-  validationWarnings?: SaveWarning[];
+  validationWarnings?: SaveWarningResponse[];
   declaredAndCarriedReleases?: CarriedAndDeclaredReleases;
   saveSectionsReader?: SaveSectionsReaderPort;
 }

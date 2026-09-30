@@ -96,7 +96,7 @@ DECISION ValidationIsTheSingleSourceOfWarnings
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SPEC "The validation result carries the warnings, never the parser"
 		IMPL "packages/core-mapping/src/application/responses/SaveValidationResponse.ts::warnings:"
-			+ "SaveWarning[]"
+			+ "SaveWarningResponse[]"
 		IMPL "packages/core-mapping/src/application/responses/ParsedSaveSectionsResponse.ts::readonly"
 			+ "errors: UnreadableLine[]"
 	SPEC "Validation runs first in the four flows, and warnings are reported on every outcome,"
