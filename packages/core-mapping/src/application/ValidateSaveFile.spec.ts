@@ -80,6 +80,14 @@ describe('ValidateSaveFile', () => {
       expect(presenter.presentSaveFileWithoutUniqueHost).not.toHaveBeenCalled();
     });
 
+    it('should keep the warnings alongside the unreadable lines', async () => {
+      // Arrange
+      const unreadableLine: UnreadableLine = {section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'};
+      const {useCase, presenter} = setupUseCase({
+        validationWarnings: [{code: 'legacy-save-format'}],
+        saveSectionsReader: stubSaveSectionsReader({unreadableLines: [unreadableLine]})
+      });
+
       // Act
       await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
 
