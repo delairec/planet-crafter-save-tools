@@ -1901,19 +1901,30 @@ TASK CHORE169
 TASK REFACTOR170
 	TITLE "refactor(core-mapping): import no other workspace package outside the infrastructure,"
 		+ "the presenters receiving application responses"
-	STATUS todo
+	STATUS implemented
 	SPEC "no presenter port and no application response of core-mapping names a type of another"
 		+ "workspace package: an unreadable line, a save warning and a section name reach a"
 		+ "presenter as an application response its use case builds, holding primitives"
+		IMPL "packages/core-mapping/src/application/responses/UnreadableLinesResponse.ts::unreadableLines"
+		IMPL "packages/core-mapping/src/application/responses/SaveWarningResponse.ts::declared-release-contradicts-content"
 	SPEC "no module of core-mapping outside infrastructure/, spec files and testing/ included,"
 		+ "imports another workspace package, import type and JSDoc @import included: every"
 		+ "application port declares the types it exchanges, and the infrastructure adapter maps"
 		+ "the records of shared-save-processing onto them"
+		IMPL "scripts/check-workspace-imports.ts::export function findWorkspacePackageImports"
+		IMPL "scripts/check-workspace-imports.spec.ts::When a file of a core- package outside"
+			+ "infrastructure/ imports another workspace package"
 	SPEC "the validation issues, the section location and the unreadable line of core-mapping are"
 		+ "domain types under domain/, each named in business terms and stating what is invalid in"
 		+ "the save by a code and its data; the infrastructure maps what it detects onto them, and"
 		+ "application/ports/ holds ports only: validationIssues/, ValidationIssue.ts,"
 		+ "validationIssueCodes.ts and SaveSectionLocation.ts no longer exist there"
+		IMPL "packages/core-mapping/src/domain/validation/ValidationIssue.ts::export type"
+			+ "ValidationIssue"
+		IMPL "packages/core-mapping/src/domain/save/SaveSectionLocation.ts::export interface"
+			+ "SaveSectionLocation"
+		IMPL "packages/core-mapping/src/domain/save/SaveSectionLocation.ts::export interface"
+			+ "UnreadableLine"
 		REF @DECISION.EachValidationIssueIsANamedInterfaceInItsOwnFile
 	SPEC "no module of core-mapping outside infrastructure/, spec files and testing/ included,"
 		+ "imports the declaration of the order of the sections or restates that order: a section"
@@ -1921,21 +1932,36 @@ TASK REFACTOR170
 		+ "location with an index and asserts that the carried index is displayed, so that a change"
 		+ "of that order, as the removal of Terrain Layers made, is written in one place, the"
 		+ "declaration the infrastructure reads"
+		IMPL "packages/core-mapping/src/testing/saveSectionLocations.ts::PLAYERS_SECTION"
+		IMPL "packages/core-mapping/src/presentation/SaveFileValidationPresenter.spec.ts::should"
+			+ "tell where in the save each error was found"
 	SPEC "a presenter receives the validation issues and the unreadable lines inside an application"
 		+ "response its use case builds, which holds them as domain value objects; no presenter"
 		+ "port imports from domain/"
+		IMPL "packages/core-mapping/src/application/responses/InvalidSaveFileResponse.ts::errors:"
+			+ "ValidationIssue[]"
+		IMPL "packages/core-mapping/src/presentation/LoadSaveFilePresenter.spec.ts::should update"
+			+ "the view model with the invalid status and the unreadable lines located"
 	SPEC "the guard REFACTOR163 adds refuses any import of another workspace package, a type"
 		+ "included, from a file of a core- package outside infrastructure/, spec files and"
 		+ "testing/ included, and carries no allow-list; no other guard states the refusal"
+		IMPL "scripts/check-workspace-imports.ts::export function findWorkspacePackageImports"
+		IMPL "package.json::check:workspace-imports"
 	SPEC "the failure message of that guard and its description in docs/wiki/development.md state"
 		+ "the refusal of the second criterion"
+		IMPL "docs/wiki/development.md::bun run check:workspace-imports"
+		IMPL "scripts/check-workspace-imports.ts::const REASON"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::test.describe('Load save page'"
 	AFTER @TASK.REFACTOR161
 	AFTER @TASK.REFACTOR163
 	AFTER @TASK.REFACTOR164
 	AFTER @TASK.REFACTOR166
 	WAVE @WAVE.14
+	DELIVERED_BY 245
 	PRIORITY high
 	DESC "outside the numbered violations of the audit"
 	RATIONALE "The instructions rule objects_crossing_a_boundary lets a presenter receive an"
@@ -1991,3 +2017,4 @@ TASK REFACTOR170
 	SOURCE "Owner rulings during the launch of REFACTOR170, 2026-09-30: nothing outside the"
 		+ "infrastructure knows the section indexes; the composition root carries no unit test; the"
 		+ "section validators are generated in shared-save-processing"
+		PR 245

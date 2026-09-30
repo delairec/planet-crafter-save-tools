@@ -671,6 +671,7 @@ DECISION WireAbbreviationsStayInSharedSaveProcessing
 		PR 228
 	SOURCE "REFACTOR170: one guard refuses every import of another workspace package outside the"
 		+ "infrastructure"
+		PR 245
 
 DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
@@ -724,6 +725,7 @@ DECISION ASectionIndexIsNeverHardCoded
 		PR 82
 		PR 141
 	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30"
+		PR 245
 
 DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 	UNTIL "fallow follows the @import tag"
@@ -2098,6 +2100,7 @@ DECISION TheSectionValidatorsAreGeneratedAndVersioned
 		+ "web UI refuses without 'unsafe-eval'"
 	SOURCE "Refinement of FIX104 with the user on 2026-09-24"
 	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30"
+		PR 245
 
 DECISION TheScheduledDependencyAuditRunsMonthly
 	SPEC "The scheduled run of the Dependencies workflow audits the dependencies once a month"
@@ -3699,3 +3702,4 @@ DECISION TheCompositionRootIsWiringAndCarriesNoUnitTest
 		PR 244
 	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30, reversing the ruling of the"
 		+ "pull request delivering REFACTOR166"
+		PR 245
