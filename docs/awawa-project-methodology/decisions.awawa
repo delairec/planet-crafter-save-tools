@@ -683,15 +683,28 @@ DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 DECISION ASectionIndexIsNeverHardCoded
 	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR170
 	SPEC "Section indexes and counters, legacy format and reserved part included, are declared once"
 		+ "with a name and read from their module"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::PLAYERS_SECTION_INDEX"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::SAVE_SPLIT_PARTS_COUNT"
 		IMPL "packages/shared-save-processing/sectionIndexes.js::resolveSectionIndexes"
-	SPEC "No core-mapping spec hard-codes a section index; the number in an expected message stays"
-		+ "literal"
-		IMPL "packages/core-mapping/src/application/MergeSaveFiles.spec.ts"
-	REJECTED "Tolerate a literal index in a spec"
+	SPEC "Outside infrastructure/, no module of core-mapping, spec files and testing/ included,"
+		+ "imports the declaration of the section order or restates that order: the infrastructure"
+		+ "sets the index of each section location, and the domain, the application and the"
+		+ "presentation carry it as data, so a change of that order is written in the declaration"
+		+ "alone"
+		IMPL "packages/core-mapping/src/infrastructure/locateSaveSection.ts"
+		IMPL "packages/core-mapping/src/presentation/formatErrorLocation.ts::(section ${index})"
+	SPEC "A presenter spec gives a section location with an index and asserts that the carried"
+		+ "index is displayed"
+		IMPL "packages/core-mapping/src/presentation/SaveFileValidationPresenter.spec.ts::should"
+			+ "tell where in the save each error was found"
+	REJECTED "Reading each index of the specs from the declaration of the section order: a spec"
+		+ "outside the infrastructure would know that order"
+	REJECTED "A test-support module under infrastructure/testing/, reached through src/testing/,"
+		+ "that reads the declaration of the section order for the specs: it carries the order out"
+		+ "of the infrastructure; refused by the owner, never to be proposed again"
 	REJECTED "Compose the expected message from the index module: the expectation would compute"
 		+ "what it pins"
 	REJECTED "Renaming sections to parts and data sections: section is the word of the public"
@@ -703,6 +716,7 @@ DECISION ASectionIndexIsNeverHardCoded
 		PR 47
 		PR 82
 		PR 141
+	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30"
 
 DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
 	UNTIL "fallow follows the @import tag"
@@ -3647,48 +3661,30 @@ DECISION AControllerIsBuiltAroundItsUseCaseFactory
 		+ "the use case factories move to a composition module of their own"
 		PR 244
 
-DECISION TheCompositionRootSpecAssertsEachFactoryOnARealSave
+DECISION TheCompositionRootIsWiringAndCarriesNoUnitTest
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_TASK @TASK.REFACTOR166
-	SPEC "each use case factory of the core-mapping composition root that no CLI spec reaches is"
-		+ "specified by running the use case it builds on a fake save, against a presenter double,"
-		+ "and asserting the one discriminant its real adapters decide"
-		IMPL "packages/core-mapping/src/composition/useCaseFactories.spec.ts::should present the"
-			+ "game release the save declares"
-	SPEC "a line of an adapter reached only through the composition root is specified by the spec"
+	APPLIES_TO_TASK @TASK.REFACTOR170
+	SPEC "The composition root of core-mapping only assembles concrete implementations, and no unit"
+		+ "test is written for it"
+		IMPL "packages/core-mapping/src/composition/useCaseFactories.ts"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts"
+	SPEC "The composition root is left out of the coverage gate"
+		IMPL "bunfig.toml::packages/core-mapping/src/composition/**"
+	SPEC "A factory that comes to hold a business rule, a validation, a transformation or a"
+		+ "calculation moves that logic into application/ or domain/"
+		IMPL "packages/core-mapping/src/composition/useCaseFactories.ts"
+	SPEC "A line of an adapter reached only through the composition root is specified by the spec"
 		+ "of that adapter, on a fixture of the sections it maps"
 		IMPL "packages/core-mapping/src/infrastructure/SaveSectionsMapperService.spec.ts::should"
 			+ "read the game version the save declares"
-	REJECTED "Keeping the controller specs crossing the real infrastructure for the save manager"
-		+ "flows: the task has every controller spec run on a double of its use case factory"
-		REF @DECISION.AControllerIsBuiltAroundItsUseCaseFactory
-	REJECTED "Relying on the scenarios of the save manager for the six factories it alone reaches:"
-		+ "bun test --coverage does not see a Playwright scenario, so the per-module floor fails"
-	REJECTED "Moving those factories into a module no unit test loads, ignoring useCaseFactories.ts"
-		+ "in coveragePathIgnorePatterns or lowering its floor: each hides the gap from the gate"
-		+ "instead of closing it"
-		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
-	REJECTED "A composition root spec asserting only the type of the use case a factory returns: it"
-		+ "executes the lines and asserts no outcome"
-	REJECTED "A composition root spec asserting each exported controller is wired: the type check"
-		+ "refuses a factory built around another presenter port, and the specs of the CLIs and the"
-		+ "scenarios of the save manager call every wired controller"
-	DEROGATES "@RULE.business_case_tested_once_at_lowest_level"
-	DEROGATES "@RULE.adapter_test"
-	DEROGATES "@RULE.third_party_isolated_in_infrastructure"
-	RATIONALE "Once the controllers take their use case factory, the wiring is the behaviour of the"
-		+ "composition root, so its spec owns it, and the per-module coverage floor needs a unit"
-		+ "test reaching the six factories only the save manager calls. Running their use cases on"
-		+ "the real adapters departs from business_case_tested_once_at_lowest_level, which keeps"
-		+ "the full stack to the controller specs, and from adapter_test, which never tests an"
-		+ "adapter through a use case: each scenario therefore asserts only the one discriminant"
-		+ "the wired adapter decides, the whole response staying with the use case spec and the"
-		+ "mapping with the adapter spec. The fake save it runs on comes from"
-		+ "shared-save-processing/testing, which third_party_isolated_in_infrastructure refuses"
-		+ "outside infrastructure; the composition root is the outermost module and already imports"
-		+ "every adapter, so the import reaches no inner layer"
-		REF @DECISION.UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
-	SOURCE "Coverage gate failing on the first head of the pull request delivering REFACTOR166: the"
-		+ "controller specs no longer reached six factories of the composition root nor the"
-		+ "declared version read by SaveSectionsMapperService"
+	REJECTED "A composition spec running each use case factory on a real or a fake save only to"
+		+ "satisfy coverage, the previous form of this ruling: it tests the adapters through a use"
+		+ "case and imports another workspace package outside the infrastructure"
+	REJECTED "A test such as toBeDefined() that executes the wiring and asserts nothing"
+	RATIONALE "Wiring is no behaviour: the type check refuses a factory built around another port,"
+		+ "and the specs of the CLIs and the scenarios of the save manager call every wired"
+		+ "controller"
+	SOURCE "Coverage gate failing on the first head of the pull request delivering REFACTOR166"
 		PR 244
+	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30, reversing the ruling of the"
+		+ "pull request delivering REFACTOR166"

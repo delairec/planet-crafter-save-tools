@@ -2,7 +2,6 @@ import {describe, expect, it} from 'bun:test';
 import {LoadSaveFilePresenter} from './LoadSaveFilePresenter';
 import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes';
 import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
-import {PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {LoadSaveFileViewModel} from './viewModels/LoadSaveFileViewModel';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
@@ -43,7 +42,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'}], warnings: noWarnings});
+      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{'}], warnings: noWarnings});
 
       // Assert
       expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({
@@ -58,7 +57,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
+      presenter.presentSaveFileWithUnreadableLines({unreadableLines: [{section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -106,7 +105,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
+      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'worldObjects', index: 3}, entryIndex: 2, line: '{'}], warnings: [{code: 'legacy-save-format'}]});
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{
@@ -120,7 +119,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 1, line: '{'}], warnings: noWarnings});
+      presenter.presentInvalidSaveFile({errors: [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: 2}, entryIndex: 1, line: '{'}], warnings: noWarnings});
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.errors).toEqual([{message: 'Invalid JSON: {', location: 'Players (section 2), entry 1'}]);
