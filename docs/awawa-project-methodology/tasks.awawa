@@ -1400,7 +1400,7 @@ TASK REFACTOR163
 		+ "parser of shared-save-processing; cli-validate, cli-merge and the save manager show it"
 		+ "as before"
 		IMPL "packages/core-mapping/src/domain/rules/detectDeclaredReleaseContradiction.spec.ts::describe('detectDeclaredReleaseContradiction'"
-		IMPL "packages/core-mapping/src/application/collectSaveWarnings.ts::detectDeclaredReleaseContradiction("
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts::detectDeclaredReleaseContradiction("
 		IMPL "packages/core-mapping/src/application/ValidateSaveFile.spec.ts::When the release the"
 			+ "save declares contradicts the format it carries"
 		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.spec.ts::When the"

@@ -10,12 +10,12 @@ import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
 import {MergeWarning} from "./responses/MergeWarning";
 import {SaveFileFindings} from "./responses/SaveFileFindings";
 import {SaveValidationResult} from "./ports/SaveValidationResult";
-import {collectSaveWarnings} from "./collectSaveWarnings";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 import {SaveSections} from "../domain/save/SaveSections";
 import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
 import {compareGameReleases} from "../domain/rules/compareGameReleases";
+import {detectDeclaredReleaseContradiction} from "../domain/rules/detectDeclaredReleaseContradiction";
 
 export class MergeSaveFiles {
   constructor(
@@ -78,8 +78,13 @@ export class MergeSaveFiles {
     }
 
     const validation = this.validator.validate(content);
+    const contradiction = detectDeclaredReleaseContradiction(validation, this.gameReleasesReader.readGameReleases());
 
-    return {hasJsonExtension: true, ...validation, warnings: collectSaveWarnings(validation, this.gameReleasesReader.readGameReleases())};
+    if (contradiction === null) {
+      return {hasJsonExtension: true, ...validation};
+    }
+
+    return {hasJsonExtension: true, ...validation, warnings: [...validation.warnings, {code: 'declared-release-contradicts-content', ...contradiction}]};
   }
 }
 
