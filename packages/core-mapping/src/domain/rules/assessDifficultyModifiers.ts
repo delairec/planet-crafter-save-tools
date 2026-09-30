@@ -13,11 +13,11 @@ type PenalisingSide = 'above' | 'below';
 const GAME_DEFAULT_MODIFIER = 1;
 
 const penalisingSideByModifier: Record<DifficultyModifierName, PenalisingSide> = {
-  terraformationPace: 'above',
+  terraformationPace: 'below',
   powerConsumption: 'above',
   meteoOccurrence: 'above',
-  gaugeDrain: 'below',
-  multiplayerFactor: 'below'
+  gaugeDrain: 'above',
+  multiplayerFactor: 'above'
 };
 
 function assessDifficultyModifier(modifier: number, penalisingSide: PenalisingSide): DifficultyModifierEffect {

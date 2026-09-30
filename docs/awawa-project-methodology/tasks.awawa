@@ -2034,15 +2034,40 @@ TASK REFACTOR170
 
 TASK FIX171
 	TITLE "Tone the difficulty modifiers of the Configuration page the right way round"
-	STATUS todo
+	STATUS implemented
 	SPEC "Terraformation Pace is in the positive tone above 100 % and in the danger tone below 100"
 		+ "%"
+		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.spec.ts::should"
+			+ "assess the terraformation pace as helping and the other modifiers as penalising the"
+			+ "player"
+		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.spec.ts::should"
+			+ "assess the terraformation pace as penalising and the other modifiers as helping the"
+			+ "player"
+		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show the"
+			+ "terraformation pace below 100 % as penalising the player"
 	SPEC "Power Consumption and Meteo Occurrence are in the danger tone above 100 % and in the"
 		+ "positive tone below 100 %"
+		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.spec.ts::should"
+			+ "assess the terraformation pace as helping and the other modifiers as penalising the"
+			+ "player"
+		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.spec.ts::should"
+			+ "assess the terraformation pace as penalising and the other modifiers as helping the"
+			+ "player"
 	SPEC "Gauge Drain and Multiplayer Factor are in the danger tone above ×1 and in the positive"
 		+ "tone below ×1"
+		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.spec.ts::should"
+			+ "assess the terraformation pace as helping and the other modifiers as penalising the"
+			+ "player"
+		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.spec.ts::should"
+			+ "assess the terraformation pace as penalising and the other modifiers as helping the"
+			+ "player"
+		IMPL "packages/ui-save-manager/e2e/display-configuration.e2e.ts::should show the gauge"
+			+ "drain below ×1 as helping the player"
 	SPEC "every modifier at 100 % or ×1 is in the neutral tone, the game's default"
+		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.spec.ts::should"
+			+ "assess every modifier at the game default"
 	SPEC "the rule on the direction of each difficulty modifier states these directions"
+		IMPL "packages/core-mapping/src/domain/rules/assessDifficultyModifiers.ts::penalisingSideByModifier"
 		REF @RULE.EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
 	WAVE @WAVE.14
 	RATIONALE "The rule ruled on 2026-09-26 makes the terraformation pace penalise above 1 and the"
@@ -2058,3 +2083,4 @@ TASK FIX171
 		+ "%, the power consumption and the meteo occurrence penalise above 100 %, every"
 		+ "coefficient helps below 1 and penalises above 1, 100 % and ×1 being the base state; the"
 		+ "task goes in wave 14"
+	DELIVERED_BY 249

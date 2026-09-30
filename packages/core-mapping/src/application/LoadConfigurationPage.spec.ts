@@ -31,11 +31,11 @@ describe('LoadConfigurationPage', () => {
       assessedSaveConfiguration: {
         modifiers: {terraformationPace: 0.1, gaugeDrain: 0.2, meteoOccurrence: 0.3, multiplayerFactor: 0.4, powerConsumption: 0.5},
         modifierEffects: {
-          terraformationPace: 'helpsThePlayer',
+          terraformationPace: 'penalisesThePlayer',
           powerConsumption: 'helpsThePlayer',
-          gaugeDrain: 'penalisesThePlayer',
+          gaugeDrain: 'helpsThePlayer',
           meteoOccurrence: 'helpsThePlayer',
-          multiplayerFactor: 'penalisesThePlayer'
+          multiplayerFactor: 'helpsThePlayer'
         },
         unlocks: {
           freeCraft: false,
