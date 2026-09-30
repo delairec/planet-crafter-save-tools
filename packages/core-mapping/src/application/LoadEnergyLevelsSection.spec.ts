@@ -112,6 +112,7 @@ describe('LoadEnergyLevelsSection', () => {
       gameRelease: '2.004',
       gameReleaseIsEarlierThanCurrent: true,
       powerConsumptionModifier: 0.5,
+      powerConsumptionIsModified: true,
       planets: [{
         planetId: 1,
         planetName: undefined,
@@ -149,6 +150,7 @@ describe('LoadEnergyLevelsSection', () => {
       // Assert
       expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
         powerConsumptionModifier: 1,
+        powerConsumptionIsModified: false,
         planets: [expect.objectContaining({consumption: 375.5})]
       }));
     });

@@ -1,8 +1,10 @@
 import {formatUnreadableLine} from "./formatUnreadableLine";
-import {EnergyLevelsResponse} from "../application/responses/EnergyLevelsResponse";
-import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
-import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
-import {OptimizerValueObject} from "../domain/valueObjects/OptimizerValueObject";
+import {
+  EnergyBreakdownEntryResponse,
+  EnergyLevelsResponse,
+  OptimizerResponse,
+  PlanetEnergyLevelsResponse
+} from "../application/responses/EnergyLevelsResponse";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
 import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {PlanetEnergyLevelsViewModel} from "./viewModels/PlanetEnergyLevelsViewModel";
@@ -13,7 +15,6 @@ import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStra
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
 import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
-import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
 import {
   energyLevelsSectionAvailableTitle,
   energyLevelsSectionConsumptionTitle,
@@ -66,7 +67,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
       });
     }
 
-    if (energyLevels.powerConsumptionModifier !== UNMODIFIED_POWER_CONSUMPTION_MODIFIER) {
+    if (energyLevels.powerConsumptionIsModified) {
       notifications.push({
         severity: 'information',
         message: resolveEnergyLevelsSectionPowerConsumptionModifierNotification(
@@ -78,7 +79,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     return notifications;
   }
 
-  private buildPlanet(planet: PlanetEnergyLevelsValueObject, worldObjectLabels: WorldObjectLabelsResponse): PlanetEnergyLevelsViewModel {
+  private buildPlanet(planet: PlanetEnergyLevelsResponse, worldObjectLabels: WorldObjectLabelsResponse): PlanetEnergyLevelsViewModel {
     return {
       planetId: planet.planetName ?? resolveEnergyLevelsSectionUnnamedPlanetName(planet.planetId),
       energyLevels: {
@@ -103,7 +104,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     };
   }
 
-  private buildBreakdownRows(breakdown: readonly EnergyBreakdownEntryValueObject[], worldObjectLabels: WorldObjectLabelsResponse): EnergyBreakdownRowViewModel[] {
+  private buildBreakdownRows(breakdown: readonly EnergyBreakdownEntryResponse[], worldObjectLabels: WorldObjectLabelsResponse): EnergyBreakdownRowViewModel[] {
     return breakdown.map((entry): EnergyBreakdownRowViewModel => ({
       label: worldObjectLabels[entry.name],
       quantity: formatNumber(entry.quantity),
@@ -112,7 +113,7 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
     }));
   }
 
-  private buildOptimizers(optimizers: readonly OptimizerValueObject[], worldObjectLabels: WorldObjectLabelsResponse): OptimizerViewModel[] {
+  private buildOptimizers(optimizers: readonly OptimizerResponse[], worldObjectLabels: WorldObjectLabelsResponse): OptimizerViewModel[] {
     return optimizers.map((optimizer): OptimizerViewModel => ({
       label: worldObjectLabels[optimizer.name],
       fuseCount: formatNumber(optimizer.fuseCount),
