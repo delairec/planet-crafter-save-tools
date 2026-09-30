@@ -1658,13 +1658,8 @@ TASK REFACTOR168
 		+ "data-world-objects the world object labels and the optimizer configuration, data-planets"
 		+ "the planet names, data-save-format the game releases and the legacy terrain layer"
 		+ "properties; each holds its tables, their row types and their selectors, and no business"
-		+ "rule, and declares the validate:tables script naming its tables; the dependency matrix"
-		+ "lets core- and shared- packages alone depend on data- and data- on no workspace package,"
-		+ "check:dependencies enforcing it"
-		IMPL "packages/data-energy/package.json::validate:tables"
-		IMPL "packages/data-world-objects/package.json::validate:tables"
-		IMPL "packages/data-planets/package.json::validate:tables"
-		IMPL "packages/data-save-format/package.json::validate:tables"
+		+ "rule; the dependency matrix lets core- and shared- packages alone depend on data- and"
+		+ "data- on no workspace package, check:dependencies enforcing it"
 		IMPL "scripts/check-package-dependencies.ts::'data-': []"
 	SPEC "no module under domain/, application/ or presentation/ of core-mapping imports a JSON"
 		+ "table, and no module under domain/ or application/ imports anything of a data- package,"
@@ -1715,8 +1710,7 @@ TASK REFACTOR168
 		IMPL "packages/data-save-format/package.json::changelogLine"
 	SPEC "bun run validate:tables validates every table; the specs of cli-merge and cli-validate"
 		+ "and the scenarios of ui-save-manager pass unchanged"
-		IMPL "package.json::\"validate:tables\": \"bun run --filter './packages/*'"
-			+ "validate:tables\""
+		IMPL "package.json::\"validate:tables\": \"bun scripts/validate-tables/validate-tables.ts\""
 		IMPL "scripts/validate-tables/validate-tables.ts::findTableViolations"
 	AFTER @TASK.REFACTOR161
 	AFTER @TASK.REFACTOR162
@@ -1768,29 +1762,42 @@ TASK REFACTOR168
 
 TASK CHORE169
 	TITLE "chore(guards): validate:tables discovers the tables of every data- package"
-	STATUS todo
+	STATUS implemented
 	SPEC "every JSON value table of a data- package has its JSON Schema beside it, under the"
 		+ "table's own name, and bun run validate:tables finds every table of every data- package"
 		+ "by that schema: a table is any .json file of a data- package outside node_modules that"
 		+ "is neither its manifest, nor a tsconfig, nor a schema, and adding a table or a data-"
 		+ "package changes neither the script nor a manifest"
+		IMPL "scripts/validate-tables/validate-tables.ts::TABLES_PATTERN"
+		IMPL "scripts/validate-tables/validate-tables.ts::isTable"
 	SPEC "a table of a data- package with no schema of its name beside it fails bun run"
 		+ "validate:tables"
+		IMPL "scripts/validate-tables/validate-tables.ts::has no schema beside it"
 	SPEC "no package declares a validate:tables script, the root script running the discovery once"
+		IMPL "package.json::\"validate:tables\": \"bun scripts/validate-tables/validate-tables.ts\""
 	SPEC "a schema several tables share, the one of the energy levels of a release first, is"
 		+ "written once in its package and reached from the schema of each table's name, so that no"
 		+ "rule of the rows is stated twice"
+		IMPL "packages/data-energy/energyLevelsByRelease/2.004.schema.json::$ref"
+		IMPL "scripts/validate-tables/validate-tables.ts::readSchema"
 	SPEC "a schema names another table relative to itself, never from the repository root, the"
 		+ "schema of the energy levels of a release naming the energy levels table so"
+		IMPL "packages/data-energy/energyLevelsOfRelease.schema.json::\"table\":"
+			+ "\"energyLevels.json\""
 	SPEC "AValueTableIsAJsonFileBesideTheModuleThatReadsIt is rewritten in place: its line on"
 		+ "scripts/validate-tables/schemas/ and its rejection of a schema beside its table gone,"
 		+ "the schema beside its table stated with the shared schema and the relative reference,"
 		+ "the one directory of schemas beside the script rejected in its turn, its anchors naming"
 		+ "the code as the task leaves it; every DATATABLE names its schema at its new path,"
 		+ "check:anchors passing"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AValueTableIsAJsonFileBesideTheModuleThatReadsIt"
+		IMPL "docs/awawa-project-specification/datatables.awawa::packages/data-energy/energyLevelsByRelease/2.004.schema.json"
+		IMPL "package.json::check:anchors"
 		REF @DECISION.AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 	AFTER @TASK.REFACTOR168
 	WAVE @WAVE.14
+	DELIVERED_BY 240
 	PRIORITY medium
 	DESC "outside the numbered violations of the audit"
 	RATIONALE "The tables task lists the tables of each data- package in its validate:tables"

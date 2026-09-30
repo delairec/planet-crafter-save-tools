@@ -9,7 +9,7 @@
     "required": ["worldObjectName", "role", "kilowatts", "source"],
     "additionalProperties": false,
     "properties": {
-      "worldObjectName": {"type": "string", "valueOfTable": {"table": "packages/data-energy/energyLevels.json", "column": "worldObjectName"}},
+      "worldObjectName": {"type": "string", "valueOfTable": {"table": "energyLevels.json", "column": "worldObjectName"}},
       "role": {"enum": ["production", "consumption"]},
       "kilowatts": {"type": "number", "exclusiveMinimum": 0},
       "source": {"type": "string", "pattern": "^https://"}

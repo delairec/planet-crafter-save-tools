@@ -8,7 +8,6 @@
     "./*": "./*.ts"
   },
   "scripts": {
-    "lint:types": "tsc --noEmit",
-    "validate:tables": "bun ../../scripts/validate-tables/validate-tables.ts worldObjectLabels optimizerConfig"
+    "lint:types": "tsc --noEmit"
   }
 }
