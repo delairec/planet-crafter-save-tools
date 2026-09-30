@@ -1634,6 +1634,8 @@ TASK DOCS167
 	AFTER @TASK.REFACTOR164
 	AFTER @TASK.REFACTOR165
 	AFTER @TASK.REFACTOR166
+	WAVE @WAVE.14
+	PRIORITY high
 	RATIONALE "The tasks of the other waves were written against the boundaries wave 14 corrects:"
 		+ "presenter ports taking value objects, the players, identity and terraformation"
 		+ "projections, the energy raw data port and the decisions that entrenched them. Rewritten"
