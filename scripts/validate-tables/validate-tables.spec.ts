@@ -56,41 +56,6 @@ describe('findTableViolations', () => {
       expect(violations).toMatchObject([{table: 'planetNamesByNumericId', row: -1}]);
     });
   });
-
-  describe('When a property names its values by a column of another table', () => {
-    const releaseSchema = {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          release: {valueOfTable: {table: 'packages/data-save-format/gameReleases.json', column: 'release'}}
-        }
-      }
-    };
-
-    it('should report no violation for a value that column holds', () => {
-      // Arrange
-      const rows = [{release: '1.618'}];
-      const noViolation: TableViolation[] = [];
-
-      // Act
-      const violations = findTableViolations('releases', rows, releaseSchema);
-
-      // Assert
-      expect<TableViolation[]>(violations).toEqual(noViolation);
-    });
-
-    it('should report the row whose value that column does not hold', () => {
-      // Arrange
-      const rows = [{release: '1.618'}, {release: '9.999'}];
-
-      // Act
-      const violations = findTableViolations('releases', rows, releaseSchema);
-
-      // Assert
-      expect(violations).toMatchObject([{table: 'releases', row: 1}]);
-    });
-  });
 });
 
 describe('validateTables', () => {
@@ -198,22 +163,43 @@ describe('validateTables', () => {
     });
   });
 
-  describe('When a shared schema names a table relative to itself', () => {
-    const sharedSchema = {
+  describe('When a table names its values by a column of another table', () => {
+    const releaseSchema = {
       type: 'array',
       items: {
         type: 'object',
-        properties: {release: {valueOfTable: {table: 'gameReleases.json', column: 'release'}}}
+        properties: {release: {valueOfTable: {table: 'releases.json', column: 'release'}}}
       }
     };
+    const releasesTable = '[{"release": "7.777"}]';
+    const releasesSchema = '{"type": "array"}';
 
-    it('should look the values up in the table beside the shared schema', async () => {
+    it('should accept a value that column holds', async () => {
       // Arrange
       const {io, printedErrors, exitCodes} = createFakeScriptIo({
         files: {
-          'packages/data-save-format/byRelease/2.004.json': '[{"release": "1.618"}, {"release": "9.999"}]',
-          'packages/data-save-format/byRelease/2.004.schema.json': JSON.stringify({$ref: '../shared.schema.json'}),
-          'packages/data-save-format/shared.schema.json': JSON.stringify(sharedSchema)
+          'packages/data-planets/planets.json': '[{"release": "7.777"}]',
+          'packages/data-planets/planets.schema.json': JSON.stringify(releaseSchema),
+          'packages/data-planets/releases.json': releasesTable,
+          'packages/data-planets/releases.schema.json': releasesSchema
+        }
+      });
+
+      // Act
+      await validateTables(io);
+
+      // Assert
+      expect({printedErrors, exitCodes}).toEqual({printedErrors: [], exitCodes: [0]});
+    });
+
+    it('should print the row whose value that column does not hold, and exit with one', async () => {
+      // Arrange
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/data-planets/planets.json': '[{"release": "7.777"}, {"release": "9.999"}]',
+          'packages/data-planets/planets.schema.json': JSON.stringify(releaseSchema),
+          'packages/data-planets/releases.json': releasesTable,
+          'packages/data-planets/releases.schema.json': releasesSchema
         }
       });
 
@@ -222,7 +208,39 @@ describe('validateTables', () => {
 
       // Assert
       expect({printedErrors, exitCodes}).toEqual({
-        printedErrors: [expect.stringContaining('packages/data-save-format/byRelease/2.004.json row 1: /1/release')],
+        printedErrors: [expect.stringContaining('packages/data-planets/planets.json row 1: /1/release')],
+        exitCodes: [1]
+      });
+    });
+  });
+
+  describe('When a shared schema names a table relative to itself', () => {
+    const sharedSchema = {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {release: {valueOfTable: {table: 'releases.json', column: 'release'}}}
+      }
+    };
+
+    it('should look the values up in the table beside the shared schema', async () => {
+      // Arrange
+      const {io, printedErrors, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/data-planets/byRelease/2.004.json': '[{"release": "7.777"}, {"release": "9.999"}]',
+          'packages/data-planets/byRelease/2.004.schema.json': JSON.stringify({$ref: '../shared.schema.json'}),
+          'packages/data-planets/shared.schema.json': JSON.stringify(sharedSchema),
+          'packages/data-planets/releases.json': '[{"release": "7.777"}]',
+          'packages/data-planets/releases.schema.json': '{"type": "array"}'
+        }
+      });
+
+      // Act
+      await validateTables(io);
+
+      // Assert
+      expect({printedErrors, exitCodes}).toEqual({
+        printedErrors: [expect.stringContaining('packages/data-planets/byRelease/2.004.json row 1: /1/release')],
         exitCodes: [1]
       });
     });
@@ -273,6 +291,24 @@ describe('validateTables when a file is missing', () => {
 
       // Assert
       await expect(validation).rejects.toThrow('packages/data-planets/missing.schema.json is not readable');
+    });
+  });
+
+  describe('When a schema names a table that is not there', () => {
+    it('should fail naming the table it cannot read', async () => {
+      // Arrange
+      const {io} = createFakeScriptIo({
+        files: {
+          'packages/data-planets/planets.json': '[]',
+          'packages/data-planets/planets.schema.json': JSON.stringify({valueOfTable: {table: 'missing.json', column: 'release'}})
+        }
+      });
+
+      // Act
+      const validation = validateTables(io);
+
+      // Assert
+      await expect(validation).rejects.toThrow('packages/data-planets/missing.json is not readable');
     });
   });
 });

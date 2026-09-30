@@ -1,19 +1,6 @@
 import Ajv from 'ajv';
-import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import {runAsEntryPoint, type ScriptIo} from '../scriptIo.ts';
-
-const REPOSITORY_ROOT = path.join(import.meta.dir, '..', '..');
-
-interface TableColumn {
-  table: string;
-  column: string;
-}
-
-function readTableColumn({table, column}: TableColumn): unknown[] {
-  const rows: Record<string, unknown>[] = JSON.parse(readFileSync(path.resolve(REPOSITORY_ROOT, table), 'utf8'));
-  return rows.map((row) => row[column]);
-}
 
 export interface TableViolation {
   table: string;
@@ -31,11 +18,6 @@ function parseRowIndex(instancePath: string): number {
 
 export function findTableViolations(table: string, rows: unknown, schema: object): TableViolation[] {
   const ajv = new Ajv({allErrors: true});
-  ajv.addKeyword({
-    keyword: 'valueOfTable',
-    schemaType: 'object',
-    validate: (tableColumn: TableColumn, value: unknown) => readTableColumn(tableColumn).includes(value)
-  });
   const validate = ajv.compile(schema);
   const valid = validate(rows);
   if (valid) {
@@ -71,14 +53,23 @@ function isPlainObject(node: unknown): node is Record<string, unknown> {
 }
 
 /**
- * Reads a schema and makes it self-contained: a `$ref` relative to the schema is replaced by the schema it reaches, and the table
- * a `valueOfTable` names, relative to the schema that names it, is turned into a path from the repository root.
+ * Reads a schema and makes it self-contained: a `$ref` relative to the schema is replaced by the schema it reaches, and a
+ * `valueOfTable` by the values of the column it names, in the table it names relative to the schema.
  */
-async function readSchema(io: ScriptIo, schemaFile: string, isReferenced: boolean): Promise<unknown> {
-  const content = await readTextIfPresent(io, schemaFile);
+async function readJson(io: ScriptIo, file: string): Promise<unknown> {
+  const content = await readTextIfPresent(io, file);
   if (content === undefined) {
-    throw new Error(`${schemaFile} is not readable`);
+    throw new Error(`${file} is not readable`);
   }
+  return JSON.parse(content);
+}
+
+async function readTableColumn(io: ScriptIo, table: string, column: string): Promise<unknown[]> {
+  const rows = (await readJson(io, table)) as Record<string, unknown>[];
+  return rows.map((row) => row[column]);
+}
+
+async function readSchema(io: ScriptIo, schemaFile: string, isReferenced: boolean): Promise<unknown> {
   const directory = path.dirname(schemaFile);
 
   async function resolve(node: unknown): Promise<unknown> {
@@ -96,14 +87,14 @@ async function readSchema(io: ScriptIo, schemaFile: string, isReferenced: boolea
     for (const [key, value] of Object.entries(node)) {
       resolved[key] = await resolve(value);
     }
-    const valueOfTable = resolved['valueOfTable'];
-    if (isPlainObject(valueOfTable) && typeof valueOfTable['table'] === 'string') {
-      resolved['valueOfTable'] = {...valueOfTable, table: path.join(directory, valueOfTable['table'])};
+    const {valueOfTable, ...constraints} = resolved;
+    if (isPlainObject(valueOfTable) && typeof valueOfTable['table'] === 'string' && typeof valueOfTable['column'] === 'string') {
+      return {...constraints, enum: await readTableColumn(io, path.join(directory, valueOfTable['table']), valueOfTable['column'])};
     }
     return resolved;
   }
 
-  const schema = await resolve(JSON.parse(content));
+  const schema = await resolve(await readJson(io, schemaFile));
   if (isReferenced && isPlainObject(schema)) {
     const {$id: _id, $schema: _schema, ...embedded} = schema;
     return embedded;

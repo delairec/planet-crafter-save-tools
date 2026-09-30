@@ -2571,7 +2571,7 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SPEC "a row of the table of a release naming a world object the energy table does not hold is"
 		+ "refused by bun run validate:tables"
 		IMPL "packages/data-energy/energyLevelsOfRelease.schema.json::valueOfTable"
-		ENFORCED_BY "scripts/validate-tables/validate-tables.spec.ts::should report the row whose"
+		ENFORCED_BY "scripts/validate-tables/validate-tables.spec.ts::should print the row whose"
 			+ "value that column does not hold"
 	REJECTED "A fromRelease column in the energy table, one row per world object and release from"
 		+ "which its value holds: the table stops holding the values of one release, and reading it"
