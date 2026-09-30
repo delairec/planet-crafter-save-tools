@@ -27,6 +27,7 @@ import {WorldEventEntry} from "../domain/save/WorldEventEntry";
 import {WorldObjectEntry} from "../domain/save/WorldObjectEntry";
 import {UnexpectedSaveEntryFieldError} from "./errors/UnexpectedSaveEntryFieldError";
 import {UnreadableSaveEntryValueError} from "./errors/UnreadableSaveEntryValueError";
+import {parseWorldObjectPosition} from "./parseWorldObjectPosition";
 
 interface FieldLocation {
   readonly section: SaveSectionName;
@@ -68,6 +69,15 @@ const groupList = {
   encode: (value: unknown): string | undefined => value === undefined ? undefined : serializeGroupList(value as string[])
 };
 
+const worldObjectPosition = {
+  decode: (value: unknown, location: FieldLocation): string => {
+    if (parseWorldObjectPosition(String(value)) === undefined) {
+      throw new UnreadableSaveEntryValueError(location.section, location.field, value);
+    }
+    return value as string;
+  }
+};
+
 const planetStoodOn = {
   decode: (value: unknown): string | undefined => value === '' ? undefined : value as string,
   encode: (value: unknown): string => value === undefined ? '' : value as string
@@ -104,7 +114,7 @@ export const PLAYER_CODEC = defineEntryCodec<Player, PlayerEntry>('players', {
 export const WORLD_OBJECT_CODEC = defineEntryCodec<WorldObject, WorldObjectEntry>('worldObjects', {
   ...keepNames('id', 'planet', 'count', 'color', 'text', 'hunger'),
   gId: {name: 'groupId'},
-  pos: {name: 'position'},
+  pos: {name: 'position', ...worldObjectPosition},
   rot: {name: 'rotation'},
   grwth: {name: 'growth'},
   pnls: {name: 'panels'},

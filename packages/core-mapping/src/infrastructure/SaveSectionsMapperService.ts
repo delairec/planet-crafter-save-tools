@@ -18,21 +18,14 @@ import {
 } from "../domain/valueObjects/PlanetWorldObjectsValueObject";
 import {WorldObjectName} from "../domain/worldObjectNames";
 import {UnreadableSaveEntryValueError} from "./errors/UnreadableSaveEntryValueError";
-
-const POSITION_SEPARATOR = ',';
-const POSITION_AXES = 3;
+import {parseWorldObjectPosition} from "./parseWorldObjectPosition";
 
 function parsePosition(position: string): [number, number, number] {
-  const coordinates = position.split(POSITION_SEPARATOR).map(readCoordinate);
-  if (coordinates.length !== POSITION_AXES || !coordinates.every(Number.isFinite)) {
+  const coordinates = parseWorldObjectPosition(position);
+  if (coordinates === undefined) {
     throw new UnreadableSaveEntryValueError('worldObjects', 'pos', position);
   }
-  const [x, y, z] = coordinates;
-  return [x, y, z];
-}
-
-function readCoordinate(coordinate: string): number {
-  return coordinate.trim() === '' ? Number.NaN : Number(coordinate);
+  return coordinates;
 }
 
 export class SaveSectionsMapperService implements SaveSectionsMapperPort {

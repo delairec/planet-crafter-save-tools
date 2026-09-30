@@ -177,6 +177,24 @@ describe('Save entry codecs', () => {
     });
   });
 
+  describe('When a world object carries a position that cannot be read', () => {
+    it.each([
+      {situation: 'a coordinate that is not a number', position: '1751.865,north,1106.104'},
+      {situation: 'an empty coordinate', position: '1751.865,,1106.104'},
+      {situation: 'two coordinates', position: '1751.865,-472.58'},
+      {situation: 'four coordinates', position: '1751.865,-472.58,1106.104,0'}
+    ])('should fail with the error naming the unreadable value for $situation', ({position}) => {
+      // Arrange
+      const record = createWorldObject({pos: position, planet: 1});
+
+      // Act
+      const decode = () => decodeEntry(record, WORLD_OBJECT_CODEC);
+
+      // Assert
+      expect(decode).toThrow(UnreadableSaveEntryValueError);
+    });
+  });
+
   describe('When an identifier list holds a value that is not a safe integer', () => {
     it.each([
       {situation: 'a word', worldObjectIds: '79111656,north'},
