@@ -1605,7 +1605,7 @@ TASK REFACTOR166
 		+ "module and instantiates no adapter"
 		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.ts::constructor(private"
 			+ "readonly createMergeSaveFiles"
-		IMPL "packages/core-mapping/src/application/UseCaseFactory.ts::export type UseCaseFactory"
+		IMPL "packages/core-mapping/src/controllers/UseCaseFactory.ts::export type UseCaseFactory"
 	SPEC "the CLIs and the save manager keep importing core-mapping/controllers/X: each controller"
 		+ "module exports, next to the class, the controller wired with the factory the composition"
 		+ "root exports, and the composition root imports no controller"

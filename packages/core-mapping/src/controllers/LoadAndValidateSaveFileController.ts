@@ -2,7 +2,7 @@ import {LoadSaveFileViewModel} from "../presentation/viewModels/LoadSaveFileView
 import {LoadSaveFilePresenter} from "../presentation/LoadSaveFilePresenter";
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import {ValidateSaveFileRequest} from "../application/requests/ValidateSaveFileRequest";
-import {UseCaseFactory} from "../application/UseCaseFactory";
+import {UseCaseFactory} from "./UseCaseFactory";
 import {createValidateSaveFile} from "../composition/compositionRoot";
 
 export class LoadAndValidateSaveFileController {

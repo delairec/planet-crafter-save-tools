@@ -2,7 +2,7 @@ import {ConfigurationPageViewModel} from "../presentation/viewModels/Configurati
 import {ConfigurationPagePresenter} from "../presentation/ConfigurationPagePresenter";
 import {ConfigurationPagePresenterPort} from "../application/ports/ConfigurationPagePresenterPort";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
-import {UseCaseFactory} from "../application/UseCaseFactory";
+import {UseCaseFactory} from "./UseCaseFactory";
 import {createLoadConfigurationPage} from "../composition/compositionRoot";
 
 export class LoadConfigurationPageController {

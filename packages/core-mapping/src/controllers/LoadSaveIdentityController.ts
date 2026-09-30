@@ -2,7 +2,7 @@ import {SaveIdentityViewModel} from "../presentation/viewModels/SaveIdentityView
 import {SaveIdentityPresenter} from "../presentation/SaveIdentityPresenter";
 import {SaveIdentityPresenterPort} from "../application/ports/SaveIdentityPresenterPort";
 import {LoadSaveIdentityRequest} from "../application/requests/LoadSaveIdentityRequest";
-import {UseCaseFactory} from "../application/UseCaseFactory";
+import {UseCaseFactory} from "./UseCaseFactory";
 import {createLoadSaveIdentity} from "../composition/compositionRoot";
 
 export class LoadSaveIdentityController {

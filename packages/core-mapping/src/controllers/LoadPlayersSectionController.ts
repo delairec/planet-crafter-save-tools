@@ -2,7 +2,7 @@ import {PlayersViewModel} from '../presentation/viewModels/PlayersViewModel';
 import {PlayersPresenter} from '../presentation/PlayersPresenter';
 import {PlayersPresenterPort} from '../application/ports/PlayersPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
-import {UseCaseFactory} from '../application/UseCaseFactory';
+import {UseCaseFactory} from './UseCaseFactory';
 import {createLoadPlayersSection} from '../composition/compositionRoot';
 
 export class LoadPlayersSectionController {

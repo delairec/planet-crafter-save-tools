@@ -2,7 +2,7 @@ import {PlayersMenuViewModel} from "../presentation/viewModels/PlayersMenuViewMo
 import {PlayersMenuPresenter} from "../presentation/PlayersMenuPresenter";
 import {PlayersMenuPresenterPort} from "../application/ports/PlayersMenuPresenterPort";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
-import {UseCaseFactory} from "../application/UseCaseFactory";
+import {UseCaseFactory} from "./UseCaseFactory";
 import {createLoadPlayersMenu} from "../composition/compositionRoot";
 
 export class LoadPlayersMenuController {

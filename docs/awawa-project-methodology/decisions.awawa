@@ -3593,7 +3593,7 @@ DECISION AControllerIsBuiltAroundItsUseCaseFactory
 	SPEC "a controller of core-mapping is a class whose constructor takes the factory building its"
 		+ "use case around the presenter the controller provides; it imports no infrastructure"
 		+ "module and instantiates no adapter"
-		IMPL "packages/core-mapping/src/application/UseCaseFactory.ts::export type UseCaseFactory"
+		IMPL "packages/core-mapping/src/controllers/UseCaseFactory.ts::export type UseCaseFactory"
 		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.ts::constructor(private"
 			+ "readonly createMergeSaveFiles"
 	SPEC "each controller module exports, next to its class, the controller wired with the use case"

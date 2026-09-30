@@ -1,5 +1,3 @@
-export interface UseCase<Request> {
-  execute(request: Request): Promise<void>;
-}
+import {UseCase} from "../application/UseCase";
 
 export type UseCaseFactory<PresenterPort, Request> = (presenter: PresenterPort) => UseCase<Request>;

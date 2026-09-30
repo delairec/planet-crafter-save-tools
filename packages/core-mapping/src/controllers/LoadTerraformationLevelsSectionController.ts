@@ -2,7 +2,7 @@ import {TerraformationLevelsViewModel} from '../presentation/viewModels/Terrafor
 import {TerraformationLevelsPresenter} from '../presentation/TerraformationLevelsPresenter';
 import {TerraformationLevelsPresenterPort} from '../application/ports/TerraformationLevelsPresenterPort';
 import {LoadSaveSectionsRequest} from '../application/requests/LoadSaveSectionsRequest';
-import {UseCaseFactory} from '../application/UseCaseFactory';
+import {UseCaseFactory} from './UseCaseFactory';
 import {createLoadTerraformationLevelsSection} from '../composition/compositionRoot';
 
 export class LoadTerraformationLevelsSectionController {

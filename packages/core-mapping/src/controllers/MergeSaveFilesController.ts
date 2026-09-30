@@ -2,7 +2,7 @@ import {MergeResultViewModel} from "../presentation/viewModels/MergeResultViewMo
 import {MergeResultPresenter} from "../presentation/MergeResultPresenter";
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "../application/requests/MergeSaveFilesRequest";
-import {UseCaseFactory} from "../application/UseCaseFactory";
+import {UseCaseFactory} from "./UseCaseFactory";
 import {createMergeSaveFiles} from "../composition/compositionRoot";
 
 export class MergeSaveFilesController {

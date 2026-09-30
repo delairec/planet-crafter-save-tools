@@ -2,7 +2,7 @@ import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsView
 import {EnergyLevelsPresenter} from "../presentation/EnergyLevelsPresenter";
 import {EnergyLevelsPresenterPort} from "../application/ports/EnergyLevelsPresenterPort";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
-import {UseCaseFactory} from "../application/UseCaseFactory";
+import {UseCaseFactory} from "./UseCaseFactory";
 import {createLoadEnergyLevelsSection} from "../composition/compositionRoot";
 
 export class LoadEnergyLevelsSectionController {
