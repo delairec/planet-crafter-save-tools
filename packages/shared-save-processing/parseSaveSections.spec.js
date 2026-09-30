@@ -280,20 +280,6 @@ describe('parseSaveSections', () => {
   });
 
   describe('When the save declares 2.004 or later and still carries the Terrain Layers section', () => {
-    it('should warn that the release its version declares contradicts the format it carries', () => {
-      // Arrange
-      const save = createLegacyFakeSaveString({saveConfiguration: createSaveConfiguration({version: '2.103'})});
-
-      // Act
-      const {warnings} = parseSaveSections(save);
-
-      // Assert
-      expect(warnings).toEqual([
-        {code: 'legacy-save-format'},
-        {code: 'declared-release-contradicts-content', declaredVersion: '2.103', declaredRelease: '2.102', carriedRelease: '1.618'}
-      ]);
-    });
-
     it('should still read the save by the format it carries', () => {
       // Arrange
       const expectedWorldEvent = {planet: 110910045, seed: 1, pos: '0,0,0', owner: 0, index: 0};
@@ -308,60 +294,16 @@ describe('parseSaveSections', () => {
       // Assert
       expect(sections[LEGACY_WORLD_EVENTS_SECTION_INDEX]).toEqual([expectedWorldEvent]);
     });
-  });
 
-  describe('When the save declares 1.618 or earlier and carries no Terrain Layers section', () => {
-    it('should warn that the release its version declares contradicts the format it carries', () => {
+    it('should raise only the legacy format warning, the declared release being checked by the use cases', () => {
       // Arrange
-      const save = createFakeSaveString({saveConfiguration: createSaveConfiguration({version: '1.0'})});
-
-      // Act
-      const {warnings} = parseSaveSections(save);
-
-      // Assert
-      expect(warnings).toEqual([
-        {code: 'declared-release-contradicts-content', declaredVersion: '1.0', declaredRelease: '1.618', carriedRelease: '2.004'}
-      ]);
-    });
-  });
-
-  describe('When the release the save declares writes the format it carries', () => {
-    it.each([
-      ['2.004'],
-      ['2.103']
-    ])('should raise no warning for a save of the current format declaring %s', (declaredVersion) => {
-      // Arrange
-      const save = createFakeSaveString({saveConfiguration: createSaveConfiguration({version: declaredVersion})});
-
-      // Act
-      const {warnings} = parseSaveSections(save);
-
-      // Assert
-      expect(warnings).toEqual([]);
-    });
-
-    it('should raise only the legacy format warning for a legacy save declaring 1.618', () => {
-      // Arrange
-      const save = createLegacyFakeSaveString({saveConfiguration: createSaveConfiguration({version: '1.618'})});
+      const save = createLegacyFakeSaveString({saveConfiguration: createSaveConfiguration({version: '2.103'})});
 
       // Act
       const {warnings} = parseSaveSections(save);
 
       // Assert
       expect(warnings).toEqual([{code: 'legacy-save-format'}]);
-    });
-  });
-
-  describe('When the version the save declares resolves to no release', () => {
-    it('should raise no warning about the release', () => {
-      // Arrange
-      const save = createFakeSaveString({saveConfiguration: createSaveConfiguration({version: 'unreleased'})});
-
-      // Act
-      const {warnings} = parseSaveSections(save);
-
-      // Assert
-      expect(warnings).toEqual([]);
     });
   });
 

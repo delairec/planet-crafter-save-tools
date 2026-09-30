@@ -10,13 +10,13 @@ const noWarnings: SaveWarning[] = [];
 
 describe('LoadSaveFilePresenter', () => {
 
-  describe('When presenting a loaded save file', () => {
+  describe('When presenting a valid save file', () => {
     it('should update the view model with the valid status and no error', () => {
       // Arrange
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile(noWarnings);
+      presenter.presentValidSaveFile(noWarnings);
 
       // Assert
       expect<LoadSaveFileViewModel>(presenter.viewModel).toEqual({status: 'valid', errors: [], warnings: []});
@@ -27,7 +27,7 @@ describe('LoadSaveFilePresenter', () => {
       const presenter = new LoadSaveFilePresenter();
 
       // Act
-      presenter.presentLoadedSaveFile([{code: 'legacy-save-format'}]);
+      presenter.presentValidSaveFile([{code: 'legacy-save-format'}]);
 
       // Assert
       expect<SaveValidationMessageViewModel[]>(presenter.viewModel.warnings).toEqual([{

@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {resolveGameReleaseOfDeclaredVersion} from './resolveGameReleaseOfDeclaredVersion';
+import {GAME_RELEASES} from '../../testing/gameReleasesFixture';
 
 describe('resolveGameReleaseOfDeclaredVersion', () => {
   it.each([
@@ -9,19 +10,19 @@ describe('resolveGameReleaseOfDeclaredVersion', () => {
     ['1.618', '1.618']
   ])('should resolve the declared version %s to the release %s', (declaredVersion, expectedRelease) => {
     // Act
-    const release = resolveGameReleaseOfDeclaredVersion(declaredVersion);
+    const release = resolveGameReleaseOfDeclaredVersion(declaredVersion, GAME_RELEASES);
 
     // Assert
     expect(release).toBe(expectedRelease);
   });
 
   describe('When the save declares no version', () => {
-    it('should resolve to the current format release', () => {
+    it('should resolve to the current game release', () => {
       // Arrange
       const noDeclaredVersion = undefined;
 
       // Act
-      const release = resolveGameReleaseOfDeclaredVersion(noDeclaredVersion);
+      const release = resolveGameReleaseOfDeclaredVersion(noDeclaredVersion, GAME_RELEASES);
 
       // Assert
       expect(release).toBe('2.102');
@@ -29,9 +30,9 @@ describe('resolveGameReleaseOfDeclaredVersion', () => {
   });
 
   describe('When the declared version is not a release number', () => {
-    it('should resolve to the current format release', () => {
+    it('should resolve to the current game release', () => {
       // Act
-      const release = resolveGameReleaseOfDeclaredVersion('beta');
+      const release = resolveGameReleaseOfDeclaredVersion('beta', GAME_RELEASES);
 
       // Assert
       expect(release).toBe('2.102');

@@ -1,4 +1,5 @@
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
+import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {SaveIdentityPresenterPort} from "./ports/SaveIdentityPresenterPort";
 import {LoadSaveIdentityRequest} from "./requests/LoadSaveIdentityRequest";
 import {resolveGameReleaseOfDeclaredVersion} from "../domain/rules/resolveGameReleaseOfDeclaredVersion";
@@ -6,6 +7,7 @@ import {resolveGameReleaseOfDeclaredVersion} from "../domain/rules/resolveGameRe
 export class LoadSaveIdentity {
   constructor(
     private readonly saveSectionsReader: SaveSectionsReaderPort,
+    private readonly gameReleasesReader: GameReleasesReaderPort,
     private readonly presenter: SaveIdentityPresenterPort
   ) {}
 
@@ -28,7 +30,7 @@ export class LoadSaveIdentity {
       fileName,
       displayName: saveConfiguration.title,
       mode: saveConfiguration.mode,
-      gameRelease: resolveGameReleaseOfDeclaredVersion(saveSections.getDeclaredVersion())
+      gameRelease: resolveGameReleaseOfDeclaredVersion(saveSections.getDeclaredVersion(), this.gameReleasesReader.readGameReleases())
     });
   }
 }

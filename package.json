@@ -40,6 +40,7 @@
     "check:dependencies": "bun scripts/check-package-dependencies.ts",
     "check:presentation": "bun scripts/check-presentation-entities.ts",
     "check:wire-format": "bun scripts/check-wire-format.ts",
+    "check:runtime-imports": "bun scripts/check-core-runtime-imports.ts",
     "check:idioms": "bun scripts/check-solid-idioms.ts",
     "check:save-line-reader": "bun scripts/check-save-line-reader.ts",
     "check:scenario-fixtures": "bun scripts/check-scenario-fixtures.ts",

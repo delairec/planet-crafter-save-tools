@@ -2,6 +2,7 @@ import {UnreadableLine} from "./ports/SaveSectionLocation";
 import {describe, expect, it, mock} from 'bun:test';
 import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
+import {stubGameReleasesReader} from "../testing/stubGameReleasesReader";
 import {LoadEnergyLevelsSection} from "./LoadEnergyLevelsSection";
 import {
   createPlanetWorldObjectsValueObject,
@@ -93,7 +94,7 @@ function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: En
   const planetNamesReader: PlanetNamesReaderPort = {findPlanetNameOfNumericId: (numericId) => PLANET_NAMES_BY_NUMERIC_ID[numericId]};
   const worldObjectLabelsReader: WorldObjectLabelsReaderPort = {readWorldObjectLabels: () => WORLD_OBJECT_LABELS};
 
-  return new LoadEnergyLevelsSection({saveSectionsReader, energyLevelsReader, optimizerRangesReader, planetNamesReader, worldObjectLabelsReader}, presenter);
+  return new LoadEnergyLevelsSection({saveSectionsReader, energyLevelsReader, gameReleasesReader: stubGameReleasesReader(), optimizerRangesReader, planetNamesReader, worldObjectLabelsReader}, presenter);
 }
 
 describe('LoadEnergyLevelsSection', () => {
@@ -109,6 +110,7 @@ describe('LoadEnergyLevelsSection', () => {
     expect(presenter.displayEnergyLevels).toHaveBeenCalledTimes(1);
     expect(presenter.displayEnergyLevels).toHaveBeenCalledWith({
       gameRelease: '2.004',
+      gameReleaseIsEarlierThanCurrent: true,
       powerConsumptionModifier: 0.5,
       planets: [{
         planetId: 1,

@@ -1,16 +1,16 @@
 import {LoadSaveFileViewModel} from "../presentation/viewModels/LoadSaveFileViewModel";
-import {createSaveSectionsReader, createSaveValidator} from "../composition/compositionRoot";
+import {createGameReleasesReader, createSaveSectionsReader, createSaveValidator} from "../composition/compositionRoot";
 import {LoadSaveFilePresenter} from "../presentation/LoadSaveFilePresenter";
-import {LoadAndValidateSaveFile} from "../application/LoadAndValidateSaveFile";
-import {LoadAndValidateSaveFileRequest} from "../application/requests/LoadAndValidateSaveFileRequest";
+import {ValidateSaveFile} from "../application/ValidateSaveFile";
+import {ValidateSaveFileRequest} from "../application/requests/ValidateSaveFileRequest";
 
 export class LoadAndValidateSaveFileController {
   static async loadAndValidateSaveFile(fileName: string, content: string): Promise<LoadSaveFileViewModel> {
-    const request: LoadAndValidateSaveFileRequest = {fileName, content};
+    const request: ValidateSaveFileRequest = {fileName, content};
     const validator = createSaveValidator();
     const saveSectionsReader = createSaveSectionsReader();
     const presenter = new LoadSaveFilePresenter();
-    const useCase = new LoadAndValidateSaveFile(validator, saveSectionsReader, presenter);
+    const useCase = new ValidateSaveFile(validator, saveSectionsReader, createGameReleasesReader(), presenter);
 
     await useCase.execute(request);
 

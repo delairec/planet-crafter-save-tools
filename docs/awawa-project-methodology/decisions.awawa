@@ -94,10 +94,10 @@ DECISION ABrokenInvariantFailsWithANamedErrorType
 DECISION ValidationIsTheSingleSourceOfWarnings
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SPEC "The validation result carries the warnings, never the parser"
-		IMPL "packages/core-mapping/src/application/ports/SaveValidationResult.ts::warnings:"
+		IMPL "packages/core-mapping/src/application/responses/SaveValidationResponse.ts::warnings:"
 			+ "SaveWarning[]"
-		IMPL "packages/core-mapping/src/application/ports/SaveSectionsParserPort.ts::the single"
-			+ "source of warnings"
+		IMPL "packages/core-mapping/src/application/responses/ParsedSaveSectionsResponse.ts::readonly"
+			+ "errors: UnreadableLine[]"
 	SPEC "Validation runs first in the four flows, and warnings are reported on every outcome,"
 		+ "invalid saves and successful merges included"
 		IMPL "packages/core-mapping/src/application"
@@ -393,7 +393,7 @@ DECISION NoMergeWarningChannelWithoutAProducer
 	SPEC "The merge output carries its own warnings on a single list under one name end to end,"
 		+ "opened by its first producer, the report of a merge of two formats"
 		IMPL "packages/core-mapping/src/application/responses/MergeSucceededResponse.ts::mergeWarnings:"
-			+ "MergeWarning[]"
+			+ "MergeWarningResponse[]"
 	REJECTED "Opening the channel ahead of need: an empty section and an identifier collision are"
 		+ "not producers"
 	REJECTED "Folding the output warnings into the per-input lists"
@@ -926,13 +926,17 @@ DECISION ThePrivateContextHoldsOnlySavesAndPlans
 		PR 61
 
 DECISION NameMergedFileEscapesControlCharacters
-	SPEC "nameMergedFile.ts writes its control-character class as escape sequences, never as raw"
-		+ "bytes"
-		IMPL "packages/core-mapping/src/application/nameMergedFile.ts::function sanitizeFileName"
+	SPEC "FileNameSanitizerService.ts writes its control-character class as escape sequences, never"
+		+ "as raw bytes"
+		IMPL "packages/core-mapping/src/infrastructure/FileNameSanitizerService.ts::function"
+			+ "sanitizeFileName"
 	REJECTED "Promoting it to a general or project rule: it happened once, and git showed it as a"
 		+ "binary diff"
 	SOURCE "Owner ruling"
 		PR 62
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION AUsageReportIsCommittedInTheTaskPullRequest
 	SPEC "A task pull request gets one usage report, following the template, committed on its"
@@ -1506,25 +1510,49 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 		+ "number of parts the saves it writes split into"
 		IMPL "packages/data-save-format/gameReleases.json"
 		IMPL "packages/data-save-format/selectGameReleaseRows.ts::selectGameReleaseRows"
+	SPEC "The game releases are resolved in the domain of core-mapping, which receives the rows of"
+		+ "the table through GameReleasesReaderPort; shared-save-processing reads only the number"
+		+ "of parts each save format splits into, through the selector of data-save-format, and"
+		+ "resolves no declared version"
+		IMPL "packages/core-mapping/src/application/ports/GameReleasesReaderPort.ts::readGameReleases"
+		IMPL "packages/core-mapping/src/infrastructure/GameReleasesReaderService.ts::selectGameReleaseRows().map"
+		IMPL "packages/shared-save-processing/gameReleases.js::export function findCarriedRelease"
+		ENFORCED_BY "packages/core-mapping/src/infrastructure/GameReleasesReaderService.spec.ts"
 	SPEC "A declared version resolves to the last release of the table not later than it, a version"
 		+ "earlier than the first release to the first release, and a version not made of"
 		+ "dot-separated numbers to none"
-		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %s to the last"
-			+ "release not later than it"
-		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %s to the first"
-			+ "release"
-		IMPL "packages/shared-save-processing/gameReleases.spec.js::should resolve %p to no release"
+		IMPL "packages/core-mapping/src/domain/rules/resolveDeclaredGameRelease.ts::export function"
+			+ "resolveDeclaredGameRelease"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/resolveDeclaredGameRelease.spec.ts::should"
+			+ "resolve %s to the last release not later than it"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/resolveDeclaredGameRelease.spec.ts::should"
+			+ "resolve %s to the first release"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/resolveDeclaredGameRelease.spec.ts::should"
+			+ "resolve %p to no release"
 	SPEC "A save whose parts contradict the release its version resolves to raises a warning naming"
 		+ "the declared version, that release and the first release whose format it carries, and is"
-		+ "still read by what it carries"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should warn that the"
-			+ "release its version declares contradicts the format it carries"
+		+ "still read by what it carries: a domain rule finds the contradiction, and the use cases"
+		+ "that validate, load and merge a save append it after the warnings of the validator"
+		IMPL "packages/core-mapping/src/domain/rules/detectDeclaredReleaseContradiction.ts::export"
+			+ "function detectDeclaredReleaseContradiction"
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts::detectDeclaredReleaseContradiction(validation,"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::detectDeclaredReleaseContradiction(validation,"
+		ENFORCED_BY "packages/core-mapping/src/domain/rules/detectDeclaredReleaseContradiction.spec.ts::should"
+			+ "name the declared version, its release and the release whose format the save carries"
+		ENFORCED_BY "packages/core-mapping/src/application/ValidateSaveFile.spec.ts::should present"
+			+ "the contradiction after the warnings of the validation"
+		ENFORCED_BY "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should present"
+			+ "the contradiction among the warnings of that save"
 		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should still read the save"
 			+ "by the format it carries"
 		IMPL "packages/core-mapping/src/presentation/formatSaveWarning.spec.ts::should name the"
 			+ "declared version, its release and the release whose format the save carries"
 	REJECTED "Reading a save by its declared version alone: a hand-edited save contradicts its"
 		+ "version"
+	REJECTED "The parser of shared-save-processing raising the contradiction warning, as it did"
+		+ "until REFACTOR163: resolving a declared version is a business judgement, which the"
+		+ "domain of core-mapping owns alone"
+		REF @TASK.REFACTOR163
 	REJECTED "Ignoring the declared version: a contradiction would pass without a word"
 		REF @OPEN_QUESTION.DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 	REJECTED "Refusing a save that contradicts its version: the content is the fact, and the save"
@@ -1539,6 +1567,9 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 	SOURCE "The table, the resolution of a declared version and the contradiction warning, on"
 		+ "delivery of the task"
 		PR 124
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SPEC "Every text/background token pair the stylesheets of packages/ui-save-manager/src compose"
@@ -1768,10 +1799,11 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 			+ "mainSave;"
 	SPEC "the format written is chosen by comparing the releases whose formats the two saves carry,"
 		+ "never by which of them carries the Terrain Layers section"
-		IMPL "packages/shared-save-processing/gameReleases.js::export function compareGameReleases"
+		IMPL "packages/core-mapping/src/domain/rules/compareGameReleases.ts::export function"
+			+ "compareGameReleases"
 	SPEC "a warning naming a dropped section names it by its section name, never by its index nor"
 		+ "its label"
-		IMPL "packages/core-mapping/src/application/responses/MergeWarning.ts::section:"
+		IMPL "packages/core-mapping/src/application/responses/MergeWarningResponse.ts::section:"
 			+ "SaveSectionName"
 	REJECTED "Writing the legacy format for two current saves when it is asked for: the Terrain"
 		+ "Layers section would be invented empty, no save carrying it"
@@ -1784,6 +1816,9 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 	SOURCE "Agent ruling while implementing FEAT94, 2026-09-24"
 		PR 151
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
 	SPEC "A task branch runs bun test, bun run lint:types, bun run guards, awawa fmt --check . and"
@@ -2572,7 +2607,7 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SPEC "a save declaring no version, or a version resolving to no release, takes the values of"
 		+ "the last release of the releases table"
 		IMPL "packages/core-mapping/src/domain/rules/resolveGameReleaseOfDeclaredVersion.ts::??"
-			+ "CURRENT_FORMAT_RELEASE"
+			+ "resolveCurrentGameRelease(gameReleases)"
 		ENFORCED_BY "packages/core-mapping/src/domain/energyLevelsByWorldObjectName.spec.ts::should"
 			+ "take the values of the last release of the table"
 	SPEC "a row of the table of a release naming a world object the energy table does not hold is"
@@ -2586,7 +2621,9 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SPEC "the Power section names in a warning notification, under the submerged machines one, the"
 		+ "release whose values it applies when that release is earlier than the last of the"
 		+ "releases table, and names none for the last"
-		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)"
+		IMPL "packages/core-mapping/src/presentation/EnergyLevelsPresenter.ts::if"
+			+ "(energyLevels.gameReleaseIsEarlierThanCurrent)"
+		IMPL "packages/core-mapping/src/application/LoadEnergyLevelsSection.ts::precedesCurrentGameRelease"
 		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
 			+ "each={energyLevels().notifications}>"
 		ENFORCED_BY "packages/core-mapping/src/presentation/EnergyLevelsPresenter.spec.ts::should"
@@ -2628,6 +2665,9 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 		+ "gameReleaseNote dans un disclaimer sous celui des submerged machines, et uniquement"
 		+ "lorsque la release est legacy, pour la current, pas de disclaimer\""
 		PR 189
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 	SPEC "PlanetEnergyGrid multiplies each base consumption level by modifierPowerConsumption once,"
@@ -2945,12 +2985,12 @@ DECISION EachPageOfTheSaveManagerIsARoute
 
 DECISION TheSaveIdentityShowsTheResolvedGameRelease
 	SPEC "the game release of the save identity is the release resolved from the version the save"
-		+ "declares, the current format release when the save declares no version or one no release"
+		+ "declares, the current game release when the save declares no version or one no release"
 		+ "matches"
 		IMPL "packages/core-mapping/src/domain/rules/resolveGameReleaseOfDeclaredVersion.ts::resolveGameReleaseOfDeclaredVersion"
 		IMPL "packages/core-mapping/src/application/LoadSaveIdentity.ts::resolveGameReleaseOfDeclaredVersion"
 		ENFORCED_BY "packages/core-mapping/src/application/LoadSaveIdentity.spec.ts::should present"
-			+ "the current format release"
+			+ "the current game release"
 	REJECTED "the version the save declares, printed as is: a version no release names reads as a"
 		+ "release the project does not know, and a save without a version would show nothing"
 	REJECTED "no game release for a save without a version: the save is read by the branch of the"
@@ -2959,6 +2999,9 @@ DECISION TheSaveIdentityShowsTheResolvedGameRelease
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
 		PR 205
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION APlayerOnAnEmptyPlanetShowsNoPlanet
 	SPEC "the players menu shows no planet for a player whose planet is empty, and the planet of"
@@ -3205,14 +3248,12 @@ DECISION AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
 DECISION ASaveWithUnreadableLinesIsNotLoaded
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR159
-	SPEC "LoadAndValidateSaveFile and ValidateSaveFile call presentSaveFileWithUnreadableLines when"
-		+ "the section reader reports at least one unreadable line, and never present that save as"
-		+ "loaded or valid; the loaded outcome carries warnings only"
-		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.ts"
-		IMPL "packages/core-mapping/src/application/ports/LoadAndValidateSaveFilePresenterPort.ts::presentSaveFileWithUnreadableLines"
+	SPEC "ValidateSaveFile, which the validation and the loading of a save both run, calls"
+		+ "presentSaveFileWithUnreadableLines when the section reader reports at least one"
+		+ "unreadable line, and never presents that save as valid; the valid outcome carries"
+		+ "warnings only"
 		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts"
 		IMPL "packages/core-mapping/src/application/ports/SaveFileValidationPresenterPort.ts::presentSaveFileWithUnreadableLines"
-		ENFORCED_BY "packages/core-mapping/src/application/LoadAndValidateSaveFile.spec.ts"
 		ENFORCED_BY "packages/core-mapping/src/application/ValidateSaveFile.spec.ts::should present"
 			+ "the save file with its unreadable lines, never as a valid save file"
 	SPEC "LoadSaveFilePresenter renders the unreadable lines outcome with the invalid status and"
@@ -3332,17 +3373,14 @@ DECISION AMergeReadsEachInputThroughTheSectionReaderForItsHost
 DECISION TheHostIsCheckedOnlyOnceValidationAcceptsTheSave
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR160
-	SPEC "ValidateSaveFile, LoadAndValidateSaveFile and MergeSaveFiles check the unique host only"
-		+ "once the validator accepted the save and the section reader read every line; a save"
-		+ "refused by validation reports its validation errors alone, a host violation included"
+	SPEC "ValidateSaveFile and MergeSaveFiles check the unique host only once the validator"
+		+ "accepted the save and the section reader read every line; a save refused by validation"
+		+ "reports its validation errors alone, a host violation included"
 		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts::validateUniqueHost(saveSections.getPlayers())"
-		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.ts::validateUniqueHost(saveSections.getPlayers())"
 		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::findWrongHostCounts(readingA,"
 			+ "readingB)"
 		ENFORCED_BY "packages/core-mapping/src/application/ValidateSaveFile.spec.ts::should present"
 			+ "an invalid save file with the validation errors and never read the content"
-		ENFORCED_BY "packages/core-mapping/src/application/LoadAndValidateSaveFile.spec.ts::should"
-			+ "present an invalid save file with the validation errors and never read the content"
 	REJECTED "Reading the players of a save validation refused, to report its host violation beside"
 		+ "the validation errors as the validator did before: the reader would map entries the"
 		+ "schema has refused"
@@ -3416,11 +3454,10 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 		+ "validated, and the single-file use cases report it by a presenter method of its own"
 		+ "taking primitives only"
 		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts::this.presenter.presentFileWithoutJsonExtension();"
-		IMPL "packages/core-mapping/src/application/LoadAndValidateSaveFile.ts::this.presenter.presentFileWithoutJsonExtension();"
 	SPEC "A merge reports the findings of each save: a file without JSON extension as such, the"
 		+ "other its validation errors and warnings, both in the one outcome of invalid saves"
-		IMPL "packages/core-mapping/src/application/responses/SaveFileFindings.ts::export type"
-			+ "SaveFileFindings"
+		IMPL "packages/core-mapping/src/application/responses/SaveFileFindingsResponse.ts::export"
+			+ "type SaveFileFindingsResponse"
 		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::When one save"
 			+ "lacks the JSON extension and the other is invalid"
 	SPEC "application/ports/validationIssues is a transitional home: the issues, the section"
@@ -3439,16 +3476,20 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 		+ "a refactoring"
 	REJECTED "application/ports as the final home: an issue is a statement about the save, which"
 		+ "the domain makes, not a type a port owns"
-	REJECTED "application/issues: the application holds use cases, ports, requests and responses,"
-		+ "and what is invalid in a save is none of them"
+	REJECTED "application/issues: ruled out by"
+		+ "@RULE.application_holds_use_cases_ports_requests_responses of ~/.ai, and what is invalid"
+		+ "in a save is none of the four"
 	REJECTED "The issues carried into domain/ as they stood: they held the text of the schema"
 		+ "validator, a detail of how the violation was detected"
 	REJECTED "The move into domain/ in the pull request of REFACTOR164: the presenter ports receive"
 		+ "the issues and import nothing from domain/ until REFACTOR170 gives them responses"
 		REF @TASK.REFACTOR170
+	DEROGATES "@RULE.application_holds_use_cases_ports_requests_responses"
 	RATIONALE "Each code carries data of its own, so each issue is a type of its own, named and"
 		+ "found by that name. The domain says what is invalid, the infrastructure how it is"
-		+ "detected"
+		+ "detected. The issues stay beside the ports, against the rule that the folder holds ports"
+		+ "only, until REFACTOR170 moves them into domain/: moving them earlier makes the presenter"
+		+ "ports import from domain/"
 	SOURCE "Owner rulings in the review: one named interface per issue, each in its own file, in a"
 		+ "subfolder grouping them; the domain says what is invalid and the infrastructure how it"
 		+ "is detected; the move into domain/ goes with the responses of REFACTOR170; a merge"
@@ -3473,6 +3514,8 @@ DECISION ADataPackageExportsItsTypeScriptModulesByPath
 		PR 238
 
 DECISION GameReleasesKeepsItsApiUntilTheReleaseRulesMove
+	STATUS archived
+	ARCHIVED_ON 2026-09-30
 	SPEC "shared-save-processing/gameReleases.js reads the releases table through the selector of"
 		+ "data-save-format and keeps the API it exports, the release rules moving with REFACTOR163"
 		IMPL "packages/shared-save-processing/gameReleases.js::selectGameReleaseRows()"
@@ -3484,3 +3527,60 @@ DECISION GameReleasesKeepsItsApiUntilTheReleaseRulesMove
 		+ "from a table already behind its selector"
 	SOURCE "Ruling taken while implementing REFACTOR168"
 		PR 238
+
+DECISION TheValidatorReportsTheReleasesTheUseCasesJudge
+	SPEC "the save validator port returns, beside its errors and warnings, the version a save"
+		+ "declares and the release whose format it carries, and the use cases that validate, load"
+		+ "and merge a save append after the validator warnings the contradiction a domain rule"
+		+ "finds between them"
+		IMPL "packages/core-mapping/src/application/responses/SaveValidationResponse.ts::carriedRelease?:"
+		IMPL "packages/core-mapping/src/infrastructure/validateSaveContent.js::carriedRelease:"
+			+ "formatRelease"
+		IMPL "packages/core-mapping/src/application/ValidateSaveFile.ts::detectDeclaredReleaseContradiction(validation,"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::detectDeclaredReleaseContradiction(validation,"
+		ENFORCED_BY "packages/core-mapping/src/application/ValidateSaveFile.spec.ts::should present"
+			+ "the contradiction after the warnings of the validation"
+		ENFORCED_BY "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should present"
+			+ "the contradiction among the warnings of that save"
+		ENFORCED_BY "packages/core-mapping/src/infrastructure/SaveValidatorService.spec.ts"
+	REJECTED "A second read of the save through the sections reader port to learn the version it"
+		+ "declares: the validator has already split and parsed the save, and a second parse"
+		+ "doubles the most expensive step of a validation"
+	REJECTED "The parser of shared-save-processing keeping the check: it resolves a declared"
+		+ "version, a business judgement the domain of core-mapping owns alone"
+		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
+	REJECTED "The validator adapter calling the domain rule itself: the use cases call the domain"
+		+ "rules, never the adapters"
+	REJECTED "A module under application/ the three use cases share to append the contradiction:"
+		+ "ruled out by @RULE.application_holds_use_cases_ports_requests_responses of ~/.ai"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR163
+	RATIONALE "The version a save declares and the parts it carries are facts the validator reads"
+		+ "on its single pass; the judgement that they contradict each other needs the releases"
+		+ "table, which reaches the use case through its port"
+	SOURCE "Agent ruling while implementing REFACTOR163"
+		PR 241
+
+DECISION TheMergeUseCaseChoosesTheSuffixOfTheMergedFileName
+	SPEC "MergeSaveFiles names the merged file by handing the file name sanitizer port both source"
+		+ "file names and the suffix -merged, a constant of the use case"
+		IMPL "packages/core-mapping/src/application/MergeSaveFiles.ts::const"
+			+ "MERGED_FILE_NAME_SUFFIX"
+		ENFORCED_BY "packages/core-mapping/src/application/MergeSaveFiles.spec.ts::should name the"
+			+ "merged file after both source files, marked as merged"
+	SPEC "the file name sanitizer knows nothing of merging: it joins the sanitized source file"
+		+ "names, appends the suffix it receives and the .json extension"
+		IMPL "packages/core-mapping/src/infrastructure/FileNameSanitizerService.ts::export class"
+			+ "FileNameSanitizerService"
+		ENFORCED_BY "packages/core-mapping/src/infrastructure/FileNameSanitizerService.spec.ts"
+	REJECTED "MergedFileNamerService composing <A>-<B>-merged.json itself: marking the file as"
+		+ "merged is a business decision, and a service that sanitizes a file name has no reason to"
+		+ "know where the name comes from"
+	REJECTED "The use case composing the whole file name, extension included: a module under"
+		+ "application/ would name a file extension"
+		REF @TASK.REFACTOR163
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR163
+	SOURCE "Owner ruling in the review: the -merged suffix is a business decision passed as a"
+		+ "parameter, the .json extension stays in the service, renamed FileNameSanitizer"
+		PR 241

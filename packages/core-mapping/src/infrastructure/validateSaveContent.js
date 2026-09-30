@@ -5,7 +5,7 @@
 
 import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
 import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
-import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
+import {resolveSectionIndexes, SAVE_CONFIGURATION_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes.ts';
@@ -14,7 +14,7 @@ import {locateUnreadableLine} from './locateUnreadableLine.ts';
 
 /**
  * @param {string} saveContent
- * @returns {{isValid: boolean, errors: ValidationIssue[], warnings: SaveWarning[]}}
+ * @returns {{isValid: boolean, errors: ValidationIssue[], warnings: SaveWarning[], declaredVersion?: string, carriedRelease?: string}}
  */
 export function validateSaveContent(saveContent) {
   const [sectionCountError] = verifySectionCount(saveContent.split('@'));
@@ -52,7 +52,27 @@ export function validateSaveContent(saveContent) {
   errors.push(...worldObjectIssues);
   errors.push(...validateFloatSerialization(saveContent));
 
-  return {isValid: errors.length === 0, errors, warnings};
+  const declaredVersion = readDeclaredVersion(
+    /** @type {unknown[]} */ (sections[SAVE_CONFIGURATION_SECTION_INDEX])
+  );
+
+  return {isValid: errors.length === 0, errors, warnings, declaredVersion, carriedRelease: formatRelease};
+}
+
+/**
+ * @param {unknown[]} saveConfigurationSection
+ * @returns {string | undefined}
+ */
+function readDeclaredVersion(saveConfigurationSection) {
+  const [saveConfiguration] = saveConfigurationSection;
+
+  if (typeof saveConfiguration !== 'object' || saveConfiguration === null) {
+    return undefined;
+  }
+
+  const {version} = /** @type {{version?: unknown}} */ (saveConfiguration);
+
+  return typeof version === 'string' ? version : undefined;
 }
 
 /**

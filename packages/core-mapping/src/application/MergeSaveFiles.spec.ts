@@ -1,22 +1,26 @@
 import {describe, expect, it, mock} from 'bun:test';
 import {MergeSaveFiles} from './MergeSaveFiles';
 import {SaveValidatorPort} from './ports/SaveValidatorPort';
-import {ParsedSaveSections, SaveSectionsParserPort} from './ports/SaveSectionsParserPort';
-import {SaveSectionsReaderPort, SaveSectionsReading} from './ports/SaveSectionsReaderPort';
+import {SaveSectionsParserPort} from './ports/SaveSectionsParserPort';
+import {ParsedSaveSectionsResponse} from './responses/ParsedSaveSectionsResponse';
+import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
+import {SaveSectionsReadingResponse} from './responses/SaveSectionsReadingResponse';
 import {SaveSectionsSerializerPort} from './ports/SaveSectionsSerializerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {SaveFilesWithoutUniqueHostResponse} from './responses/SaveFilesWithoutUniqueHostResponse';
-import {MergeWarning} from './responses/MergeWarning';
+import {MergeWarningResponse} from './responses/MergeWarningResponse';
 import {ValidationIssue} from './ports/ValidationIssue';
 import {VALIDATION_ISSUE_CODES} from './ports/validationIssueCodes';
-import {SaveValidationResult} from './ports/SaveValidationResult';
+import {SaveValidationResponse} from './responses/SaveValidationResponse';
 import {UnreadableLine} from './ports/SaveSectionLocation';
-import {SaveWarning} from 'shared-save-processing/gameDefinitions';
-import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import type {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {createPlayerEntry, createSaveConfigurationEntry, createTerrainLayerEntry} from '../testing/createSaveEntries';
 import {createSaveSections} from '../testing/createSaveSections';
+import {INVENTORIES_SECTION, PLAYERS_SECTION} from '../testing/saveSectionLocations';
+import {stubGameReleasesReader} from '../testing/stubGameReleasesReader';
+import {FileNameSanitizerPort} from './ports/FileNameSanitizerPort';
 import {FakeSaveSectionsMapperService} from '../testing/FakeSaveSectionsMapperService';
 import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/SaveSectionsWithPlayers';
 
@@ -24,20 +28,20 @@ describe('MergeSaveFiles', () => {
 
   const TWO_VALID_SAVES = {fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'};
   const noErrorsFromTheMerge: ValidationIssue[] = [];
-  const noMergeWarnings: MergeWarning[] = [];
+  const noMergeWarnings: MergeWarningResponse[] = [];
   const noParseErrors: UnreadableLine[] = [];
 
-  const ACCEPTED: SaveValidationResult = {isValid: true, errors: [], warnings: []};
-  const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResult => ({isValid: false, errors, warnings: []});
-  const acceptedWith = (...warnings: SaveWarning[]): SaveValidationResult => ({isValid: true, errors: [], warnings});
+  const ACCEPTED: SaveValidationResponse = {isValid: true, errors: [], warnings: []};
+  const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResponse => ({isValid: false, errors, warnings: []});
+  const acceptedWith = (...warnings: SaveWarning[]): SaveValidationResponse => ({isValid: true, errors: [], warnings});
 
-  const validatorAnswering = (resultsByContent: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
+  const validatorAnswering = (resultsByContent: Record<string, SaveValidationResponse>): SaveValidatorPort['validate'] =>
     (content: string) => resultsByContent[content] ?? ACCEPTED;
 
-  const parserAnswering = (savesByContent: Record<string, ParsedSaveSections>): SaveSectionsParserPort['parse'] =>
+  const parserAnswering = (savesByContent: Record<string, ParsedSaveSectionsResponse>): SaveSectionsParserPort['parse'] =>
     (content: string) => savesByContent[content] ?? {sections: createSaveSections(), errors: noParseErrors};
 
-  const readerAnswering = (readingsByContent: Record<string, SaveSectionsReading>): SaveSectionsReaderPort['read'] =>
+  const readerAnswering = (readingsByContent: Record<string, SaveSectionsReadingResponse>): SaveSectionsReaderPort['read'] =>
     (content: string) => readingsByContent[content] ?? {saveSections: new FakeSaveSectionsMapperService(), unreadableLines: noParseErrors};
 
   interface UseCaseOverrides {
@@ -52,6 +56,7 @@ describe('MergeSaveFiles', () => {
     const reader: SaveSectionsReaderPort = {read: mock(read)};
     const parser: SaveSectionsParserPort = {parse: mock(parse)};
     const serializer: SaveSectionsSerializerPort = {serialize: mock(() => 'merged content')};
+    const fileNameSanitizer: FileNameSanitizerPort = {sanitize: mock(() => ({fileName: 'Save-A-Save-B-merged.json', stem: 'Save-A-Save-B-merged'}))};
     const presenter: MergeResultPresenterPort = {
       presentMergeSucceeded: mock(),
       presentSaveFilesInvalid: mock(),
@@ -59,8 +64,26 @@ describe('MergeSaveFiles', () => {
       presentMergedSaveUnusable: mock()
     };
 
-    return {useCase: new MergeSaveFiles(validator, reader, parser, serializer, presenter), validator, reader, parser, serializer, presenter};
+    return {useCase: new MergeSaveFiles(validator, reader, parser, serializer, stubGameReleasesReader(), fileNameSanitizer, presenter), validator, reader, parser, serializer, fileNameSanitizer, presenter};
   }
+
+  describe('When the release a save declares contradicts the format it carries', () => {
+    it('should present the contradiction among the warnings of that save', async () => {
+      // Arrange
+      const {useCase, presenter} = createUseCase({
+        validate: validatorAnswering({contentA: {isValid: true, errors: [], warnings: [], declaredVersion: '1.0', carriedRelease: '2.004'}})
+      });
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(presenter.presentMergeSucceeded).toHaveBeenCalledWith(expect.objectContaining({
+        saveAWarnings: [{code: 'declared-release-contradicts-content', declaredVersion: '1.0', declaredRelease: '1.618', carriedRelease: '2.004'}],
+        saveBWarnings: []
+      }));
+    });
+  });
 
   describe('When both saves are valid', () => {
     it('should present a success result with the merged file name and content', async () => {
@@ -80,6 +103,17 @@ describe('MergeSaveFiles', () => {
         saveAWarnings: [],
         saveBWarnings: []
       } satisfies MergeSucceededResponse);
+    });
+
+    it('should name the merged file after both source files, marked as merged', async () => {
+      // Arrange
+      const {useCase, fileNameSanitizer} = createUseCase();
+
+      // Act
+      await useCase.execute(TWO_VALID_SAVES);
+
+      // Assert
+      expect(fileNameSanitizer.sanitize).toHaveBeenCalledWith({sourceFileNames: ['Save-A.json', 'Save-B.json'], suffix: '-merged'});
     });
 
     it('should hand the serializer the sections merged from both saves, with their identifier conflicts resolved', async () => {
@@ -225,7 +259,7 @@ describe('MergeSaveFiles', () => {
   describe('When the two saves carry the legacy format', () => {
     it('should not state that the legacy format could have been kept, no format being lost', async () => {
       // Arrange
-      const legacySave: ParsedSaveSections = {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()]}), errors: noParseErrors};
+      const legacySave: ParsedSaveSectionsResponse = {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()]}), errors: noParseErrors};
       const {useCase, presenter} = createUseCase({parse: parserAnswering({contentA: legacySave, contentB: legacySave})});
 
       // Act
@@ -239,7 +273,7 @@ describe('MergeSaveFiles', () => {
   describe('When at least one save is invalid', () => {
     it('should present a validation error result without parsing the saves for the merge', async () => {
       // Arrange
-      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentA'};
+      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: PLAYERS_SECTION, entryIndex: 0, line: 'contentA'};
       const {useCase, parser, presenter} = createUseCase({
         validate: validatorAnswering({contentA: rejectedWith(invalidJsonError)})
       });
@@ -259,7 +293,7 @@ describe('MergeSaveFiles', () => {
   describe('When a save file has no JSON extension', () => {
     it('should present that save as without JSON extension beside the findings of the other save', async () => {
       // Arrange
-      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentB'};
+      const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: PLAYERS_SECTION, entryIndex: 0, line: 'contentB'};
       const {useCase, presenter} = createUseCase({
         hasJsonExtension: (fileName: string) => fileName !== 'Save-A.txt',
         validate: validatorAnswering({contentB: {isValid: false, errors: [invalidJsonError], warnings: [{code: 'legacy-save-format'}]}})
@@ -316,7 +350,7 @@ describe('MergeSaveFiles', () => {
     describe('When the merge is rejected', () => {
       it('should present the warnings of each save', async () => {
         // Arrange
-        const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'players', index: PLAYERS_SECTION_INDEX}, entryIndex: 0, line: 'contentB'};
+        const invalidJsonError: ValidationIssue = {code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: PLAYERS_SECTION, entryIndex: 0, line: 'contentB'};
         const {useCase, presenter} = createUseCase({
           validate: validatorAnswering({
             contentA: acceptedWith({code: 'legacy-save-format'}),
@@ -339,7 +373,7 @@ describe('MergeSaveFiles', () => {
   describe('When the merged save does not pass validation', () => {
     const missingPlayerName: ValidationIssue = {
       code: VALIDATION_ISSUE_CODES.MISSING_FIELD,
-      section: {name: 'players', index: PLAYERS_SECTION_INDEX},
+      section: PLAYERS_SECTION,
       entryIndex: 0,
       fieldPath: '',
       missingFieldName: 'name'
@@ -391,7 +425,7 @@ describe('MergeSaveFiles', () => {
   });
 
   describe('When a save reaches the merge with a line that cannot be read', () => {
-    const unreadableLine: UnreadableLine = {section: {name: 'inventories', index: INVENTORIES_SECTION_INDEX}, entryIndex: 0, line: '{not valid json'};
+    const unreadableLine: UnreadableLine = {section: INVENTORIES_SECTION, entryIndex: 0, line: '{not valid json'};
     const readSaveAWithAnUnreadableLine = readerAnswering({contentA: {saveSections: new FakeSaveSectionsMapperService(), unreadableLines: [unreadableLine]}});
 
     it('should present the merged save as unusable instead of a success', async () => {

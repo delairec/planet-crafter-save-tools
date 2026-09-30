@@ -1,4 +1,4 @@
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import type {SaveWarning} from "shared-save-processing/gameDefinitions";
 
 export interface SaveFilesWithoutUniqueHostResponse {
   saveAWrongHostCount?: number;

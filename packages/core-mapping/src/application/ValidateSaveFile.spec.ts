@@ -6,15 +6,18 @@ import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
 import {ValidationIssue} from './ports/ValidationIssue';
 import {VALIDATION_ISSUE_CODES} from './ports/validationIssueCodes';
 import {UnreadableLine} from './ports/SaveSectionLocation';
-import {SaveWarning} from 'shared-save-processing/gameDefinitions';
-import {WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import type {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {SAVE_CONTENT, stubSaveSectionsReader} from '../testing/stubSaveSectionsReader';
+import {stubGameReleasesReader} from '../testing/stubGameReleasesReader';
+import {WORLD_OBJECTS_SECTION} from '../testing/saveSectionLocations';
+import {CarriedAndDeclaredReleases} from '../domain/rules/detectDeclaredReleaseContradiction';
 import {createPlayerFlaggedAsHost, SaveSectionsWithPlayers} from '../testing/SaveSectionsWithPlayers';
 
 interface UseCaseOverrides {
   fileHasJsonExtension?: boolean;
   validationErrors?: ValidationIssue[];
   validationWarnings?: SaveWarning[];
+  declaredAndCarriedReleases?: CarriedAndDeclaredReleases;
   saveSectionsReader?: SaveSectionsReaderPort;
 }
 
@@ -22,11 +25,12 @@ function setupUseCase({
                         fileHasJsonExtension = true,
                         validationErrors = [],
                         validationWarnings = [],
+                        declaredAndCarriedReleases = {declaredVersion: undefined, carriedRelease: undefined},
                         saveSectionsReader = stubSaveSectionsReader()
                       }: UseCaseOverrides = {}) {
   const validator: SaveValidatorPort = {
     hasJsonExtension: mock(() => fileHasJsonExtension),
-    validate: mock(() => ({isValid: validationErrors.length === 0, errors: validationErrors, warnings: validationWarnings}))
+    validate: mock(() => ({isValid: validationErrors.length === 0, errors: validationErrors, warnings: validationWarnings, ...declaredAndCarriedReleases}))
   };
   const reader: SaveSectionsReaderPort = {read: mock(saveSectionsReader.read)};
   const presenter: SaveFileValidationPresenterPort = {
@@ -37,10 +41,29 @@ function setupUseCase({
     presentSaveFileWithoutUniqueHost: mock()
   };
 
-  return {useCase: new ValidateSaveFile(validator, reader, presenter), validator, reader, presenter};
+  return {useCase: new ValidateSaveFile(validator, reader, stubGameReleasesReader(), presenter), validator, reader, presenter};
 }
 
 describe('ValidateSaveFile', () => {
+
+  describe('When the release the save declares contradicts the format it carries', () => {
+    it('should present the contradiction after the warnings of the validation', async () => {
+      // Arrange
+      const {useCase, presenter} = setupUseCase({
+        validationWarnings: [{code: 'legacy-save-format'}],
+        declaredAndCarriedReleases: {declaredVersion: '2.103', carriedRelease: '1.618'}
+      });
+
+      // Act
+      await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.presentValidSaveFile).toHaveBeenCalledWith([
+        {code: 'legacy-save-format'},
+        {code: 'declared-release-contradicts-content', declaredVersion: '2.103', declaredRelease: '2.102', carriedRelease: '1.618'}
+      ]);
+    });
+  });
 
   describe('When the save file is valid', () => {
     it('should present a valid save file', async () => {
@@ -55,6 +78,21 @@ describe('ValidateSaveFile', () => {
       expect(presenter.presentValidSaveFile).toHaveBeenCalledWith([]);
       expect(presenter.presentInvalidSaveFile).not.toHaveBeenCalled();
       expect(presenter.presentSaveFileWithoutUniqueHost).not.toHaveBeenCalled();
+    });
+
+    it('should keep the warnings alongside the unreadable lines', async () => {
+      // Arrange
+      const unreadableLine: UnreadableLine = {section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'};
+      const {useCase, presenter} = setupUseCase({
+        validationWarnings: [{code: 'legacy-save-format'}],
+        saveSectionsReader: stubSaveSectionsReader({unreadableLines: [unreadableLine]})
+      });
+
+      // Act
+      await useCase.execute({fileName: 'Save-A.json', content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.presentSaveFileWithUnreadableLines).toHaveBeenCalledWith([unreadableLine], [{code: 'legacy-save-format'}]);
     });
   });
 
@@ -92,7 +130,7 @@ describe('ValidateSaveFile', () => {
   describe('When the reader cannot read some lines of a valid save file', () => {
     it('should present the save file with its unreadable lines, never as a valid save file', async () => {
       // Arrange
-      const unreadableLine: UnreadableLine = {section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'};
+      const unreadableLine: UnreadableLine = {section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'};
       const {useCase, presenter} = setupUseCase({saveSectionsReader: stubSaveSectionsReader({unreadableLines: [unreadableLine]})});
 
       // Act
@@ -153,7 +191,7 @@ describe('ValidateSaveFile', () => {
 
     it('should present the warnings of an invalid save file too', async () => {
       // Arrange
-      const validationErrors: ValidationIssue[] = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: {name: 'worldObjects', index: WORLD_OBJECTS_SECTION_INDEX}, entryIndex: 2, line: '{'}];
+      const validationErrors: ValidationIssue[] = [{code: VALIDATION_ISSUE_CODES.INVALID_JSON, section: WORLD_OBJECTS_SECTION, entryIndex: 2, line: '{'}];
       const {useCase, presenter} = setupUseCase({validationErrors, validationWarnings: [{code: 'legacy-save-format'}]});
 
       // Act

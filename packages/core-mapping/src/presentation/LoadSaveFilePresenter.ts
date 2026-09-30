@@ -1,4 +1,4 @@
-import {LoadAndValidateSaveFilePresenterPort} from "../application/ports/LoadAndValidateSaveFilePresenterPort";
+import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import {ValidationIssue} from "../application/ports/ValidationIssue";
 import {SaveWarning} from "shared-save-processing/gameDefinitions";
 import {UnreadableLine} from "../application/ports/SaveSectionLocation";
@@ -9,7 +9,7 @@ import {formatSaveWarning} from "./formatSaveWarning";
 import {formatUniqueHostError} from "./formatUniqueHostError";
 import {formatJsonExtensionError} from "./formatJsonExtensionError";
 
-export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPort {
+export class LoadSaveFilePresenter implements SaveFileValidationPresenterPort {
   private _viewModel: LoadSaveFileViewModel;
 
   constructor() {
@@ -28,7 +28,7 @@ export class LoadSaveFilePresenter implements LoadAndValidateSaveFilePresenterPo
     };
   }
 
-  presentLoadedSaveFile(warnings: SaveWarning[]): void {
+  presentValidSaveFile(warnings: SaveWarning[]): void {
     this._viewModel = {
       status: 'valid',
       errors: [],

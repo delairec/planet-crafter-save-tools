@@ -42,7 +42,7 @@ describe('validateSaveContent', () => {
       const result = validateSaveContent(save);
 
       // Assert
-      expect(result).toEqual({isValid: true, errors: [], warnings: []});
+      expect(result).toEqual({isValid: true, errors: [], warnings: [], declaredVersion: '2.004', carriedRelease: '2.004'});
     });
   });
 
@@ -133,7 +133,7 @@ describe('validateSaveContent', () => {
         const result = validateSaveContent(save);
 
         // Assert
-        expect(result).toEqual({isValid: true, errors: [], warnings: []});
+        expect(result).toEqual({isValid: true, errors: [], warnings: [], declaredVersion: '2.004', carriedRelease: '2.004'});
       });
     });
 
@@ -519,7 +519,7 @@ describe('validateSaveContent', () => {
         const result = validateSaveContent(save);
 
         // Assert
-        expect(result).toEqual({isValid: true, errors: [], warnings: []});
+        expect(result).toEqual({isValid: true, errors: [], warnings: [], declaredVersion: '2.004', carriedRelease: '2.004'});
       });
     });
 
@@ -560,7 +560,7 @@ describe('validateSaveContent', () => {
       const result = validateSaveContent(save);
 
       // Assert
-      expect(result).toEqual({isValid: true, errors: [], warnings: [{code: 'legacy-save-format'}]});
+      expect(result).toEqual({isValid: true, errors: [], warnings: [{code: 'legacy-save-format'}], declaredVersion: '1.618', carriedRelease: '1.618'});
     });
 
     describe('When a Terrain Layers entry lacks a property the game writes in every entry', () => {

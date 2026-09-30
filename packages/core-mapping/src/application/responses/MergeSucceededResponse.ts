@@ -1,12 +1,12 @@
 import {ValidationIssue} from "../ports/ValidationIssue";
-import {MergeWarning} from "./MergeWarning";
-import {SaveWarning} from "shared-save-processing/gameDefinitions";
+import {MergeWarningResponse} from "./MergeWarningResponse";
+import type {SaveWarning} from "shared-save-processing/gameDefinitions";
 
 export interface MergeSucceededResponse {
   fileName: string;
   content: string;
   mergeErrors: ValidationIssue[];
-  mergeWarnings: MergeWarning[];
+  mergeWarnings: MergeWarningResponse[];
   legacyFormatCouldBeKept: boolean;
   saveAWarnings: SaveWarning[];
   saveBWarnings: SaveWarning[];
