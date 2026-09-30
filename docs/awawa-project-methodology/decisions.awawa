@@ -2067,21 +2067,30 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 		PR 144
 
 DECISION TheSectionValidatorsAreGeneratedAndVersioned
-	SPEC "The section validators are Ajv standalone code generated from the JSON Schemas of"
-		+ "shared-save-processing into core-mapping and versioned; the CLI and the web UI validate"
-		+ "through that module, and no schema is compiled at run time"
-		IMPL "packages/core-mapping/scripts/generate-section-validators.ts::standaloneCode"
-		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::./sectionValidators.generated.js"
+	SPEC "The section validators are Ajv standalone code that shared-save-processing, which owns"
+		+ "the JSON Schemas, generates from them, versions and exports; the infrastructure of"
+		+ "core-mapping imports that module, the CLI and the web UI validate through it, and no"
+		+ "schema is compiled at run time"
+		IMPL "packages/shared-save-processing/scripts/generate-section-validators.ts::standaloneCode"
+		IMPL "packages/core-mapping/src/infrastructure/validateSchemas.js::shared-save-processing/sectionValidators.generated.js"
 	SPEC "bun run guards fails when the versioned module differs from what the generator writes"
-		IMPL "packages/core-mapping/scripts/check-section-validators.ts"
-		ENFORCED_BY "packages/core-mapping/scripts/check-section-validators.spec.ts"
+		IMPL "packages/shared-save-processing/scripts/check-section-validators.ts"
+		ENFORCED_BY "packages/shared-save-processing/scripts/check-section-validators.spec.ts"
+	SPEC "Ajv is a development dependency of shared-save-processing alone: the generated module"
+		+ "imports no Ajv runtime helper"
+		IMPL "packages/shared-save-processing/package.json::ajv"
 	REJECTED "A Vite plugin generating the validators at build time: the CLI would keep a second"
 		+ "path compiling at run time"
 	REJECTED "An unversioned generation: bun test and the CLI would depend on a step having run"
+	REJECTED "Generating from core-mapping/scripts/: a core- package would import the schemas of"
+		+ "another workspace package outside its infrastructure"
+	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.REFACTOR170
 	RATIONALE "Ajv compiles a schema with new Function, which the content security policy of the"
 		+ "web UI refuses without 'unsafe-eval'"
 	SOURCE "Refinement of FIX104 with the user on 2026-09-24"
+	SOURCE "Owner ruling during the launch of REFACTOR170, 2026-09-30"
 
 DECISION TheScheduledDependencyAuditRunsMonthly
 	SPEC "The scheduled run of the Dependencies workflow audits the dependencies once a month"
@@ -2486,7 +2495,7 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 		+ "receives, and the test passes a fake"
 		IMPL "scripts/specSources.ts::readOwnSourceFiles(io: ScriptIo"
 		IMPL "scripts/scriptIo.ts::export interface ScriptIo"
-		IMPL "packages/core-mapping/scripts/sectionValidatorsFile.ts::export interface"
+		IMPL "packages/shared-save-processing/scripts/sectionValidatorsFile.ts::export interface"
 			+ "SectionValidatorsFileIo"
 	SPEC "The entry of a script hands its main function and import.meta.main to runAsEntryPoint,"
 		+ "which alone gives it the input and output of the process"
@@ -2494,8 +2503,8 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 		IMPL "scripts/scriptIo.ts::export function runAsEntryPoint"
 		IMPL "scripts/generate-scenario-fixtures.ts::await runAsEntryPointWith(import.meta.main,"
 			+ "generateScenarioFixtures, console.log)"
-		IMPL "packages/core-mapping/scripts/sectionValidatorsFile.ts::export async function"
-			+ "runAsEntryPoint"
+		IMPL "packages/shared-save-processing/scripts/sectionValidatorsFile.ts::export async"
+			+ "function runAsEntryPoint"
 	SPEC "Only a module holding the real input and output is ignored by the coverage, listed in the"
 		+ "coveragePathIgnorePatterns of bunfig.toml"
 		IMPL "bunfig.toml::coveragePathIgnorePatterns ="

@@ -43,9 +43,6 @@
         "data-world-objects": "*",
         "shared-save-processing": "*",
       },
-      "devDependencies": {
-        "ajv": "^8.20.0",
-      },
     },
     "packages/data-energy": {
       "name": "data-energy",
@@ -75,6 +72,9 @@
       "version": "1.0.0",
       "dependencies": {
         "data-save-format": "*",
+      },
+      "devDependencies": {
+        "ajv": "^8.20.0",
       },
     },
     "packages/ui-save-manager": {

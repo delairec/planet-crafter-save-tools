@@ -1,17 +1,17 @@
 import Ajv from 'ajv';
 import standaloneCode from 'ajv/dist/standalone';
 import {runAsEntryPoint, type SectionValidatorsFileIo} from './sectionValidatorsFile.ts';
-import schema0 from 'shared-save-processing/schemas/section0-player-progression.schema.json' with {type: 'json'};
-import schema1 from 'shared-save-processing/schemas/section1-terraformation-levels.schema.json' with {type: 'json'};
-import schema2 from 'shared-save-processing/schemas/section2-players.schema.json' with {type: 'json'};
-import schema3 from 'shared-save-processing/schemas/section3-world-objects.schema.json' with {type: 'json'};
-import schema4 from 'shared-save-processing/schemas/section4-inventories.schema.json' with {type: 'json'};
-import schema5 from 'shared-save-processing/schemas/section5-statistics.schema.json' with {type: 'json'};
-import schema6 from 'shared-save-processing/schemas/section6-messages.schema.json' with {type: 'json'};
-import schema7 from 'shared-save-processing/schemas/section7-story-events.schema.json' with {type: 'json'};
-import schema8 from 'shared-save-processing/schemas/section8-save-config.schema.json' with {type: 'json'};
-import schema9 from 'shared-save-processing/schemas/section9-world-events.schema.json' with {type: 'json'};
-import legacyTerrainLayersSchema from 'shared-save-processing/schemas/legacy-section9-terrain-layers.schema.json' with {type: 'json'};
+import schema0 from '../schemas/section0-player-progression.schema.json' with {type: 'json'};
+import schema1 from '../schemas/section1-terraformation-levels.schema.json' with {type: 'json'};
+import schema2 from '../schemas/section2-players.schema.json' with {type: 'json'};
+import schema3 from '../schemas/section3-world-objects.schema.json' with {type: 'json'};
+import schema4 from '../schemas/section4-inventories.schema.json' with {type: 'json'};
+import schema5 from '../schemas/section5-statistics.schema.json' with {type: 'json'};
+import schema6 from '../schemas/section6-messages.schema.json' with {type: 'json'};
+import schema7 from '../schemas/section7-story-events.schema.json' with {type: 'json'};
+import schema8 from '../schemas/section8-save-config.schema.json' with {type: 'json'};
+import schema9 from '../schemas/section9-world-events.schema.json' with {type: 'json'};
+import legacyTerrainLayersSchema from '../schemas/legacy-section9-terrain-layers.schema.json' with {type: 'json'};
 
 const SECTION_SCHEMAS = [schema0, schema1, schema2, schema3, schema4, schema5, schema6, schema7, schema8, schema9, legacyTerrainLayersSchema];
 

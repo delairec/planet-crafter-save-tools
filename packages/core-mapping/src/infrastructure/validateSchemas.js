@@ -11,7 +11,7 @@ import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
 import {locateSaveSection} from './locateSaveSection.ts';
 import {mapSchemaErrorToValidationIssue} from './mapSchemaErrorToValidationIssue.ts';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
-import {SECTION_VALIDATORS_BY_SCHEMA_ID} from './sectionValidators.generated.js';
+import {SECTION_VALIDATORS_BY_SCHEMA_ID} from 'shared-save-processing/sectionValidators.generated.js';
 
 /**
  * @typedef {object} SaveFileSectionSchema
