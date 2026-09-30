@@ -8,7 +8,6 @@
     "./*": "./*.ts"
   },
   "scripts": {
-    "lint:types": "tsc --noEmit",
-    "validate:tables": "bun ../../scripts/validate-tables/validate-tables.ts energyLevels energyLevelsByRelease/2.004:energyLevelsOfRelease"
+    "lint:types": "tsc --noEmit"
   }
 }
