@@ -89,6 +89,8 @@ DECISION ABrokenInvariantFailsWithANamedErrorType
 		PR 48
 	SOURCE "Domain layer"
 		PR 102
+	SOURCE "The removal of the explanatory comments of core-mapping: the error types keep no JSDoc"
+		PR 244
 
 DECISION ValidationIsTheSingleSourceOfWarnings
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -3617,3 +3619,4 @@ DECISION AControllerIsBuiltAroundItsUseCaseFactory
 		+ "specs of the CLIs and the scenarios of the save manager"
 	SOURCE "Owner ruling during the refinement of the task: the controller modules keep their"
 		+ "import path and export the controller wired with the factories of the composition root"
+		PR 244

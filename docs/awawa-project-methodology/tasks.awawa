@@ -1599,29 +1599,46 @@ TASK REFACTOR165
 
 TASK REFACTOR166
 	TITLE "refactor(core-mapping): inject the use cases into the controllers"
-	STATUS todo
+	STATUS implemented
 	SPEC "a controller of core-mapping is a class whose constructor takes the factory that builds"
 		+ "its use case around the presenter the controller provides; it imports no infrastructure"
 		+ "module and instantiates no adapter"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.ts::constructor(private"
+			+ "readonly createMergeSaveFiles"
+		IMPL "packages/core-mapping/src/application/UseCaseFactory.ts::export type UseCaseFactory"
 	SPEC "the CLIs and the save manager keep importing core-mapping/controllers/X: each controller"
 		+ "module exports, next to the class, the controller wired with the factory the composition"
 		+ "root exports, and the composition root imports no controller"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.ts::export const"
+			+ "mergeSaveFilesController"
+		IMPL "packages/core-mapping/src/composition/compositionRoot.ts::export function"
+			+ "createMergeSaveFiles"
 	SPEC "that ruling is recorded as a DECISION applying to the task, its rejected alternatives"
 		+ "being the composition root building and exporting the wired controllers, which moves the"
 		+ "import path the CLIs keep by TheModulesTheClisImportKeepTheirContract, and controller"
 		+ "functions taking their use case from their caller"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::AControllerIsBuiltAroundItsUseCaseFactory"
 		REF @DECISION.TheModulesTheClisImportKeepTheirContract
 	SPEC "a controller spec runs against a test double of its use case factory, no controller spec"
 		+ "reaching the real infrastructure; AControllerSpecCoversWiringNotBranches is archived"
+		IMPL "packages/core-mapping/src/controllers/MergeSaveFilesController.spec.ts::function"
+			+ "createController"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::AControllerSpecCoversWiringNotBranches"
 		REF @DECISION.AControllerSpecCoversWiringNotBranches
 	SPEC "no module of core-mapping carries an explanatory comment, JSDoc blocks included: the"
 		+ "comments left are the annotations a tool reads, a JSDoc tag typing a JavaScript module"
 		+ "or a directive the compiler or the audit reads (ts-expect-error, ts-nocheck,"
 		+ "fallow-ignore-file), and the provenance header of a generated or regenerated file"
+		IMPL "packages/core-mapping/src"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::ABrokenInvariantFailsWithANamedErrorType"
 	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
 		+ "unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts"
 	AFTER @TASK.REFACTOR161
 	AFTER @TASK.REFACTOR168
+	DELIVERED_BY 244
 	WAVE @WAVE.14
 	PRIORITY low
 	DESC "fixes violations 14 and 15 of the audit"
