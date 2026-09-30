@@ -1969,22 +1969,3 @@ TASK REFACTOR170
 	SOURCE "Owner ruling in the review of REFACTOR163: a section index is read from the constant"
 		+ "that declares the order of the sections, never restated in the test support"
 		PR 241
-
-TASK REFACTOR171
-	TITLE "refactor(cli-merge): the entry file hands the merge controller to initMergeCli"
-	STATUS draft
-	SPEC "initMergeCli takes the merge of two saves as a parameter with no default, and"
-		+ "merge-cli.js passes it the merge of the wired controller of core-mapping"
-	SPEC "the spec of initMergeCli hands its merge explicitly, the real controller or a double"
-	AFTER @TASK.REFACTOR166
-	PRIORITY low
-	DESC "removes a dependency injected with a default that production never overrides"
-	RATIONALE "The fourth parameter of initMergeCli defaults to the controller of core-mapping and"
-		+ "only its spec hands another, the seam the instructions rule"
-		+ "production_signature_not_deformed_for_test forbids; the entry file already creates the"
-		+ "platform and calls the initialiser, so it can pass the controller. REFACTOR166 keeps the"
-		+ "spec of cli-merge unchanged to prove the controllers kept their contract, so the fix,"
-		+ "which changes that spec, takes a pull request of its own"
-		REF @TASK.REFACTOR166
-	SOURCE "Clean Architecture review of the pull request delivering REFACTOR166"
-		PR 244
