@@ -1,3 +1,4 @@
+import {mergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesController';
 import {getCliArguments} from 'shared-platforms/platform.common.js';
 import {extractPlatformParameter} from 'shared-platforms/extractPlatformParameter.js';
 import {createPlatform} from 'shared-platforms/platform.js';
@@ -8,7 +9,7 @@ import {renderUnexpectedError} from './renderMergeCliOutput.js';
 
 const cliArguments = getCliArguments();
 const platform = createPlatform(extractPlatformParameter(cliArguments));
-const {main} = initMergeCli(platform, cliArguments, cliManifest);
+const {main} = initMergeCli(platform, cliArguments, cliManifest, (request) => mergeSaveFilesController.mergeSaveFiles(request));
 
 runWhenEntryPoint(platform, {
   importMeta: import.meta,

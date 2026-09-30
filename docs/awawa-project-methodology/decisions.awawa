@@ -2800,7 +2800,7 @@ DECISION TheModulesTheClisImportKeepTheirContract
 		+ "formatValidationIssue, formatErrorLocation, formatSaveWarning, formatMergeWarning, the"
 		+ "saveWarning, mergeWarning, mergeFailure and saveSectionLabels messages, the validator,"
 		+ "parser and serializer services and shared-save-processing"
-		IMPL "packages/cli-merge/cli/initMergeCli.js::MergeSaveFilesController"
+		IMPL "packages/cli-merge/cli/merge-cli.js::MergeSaveFilesController"
 		IMPL "packages/cli-validate/cli/initValidateCli.js::ValidateSaveFileController"
 		ENFORCED_BY "packages/cli-merge/cli/initMergeCli.spec.js"
 		ENFORCED_BY "packages/cli-validate/cli/initValidateCli.spec.js"

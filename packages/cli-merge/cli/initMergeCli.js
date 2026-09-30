@@ -1,6 +1,5 @@
 /** @import { MergeResultViewModel } from 'core-mapping/presentation/viewModels/MergeResultViewModel' */
 
-import {mergeSaveFilesController} from 'core-mapping/controllers/MergeSaveFilesController';
 import {hasJsonExtension} from 'shared-save-processing/jsonExtension.js';
 import {parseMergeCliArguments} from './parseMergeCliArguments.js';
 import {
@@ -39,7 +38,7 @@ function hasReport({saveAWarnings, saveBWarnings, mergeErrors, mergeWarnings}) {
   return [saveAWarnings, saveBWarnings, mergeErrors, mergeWarnings].some(messages => messages.length > 0);
 }
 
-export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = [], release, mergeSaveFiles = (request) => mergeSaveFilesController.mergeSaveFiles(request)) {
+export function initMergeCli({readTextFile, exitProcess, readDirectory, writeTextFile, joinPath}, argv = [], release, mergeSaveFiles) {
   const {inputDir, outputDir, preferLegacyFormat, isVersionAsked, isHelpAsked, unknownArguments} = parseMergeCliArguments(argv);
 
   /**
