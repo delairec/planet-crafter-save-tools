@@ -934,6 +934,9 @@ DECISION NameMergedFileEscapesControlCharacters
 		+ "binary diff"
 	SOURCE "Owner ruling"
 		PR 62
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION AUsageReportIsCommittedInTheTaskPullRequest
 	SPEC "A task pull request gets one usage report, following the template, committed on its"
@@ -1565,6 +1568,9 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 	SOURCE "The table, the resolution of a declared version and the contradiction warning, on"
 		+ "delivery of the task"
 		PR 124
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SPEC "Every text/background token pair the stylesheets of packages/ui-save-manager/src compose"
@@ -1811,6 +1817,9 @@ DECISION AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 	SOURCE "Agent ruling while implementing FEAT94, 2026-09-24"
 		PR 151
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION ATaskBranchRunsTheAcceptanceListOfTheWorktreeInstructions
 	SPEC "A task branch runs bun test, bun run lint:types, bun run guards, awawa fmt --check . and"
@@ -2657,6 +2666,9 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 		+ "gameReleaseNote dans un disclaimer sous celui des submerged machines, et uniquement"
 		+ "lorsque la release est legacy, pour la current, pas de disclaimer\""
 		PR 189
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 	SPEC "PlanetEnergyGrid multiplies each base consumption level by modifierPowerConsumption once,"
@@ -2988,6 +3000,9 @@ DECISION TheSaveIdentityShowsTheResolvedGameRelease
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SOURCE "Owner ruling of 2026-09-27 at the launch of wave 10"
 		PR 205
+	SOURCE "Rewritten in place on delivery of REFACTOR163, its anchors naming the code the task"
+		+ "leaves"
+		PR 241
 
 DECISION APlayerOnAnEmptyPlanetShowsNoPlanet
 	SPEC "the players menu shows no planet for a player whose planet is empty, and the planet of"
@@ -3542,6 +3557,7 @@ DECISION TheValidatorReportsTheReleasesTheUseCasesJudge
 		+ "on its single pass; the judgement that they contradict each other needs the releases"
 		+ "table, which reaches the use case through its port"
 	SOURCE "Agent ruling while implementing REFACTOR163"
+		PR 241
 
 DECISION OnlyImportTypeCrossesIntoTheCoreInnerLayers
 	SPEC "a file under domain/ or application/ of a core- package, spec files included, imports"
@@ -3563,3 +3579,4 @@ DECISION OnlyImportTypeCrossesIntoTheCoreInnerLayers
 	RATIONALE "A JSDoc @import and a commented-out import are comments, erased before run time, so"
 		+ "the guard reads statements at the start of a line once the comments are blanked"
 	SOURCE "Agent ruling while implementing REFACTOR163"
+		PR 241
