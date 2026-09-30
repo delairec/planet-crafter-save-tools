@@ -1,6 +1,6 @@
-import {SaveFileFindings} from "./SaveFileFindings";
+import {SaveFileFindingsResponse} from "./SaveFileFindingsResponse";
 
 export interface SaveFilesInvalidResponse {
-  saveA: SaveFileFindings;
-  saveB: SaveFileFindings;
+  saveA: SaveFileFindingsResponse;
+  saveB: SaveFileFindingsResponse;
 }

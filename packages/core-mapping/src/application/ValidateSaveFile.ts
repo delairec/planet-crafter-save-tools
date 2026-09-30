@@ -3,7 +3,7 @@ import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {SaveFileValidationPresenterPort} from "./ports/SaveFileValidationPresenterPort";
 import {ValidateSaveFileRequest} from "./requests/ValidateSaveFileRequest";
-import {SaveValidationResult} from "./responses/SaveValidationResult";
+import {SaveValidationResponse} from "./responses/SaveValidationResponse";
 import {validateUniqueHost} from "../domain/rules/validateUniqueHost";
 import {detectDeclaredReleaseContradiction} from "../domain/rules/detectDeclaredReleaseContradiction";
 
@@ -24,7 +24,7 @@ export class ValidateSaveFile {
 
     const validation = this.validator.validate(content);
     const contradiction = detectDeclaredReleaseContradiction(validation, this.gameReleasesReader.readGameReleases());
-    const warnings: SaveValidationResult['warnings'] = contradiction === null ? validation.warnings : [...validation.warnings, {code: 'declared-release-contradicts-content', ...contradiction}];
+    const warnings: SaveValidationResponse['warnings'] = contradiction === null ? validation.warnings : [...validation.warnings, {code: 'declared-release-contradicts-content', ...contradiction}];
 
     if (!validation.isValid) {
       this.presenter.presentInvalidSaveFile(validation.errors, warnings);

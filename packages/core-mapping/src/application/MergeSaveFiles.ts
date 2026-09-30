@@ -1,15 +1,15 @@
 import {SaveValidatorPort} from "./ports/SaveValidatorPort";
 import {SaveSectionsParserPort} from "./ports/SaveSectionsParserPort";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
-import {SaveSectionsReading} from "./responses/SaveSectionsReading";
+import {SaveSectionsReadingResponse} from "./responses/SaveSectionsReadingResponse";
 import {SaveSectionsSerializerPort} from "./ports/SaveSectionsSerializerPort";
 import {GameReleasesReaderPort} from "./ports/GameReleasesReaderPort";
 import {FileNameSanitizerPort} from "./ports/FileNameSanitizerPort";
 import {MergeResultPresenterPort} from "./ports/MergeResultPresenterPort";
 import {MergeSaveFilesRequest} from "./requests/MergeSaveFilesRequest";
-import {MergeWarning} from "./responses/MergeWarning";
-import {SaveFileFindings} from "./responses/SaveFileFindings";
-import {SaveValidationResult} from "./responses/SaveValidationResult";
+import {MergeWarningResponse} from "./responses/MergeWarningResponse";
+import {SaveFileFindingsResponse} from "./responses/SaveFileFindingsResponse";
+import {SaveValidationResponse} from "./responses/SaveValidationResponse";
 import {mergeSaveSections} from "../domain/rules/merge/mergeSaveSections";
 import {resolveIdConflicts} from "../domain/rules/merge/resolveIdConflicts";
 import {SaveSections} from "../domain/save/SaveSections";
@@ -90,7 +90,7 @@ export class MergeSaveFiles {
   }
 }
 
-type ValidatedSaveFile = {hasJsonExtension: true} & SaveValidationResult;
+type ValidatedSaveFile = {hasJsonExtension: true} & SaveValidationResponse;
 
 type SaveFileValidation = {hasJsonExtension: false} | ValidatedSaveFile;
 
@@ -98,7 +98,7 @@ function isMergeable(validation: SaveFileValidation): validation is ValidatedSav
   return validation.hasJsonExtension && validation.isValid;
 }
 
-function reportFindings(validation: SaveFileValidation): SaveFileFindings {
+function reportFindings(validation: SaveFileValidation): SaveFileFindingsResponse {
   if (!validation.hasJsonExtension) {
     return {hasJsonExtension: false};
   }
@@ -111,7 +111,7 @@ interface WrongHostCounts {
   saveBWrongHostCount?: number;
 }
 
-function findWrongHostCounts(readingA: SaveSectionsReading, readingB: SaveSectionsReading): WrongHostCounts | null {
+function findWrongHostCounts(readingA: SaveSectionsReadingResponse, readingB: SaveSectionsReadingResponse): WrongHostCounts | null {
   const violationA = validateUniqueHost(readingA.saveSections.getPlayers());
   const violationB = validateUniqueHost(readingB.saveSections.getPlayers());
 
@@ -122,14 +122,14 @@ function findWrongHostCounts(readingA: SaveSectionsReading, readingB: SaveSectio
   return {saveAWrongHostCount: violationA?.hostCount, saveBWrongHostCount: violationB?.hostCount};
 }
 
-function reportMergedSaveFormat(sectionsA: SaveSections, sectionsB: SaveSections, mergedSave: SaveSections): MergeWarning[] {
+function reportMergedSaveFormat(sectionsA: SaveSections, sectionsB: SaveSections, mergedSave: SaveSections): MergeWarningResponse[] {
   if (sectionsA.formatRelease === sectionsB.formatRelease) {
     return [];
   }
 
   const writtenRelease = mergedSave.formatRelease;
   const otherRelease = sectionsA.formatRelease === writtenRelease ? sectionsB.formatRelease : sectionsA.formatRelease;
-  const warnings: MergeWarning[] = [{code: 'merged-save-format', formatRelease: writtenRelease}];
+  const warnings: MergeWarningResponse[] = [{code: 'merged-save-format', formatRelease: writtenRelease}];
 
   if (mergedSave.terrainLayers === undefined) {
     warnings.push({code: 'merged-save-section-dropped', section: 'terrainLayers'});

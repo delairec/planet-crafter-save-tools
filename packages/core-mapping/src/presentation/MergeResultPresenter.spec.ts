@@ -5,12 +5,12 @@ import {VALIDATION_ISSUE_CODES} from '../application/ports/validationIssueCodes'
 import {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {INVENTORIES_SECTION_INDEX, PLAYERS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {MergeResultViewModel} from './viewModels/MergeResultViewModel';
-import {MergeWarning} from '../application/responses/MergeWarning';
+import {MergeWarningResponse} from '../application/responses/MergeWarningResponse';
 import {SaveValidationMessageViewModel} from './viewModels/SaveFileValidationViewModel';
 
 const noErrorsFromSaveB: ValidationIssue[] = [];
 const noErrorsFromTheMerge: ValidationIssue[] = [];
-const noMergeWarnings: MergeWarning[] = [];
+const noMergeWarnings: MergeWarningResponse[] = [];
 const noWarningsFromSaveA: SaveWarning[] = [];
 const noWarningsFromSaveB: SaveWarning[] = [];
 

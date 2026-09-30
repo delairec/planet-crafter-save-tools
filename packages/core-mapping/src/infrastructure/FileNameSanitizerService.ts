@@ -1,10 +1,10 @@
 import {stripJsonExtension} from "shared-save-processing/jsonExtension.js";
 import {FileNameSanitizerPort} from "../application/ports/FileNameSanitizerPort";
-import {FileNameParts} from "../application/responses/FileNameParts";
-import {SanitizedFileName} from "../application/responses/SanitizedFileName";
+import {FileNamePartsResponse} from "../application/responses/FileNamePartsResponse";
+import {SanitizedFileNameResponse} from "../application/responses/SanitizedFileNameResponse";
 
 export class FileNameSanitizerService implements FileNameSanitizerPort {
-  sanitize({sourceFileNames, suffix}: FileNameParts): SanitizedFileName {
+  sanitize({sourceFileNames, suffix}: FileNamePartsResponse): SanitizedFileNameResponse {
     const stem = `${sourceFileNames.map((fileName) => sanitizeFileName(stripJsonExtension(fileName))).join('-')}${suffix}`;
 
     return {fileName: `${stem}.json`, stem};

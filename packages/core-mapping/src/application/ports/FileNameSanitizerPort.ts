@@ -1,6 +1,6 @@
-import {FileNameParts} from "../responses/FileNameParts";
-import {SanitizedFileName} from "../responses/SanitizedFileName";
+import {FileNamePartsResponse} from "../responses/FileNamePartsResponse";
+import {SanitizedFileNameResponse} from "../responses/SanitizedFileNameResponse";
 
 export interface FileNameSanitizerPort {
-  sanitize(fileNameParts: FileNameParts): SanitizedFileName;
+  sanitize(fileNameParts: FileNamePartsResponse): SanitizedFileNameResponse;
 }

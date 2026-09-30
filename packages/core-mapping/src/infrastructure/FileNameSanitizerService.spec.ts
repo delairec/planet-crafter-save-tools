@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {SanitizedFileName} from '../application/responses/SanitizedFileName';
+import {SanitizedFileNameResponse} from '../application/responses/SanitizedFileNameResponse';
 import {FileNameSanitizerService} from './FileNameSanitizerService';
 
 describe('FileNameSanitizerService', () => {
@@ -10,7 +10,7 @@ describe('FileNameSanitizerService', () => {
       const result = new FileNameSanitizerService().sanitize({sourceFileNames: ['Standard-1.json', 'Standard-2.json'], suffix: '-merged'});
 
       // Assert
-      expect<SanitizedFileName>(result).toEqual({fileName: 'Standard-1-Standard-2-merged.json', stem: 'Standard-1-Standard-2-merged'});
+      expect<SanitizedFileNameResponse>(result).toEqual({fileName: 'Standard-1-Standard-2-merged.json', stem: 'Standard-1-Standard-2-merged'});
     });
   });
 
@@ -40,7 +40,7 @@ describe('FileNameSanitizerService', () => {
       const result = new FileNameSanitizerService().sanitize({sourceFileNames: ['Standard-1.json'], suffix: ''});
 
       // Assert
-      expect<SanitizedFileName>(result).toEqual({fileName: 'Standard-1.json', stem: 'Standard-1'});
+      expect<SanitizedFileNameResponse>(result).toEqual({fileName: 'Standard-1.json', stem: 'Standard-1'});
     });
   });
 });

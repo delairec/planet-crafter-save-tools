@@ -36,7 +36,7 @@ describe('findRuntimeImports', () => {
 
     it.each([
       ['packages/core-mapping/src/application/MergeSaveFiles.spec.ts'],
-      ['packages/core-mapping/src/application/responses/SaveValidationResult.ts'],
+      ['packages/core-mapping/src/application/responses/SaveValidationResponse.ts'],
       ['packages/core-other/domain/rule.js']
     ])('should report it in %s', (filePath) => {
       // Arrange

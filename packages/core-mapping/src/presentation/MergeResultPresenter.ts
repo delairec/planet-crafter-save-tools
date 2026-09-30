@@ -1,7 +1,7 @@
 import {MergeResultPresenterPort} from "../application/ports/MergeResultPresenterPort";
 import {MergeSucceededResponse} from "../application/responses/MergeSucceededResponse";
 import {SaveFilesInvalidResponse} from "../application/responses/SaveFilesInvalidResponse";
-import {SaveFileFindings} from "../application/responses/SaveFileFindings";
+import {SaveFileFindingsResponse} from "../application/responses/SaveFileFindingsResponse";
 import {SaveFilesWithoutUniqueHostResponse} from "../application/responses/SaveFilesWithoutUniqueHostResponse";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "./viewModels/SaveFileValidationViewModel";
@@ -104,10 +104,10 @@ function formatWrongHostCount(wrongHostCount: number | undefined): SaveValidatio
   return wrongHostCount === undefined ? [] : [formatUniqueHostError(wrongHostCount)];
 }
 
-function formatFindingErrors(findings: SaveFileFindings): SaveValidationMessageViewModel[] {
+function formatFindingErrors(findings: SaveFileFindingsResponse): SaveValidationMessageViewModel[] {
   return findings.hasJsonExtension ? findings.errors.map(formatValidationError) : [formatJsonExtensionError()];
 }
 
-function formatFindingWarnings(findings: SaveFileFindings): SaveValidationMessageViewModel[] {
+function formatFindingWarnings(findings: SaveFileFindingsResponse): SaveValidationMessageViewModel[] {
   return findings.hasJsonExtension ? findings.warnings.map(formatSaveWarning) : [];
 }

@@ -1,5 +1,5 @@
-import {SaveSectionsReading} from "../responses/SaveSectionsReading";
+import {SaveSectionsReadingResponse} from "../responses/SaveSectionsReadingResponse";
 
 export interface SaveSectionsReaderPort {
-  read(content: string): SaveSectionsReading;
+  read(content: string): SaveSectionsReadingResponse;
 }

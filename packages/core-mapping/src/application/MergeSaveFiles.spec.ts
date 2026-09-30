@@ -2,18 +2,18 @@ import {describe, expect, it, mock} from 'bun:test';
 import {MergeSaveFiles} from './MergeSaveFiles';
 import {SaveValidatorPort} from './ports/SaveValidatorPort';
 import {SaveSectionsParserPort} from './ports/SaveSectionsParserPort';
-import {ParsedSaveSections} from './responses/ParsedSaveSections';
+import {ParsedSaveSectionsResponse} from './responses/ParsedSaveSectionsResponse';
 import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
-import {SaveSectionsReading} from './responses/SaveSectionsReading';
+import {SaveSectionsReadingResponse} from './responses/SaveSectionsReadingResponse';
 import {SaveSectionsSerializerPort} from './ports/SaveSectionsSerializerPort';
 import {MergeResultPresenterPort} from './ports/MergeResultPresenterPort';
 import {MergeSucceededResponse} from './responses/MergeSucceededResponse';
 import {SaveFilesInvalidResponse} from './responses/SaveFilesInvalidResponse';
 import {SaveFilesWithoutUniqueHostResponse} from './responses/SaveFilesWithoutUniqueHostResponse';
-import {MergeWarning} from './responses/MergeWarning';
+import {MergeWarningResponse} from './responses/MergeWarningResponse';
 import {ValidationIssue} from './ports/ValidationIssue';
 import {VALIDATION_ISSUE_CODES} from './ports/validationIssueCodes';
-import {SaveValidationResult} from './responses/SaveValidationResult';
+import {SaveValidationResponse} from './responses/SaveValidationResponse';
 import {UnreadableLine} from './ports/SaveSectionLocation';
 import type {SaveWarning} from 'shared-save-processing/gameDefinitions';
 import {createPlayerEntry, createSaveConfigurationEntry, createTerrainLayerEntry} from '../testing/createSaveEntries';
@@ -28,20 +28,20 @@ describe('MergeSaveFiles', () => {
 
   const TWO_VALID_SAVES = {fileNameA: 'Save-A.json', contentA: 'contentA', fileNameB: 'Save-B.json', contentB: 'contentB'};
   const noErrorsFromTheMerge: ValidationIssue[] = [];
-  const noMergeWarnings: MergeWarning[] = [];
+  const noMergeWarnings: MergeWarningResponse[] = [];
   const noParseErrors: UnreadableLine[] = [];
 
-  const ACCEPTED: SaveValidationResult = {isValid: true, errors: [], warnings: []};
-  const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResult => ({isValid: false, errors, warnings: []});
-  const acceptedWith = (...warnings: SaveWarning[]): SaveValidationResult => ({isValid: true, errors: [], warnings});
+  const ACCEPTED: SaveValidationResponse = {isValid: true, errors: [], warnings: []};
+  const rejectedWith = (...errors: ValidationIssue[]): SaveValidationResponse => ({isValid: false, errors, warnings: []});
+  const acceptedWith = (...warnings: SaveWarning[]): SaveValidationResponse => ({isValid: true, errors: [], warnings});
 
-  const validatorAnswering = (resultsByContent: Record<string, SaveValidationResult>): SaveValidatorPort['validate'] =>
+  const validatorAnswering = (resultsByContent: Record<string, SaveValidationResponse>): SaveValidatorPort['validate'] =>
     (content: string) => resultsByContent[content] ?? ACCEPTED;
 
-  const parserAnswering = (savesByContent: Record<string, ParsedSaveSections>): SaveSectionsParserPort['parse'] =>
+  const parserAnswering = (savesByContent: Record<string, ParsedSaveSectionsResponse>): SaveSectionsParserPort['parse'] =>
     (content: string) => savesByContent[content] ?? {sections: createSaveSections(), errors: noParseErrors};
 
-  const readerAnswering = (readingsByContent: Record<string, SaveSectionsReading>): SaveSectionsReaderPort['read'] =>
+  const readerAnswering = (readingsByContent: Record<string, SaveSectionsReadingResponse>): SaveSectionsReaderPort['read'] =>
     (content: string) => readingsByContent[content] ?? {saveSections: new FakeSaveSectionsMapperService(), unreadableLines: noParseErrors};
 
   interface UseCaseOverrides {
@@ -259,7 +259,7 @@ describe('MergeSaveFiles', () => {
   describe('When the two saves carry the legacy format', () => {
     it('should not state that the legacy format could have been kept, no format being lost', async () => {
       // Arrange
-      const legacySave: ParsedSaveSections = {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()]}), errors: noParseErrors};
+      const legacySave: ParsedSaveSectionsResponse = {sections: createSaveSections({formatRelease: '1.618', terrainLayers: [createTerrainLayerEntry()]}), errors: noParseErrors};
       const {useCase, presenter} = createUseCase({parse: parserAnswering({contentA: legacySave, contentB: legacySave})});
 
       // Act
