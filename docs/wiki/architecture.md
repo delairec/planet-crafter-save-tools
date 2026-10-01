@@ -30,3 +30,5 @@ The prefix of a package name sets what it is allowed to depend on. A type-only i
 `bun run check:dependencies` enforces this matrix. A `data-*` package holds value tables, their row types and the selectors reading them, and no business rule; in a `core-*` package, only `infrastructure/` imports it, behind an application port.
 
 What each package does in detail is in the specification corpus: `awawa show @PACKAGE.<name> .`.
+
+The imports as measured, between packages and between the layers of `core-mapping`, are drawn in [Dependency graphs](dependency-graphs.md).
