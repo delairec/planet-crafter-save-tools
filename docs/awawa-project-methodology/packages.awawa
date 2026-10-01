@@ -11,7 +11,8 @@ PACKAGE util_types
 	MANIFEST "packages/util-types/package.json::util-types"
 
 PACKAGE core_mapping
-	DESC "domain, application, infrastructure and presentation of save mapping"
+	DESC "validation, merge and display of a save, one folder per business, each in clean"
+		+ "architecture layers"
 	MANIFEST "packages/core-mapping/package.json::core-mapping"
 
 PACKAGE cli_merge

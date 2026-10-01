@@ -4,7 +4,7 @@ import {
   validationMessageLocationPrefix
 } from "~/messages/validationMessages";
 import {createSignal, For, Show} from "solid-js";
-import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
+import {SaveValidationMessageViewModel} from "core-mapping/save/presentation/viewModels/SaveValidationMessageViewModel";
 
 export default function ValidationMessagesList(props: {
   title: string,

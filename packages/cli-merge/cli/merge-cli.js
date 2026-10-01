@@ -1,4 +1,4 @@
-import {mergeSaveFilesController} from 'core-mapping/composition/compositionRoot';
+import {mergeSaveFilesController} from 'core-mapping/merge/composition/compositionRoot';
 import {getCliArguments} from 'shared-platforms/platform.common.js';
 import {extractPlatformParameter} from 'shared-platforms/extractPlatformParameter.js';
 import {createPlatform} from 'shared-platforms/platform.js';

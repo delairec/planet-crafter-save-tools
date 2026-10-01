@@ -1,4 +1,4 @@
-import {UnlockStateViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
+import {UnlockStateViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
 
 interface OnOffPillProps {
   state: UnlockStateViewModel;

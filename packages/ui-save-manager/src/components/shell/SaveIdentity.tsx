@@ -1,5 +1,5 @@
 import {JSX, Show} from 'solid-js';
-import {SaveIdentityViewModel} from 'core-mapping/presentation/viewModels/SaveIdentityViewModel';
+import {SaveIdentityViewModel} from 'core-mapping/display/presentation/viewModels/SaveIdentityViewModel';
 import Surface from '~/components/structure/Surface';
 import {saveIdentityLabel} from '~/messages/shellMessages';
 

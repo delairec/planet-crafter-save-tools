@@ -1,7 +1,7 @@
 {
   "name": "core-mapping",
   "version": "1.0.0",
-  "description": "Domain/application/infrastructure/presentation mapping for Planet Crafter save files",
+  "description": "Validation, merge and display of Planet Crafter save files, one folder per business, each in Clean Architecture layers",
   "changelogLine": "Core engine updated",
   "type": "module",
   "scripts": {
@@ -9,8 +9,13 @@
     "lint:types": "tsc --noEmit"
   },
   "exports": {
-    "./composition/compositionRoot": "./src/composition/compositionRoot.ts",
-    "./presentation/viewModels/*": "./src/presentation/viewModels/*.ts"
+    "./validation/composition/compositionRoot": "./src/validation/composition/compositionRoot.ts",
+    "./merge/composition/compositionRoot": "./src/merge/composition/compositionRoot.ts",
+    "./display/composition/compositionRoot": "./src/display/composition/compositionRoot.ts",
+    "./save/presentation/viewModels/*": "./src/save/presentation/viewModels/*.ts",
+    "./validation/presentation/viewModels/*": "./src/validation/presentation/viewModels/*.ts",
+    "./merge/presentation/viewModels/*": "./src/merge/presentation/viewModels/*.ts",
+    "./display/presentation/viewModels/*": "./src/display/presentation/viewModels/*.ts"
   },
   "dependencies": {
     "data-energy": "*",

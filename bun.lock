@@ -19,6 +19,8 @@
       "dependencies": {
         "core-mapping": "*",
         "shared-platforms": "*",
+      },
+      "devDependencies": {
         "shared-save-processing": "*",
       },
     },

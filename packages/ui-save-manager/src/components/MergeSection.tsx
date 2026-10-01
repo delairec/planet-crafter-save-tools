@@ -1,6 +1,6 @@
 import {createSignal, Show} from 'solid-js';
-import {mergeSaveFilesController} from 'core-mapping/composition/compositionRoot';
-import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeResultViewModel';
+import {mergeSaveFilesController} from 'core-mapping/merge/composition/compositionRoot';
+import {MergeResultViewModel} from 'core-mapping/merge/presentation/viewModels/MergeResultViewModel';
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';
 import CheckboxField from '~/components/structure/CheckboxField';

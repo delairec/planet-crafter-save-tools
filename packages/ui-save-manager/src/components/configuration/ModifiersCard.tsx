@@ -1,7 +1,7 @@
 import {For} from "solid-js";
 import Card from "~/components/structure/Card";
 import ToneBadge from "~/components/structure/ToneBadge";
-import {ModifiersZoneViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
+import {ModifiersZoneViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
 import {modifiersCardSummary, modifiersCardTitle} from "~/messages/configurationPageMessages";
 
 interface ModifiersCardProps {

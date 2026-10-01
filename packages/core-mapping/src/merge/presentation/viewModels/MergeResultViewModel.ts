@@ -1,0 +1,15 @@
+import {SaveValidationMessageViewModel} from "../../../save/presentation/viewModels/SaveValidationMessageViewModel";
+
+export interface MergeResultViewModel {
+  status: 'idle' | 'success' | 'validationError' | 'mergeFailed';
+  fileName: string;
+  content: string;
+  mergeFailureMessage: string;
+  mergeErrors: SaveValidationMessageViewModel[];
+  mergeWarnings: SaveValidationMessageViewModel[];
+  legacyFormatCouldBeKept: boolean;
+  saveAErrors: SaveValidationMessageViewModel[];
+  saveBErrors: SaveValidationMessageViewModel[];
+  saveAWarnings: SaveValidationMessageViewModel[];
+  saveBWarnings: SaveValidationMessageViewModel[];
+}

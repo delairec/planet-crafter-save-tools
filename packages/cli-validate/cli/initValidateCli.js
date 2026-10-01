@@ -1,4 +1,4 @@
-/** @import { SaveFileValidationViewModel } from 'core-mapping/presentation/viewModels/SaveFileValidationViewModel' */
+/** @import { SaveFileValidationViewModel } from 'core-mapping/validation/presentation/viewModels/SaveFileValidationViewModel' */
 
 import {parseValidateCliArguments} from './parseValidateCliArguments.js';
 import {renderHelp, renderMissingFile, renderSaveErrors, renderSaveIsValid, renderSaveWarnings, renderUnknownArguments, renderVersion} from './renderValidateCliOutput.js';

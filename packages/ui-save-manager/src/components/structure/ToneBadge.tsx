@@ -1,4 +1,4 @@
-import {TonedValueViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
+import {TonedValueViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
 import {toneBadgeSeparator} from "~/messages/configurationPageMessages";
 
 interface ToneBadgeProps {

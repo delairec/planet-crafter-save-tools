@@ -1,6 +1,5 @@
-/** @import { MergeResultViewModel } from 'core-mapping/presentation/viewModels/MergeResultViewModel' */
+/** @import { MergeResultViewModel } from 'core-mapping/merge/presentation/viewModels/MergeResultViewModel' */
 
-import {hasJsonExtension} from 'shared-save-processing/jsonExtension.js';
 import {parseMergeCliArguments} from './parseMergeCliArguments.js';
 import {
   renderDone,
@@ -21,12 +20,18 @@ import {
   renderVersion
 } from './renderMergeCliOutput.js';
 
+const JSON_EXTENSION_PATTERN = /\.json$/i;
 const MERGEABLE_SAVE_FILES_COUNT = 2;
 const NO_VALID_FOLDERS_EXIT_CODE = 2;
 const USAGE_ERROR_EXIT_CODE = 1;
 const SUCCESS_EXIT_CODE = 0;
 
 export const UNEXPECTED_ERROR_EXIT_CODE = 1;
+
+/** @param {string} fileName */
+function hasJsonExtension(fileName) {
+  return JSON_EXTENSION_PATTERN.test(fileName);
+}
 
 /** @param {string[]} saveFileNames */
 function isMergeable(saveFileNames) {

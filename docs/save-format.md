@@ -23,7 +23,7 @@ The file ends with `@`.
 > or earlier; validation is the single source of that warning, on every outcome and in every flow (displaying a save,
 > merging saves, `bun validate`, `bun merge`). The warning travels as the code defined in
 > `packages/shared-save-processing/saveWarningCodes.js` and is turned into the sentence shown to the user by
-> `packages/core-mapping/src/presentation/formatSaveWarning.ts`. core-mapping still reads the sections the format of
+> `packages/core-mapping/src/save/presentation/formatSaveWarning.ts`. core-mapping still reads the sections the format of
 > 2.004 shares with it, and a merge still writes the format of 2.004.
 
 ```
@@ -219,7 +219,7 @@ but the merge remaps it (`GR-ID-3`), so the schema declares it rather than rejec
 numeric ID rather than the textual `planetId` used elsewhere (`TerraformationLevel.planetId`,
 `Player.planetId`, `SaveConfiguration.planetId`). This numeric ID is **stable across saves** (not derived from
 the save's world seed or content) — confirmed by cross-referencing several real save files. The known ids are the rows of
-`packages/core-mapping/src/domain/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`).
+`packages/data-planets/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`).
 
 The numeric id is a two-accumulator djb2 hash of the planet name over its UTF-16 code units, which reproduces
 all six known ids; the table stays a maintained lookup because a save carries the id and the name must be found
@@ -361,7 +361,7 @@ current format, but section 9 was **Terrain Layers**, World Events was at index 
 was at index 11.
 
 The properties of a Terrain Layers entry are the rows of
-`packages/shared-save-processing/legacyTerrainLayerProperties.json` (`@DATATABLE.LegacyTerrainLayerProperties`).
+`packages/data-save-format/legacyTerrainLayerProperties.json` (`@DATATABLE.LegacyTerrainLayerProperties`).
 
 This section no longer exists in the current save format. When a legacy save is loaded or merged, its Terrain Layers
 data is discarded and the user is warned that their save was adapted from an old format.

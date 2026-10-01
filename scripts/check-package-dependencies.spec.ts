@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
 import {checkPackageDependencies, findImportedPackages, findViolations} from './check-package-dependencies.ts';
-import type {DependencyMatrix, PackageImport, WorkspacePackage} from './check-package-dependencies.ts';
+import type {DependencyMatrix, InterfaceProductionImports, PackageImport, WorkspacePackage} from './check-package-dependencies.ts';
 
 const matrix: DependencyMatrix = {
   'core-': ['shared-', 'util-'],
@@ -9,6 +9,11 @@ const matrix: DependencyMatrix = {
   'cli-': ['shared-', 'util-', 'core-'],
   'ui-': ['shared-', 'util-', 'core-'],
   'shared-': ['util-']
+};
+
+const interfaceProductionImports: InterfaceProductionImports = {
+  'cli-': {prefixes: ['core-'], packages: ['shared-platforms']},
+  'ui-': {prefixes: ['core-'], packages: []}
 };
 
 const noImports: PackageImport[] = [];
@@ -25,7 +30,7 @@ describe('findViolations', () => {
       ];
 
       // Act
-      const violations = findViolations(packages, noImports, matrix);
+      const violations = findViolations(packages, noImports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([{
@@ -44,7 +49,7 @@ describe('findViolations', () => {
       ];
 
       // Act
-      const violations = findViolations(packages, noImports, matrix);
+      const violations = findViolations(packages, noImports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([{
@@ -69,7 +74,7 @@ describe('findViolations', () => {
       }];
 
       // Act
-      const violations = findViolations(packages, imports, matrix);
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([
@@ -100,7 +105,7 @@ describe('findViolations', () => {
       }];
 
       // Act
-      const violations = findViolations(packages, imports, matrix);
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([{
@@ -126,7 +131,7 @@ describe('findViolations', () => {
       }];
 
       // Act
-      const violations = findViolations(packages, imports, matrix);
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([{
@@ -145,7 +150,7 @@ describe('findViolations', () => {
       ];
 
       // Act
-      const violations = findViolations(packages, noImports, matrix);
+      const violations = findViolations(packages, noImports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([{
@@ -165,7 +170,7 @@ describe('findViolations', () => {
       ];
 
       // Act
-      const violations = findViolations(packages, imports, matrix);
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([{
@@ -189,7 +194,7 @@ describe('findViolations', () => {
       }];
 
       // Act
-      const violations = findViolations(packages, imports, matrix);
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([]);
@@ -211,7 +216,7 @@ describe('findViolations', () => {
       }];
 
       // Act
-      const violations = findViolations(packages, imports, matrix);
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([]);
@@ -232,7 +237,104 @@ describe('findViolations', () => {
       }];
 
       // Act
-      const violations = findViolations(packages, imports, matrix);
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
+
+      // Assert
+      expect(violations).toEqual([]);
+    });
+  });
+
+  describe('When a production source of a command line package imports a workspace package that is neither a core nor shared-platforms', () => {
+    it('should report the file and the line of the import', () => {
+      // Arrange
+      const packages: WorkspacePackage[] = [
+        {name: 'cli-merge', manifestPath: 'packages/cli-merge/package.json', declaredDependencies: ['shared-save-processing']},
+        {name: 'shared-save-processing', manifestPath: 'packages/shared-save-processing/package.json', declaredDependencies: noDependencies}
+      ];
+      const imports: PackageImport[] = [{
+        packageName: 'cli-merge',
+        filePath: 'packages/cli-merge/cli/initMergeCli.js',
+        line: 3,
+        specifier: 'shared-save-processing/jsonExtension.js'
+      }];
+
+      // Act
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
+
+      // Assert
+      expect(violations).toEqual([{
+        location: 'packages/cli-merge/cli/initMergeCli.js:3',
+        message: 'import of \'shared-save-processing/jsonExtension.js\': a production source of a cli- package may only import core-, shared-platforms'
+      }]);
+    });
+  });
+
+  describe('When a production source of a command line package imports shared-platforms', () => {
+    it('should report nothing', () => {
+      // Arrange
+      const packages: WorkspacePackage[] = [
+        {name: 'cli-merge', manifestPath: 'packages/cli-merge/package.json', declaredDependencies: ['shared-platforms']},
+        {name: 'shared-platforms', manifestPath: 'packages/shared-platforms/package.json', declaredDependencies: noDependencies}
+      ];
+      const imports: PackageImport[] = [{
+        packageName: 'cli-merge',
+        filePath: 'packages/cli-merge/cli/merge-cli.js',
+        line: 4,
+        specifier: 'shared-platforms/platform.js'
+      }];
+
+      // Act
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
+
+      // Assert
+      expect(violations).toEqual([]);
+    });
+  });
+
+  describe('When a production source of a user interface package imports shared-platforms', () => {
+    it('should report the import, shared-platforms being open to a command line package only', () => {
+      // Arrange
+      const packages: WorkspacePackage[] = [
+        {name: 'ui-save-manager', manifestPath: 'packages/ui-save-manager/package.json', declaredDependencies: ['shared-platforms']},
+        {name: 'shared-platforms', manifestPath: 'packages/shared-platforms/package.json', declaredDependencies: noDependencies}
+      ];
+      const imports: PackageImport[] = [{
+        packageName: 'ui-save-manager',
+        filePath: 'packages/ui-save-manager/src/components/MergeSection.tsx',
+        line: 2,
+        specifier: 'shared-platforms/platform.js'
+      }];
+
+      // Act
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
+
+      // Assert
+      expect(violations).toEqual([{
+        location: 'packages/ui-save-manager/src/components/MergeSection.tsx:2',
+        message: 'import of \'shared-platforms/platform.js\': a production source of a ui- package may only import core-'
+      }]);
+    });
+  });
+
+  describe('When a file of a command line package that is no production source imports the save format package', () => {
+    it.each([
+      ['a spec file', 'packages/cli-merge/cli/initMergeCli.spec.js'],
+      ['a file of a testing folder', 'packages/cli-merge/testing/fakeSaveStrings.js']
+    ])('should report nothing for %s', (_kind, filePath) => {
+      // Arrange
+      const packages: WorkspacePackage[] = [
+        {name: 'cli-merge', manifestPath: 'packages/cli-merge/package.json', declaredDependencies: ['shared-save-processing']},
+        {name: 'shared-save-processing', manifestPath: 'packages/shared-save-processing/package.json', declaredDependencies: noDependencies}
+      ];
+      const imports: PackageImport[] = [{
+        packageName: 'cli-merge',
+        filePath,
+        line: 1,
+        specifier: 'shared-save-processing/testing/createFakeSaveContent.js'
+      }];
+
+      // Act
+      const violations = findViolations(packages, imports, matrix, interfaceProductionImports);
 
       // Assert
       expect(violations).toEqual([]);
@@ -393,6 +495,31 @@ describe('checkPackageDependencies', () => {
       expect({printed, exitCodes}).toEqual({
         printed: [
           "packages/core-mapping/src/mergeSaves.ts:2: import of 'shared-save-processing/parseSaveSections.js': shared-save-processing is missing from the dependencies of packages/core-mapping/package.json",
+          'check:dependencies: 1 dependency matrix violation(s); see the dependency matrix in docs/wiki/architecture.md.'
+        ],
+        exitCodes: [1]
+      });
+    });
+  });
+
+  describe('When a production source of a command line package imports the save format package', () => {
+    it('should print the file, the line and what such a source may import, then the count, and exit with one', async () => {
+      // Arrange
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          'packages/cli-merge/package.json': '{"name": "cli-merge", "devDependencies": {"shared-save-processing": "*"}}',
+          'packages/cli-merge/cli/initMergeCli.js': "import {hasJsonExtension} from 'shared-save-processing/jsonExtension.js';",
+          'packages/shared-save-processing/package.json': '{"name": "shared-save-processing"}'
+        }
+      });
+
+      // Act
+      await checkPackageDependencies(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          "packages/cli-merge/cli/initMergeCli.js:1: import of 'shared-save-processing/jsonExtension.js': a production source of a cli- package may only import core-, shared-platforms",
           'check:dependencies: 1 dependency matrix violation(s); see the dependency matrix in docs/wiki/architecture.md.'
         ],
         exitCodes: [1]

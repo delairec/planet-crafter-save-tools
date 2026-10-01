@@ -1,7 +1,7 @@
 import {For} from "solid-js";
 import Card from "~/components/structure/Card";
 import OnOffPill from "~/components/structure/OnOffPill";
-import {UnlocksZoneViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
+import {UnlocksZoneViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
 import {unlocksCardTitle} from "~/messages/configurationPageMessages";
 
 interface UnlocksCardProps {
