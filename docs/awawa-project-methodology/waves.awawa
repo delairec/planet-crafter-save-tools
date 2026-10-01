@@ -47,3 +47,16 @@ WAVE 14
 		REF @PACKAGE.core_mapping
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
+
+WAVE 15
+	MILESTONE "split-core-mapping"
+	BRANCH "integration/split-core-mapping"
+	DESC "core-mapping is split into one core per business, core-validate, core-merge and"
+		+ "core-display, none importing another; what several cores need lives in shared packages,"
+		+ "and an interface reaches the save format through a core only"
+	RATIONALE "The wave follows the working document docs/designs/2026-10-01-core-mapping-split.md:"
+		+ "each core is offered to several interfaces, a fourth core for editing a save is planned,"
+		+ "and the split lands before new features are added to core-mapping"
+		REF @PACKAGE.core_mapping
+	SOURCE "Owner ruling in the session of 2026-10-01, recorded in the working document"
+		+ "docs/designs/2026-10-01-core-mapping-split.md"

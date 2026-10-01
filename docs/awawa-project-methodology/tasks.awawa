@@ -2132,3 +2132,247 @@ TASK FIX171
 		+ "coefficient helps below 1 and penalises above 1, 100 % and ×1 being the base state; the"
 		+ "task goes in wave 14"
 	DELIVERED_BY 249
+
+TASK REFACTOR172
+	TITLE "refactor(cli-merge): reach the save format through a core only"
+	STATUS draft
+	SPEC "no production source of a cli- or ui- package imports shared-save-processing; cli-merge"
+		+ "filters the save files of a folder without importing"
+		+ "shared-save-processing/jsonExtension.js"
+	SPEC "bun run check:dependencies fails on a production source of a cli- or ui- package that"
+		+ "imports shared-save-processing, import type and JSDoc @import included; spec files and"
+		+ "testing/ folders are not reported"
+	SPEC "the specs of cli-merge pass with their assertions unchanged"
+	WAVE @WAVE.15
+	PRIORITY medium
+	DESC "closes the one production import of the save format from an interface,"
+		+ "cli/initMergeCli.js, and guards it"
+	RATIONALE "An interface that reads the save format bypasses the core offered to every"
+		+ "interface. The specs of the CLIs keep importing the fixtures of"
+		+ "shared-save-processing/testing, so the guard covers production sources only"
+		REF @PACKAGE.cli_merge
+		REF @PACKAGE.shared_save_processing
+
+TASK REFACTOR173
+	TITLE "refactor(core-mapping): check the unique host on the player entries, the entities"
+		+ "serving the display alone"
+	STATUS draft
+	SPEC "validateUniqueHost takes the player entries of the decoded save and no longer imports"
+		+ "PlayerEntity"
+	SPEC "ValidateSaveFile and MergeSaveFiles receive no SaveSectionsReaderPort: the unreadable"
+		+ "lines and the player entries come from SaveSectionsParserPort"
+	SPEC "no module the validation or the merge use case reaches imports a file of domain/entities,"
+		+ "domain/valueObjects, SaveSectionsMapperService or SaveSectionsReaderService"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	WAVE @WAVE.15
+	PRIORITY high
+	DESC "first step of the split: removes the one reason validation and merge reach the entities"
+	RATIONALE "Measured at 054b4e0, 58 files are reached by the three businesses, 32 of them in the"
+		+ "domain, because validation and merge read the save through the reader to call one rule"
+		+ "on PlayerEntity. The player entry carries the host flag, and the unreadable lines come"
+		+ "from the parser"
+		REF @PACKAGE.core_mapping
+
+TASK REFACTOR174
+	TITLE "refactor(shared-save-processing): hold the decoded save, its parser and the game"
+		+ "releases"
+	STATUS draft
+	SPEC "the entries of the decoded save, SaveSections, the section location, the parser with its"
+		+ "codecs and the modules that locate a section or an unreadable line are modules of a"
+		+ "shared package; none is left under packages/core-mapping"
+	SPEC "the game release value object, the rules that compare and resolve a release and the"
+		+ "reader of the game release table are modules of a shared package; none is left under"
+		+ "packages/core-mapping"
+	SPEC "bun run check:wire-format still confines the wire abbreviations to the wire records;"
+		+ "WireAbbreviationsStayInSharedSaveProcessing and"
+		+ "SharedSaveProcessingOwnsSectionParsingAndSerialization are rewritten in place to the new"
+		+ "boundary"
+		REF @DECISION.WireAbbreviationsStayInSharedSaveProcessing
+		REF @DECISION.SharedSaveProcessingOwnsSectionParsingAndSerialization
+	SPEC "the refinement of the task rules whether the decoded save extends shared-save-processing"
+		+ "or forms a package of its own beside it, and the PACKAGE entities say what each holds"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR173
+	WAVE @WAVE.15
+	PRIORITY high
+	DESC "moves what validation, merge and display all need out of the core"
+	RATIONALE "The decoded save and the game releases are needed by the three businesses, so they"
+		+ "cannot stay in one core once no core imports another. Wave 14 moved the game releases"
+		+ "into the domain as business knowledge; the owner ruling of this wave is that what"
+		+ "several cores need is shared"
+		REF @PACKAGE.shared_save_processing
+		REF @PACKAGE.core_mapping
+
+TASK REFACTOR175
+	TITLE "refactor(shared-save-validation): validate a save in one shared function returning codes"
+		+ "and data"
+	STATUS draft
+	SPEC "a package shared-save-validation exposes the validation of a save: the JSON extension,"
+		+ "the schemas, the float serialization, the unreadable lines, the unique host and the"
+		+ "contradiction between the declared release and the content; its result carries codes and"
+		+ "data, never a sentence"
+	SPEC "ValidateSaveFile and MergeSaveFiles call it; the sequence of checks is written once, and"
+		+ "MergeSaveFiles holds no validateSaveFile of its own"
+	SPEC "the validation issue types, validateUniqueHost, detectDeclaredReleaseContradiction and"
+		+ "the validator adapter no longer exist under packages/core-mapping"
+	SPEC "a PACKAGE entity describes shared-save-validation, and docs/wiki/architecture.md lists it"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR174
+	WAVE @WAVE.15
+	PRIORITY high
+	DESC "one validation for every core that needs it, so that a core writing a save validates"
+		+ "inside its own use case"
+	RATIONALE "The validation sequence is written twice today, in ValidateSaveFile and in"
+		+ "MergeSaveFiles, and editing will need it a third time. A shared function keeps the"
+		+ "invariant in each use case without a core importing another"
+		REF @PACKAGE.core_mapping
+
+TASK REFACTOR176
+	TITLE "refactor(shared-messages): write once the sentences several cores show"
+	STATUS draft
+	SPEC "a package shared-messages builds, from a key and its data, the sentences more than one"
+		+ "business shows: the location of an issue with its section label, a validation issue, an"
+		+ "unreadable line, a save warning"
+	SPEC "the presenters of core-mapping call it, and presentation/messages keeps only the messages"
+		+ "one business shows"
+	SPEC "the section label table stays complete, its exhaustiveness test moving with it"
+	SPEC "DissolvedPackagesAreNotRecreated states that shared-messages is not the dissolved"
+		+ "util-messages recreated, and UserTextLivesInCoreMappingPresentation is rewritten in"
+		+ "place: a sentence several cores show is built in shared-messages, the others in the"
+		+ "presentation of their core"
+		REF @DECISION.DissolvedPackagesAreNotRecreated
+		REF @DECISION.UserTextLivesInCoreMappingPresentation
+		REF @DECISION.ALocationIsABusinessLabelFollowedByTheIndex
+	SPEC "the refinement of the task rules whether a message is reached by a function of its own or"
+		+ "by a key, and a PACKAGE entity describes shared-messages"
+	SPEC "the specs of cli-merge and cli-validate and the scenarios of ui-save-manager pass"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR175
+	WAVE @WAVE.15
+	PRIORITY medium
+	DESC "the sentences common to validation, merge and display leave the core before it is split"
+	RATIONALE "Each core translates the codes it receives into its own sentences, which lets an"
+		+ "interface get wording of its own. The sentences the three presentations share today"
+		+ "would otherwise be copied into each core; one place also prepares a second language, for"
+		+ "which nothing is built now"
+		REF @PACKAGE.core_mapping
+
+TASK REFACTOR177
+	TITLE "refactor(core-validate): extract the validation of a save file into a core of its own"
+	STATUS draft
+	SPEC "a package core-validate holds the validation use case, its two presenters, its"
+		+ "controllers and their view models, and exports its wired controllers through its"
+		+ "composition root and its view models, nothing else"
+	SPEC "cli-validate and the load page of ui-save-manager import the validation from"
+		+ "core-validate; nothing of it is left under packages/core-mapping"
+	SPEC "core-validate imports no core- package, and bun run check:dependencies passes"
+	SPEC "a PACKAGE entity describes core-validate, and each decision that applies to the code"
+		+ "moved names it in APPLIES_TO_PACKAGE; TheModulesTheClisImportKeepTheirContract names the"
+		+ "new module paths"
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
+		REF @DECISION.CoreMappingExportsOnlyControllersAndViewModels
+	SPEC "the specs of cli-validate and the scenarios of ui-save-manager pass with their assertions"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR176
+	WAVE @WAVE.15
+	PRIORITY medium
+	DESC "first core split off: 10 files are its own at 054b4e0, the rest of what it reached being"
+		+ "shared by then"
+	RATIONALE "Validation is offered to the CLI and to the save manager, which calls it before"
+		+ "displaying a save"
+		REF @PACKAGE.core_mapping
+		REF @PACKAGE.cli_validate
+		REF @PACKAGE.ui_save_manager
+
+TASK REFACTOR178
+	TITLE "refactor(core-merge): extract the merge of two saves into a core of its own"
+	STATUS draft
+	SPEC "a package core-merge holds the merge rules, the merge use case, the serializer, the file"
+		+ "name sanitizer, its presenter, its controller and its view model, and exports its wired"
+		+ "controller through its composition root and its view models, nothing else"
+	SPEC "the merge use case validates both inputs and the merged save through"
+		+ "shared-save-validation"
+	SPEC "cli-merge and the merge page of ui-save-manager import the merge from core-merge; nothing"
+		+ "of it is left under packages/core-mapping"
+	SPEC "core-merge imports no core- package, and bun run check:dependencies passes"
+	SPEC "a PACKAGE entity describes core-merge, and each decision that applies to the code moved"
+		+ "names it in APPLIES_TO_PACKAGE; TheModulesTheClisImportKeepTheirContract names the new"
+		+ "module paths"
+		REF @DECISION.TheModulesTheClisImportKeepTheirContract
+	SPEC "the specs of cli-merge and the scenarios of ui-save-manager pass with their assertions"
+		+ "unchanged"
+	AFTER @TASK.REFACTOR177
+	WAVE @WAVE.15
+	PRIORITY medium
+	DESC "second core split off: 46 files are its own at 054b4e0"
+	RATIONALE "The merge is offered to the CLI and to the save manager with one call, the"
+		+ "validation of its inputs and of its output staying inside its use case"
+		REF @PACKAGE.core_mapping
+		REF @PACKAGE.cli_merge
+		REF @PACKAGE.ui_save_manager
+
+TASK REFACTOR179
+	TITLE "refactor(core-display): name what is left of core-mapping after the core of the save"
+		+ "display"
+	STATUS draft
+	SPEC "the package core-mapping no longer exists: the entities, the value objects, the six"
+		+ "display use cases, their presenters, controllers and view models and the number"
+		+ "formatters form the package core-display"
+	SPEC "ui-save-manager imports the display from core-display, and no file of the repository"
+		+ "names core-mapping outside the dated documents of docs/"
+	SPEC "core-display imports no core- package, and bun run check:dependencies, check:presentation"
+		+ "and check:workspace-imports pass on the three cores"
+	SPEC "the PACKAGE entity core_mapping is renamed, every decision and limitation that named it"
+		+ "names the core that inherits its code, and SectionControllersReceiveTheValidatedText"
+		+ "says the save manager validates through core-validate before it displays"
+		REF @DECISION.SectionControllersReceiveTheValidatedText
+	SPEC "the scenarios of ui-save-manager pass with their assertions unchanged"
+	AFTER @TASK.REFACTOR178
+	WAVE @WAVE.15
+	PRIORITY medium
+	DESC "last step of the split: 83 files are the display's own at 054b4e0"
+	RATIONALE "Once validation and merge have left, what remains serves the save manager alone and"
+		+ "takes the name of its business; editing a save will be a core of its own, called between"
+		+ "the display and the validation"
+		REF @PACKAGE.core_mapping
+		REF @PACKAGE.ui_save_manager
+
+TASK REFACTOR180
+	TITLE "refactor(ui-save-manager): hold the text that names the interface, the cores keeping the"
+		+ "sentences of a business outcome"
+	STATUS draft
+	SPEC "a text that names a part of the interface, a page or section title, a field or column"
+		+ "label, the caption of a control, is a message of ui-save-manager; no view model of a"
+		+ "core carries one"
+	SPEC "a sentence that states a business outcome, a validation issue, a warning, a merge"
+		+ "failure, a value the game shows, is still built by the presenter of its core"
+	SPEC "the refinement of the task lists, message by message, which side each message of the"
+		+ "presentation of core-display falls on"
+	SPEC "the scenarios of ui-save-manager pass with their assertions unchanged"
+	AFTER @TASK.REFACTOR179
+	WAVE @WAVE.15
+	PRIORITY low
+	DESC "applies the owner ruling on interface text to the messages of the display presentation,"
+		+ "such as the Equipment and Inventory labels of the players section"
+	RATIONALE "The core states the business meaning and the interface decides how to name its own"
+		+ "parts, as the reminder about the legacy format and the severity pill already do"
+		REF @DECISION.TheSeverityPillLabelIsAMessageOfTheUi
+		REF @PACKAGE.ui_save_manager
+
+TASK DOCS181
+	TITLE "docs(wiki): describe the three cores and the packages they share"
+	STATUS draft
+	SPEC "docs/wiki/architecture.md lists core-validate, core-merge, core-display,"
+		+ "shared-save-validation and shared-messages with their role, and states that an interface"
+		+ "imports cores and shared-platforms only"
+	SPEC "the dependency graphs of docs/wiki are measured again on the delivered wave"
+	SPEC "AGENTS.md and the files of agents/ name no package that no longer exists"
+	AFTER @TASK.REFACTOR179
+	WAVE @WAVE.15
+	PRIORITY low
+	DESC "closes the wave on the contributor documentation"
+	RATIONALE "The architecture page is where a contributor reads the dependency matrix and the"
+		+ "role of each package"
