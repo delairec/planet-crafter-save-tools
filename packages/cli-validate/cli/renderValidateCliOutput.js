@@ -1,4 +1,4 @@
-/** @import { SaveValidationMessageViewModel } from 'core-mapping/presentation/viewModels/SaveFileValidationViewModel' */
+/** @import { SaveValidationMessageViewModel } from 'core-mapping/save/presentation/viewModels/SaveValidationMessageViewModel' */
 
 import {formatHelp} from 'shared-platforms/cliArguments.js';
 import {VALIDATE_CLI_ARGUMENTS} from './parseValidateCliArguments.js';

@@ -1,5 +1,5 @@
 import {Accessor, For} from "solid-js";
-import {TableViewModel} from "core-mapping/presentation/viewModels/TableViewModel";
+import {TableViewModel} from "core-mapping/display/presentation/viewModels/TableViewModel";
 
 export type ColumnViewModel = TableViewModel['columns'][number];
 

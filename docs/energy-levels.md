@@ -16,7 +16,7 @@
 
 Base production and consumption values (kW) per `WorldObject.gId`, **before any Optimizer/Fuse bonus**, are
 rows of
-[`packages/core-mapping/src/domain/energyLevels.json`](../packages/core-mapping/src/domain/energyLevels.json)
+[`packages/data-energy/energyLevels.json`](../packages/data-energy/energyLevels.json)
 (`@DATATABLE.EnergyLevels`), which `energyLevelsByWorldObjectName.ts` reads into two lookups:
 
 - `energyProductionLevelsByWorldObjectName` — energy producers (`EnergyGenerator1..6`, `WindTurbine1`).
@@ -138,7 +138,7 @@ matched only after excluding un-positioned generators.
 The producers are the `production` rows of the energy levels table. `Optimizer1` and `Optimizer2` are fuse
 holders and boosters **and** energy consumers; `FuseEnergy1` is the Energy Fuse, a bonus item that goes inside an
 Optimizer. Display labels are the rows of
-[`packages/core-mapping/src/presentation/worldObjectLabels.json`](../packages/core-mapping/src/presentation/worldObjectLabels.json)
+[`packages/data-world-objects/worldObjectLabels.json`](../packages/data-world-objects/worldObjectLabels.json)
 (`@DATATABLE.WorldObjectLabels`), see section 6.
 
 All values in `energyProductionLevelsByWorldObjectName` are, per the wiki, boostable by the Energy Fuse
@@ -209,7 +209,7 @@ never affected by the Energy Fuse.
 
 ## 4. Computation algorithm (implemented)
 
-Implemented in [`PlanetEnergyGrid`](../packages/core-mapping/src/domain/PlanetEnergyGrid.ts), the aggregate that
+Implemented in [`PlanetEnergyGrid`](../packages/core-mapping/src/display/domain/PlanetEnergyGrid.ts), the aggregate that
 is one planet's power grid: it counts the Energy Fuses reaching each producer once, in its constructor, and
 `levels()` reads that count back.
 
@@ -243,7 +243,7 @@ producers on the same `planet` (Rule EN-OPT-2), so no cross-planet leakage was p
 formalizes that production/consumption/breakdowns are scoped the same way.
 
 **Rule EN-PLANET-2 (planet label resolution):** each planet is labelled using the fixed numeric-id → name
-lookup table of `packages/core-mapping/src/domain/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`),
+lookup table of `packages/data-planets/planetNamesByNumericId.json` (`@DATATABLE.PlanetNamesByNumericId`),
 looked up by the domain rule `resolvePlanetName`. For planet ids not in that table (e.g. future
 planets, modded content), a fallback heuristic applies: some world object `gId`s embed the planet name in
 plain text (e.g. `Seed7Humble` on planet `Humble`) — if exactly one of the save's known planet names (from
@@ -282,7 +282,7 @@ resolved planet name (Rule EN-PLANET-2). Within each planet's card, one sub-card
 
 ## 6. World object names and labels
 
-`packages/core-mapping/src/domain/worldObjectNames.ts` lists the `gId`s the game is known to use, and derives the
+`packages/core-mapping/src/display/domain/worldObjectNames.ts` lists the `gId`s the game is known to use, and derives the
 `WorldObjectName` type from them. Until 2026-09-09 the list had been collected by hand from sources that were not
 recorded, and it was wrong in both directions: it carried 104 names nothing corroborated and lacked 56 that two
 independent sources attest, among them `Incubator2` and `InsideLamp2`, two real consumers that could not be priced
@@ -309,10 +309,9 @@ name to re-add, not a defect.
 energy, consuming energy, and without a known energy level. Totality is by construction rather than asserted, and
 the guard described in section 1 turns any drift between a group and a table red.
 
-**Labels.** `packages/core-mapping/src/presentation/worldObjectLabels.json` maps every `WorldObjectName` to a
-display label. `worldObjectLabels.spec.ts` fails on a name without a label and on a label for an unknown name: the
-two files cannot drift apart. The 25 labels added on 2026-09-09 come from the label file
-above.
+**Labels.** `packages/data-world-objects/worldObjectLabels.json` maps every `WorldObjectName` to a display label.
+`WorldObjectLabelsReaderService.spec.ts` fails on a name without a label and on a label for an unknown name: the two
+files cannot drift apart. The 25 labels added on 2026-09-09 come from the label file above.
 
 **Label wording.** 178 of the 614 labels this repository shares with the label file differ in more than word
 order or case, and the repository's wording is deliberately the more precise of the two: it disambiguates names

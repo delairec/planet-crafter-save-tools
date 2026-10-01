@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, mock, spyOn} from 'bun:test';
-import {validateSaveFileController} from 'core-mapping/composition/compositionRoot';
+import {validateSaveFileController} from 'core-mapping/validation/composition/compositionRoot';
 import {initValidateCli} from './initValidateCli.js';
 import {NON_JSON_SAVE_FILE_PATH, SAVE_FILE_PATH} from '../testing/fakePaths.js';
 import {VALID_SAVE_CONTENT} from '../testing/fakeValidSaveContent.js';

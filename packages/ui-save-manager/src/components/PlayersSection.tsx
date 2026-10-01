@@ -1,7 +1,7 @@
 import {For, Resource} from "solid-js";
 import FieldsGroup from "~/components/structure/FieldsGroup";
 import SectionState from "~/components/structure/SectionState";
-import {PlayersViewModel} from "core-mapping/presentation/viewModels/PlayersViewModel";
+import {PlayersViewModel} from "core-mapping/display/presentation/viewModels/PlayersViewModel";
 import {playersSectionTitle} from "~/messages/playersSectionMessages";
 
 interface PlayersProps {

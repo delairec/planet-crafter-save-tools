@@ -1,0 +1,15 @@
+import {SaveSections} from '../../../save/domain/save/SaveSections';
+
+const PRIME_PLANET_ID = 'Prime';
+
+export function determineSaveOrder(saveA: SaveSections, saveB: SaveSections): [SaveSections, SaveSections] {
+  if (!isPrimePlanetSave(saveA) && isPrimePlanetSave(saveB)) {
+    return [saveB, saveA];
+  }
+
+  return [saveA, saveB];
+}
+
+function isPrimePlanetSave(save: SaveSections): boolean {
+  return save.saveConfigurations[0]?.planetId === PRIME_PLANET_ID;
+}

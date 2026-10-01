@@ -190,6 +190,81 @@ types; the infrastructure adapter maps the records of the other package onto the
 that package. The guard carries no allow-list.
 
 ```
+bun run check:business-boundaries
+```
+
+Judges every `core-` package laid out by business, which it tells from the tree alone: a package holding the shared
+area `src/save/`. A `core-` package laid out by layers holds no `src/save/` and is not judged. In a package laid out by
+business, the area of a file is the first folder under `src/`: `save/` is the shared area, every other folder is a
+business, so a business added under `src/` is held apart without touching the guard. The guard fails on:
+
+- a file sitting directly under `src/`: every file lives in an area, so no file can bridge two businesses;
+- a file of a business that imports a file of another business, and a file of `save/` that imports a file of any
+  business. An import of a business folder itself (`../../display`) counts as an import of that business, and so does
+  an extensionless specifier stopping directly under `src/` (`../../version`);
+- a file of an area that names its own package (`core-mapping/merge/...`) or an entry of its import map (`#...`): the
+  files of the package are imported by a relative path inside `src/` only;
+- a relative or absolute specifier that leaves `src/` — towards the package root, through `node_modules`, into another
+  package — or that names a file directly under `src/` with its extension (`../../version.ts`).
+
+A business may import `save/` and its own files. Any other non-relative specifier is left to `check:workspace-imports`
+and `check:dependencies`. The guard knows no layer: a business importing any layer of `save/` passes it, and the layer
+boundaries are held by `check:layers`, `check:presentation` and `check:workspace-imports`.
+
+Every `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs`, `.mts` and `.cts` file under `src/` is scanned, spec files and
+`testing/` included. Static imports and re-exports wherever they start on their line, side-effect imports, `import()`
+and `require()` whose argument is a string or a template literal without substitution, and JSDoc `@import` and
+`import()` all count. String literals, template literals and regular expressions are read as such, so a `/*` or `//`
+inside one hides no import, and an import written inside one is not read. The guard runs with no exemption. Its limits,
+each pinned by a case of `scripts/readImportStatements.spec.ts` or `scripts/check-business-boundaries.spec.ts`:
+
+- a specifier only known at run time — a template literal with a substitution, a variable, a concatenation — is not
+  read;
+- a `/` is read as the start of a regular expression or as a division from the token before it; where that guess is
+  wrong (a regular expression right after the condition of an `if`), the misreading stops at the end of its line;
+- an extensionless specifier stopping directly under `src/` is read as the area folder it names, so `../../save`
+  passes even where a file `src/save.ts` exists; that file is reported on its own.
+
+The layout it holds is described in [Architecture](architecture.md#layout-of-core-mapping).
+
+```
+bun run check:layers
+```
+
+Fails on a production file of a `core-` package that imports a layer its own layer may not depend on. The layer of a
+file is the first layer folder on its path — `domain/`, `application/`, `infrastructure/`, `presentation/`,
+`controllers/` or `composition/` — so a folder nested inside a layer and named after another one never takes a file
+out of its layer. The matrix:
+
+| A file of        | may import                                                                              |
+|------------------|-----------------------------------------------------------------------------------------|
+| `domain`         | `domain`                                                                                |
+| `application`    | `application`, `domain`                                                                 |
+| `infrastructure` | `infrastructure`, `application`, `domain`                                               |
+| `presentation`   | `presentation`, the application contracts: `application/ports`, `requests`, `responses` |
+| `controllers`    | `controllers`, `application`, `presentation`                                            |
+| `composition`    | every layer                                                                             |
+
+The matrix holds across the areas of a package exactly as inside one: `merge/application/` importing
+`save/infrastructure/` is refused as `merge/infrastructure/` is. A relative import is judged by the path it resolves
+to. A presentation file reads the application contracts it transforms outcomes with, not a use case: a use case is
+told by its place, a file of `application/` outside `ports/`, `requests/` and `responses/`, the use-case contract
+`UseCase` included. The guard also fails on a production file importing a file under `testing/`; outside
+`infrastructure/`, on an import that is not a relative path to a source file — a runtime module (`node:`, `bun:`), an
+npm package — and on an import of a JSON table, relative or not; and on a production file under no layer folder,
+reported once on its own, its imports of `testing/` and of the outside world still reported.
+
+One violation is reported by one guard: an import `check:presentation` refuses (a presentation file importing
+`domain/` or `infrastructure/`, a response importing `infrastructure/`) or `check:workspace-imports` refuses (another
+workspace package outside `infrastructure/`) is left to it. The production files are the `.js`, `.ts` and `.tsx`
+files under the `src/` of every `core-` package, spec files and every file under a `testing/` folder left out; a file
+of the package outside `src/`, such as `testSetup.ts`, is not read. Type-only, dynamic and JSDoc `@import` imports
+count. The guard keeps these limits: an import resolving to a file or a folder under no layer folder is not judged by
+the matrix, the file it reaches being reported on its own when it is a production file; a production file importing a
+spec file outside `testing/` passes; and an area folder named after a layer is read as that layer. A path alias is
+not a relative path, so outside `infrastructure/` it is refused as a package. The guard runs with no exemption.
+
+```
 bun run check:action-pins
 ```
 

@@ -1,5 +1,5 @@
 import {JSX} from "solid-js";
-import {NotificationSeverity} from "core-mapping/presentation/viewModels/NotificationViewModel";
+import {NotificationSeverity} from "core-mapping/display/presentation/viewModels/NotificationViewModel";
 import {notificationSeveritySeparator, resolveNotificationSeverityLabel} from "~/messages/notificationMessages";
 
 interface NotificationProps {

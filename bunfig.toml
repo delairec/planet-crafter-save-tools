@@ -19,6 +19,6 @@ preload = ["./testSetup.ts"]
 coverageThreshold = { lines = 1.0, functions = 0.0 }
 # Only a module holding the real input and output of a script is left out: its main function receives that input and
 # output and is tested on a fake (@DECISION.AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter).
-# The composition root of core-mapping is left out as well: it only wires, and carries no unit test
+# The composition root of each business of core-mapping is left out as well: it only wires, and carries no unit test
 # (@DECISION.TheCompositionRootIsWiringAndCarriesNoUnitTest).
-coveragePathIgnorePatterns = ["scripts/runAsEntryPointWith.ts", "scripts/scriptIo.ts", "packages/shared-save-processing/scripts/sectionValidatorsFile.ts", "packages/core-mapping/src/composition/**"]
+coveragePathIgnorePatterns = ["scripts/runAsEntryPointWith.ts", "scripts/scriptIo.ts", "packages/shared-save-processing/scripts/sectionValidatorsFile.ts", "packages/core-mapping/src/*/composition/**"]

@@ -1,4 +1,4 @@
-import {validateSaveFileController} from 'core-mapping/composition/compositionRoot';
+import {validateSaveFileController} from 'core-mapping/validation/composition/compositionRoot';
 import {getCliArguments} from 'shared-platforms/platform.common.js';
 import {extractPlatformParameter} from 'shared-platforms/extractPlatformParameter.js';
 import {createPlatform} from 'shared-platforms/platform.js';

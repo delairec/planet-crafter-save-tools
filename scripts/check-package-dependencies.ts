@@ -8,10 +8,9 @@ const GENERATED_DIRECTORY = /(?:^|\/)(?:node_modules|dist|build|coverage|\.outpu
 const FROM_SPECIFIER_PATTERN = /\bfrom\s+['"]([^'"]+)['"]/g;
 const DYNAMIC_IMPORT_SPECIFIER_PATTERN = /\bimport\(\s*['"]([^'"]+)['"]\s*\)/g;
 const RELATIVE_OR_ALIASED_SPECIFIER = /^[./~]/;
+const SPEC_FILE_PATTERN = /\.spec\.(?:js|ts|tsx)$/;
+const TEST_SUPPORT_FOLDER = 'testing';
 
-/**
- * The dependency matrix of the repository, by package name prefix.
- */
 const DEPENDENCY_MATRIX: DependencyMatrix = {
   'core-': ['shared-', 'util-', 'data-'],
   'util-': [],
@@ -19,6 +18,11 @@ const DEPENDENCY_MATRIX: DependencyMatrix = {
   'ui-': ['shared-', 'util-', 'core-'],
   'shared-': ['util-', 'data-'],
   'data-': []
+};
+
+const INTERFACE_PRODUCTION_IMPORTS: InterfaceProductionImports = {
+  'cli-': {prefixes: ['core-'], packages: ['shared-platforms']},
+  'ui-': {prefixes: ['core-'], packages: []}
 };
 
 export interface WorkspacePackage {
@@ -36,6 +40,13 @@ export interface PackageImport {
 
 export type DependencyMatrix = Record<string, string[]>;
 
+export interface ProductionImports {
+  prefixes: string[];
+  packages: string[];
+}
+
+export type InterfaceProductionImports = Record<string, ProductionImports>;
+
 export interface DependencyViolation {
   location: string;
   message: string;
@@ -46,11 +57,6 @@ export interface ImportedPackage {
   specifier: string;
 }
 
-/**
- * @param {string} line a single line of a source file
- * @param {number} lineNumber the 1-based line number of that line
- * @returns every package specifier imported on that line
- */
 function findImportedPackagesOnLine(line: string, lineNumber: number): ImportedPackage[] {
   const specifiers = [
     ...Array.from(line.matchAll(FROM_SPECIFIER_PATTERN), match => match[1]),
@@ -61,49 +67,27 @@ function findImportedPackagesOnLine(line: string, lineNumber: number): ImportedP
     .map(specifier => ({line: lineNumber, specifier}));
 }
 
-/**
- * @param {string} source the whole content of a source file
- * @returns every package specifier the file imports, relative and aliased ones left out
- */
 export function findImportedPackages(source: string): ImportedPackage[] {
   return source.split('\n').flatMap((line, lineIndex) => findImportedPackagesOnLine(line, lineIndex + 1));
 }
 
-/**
- * @param {string} packageName the name of a workspace package
- * @param {DependencyMatrix} matrix the prefixes each package prefix is allowed to depend on
- * @returns the matrix entry whose prefix starts the package name, or undefined when none does
- */
-function findMatrixEntry(packageName: string, matrix: DependencyMatrix): [string, string[]] | undefined {
-  return Object.entries(matrix).find(([prefix]) => packageName.startsWith(prefix));
+function findEntryOfPrefix<Rule>(packageName: string, rulesByPrefix: Record<string, Rule>): [string, Rule] | undefined {
+  return Object.entries(rulesByPrefix).find(([prefix]) => packageName.startsWith(prefix));
 }
 
-/**
- * @param {string[]} allowedPrefixes the prefixes a package prefix may depend on
- */
 function describeAllowedPrefixes(allowedPrefixes: string[]): string {
   return allowedPrefixes.length === 0
     ? 'may not depend on any workspace package'
     : `may only depend on ${allowedPrefixes.join(', ')}`;
 }
 
-/**
- * @param {string} specifier an import specifier
- * @returns the workspace package name the specifier points into
- */
 function extractPackageName(specifier: string): string {
   const slashIndex = specifier.indexOf('/');
   return slashIndex === -1 ? specifier : specifier.slice(0, slashIndex);
 }
 
-/**
- * @param {WorkspacePackage} consumer the package whose manifest is being checked
- * @param {Map<string, WorkspacePackage>} workspacePackagesByName every workspace package indexed by name
- * @param {DependencyMatrix} matrix the prefixes each package prefix is allowed to depend on
- * @param {PackageImport[]} imports every workspace package specifier imported by a source file
- */
 function collectManifestViolations(consumer: WorkspacePackage, workspacePackagesByName: Map<string, WorkspacePackage>, matrix: DependencyMatrix, imports: PackageImport[]): DependencyViolation[] {
-  const consumerEntry = findMatrixEntry(consumer.name, matrix);
+  const consumerEntry = findEntryOfPrefix(consumer.name, matrix);
   if (!consumerEntry) {
     return [{location: consumer.manifestPath, message: `package name ${consumer.name} carries no prefix of the dependency matrix`}];
   }
@@ -115,7 +99,7 @@ function collectManifestViolations(consumer: WorkspacePackage, workspacePackages
       continue;
     }
 
-    const dependencyEntry = findMatrixEntry(dependencyName, matrix);
+    const dependencyEntry = findEntryOfPrefix(dependencyName, matrix);
     if (!dependencyEntry || !allowedPrefixes.includes(dependencyEntry[0])) {
       violations.push({
         location: consumer.manifestPath,
@@ -132,21 +116,37 @@ function collectManifestViolations(consumer: WorkspacePackage, workspacePackages
   return violations;
 }
 
-/**
- * A package whose own prefix is outside the matrix is reported once on its manifest; its imports
- * are left alone, no rule applying to them.
- * @param {PackageImport} sourceImport a workspace package specifier imported by a source file
- * @param {Map<string, WorkspacePackage>} workspacePackagesByName every workspace package indexed by name
- * @param {DependencyMatrix} matrix the prefixes each package prefix is allowed to depend on
- */
-function collectImportViolation(sourceImport: PackageImport, workspacePackagesByName: Map<string, WorkspacePackage>, matrix: DependencyMatrix): DependencyViolation | undefined {
+function isProductionSource(filePath: string): boolean {
+  return !SPEC_FILE_PATTERN.test(filePath) && !filePath.split('/').includes(TEST_SUPPORT_FOLDER);
+}
+
+function mayBeImportedByProductionSource(packageName: string, {prefixes, packages}: ProductionImports): boolean {
+  return prefixes.some(prefix => packageName.startsWith(prefix)) || packages.includes(packageName);
+}
+
+function describeRefusedProductionImport({packageName, filePath}: PackageImport, importedPackageName: string, interfaceProductionImports: InterfaceProductionImports): string | undefined {
+  const interfaceEntry = findEntryOfPrefix(packageName, interfaceProductionImports);
+  if (!interfaceEntry || !isProductionSource(filePath)) {
+    return undefined;
+  }
+
+  const [interfacePrefix, productionImports] = interfaceEntry;
+  if (mayBeImportedByProductionSource(importedPackageName, productionImports)) {
+    return undefined;
+  }
+
+  const allowedImports = [...productionImports.prefixes, ...productionImports.packages].join(', ');
+  return `a production source of a ${interfacePrefix} package may only import ${allowedImports}`;
+}
+
+function collectImportViolation(sourceImport: PackageImport, workspacePackagesByName: Map<string, WorkspacePackage>, matrix: DependencyMatrix, interfaceProductionImports: InterfaceProductionImports): DependencyViolation | undefined {
   const importedPackageName = extractPackageName(sourceImport.specifier);
   if (importedPackageName === sourceImport.packageName || !workspacePackagesByName.has(importedPackageName)) {
     return undefined;
   }
 
   const consumer = workspacePackagesByName.get(sourceImport.packageName);
-  const consumerEntry = findMatrixEntry(sourceImport.packageName, matrix);
+  const consumerEntry = findEntryOfPrefix(sourceImport.packageName, matrix);
   if (!consumer || !consumerEntry) {
     return undefined;
   }
@@ -154,9 +154,14 @@ function collectImportViolation(sourceImport: PackageImport, workspacePackagesBy
   const [consumerPrefix, allowedPrefixes] = consumerEntry;
   const location = `${sourceImport.filePath}:${sourceImport.line}`;
 
-  const dependencyEntry = findMatrixEntry(importedPackageName, matrix);
+  const dependencyEntry = findEntryOfPrefix(importedPackageName, matrix);
   if (!dependencyEntry || !allowedPrefixes.includes(dependencyEntry[0])) {
     return {location, message: `import of '${sourceImport.specifier}': a ${consumerPrefix} package ${describeAllowedPrefixes(allowedPrefixes)}`};
+  }
+
+  const refusedProductionImport = describeRefusedProductionImport(sourceImport, importedPackageName, interfaceProductionImports);
+  if (refusedProductionImport) {
+    return {location, message: `import of '${sourceImport.specifier}': ${refusedProductionImport}`};
   }
 
   if (!consumer.declaredDependencies.includes(importedPackageName)) {
@@ -166,17 +171,12 @@ function collectImportViolation(sourceImport: PackageImport, workspacePackagesBy
   return undefined;
 }
 
-/**
- * @param {WorkspacePackage[]} packages every workspace package with its declared dependencies
- * @param {PackageImport[]} imports every workspace package specifier imported by a source file
- * @param {DependencyMatrix} matrix the prefixes each package prefix is allowed to depend on
- */
-export function findViolations(packages: WorkspacePackage[], imports: PackageImport[], matrix: DependencyMatrix): DependencyViolation[] {
+export function findViolations(packages: WorkspacePackage[], imports: PackageImport[], matrix: DependencyMatrix, interfaceProductionImports: InterfaceProductionImports): DependencyViolation[] {
   const workspacePackagesByName = new Map(packages.map(workspacePackage => [workspacePackage.name, workspacePackage]));
 
   const manifestViolations = packages.flatMap(consumer => collectManifestViolations(consumer, workspacePackagesByName, matrix, imports));
   const importViolations = imports
-    .map(sourceImport => collectImportViolation(sourceImport, workspacePackagesByName, matrix))
+    .map(sourceImport => collectImportViolation(sourceImport, workspacePackagesByName, matrix, interfaceProductionImports))
     .filter((violation): violation is DependencyViolation => violation !== undefined);
 
   return [...manifestViolations, ...importViolations];
@@ -189,10 +189,6 @@ interface PackageManifest {
   peerDependencies?: Record<string, string>;
 }
 
-/**
- * @param {string} filePath a path relative to the repository root
- * @returns the `packages/<directory>` part of that path
- */
 function extractPackageDirectory(filePath: string): string {
   return filePath.split('/').slice(0, 2).join('/');
 }
@@ -210,10 +206,6 @@ async function readWorkspacePackages(io: ScriptIo): Promise<WorkspacePackage[]> 
   return packages.sort((first, second) => first.manifestPath.localeCompare(second.manifestPath));
 }
 
-/**
- * @param {ScriptIo} io the file system the sources are read from
- * @param {WorkspacePackage[]} packages every workspace package with its declared dependencies
- */
 async function readPackageImports(io: ScriptIo, packages: WorkspacePackage[]): Promise<PackageImport[]> {
   const packageNameByDirectory = new Map(packages.map(workspacePackage => [extractPackageDirectory(workspacePackage.manifestPath), workspacePackage.name]));
   const imports: PackageImport[] = [];
@@ -228,15 +220,12 @@ async function readPackageImports(io: ScriptIo, packages: WorkspacePackage[]): P
   return imports.sort((first, second) => first.filePath.localeCompare(second.filePath) || first.line - second.line);
 }
 
-/**
- * @param {ScriptIo} io the input and output of the guard
- */
 export async function checkPackageDependencies(io: ScriptIo): Promise<void> {
   const packages = await readWorkspacePackages(io);
   const imports = await readPackageImports(io, packages);
   reportViolations(io, {
     checkName: 'check:dependencies',
-    violations: findViolations(packages, imports, DEPENDENCY_MATRIX).map(({location, message}) => `${location}: ${message}`),
+    violations: findViolations(packages, imports, DEPENDENCY_MATRIX, INTERFACE_PRODUCTION_IMPORTS).map(({location, message}) => `${location}: ${message}`),
     nothingFound: 'no dependency matrix violation found.',
     summarize: count => `${count} dependency matrix violation(s); see the dependency matrix in docs/wiki/architecture.md.`
   });

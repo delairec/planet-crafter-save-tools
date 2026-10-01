@@ -1,5 +1,5 @@
 import {Accessor, createContext, createResource, createSignal, JSX, Resource} from "solid-js";
-import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
+import {SaveValidationMessageViewModel} from "core-mapping/save/presentation/viewModels/SaveValidationMessageViewModel";
 import {
   loadConfigurationPageController,
   loadEnergyLevelsSectionController,
@@ -7,13 +7,13 @@ import {
   loadPlayersSectionController,
   loadSaveIdentityController,
   loadTerraformationLevelsSectionController
-} from "core-mapping/composition/compositionRoot";
-import {ConfigurationPageViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
-import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
-import {TerraformationLevelsViewModel} from "core-mapping/presentation/viewModels/TerraformationLevelsViewModel";
-import {PlayersViewModel} from "core-mapping/presentation/viewModels/PlayersViewModel";
-import {SaveIdentityViewModel} from "core-mapping/presentation/viewModels/SaveIdentityViewModel";
-import {PlayersMenuViewModel} from "core-mapping/presentation/viewModels/PlayersMenuViewModel";
+} from "core-mapping/display/composition/compositionRoot";
+import {ConfigurationPageViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
+import {EnergyLevelsViewModel} from "core-mapping/display/presentation/viewModels/EnergyLevelsViewModel";
+import {TerraformationLevelsViewModel} from "core-mapping/display/presentation/viewModels/TerraformationLevelsViewModel";
+import {PlayersViewModel} from "core-mapping/display/presentation/viewModels/PlayersViewModel";
+import {SaveIdentityViewModel} from "core-mapping/display/presentation/viewModels/SaveIdentityViewModel";
+import {PlayersMenuViewModel} from "core-mapping/display/presentation/viewModels/PlayersMenuViewModel";
 
 export interface LoadedSaveViewModels {
   configurationPage: Resource<ConfigurationPageViewModel>;

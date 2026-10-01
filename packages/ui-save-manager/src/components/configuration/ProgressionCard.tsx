@@ -1,7 +1,7 @@
 import {For, Show} from "solid-js";
 import Card from "~/components/structure/Card";
 import ToneBadge from "~/components/structure/ToneBadge";
-import {ProgressionZoneViewModel} from "core-mapping/presentation/viewModels/ConfigurationPageViewModel";
+import {ProgressionZoneViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
 import {progressionCardTitle} from "~/messages/configurationPageMessages";
 
 interface ProgressionCardProps {

@@ -1,5 +1,5 @@
 import {Accessor, createEffect, JSX, Resource, Show} from "solid-js";
-import {SaveValidationMessageViewModel} from "core-mapping/presentation/viewModels/SaveFileValidationViewModel";
+import {SaveValidationMessageViewModel} from "core-mapping/save/presentation/viewModels/SaveValidationMessageViewModel";
 import Spinner from "~/components/structure/Spinner";
 import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
 import {sectionLoadingErrorMessage, sectionUnreadableLinesTitle} from "~/messages/sectionStateMessages";

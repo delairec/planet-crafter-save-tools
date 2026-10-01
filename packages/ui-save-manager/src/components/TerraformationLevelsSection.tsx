@@ -1,7 +1,7 @@
 import {For, Resource} from "solid-js";
 import FieldsGroup from "./structure/FieldsGroup";
 import SectionState from "./structure/SectionState";
-import {TerraformationLevelsViewModel} from "core-mapping/presentation/viewModels/TerraformationLevelsViewModel";
+import {TerraformationLevelsViewModel} from "core-mapping/display/presentation/viewModels/TerraformationLevelsViewModel";
 import {
   terraformationLevelsSectionBiomassLabel,
   terraformationLevelsSectionIndexLabel,

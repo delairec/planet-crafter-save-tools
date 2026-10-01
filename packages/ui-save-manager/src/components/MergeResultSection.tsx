@@ -1,5 +1,5 @@
 import {Accessor, Show} from 'solid-js';
-import {MergeResultViewModel} from 'core-mapping/presentation/viewModels/MergeResultViewModel';
+import {MergeResultViewModel} from 'core-mapping/merge/presentation/viewModels/MergeResultViewModel';
 import {
   mergeResultSectionDownloadLinkLabel,
   mergeResultSectionFileCreatedMessage,

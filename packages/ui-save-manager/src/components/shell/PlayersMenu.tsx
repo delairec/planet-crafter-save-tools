@@ -1,5 +1,5 @@
 import {For, Show} from 'solid-js';
-import {PlayersMenuViewModel} from 'core-mapping/presentation/viewModels/PlayersMenuViewModel';
+import {PlayersMenuViewModel} from 'core-mapping/display/presentation/viewModels/PlayersMenuViewModel';
 import HostBadge from '~/components/players/HostBadge';
 import Surface from '~/components/structure/Surface';
 

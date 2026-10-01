@@ -6,7 +6,7 @@ LIMITATION ElevenPlacedMachinesHaveNoKnownEnergyLevel
 		+ "displayed consumption of a game placing one of them is underestimated if the machine"
 		+ "draws power in game"
 	UNTIL "a source prices these machines, or a reading in game shows they draw no power"
-	SEEN_IN "packages/core-mapping/src/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
+	SEEN_IN "packages/core-mapping/src/display/domain/worldObjectNames.ts::WORLD_OBJECT_NAMES_WITHOUT_KNOWN_ENERGY_LEVEL"
 	SEEN_IN "packages/data-energy/energyLevels.json::GeneticManipulator1"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "The wiki prints no energy field for these machines, and the game data export prints"
@@ -60,7 +60,7 @@ LIMITATION SectionLabelsDivergeFromTheFormatDocument
 		+ "headings of the save format document"
 	STATUS archived
 	ARCHIVED_ON 2026-09-25
-	SEEN_IN "packages/core-mapping/src/presentation/messages/saveSectionLabels.js::'Mailbox"
+	SEEN_IN "packages/core-mapping/src/save/presentation/messages/saveSectionLabels.js::'Mailbox"
 		+ "messages'"
 	SEEN_IN "docs/save-format.md::#0 — Player Progression (tokens & unlocked groups)"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -75,7 +75,7 @@ LIMITATION TheMachineBreakdownIgnoresOptimizerBoost
 		+ "production, and their productionRatio shares do not sum to 1"
 	STATUS archived
 	ARCHIVED_ON 2026-09-25
-	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private"
+	SEEN_IN "packages/core-mapping/src/display/domain/PlanetEnergyGrid.ts::private"
 		+ "productionBreakdown(production: number)"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "It is the counterpart of counting the boost once, in the contribution of the"
@@ -150,7 +150,7 @@ LIMITATION SubmergedMachinesAreCountedAsDrawingPower
 	WORKAROUND "a warning in the energy section that submerged machines may distort the computed"
 		+ "available energy"
 	UNTIL "the save records whether a machine is under water or running"
-	SEEN_IN "packages/core-mapping/src/domain/PlanetEnergyGrid.ts::private consumption()"
+	SEEN_IN "packages/core-mapping/src/display/domain/PlanetEnergyGrid.ts::private consumption()"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "The save stores the position of a machine but neither the water level nor whether"
 		+ "the machine runs. The water level differs from lake to lake and rises with the"

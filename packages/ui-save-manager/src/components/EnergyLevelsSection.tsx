@@ -3,7 +3,7 @@ import FieldsGroup from "./structure/FieldsGroup";
 import FieldsGroupGrid from "./structure/FieldsGroupGrid";
 import SectionState from "./structure/SectionState";
 import Notification from "./structure/Notification";
-import {EnergyLevelsViewModel} from "core-mapping/presentation/viewModels/EnergyLevelsViewModel";
+import {EnergyLevelsViewModel} from "core-mapping/display/presentation/viewModels/EnergyLevelsViewModel";
 import {
   energyLevelsSectionBoostedMachinesLabel,
   energyLevelsSectionConsumptionTitle,

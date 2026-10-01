@@ -1,5 +1,5 @@
 import {Accessor, createContext, createSignal, JSX, onCleanup} from "solid-js";
-import {MergeResultViewModel} from "core-mapping/presentation/viewModels/MergeResultViewModel";
+import {MergeResultViewModel} from "core-mapping/merge/presentation/viewModels/MergeResultViewModel";
 
 const KEPT_MERGED_SAVES_LIMIT = 5;
 
