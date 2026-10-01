@@ -27,7 +27,7 @@ TASK FEAT69
 		+ "section, so nothing holds a save an edit could reach; the serializer is reachable from"
 		+ "the merge alone, and every domain entity is read-only. An editable draft is therefore a"
 		+ "use case of core-mapping beside MergeSaveFiles, holding the sections"
-		+ "SaveSectionsReaderPort reads, decoded into the business types of the domain, taking"
+		+ "SaveSectionsParserPort parses, decoded into the business types of the domain, taking"
 		+ "typed operations and giving back a new save text through SaveSectionsSerializerPort as"
 		+ "the merge does, so that the user interface holds edit state and no save format"
 		+ "knowledge. Exporting the unedited draft byte for byte is what proves the draft loses"
@@ -272,8 +272,8 @@ TASK FEAT77
 		+ "unchanged"
 	WAVE @WAVE.7
 	RATIONALE "A fix the user ticks has to be applied to one entry of one section, and today an"
-		+ "issue cannot say which. The two codes that carry an entryIndex do not count in the same"
-		+ "space: the unreadable line carries its rank among the lines of the section, the schema"
+		+ "issue cannot say which. The codes that carry an entryIndex do not count in the same"
+		+ "space: the unreadable line carries its rank among the lines of the section, each schema"
 		+ "violation its rank among the readable entries alone, so one unreadable line above a"
 		+ "violation shifts every index below it and a repair would rewrite the wrong entry. Since"
 		+ "wave 14 an issue carries a code and its data, no sentence: the issues of a section"
@@ -323,17 +323,19 @@ TASK FEAT78
 		+ "return before reading its sections when validation fails, while SaveSectionsReaderPort"
 		+ "never refuses a save: a line it cannot parse and an entry it cannot decode into the"
 		+ "business types of the domain come back as unreadable lines, every other entry decoded."
-		+ "The plan therefore reads the issues from the validator, the single source, and the"
-		+ "sections through that reader port, and pairs them; it invents no detection of its own."
-		+ "Two defects need no fix code at all, the unreadable line and the undecodable entry being"
-		+ "already dropped by the reader and the float suffix being already written back by the"
-		+ "serializer, which is why the plan is worth its own task before anything is applied. A"
-		+ "defect with no known fix stays visible: a repair that hides what it cannot mend is worse"
-		+ "than one that mends nothing"
+		+ "The plan therefore reads the issues from the validator, the single source, the host"
+		+ "designation from the unique host rule of the domain, no longer an issue of the validator"
+		+ "since wave 14, and the sections through that reader port, and pairs them; it invents no"
+		+ "detection of its own. Two defects need no fix code at all, the unreadable line and the"
+		+ "undecodable entry being already dropped by the reader and the float suffix being already"
+		+ "written back by the serializer, which is why the plan is worth its own task before"
+		+ "anything is applied. A defect with no known fix stays visible: a repair that hides what"
+		+ "it cannot mend is worse than one that mends nothing"
 		REF @COMMAND.ValidateSave
 		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
 		REF @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
+		REF @RULE.ASaveDesignatesExactlyOneHostPlayer
 		REF @TASK.FEAT77
 		REF @PACKAGE.core_mapping
 		REF @PACKAGE.shared_save_processing
@@ -363,20 +365,21 @@ TASK FEAT79
 		+ "the result says that the terrain layers are not carried over"
 	AFTER @TASK.FEAT78
 	WAVE @WAVE.7
-	RATIONALE "This is where the repair writes. The whole result is produced by reading the"
-		+ "rejected save through SaveSectionsReaderPort, applying the selected fixes to the"
-		+ "sections decoded into the business types of the domain and serializing them again"
-		+ "through SaveSectionsSerializerPort, so the two defects the round trip already mends cost"
-		+ "no fix code and the third, several host players, is a single assignment on the players"
-		+ "section. Serializing is what makes the repair risky rather than the fixes: an entry the"
-		+ "decoding cannot read comes back from the reader as an unreadable line and never reaches"
-		+ "the entry serializer, which refuses a nested value, and whether every nested field is"
-		+ "such an entry is measured at refinement, a save the serializer still refuses coming back"
-		+ "as a named failure instead of a thrown error; the identifier of a player is written as"
-		+ "its exact decimal text and must not be parsed into a number on the way through; and the"
-		+ "serializer writes ten sections, so a legacy save is converted whether or not the user"
-		+ "asked. The result is validated again before it is handed back, exactly as the merge"
-		+ "validates its own output, and what remains is reported rather than swallowed"
+	RATIONALE "This is where the repair writes. The whole result is produced by parsing the"
+		+ "rejected save through SaveSectionsParserPort as the merge does, applying the selected"
+		+ "fixes to the sections decoded into the business types of the domain and serializing them"
+		+ "again through SaveSectionsSerializerPort, so the two defects the round trip already"
+		+ "mends cost no fix code and the third, several host players, is a single assignment on"
+		+ "the players section. Serializing is what makes the repair risky rather than the fixes:"
+		+ "an entry the decoding cannot read comes back from that port as an unreadable line and"
+		+ "never reaches the entry serializer, which refuses a nested value, and whether every"
+		+ "nested field is such an entry is measured at refinement, a save the serializer still"
+		+ "refuses coming back as a named failure instead of a thrown error; the identifier of a"
+		+ "player is written as its exact decimal text and must not be parsed into a number on the"
+		+ "way through; and the serializer writes ten sections, so a legacy save is converted"
+		+ "whether or not the user asked. The result is validated again before it is handed back,"
+		+ "exactly as the merge validates its own output, and what remains is reported rather than"
+		+ "swallowed"
 		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
 		REF @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
 		REF @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
@@ -417,12 +420,12 @@ TASK FEAT80
 		+ "before builds so that the corrected save leaves as a new file and the loaded one is"
 		+ "never overwritten. Grouping by kind is what makes the table usable when a defect repeats"
 		+ "across hundreds of entries. A fix the rewrite itself carries cannot be left out, the"
-		+ "parser having already dropped the unreadable line and the serializer writing the float"
-		+ "suffix back, so it is shown as always applied with the loss named in its row rather than"
-		+ "behind a box that could not be honoured, because a save manager that silently drops"
-		+ "entries of a save is the failure this feature exists to avoid. A call that does not"
-		+ "complete keeps the one failure idiom of the package, distinct from what the validator"
-		+ "reports"
+		+ "reader having already dropped the unreadable line and the undecodable entry and the"
+		+ "serializer writing the float suffix back, so it is shown as always applied with the loss"
+		+ "named in its row rather than behind a box that could not be honoured, because a save"
+		+ "manager that silently drops entries of a save is the failure this feature exists to"
+		+ "avoid. A call that does not complete keeps the one failure idiom of the package,"
+		+ "distinct from what the validator reports"
 		REF @DECISION.UiSaveManagerHasOneUiErrorIdiom
 		REF @DECISION.ValidationIsTheSingleSourceOfWarnings
 		REF @DECISION.AGuardRefusesLocatorsTheScreenDoesNotShow
