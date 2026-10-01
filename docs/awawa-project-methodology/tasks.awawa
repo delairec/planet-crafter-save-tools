@@ -2376,3 +2376,21 @@ TASK DOCS181
 	DESC "closes the wave on the contributor documentation"
 	RATIONALE "The architecture page is where a contributor reads the dependency matrix and the"
 		+ "role of each package"
+
+TASK DOCS182
+	TITLE "Plan the wave splitting core-mapping into one core per business"
+	STATUS implemented
+	SPEC "wave 15 carries the milestone split-core-mapping and the branch"
+		+ "integration/split-core-mapping, and names the working document it follows"
+		IMPL "docs/awawa-project-methodology/waves.awawa::WAVE 15"
+	SPEC "the working document states the target packages, the flows, the state measured on master"
+		+ "and the recorded decisions the wave rewrites"
+		IMPL "docs/designs/2026-10-01-core-mapping-split.md::## Target"
+	SPEC "each step of the split is a draft task of wave 15 carrying a priority"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::first step of the split"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::last step of the split"
+	DELIVERED_BY 253
+	DESC "plan pull request of wave 15"
+	SOURCE "Owner ruling in the session of 2026-10-01: core-mapping is split before new features"
+		+ "are added"
+		PR 253
