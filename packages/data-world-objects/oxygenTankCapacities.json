@@ -1,0 +1,7 @@
+[
+  {"worldObjectName": "OxygenTank1", "oxygenCapacity": 145},
+  {"worldObjectName": "OxygenTank2", "oxygenCapacity": 200},
+  {"worldObjectName": "OxygenTank3", "oxygenCapacity": 280},
+  {"worldObjectName": "OxygenTank4", "oxygenCapacity": 370},
+  {"worldObjectName": "OxygenTank5", "oxygenCapacity": 450}
+]

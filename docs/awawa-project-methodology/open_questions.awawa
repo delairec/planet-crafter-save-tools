@@ -19,3 +19,10 @@ OPEN_QUESTION DeprecatedGroupIdsOfTheSkeoUpdateAreHandled
 		+ "read on 2026-09-21"
 		REF @URL.PceditItemCatalog
 		REF @GAME_RELEASE.2.102
+
+OPEN_QUESTION TheToxicityGaugeIsShownOnThePlayerCard
+	DESC "whether a player card shows a fourth gauge for toxicity, which the save carries as"
+		+ "playerGaugeToxic, every reference save holding it at zero and its maximum being unknown"
+		REF @SECTION.Players
+		REF @DECISION.APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
+	BLOCKS @TASK.FEAT144

@@ -3380,11 +3380,11 @@ DECISION AGuardAllowListOnlyShrinks
 DECISION AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR159
-	SPEC "PlayerMenuEntry, PlayerSummary, SaveIdentity, TerraformationLevelSummary and EnergyLevels"
+	SPEC "PlayerMenuEntry, PlayerCard, SaveIdentity, TerraformationLevelSummary and EnergyLevels"
 		+ "are interfaces of application/responses, each built as a literal by its use case; no"
 		+ "factory re-checks their fields"
 		IMPL "packages/core-mapping/src/display/application/responses/PlayerMenuEntryResponse.ts"
-		IMPL "packages/core-mapping/src/display/application/responses/PlayerSummaryResponse.ts"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerCardResponse"
 		IMPL "packages/core-mapping/src/display/application/responses/SaveIdentityResponse.ts"
 		IMPL "packages/core-mapping/src/display/application/responses/TerraformationLevelSummaryResponse.ts"
 		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts"
@@ -3500,13 +3500,13 @@ DECISION ASectionUseCaseReportsTheLinesItCannotRead
 		IMPL "packages/core-mapping/src/display/application/LoadConfigurationPage.ts::displaySaveWithUnreadableLines"
 		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts::displaySaveWithUnreadableLines"
 		IMPL "packages/core-mapping/src/display/application/LoadPlayersMenu.ts::displaySaveWithUnreadableLines"
-		IMPL "packages/core-mapping/src/display/application/LoadPlayersSection.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts::displaySaveWithUnreadableLines"
 		IMPL "packages/core-mapping/src/display/application/LoadSaveIdentity.ts::displaySaveWithUnreadableLines"
 		IMPL "packages/core-mapping/src/display/application/LoadTerraformationLevelsSection.ts::displaySaveWithUnreadableLines"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadConfigurationPage.spec.ts"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.spec.ts"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPlayersMenu.spec.ts"
-		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPlayersSection.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPlayersPage.spec.ts"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadSaveIdentity.spec.ts"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadTerraformationLevelsSection.spec.ts"
 	SPEC "the presenter of a section carries the unreadable lines, each located, in its view model;"
@@ -4158,3 +4158,42 @@ DECISION TheStylesOfOnePageLiveInAStylesheetNamedAfterIt
 		+ "page with the pieces every page shares, and grows with every page of the redesign"
 	SOURCE "Owner review of 2026-10-03, r4170801024: \"on pourrait avoir un overview.css\""
 		PR 264
+
+DECISION APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
+	SPEC "the Players page measures the oxygen, the health and the thirst of each player against"
+		+ "their maximum: the oxygen maximum is the capacity of the oxygen tank worn, read from a"
+		+ "value table of data-world-objects behind an application port, and health and thirst are"
+		+ "measured against the base capacity of 100"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts"
+		IMPL "packages/core-mapping/src/display/domain/rules/resolveOxygenCapacity.ts"
+		IMPL "packages/core-mapping/src/display/infrastructure/OxygenTankCapacitiesReaderService.ts"
+		REF @DATATABLE.OxygenTankCapacities
+		REF @RULE.TheOxygenMaximumIsTheCapacityOfTheTankWorn
+	SPEC "a gauge percentage is held between 0 and 100, and the value over its maximum is shown as"
+		+ "the save carries it, above the maximum included"
+		IMPL "packages/core-mapping/src/display/domain/rules/computeGaugePercentage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts"
+	SPEC "the use case hands the presenter each gauge as its value, its maximum and its percentage,"
+		+ "primitives of the application response; the presenter rounds them for the labels"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerGaugeResponse"
+	REJECTED "the oxygen capacities written as constants of the domain rule: a value table is read"
+		+ "by an infrastructure adapter behind a port, and the wiki moves the figures with the game"
+	REJECTED "the maximum taken as the highest value the save holds for a gauge: a save whose"
+		+ "players are all half full would show them full"
+	REJECTED "a percentage above 100 drawn as an overflow: the gauge shape has no room for it, and"
+		+ "the value over its maximum already says it"
+	REJECTED "a fourth gauge for toxicity: the save carries it, every reference save holds it at"
+		+ "zero and its maximum is unknown; left to an open question"
+		REF @OPEN_QUESTION.TheToxicityGaugeIsShownOnThePlayerCard
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT144
+	RATIONALE "The save stores each gauge as a raw value without its maximum. Health and thirst"
+		+ "never exceed 100 in the reference saves; oxygen reaches 280, 370 or 450 with the tank"
+		+ "tiers 3, 4 and 5 and 100 without a tank, which the wiki confirms. One reference save"
+		+ "holds players at 450 oxygen with no tank found, so a value may exceed the computed"
+		+ "maximum: the fill is held at full and the figure stays truthful"
+	SOURCE "Research of task FEAT144 on 2026-10-02: the wiki page Oxygen Tanks and the gauges of"
+		+ "the players of the reference saves"
+		REF @URL.WikiOxygenTanks
+		REF @PROJECT.DNC

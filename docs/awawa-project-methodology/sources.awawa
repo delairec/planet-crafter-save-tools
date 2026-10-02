@@ -216,3 +216,7 @@ URL BracesStackExhaustionAdvisory
 URL BracesNestedPatternFix
 	LOCATION "https://github.com/micromatch/braces/pull/72"
 	DESC "upstream fix of GHSA-vfj7-8cjw-p6xm, open and unmerged"
+
+URL WikiOxygenTanks
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&page=Oxygen%20Tanks&prop=wikitext&format=json"
+	DESC "fandom wiki page Oxygen Tanks, read on 2026-10-02"
