@@ -382,6 +382,41 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.overview-tile-unit',
     foreground: 'muted',
     background: 'surface'
+  },
+  {
+    description: 'a label of the terraformation figures of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.key-value dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the label under the Terraformation Index of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.overview-planet-index-label',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the label of a power row of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.overview-planet-power-row dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the share of production consumed of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.overview-planet-share',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the line naming the side a planet card of the Overview page lacks, on the card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.overview-planet-absent-side',
+    foreground: 'muted',
+    background: 'surface'
   }
 ];
 
