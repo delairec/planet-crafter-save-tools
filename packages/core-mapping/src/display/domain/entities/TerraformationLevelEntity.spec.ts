@@ -68,4 +68,27 @@ describe('TerraformationLevelEntity', () => {
     // Assert
     expect(terraformationIndex).toBe(2_129_127);
   });
+
+  describe('When the planet does not handle purification', () => {
+    it('should leave purification out of the terraformation index', () => {
+      // Arrange
+      const purificationNotHandled = undefined;
+      const level = new TerraformationLevelEntity({
+        planetId: 'Prime',
+        unitOxygenLevel: 123_123,
+        unitHeatLevel: 456_456,
+        unitPressureLevel: 789_789,
+        unitPurificationLevel: purificationNotHandled,
+        unitPlantsLevel: 101_101,
+        unitInsectsLevel: 112_112,
+        unitAnimalsLevel: 131_131
+      });
+
+      // Act
+      const terraformationIndex = level.terraformationIndex;
+
+      // Assert
+      expect(terraformationIndex).toBe(1_713_712);
+    });
+  });
 });

@@ -6,7 +6,7 @@ export interface TerraformationLevelSummaryResponse {
   readonly unitPlantsLevel: number;
   readonly unitInsectsLevel: number;
   readonly unitAnimalsLevel: number;
-  readonly unitPurificationLevel: number;
+  readonly unitPurificationLevel: number | undefined;
   readonly terraformationIndex: number;
   readonly biomass: number;
 }

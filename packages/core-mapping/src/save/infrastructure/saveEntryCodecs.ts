@@ -86,6 +86,13 @@ const planetStoodOn = {
   encode: (value: unknown): string => value === undefined ? '' : value as string
 };
 
+const PURIFICATION_NOT_HANDLED_LEVEL = -1;
+
+const purificationLevel = {
+  decode: (value: unknown): number | undefined => value === PURIFICATION_NOT_HANDLED_LEVEL ? undefined : value as number,
+  encode: (value: unknown): number => value === undefined ? PURIFICATION_NOT_HANDLED_LEVEL : value as number
+};
+
 function keepNames<Name extends string>(...names: Name[]): {readonly [Field in Name]: {readonly name: Field}} {
   return Object.fromEntries(names.map(name => [name, {name}])) as {readonly [Field in Name]: {readonly name: Field}};
 }
@@ -101,10 +108,12 @@ export const GLOBAL_METADATA_CODEC = defineEntryCodec<GlobalMetadata, GlobalMeta
   unlockedGroups: {name: 'unlockedGroups', ...groupList}
 });
 
-export const TERRAFORMATION_LEVEL_CODEC = defineEntryCodec<TerraformationLevel, TerraformationLevelEntry>('terraformationLevels', keepNames(
-  'planetId', 'unitOxygenLevel', 'unitHeatLevel', 'unitPressureLevel', 'unitPlantsLevel', 'unitInsectsLevel', 'unitAnimalsLevel',
-  'unitPurificationLevel'
-));
+export const TERRAFORMATION_LEVEL_CODEC = defineEntryCodec<TerraformationLevel, TerraformationLevelEntry>('terraformationLevels', {
+  ...keepNames(
+    'planetId', 'unitOxygenLevel', 'unitHeatLevel', 'unitPressureLevel', 'unitPlantsLevel', 'unitInsectsLevel', 'unitAnimalsLevel'
+  ),
+  unitPurificationLevel: {name: 'unitPurificationLevel', ...purificationLevel}
+});
 
 export const PLAYER_CODEC = defineEntryCodec<Player, PlayerEntry>('players', {
   ...keepNames(

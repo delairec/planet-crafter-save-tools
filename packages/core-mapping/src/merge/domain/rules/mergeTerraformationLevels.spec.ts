@@ -1,11 +1,21 @@
 import {describe, expect, it} from 'bun:test';
 import {mergeTerraformationLevels} from './mergeTerraformationLevels';
 import {createTerraformationLevelEntry} from '../../../save/testing/createSaveEntries';
+import {TerraformationLevelEntry} from '../../../save/domain/save/TerraformationLevelEntry';
 
 describe('Merge terraformation levels', () => {
-  const baseTerraformationLevel = createTerraformationLevelEntry();
+  const purificationNotHandled = undefined;
 
-  const toxicityLevelFromSaveA = {...baseTerraformationLevel};
+  const toxicityLevelFromSaveA = createTerraformationLevelEntry({
+    planetId: 'Toxicity',
+    unitOxygenLevel: 100.0,
+    unitHeatLevel: 200.0,
+    unitPressureLevel: 300.0,
+    unitPlantsLevel: 400.0,
+    unitInsectsLevel: 500.0,
+    unitAnimalsLevel: 600.0,
+    unitPurificationLevel: 700.0
+  });
 
   const primeLevelFromSaveB = createTerraformationLevelEntry({
     planetId: 'Prime',
@@ -15,7 +25,7 @@ describe('Merge terraformation levels', () => {
     unitPlantsLevel: 40.0,
     unitInsectsLevel: 50.0,
     unitAnimalsLevel: 60.0,
-    unitPurificationLevel: -1.0
+    unitPurificationLevel: purificationNotHandled
   });
 
   const aqualisLevelFromSaveB = createTerraformationLevelEntry({
@@ -26,7 +36,7 @@ describe('Merge terraformation levels', () => {
     unitPlantsLevel: 4.0,
     unitInsectsLevel: 5.0,
     unitAnimalsLevel: 6.0,
-    unitPurificationLevel: -1.0
+    unitPurificationLevel: purificationNotHandled
   });
 
   describe('When terraformation levels are unique', () => {
@@ -35,65 +45,82 @@ describe('Merge terraformation levels', () => {
       const result = mergeTerraformationLevels([toxicityLevelFromSaveA], [primeLevelFromSaveB, aqualisLevelFromSaveB]);
 
       // Assert
-      expect(result).toEqual([toxicityLevelFromSaveA, primeLevelFromSaveB, aqualisLevelFromSaveB]);
+      expect<TerraformationLevelEntry[]>(result).toEqual([toxicityLevelFromSaveA, primeLevelFromSaveB, aqualisLevelFromSaveB]);
     });
   });
 
   describe('When terraformation levels are duplicated', () => {
     it('should merge terraformation levels by taking max values', () => {
       // Arrange
-      const primeLevelFromSaveA = {
-        planetId: 'Prime',
-        unitOxygenLevel: 101.0, unitHeatLevel: 201.0, unitPressureLevel: 301.0,
-        unitPlantsLevel: 401.0, unitInsectsLevel: 501.0, unitAnimalsLevel: 601.0,
-        unitPurificationLevel: -1.0
-      };
+      const toxicityLevelFromSaveB = createTerraformationLevelEntry({
+        planetId: 'Toxicity',
+        unitOxygenLevel: 101.0,
+        unitHeatLevel: 20.0,
+        unitPressureLevel: 301.0,
+        unitPlantsLevel: 40.0,
+        unitInsectsLevel: 501.0,
+        unitAnimalsLevel: 60.0,
+        unitPurificationLevel: 701.0
+      });
 
       // Act
-      const result = mergeTerraformationLevels([toxicityLevelFromSaveA, primeLevelFromSaveA], [primeLevelFromSaveB, aqualisLevelFromSaveB]);
+      const result = mergeTerraformationLevels([toxicityLevelFromSaveA], [toxicityLevelFromSaveB]);
 
       // Assert
-      expect(result).toEqual([
-        toxicityLevelFromSaveA,
+      expect<TerraformationLevelEntry[]>(result).toEqual([
         {
-          planetId: 'Prime',
-          unitOxygenLevel: 101.0, unitHeatLevel: 201.0, unitPressureLevel: 301.0,
-          unitPlantsLevel: 401.0, unitInsectsLevel: 501.0, unitAnimalsLevel: 601.0,
-          unitPurificationLevel: -1.0
-        },
-        aqualisLevelFromSaveB
+          planetId: 'Toxicity',
+          unitOxygenLevel: 101.0, unitHeatLevel: 200.0, unitPressureLevel: 301.0,
+          unitPlantsLevel: 400.0, unitInsectsLevel: 501.0, unitAnimalsLevel: 600.0,
+          unitPurificationLevel: 701.0
+        }
       ]);
     });
   });
 
-  describe('When both saves have unitPurificationLevel at -1 (sentinel for "not yet unlocked")', () => {
-    it('should keep -1', () => {
+  describe('When neither save carries a purification level for a planet', () => {
+    it('should leave the planet without a purification level', () => {
       // Arrange
-      const levelsFromSaveA = [{...baseTerraformationLevel, planetId: 'Prime', unitPurificationLevel: -1.0}];
-      const levelsFromSaveB = [{...baseTerraformationLevel, planetId: 'Prime', unitPurificationLevel: -1.0}];
+      const primeLevelFromSaveA = createTerraformationLevelEntry({
+        planetId: 'Prime',
+        unitOxygenLevel: 10.0,
+        unitHeatLevel: 20.0,
+        unitPressureLevel: 30.0,
+        unitPlantsLevel: 40.0,
+        unitInsectsLevel: 50.0,
+        unitAnimalsLevel: 60.0,
+        unitPurificationLevel: purificationNotHandled
+      });
 
       // Act
-      const result = mergeTerraformationLevels(levelsFromSaveA, levelsFromSaveB);
+      const result = mergeTerraformationLevels([primeLevelFromSaveA], [primeLevelFromSaveB]);
 
       // Assert
-      expect(result).toEqual([{...baseTerraformationLevel, planetId: 'Prime', unitPurificationLevel: -1.0}]);
+      expect<TerraformationLevelEntry[]>(result).toEqual([
+        {
+          planetId: 'Prime',
+          unitOxygenLevel: 10.0, unitHeatLevel: 20.0, unitPressureLevel: 30.0,
+          unitPlantsLevel: 40.0, unitInsectsLevel: 50.0, unitAnimalsLevel: 60.0,
+          unitPurificationLevel: undefined
+        }
+      ]);
     });
   });
 
-  describe('When only one save has unitPurificationLevel at -1', () => {
+  describe('When only one save carries a purification level for a planet', () => {
     it.each([
-      {unlockedIn: 'save B', purificationLevelA: -1.0, purificationLevelB: 500.0},
-      {unlockedIn: 'save A', purificationLevelA: 500.0, purificationLevelB: -1.0}
-    ])('should take the non-negative value of the other save, the one of $unlockedIn', ({purificationLevelA, purificationLevelB}) => {
+      {carriedBy: 'save B', purificationLevelA: purificationNotHandled, purificationLevelB: 500.0},
+      {carriedBy: 'save A', purificationLevelA: 500.0, purificationLevelB: purificationNotHandled}
+    ])('should take the purification level of the save that carries it, $carriedBy', ({purificationLevelA, purificationLevelB}) => {
       // Arrange
-      const levelsFromSaveA = [{...baseTerraformationLevel, unitPurificationLevel: purificationLevelA}];
-      const levelsFromSaveB = [{...baseTerraformationLevel, unitPurificationLevel: purificationLevelB}];
+      const levelsFromSaveA = [createTerraformationLevelEntry({planetId: 'Toxicity', unitPurificationLevel: purificationLevelA})];
+      const levelsFromSaveB = [createTerraformationLevelEntry({planetId: 'Toxicity', unitPurificationLevel: purificationLevelB})];
 
       // Act
       const result = mergeTerraformationLevels(levelsFromSaveA, levelsFromSaveB);
 
       // Assert
-      expect(result).toEqual([{...baseTerraformationLevel, unitPurificationLevel: 500.0}]);
+      expect(result[0]?.unitPurificationLevel).toBe(500.0);
     });
   });
 });

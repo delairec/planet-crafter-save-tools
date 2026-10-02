@@ -1,7 +1,5 @@
 import {TerraformationLevelEntry} from '../../../save/domain/save/TerraformationLevelEntry';
 
-const PURIFICATION_SENTINEL = -1;
-
 export function mergeTerraformationLevels(terraformationLevelsA: readonly TerraformationLevelEntry[], terraformationLevelsB: readonly TerraformationLevelEntry[]): TerraformationLevelEntry[] {
   const planetIds = new Set([...terraformationLevelsA, ...terraformationLevelsB].map(level => level.planetId));
 
@@ -26,14 +24,11 @@ export function mergeTerraformationLevels(terraformationLevelsA: readonly Terraf
   });
 }
 
-function mergePurificationLevel(levelA: number, levelB: number): number {
-  if (levelA === PURIFICATION_SENTINEL && levelB === PURIFICATION_SENTINEL) {
-    return PURIFICATION_SENTINEL;
-  }
-  if (levelA === PURIFICATION_SENTINEL) {
+function mergePurificationLevel(levelA: number | undefined, levelB: number | undefined): number | undefined {
+  if (levelA === undefined) {
     return levelB;
   }
-  if (levelB === PURIFICATION_SENTINEL) {
+  if (levelB === undefined) {
     return levelA;
   }
 

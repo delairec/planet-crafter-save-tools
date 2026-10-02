@@ -1,3 +1,4 @@
+const NO_PURIFICATION_CONTRIBUTION = 0;
 
 export interface TerraformationLevelEntityInput {
   readonly planetId: string;
@@ -7,7 +8,7 @@ export interface TerraformationLevelEntityInput {
   readonly unitPlantsLevel: number;
   readonly unitInsectsLevel: number;
   readonly unitAnimalsLevel: number;
-  readonly unitPurificationLevel: number;
+  readonly unitPurificationLevel: number | undefined;
 }
 
 export class TerraformationLevelEntity {
@@ -18,7 +19,7 @@ export class TerraformationLevelEntity {
   private readonly _unitPlantsLevel: number;
   private readonly _unitInsectsLevel: number;
   private readonly _unitAnimalsLevel: number;
-  private readonly _unitPurificationLevel: number;
+  private readonly _unitPurificationLevel: number | undefined;
 
   constructor(input: TerraformationLevelEntityInput) {
     this._planetId = input.planetId;
@@ -59,7 +60,7 @@ export class TerraformationLevelEntity {
     return this._unitAnimalsLevel;
   }
 
-  get unitPurificationLevel(): number {
+  get unitPurificationLevel(): number | undefined {
     return this._unitPurificationLevel;
   }
 
@@ -68,7 +69,8 @@ export class TerraformationLevelEntity {
   }
 
   get terraformationIndex(): number {
-    const environmental = this._unitOxygenLevel + this._unitHeatLevel + this._unitPressureLevel + this._unitPurificationLevel;
+    const purificationContribution = this._unitPurificationLevel ?? NO_PURIFICATION_CONTRIBUTION;
+    const environmental = this._unitOxygenLevel + this._unitHeatLevel + this._unitPressureLevel + purificationContribution;
 
     return environmental + this.biomass;
   }
