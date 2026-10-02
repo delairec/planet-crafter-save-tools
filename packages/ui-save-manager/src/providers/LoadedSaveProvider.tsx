@@ -8,6 +8,8 @@ import {
   loadSaveIdentityController,
   loadTerraformationLevelsSectionController
 } from "core-mapping/display/composition/compositionRoot";
+import {loadOverviewPageController} from "core-mapping/display/composition/compositionRoot";
+import {OverviewPageViewModel} from "core-mapping/display/presentation/viewModels/OverviewPageViewModel";
 import {ConfigurationPageViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
 import {EnergyLevelsViewModel} from "core-mapping/display/presentation/viewModels/EnergyLevelsViewModel";
 import {TerraformationLevelsViewModel} from "core-mapping/display/presentation/viewModels/TerraformationLevelsViewModel";
@@ -22,10 +24,12 @@ export interface LoadedSaveViewModels {
   players: Resource<PlayersViewModel>;
   saveIdentity: Resource<SaveIdentityViewModel>;
   playersMenu: Resource<PlayersMenuViewModel>;
+  overviewPage: Resource<OverviewPageViewModel>;
 }
 export interface ValidatedSave {
   content: string;
   fileName: string;
+  fileSize: number;
   warnings: SaveValidationMessageViewModel[];
 }
 
@@ -60,6 +64,8 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     ({content, fileName}) => loadSaveIdentityController.loadSaveIdentity(content, fileName));
   const [playersMenu] = createResource(validatedContent,
     (content) => loadPlayersMenuController.loadPlayersMenu(content));
+  const [overviewPage] = createResource(validatedSave,
+    ({content, fileName, fileSize}) => loadOverviewPageController.loadOverviewPage({content, fileName, fileSize}));
 
   const loadedSave: LoadedSave = {
     validatedSave,
@@ -68,7 +74,7 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     loadSave: setValidatedSave,
     unloadSave: () => setValidatedSave(null),
     viewModels: {
-      configurationPage, energyLevels, terraformationLevels, players, saveIdentity, playersMenu
+      configurationPage, energyLevels, terraformationLevels, players, saveIdentity, playersMenu, overviewPage
     }
   };
 

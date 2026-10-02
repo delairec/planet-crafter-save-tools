@@ -363,18 +363,32 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
-    description: 'the links of the overview to the pages of the save, on the page background',
-    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
-    selector: '.overview-pages a',
-    foreground: 'content',
-    background: 'canvas'
-  },
-  {
     description: 'the file name of a merged save attached to the home message, on its chip',
     file: 'packages/ui-save-manager/src/styles/home.css',
     selector: '.home-message-attachment-download',
     foreground: 'content',
     background: 'canvas'
+  },
+  {
+    description: 'the hint beside a section title, on the page background',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.section-title-hint',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the label of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.overview-tile dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the unit after the figure of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.overview-tile-unit',
+    foreground: 'muted',
+    background: 'surface'
   }
 ];
 

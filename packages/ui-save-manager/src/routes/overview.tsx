@@ -1,36 +1,29 @@
-import {A, Navigate} from '@solidjs/router';
 import {Show} from 'solid-js';
-import {
-  configurationPageTitle,
-  powerPageTitle,
-  resolveLoadedSaveTitle,
-  terraformationPageTitle
-} from "~/messages/shellMessages";
-import {displayRouteWarningsTitle} from "~/messages/displayRouteMessages";
-import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
-import {useLoadedSave} from "~/hooks/useLoadedSave.ts";
-import {PAGE_PATHS} from "~/lib/pagePaths";
+import SavePage from '~/components/shell/SavePage';
+import SectionTitle from '~/components/structure/SectionTitle';
+import SectionState from '~/components/structure/SectionState';
+import OverviewTiles from '~/components/overview/OverviewTiles';
+import ValidationMessagesList from '~/components/validation/ValidationMessagesList';
+import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
+import {overviewPageTitle} from '~/messages/shellMessages';
+import {displayRouteWarningsTitle} from '~/messages/displayRouteMessages';
 
 export default function OverviewPage() {
-  const {validatedSave, warnings} = useLoadedSave();
+  const loadedSave = useLoadedSave();
 
   return (
-    <Show when={validatedSave()} fallback={<Navigate href={PAGE_PATHS.loadSavePath}/>}>
-      {(loadedSave) => (
-        <>
-          <Show when={warnings().length}>
-            <code>{loadedSave().fileName}</code>
-            <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={warnings()}/>
-          </Show>
-
-          <h3 data-testid="loaded-save-title">{resolveLoadedSaveTitle(loadedSave().fileName)}</h3>
-          <p class="overview-pages">
-            <A href={PAGE_PATHS.configurationPath} data-testid="overview-configuration-page-link">{configurationPageTitle}</A>
-            <A href={PAGE_PATHS.powerPath} data-testid="overview-power-page-link">{powerPageTitle}</A>
-            <A href={PAGE_PATHS.terraformationPath} data-testid="overview-terraformation-page-link">{terraformationPageTitle}</A>
-          </p>
-        </>
-      )}
-    </Show>
+    <SavePage page={overviewPageTitle}>
+      <Show when={loadedSave.warnings().length}>
+        <ValidationMessagesList title={displayRouteWarningsTitle} testId="display-warnings" severity="warning" messages={loadedSave.warnings()}/>
+      </Show>
+      <SectionState title={overviewPageTitle} resource={loadedSave.viewModels.overviewPage}>
+        {(overviewPage) => (
+          <section class="overview-identity" aria-label={overviewPageTitle} data-testid="overview-identity">
+            <SectionTitle testId="overview-identity-title" hint={overviewPage().identity.hint}>{overviewPage().identity.title}</SectionTitle>
+            <OverviewTiles tiles={overviewPage().tiles}/>
+          </section>
+        )}
+      </SectionState>
+    </SavePage>
   );
 }

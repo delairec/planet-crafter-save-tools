@@ -34,16 +34,6 @@
     min-width: 0;
 }
 
-.overview-pages {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-lg);
-}
-
-.overview-pages a {
-    color: var(--content);
-}
-
 .home-page-links {
     display: flex;
     flex-wrap: wrap;

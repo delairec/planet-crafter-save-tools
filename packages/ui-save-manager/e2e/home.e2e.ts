@@ -245,7 +245,7 @@ test.describe('Home page', () => {
 
       // Assert
       await expect(page).toHaveURL(/\/overview$/);
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 

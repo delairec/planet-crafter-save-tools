@@ -15,7 +15,7 @@ async function openTheLoadSavePage(page: Page): Promise<void> {
 
 async function showASaveVisualization(page: Page): Promise<void> {
   await visualizeTheSave(page, saveAFixturePath);
-  await expect(page.getByTestId('loaded-save-title')).toBeVisible();
+  await expect(page.getByTestId('overview-identity-title')).toBeVisible();
 }
 
 test.describe('Overview page accessibility', () => {
@@ -105,6 +105,25 @@ test.describe('Overview page accessibility', () => {
     });
 
     describeTheColorRulesAuditInTheDarkColorScheme(showASaveVisualization);
+
+    test('should title the identity of the save with a third level heading', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, saveAFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-identity-title')).toHaveRole('heading');
+      await expect(page.getByTestId('overview-identity-title')).toHaveAccessibleName('Merged Save');
+      await expect(page.getByTestId('overview-identity-title')).toMatchAriaSnapshot('- heading [level=3]');
+    });
+
+    test('should name the identity zone of the save as a region', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, saveAFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-identity')).toHaveRole('region');
+      await expect(page.getByTestId('overview-identity')).toHaveAccessibleName('Overview');
+    });
   });
 
   test.describe('When the warnings of a visualized save are revealed', () => {
