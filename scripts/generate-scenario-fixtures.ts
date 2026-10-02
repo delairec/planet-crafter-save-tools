@@ -1,4 +1,4 @@
-import {mkdir, writeFile} from 'node:fs/promises';
+import {writeFile} from 'node:fs/promises';
 import {runAsEntryPointWith} from './runAsEntryPointWith.ts';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from '../packages/core-mapping/src/save/infrastructure/wireFormat/testing/createFakeSaveContent.js';
 import {
@@ -9,15 +9,10 @@ import {
   createSaveConfiguration,
   createWorldObject
 } from '../packages/core-mapping/src/save/infrastructure/wireFormat/testing/createSaveRecords.js';
-import {GLOBAL_METADATA_SECTION_INDEX, PLAYERS_SECTION_INDEX} from '../packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js';
-import {replaceSaveSection} from '../packages/core-mapping/src/save/infrastructure/wireFormat/replaceSaveSection.js';
 
-const UI_SCENARIOS_DIRECTORY = 'packages/ui-save-manager/e2e/fixtures';
-const MERGE_CLI_SPECS_DIRECTORY = 'packages/cli-merge/testing/fixtures';
-const VALIDATE_CLI_SPECS_DIRECTORY = 'packages/cli-validate/testing/fixtures';
+const SCENARIO_FIXTURES_DIRECTORY = 'packages/ui-save-manager/e2e/fixtures';
 
 interface ScenarioFixture {
-  directory: string;
   fileName: string;
   generateContent: () => string;
 }
@@ -105,105 +100,32 @@ function generateEnergyConsumptionContent(): string {
   });
 }
 
-const UNREADABLE_ENTRY = '{ broken entry';
-const GROUP_UNLOCKED_BY_SAVE_A_ONLY = 'UnlockedFromSaveA';
-const GROUP_UNLOCKED_BY_SAVE_B_ONLY = 'UnlockedFromSaveB';
-const WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID = [createWorldObject({id: 15974863, gId: 'Phytoplankton1'})];
-
-function generateContentHoldingTerraTokens(terraTokens: number): string {
-  return createFakeSaveContent({globalMetadata: createGlobalMetadata({terraTokens, allTimeTerraTokens: terraTokens})});
-}
-
-function generateContentUnlockingOnly(unlockedGroup: string): string {
-  return createFakeSaveContent({globalMetadata: createGlobalMetadata({unlockedGroups: unlockedGroup})});
-}
-
-function appendUnreadablePlayerEntry(saveContent: string): string {
-  return replaceSaveSection(saveContent, PLAYERS_SECTION_INDEX, (currentSection: string) => `${currentSection}|\n${UNREADABLE_ENTRY}`);
-}
-
-function generateContentWithoutGlobalMetadata(): string {
-  return replaceSaveSection(generateContentHoldingTerraTokens(10), GLOBAL_METADATA_SECTION_INDEX, () => '');
-}
-
-function generateContentCarryingDeprecatedGroupIds(): string {
-  return createFakeSaveContent({
-    worldObjects: [
-      createWorldObject({id: 79111656, gId: 'Phytoplankton2'}),
-      createWorldObject({id: 79111657, gId: 'Phytoplankton3'})
-    ]
-  });
-}
-
 export const SCENARIO_FIXTURES: ScenarioFixture[] = [
-  {directory: UI_SCENARIOS_DIRECTORY, fileName: 'baseline_valid.json', generateContent: () => createFakeSaveContent()},
-  {directory: UI_SCENARIOS_DIRECTORY, fileName: 'other-player_valid.json', generateContent: generateOtherPlayerContent},
-  {directory: UI_SCENARIOS_DIRECTORY, fileName: 'negative-gauge_invalid.json', generateContent: () => createFakeSaveContent({players: [createPlayer({playerGaugeToxic: -1})]})},
-  {directory: UI_SCENARIOS_DIRECTORY, fileName: 'legacy-format_valid.json', generateContent: () => createLegacyFakeSaveContent()},
-  {directory: UI_SCENARIOS_DIRECTORY, fileName: 'skeo-update_valid.json', generateContent: generateSkeoUpdateContent},
-  {directory: UI_SCENARIOS_DIRECTORY, fileName: 'energy-consumption_valid.json', generateContent: generateEnergyConsumptionContent},
-  {directory: MERGE_CLI_SPECS_DIRECTORY, fileName: 'terra-tokens-10_valid.json', generateContent: () => generateContentHoldingTerraTokens(10)},
-  {directory: MERGE_CLI_SPECS_DIRECTORY, fileName: 'terra-tokens-20_valid.json', generateContent: () => generateContentHoldingTerraTokens(20)},
-  {
-    directory: MERGE_CLI_SPECS_DIRECTORY,
-    fileName: 'legacy-format-terra-tokens-10_valid.json',
-    generateContent: () => createLegacyFakeSaveContent({globalMetadata: createGlobalMetadata({terraTokens: 10, allTimeTerraTokens: 10})})
-  },
-  {
-    directory: MERGE_CLI_SPECS_DIRECTORY,
-    fileName: 'unreadable-player-entry_invalid.json',
-    generateContent: () => appendUnreadablePlayerEntry(generateContentHoldingTerraTokens(10))
-  },
-  {directory: MERGE_CLI_SPECS_DIRECTORY, fileName: 'no-global-metadata_invalid.json', generateContent: generateContentWithoutGlobalMetadata},
-  {directory: MERGE_CLI_SPECS_DIRECTORY, fileName: 'deprecated-group-ids_valid.json', generateContent: generateContentCarryingDeprecatedGroupIds},
-  {
-    directory: MERGE_CLI_SPECS_DIRECTORY,
-    fileName: 'legacy-format-current-group-ids_valid.json',
-    generateContent: () => createLegacyFakeSaveContent({worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID})
-  },
-  {
-    directory: MERGE_CLI_SPECS_DIRECTORY,
-    fileName: 'current-group-ids_valid.json',
-    generateContent: () => createFakeSaveContent({worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID})
-  },
-  {
-    directory: MERGE_CLI_SPECS_DIRECTORY,
-    fileName: 'release-2-102-current-group-ids_valid.json',
-    generateContent: () => createFakeSaveContent({
-      saveConfiguration: createSaveConfiguration({version: SKEO_UPDATE_RELEASE}),
-      worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID
-    })
-  },
-  {directory: MERGE_CLI_SPECS_DIRECTORY, fileName: 'unlocks-group-a_valid.json', generateContent: () => generateContentUnlockingOnly(GROUP_UNLOCKED_BY_SAVE_A_ONLY)},
-  {directory: MERGE_CLI_SPECS_DIRECTORY, fileName: 'unlocks-group-b_valid.json', generateContent: () => generateContentUnlockingOnly(GROUP_UNLOCKED_BY_SAVE_B_ONLY)},
-  {
-    directory: MERGE_CLI_SPECS_DIRECTORY,
-    fileName: 'legacy-format-unlocks-group-a_valid.json',
-    generateContent: () => createLegacyFakeSaveContent({globalMetadata: createGlobalMetadata({unlockedGroups: GROUP_UNLOCKED_BY_SAVE_A_ONLY})})
-  },
-  {directory: VALIDATE_CLI_SPECS_DIRECTORY, fileName: 'baseline_valid.json', generateContent: () => createFakeSaveContent()},
-  {directory: VALIDATE_CLI_SPECS_DIRECTORY, fileName: 'unreadable-player-entry_invalid.json', generateContent: () => appendUnreadablePlayerEntry(createFakeSaveContent())},
-  {directory: VALIDATE_CLI_SPECS_DIRECTORY, fileName: 'legacy-format_valid.json', generateContent: () => createLegacyFakeSaveContent()}
+  {fileName: 'baseline_valid.json', generateContent: () => createFakeSaveContent()},
+  {fileName: 'other-player_valid.json', generateContent: generateOtherPlayerContent},
+  {fileName: 'negative-gauge_invalid.json', generateContent: () => createFakeSaveContent({players: [createPlayer({playerGaugeToxic: -1})]})},
+  {fileName: 'legacy-format_valid.json', generateContent: () => createLegacyFakeSaveContent()},
+  {fileName: 'skeo-update_valid.json', generateContent: generateSkeoUpdateContent},
+  {fileName: 'energy-consumption_valid.json', generateContent: generateEnergyConsumptionContent}
 ];
 
-const FIXTURE_DIRECTORIES = [UI_SCENARIOS_DIRECTORY, MERGE_CLI_SPECS_DIRECTORY, VALIDATE_CLI_SPECS_DIRECTORY];
-
-export function resolveScenarioFixturePath({directory, fileName}: {directory: string; fileName: string}): string {
-  return new URL(`../${directory}/${fileName}`, import.meta.url).pathname;
+export function resolveScenarioFixturePath(fileName: string): string {
+  return new URL(`../${SCENARIO_FIXTURES_DIRECTORY}/${fileName}`, import.meta.url).pathname;
 }
 
+// The Playwright global setup: called with the run configuration, which the writer ignores.
 export default async function writeScenarioFixtures(): Promise<void> {
-  for (const directory of FIXTURE_DIRECTORIES) {
-    await mkdir(new URL(`../${directory}`, import.meta.url).pathname, {recursive: true});
-  }
-  for (const fixture of SCENARIO_FIXTURES) {
-    await writeFile(resolveScenarioFixturePath(fixture), fixture.generateContent());
+  for (const {fileName, generateContent} of SCENARIO_FIXTURES) {
+    await writeFile(resolveScenarioFixturePath(fileName), generateContent());
   }
 }
 
+/**
+ * @param print the console the summary of bun run generate:scenario-fixtures is printed on
+ */
 export async function generateScenarioFixtures(print: (line: string) => void): Promise<void> {
   await writeScenarioFixtures();
-  print(`generate:scenario-fixtures: ${SCENARIO_FIXTURES.length} fixture(s) written to ${FIXTURE_DIRECTORIES.join(', ')}.`);
+  print(`generate:scenario-fixtures: ${SCENARIO_FIXTURES.length} fixture(s) written to ${SCENARIO_FIXTURES_DIRECTORY}.`);
 }
 
 await runAsEntryPointWith(import.meta.main, generateScenarioFixtures, console.log);

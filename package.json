@@ -51,6 +51,8 @@
     "check:action-pins": "bun scripts/check-action-pins.ts",
     "check:package-scripts": "bun scripts/check-package-scripts.ts",
     "generate:scenario-fixtures": "bun scripts/generate-scenario-fixtures.ts",
+    "generate:merge-cli-fixtures": "bun scripts/generate-merge-cli-fixtures.ts",
+    "generate:validate-cli-fixtures": "bun scripts/generate-validate-cli-fixtures.ts",
     "generate:section-validators": "bun run --filter core-mapping generate:section-validators",
     "fallow:quality": "fallow audit --config ./fallow.toml --base master --no-cache --ci",
     "fallow:quality:local": "fallow audit --config ./fallow.toml --base master --no-cache",

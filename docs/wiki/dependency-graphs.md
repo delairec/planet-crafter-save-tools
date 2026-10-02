@@ -116,7 +116,7 @@ An area holds the layers it needs and no other. Production files per area and la
 
 - `shared-save-processing` is gone: its modules live under `core-mapping/src/save/infrastructure/wireFormat/`, `core-mapping` being the only package whose production sources imported it. The 27 imports `core-mapping` made of it at `a286f6a` are now imports inside the package, and the one `shared-save-processing` made of `data-save-format` is now `core-mapping --> data-save-format`, 3 imports against 2.
 - Arrows go from `cli-*` and `ui-*` to `core-*`, then `shared-*` and `data-*`, as the matrix of `docs/wiki/architecture.md` sets.
-- No interface reaches the save format but through `core-mapping`, whose manifest exports its composition roots and view models only. `check:dependencies` holds it on the production sources of a `cli-*` or `ui-*` package, which import a `core-*` package and, for a CLI, `shared-platforms`, nothing else; the specs of a CLI read the saves `generate:scenario-fixtures` writes, and build none.
+- No interface reaches the save format but through `core-mapping`, whose manifest exports its composition roots and view models only. `check:dependencies` holds it on the production sources of a `cli-*` or `ui-*` package, which import a `core-*` package and, for a CLI, `shared-platforms`, nothing else; the specs of a CLI read the saves the generator of their CLI writes, and build none.
 - No cycle and no upward arrow.
 
 ### Areas of `core-mapping`: no violation

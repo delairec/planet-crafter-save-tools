@@ -1,5 +1,7 @@
 import {enforceTestIsolation} from './testing/testIsolation';
-import writeScenarioFixtures from './scripts/generate-scenario-fixtures.ts';
+import writeMergeCliFixtures from './scripts/generate-merge-cli-fixtures.ts';
+import writeValidateCliFixtures from './scripts/generate-validate-cli-fixtures.ts';
 
 enforceTestIsolation();
-await writeScenarioFixtures();
+await writeMergeCliFixtures();
+await writeValidateCliFixtures();

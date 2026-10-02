@@ -1,5 +1,5 @@
 import {enforceTestIsolation} from '../../testing/testIsolation';
-import writeScenarioFixtures from '../../scripts/generate-scenario-fixtures.ts';
+import writeValidateCliFixtures from '../../scripts/generate-validate-cli-fixtures.ts';
 
 enforceTestIsolation();
-await writeScenarioFixtures();
+await writeValidateCliFixtures();
