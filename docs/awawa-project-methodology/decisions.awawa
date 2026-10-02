@@ -2430,6 +2430,7 @@ DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
 		PR 181
 	SOURCE "The Release runs of the 0.1.3 tags, failed on a coverage gap the fallow job of #256 and"
 		+ "#257 had passed with a warning"
+		PR 258
 
 DECISION ADroppedSaveIsSelectedThroughItsFileInput
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager

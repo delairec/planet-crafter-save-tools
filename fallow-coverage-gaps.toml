@@ -26,4 +26,5 @@ entryPoints = [
     "packages/ui-save-manager/scripts/check-site.ts",
     # Type declarations only, no runtime code for a test to reach.
     "packages/core-mapping/src/save/infrastructure/wireFormat/jsonSourceTextAccess.d.ts",
+    "packages/shared-platforms/RuntimePlatform.ts",
 ]
