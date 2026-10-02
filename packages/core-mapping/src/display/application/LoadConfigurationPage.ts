@@ -6,11 +6,11 @@ import {
   AssessedSaveConfigurationResponse,
   DifficultyModifierEffectsResponse,
   DifficultyModifiersResponse,
-  DroneLogisticsResponse,
   GlobalProgressionResponse,
   StatisticsResponse,
   UnlocksResponse
 } from "./responses/ConfigurationPageResponse";
+import {DroneLogisticsResponse} from "./responses/DroneLogisticsResponse";
 import {SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigurationValueObject";
 import {GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";

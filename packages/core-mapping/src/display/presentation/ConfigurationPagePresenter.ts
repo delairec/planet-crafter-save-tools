@@ -4,12 +4,12 @@ import {
   AssessedSaveConfigurationResponse,
   ConfigurationPageResponse,
   DifficultyModifierEffectResponse,
-  DroneLogisticsEffectResponse,
-  DroneLogisticsResponse,
   GlobalProgressionResponse,
   StatisticsResponse,
   UnlocksResponse
 } from "../application/responses/ConfigurationPageResponse";
+import {DroneLogisticsResponse} from "../application/responses/DroneLogisticsResponse";
+import {createDroneLogisticsBadge} from "./createDroneLogisticsBadge";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
 import {
@@ -26,8 +26,6 @@ import {
   configurationPageAllTimeTerraTokensLabel,
   configurationPageAutocrafterLabel,
   configurationPageDroneLogisticsLabel,
-  configurationPageDroneLogisticsPausedValue,
-  configurationPageDroneLogisticsRunningValue,
   configurationPageDronesLabel,
   configurationPageEverythingUnlockedLabel,
   configurationPageFreeCraftLabel,
@@ -56,11 +54,6 @@ const PERCENT_PER_RATIO = 100;
 
 const toneByModifierEffect: Record<DifficultyModifierEffectResponse, ToneViewModel> = {
   gameDefault: 'neutral',
-  penalisesThePlayer: 'danger',
-  helpsThePlayer: 'positive'
-};
-
-const toneByDroneLogisticsEffect: Record<DroneLogisticsEffectResponse, ToneViewModel> = {
   penalisesThePlayer: 'danger',
   helpsThePlayer: 'positive'
 };
@@ -111,9 +104,8 @@ function createProgressionZone(globalProgression: GlobalProgressionResponse, sta
   return {fields, droneLogistics: createDroneLogistics(globalProgression.droneLogistics)};
 }
 
-function createDroneLogistics({paused, effect}: DroneLogisticsResponse): DroneLogisticsViewModel {
-  const value = paused ? configurationPageDroneLogisticsPausedValue : configurationPageDroneLogisticsRunningValue;
-  return {label: configurationPageDroneLogisticsLabel, badge: createTonedValue(value, toneByDroneLogisticsEffect[effect])};
+function createDroneLogistics(droneLogistics: DroneLogisticsResponse): DroneLogisticsViewModel {
+  return {label: configurationPageDroneLogisticsLabel, badge: createDroneLogisticsBadge(droneLogistics)};
 }
 
 function createSaveConfigurationZones(assessedSaveConfiguration: AssessedSaveConfigurationResponse | undefined): Pick<ConfigurationPageViewModel, 'modifiers' | 'unlocks'> {

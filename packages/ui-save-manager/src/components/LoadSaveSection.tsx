@@ -17,6 +17,7 @@ import {tooManyFilesForOneSaveMessage} from '~/messages/dropZoneMessages';
 
 export interface LoadSaveResult {
   fileName: string;
+  fileSize: number;
   content: string;
   isValid: boolean;
   errors: SaveValidationMessageViewModel[];
@@ -66,6 +67,7 @@ export default function LoadSaveSection(props: LoadSaveSectionProps) {
       if (!isDisposed) {
         props.onLoadResult({
           fileName: selectedFile.name,
+          fileSize: selectedFile.size,
           content,
           isValid: viewModel.status === 'valid',
           errors: viewModel.errors,

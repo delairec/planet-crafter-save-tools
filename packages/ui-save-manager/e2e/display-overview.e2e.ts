@@ -1,8 +1,9 @@
 import {expect, test} from './scenarioTest';
-import {findTheMenuGroupTitles, locateTheFixture, visualizeTheSave} from './scenarioSteps';
+import {findTheBreadcrumbSteps, findTheMenuGroupTitles, locateTheFixture, visualizeTheSave} from './scenarioSteps';
 
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
+const skeoUpdateSaveFixturePath = locateTheFixture('skeo-update_valid.json');
 const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
 
 test.describe('Overview page', () => {
@@ -19,13 +20,43 @@ test.describe('Overview page', () => {
   });
 
   test.describe('When a valid save file is visualized', () => {
-    test('should name the file and offer the pages of the Save group', async ({page}) => {
+    test('should title the page with the display name of the save, its mode, its game release and its file size beside it', async ({page}) => {
       // Act
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
-      await expect(page.getByTestId(/^overview-[a-z]+-page-link$/)).toHaveText(['Configuration', 'Power', 'Terraformation']);
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
+      await expect(page.getByTestId('overview-identity-title-hint')).toHaveText('Standard · Game release 2.004 · 2.48 KB');
+    });
+
+    test('should show the progression tiles the save carries', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-all-time-terra-tokens-value')).toHaveText('200,345=tt=');
+      await expect(page.getByTestId('overview-total-crafted-objects-value')).toHaveText('10');
+      await expect(page.getByTestId('overview-drone-logistics')).toBeHidden();
+    });
+
+    test('should read Overview alone in the breadcrumb and leave the pages of the save to the menu', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(findTheBreadcrumbSteps(page)).toHaveText(['Overview']);
+      await expect(page.getByTestId(/^overview-[a-z]+-page-link$/)).toHaveCount(0);
+    });
+  });
+
+  test.describe('When a save written by the Skeo update is visualized', () => {
+    test('should show the drone logistics as a Paused badge penalising the player', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-drone-logistics-badge')).toContainText('Paused');
+      await expect(page.getByTestId('overview-drone-logistics-badge-tone')).toHaveText(', penalises the player');
     });
   });
 
@@ -35,7 +66,7 @@ test.describe('Overview page', () => {
       await visualizeTheSave(page, legacySaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: legacy-format_valid.json');
+      await expect(page.getByTestId('overview-identity-title-hint')).toHaveText('Standard · Game release 1.618 · 2.623 KB');
       await expect(page.getByTestId('display-errors-title')).toBeHidden();
     });
 
@@ -44,10 +75,10 @@ test.describe('Overview page', () => {
       await visualizeTheSave(page, legacySaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: legacy-format_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
       const warningsTop = (await page.getByTestId('display-warnings-title').boundingBox())!.y;
-      const loadedSaveTop = (await page.getByTestId('loaded-save-title').boundingBox())!.y;
-      expect(warningsTop).toBeLessThan(loadedSaveTop);
+      const identityTitleTop = (await page.getByTestId('overview-identity-title').boundingBox())!.y;
+      expect(warningsTop).toBeLessThan(identityTitleTop);
     });
   });
 
