@@ -6,7 +6,7 @@ either: git ignores every `.json` of this directory, and this README is the only
 
 ## Generating them
 
-`scripts/generate-scenario-fixtures.ts` declares every fixture of this directory and is the only place that says
+`scripts/fixtures/generate-scenario-fixtures.ts` declares every fixture of this directory and is the only place that says
 how each one is built. It is the global setup of `playwright.config.ts`, so every run of the scenarios — `bun run
 test:ui` from the root, `playwright test` from `packages/ui-save-manager` — writes them here, under Node, before the
 first scenario starts. `bun run generate:scenario-fixtures` writes the same files without running the scenarios, to
@@ -15,9 +15,9 @@ open a fixture or check it with `bun validate`.
 `bun run check:scenario-fixtures`, part of `bun run guards`, refuses any scenario reaching into `input/`.
 
 Every fixture is the output of `createFakeSaveContent()`, from
-`packages/shared-save-processing/testing/createFakeSaveContent.js` (a wrapper around `createFakeSaveString.js`, the
+`packages/core-mapping/src/save/infrastructure/wireFormat/testing/createFakeSaveContent.js` (a wrapper around `createFakeSaveString.js`, the
 generator the unit tests already rely on). Pass an override object to build a variant; the record builders the
-overrides use come from `packages/shared-save-processing/testing/createSaveRecords.js`. A fixture meant to be valid is
+overrides use come from `packages/core-mapping/src/save/infrastructure/wireFormat/testing/createSaveRecords.js`. A fixture meant to be valid is
 checked with `bun validate -- --file=<path>`.
 
 ## Naming

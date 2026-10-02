@@ -4,11 +4,11 @@ import {MissingSectionEntrySchemaError} from './errors/MissingSectionEntrySchema
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
 import {UnknownSaveFormatReleaseError} from './errors/UnknownSaveFormatReleaseError.ts';
 import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes.ts';
-import {LEGACY_TERRAIN_LAYERS_SECTION_INDEX, PLAYERS_SECTION_INDEX, RESERVED_TRAILING_SECTION_INDEX, STATISTICS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
-import {createFakeParsedSave} from 'shared-save-processing/testing/createFakeParsedSave.js';
-import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
-import {createPlayer, createTerrainLayer, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
-import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
+import {LEGACY_TERRAIN_LAYERS_SECTION_INDEX, PLAYERS_SECTION_INDEX, RESERVED_TRAILING_SECTION_INDEX, STATISTICS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from './wireFormat/sectionIndexes.js';
+import {createFakeParsedSave} from './wireFormat/testing/createFakeParsedSave.js';
+import {createFakeSaveContent, createLegacyFakeSaveContent} from './wireFormat/testing/createFakeSaveContent.js';
+import {createPlayer, createTerrainLayer, createWorldEvent, createWorldObject} from './wireFormat/testing/createSaveRecords.js';
+import {parseSaveSections} from './wireFormat/parseSaveSections.js';
 
 /** @returns {Generator<never>} */
 const NO_WORLD_OBJECTS = function* () {};

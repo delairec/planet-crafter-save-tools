@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveSectionsParserService} from './SaveSectionsParserService';
-import {createFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
-import {createFakeSaveString, createLegacyFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
-import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
-import {createEquipment, createInventory, createPlayer, createSaveConfiguration, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createFakeSaveContent} from './wireFormat/testing/createFakeSaveContent.js';
+import {createFakeSaveString, createLegacyFakeSaveString} from './wireFormat/testing/createFakeSaveString.js';
+import {stringifyEntry} from './wireFormat/stringifyEntry.js';
+import {createEquipment, createInventory, createPlayer, createSaveConfiguration, createWorldEvent, createWorldObject} from './wireFormat/testing/createSaveRecords.js';
 import {UnreadableLine} from '../domain/save/SaveSectionLocation';
 import {UnknownSaveFormatReleaseError} from './errors/UnknownSaveFormatReleaseError';
 import {InventoryEntry} from '../domain/save/InventoryEntry';

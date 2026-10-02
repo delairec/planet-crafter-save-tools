@@ -1,4 +1,4 @@
-import type {UnreadableSaveLine} from "shared-save-processing/gameDefinitions";
+import type {UnreadableSaveLine} from "./wireFormat/gameDefinitions";
 import type {UnreadableLine} from "../domain/save/SaveSectionLocation";
 import {locateSaveSection} from "./locateSaveSection";
 

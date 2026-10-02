@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {UnreadableLine} from '../../save/domain/save/SaveSectionLocation';
-import {createPlayer} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createPlayer} from '../../save/infrastructure/wireFormat/testing/createSaveRecords.js';
 import {SaveSectionsReaderService} from './SaveSectionsReaderService';
 import {SaveSectionsParserPort} from '../../save/application/ports/SaveSectionsParserPort';
 import {SaveSections} from '../../save/domain/save/SaveSections';

@@ -1,7 +1,3 @@
-PACKAGE shared_save_processing
-	DESC "save wire format: types, parsing, serialization, JSON schemas, test fixtures"
-	MANIFEST "packages/shared-save-processing/package.json::shared-save-processing"
-
 PACKAGE shared_platforms
 	DESC "fs and process adapters for Bun and Node, with no side effect on import, and the"
 		+ "RuntimePlatform contract they honour"

@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import type {SaveWarning as SaveFormatWarning} from 'shared-save-processing/gameDefinitions';
+import type {SaveWarning as SaveFormatWarning} from './wireFormat/gameDefinitions';
 import {mapSaveWarning} from './mapSaveWarning';
 import type {SaveWarning} from '../domain/validation/SaveWarning';
 

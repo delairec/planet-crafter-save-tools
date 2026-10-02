@@ -3,10 +3,10 @@ RULE ASaveHasElevenSectionsTheLastReservedAndEmpty
 	DOMAIN format
 	SPEC "a save splits into 11 parts, indexed 0 to 10, the last being the reserved empty part the"
 		+ "terminating separator produces"
-		ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Array of 11"
-			+ "sections (indexes 0 to 10)"
-		ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 10 —"
-			+ "Reserved"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Array"
+			+ "of 11 sections (indexes 0 to 10)"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+			+ "10 — Reserved"
 	APPLIES_TO_SECTION @SECTION.Reserved
 	SOURCE "Extracted from the ruling on section counters, names settled in the review of pull"
 		+ "request 47, recorded on 2026-09-18"
@@ -16,8 +16,9 @@ RULE ASectionLineIsOneJsonEntry
 	HOLDS_FOR all
 	DOMAIN format
 	SPEC "each line of a section is one JSON entry, lines being separated by a pipe"
-		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::{\"id\":1,\"gId\":\"Iron\"}|"
-		ATTESTED_BY "packages/shared-save-processing/parseSaveSections.js::return JSON.parse(line);"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.spec.js::{\"id\":1,\"gId\":\"Iron\"}|"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js::return"
+			+ "JSON.parse(line);"
 	SOURCE "Extracted from the ruling on the single save parser, pull request 47, recorded on"
 		+ "2026-09-18"
 		PR 47
@@ -27,9 +28,9 @@ RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 	DOMAIN format
 	SPEC "the player identifier exceeds the exact integer range of a double, and it is the only"
 		+ "such field in the six reference saves"
-		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::When a save holding an"
-			+ "int64 player identifier is read back"
-		ATTESTED_BY "packages/shared-save-processing/int64Identifiers.js::RAW_INTEGER_FIELDS"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.spec.js::When"
+			+ "a save holding an int64 player identifier is read back"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/int64Identifiers.js::RAW_INTEGER_FIELDS"
 	APPLIES_TO_SECTION @SECTION.Players
 	SOURCE "Extracted from the ruling on int64 identifiers, delivered by pull request 49, recorded"
 		+ "on 2026-09-18"
@@ -40,9 +41,9 @@ RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 	DOMAIN format
 	SPEC "the float fields of a save carry a .0 suffix when their value is whole, and the records"
 		+ "of the format are flat"
-		ATTESTED_BY "packages/shared-save-processing/stringifyEntry.spec.js::\"playerGaugeToxic\":0.0"
-		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::should preserve decimal"
-			+ "notation for known float fields in world objects"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/stringifyEntry.spec.js::\"playerGaugeToxic\":0.0"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.spec.js::should"
+			+ "preserve decimal notation for known float fields in world objects"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
 	APPLIES_TO_SECTION @SECTION.Players
 	APPLIES_TO_SECTION @SECTION.WorldObjects
@@ -315,9 +316,9 @@ RULE APlayerIdentifierIsCarriedAsExactDecimalText
 		+ "entry, and no entry back-references it"
 	SPEC "a player identifier is carried and written as its exact decimal text, never parsed into a"
 		+ "number"
-		ATTESTED_BY "packages/shared-save-processing/serializeSave.spec.js::When a save holding an"
-			+ "int64 player identifier is read back"
-		ATTESTED_BY "packages/shared-save-processing/int64Identifiers.js::RAW_INTEGER_FIELDS"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.spec.js::When"
+			+ "a save holding an int64 player identifier is read back"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/int64Identifiers.js::RAW_INTEGER_FIELDS"
 	SPEC "a player identifier is never regenerated, and players neither seed the id sequence nor"
 		+ "draw from it"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/resolveIdConflicts.spec.ts::should"
@@ -368,7 +369,7 @@ RULE APlanetNumericIdIsStableAcrossSaves
 	SPEC "the numeric planet id a world object and a world event carry is the same value in every"
 		+ "save, being derived neither from the world seed nor from the content of the save"
 		ATTESTED_BY "packages/data-planets/planetNamesByNumericId.json::-1140328421"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section9-world-events.schema.json::planet"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section9-world-events.schema.json::planet"
 		ATTESTED_BY "packages/data-planets/planetNamesByNumericId.json::-440810600"
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	APPLIES_TO_SECTION @SECTION.WorldEvents
@@ -387,9 +388,9 @@ RULE APurificationLevelOfMinusOneMeansNotUnlocked
 	DOMAIN format
 	SPEC "unitPurificationLevel carries -1 while purification is not unlocked, and a non-negative"
 		+ "value once it is"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section1-terraformation-levels.schema.json::-1"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section1-terraformation-levels.schema.json::-1"
 			+ "is a sentinel value meaning purification is not unlocked yet"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section1-terraformation-levels.schema.json::\"minimum\":"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section1-terraformation-levels.schema.json::\"minimum\":"
 			+ "-1"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-TERRA-3, a"
@@ -401,7 +402,7 @@ RULE APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 	DOMAIN format
 	SPEC "a player entry carries cameraView, totalCraftedObjects and totalTerraTokenEarned; one"
 		+ "written by 1.618 or earlier has none of them"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section2-players.schema.json::\"cameraView\":"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::\"cameraView\":"
 			+ "{"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/mergePlayers.ts::NUMBER_FIELD_FALLBACKS"
 	APPLIES_TO_SECTION @SECTION.Players
@@ -414,7 +415,7 @@ RULE TheGlobalMetadataEntryCarriesLogisticsPaused
 	DOMAIN format
 	SPEC "the global metadata entry carries logisticsPaused, a boolean; one written before 2.102"
 		+ "has no such key"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section0-player-progression.schema.json::\"logisticsPaused\""
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section0-player-progression.schema.json::\"logisticsPaused\""
 		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/validateSaveContent.spec.js::written"
 			+ "by the Skeo update and carries logisticsPaused"
 	APPLIES_TO_SECTION @SECTION.GlobalMetadata
@@ -432,9 +433,9 @@ RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 	DOMAIN format
 	SPEC "a save written by 1.618 or earlier splits into 12 parts, Terrain Layers at index 9, which"
 		+ "shifts World Events to index 10"
-		ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 			+ "= 9"
-		ATTESTED_BY "packages/shared-save-processing/testing/createSaveRecords.js::PC-Toxicity-Layer2"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/testing/createSaveRecords.js::PC-Toxicity-Layer2"
 	SPEC "the game writes the six properties of the table in every Terrain Layers entry it writes,"
 		+ "and no other"
 		ATTESTED_BY "packages/data-save-format/legacyTerrainLayerProperties.json::colorCustomLerp"
@@ -453,8 +454,8 @@ RULE TheGameKeepsDeprecatedPhytoplanktonGroupIds
 	DOMAIN format
 	SPEC "a world object or an item whose group id is Phytoplankton2 or Phytoplankton3 loads as"
 		+ "that phytoplankton in play and is written back under the same group id"
-		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::Phytoplankton2"
-		ATTESTED_BY "packages/shared-save-processing/testing/createFakeSaveContent.js::Phytoplankton3"
+		ATTESTED_BY "scripts/fixtures/generate-scenario-fixtures.ts::Phytoplankton2"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/testing/createFakeSaveContent.js::Phytoplankton3"
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	RATIONALE "Release 2.102 replaced Phytoplankton B and C with one variant in recipes and"
 		+ "generators, yet the game still knows both ids: a save carrying them loads them as they"
@@ -472,7 +473,7 @@ RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 	SPEC "ButterflyDisplayer1, FishDisplayer1, FrogDisplayer1, Server1, CookingStation1,"
 		+ "PodUnderground and RocketAnimals2 placed on a planet add nothing to the consumption the"
 		+ "HUD prints"
-		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000008,"
+		ATTESTED_BY "scripts/fixtures/generate-scenario-fixtures.ts::placedOnToxicity(41000008,"
 			+ "'PodUnderground', 40)"
 		ATTESTED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should"
 			+ "charge the 85 kW the game shows, TreePlanter3 being the only one drawing power"
@@ -493,7 +494,7 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 	DOMAIN game
 	SPEC "the consumption the HUD prints for a planet whose machines stand on dry ground, in a save"
 		+ "whose modifierPowerConsumption is 1, is the sum of their base consumption levels"
-		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000002,"
+		ATTESTED_BY "scripts/fixtures/generate-scenario-fixtures.ts::placedOnToxicity(41000002,"
 			+ "'TreePlanter3', 10)"
 		ATTESTED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should sum"
 			+ "the consumption of the placed world objects with known consumption levels"
@@ -501,7 +502,7 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 			+ "charge the 85 kW the game shows, TreePlanter3 being the only one drawing power"
 	SPEC "an optimizer adds its own base consumption level to the sum, and no fuse it holds changes"
 		+ "the consumption of any machine"
-		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::placedOnToxicity(41000011,"
+		ATTESTED_BY "scripts/fixtures/generate-scenario-fixtures.ts::placedOnToxicity(41000011,"
 			+ "'Optimizer2', -10, OTHER_FUSE_OPTIMIZER_INVENTORY_ID)"
 		ATTESTED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should"
 			+ "charge each optimizer its base level, the fuses it holds changing no consumption"
@@ -528,28 +529,28 @@ RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 		+ "modifierMeteoOccurence each multiply the quantity the game derives from them: the"
 		+ "terraformation pace, the consumption of machines, the depletion of the player's vitals"
 		+ "and the occurrence of weather events; at 1 that quantity is the game's default"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section8-save-config.schema.json::Terraformation"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section8-save-config.schema.json::Terraformation"
 			+ "speed multiplier"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section8-save-config.schema.json::Energy"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section8-save-config.schema.json::Energy"
 			+ "consumption multiplier"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section8-save-config.schema.json::Player"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section8-save-config.schema.json::Player"
 			+ "gauge depletion multiplier"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section8-save-config.schema.json::Weather"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section8-save-config.schema.json::Weather"
 			+ "event frequency multiplier"
 	SPEC "at 0 a modifier still multiplies: the quantity it applies to is zero"
-		ATTESTED_BY "packages/shared-save-processing/schemas/section8-save-config.schema.json::Energy"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section8-save-config.schema.json::Energy"
 			+ "consumption multiplier"
 		ATTESTED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should"
 			+ "charge the machines of the energy consumption fixture, at modifier %p, %p kW"
 	SPEC "modifierPowerConsumption multiplies the consumption of every machine: at 1 the HUD prints"
 		+ "the base consumption levels, at 1.5 a machine drawing 0.4 kW draws 0.6 kW"
-		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
+		ATTESTED_BY "scripts/fixtures/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
 		ATTESTED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should"
 			+ "charge the machines of the energy consumption fixture, at modifier %p, %p kW"
 		ATTESTED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should"
 			+ "multiply the unit and total level of each consumption breakdown entry"
 	SPEC "a player sets modifierPowerConsumption between 0 and 2"
-		ATTESTED_BY "scripts/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
+		ATTESTED_BY "scripts/fixtures/generate-scenario-fixtures.ts::modifierPowerConsumption: 1.0"
 	APPLIES_TO_SECTION @SECTION.SaveConfiguration
 	RATIONALE "The rule states only that each modifier is a plain factor, with no formula for the"
 		+ "quantity it multiplies. modifierMultiplayerTerraformationFactor is left out, the owner's"

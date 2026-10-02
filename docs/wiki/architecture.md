@@ -4,7 +4,6 @@ This is a Bun workspace monorepo, organized around package prefixes:
 
 | Package                  | Role                                                                                                                                 |
 |--------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                               |
 | `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` and `--name` arguments.           |
 | `core-mapping`           | Validation, merge and display engines in Clean Architecture layers, one folder per business, reusable across front ends (CLIs, UIs). |
 | `cli-merge`              | Thin CLI: parses `--input`/`--output`/`--prefer-legacy` arguments and delegates to `core-mapping`.                                   |
@@ -28,7 +27,7 @@ The prefix of a package name sets what it is allowed to depend on. A type-only i
 
 `bun run check:dependencies` enforces this matrix. A `data-*` package holds value tables, their row types and the selectors reading them, and no business rule; in a `core-*` package, only `infrastructure/` imports it, behind an application port.
 
-The production sources of an interface are held to less than the matrix. Outside its spec files and its `testing/` folders, a `cli-*` or `ui-*` package imports no workspace package other than a `core-*` package and, for a `cli-*` package, `shared-platforms`; an `import type` and a JSDoc `@import` count. `bun run check:dependencies` enforces this too. An interface so reaches the save format through a core only, while its specs keep building their saves with the fixtures of `shared-save-processing/testing`, which is why a CLI declares `shared-save-processing` under `devDependencies`. The ruling and its reasons: `awawa show @DECISION.AnInterfaceReachesTheSaveFormatThroughACoreOnly .`.
+The production sources of an interface are held to less than the matrix. Outside its spec files and its `testing/` folders, a `cli-*` or `ui-*` package imports no workspace package other than a `core-*` package and, for a `cli-*` package, `shared-platforms`; an `import type` and a JSDoc `@import` count. `bun run check:dependencies` enforces this too. An interface so reaches the save format through a core only, and its specs build no save: they read the files the generator of their CLI, `scripts/fixtures/generate-merge-cli-fixtures.ts` or `scripts/fixtures/generate-validate-cli-fixtures.ts`, writes into the `testing/fixtures/` folder of their package, from the preload of every test run. The ruling and its reasons: `awawa show @DECISION.AnInterfaceReachesTheSaveFormatThroughACoreOnly .`.
 
 What each package does in detail is in the specification corpus: `awawa show @PACKAGE.<name> .`.
 
@@ -41,7 +40,7 @@ What each package does in detail is in the specification corpus: `awawa show @PA
 | `validation/` | Validating a save file.                                                                                                                                      |
 | `merge/`      | Merging two saves.                                                                                                                                           |
 | `display/`    | Displaying a save.                                                                                                                                           |
-| `save/`       | What at least two businesses use: the save model and the domain rules judging it, the parser, validator and game releases adapters, the validation messages. |
+| `save/`       | What at least two businesses use: the save model and the domain rules judging it, the parser, validator and game releases adapters, the validation messages, and under `infrastructure/wireFormat/` the save file wire format: its records, parsing, serialization and JSON Schemas. |
 
 A business imports `save/` and no file of another business; `save/` imports no business. `bun run check:business-boundaries` holds both, spec files and test support included.
 

@@ -2,11 +2,9 @@ import {beforeEach, describe, expect, it, mock, spyOn} from 'bun:test';
 import {validateSaveFileController} from 'core-mapping/validation/composition/compositionRoot';
 import {initValidateCli} from './initValidateCli.js';
 import {NON_JSON_SAVE_FILE_PATH, SAVE_FILE_PATH} from '../testing/fakePaths.js';
-import {VALID_SAVE_CONTENT} from '../testing/fakeValidSaveContent.js';
+import {LEGACY_SAVE_CONTENT, SAVE_CONTENT_WITH_INVALID_ENTRY, VALID_SAVE_CONTENT} from '../testing/fakeSaveContents.js';
 import {INVALID_SAVE_CONTENT} from '../testing/fakeInvalidSaveContent.js';
-import {SAVE_CONTENT_WITH_INVALID_ENTRY} from '../testing/fakeSaveContentWithInvalidEntry.js';
 import {VALIDATE_CLI_HELP} from '../testing/validateCliHelp.js';
-import {createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 
 const NO_ARGUMENTS = [];
 const CLI_RELEASE = {name: 'cli-validate', version: '1.4.2'};
@@ -352,7 +350,7 @@ describe('Validate CLI', () => {
 
   describe('When the save file is in the legacy format', () => {
     beforeEach(() => {
-      readTextFile.mockResolvedValue(createLegacyFakeSaveContent());
+      readTextFile.mockResolvedValue(LEGACY_SAVE_CONTENT);
     });
 
     it('should warn with a user message instead of the warning code', async () => {

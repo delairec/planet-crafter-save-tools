@@ -6,9 +6,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {text} from 'node:stream/consumers';
 import {fileURLToPath} from 'node:url';
-import {createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
-import {VALID_SAVE_CONTENT} from '../testing/fakeValidSaveContent.js';
-import {SAVE_CONTENT_WITH_INVALID_ENTRY} from '../testing/fakeSaveContentWithInvalidEntry.js';
+import {LEGACY_SAVE_CONTENT, SAVE_CONTENT_WITH_INVALID_ENTRY, VALID_SAVE_CONTENT} from '../testing/fakeSaveContents.js';
 
 const REPOSITORY_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 const NODE_LOADER_PATH = join(REPOSITORY_ROOT, 'scripts/node/register.js');
@@ -64,7 +62,7 @@ describe('Validate CLI run as a Node process', () => {
   describe('When the save file is in the legacy format', () => {
     it('should warn that the save was written by 1.618 or earlier and still report the file as valid', async () => {
       // Arrange
-      await writeFile(saveFilePath, createLegacyFakeSaveContent(), 'utf8');
+      await writeFile(saveFilePath, LEGACY_SAVE_CONTENT, 'utf8');
 
       // Act
       const {exitCode, stdout, stderr} = await runValidateCliUnderNode(saveFilePath);

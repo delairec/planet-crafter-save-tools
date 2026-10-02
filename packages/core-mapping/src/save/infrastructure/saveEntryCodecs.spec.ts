@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
-import {Inventory, WorldEvent, WorldObject} from 'shared-save-processing/gameDefinitions';
-import {createGlobalMetadata, createInventory, createPlayer, createTerraformationLevel, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
+import {Inventory, WorldEvent, WorldObject} from './wireFormat/gameDefinitions';
+import {createGlobalMetadata, createInventory, createPlayer, createTerraformationLevel, createWorldObject} from './wireFormat/testing/createSaveRecords.js';
 import {
   decodeEntry,
   encodeEntry,

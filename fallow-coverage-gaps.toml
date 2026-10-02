@@ -12,7 +12,7 @@ entryPoints = [
     # Loaded by node --import in the processes the node:* command specs spawn.
     "scripts/node/register.js",
     # Run by the Playwright global setup of ui-save-manager before every scenario.
-    "scripts/generate-scenario-fixtures.ts",
+    "scripts/fixtures/generate-scenario-fixtures.ts",
     # Spawned as a real process by release.spec.ts.
     "scripts/release/release.ts",
     # Spawned as a real process by release-tag.spec.ts.
@@ -25,5 +25,5 @@ entryPoints = [
     # Spawned as a real process by check-site.spec.ts.
     "packages/ui-save-manager/scripts/check-site.ts",
     # Type declarations only, no runtime code for a test to reach.
-    "packages/shared-save-processing/jsonSourceTextAccess.d.ts",
+    "packages/core-mapping/src/save/infrastructure/wireFormat/jsonSourceTextAccess.d.ts",
 ]

@@ -1,12 +1,12 @@
 /**
- * @import { UnreadableSaveLine } from 'shared-save-processing/gameDefinitions'
+ * @import { UnreadableSaveLine } from './wireFormat/gameDefinitions'
  * @import { SaveWarning } from '../domain/validation/SaveWarning'
  * @import { ValidationIssue } from '../domain/validation/ValidationIssue'
  */
 
-import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
-import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
-import {resolveSectionIndexes, SAVE_CONFIGURATION_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import {parseSaveSections} from './wireFormat/parseSaveSections.js';
+import {verifySectionCount} from './wireFormat/verifySectionCount.js';
+import {resolveSectionIndexes, SAVE_CONFIGURATION_SECTION_INDEX} from './wireFormat/sectionIndexes.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
 import {mapSaveWarning} from './mapSaveWarning.ts';

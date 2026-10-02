@@ -1,5 +1,5 @@
-import type {SaveWarning as SaveFormatWarning} from "shared-save-processing/gameDefinitions";
-import {SAVE_WARNING_CODES} from "shared-save-processing/saveWarningCodes.js";
+import type {SaveWarning as SaveFormatWarning} from "./wireFormat/gameDefinitions";
+import {SAVE_WARNING_CODES} from "./wireFormat/saveWarningCodes.js";
 import type {SaveWarning} from "../domain/validation/SaveWarning";
 
 export function mapSaveWarning(warning: SaveFormatWarning): SaveWarning {

@@ -1,7 +1,7 @@
-import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
-import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
-import {stringifyEntry} from "shared-save-processing/stringifyEntry.js";
-import {ParsedSections, SaveSectionIndexes, UnreadableSaveLine} from "shared-save-processing/gameDefinitions";
+import {parseSaveSections} from "./wireFormat/parseSaveSections.js";
+import {resolveSectionIndexes} from "./wireFormat/sectionIndexes.js";
+import {stringifyEntry} from "./wireFormat/stringifyEntry.js";
+import {ParsedSections, SaveSectionIndexes, UnreadableSaveLine} from "./wireFormat/gameDefinitions";
 import {SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
 import {ParsedSaveSectionsResponse} from "../application/responses/ParsedSaveSectionsResponse";
 import {SaveSections} from "../domain/save/SaveSections";
