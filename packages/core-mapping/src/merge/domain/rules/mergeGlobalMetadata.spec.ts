@@ -148,7 +148,7 @@ describe('Merge global metadata', () => {
 
       // Assert
       expect(mergeBothSavesWithoutMetadata).toThrow(NoGlobalMetadataToMergeError);
-      expect(mergeBothSavesWithoutMetadata).toThrow('Neither save carries global metadata (section 0): validation should have refused them before the merge.');
+      expect(mergeBothSavesWithoutMetadata).toThrow('Neither save carries global metadata: validation should have refused them before the merge.');
     });
   });
 
