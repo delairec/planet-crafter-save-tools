@@ -2334,16 +2334,27 @@ TASK FEAT186
 
 TASK FEAT187
 	TITLE "Show the application title at the top of the menu"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on 2026-10-02 without refinement; the home page is"
 		+ "kept as it is for now"
 	SPEC "on every page that shows the menu, the application title sits at the top of the menu, as"
 		+ "page F shows, and leads to the home page; it no longer sits in a header above the menu"
 		+ "and the page"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::<ApplicationTitle"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the title at the top of the"
+			+ "menu, beside the page rather than above it"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::When the title is chosen at the top of the"
+			+ "menu"
 	SPEC "the home page, which shows no menu, stays as it is today, the application title above its"
 		+ "content; every page keeps one first-level heading, and the disclaimer block stays"
 		+ "unchanged at the top of the page"
+		IMPL "packages/ui-save-manager/src/app.tsx::<Show when={isHomePage()}>"
+		IMPL "packages/ui-save-manager/src/components/shell/ApplicationTitle.tsx::<h1"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::When the home page is opened"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the disclaimers above the page"
+			+ "and above the version footer"
 	WAVE @WAVE.15
+	DELIVERED_BY 260
 	RATIONALE "The title is today a centred heading above the shell, on every page, and takes the"
 		+ "height page F gives to the content. The menu validated in the navigation wave has no"
 		+ "brand; the title is the one addition page F makes to it"

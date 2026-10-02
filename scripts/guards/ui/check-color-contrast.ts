@@ -279,6 +279,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'surface'
   },
   {
+    description: 'the Save Manager part of the application title, at the top of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-application-title-highlight',
+    foreground: 'neon-pink',
+    background: 'surface-card'
+  },
+  {
     description: 'the Host badge of a player, on its neon fill',
     file: 'packages/ui-save-manager/src/styles/components.css',
     selector: '.host-badge',
