@@ -3,12 +3,9 @@ PACKAGE shared_save_processing
 	MANIFEST "packages/shared-save-processing/package.json::shared-save-processing"
 
 PACKAGE shared_platforms
-	DESC "fs and process adapters for Bun and Node, with no side effect on import"
+	DESC "fs and process adapters for Bun and Node, with no side effect on import, and the"
+		+ "RuntimePlatform contract they honour"
 	MANIFEST "packages/shared-platforms/package.json::shared-platforms"
-
-PACKAGE util_types
-	DESC "the single RuntimePlatform contract type, consumed type-only by shared-platforms"
-	MANIFEST "packages/util-types/package.json::util-types"
 
 PACKAGE core_mapping
 	DESC "validation, merge and display of a save, one folder per business, each in clean"

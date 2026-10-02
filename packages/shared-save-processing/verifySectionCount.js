@@ -4,10 +4,11 @@ import {listSplitPartsCounts} from './gameReleases.js';
 import {SAVE_PARSE_ERROR_CODES} from './saveParseErrorCodes.js';
 
 /**
- * @param {string[]} rawParts - result of `save.split('@')`
+ * @param {string} saveContent
  * @returns {UnexpectedSectionCount[]}
  */
-export function verifySectionCount(rawParts) {
+export function verifySectionCount(saveContent) {
+  const rawParts = saveContent.split('@');
   const splitPartsCounts = listSplitPartsCounts();
 
   if (splitPartsCounts.includes(rawParts.length)) {

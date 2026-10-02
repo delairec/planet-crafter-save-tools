@@ -60,6 +60,7 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
       const worldObjects = this.findWorldObjectByIds([...playerInventoryIds, ...playerEquipmentIds]);
 
       return new PlayerEntity({
+        id: player.id,
         name: player.name,
         inventory: playerInventoryIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),
         equipment: playerEquipmentIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),

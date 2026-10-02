@@ -5,7 +5,7 @@ import {createFakeSaveString, createLegacyFakeSaveString} from 'shared-save-proc
 import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
 import {createEquipment, createInventory, createPlayer, createSaveConfiguration, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 import {UnreadableLine} from '../domain/save/SaveSectionLocation';
-import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
+import {UnknownSaveFormatReleaseError} from './errors/UnknownSaveFormatReleaseError';
 import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {WorldEventEntry} from '../domain/save/WorldEventEntry';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
@@ -117,7 +117,7 @@ describe('SaveSectionsParserService', () => {
   });
 
   describe('When a save splits into a part count no release writes', () => {
-    it('should fail with an UnknownFormatReleaseError rather than read its parts by position', () => {
+    it('should fail with the error naming the unknown format rather than read its parts by position', () => {
       // Arrange
       const service = new SaveSectionsParserService();
       const saveOfTwoParts = '{}@{}';
@@ -126,7 +126,7 @@ describe('SaveSectionsParserService', () => {
       const parsing = () => service.parse(saveOfTwoParts);
 
       // Assert
-      expect(parsing).toThrow(UnknownFormatReleaseError);
+      expect(parsing).toThrow(UnknownSaveFormatReleaseError);
     });
   });
 

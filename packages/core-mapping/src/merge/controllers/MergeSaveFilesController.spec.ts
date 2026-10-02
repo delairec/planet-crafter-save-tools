@@ -1,6 +1,7 @@
 import {describe, expect, it, mock} from 'bun:test';
 import {MergeSaveFilesController} from './MergeSaveFilesController';
 import {MergeSaveFilesRequest} from '../application/requests/MergeSaveFilesRequest';
+import {MergeSaveFilesInput} from './MergeSaveFilesInput';
 import {MergeResultViewModel} from '../presentation/viewModels/MergeResultViewModel';
 
 type ExecuteMergeSaveFiles = (request: MergeSaveFilesRequest) => Promise<void>;
@@ -17,22 +18,23 @@ function createController(execute: ExecuteMergeSaveFiles, presenter: {viewModel:
 }
 
 describe('MergeSaveFilesController', () => {
-  it('should hand its use case the request it received', async () => {
+  it('should hand its use case the request built from the input it received', async () => {
     // Arrange
-    const request: MergeSaveFilesRequest = {fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B', preferLegacyFormat: true};
+    const input: MergeSaveFilesInput = {fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B', preferLegacyFormat: true};
     const execute = mock<ExecuteMergeSaveFiles>(async () => {});
     const controller = createController(execute, {viewModel: mergeResultViewModel('idle')});
 
     // Act
-    await controller.mergeSaveFiles(request);
+    await controller.mergeSaveFiles(input);
 
     // Assert
-    expect(execute).toHaveBeenCalledWith(request);
+    const expectedRequest: MergeSaveFilesRequest = {fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B', preferLegacyFormat: true};
+    expect(execute).toHaveBeenCalledWith(expectedRequest);
   });
 
   it('should return the view model its presenter holds once the use case has run', async () => {
     // Arrange
-    const request: MergeSaveFilesRequest = {fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B'};
+    const input: MergeSaveFilesInput = {fileNameA: 'Standard-1.json', contentA: 'save A', fileNameB: 'Standard-2.json', contentB: 'save B'};
     const presenter: {viewModel: MergeResultViewModel} = {viewModel: mergeResultViewModel('idle')};
     const viewModelAfterRun: MergeResultViewModel = mergeResultViewModel('mergeFailed');
     const controller = createController(async () => {
@@ -41,7 +43,7 @@ describe('MergeSaveFilesController', () => {
     }, presenter);
 
     // Act
-    const viewModel = await controller.mergeSaveFiles(request);
+    const viewModel = await controller.mergeSaveFiles(input);
 
     // Assert
     expect(viewModel).toBe(viewModelAfterRun);

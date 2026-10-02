@@ -1,5 +1,5 @@
-
 export interface PlayerEntityInput {
+  readonly id: string;
   readonly name: string;
   readonly inventory: readonly string[];
   readonly equipment: readonly string[];
@@ -8,6 +8,7 @@ export interface PlayerEntityInput {
 }
 
 export class PlayerEntity {
+  private readonly _id: string;
   private readonly _name: string;
   private readonly _inventory: readonly string[];
   private readonly _equipment: readonly string[];
@@ -15,11 +16,16 @@ export class PlayerEntity {
   private readonly _host: boolean;
 
   constructor(input: PlayerEntityInput) {
+    this._id = input.id;
     this._name = input.name;
     this._inventory = [...input.inventory];
     this._equipment = [...input.equipment];
     this._planetId = input.planetId;
     this._host = input.host;
+  }
+
+  get id(): string {
+    return this._id;
   }
 
   get name(): string {
@@ -40,9 +46,5 @@ export class PlayerEntity {
 
   get isHost(): boolean {
     return this._host;
-  }
-
-  findPlanetStoodOn(): string | undefined {
-    return this._planetId;
   }
 }

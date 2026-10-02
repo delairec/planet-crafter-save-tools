@@ -4,6 +4,8 @@ import {
   AssessedSaveConfigurationResponse,
   ConfigurationPageResponse,
   DifficultyModifierEffectResponse,
+  DroneLogisticsEffectResponse,
+  DroneLogisticsResponse,
   GlobalProgressionResponse,
   StatisticsResponse,
   UnlocksResponse
@@ -58,6 +60,11 @@ const toneByModifierEffect: Record<DifficultyModifierEffectResponse, ToneViewMod
   helpsThePlayer: 'positive'
 };
 
+const toneByDroneLogisticsEffect: Record<DroneLogisticsEffectResponse, ToneViewModel> = {
+  penalisesThePlayer: 'danger',
+  helpsThePlayer: 'positive'
+};
+
 const toneLabelByTone: Record<ToneViewModel, string> = {
   neutral: configurationPageGameDefaultToneLabel,
   danger: configurationPagePenalisingToneLabel,
@@ -98,17 +105,15 @@ function createProgressionZone(globalProgression: GlobalProgressionResponse, sta
       value: `${statistics?.totalCraftedObjects ?? NO_CRAFTED_OBJECT_COUNTED}`
     }
   ];
-  if (globalProgression.logisticsPaused === undefined) {
+  if (!globalProgression.droneLogistics) {
     return {fields};
   }
-  return {fields, droneLogistics: createDroneLogistics(globalProgression.logisticsPaused)};
+  return {fields, droneLogistics: createDroneLogistics(globalProgression.droneLogistics)};
 }
 
-function createDroneLogistics(logisticsPaused: boolean): DroneLogisticsViewModel {
-  if (logisticsPaused) {
-    return {label: configurationPageDroneLogisticsLabel, badge: createTonedValue(configurationPageDroneLogisticsPausedValue, 'danger')};
-  }
-  return {label: configurationPageDroneLogisticsLabel, badge: createTonedValue(configurationPageDroneLogisticsRunningValue, 'positive')};
+function createDroneLogistics({paused, effect}: DroneLogisticsResponse): DroneLogisticsViewModel {
+  const value = paused ? configurationPageDroneLogisticsPausedValue : configurationPageDroneLogisticsRunningValue;
+  return {label: configurationPageDroneLogisticsLabel, badge: createTonedValue(value, toneByDroneLogisticsEffect[effect])};
 }
 
 function createSaveConfigurationZones(assessedSaveConfiguration: AssessedSaveConfigurationResponse | undefined): Pick<ConfigurationPageViewModel, 'modifiers' | 'unlocks'> {

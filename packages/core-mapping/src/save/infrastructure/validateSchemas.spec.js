@@ -1,9 +1,10 @@
 import {describe, expect, it} from 'bun:test';
 import {createSectionEntryValidator, validateSchemas} from './validateSchemas.js';
+import {MissingSectionEntrySchemaError} from './errors/MissingSectionEntrySchemaError.ts';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
+import {UnknownSaveFormatReleaseError} from './errors/UnknownSaveFormatReleaseError.ts';
 import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes.ts';
 import {LEGACY_TERRAIN_LAYERS_SECTION_INDEX, PLAYERS_SECTION_INDEX, RESERVED_TRAILING_SECTION_INDEX, STATISTICS_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
-import {UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
 import {createFakeParsedSave} from 'shared-save-processing/testing/createFakeParsedSave.js';
 import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
 import {createPlayer, createTerrainLayer, createWorldEvent, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
@@ -161,7 +162,7 @@ describe('createSectionEntryValidator', () => {
   });
 
   describe('When the format is none of those a save file schema describes', () => {
-    it('should fail with an UnknownFormatReleaseError', () => {
+    it('should fail with the error naming the unknown format', () => {
       // Arrange
       const unknownFormatRelease = '0.9';
 
@@ -169,17 +170,17 @@ describe('createSectionEntryValidator', () => {
       const creating = () => createSectionEntryValidator(unknownFormatRelease, PLAYERS_SECTION_INDEX);
 
       // Assert
-      expect(creating).toThrow(UnknownFormatReleaseError);
+      expect(creating).toThrow(UnknownSaveFormatReleaseError);
     });
   });
 
   describe('When the index is the trailing part the terminating @ leaves empty', () => {
-    it('should fail, no schema describing entries of that part', () => {
+    it('should fail with the error naming the part no schema describes', () => {
       // Act
       const creating = () => createSectionEntryValidator('2.004', RESERVED_TRAILING_SECTION_INDEX);
 
       // Assert
-      expect(creating).toThrow('No schema describes the entries of section 10 in the format of 2.004');
+      expect(creating).toThrow(MissingSectionEntrySchemaError);
     });
   });
 });

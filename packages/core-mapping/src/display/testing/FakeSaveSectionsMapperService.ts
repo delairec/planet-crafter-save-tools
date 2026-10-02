@@ -68,12 +68,14 @@ export class FakeSaveSectionsMapperService implements SaveSectionsMapperPort {
 
   getPlayers(): PlayerEntity[] {
     return [new PlayerEntity({
+      id: '76561190000000001',
       name: 'Nikowa',
       inventory: [],
       equipment: [],
       planetId: 'Toxicity',
       host: true
     }), new PlayerEntity({
+      id: '76561190000000007',
       name: 'Chileny',
       inventory: [],
       equipment: [],

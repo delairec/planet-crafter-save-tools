@@ -646,19 +646,25 @@ DECISION CoreMappingExportsOnlyControllersAndViewModels
 DECISION EachUseCaseResponseIsDeclaredInItsOwnFile
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	SPEC "The Responses of the use cases are declared in the application/responses folder of their"
-		+ "business, or of save when several businesses exchange them, one interface per file"
+		+ "business, or of save when several businesses exchange them, one file per Response a port"
+		+ "or a presenter method exchanges; the records nested under such a Response are declared"
+		+ "in its file"
 		IMPL "packages/core-mapping/src/save/application/responses"
 		IMPL "packages/core-mapping/src/validation/application/responses"
 		IMPL "packages/core-mapping/src/merge/application/responses"
 		IMPL "packages/core-mapping/src/display/application/responses"
 	REJECTED "Declare a Response beside the port it crosses: the port is the boundary, not the"
 		+ "payload"
+	REJECTED "One interface per file, the records nested under a Response included, the previous"
+		+ "form of this ruling: such a record has no reader outside its Response, and"
+		+ "ConfigurationPageResponse and EnergyLevelsResponse keep theirs in the response file"
+		REF @DECISION.AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
 	SOURCE "T28"
 		PR 59
 
 DECISION DissolvedPackagesAreNotRecreated
 	DESC "util-parsing, util-messages and shared-mapping were dissolved into shared-save-processing"
-		+ "and core-mapping"
+		+ "and core-mapping, util-types into shared-platforms"
 	SPEC "No dissolved package is recreated, and no util-* package is created except for a truly"
 		+ "generic helper"
 		IMPL "agents/packages.md::ont été dissous"
@@ -760,6 +766,8 @@ DECISION ASectionIndexIsNeverHardCoded
 		PR 245
 
 DECISION ACrossPackageJsdocTypeImportIsWrittenAsTypedef
+	STATUS archived
+	ARCHIVED_ON 2026-10-02
 	UNTIL "fallow follows the @import tag"
 	SPEC "A JSDoc type import crossing a package boundary is written as a typedef carrying the"
 		+ "import"
@@ -829,17 +837,24 @@ DECISION SectionControllersReceiveTheValidatedText
 
 DECISION BehaviourMovesOntoTheEntityAndTheRuleAsksIt
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	SPEC "What follows from a world object alone is asked of the entity: a placed object tells its"
-		+ "energy levels and chooses the producers it boosts, a world object tells whether it is a"
-		+ "fuse"
+	SPEC "What follows from a world object alone is asked of the entity: a placed object chooses"
+		+ "the producers it boosts, a world object tells whether it is a fuse"
 		IMPL "packages/core-mapping/src/display/domain/entities/PlacedWorldObjectEntity.ts::boostedProducersAmong"
 		IMPL "packages/core-mapping/src/display/domain/entities/WorldObjectEntity.ts::isEnergyFuse"
-	SPEC "No energy rule indexes an energy table by an entity name, except computeEnergyBreakdown,"
-		+ "which receives its table"
+	SPEC "No entity holds an energy table: a table is indexed by an entity name by what holds or"
+		+ "receives it, PlanetEnergyGrid, the aggregate holding the tables of the release, and"
+		+ "computeEnergyBreakdown and boostedProducersAmong, which receive theirs"
 		IMPL "packages/core-mapping/src/display/domain/PlanetEnergyGrid.ts"
+		IMPL "packages/core-mapping/src/display/domain/rules/computeEnergyBreakdown.ts::levelsByWorldObjectName[worldObject.name]"
+		IMPL "packages/core-mapping/src/display/domain/entities/PlacedWorldObjectEntity.ts::productionLevels[candidate.name]"
+		REF @DECISION.APlanetEnergyGridIsAnAggregate
 	REJECTED "Turning a sum or a join over a collection into an entity method: it belongs to no"
 		+ "single entity"
 	REJECTED "A contains taking a WorldObjectEntity: the inventory would depend on another entity"
+	REJECTED "A placed object telling its energy levels, the previous form of this ruling: the"
+		+ "levels are those of the release of the save, a table the grid holds, so they do not"
+		+ "follow from the object alone"
+		REF @DECISION.TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SOURCE "T15, owner review"
 		PR 72
 
@@ -1143,7 +1158,7 @@ DECISION MockIsolationIsAGlobalPreload
 	REJECTED "A cleanup block per spec file"
 	SPEC "A test runner preload restores and clears the doubles after every test, declared at the"
 		+ "root and in every package whose test script runs bun test: cli-merge, cli-validate,"
-		+ "core-mapping, shared-platforms, shared-save-processing and util-types"
+		+ "core-mapping, shared-platforms and shared-save-processing"
 		IMPL "testing/testIsolation.ts::enforceTestIsolation"
 		IMPL "bunfig.toml::preload"
 		IMPL "packages/cli-merge/bunfig.toml::preload"
@@ -1151,7 +1166,6 @@ DECISION MockIsolationIsAGlobalPreload
 		IMPL "packages/core-mapping/bunfig.toml::preload"
 		IMPL "packages/shared-platforms/bunfig.toml::preload"
 		IMPL "packages/shared-save-processing/bunfig.toml::preload"
-		IMPL "packages/util-types/bunfig.toml::preload"
 		ENFORCED_BY "testIsolation.spec.ts"
 	SPEC "ui-save-manager carries no bunfig.toml and no bun test script: its spec files run from"
 		+ "the root, under the root preload"
@@ -2791,7 +2805,8 @@ DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 		ENFORCED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should"
 			+ "multiply the unit and total level of each consumption breakdown entry"
 	SPEC "a save with no save configuration section consumes at modifier 1"
-		IMPL "packages/core-mapping/src/display/domain/powerConsumptionModifier.ts::UNMODIFIED_POWER_CONSUMPTION_MODIFIER"
+		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts::modifiers.powerConsumption"
+			+ "?? GAME_DEFAULT_MODIFIER"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.spec.ts::should"
 			+ "charge the base consumption levels, the modifier being 1"
 	SPEC "the Power section names the modifier in an information notification, under the game"
@@ -3132,12 +3147,10 @@ DECISION TheSaveIdentityShowsTheResolvedGameRelease
 DECISION APlayerOnAnEmptyPlanetShowsNoPlanet
 	SPEC "the players menu shows no planet for a player whose planet is empty, and the planet of"
 		+ "the entry otherwise, whatever the format of the save"
-		IMPL "packages/core-mapping/src/display/domain/entities/PlayerEntity.ts::findPlanetStoodOn"
+		IMPL "packages/core-mapping/src/display/domain/entities/PlayerEntity.ts::get planetId"
 		IMPL "packages/core-mapping/src/save/infrastructure/saveEntryCodecs.ts::planetStoodOn"
 		ENFORCED_BY "packages/core-mapping/src/save/infrastructure/saveEntryCodecs.spec.ts::should"
 			+ "hand over the player without a planet"
-		ENFORCED_BY "packages/core-mapping/src/display/domain/entities/PlayerEntity.spec.ts::should"
-			+ "answer $expected for $situation"
 		ENFORCED_BY "packages/ui-save-manager/e2e/shell.e2e.ts::should list its players with the"
 			+ "planet they stand on"
 	REJECTED "no planet for any player of a legacy save: a legacy player entry carries its planet"
@@ -3567,6 +3580,11 @@ DECISION ACoordinateTextCrossesTheDomainUndecoded
 			+ "fail with the error naming the unreadable value for $situation"
 	REJECTED "Decoding positions into coordinates at the boundary: their text does not round-trip"
 		+ "byte for byte, and the merge only compares them"
+	DEROGATES "@RULE.external_format_not_serialized_in_domain"
+	RATIONALE "The instructions rule has the infrastructure decode a positional string before it"
+		+ "crosses inward. Decoded coordinates do not write back byte for byte, and the merge only"
+		+ "compares these texts for equality, never reading a coordinate in them; the display,"
+		+ "which needs the coordinates, has its mapper decode them"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR162
 	SOURCE "Ruled while implementing the decoding of the save format"
@@ -3632,11 +3650,13 @@ DECISION EachValidationIssueIsANamedInterfaceInItsOwnFile
 	REJECTED "The move into domain/ in the pull request of REFACTOR164: the presenter ports receive"
 		+ "the issues and import nothing from domain/ until REFACTOR170 gives them responses"
 		REF @TASK.REFACTOR170
+	DEROGATES "@RULE.error_layer_by_meaning"
 	RATIONALE "Each code carries data of its own, so each issue is a type of its own, named and"
 		+ "found by that name. The domain says what is invalid, the infrastructure how it is"
-		+ "detected. The issues stay beside the ports, against the rule that the folder holds ports"
-		+ "only, until REFACTOR170 moves them into domain/: moving them earlier makes the presenter"
-		+ "ports import from domain/"
+		+ "detected. The instructions rule has a check on the medium refused before validation by"
+		+ "the code that received the file; here the use case refuses the file name, so that every"
+		+ "interface gets the refusal from the core, and a merge reports it beside the findings of"
+		+ "the other save rather than drop them"
 	SOURCE "Owner rulings in the review: one named interface per issue, each in its own file, in a"
 		+ "subfolder grouping them; the domain says what is invalid and the infrastructure how it"
 		+ "is detected; the move into domain/ goes with the responses of REFACTOR170; a merge"
@@ -3742,8 +3762,9 @@ DECISION AControllerIsBuiltAroundItsUseCaseFactory
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR166
 	SPEC "a controller of core-mapping is a class whose constructor takes the factory building its"
-		+ "use case around the presenter the controller provides; it imports no infrastructure"
-		+ "module and instantiates no adapter"
+		+ "use case and the presenter that use case reports to; the controller runs the use case,"
+		+ "then reads the view model of that presenter; it imports no infrastructure module nor"
+		+ "concrete presenter and instantiates no adapter"
 		IMPL "packages/core-mapping/src/save/controllers/UseCaseFactory.ts::export type"
 			+ "UseCaseFactory"
 		IMPL "packages/core-mapping/src/merge/controllers/MergeSaveFilesController.ts::constructor(private"
@@ -3771,12 +3792,15 @@ DECISION AControllerIsBuiltAroundItsUseCaseFactory
 		+ "manager would wire core-mapping themselves"
 	REJECTED "Static controllers calling the factories of the composition root: a controller spec"
 		+ "could only cross the real infrastructure"
+	DEROGATES "@RULE.controller_responsibilities"
 	RATIONALE "The composition root is the outermost module of core-mapping: it imports the"
 		+ "controllers it wires and no controller imports it back, so the controllers depend on"
 		+ "application and presentation only. Keeping the factories out of the exported module"
 		+ "leaves a consumer the wired controllers and no way to wire core-mapping itself; the"
 		+ "wiring stays covered end to end by the specs of the CLIs and the scenarios of the save"
-		+ "manager"
+		+ "manager. The instructions rule has the controller provide the presenter; here the"
+		+ "factory builds it with the use case, so that a controller imports no concrete presenter"
+		+ "and its spec mounts it on a double of the factory"
 	SOURCE "Owner rulings on the review of the pull request delivering REFACTOR166: the composition"
 		+ "root exports the wired controllers, each controller module keeps its class alone, and"
 		+ "the use case factories move to a composition module of their own"

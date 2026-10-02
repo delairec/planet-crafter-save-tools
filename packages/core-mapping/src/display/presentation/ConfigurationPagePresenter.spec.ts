@@ -103,7 +103,7 @@ describe('ConfigurationPagePresenter', () => {
       const presenter = new ConfigurationPagePresenter();
 
       // Act
-      presenter.displayConfigurationPage({globalProgression: {allTimeTerraTokens: 500, logisticsPaused: true}});
+      presenter.displayConfigurationPage({globalProgression: {allTimeTerraTokens: 500, droneLogistics: {paused: true, effect: 'penalisesThePlayer'}}});
 
       // Assert
       expect(presenter.viewModel.progression.droneLogistics).toEqual({
@@ -119,7 +119,7 @@ describe('ConfigurationPagePresenter', () => {
       const presenter = new ConfigurationPagePresenter();
 
       // Act
-      presenter.displayConfigurationPage({globalProgression: {allTimeTerraTokens: 500, logisticsPaused: false}});
+      presenter.displayConfigurationPage({globalProgression: {allTimeTerraTokens: 500, droneLogistics: {paused: false, effect: 'helpsThePlayer'}}});
 
       // Assert
       expect(presenter.viewModel.progression.droneLogistics).toEqual({

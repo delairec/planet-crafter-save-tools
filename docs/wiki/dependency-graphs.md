@@ -22,7 +22,6 @@ flowchart TD
     end
     subgraph leaves [" "]
         direction LR
-        util-types["util-types"]
         data-save-format["data-save-format"]
         data-energy["data-energy"]
         data-planets["data-planets"]
@@ -40,7 +39,6 @@ flowchart TD
     core-mapping --> data-planets
     core-mapping --> data-world-objects
     shared-save-processing --> data-save-format
-    shared-platforms --> util-types
 
     style apps fill:none,stroke:none
     style libs fill:none,stroke:none

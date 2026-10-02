@@ -6,6 +6,7 @@ import {
   AssessedSaveConfigurationResponse,
   DifficultyModifierEffectsResponse,
   DifficultyModifiersResponse,
+  DroneLogisticsResponse,
   GlobalProgressionResponse,
   StatisticsResponse,
   UnlocksResponse
@@ -14,6 +15,7 @@ import {SaveConfigurationValueObject} from "../domain/valueObjects/SaveConfigura
 import {GlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {StatisticsValueObject} from "../domain/valueObjects/StatisticsValueObject";
 import {assessDifficultyModifiers, DifficultyModifierEffects, DifficultyModifiers} from "../domain/rules/assessDifficultyModifiers";
+import {assessDroneLogistics} from "../domain/rules/assessDroneLogistics";
 
 export class LoadConfigurationPage implements UseCase<LoadSaveSectionsRequest> {
   constructor(
@@ -38,7 +40,14 @@ export class LoadConfigurationPage implements UseCase<LoadSaveSectionsRequest> {
 }
 
 function describeGlobalProgression(globalProgression: GlobalProgressionValueObject): GlobalProgressionResponse {
-  return {allTimeTerraTokens: globalProgression.allTimeTerraTokens, logisticsPaused: globalProgression.logisticsPaused};
+  return {allTimeTerraTokens: globalProgression.allTimeTerraTokens, droneLogistics: describeDroneLogistics(globalProgression.logisticsPaused)};
+}
+
+function describeDroneLogistics(logisticsPaused: boolean | undefined): DroneLogisticsResponse | undefined {
+  if (logisticsPaused === undefined) {
+    return undefined;
+  }
+  return {paused: logisticsPaused, effect: assessDroneLogistics(logisticsPaused)};
 }
 
 function describeStatistics(statistics: StatisticsValueObject | undefined): StatisticsResponse | undefined {

@@ -15,8 +15,7 @@
       "packages/data-world-objects",
       "packages/shared-platforms",
       "packages/shared-save-processing",
-      "packages/ui-save-manager",
-      "packages/util-types"
+      "packages/ui-save-manager"
     ]
   },
   "type": "module",

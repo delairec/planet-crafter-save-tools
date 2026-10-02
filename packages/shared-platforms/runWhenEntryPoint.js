@@ -1,4 +1,4 @@
-/** @typedef {import('util-types/platform').RuntimePlatform} RuntimePlatform */
+/** @import { RuntimePlatform } from './RuntimePlatform.ts' */
 
 /**
  * @typedef {object} EntryPointRun
