@@ -12,7 +12,7 @@
 
 **Une ancre nomme un fichier suivi par git** (@DECISION.AnAnchorNamesAFileTrackedByGit). Les témoins commités sont
 les JSON Schemas de `packages/core-mapping/src/save/infrastructure/wireFormat/schemas/`, les tests, les fabriques de saves de
-`packages/core-mapping/src/save/infrastructure/wireFormat/testing/`, le générateur `scripts/generate-scenario-fixtures.ts` et les documents de
+`packages/core-mapping/src/save/infrastructure/wireFormat/testing/`, le générateur `scripts/fixtures/generate-scenario-fixtures.ts` et les documents de
 `docs/`. Les saves des scénarios ne le sont pas : le setup global de Playwright les écrit à chaque lancement dans
 `packages/ui-save-manager/e2e/fixtures/`, que git ignore.
 

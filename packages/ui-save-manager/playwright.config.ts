@@ -8,7 +8,7 @@ const buildAndPreviewTimeout = 180_000;
 export default defineConfig({
   testDir: './e2e',
   testMatch: '**/*.e2e.ts',
-  globalSetup: '../../scripts/generate-scenario-fixtures.ts',
+  globalSetup: '../../scripts/fixtures/generate-scenario-fixtures.ts',
   forbidOnly: isContinuousIntegration,
   retries: isContinuousIntegration ? 1 : 0,
   reporter: isContinuousIntegration ? [['list'], ['html', {open: 'never'}]] : [['list']],

@@ -93,7 +93,7 @@ above, whose consumption the tool underestimates
 (`@DECISION.AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine`). The hypothesis stands until observed
 otherwise in game. The game data search below prices `TreePlanter3` at 85 kW and `TreePlanter` at 40 kW, so the
 hypothesis is narrowed to `PodUnderground` and `RocketAnimals2`, `TreePlanter3` moving to the consuming group;
-the energy consumption fixture of `scripts/generate-scenario-fixtures.ts` keeps it, to check the 85 kW in game.
+the energy consumption fixture of `scripts/fixtures/generate-scenario-fixtures.ts` keeps it, to check the 85 kW in game.
 
 **Game data search: 2026-09-25**, against game version 2.103. Every name of the group without a known energy level,
 placed in a reference save or not, was looked up in a community export of the game's own item data

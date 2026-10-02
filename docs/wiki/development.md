@@ -97,6 +97,28 @@ the dependency audit, stopping at the first failure. The `Release` workflow runs
 whose name holds `v` or `@` followed by a digit — and it can be run by hand before tagging. `test:ui` needs the
 browsers of `test:ui:install`.
 
+## Repository scripts
+
+The scripts of the repository root live in `scripts/`, one folder per role:
+
+| Folder                            | Holds                                                                                                 |
+|-----------------------------------|-------------------------------------------------------------------------------------------------------|
+| `scripts/guards/architecture/`    | the guards of the package matrix, the business areas and the layers of a core, the save format reader |
+| `scripts/guards/tests/`           | the guards of the specs, the test fixtures and the UI scenarios                                       |
+| `scripts/guards/repository/`      | the guards of the workflows, the audit exemptions, the package scripts and the corpus anchors         |
+| `scripts/guards/ui/`              | the color contrast guard of the save manager                                                          |
+| `scripts/guards/validate-tables/` | the check of the value tables against their JSON Schemas                                              |
+| `scripts/guards/common/`          | what several guards share: import reading, workspace package names, spec sources                      |
+| `scripts/fixtures/`               | the save fixture generators, one for the UI scenarios and one per CLI, and what they share            |
+| `scripts/release/`                | the release and tagging scripts                                                                       |
+| `scripts/node/`                   | the loader running the CLIs under Node                                                                |
+| `scripts/common/`                 | the entry point and input/output wiring every script uses, and its fake for specs                     |
+
+`scripts/sync-private-context.sh`, run after every install, stays at the root of the folder.
+
+A script a single package uses lives in the `scripts/` folder of that package instead, such as the section validator
+generator of `core-mapping`.
+
 ## Guard scripts
 
 ```
@@ -216,7 +238,7 @@ Every `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs`, `.mts` and `.cts` file under
 and `require()` whose argument is a string or a template literal without substitution, and JSDoc `@import` and
 `import()` all count. String literals, template literals and regular expressions are read as such, so a `/*` or `//`
 inside one hides no import, and an import written inside one is not read. The guard runs with no exemption. Its limits,
-each pinned by a case of `scripts/readImportStatements.spec.ts` or `scripts/check-business-boundaries.spec.ts`:
+each pinned by a case of `scripts/guards/common/readImportStatements.spec.ts` or `scripts/guards/architecture/check-business-boundaries.spec.ts`:
 
 - a specifier only known at run time — a template literal with a substitution, a variable, a concatenation — is not
   read;

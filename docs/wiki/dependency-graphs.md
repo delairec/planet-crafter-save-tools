@@ -2,7 +2,7 @@
 
 Edges are the imports found in the production sources (specs, `testing/`, e2e and test setup files excluded), measured at `ed1a757`, the commit that dissolved `shared-save-processing` into `core-mapping`, on the branch `refactor/dissolve-shared-save-processing`. The figures are compared with `a286f6a`, the commit this page was measured at before, which laid `core-mapping` out by business. An arrow `A --> B` reads "A imports B". Each package, each area and each layer is one block.
 
-The edges and every count of this page were measured by a one-off script, not versioned, that reads each import statement of the tracked production sources with `readImportStatements` of `scripts/readImportStatements.ts`: value, type-only, re-export, dynamic and JSDoc `@import` statements, one count per statement. Run on `a286f6a`, the same script gives back every figure published there. What an import carries (a request type, a constructor injection, what a guard accepts) was established by reading the files the script names. The counts given as "before wave 14" were measured at `c81d99f`.
+The edges and every count of this page were measured by a one-off script, not versioned, that reads each import statement of the tracked production sources with `readImportStatements` of `scripts/guards/common/readImportStatements.ts`: value, type-only, re-export, dynamic and JSDoc `@import` statements, one count per statement. Run on `a286f6a`, the same script gives back every figure published there. What an import carries (a request type, a constructor injection, what a guard accepts) was established by reading the files the script names. The counts given as "before wave 14" were measured at `c81d99f`.
 
 ## Packages
 

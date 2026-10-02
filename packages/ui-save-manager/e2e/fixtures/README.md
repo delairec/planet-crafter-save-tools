@@ -6,7 +6,7 @@ either: git ignores every `.json` of this directory, and this README is the only
 
 ## Generating them
 
-`scripts/generate-scenario-fixtures.ts` declares every fixture of this directory and is the only place that says
+`scripts/fixtures/generate-scenario-fixtures.ts` declares every fixture of this directory and is the only place that says
 how each one is built. It is the global setup of `playwright.config.ts`, so every run of the scenarios — `bun run
 test:ui` from the root, `playwright test` from `packages/ui-save-manager` — writes them here, under Node, before the
 first scenario starts. `bun run generate:scenario-fixtures` writes the same files without running the scenarios, to
