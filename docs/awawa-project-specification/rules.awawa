@@ -120,9 +120,12 @@ RULE TerraformationLevelsTakeTheHigherValue
 	SPEC "unitPurificationLevel keeps its -1 sentinel only when both saves carry it, and otherwise"
 		+ "takes the non-negative value"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/mergeTerraformationLevels.spec.ts::should"
-			+ "keep -1"
+			+ "leave the planet without a purification level"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/saveEntryCodecs.spec.ts::should"
+			+ "write back the terraformation level of a planet that does not handle purification,"
+			+ "byte for byte"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/mergeTerraformationLevels.spec.ts::should"
-			+ "take the non-negative value of the other save"
+			+ "take the purification level of the save that carries it"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-TERRA-1 to GR-TERRA-3)"
 

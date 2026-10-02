@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {Inventory, WorldEvent, WorldObject} from 'shared-save-processing/gameDefinitions';
-import {createGlobalMetadata, createInventory, createPlayer, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
+import {createGlobalMetadata, createInventory, createPlayer, createTerraformationLevel, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 import {
   decodeEntry,
   encodeEntry,
@@ -8,6 +8,7 @@ import {
   GLOBAL_METADATA_CODEC,
   INVENTORY_CODEC,
   PLAYER_CODEC,
+  TERRAFORMATION_LEVEL_CODEC,
   WORLD_EVENT_CODEC,
   WORLD_OBJECT_CODEC
 } from './saveEntryCodecs';
@@ -16,6 +17,7 @@ import {UnreadableSaveEntryValueError} from './errors/UnreadableSaveEntryValueEr
 import {GlobalMetadataEntry} from '../domain/save/GlobalMetadataEntry';
 import {InventoryEntry} from '../domain/save/InventoryEntry';
 import {PlayerEntry} from '../domain/save/PlayerEntry';
+import {TerraformationLevelEntry} from '../domain/save/TerraformationLevelEntry';
 import {WorldObjectEntry} from '../domain/save/WorldObjectEntry';
 
 function writeBack<Record extends object, Entry extends object>(record: Record, codec: EntryCodec<Record, Entry>): string {
@@ -103,6 +105,22 @@ describe('Save entry codecs', () => {
     });
   });
 
+  describe('When a planet does not handle purification', () => {
+    it('should hand over its terraformation level without a purification level', () => {
+      // Arrange
+      const record = createTerraformationLevel({planetId: 'Prime', unitPurificationLevel: -1.0});
+
+      // Act
+      const entry = decodeEntry(record, TERRAFORMATION_LEVEL_CODEC);
+
+      // Assert
+      expect<TerraformationLevelEntry>(entry).toEqual({
+        planetId: 'Prime', unitOxygenLevel: 100.0, unitHeatLevel: 200.0, unitPressureLevel: 300.0,
+        unitPlantsLevel: 400.0, unitInsectsLevel: 500.0, unitAnimalsLevel: 600.0, unitPurificationLevel: undefined
+      });
+    });
+  });
+
   describe('When an entry is decoded then encoded back', () => {
     const worldObjectInGameOrder: WorldObject = {
       id: 100, gId: 'Container2', liId: 10, liGrps: '', siIds: '10,11', pos: '1751.865,-472.58,1106.104', rot: '0,0,0,1', planet: 1, count: '3'
@@ -113,6 +131,16 @@ describe('Save entry codecs', () => {
       owner: 0, planet: -1140328421, index: 1, seed: 577338550, pos: '1250.623,-51.60085,-215.7026', rot: '-0.001,-0.353,-0.010,-0.935',
       wrecksWOGenerated: true, woIdsGenerated: '201234,205678', woIdsDropped: '201234', version: 13
     };
+    const terraformationLevelWithoutPurification = createTerraformationLevel({planetId: 'Prime', unitPurificationLevel: -1.0});
+
+    it('should write back the terraformation level of a planet that does not handle purification, byte for byte', () => {
+      // Act
+      const text = writeBack(terraformationLevelWithoutPurification, TERRAFORMATION_LEVEL_CODEC);
+
+      // Assert
+      expect(text).toBe('{"planetId":"Prime","unitOxygenLevel":100,"unitHeatLevel":200,"unitPressureLevel":300,'
+        + '"unitPlantsLevel":400,"unitInsectsLevel":500,"unitAnimalsLevel":600,"unitPurificationLevel":-1}');
+    });
 
     it('should write back a world object in the order of its fields, byte for byte', () => {
       // Act

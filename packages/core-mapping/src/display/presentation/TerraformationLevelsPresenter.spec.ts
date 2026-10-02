@@ -126,6 +126,73 @@ describe('TerraformationLevelsPresenter', () => {
     });
   });
 
+  describe('When a planet does not handle purification', () => {
+    it('should leave the purification column out of its environmental levels', () => {
+      // Arrange
+      const purificationNotHandled = undefined;
+      const presenter = new TerraformationLevelsPresenter();
+
+      // Act
+      presenter.displayTerraformationLevels([
+        {
+          planetId: 'Prime',
+          unitOxygenLevel: 123123,
+          unitHeatLevel: 456456,
+          unitPressureLevel: 789789,
+          unitPlantsLevel: 101101,
+          unitInsectsLevel: 112112,
+          unitAnimalsLevel: 130519,
+          unitPurificationLevel: purificationNotHandled,
+          terraformationIndex: 1_713_100,
+          biomass: 343_732
+        }
+      ]);
+
+      // Assert
+      expect(presenter.viewModel).toEqual<TerraformationLevelsViewModel>({
+        planets: [
+          {
+            name: 'Prime',
+            environmentalLevels: {
+              columns: [
+                {
+                  header: 'O²',
+                  values: [`123.123${nbsp}ppt`]
+                },
+                {
+                  header: 'Heat',
+                  values: [`456.456${nbsp}nK`]
+                },
+                {
+                  header: 'Pressure',
+                  values: [`789.789${nbsp}µPa`]
+                }
+              ]
+            },
+            organicLevels: {
+              columns: [
+                {
+                  header: 'Plants',
+                  values: [`101.101${nbsp}kg`]
+                },
+                {
+                  header: 'Insects',
+                  values: [`112.112${nbsp}kg`]
+                },
+                {
+                  header: 'Animals',
+                  values: [`130.519${nbsp}kg`]
+                },
+              ]
+            },
+            terraformationIndex: `1.713${nbsp}MTi`,
+            biomass: `343.732${nbsp}kg`
+          }
+        ],
+      });
+    });
+  });
+
   describe('When the save has unreadable lines', () => {
     it('should show the unreadable lines in place of the terraformation levels', () => {
       // Arrange

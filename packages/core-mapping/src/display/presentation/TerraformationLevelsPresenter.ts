@@ -1,5 +1,6 @@
 import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
 import {TerraformationLevelsViewModel} from "./viewModels/TerraformationLevelsViewModel";
+import {ColumnViewModel} from "./viewModels/TableViewModel";
 import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
 import {TerraformationLevelsPresenterPort} from "../application/ports/TerraformationLevelsPresenterPort";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
@@ -17,6 +18,19 @@ import {
   terraformationLevelsSectionTerraformationIndexUnit
 } from "./messages/terraformationLevelsSectionMessages.js";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
+
+function presentPurificationColumns(unitPurificationLevel: number | undefined): ColumnViewModel[] {
+  if (unitPurificationLevel === undefined) {
+    return [];
+  }
+
+  return [
+    {
+      header: terraformationLevelsSectionPurificationLabel,
+      values: [formatNumber(unitPurificationLevel, FormatNumberStrategies.SYMBOL) + terraformationLevelsSectionPurificationUnit]
+    }
+  ];
+}
 
 export class TerraformationLevelsPresenter implements TerraformationLevelsPresenterPort {
   private _viewModel: TerraformationLevelsViewModel;
@@ -91,10 +105,7 @@ export class TerraformationLevelsPresenter implements TerraformationLevelsPresen
               header: terraformationLevelsSectionPressureLabel,
               values: [formatNumber(level.unitPressureLevel, FormatNumberStrategies.PASCAL)]
             },
-            {
-              header: terraformationLevelsSectionPurificationLabel,
-              values: [formatNumber(level.unitPurificationLevel, FormatNumberStrategies.SYMBOL) + terraformationLevelsSectionPurificationUnit]
-            }
+            ...presentPurificationColumns(level.unitPurificationLevel)
           ]
         },
         organicLevels: {
