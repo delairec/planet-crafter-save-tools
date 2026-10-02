@@ -2393,6 +2393,8 @@ DECISION UnitTestCoverageIsGatedAtTheMeasuredFloorOfEachModule
 		PR 197
 
 DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
+	REJECTED "The coverage-gaps step of the fallow-rs/fallow action: version 3.28 ties no input to"
+		+ "the health-coverage-gaps gate, so the job passes with the gate failed"
 	REJECTED "A fallow-ignore-file coverage-gaps directive at the top of each exempt module: the"
 		+ "exemptions scatter across the code, where no one reads them as a list"
 	REJECTED "A coverage-gaps severity in a fallow.toml [[overrides]] entry, or the module in"
@@ -2403,7 +2405,7 @@ DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
 	SPEC "A source file or export that no test reaches statically fails the fallow job, over the"
 		+ "whole project, ui-save-manager included"
 		IMPL "fallow.toml::coverage-gaps ="
-		IMPL ".github/workflows/quality.yml::args: --coverage-gaps"
+		IMPL ".github/workflows/quality.yml::bun run fallow:coverage-gaps"
 		IMPL "package.json::fallow:coverage-gaps"
 	SPEC "Only a module a test runs as a spawned process, or a type declaration file, is exempt"
 		IMPL "fallow-coverage-gaps.toml::entryPoints ="
@@ -2426,6 +2428,9 @@ DECISION ACoverageGapExemptionIsATestRootDeclaredInOneFile
 		PR 173
 	SOURCE "Extended to ui-save-manager by the delivery of CHORE112, measured on 2026-09-25"
 		PR 181
+	SOURCE "The Release runs of the 0.1.3 tags, failed on a coverage gap the fallow job of #256 and"
+		+ "#257 had passed with a warning"
+		PR 258
 
 DECISION ADroppedSaveIsSelectedThroughItsFileInput
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager

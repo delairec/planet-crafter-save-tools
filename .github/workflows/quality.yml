@@ -28,13 +28,9 @@ jobs:
           command: health
           format: github-summary
       # Over the whole project, not the files the pull request changed: a test removed from a changed
-      # spec leaves the module it reached untested without changing that module.
-      - uses: fallow-rs/fallow@bd8fca5af5df4ccfd94c7a835d17bd93c31a7cef # v3.28.0
-        with:
-          command: health
-          format: github-summary
-          auto-changed-since: 'false'
-          args: --coverage-gaps
+      # spec leaves the module it reached untested without changing that module. The CLI, not the action, which
+      # never fails the job on this gate (@DECISION.ACoverageGapExemptionIsATestRootDeclaredInOneFile).
+      - run: bun run fallow:coverage-gaps
 
   lint:
     runs-on: ubuntu-latest
