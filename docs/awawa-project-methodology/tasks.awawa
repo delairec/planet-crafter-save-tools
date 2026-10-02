@@ -872,7 +872,8 @@ TASK FEAT143
 
 TASK FEAT144
 	TITLE "Give the Players page its view model: player cards with the host badge and vital gauges"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 263
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27 and narrowed on"
 		+ "2026-10-02 to the cards and the gauges, the equipment slots and the grouped inventory"
 		+ "being a task of their own; the maximum of each gauge and whether the toxicity gauge is"
@@ -883,18 +884,32 @@ TASK FEAT144
 		+ "oxygen, a sandwich for health and a flask for thirst, with a clear outline and a visible"
 		+ "empty part, the percentage next to the label and the value over its maximum under the"
 		+ "gauge"
+		IMPL "packages/ui-save-manager/src/routes/players.tsx"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerCard.tsx"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerGauge.tsx"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts"
 	SPEC "inside a card the equipment and the inventory stay listed item by item, as the page lists"
 		+ "them today, until the task of the slots lands"
 		REF @TASK.FEAT185
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts::PlayerCardViewModel"
 	SPEC "a gauge maximum that depends on the equipment worn is read from a value table of a data-"
 		+ "package, by an infrastructure adapter behind an application port; the use case computes"
 		+ "the percentages from domain values and hands them to the presenter as primitives of its"
 		+ "application response, and the presenter renders them"
+		IMPL "packages/data-world-objects/oxygenTankCapacities.json"
+		IMPL "packages/core-mapping/src/display/infrastructure/OxygenTankCapacitiesReaderService.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerGaugeResponse"
 	SPEC "the Players page reads one view model, one card per player, built by one presenter from"
 		+ "one use case; the Players section controller, presenter and view model of today are"
 		+ "retired, every module left without an importer is deleted, and the anchors and the"
 		+ "wording of the decisions naming them are rewritten"
+		IMPL "packages/core-mapping/src/display/controllers/LoadPlayersPageController.ts"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts::loadPlayersPageController"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge"
+		IMPL "packages/cli-validate"
 	WAVE @WAVE.15
 	RATIONALE "The Players section lists today the equipment and the inventory item by item, in"
 		+ "save order, without quantities, and shows no gauge. The owner asked for more graphics on"

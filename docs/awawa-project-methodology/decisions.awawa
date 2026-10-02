@@ -2896,6 +2896,7 @@ DECISION AViewModelServesOneView
 		+ "of a page; a page view model composes the view models of its zones, and a zone view"
 		+ "model is the type its zone component receives"
 		IMPL "packages/core-mapping/src/display/presentation/viewModels/ConfigurationPageViewModel.ts"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts"
 	SPEC "a zone rendered by one component on several pages is one view: each page view model holds"
 		+ "its own instance of it, built by a presentation helper the presenters of those pages"
 		+ "call; what two views share is that helper, a pure mapping from value objects to the"
@@ -4197,3 +4198,4 @@ DECISION APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
 		+ "the players of the reference saves"
 		REF @URL.WikiOxygenTanks
 		REF @PROJECT.DNC
+		PR 263
