@@ -530,7 +530,7 @@ TASK TEST91
 		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::describeTheColorRulesAuditInTheDarkColorScheme(showASaveVisualization)"
 	SPEC "a violation the dark audits find is fixed in the same pull request; no rule is silenced"
 		+ "and no element is excluded"
-		IMPL "packages/ui-save-manager/src/styles/shell/shell.css::.overview-pages a"
+		IMPL "packages/ui-save-manager/e2e/helpers/describeTheColorRulesAuditInTheDarkColorScheme.ts::expect(violations).toEqual(noViolation);"
 	SPEC "@DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest states that the color rules of"
 		+ "the axe audit are replayed in the dark color scheme, anchored on the dark audits"
 		IMPL "docs/awawa-project-methodology/decisions.awawa::are replayed on"
@@ -776,7 +776,7 @@ TASK FEAT141
 
 TASK FEAT142
 	TITLE "Give the Overview page its view model: identity and progression tiles"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27 and narrowed on"
 		+ "2026-10-02 to the identity and the tiles, the planet cards being a task of their own;"
 		+ "how the file size reaches the view model is settled when the task starts"
@@ -784,15 +784,34 @@ TASK FEAT142
 		+ "name, the mode, the game release and the file size, then a row of tiles with the"
 		+ "all-time Terra Tokens, the total crafted objects and the drone logistics as a badge; a"
 		+ "save without statistics shows the tiles it can"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should title the page with the"
+			+ "display name of the save"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the progression"
+			+ "tiles the save carries"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts"
 	SPEC "the breadcrumb reads Overview, the warnings of the save stay above the content, and the"
 		+ "links to the Configuration, Power and Terraformation pages are gone, the menu leading"
 		+ "there"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should read Overview alone in"
+			+ "the breadcrumb"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show its warnings above"
+			+ "the content of the page"
 	SPEC "the title of a section is left-aligned in neon pink over a pink line, a muted hint beside"
 		+ "it, as page F shows, and every page already redesigned wears the same title"
+		IMPL "packages/ui-save-manager/src/components/structure/SectionTitle.tsx::section-title-hint"
+		IMPL "packages/ui-save-manager/src/styles/components.css::.section-title-hint"
+		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle"
+			+ "testId=\"configuration-title\">"
 	SPEC "the Overview page reads one view model, identity and tiles, built by one presenter from"
 		+ "one use case that reads the configuration and the progression; the page computes no"
 		+ "figure"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
+		IMPL "packages/core-mapping/src/display/controllers/LoadOverviewPageController.ts"
+		IMPL "packages/ui-save-manager/src/routes/overview.tsx::loadedSave.viewModels.overviewPage"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
 	WAVE @WAVE.15
 	RATIONALE "The overview is the page the save opens on and the one the owner shaped most on the"
 		+ "mockup, so the redesign delivers it first. The route shows today a title and three links"
@@ -812,6 +831,7 @@ TASK FEAT142
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	DELIVERED_BY 262
 
 TASK FEAT143
 	TITLE "Give each planet a page with a Power tab and a Terraformation tab"

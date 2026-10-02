@@ -32,7 +32,7 @@ test.describe('Save warnings', () => {
 
       // Assert
       await expect(page.getByTestId('display-warnings-title')).toHaveText('Warnings');
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: legacy-format_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 

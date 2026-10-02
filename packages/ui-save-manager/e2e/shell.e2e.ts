@@ -214,7 +214,7 @@ test.describe('Save manager shell', () => {
     test('should keep the loaded save without reading its file again nor reloading the page', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
       await holdEveryFurtherFileRead(page);
       const loadedDocumentUrls = recordTheDocumentLoads(page);
       await openThePageOfTheMenu(page, 'Power');

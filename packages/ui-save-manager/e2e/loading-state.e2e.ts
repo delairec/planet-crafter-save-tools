@@ -53,7 +53,7 @@ test.describe('Loading states', () => {
       await releaseTheHeldFileReads(page);
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
       await expect(page).toHaveURL(/\/overview$/);
     });
   });

@@ -28,8 +28,5 @@ export const homeMessageAttachmentsLabel = 'Merged saves';
 /** @param {string} fileName */
 export const resolveRemoveMergedSaveButtonLabel = (fileName) => `Remove ${fileName}`;
 
-/** @param {string} fileName */
-export const resolveLoadedSaveTitle = (fileName) => `Loaded save: ${fileName}`;
-
 /** @param {boolean} isSaveLoaded */
 export const resolveLoadSavePageTitle = (isSaveLoaded) => isSaveLoaded ? loadAnotherSavePageTitle : loadSavePageTitle;

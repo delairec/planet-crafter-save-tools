@@ -5,6 +5,7 @@ import {formatNumberByPartsPerThresholds} from "./partsPer.strategy";
 import {formatNumberByKelvinThresholds} from "./kelvin.strategy";
 import {formatNumberByPascalThresholds} from "./pascal.strategy";
 import {formatNumberByWeightThresholds} from "./weight.strategy";
+import {formatNumberByFileSizeThresholds} from "./fileSize.strategy";
 
 export const FormatNumberStrategies = {
   SYMBOL: formatNumberByUnitThresholds,
@@ -14,6 +15,7 @@ export const FormatNumberStrategies = {
   KELVIN: formatNumberByKelvinThresholds,
   PASCAL: formatNumberByPascalThresholds,
   WEIGHT: formatNumberByWeightThresholds,
+  FILE_SIZE: formatNumberByFileSizeThresholds,
 } satisfies Record<string, (value: number | bigint) => string>;
 
 export type FormatNumberStrategyName = keyof typeof FormatNumberStrategies;
