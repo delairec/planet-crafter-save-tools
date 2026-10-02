@@ -12,3 +12,4 @@ export const mergeResultSectionMergeFailedTitle = 'Merge failed';
 export const mergeResultSectionMergeWarningsTitle = 'Merge warnings';
 export const earlierMergedSavesTitle = 'Earlier merged saves';
 export const mergeResultSectionKeepLegacyFormatReminder = `To write the legacy format instead, tick "${mergeSectionPreferLegacyFormatLabel}" and merge again.`;
+export const mergeResultSectionMergedSaveTitle = 'Merged save';

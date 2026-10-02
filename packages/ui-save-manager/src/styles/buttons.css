@@ -110,3 +110,33 @@ button:focus-visible {
 .button-link-neon-pink:hover {
     text-decoration: underline;
 }
+
+:root {
+    --button-neon-pink-bg-hover: color-mix(in srgb, var(--neon-pink) 85%, var(--content));
+
+    --button-neon-pink-bg-disabled: color-mix(
+            in srgb,
+            var(--neon-pink) 50%,
+            white
+    );
+
+    @media (prefers-color-scheme: dark) {
+        --button-neon-pink-bg-disabled: color-mix(
+                in srgb,
+                var(--neon-pink) 50%,
+                black
+        );
+    }
+}
+
+.button-neon-pink {
+    background-color: var(--neon-pink);
+}
+
+.button-neon-pink:hover {
+    background-color: var(--button-neon-pink-bg-hover);
+}
+
+.button-neon-pink:disabled {
+    background-color: var(--button-neon-pink-bg-disabled);
+}

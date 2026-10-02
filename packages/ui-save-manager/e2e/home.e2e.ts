@@ -136,7 +136,7 @@ test.describe('Home page', () => {
 
       // Assert
       await expect(page.getByTestId('merged-file-name')).toHaveText('baseline_valid-legacy-format_valid-merged.json');
-      await expect(page.getByTestId('earlier-merged-saves')).toHaveCount(0);
+      await expect(page.getByTestId('earlier-merged-saves-card')).toHaveCount(0);
     });
   });
 

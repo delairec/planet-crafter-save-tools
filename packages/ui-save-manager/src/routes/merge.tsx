@@ -11,9 +11,11 @@ export default function MergePage() {
   return (
     <>
       <Breadcrumb group={toolsGroupTitle} page={mergeTwoSavesPageTitle}/>
-      <MergeSection onMergeStarted={mergedSaves.startMerge} onMergeResult={mergedSaves.keepMergeResult}/>
-      <MergeResultSection result={mergedSaves.lastMergeResult} mergedSave={mergedSaves.lastMergedSave}/>
-      <EarlierMergedSavesSection mergedSaves={mergedSaves.earlierMergedSaves}/>
+      <div class="merge-page">
+        <MergeSection onMergeStarted={mergedSaves.startMerge} onMergeResult={mergedSaves.keepMergeResult}/>
+        <MergeResultSection result={mergedSaves.lastMergeResult} mergedSave={mergedSaves.lastMergedSave}/>
+        <EarlierMergedSavesSection mergedSaves={mergedSaves.earlierMergedSaves}/>
+      </div>
     </>
   );
 }

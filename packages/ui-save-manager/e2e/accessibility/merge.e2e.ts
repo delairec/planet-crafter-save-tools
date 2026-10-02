@@ -40,14 +40,14 @@ test.describe('Merge two saves page accessibility', () => {
 
     describeTheColorRulesAuditInTheDarkColorScheme(openTheMergePage);
 
-    test('should title the merge form with a second level heading', async ({page}) => {
+    test('should title the page with a third level heading', async ({page}) => {
       // Act
       await page.goto('/merge');
 
       // Assert
       await expect(page.getByTestId('merge-title')).toHaveRole('heading');
       await expect(page.getByTestId('merge-title')).toHaveAccessibleName('Merge two saves');
-      await expect(page.getByTestId('merge-title')).toMatchAriaSnapshot('- heading [level=2]');
+      await expect(page.getByTestId('merge-title')).toMatchAriaSnapshot('- heading [level=3]');
     });
 
     test('should name each save area as a group', async ({page}) => {
@@ -68,8 +68,8 @@ test.describe('Merge two saves page accessibility', () => {
       await page.goto('/merge');
 
       // Assert
-      await expect(page.getByTestId('save-a')).toHaveAccessibleName('Save A:');
-      await expect(page.getByTestId('save-b')).toHaveAccessibleName('Save B:');
+      await expect(page.getByTestId('save-a')).toHaveAccessibleName('Save A');
+      await expect(page.getByTestId('save-b')).toHaveAccessibleName('Save B');
     });
 
     test('should name the merge button by its text', async ({page}) => {
@@ -155,13 +155,13 @@ test.describe('Merge two saves page accessibility', () => {
 
     describeTheColorRulesAuditInTheDarkColorScheme(showTwoMergeResults);
 
-    test('should title the earlier merged saves with a third level heading', async ({page}) => {
+    test('should title the earlier merged saves with a fourth level heading', async ({page}) => {
       // Act
       await showTwoMergeResults(page);
 
       // Assert
       await expect(page.getByTestId('earlier-merged-saves-title')).toHaveAccessibleName('Earlier merged saves');
-      await expect(page.getByTestId('earlier-merged-saves-title')).toMatchAriaSnapshot('- heading [level=3]');
+      await expect(page.getByTestId('earlier-merged-saves-title')).toMatchAriaSnapshot('- heading [level=4]');
     });
 
     test('should offer each earlier merged save as a download link', async ({page}) => {
