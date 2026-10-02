@@ -3018,10 +3018,10 @@ DECISION AUiTestDoesNotBreakOnAChangeOfTheDomStructure
 		+ "button into a link would break the scenarios, while it changes neither the data shown"
 		+ "nor a behaviour"
 	REJECTED "Renaming now the positional test ids the generic field groups build from a column and"
-		+ "a value rank: the view models of the Configuration and Power pages are replaced and the"
-		+ "data they show changes in wave 11, which rewrites those scenarios and names those ids"
-		+ "there"
-		REF @WAVE.11
+		+ "a value rank: the view models of the pages are replaced and the data they show changes"
+		+ "page by page, the Power page in wave 16, each wave rewriting those scenarios and naming"
+		+ "those ids there"
+		REF @WAVE.16
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	RATIONALE "A scenario tests a user flow; the markup that draws it changes with every layout"
 		+ "review. A data-testid attribute changes nothing the user sees or uses, so it ties the"
