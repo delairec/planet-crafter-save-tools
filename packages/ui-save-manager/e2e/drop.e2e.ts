@@ -79,7 +79,7 @@ test.describe('Save file drop', () => {
       await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 

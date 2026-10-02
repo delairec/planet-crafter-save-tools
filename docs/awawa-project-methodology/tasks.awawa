@@ -530,7 +530,7 @@ TASK TEST91
 		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::describeTheColorRulesAuditInTheDarkColorScheme(showASaveVisualization)"
 	SPEC "a violation the dark audits find is fixed in the same pull request; no rule is silenced"
 		+ "and no element is excluded"
-		IMPL "packages/ui-save-manager/src/styles/shell/shell.css::.overview-pages a"
+		IMPL "packages/ui-save-manager/e2e/helpers/describeTheColorRulesAuditInTheDarkColorScheme.ts::expect(violations).toEqual(noViolation);"
 	SPEC "@DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest states that the color rules of"
 		+ "the axe audit are replayed in the dark color scheme, anchored on the dark audits"
 		IMPL "docs/awawa-project-methodology/decisions.awawa::are replayed on"

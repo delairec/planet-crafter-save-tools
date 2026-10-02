@@ -32,7 +32,7 @@ test.describe('Load save page', () => {
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
       await expect(page).toHaveURL(/\/overview$/);
     });
   });
@@ -73,8 +73,8 @@ test.describe('Load save page', () => {
       await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: other-player_valid.json');
-      await expect(findTheBreadcrumbSteps(page)).toHaveCount(0);
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Companion Save');
+      await expect(findTheBreadcrumbSteps(page)).toHaveText(['Overview']);
     });
   });
 
@@ -89,7 +89,7 @@ test.describe('Load save page', () => {
       await openThePageOfTheMenu(page, 'Overview');
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 
@@ -106,7 +106,7 @@ test.describe('Load save page', () => {
       // Assert
       await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
       await openThePageOfTheMenu(page, 'Overview');
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 });

@@ -235,7 +235,7 @@ test.describe('Save merge', () => {
       await openThePageOfTheMenu(page, 'Overview');
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 

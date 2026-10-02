@@ -5,7 +5,7 @@ import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
 
 interface SavePageProps {
-  group: string;
+  group?: string;
   page: string;
   children: JSX.Element;
 }

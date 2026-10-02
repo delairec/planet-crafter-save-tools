@@ -27,6 +27,10 @@ import {TerraformationLevelsViewModel} from "../presentation/viewModels/Terrafor
 import {LoadSaveIdentityRequest} from "../application/requests/LoadSaveIdentityRequest";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
 import {UseCaseWithPresenter} from "../../save/controllers/UseCaseFactory";
+import {LoadOverviewPage} from "../application/LoadOverviewPage";
+import {LoadOverviewPageRequest} from "../application/requests/LoadOverviewPageRequest";
+import {OverviewPagePresenter} from "../presentation/OverviewPagePresenter";
+import {OverviewPageViewModel} from "../presentation/viewModels/OverviewPageViewModel";
 
 function createSaveSectionsReader(): SaveSectionsReaderPort {
   return new SaveSectionsReaderService(new SaveSectionsParserService());
@@ -91,4 +95,13 @@ export function createLoadTerraformationLevelsSection(): UseCaseWithPresenter<Lo
 
 function createLoadTerraformationLevelsSectionUseCase(presenter: TerraformationLevelsPresenter): LoadTerraformationLevelsSection {
   return new LoadTerraformationLevelsSection(createSaveSectionsReader(), presenter);
+}
+
+export function createLoadOverviewPage(): UseCaseWithPresenter<LoadOverviewPageRequest, OverviewPageViewModel> {
+  const presenter = new OverviewPagePresenter();
+  return {useCase: createLoadOverviewPageUseCase(presenter), presenter};
+}
+
+function createLoadOverviewPageUseCase(presenter: OverviewPagePresenter): LoadOverviewPage {
+  return new LoadOverviewPage(createSaveSectionsReader(), new GameReleasesReaderService(), presenter);
 }

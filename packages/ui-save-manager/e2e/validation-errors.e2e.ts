@@ -30,7 +30,7 @@ test.describe('Save validation errors', () => {
 
       // Assert
       await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
-      await expect(page.getByTestId('loaded-save-title')).toBeHidden();
+      await expect(page.getByTestId('overview-identity-title')).toBeHidden();
     });
   });
 
