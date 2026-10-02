@@ -1,5 +1,10 @@
 # Changelog of ui-save-manager
 
+## 0.1.3 — 2026-10-02
+
+- fix(core-mapping): tone the difficulty modifiers the right way round (#249)
+- Core engine updated
+
 ## 0.1.2 — 2026-09-28
 
 - feat(ui-save-manager): implement new save manager navigation  (#204)
