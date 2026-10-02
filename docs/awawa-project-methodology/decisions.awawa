@@ -1688,6 +1688,14 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 			+ "var(--primary-idle);"
 		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::When a merge result"
 			+ "is shown"
+	SPEC "a series colour, --series-production or --series-consumption, fills a graphic and never"
+		+ "serves as text; every graphic/background pair the catalog names reaches the WCAG 2.1"
+		+ "non-text floor, 3:1, in both themes"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::GRAPHIC_TOKEN_PAIRS"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-production"
+		ENFORCED_BY "scripts/guards/ui/check-color-contrast.ts::MINIMUM_GRAPHIC_CONTRAST_RATIO"
+		ENFORCED_BY "scripts/guards/ui/check-color-contrast.spec.ts::should print the graphic pair"
+			+ "at the 3:1 floor, then the count, and exit with one"
 	REJECTED "WCAG 2.1 AAA (7:1): unreachable by the neon accent palette (--neon-pink,"
 		+ "--neon-purple, --neon-cyan) without abandoning the palette's own identity"
 	REJECTED "The full cross-product of every declared color token, text or not: produces pairs no"
@@ -1704,6 +1712,10 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		+ "#5677fa is 3.87:1, and the catalog, pairing the label with --primary, passed it; the axe"
 		+ "audit of the merge result caught it on the download link"
 		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
+	REJECTED "the series colours held to 4.5:1 as text colours: the pair measured on the mockup,"
+		+ "which passes the colour-vision check on both surfaces, would have to darken, while no"
+		+ "text is ever written in them"
+		REF @TASK.FEAT183
 	RATIONALE "The task's SPEC left the threshold and the verification method open. WCAG 2.1 AA is"
 		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
 		+ "-rendered DOM, a gap the axe audits of the accessibility tests close in the light"
@@ -1718,6 +1730,8 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "Owner ruling of 2026-09-28 on the second review round: the contrast of the download"
 		+ "link of the merge result is fixed in this pull request"
 		PR 211
+	SOURCE "Ruled while delivering FEAT183: the series colours fill the power bars, never text,"
+		+ "checked at the non-text floor"
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"
@@ -4074,3 +4088,53 @@ DECISION ASaveAreaOfTheMergePageShowsItsNativeFileInput
 	SOURCE "Ruled while delivering FEAT186: page F draws a choose a file link, the save areas keep"
 		+ "the native input a drop writes into"
 		PR 261
+
+DECISION TheOverviewPowerBarsShareTheLargestFigureOfTheSaveAsTheirScale
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT183
+	SPEC "the production and the consumption bars of every planet card of the Overview share one"
+		+ "scale: 100 % is the largest production or consumption over every planet of the save, a"
+		+ "bar is as wide as its value divided by that largest figure, and empty when that figure"
+		+ "is 0"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::fullBarKilowatts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::function"
+			+ "scaleBar("
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
+			+ "show the terraformation figures of each planet, then its power on a scale common to"
+			+ "every planet"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
+			+ "draw empty bars without a share of production consumed"
+	REJECTED "the largest production alone as 100 %: a consumption above every production overflows"
+		+ "its bar and has to be clipped"
+	REJECTED "each planet's share of the total of the save: the bars of a small planet fall to"
+		+ "almost nothing"
+	SOURCE "Owner ruling of 2026-10-02 at the launch of FEAT183"
+
+DECISION TheOverviewShowsACardForEveryPlanetOfEitherList
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT183
+	SPEC "the Overview shows one card per planet of the union of the terraformation levels and the"
+		+ "energy planets: the terraformation entries in save order, then the planets with machines"
+		+ "placed and no terraformation entry, in energy order"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::energyOnlyPlanets"
+		ENFORCED_BY "packages/core-mapping/src/display/application/LoadOverviewPage.spec.ts::should"
+			+ "present it after the terraformed planets, with its energy alone"
+	SPEC "a planet with terraformation levels and no machine placed shows its terraformation"
+		+ "figures and, in place of the bars, a line saying no machine is placed; a planet with"
+		+ "machines placed and no terraformation level shows its name, or its numeric identifier,"
+		+ "then a line saying no terraformation level is recorded in place of the figures; nothing"
+		+ "of the missing side is shown as zero"
+		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js::overviewPageNoMachinePlaced"
+		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js::overviewPageNoTerraformationLevelRecorded"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::card.absentSide"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
+			+ "show its terraformation figures and say that no machine is placed"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
+			+ "name it after its numeric identifier, show its power and say that no terraformation"
+			+ "level is recorded"
+	REJECTED "the missing side shown as zeros: it invents a value the save does not hold"
+		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+	REJECTED "cards for the terraformation planets only: a planet with machines placed vanishes"
+		+ "from the Overview"
+	SOURCE "Owner ruling of 2026-10-02 at the launch of FEAT183"
