@@ -32,77 +32,18 @@ WAVE 14
 		PR 222
 
 WAVE 15
-	MILESTONE "save-manager-overview"
-	BRANCH "integration/save-manager-overview"
-	DESC "the Overview page reads a view model of its own and wears page F: the identity of the"
-		+ "save, the progression tiles, the SysTi included, and one card per planet, terraformation"
-		+ "first and power in the foot"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
-		REF @URL.SaveManagerRedesignMockup
-
-WAVE 16
-	MILESTONE "save-manager-power-tables"
-	BRANCH "integration/save-manager-power-tables"
-	DESC "the Power page reads a view model of its own and wears page F with the tables as its only"
-		+ "form: planet tabs, figures with a status decided by the domain, optimizers first,"
-		+ "producers and consumers"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
-		REF @URL.SaveManagerRedesignMockup
-
-WAVE 17
-	MILESTONE "save-manager-power-charts"
-	BRANCH "integration/save-manager-power-charts"
-	DESC "the Power page charts the production and the consumption of a planet in two more forms,"
-		+ "bars by machine and share of each machine type, behind a selector of the form"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
-		REF @URL.SaveManagerRedesignMockup
-
-WAVE 18
-	MILESTONE "save-manager-terraformation"
-	BRANCH "integration/save-manager-terraformation"
-	DESC "the Terraformation page reads a view model of its own and wears page F, hero figures and"
-		+ "bar-aligned tables, and each planet gets a page of its own, opened from its overview"
-		+ "card, with a Power tab and a Terraformation tab"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
-		REF @URL.SaveManagerRedesignMockup
-
-WAVE 19
-	MILESTONE "save-manager-players"
-	BRANCH "integration/save-manager-players"
-	DESC "the Players page reads a view model of its own and wears page F: player cards with the"
-		+ "host badge and vital gauges, equipment slots and an inventory grouped by kind"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
-		REF @URL.SaveManagerRedesignMockup
-
-WAVE 20
-	MILESTONE "save-manager-merge"
-	BRANCH "integration/save-manager-merge"
-	DESC "the Merge two saves page wears page F, the application title moves to the top of the"
-		+ "menu, the Load save page is harmonised with the merge page, and the redesign closes: no"
+	MILESTONE "save-manager-redesign"
+	BRANCH "integration/save-manager-redesign"
+	DESC "the save manager wears page F, page by page, each page reading a view model of its own:"
+		+ "the Overview first, then Power, its tables before its charts, Terraformation and the"
+		+ "planet page, Players, and the Merge two saves page with the application title at the top"
+		+ "of the menu and the Load save page harmonised; the redesign closes in the wave, no"
 		+ "section controller left, nothing of the earlier look left, the whole save manager usable"
 		+ "at phone width and by keyboard"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+		REF @DECISION.AViewModelServesOneView
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments; the pages first planned"
+		+ "as six waves are one wave, their tasks being few"
 		REF @URL.SaveManagerRedesignMockup

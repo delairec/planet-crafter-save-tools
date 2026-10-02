@@ -610,9 +610,9 @@ TASK FEAT132
 		+ "mockup of three proposals, to draft for memory; owner ruling of 2026-09-27 to deliver it"
 		+ "in wave 11"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT139
@@ -644,11 +644,11 @@ TASK FEAT139
 		+ "left without an importer is deleted, and the anchors and the wording of the decisions"
 		+ "naming them are rewritten"
 	SPEC "the tables are the only form the page offers: it shows no Display as selector and no"
-		+ "chart, which come with the next wave"
+		+ "chart, which come with the chart tasks"
 		REF @TASK.FEAT140
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT183
-	WAVE @WAVE.16
+	WAVE @WAVE.15
 	RATIONALE "The Power section is the largest of the page on a real save, one card per machine"
 		+ "type and fifty types on Prime; tables make it scannable and the optimizers, always fewer"
 		+ "than the machines, come first as the owner ruled. The balance of a planet is a fact"
@@ -675,9 +675,9 @@ TASK FEAT139
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: the optimizers are shown before the machines"
 		+ "because there are always fewer of them"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT140
@@ -704,7 +704,7 @@ TASK FEAT140
 		+ "planet cards of the Overview page brought, catalogued by the contrast guard"
 		REF @TASK.FEAT183
 	AFTER @TASK.FEAT139
-	WAVE @WAVE.17
+	WAVE @WAVE.15
 	RATIONALE "A histogram of the power was the owner's first wish for the redesign, with a select"
 		+ "to switch between forms. The balance form of the proposals was dropped: hard to fit on a"
 		+ "phone and adding nothing the share form does not show. Folding the tail and naming it"
@@ -725,9 +725,9 @@ TASK FEAT140
 		+ "histogram, several forms behind a select; review of the same day: no balance form, the"
 		+ "boost in the colour of its legend"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT141
@@ -751,12 +751,12 @@ TASK FEAT141
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT132
 	AFTER @TASK.FEAT139
-	WAVE @WAVE.18
+	WAVE @WAVE.15
 	RATIONALE "The section shows today six cards of key and value pairs; the mockup keeps the two"
 		+ "groups of values and adds a bar per row so the reader sees which value carries the"
 		+ "index. The planet zone of this view model is what the planet page shows in its"
 		+ "Terraformation tab, built by the same helper. The SysTi is computed since the Overview"
-		+ "wave, which this page reads for the share under its hero figure, and the planet tabs"
+		+ "page, which this page reads for the share under its hero figure, and the planet tabs"
 		+ "come with the Power page"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
@@ -769,9 +769,9 @@ TASK FEAT141
 	SOURCE "Owner review of 2026-09-26 of the first working version: the bars are not aligned,"
 		+ "otherwise good"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT142
@@ -808,9 +808,9 @@ TASK FEAT142
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: page F is the final version, its details"
 		+ "adjustable during the implementation"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT143
@@ -832,7 +832,7 @@ TASK FEAT143
 	AFTER @TASK.FEAT183
 	AFTER @TASK.FEAT184
 	AFTER @TASK.FEAT141
-	WAVE @WAVE.18
+	WAVE @WAVE.15
 	RATIONALE "Proposal C opened the detail of a planet in a side drawer over the comparison; the"
 		+ "owner kept the detail and made it a page of its own, reached from the overview card. Its"
 		+ "view model composes the two planet zones already built for the Power and Terraformation"
@@ -845,9 +845,9 @@ TASK FEAT143
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: the side panel of C becomes a full page"
 		+ "opened from a planet card of the overview"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT144
@@ -875,7 +875,7 @@ TASK FEAT144
 		+ "retired, every module left without an importer is deleted, and the anchors and the"
 		+ "wording of the decisions naming them are rewritten"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
-	WAVE @WAVE.19
+	WAVE @WAVE.15
 	RATIONALE "The Players section lists today the equipment and the inventory item by item, in"
 		+ "save order, without quantities, and shows no gauge. The owner asked for more graphics on"
 		+ "the vitals, for a visible host, for empty equipment slots, and for the inventory to stay"
@@ -893,9 +893,9 @@ TASK FEAT144
 	SOURCE "Owner review of 2026-09-26 of the first working version: gauges with a clearer outline,"
 		+ "a clearer symbol for health, Host without a star on a neon colour of the project"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT145
@@ -918,7 +918,7 @@ TASK FEAT145
 	AFTER @TASK.FEAT142
 	AFTER @TASK.FEAT144
 	AFTER @TASK.FEAT185
-	WAVE @WAVE.20
+	WAVE @WAVE.15
 	RATIONALE "Each page task retires the section it replaces and deletes what it orphans, the"
 		+ "quality gate refusing a file without an importer. What remains at the end is to prove"
 		+ "the boundary once: no section controller left, no generic table piece left, and a guard"
@@ -948,7 +948,7 @@ TASK FEAT146
 	AFTER @TASK.FEAT143
 	AFTER @TASK.FEAT145
 	AFTER @TASK.FEAT189
-	WAVE @WAVE.20
+	WAVE @WAVE.15
 	RATIONALE "The owner named accessibility and the phone display as the reasons the details of"
 		+ "the mockup may move during the implementation; this task is the pass that checks both"
 		+ "once every page is redesigned, so that each page task does not carry its own partial"
@@ -2179,11 +2179,11 @@ TASK FIX171
 
 TASK FEAT183
 	TITLE "Show one card per planet on the Overview page: terraformation first, power in the foot"
-	STATUS draft
-	DESC "from page F of the mockup, split on 2026-10-02 from the Overview task ratified on"
-		+ "2026-09-27; the common scale of the power bars, and what a planet present in the"
-		+ "terraformation levels only or in the energy only shows, are settled with the owner when"
-		+ "the task starts"
+	STATUS todo
+	DESC "from page F of the mockup, split and ratified on 2026-10-02 from the Overview task"
+		+ "ratified on 2026-09-27; the common scale of the power bars, and what a planet present in"
+		+ "the terraformation levels only or in the energy only shows, are settled with the owner"
+		+ "when the task starts"
 	SPEC "under a Planets title counting them, one card per planet shows, in this order, the planet"
 		+ "name, its Terraformation Index, then O2, heat, pressure, purification when unlocked, and"
 		+ "biomass; the foot of the card shows the production and the consumption as two bars on a"
@@ -2226,15 +2226,16 @@ TASK FEAT183
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: page F is the final version, its details"
 		+ "adjustable during the implementation"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT184
 	TITLE "Chart the share of each machine type in the production and the consumption of a planet"
-	STATUS draft
-	DESC "from page F of the mockup, split on 2026-10-02 from the chart task ratified on 2026-09-27"
+	STATUS todo
+	DESC "from page F of the mockup, split and ratified on 2026-10-02 from the chart task ratified"
+		+ "on 2026-09-27"
 	SPEC "the Display as selector offers a third form, Share of each machine type, between Bars by"
 		+ "machine and Table"
 	SPEC "Share of each machine type shows one stacked bar for production and one for consumption,"
@@ -2247,7 +2248,7 @@ TASK FEAT184
 		+ "cyan and those of consumption shades of its pink, every pair the form composes"
 		+ "catalogued by the contrast guard"
 	AFTER @TASK.FEAT140
-	WAVE @WAVE.17
+	WAVE @WAVE.15
 	RATIONALE "The share form answers what the bars do not: which machine type weighs how much in"
 		+ "the whole. It reuses the selector and the chart zone of the bars task and adds the"
 		+ "shades of the two series, which the mockup draws as gradients of the cyan and of the"
@@ -2260,18 +2261,18 @@ TASK FEAT184
 	SOURCE "Owner request of 2026-09-26 for the redesign: productions and consumptions as a"
 		+ "histogram, several forms behind a select"
 		REF @URL.SaveManagerRedesignMockup
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT185
 	TITLE "Show the equipment of a player as slots and their inventory grouped by kind"
-	STATUS draft
-	DESC "from page F of the mockup, split on 2026-10-02 from the Players task ratified on"
-		+ "2026-09-27; whether the inventory size the save carries includes the backpack slots, and"
-		+ "the value table naming the kind of each equipment slot and of each worn item, are"
-		+ "researched when the task starts"
+	STATUS todo
+	DESC "from page F of the mockup, split and ratified on 2026-10-02 from the Players task"
+		+ "ratified on 2026-09-27; whether the inventory size the save carries includes the"
+		+ "backpack slots, and the value table naming the kind of each equipment slot and of each"
+		+ "worn item, are researched when the task starts"
 	SPEC "the equipment shows every slot under a caption counting the worn ones, an empty slot"
 		+ "named by its kind and marked Empty; the inventory groups the items by kind with their"
 		+ "count, under a caption counting the items, the slots and the kinds, and ends on an Empty"
@@ -2284,7 +2285,7 @@ TASK FEAT185
 		+ "card"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT144
-	WAVE @WAVE.19
+	WAVE @WAVE.15
 	RATIONALE "The owner asked for empty equipment slots to show and for the inventory to stay"
 		+ "grouped, since the game does not stack items. The inventory size is in the save; the"
 		+ "slot kinds depend on a table the package does not hold, a research the gauges of the"
@@ -2297,16 +2298,16 @@ TASK FEAT185
 		REF @SECTION.Inventories
 		REF @PACKAGE.core_mapping
 		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT186
 	TITLE "Give the Merge two saves page the look of page F: title over the form, drop zones in a"
 		+ "card"
-	STATUS draft
-	DESC "from page F of the mockup, drafted on 2026-10-02, not refined"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on 2026-10-02 without refinement"
 	SPEC "the title of the Merge two saves page leaves the drop zone: it is the section title over"
 		+ "the form, beside the hint that a merge produces a new file and never modifies the"
 		+ "originals, the notice that save A prevails over save B under it"
@@ -2317,7 +2318,7 @@ TASK FEAT186
 		+ "redesigned pages: the busy indicator, a refused drop, the warnings and the errors of"
 		+ "each save and of the merge, the reminder of the legacy format, the merged save with its"
 		+ "download, and the earlier merged saves"
-	WAVE @WAVE.20
+	WAVE @WAVE.15
 	RATIONALE "The merge form is today one drop zone holding the page title, the notice and two"
 		+ "native file inputs whose drop areas are an outline; page F gives the page the structure"
 		+ "of the others, a section title then a card. The mockup draws the form only, so what the"
@@ -2326,9 +2327,9 @@ TASK FEAT186
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.ANotificationIsRenderedByTheNotificationComponent
 		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT187
@@ -2341,23 +2342,23 @@ TASK FEAT187
 		+ "and the page"
 	SPEC "the home page still shows the application title, every page keeps one first-level"
 		+ "heading, and the disclaimer block stays unchanged at the top of the page"
-	WAVE @WAVE.20
+	WAVE @WAVE.15
 	RATIONALE "The title is today a centred heading above the shell, on every page, and takes the"
 		+ "height page F gives to the content. The menu validated in the navigation wave has no"
 		+ "brand; the title is the one addition page F makes to it"
 		REF @URL.SaveManagerRedesignMockup
 		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT188
 	TITLE "Harmonise the Load save page with the Merge two saves page"
-	STATUS draft
-	DESC "drafted on 2026-10-02, not refined: the mockup has no Load save page, the Merge two saves"
-		+ "page is its model; the tasks of the saves kept in the browser change the same page,"
-		+ "whichever lands second builds on the first"
+	STATUS todo
+	DESC "ratified on 2026-10-02 without refinement: the mockup has no Load save page, the Merge"
+		+ "two saves page is its model; the tasks of the saves kept in the browser change the same"
+		+ "page, whichever lands second builds on the first"
 		REF @TASK.FEAT151
 		REF @TASK.FEAT153
 		REF @TASK.FIX152
@@ -2367,16 +2368,16 @@ TASK FEAT188
 	SPEC "the busy indicator, a refused drop, and the errors and the warnings of the save show"
 		+ "where and how the Merge two saves page shows them, the file name once"
 	AFTER @TASK.FEAT186
-	WAVE @WAVE.20
+	WAVE @WAVE.15
 	RATIONALE "The two tools pages load files the same way and differ today in where the button,"
 		+ "the busy indicator and the messages sit. The merge page is redesigned from the mockup"
 		+ "first, so this page follows the pieces it leaves rather than inventing its own"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.OneLoadSavePageLoadsTheFirstAndEveryNextSave
 		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
 
 TASK FEAT189
@@ -2394,14 +2395,14 @@ TASK FEAT189
 	AFTER @TASK.FEAT186
 	AFTER @TASK.FEAT187
 	AFTER @TASK.FEAT188
-	WAVE @WAVE.20
+	WAVE @WAVE.15
 	RATIONALE "Each page task restyles its page and leaves the global styles of the earlier look in"
 		+ "place for the pages not yet redesigned: the centred headings, the field groups, a"
 		+ "surface declared twice. Once the last page is done nothing needs them, and the owner"
 		+ "looks at the whole application once to list what still departs from page F"
 		REF @URL.SaveManagerRedesignMockup
 		REF @PACKAGE.ui_save_manager
-	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page, the"
-		+ "Overview first, then Power in two waves, Terraformation, Players, and the Merge two"
-		+ "saves page with the last adjustments"
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
