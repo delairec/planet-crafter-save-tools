@@ -4073,3 +4073,4 @@ DECISION ASaveAreaOfTheMergePageShowsItsNativeFileInput
 	APPLIES_TO_TASK @TASK.FEAT186
 	SOURCE "Ruled while delivering FEAT186: page F draws a choose a file link, the save areas keep"
 		+ "the native input a drop writes into"
+		PR 261
