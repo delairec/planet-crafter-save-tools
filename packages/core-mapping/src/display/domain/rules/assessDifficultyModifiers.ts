@@ -11,6 +11,7 @@ export type DifficultyModifierEffects = Record<DifficultyModifierName, Difficult
 type PenalisingSide = 'above' | 'below';
 
 const GAME_DEFAULT_MODIFIER = 1;
+const MULTIPLAYER_DEFAULT_MODIFIER = 0.5;
 
 const penalisingSideByModifier: Record<DifficultyModifierName, PenalisingSide> = {
   terraformationPace: 'below',
@@ -20,11 +21,11 @@ const penalisingSideByModifier: Record<DifficultyModifierName, PenalisingSide> =
   multiplayerFactor: 'above'
 };
 
-function assessDifficultyModifier(modifier: number, penalisingSide: PenalisingSide): DifficultyModifierEffect {
-  if (modifier === GAME_DEFAULT_MODIFIER) {
+function assessDifficultyModifier(modifier: number, penalisingSide: PenalisingSide, defaultModifier: number = GAME_DEFAULT_MODIFIER): DifficultyModifierEffect {
+  if (modifier === defaultModifier) {
     return 'gameDefault';
   }
-  const isAboveTheGameDefault = modifier > GAME_DEFAULT_MODIFIER;
+  const isAboveTheGameDefault = modifier > defaultModifier;
   if (isAboveTheGameDefault === (penalisingSide === 'above')) {
     return 'penalisesThePlayer';
   }
@@ -37,6 +38,6 @@ export function assessDifficultyModifiers(modifiers: DifficultyModifiers): Diffi
     powerConsumption: assessDifficultyModifier(modifiers.powerConsumption, penalisingSideByModifier.powerConsumption),
     gaugeDrain: assessDifficultyModifier(modifiers.gaugeDrain, penalisingSideByModifier.gaugeDrain),
     meteoOccurrence: assessDifficultyModifier(modifiers.meteoOccurrence, penalisingSideByModifier.meteoOccurrence),
-    multiplayerFactor: assessDifficultyModifier(modifiers.multiplayerFactor, penalisingSideByModifier.multiplayerFactor)
+    multiplayerFactor: assessDifficultyModifier(modifiers.multiplayerFactor, penalisingSideByModifier.multiplayerFactor, MULTIPLAYER_DEFAULT_MODIFIER)
   };
 }
