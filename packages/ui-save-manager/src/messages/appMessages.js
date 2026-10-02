@@ -1,4 +1,6 @@
-export const appName = 'Planet Crafter Save Manager';
+export const appNameLead = 'Planet Crafter';
+export const appNameHighlight = 'Save Manager';
+export const appName = `${appNameLead} ${appNameHighlight}`;
 
 /** @param {string} version */
 export const resolveVersionLabel = (version) => `v${version}`;
