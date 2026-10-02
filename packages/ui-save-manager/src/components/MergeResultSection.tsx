@@ -5,6 +5,7 @@ import {
   mergeResultSectionFileCreatedMessage,
   mergeResultSectionKeepLegacyFormatReminder,
   mergeResultSectionMergedSaveInvalidMessage,
+  mergeResultSectionMergedSaveTitle,
   mergeResultSectionMergeFailedTitle,
   mergeResultSectionMergeWarningsTitle,
   mergeResultSectionSaveAInvalidMessage,
@@ -14,6 +15,8 @@ import {
   mergeResultSectionSuccessMessage
 } from '~/messages/mergeResultSectionMessages';
 import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
+import Card from "~/components/structure/Card";
+import Notification from "~/components/structure/Notification";
 import {KeptMergedSave} from "~/providers/MergedSavesProvider.tsx";
 
 interface MergeResultSectionProps {
@@ -36,22 +39,24 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
           </Show>
 
           <Show when={result().status === 'success'}>
-            <Show when={result().mergeWarnings.length > 0}>
-              <ValidationMessagesList title={mergeResultSectionMergeWarningsTitle} testId="merge-warnings" severity="warning"
-                                      messages={result().mergeWarnings}/>
-            </Show>
-            <Show when={result().legacyFormatCouldBeKept}>
-              <p data-testid="keep-legacy-format-reminder">{mergeResultSectionKeepLegacyFormatReminder}</p>
-            </Show>
-            <p class="text-color-success" data-testid="merge-success-message">{mergeResultSectionSuccessMessage}</p>
-            <p>{mergeResultSectionFileCreatedMessage} <code data-testid="merged-file-name">{result().fileName}</code> <a class="button-link" data-testid="merged-save-download"
-                                                                                          href={props.mergedSave()?.downloadUrl}
-                                                                                          download={result().fileName}>{mergeResultSectionDownloadLinkLabel}</a>
-            </p>
-            <Show when={result().mergeErrors.length > 0}>
-              <ValidationMessagesList title={mergeResultSectionMergedSaveInvalidMessage} testId="merged-save-errors" severity="danger"
-                                      messages={result().mergeErrors}/>
-            </Show>
+            <Card title={mergeResultSectionMergedSaveTitle} testId="merged-save">
+              <Show when={result().mergeWarnings.length > 0}>
+                <ValidationMessagesList title={mergeResultSectionMergeWarningsTitle} testId="merge-warnings" severity="warning"
+                                        messages={result().mergeWarnings}/>
+              </Show>
+              <Show when={result().legacyFormatCouldBeKept}>
+                <Notification severity="information" testId="keep-legacy-format-reminder">{mergeResultSectionKeepLegacyFormatReminder}</Notification>
+              </Show>
+              <p class="text-color-success" data-testid="merge-success-message">{mergeResultSectionSuccessMessage}</p>
+              <p>{mergeResultSectionFileCreatedMessage} <code data-testid="merged-file-name">{result().fileName}</code> <a class="button-link" data-testid="merged-save-download"
+                                                                                            href={props.mergedSave()?.downloadUrl}
+                                                                                            download={result().fileName}>{mergeResultSectionDownloadLinkLabel}</a>
+              </p>
+              <Show when={result().mergeErrors.length > 0}>
+                <ValidationMessagesList title={mergeResultSectionMergedSaveInvalidMessage} testId="merged-save-errors" severity="danger"
+                                        messages={result().mergeErrors}/>
+              </Show>
+            </Card>
           </Show>
 
           <Show when={result().status === 'mergeFailed'}>

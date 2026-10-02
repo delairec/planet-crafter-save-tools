@@ -34,6 +34,10 @@ const saveAPrecedenceNotice =
   + 'swap the saves to change which one prevails. When only one of them is on Prime, that save acts as save A '
   + 'whatever their order.';
 
+const mergeHint = 'A merge produces a new file and never modifies the originals.';
+
+const saveDropHint = 'Drop a save here or choose a file.';
+
 const keepLegacyFormatReminder = 'To write the legacy format instead, tick "Prefer legacy format" and merge again.';
 
 async function chooseTheTwoSaves(page: Page, chosenSaveAPath: string, chosenSaveBPath: string): Promise<void> {
@@ -98,6 +102,14 @@ test.describe('Save merge', () => {
       expect(download.suggestedFilename()).toBe(mergedFileName);
     });
 
+    test('should present the merged save under its own title', async ({page}) => {
+      // Act
+      await mergeTheTwoFixtures(page);
+
+      // Assert
+      await expect(page.getByTestId('merged-save-title')).toHaveText('Merged save');
+    });
+
     test('should hand over the merged save and not one of the two source files', async ({page}) => {
       // Arrange
       const saveAContent = await readFile(saveAFixturePath, 'utf8');
@@ -137,7 +149,8 @@ test.describe('Save merge', () => {
       // Assert
       await expect(page.getByTestId('merge-warnings-title')).toHaveText('Merge warnings');
       await expect(page.getByTestId('merge-warnings-messages')).toContainText('The two saves carry different formats; the merged save is written in the format of release 2.004.');
-      await expect(page.getByTestId('keep-legacy-format-reminder')).toHaveText(keepLegacyFormatReminder);
+      await expect(page.getByTestId('keep-legacy-format-reminder')).toContainText(keepLegacyFormatReminder);
+      await expect(page.getByTestId('keep-legacy-format-reminder-severity')).toHaveText('Information');
       await expect(page.getByTestId('merge-warnings-messages')).not.toContainText('merged-save-format');
     });
 
@@ -187,18 +200,21 @@ test.describe('Save merge', () => {
   });
 
   test.describe('When the merge section is shown', () => {
-    test('should align the edge of the legacy format checkbox with the edge of the save inputs', async ({page}) => {
-      // Arrange
+    test('should tell that a merge produces a new file and never modifies the originals', async ({page}) => {
+      // Act
       await page.goto('/merge');
 
+      // Assert
+      await expect(page.getByTestId('merge-title-hint')).toHaveText(mergeHint);
+    });
+
+    test('should offer to drop a save or choose a file in the area of each save', async ({page}) => {
       // Act
-      const saveAInputLeft = (await page.getByTestId('save-a').boundingBox())!.x;
-      const saveBInputLeft = (await page.getByTestId('save-b').boundingBox())!.x;
-      const checkboxLeft = (await page.getByTestId('prefer-legacy-format').boundingBox())!.x;
+      await page.goto('/merge');
 
       // Assert
-      expect(saveBInputLeft).toBeCloseTo(saveAInputLeft, 0);
-      expect(checkboxLeft).toBeCloseTo(saveAInputLeft, 0);
+      await expect(page.getByTestId('save-a-drop-hint')).toHaveText(saveDropHint);
+      await expect(page.getByTestId('save-b-drop-hint')).toHaveText(saveDropHint);
     });
 
     test('should tell, in an information notification, that save A prevails over save B', async ({page}) => {

@@ -4055,3 +4055,22 @@ DECISION TheFileSizeIsReadWhereTheFileIsRead
 		+ "view model"
 		PR 262
 		REF @TASK.FEAT142
+
+DECISION ASaveAreaOfTheMergePageShowsItsNativeFileInput
+	SPEC "Each save area of the Merge two saves page shows the native file input of its save under"
+		+ "the name of the save, above the hint to drop a save or choose a file: the input is the"
+		+ "choose a file of page F, and it shows the name of the chosen save"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::data-testid=\"save-a-drop-hint\""
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.merge-save-area .save-file-field {"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::should label each"
+			+ "save file input"
+	REJECTED "A visually hidden file input behind a choose a file link, as page F draws it: the"
+		+ "page would have to print the chosen file name the input shows today, and rebuild the"
+		+ "focus ring and the keyboard access the native control gives"
+		REF @DECISION.ADroppedSaveIsSelectedThroughItsFileInput
+		REF @URL.SaveManagerRedesignMockup
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT186
+	SOURCE "Ruled while delivering FEAT186: page F draws a choose a file link, the save areas keep"
+		+ "the native input a drop writes into"
+		PR 261
