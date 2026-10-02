@@ -2334,14 +2334,15 @@ TASK FEAT186
 
 TASK FEAT187
 	TITLE "Show the application title at the top of the menu"
-	STATUS draft
-	DESC "from page F of the mockup, drafted on 2026-10-02, not refined; where the home page, which"
-		+ "shows no menu, carries the title is settled with the owner when the task starts"
+	STATUS todo
+	DESC "from page F of the mockup, ratified on 2026-10-02 without refinement; the home page is"
+		+ "kept as it is for now"
 	SPEC "on every page that shows the menu, the application title sits at the top of the menu, as"
 		+ "page F shows, and leads to the home page; it no longer sits in a header above the menu"
 		+ "and the page"
-	SPEC "the home page still shows the application title, every page keeps one first-level"
-		+ "heading, and the disclaimer block stays unchanged at the top of the page"
+	SPEC "the home page, which shows no menu, stays as it is today, the application title above its"
+		+ "content; every page keeps one first-level heading, and the disclaimer block stays"
+		+ "unchanged at the top of the page"
 	WAVE @WAVE.15
 	RATIONALE "The title is today a centred heading above the shell, on every page, and takes the"
 		+ "height page F gives to the content. The menu validated in the navigation wave has no"
@@ -2382,14 +2383,15 @@ TASK FEAT188
 
 TASK FEAT189
 	TITLE "Leave no page and no style of the earlier look in the save manager"
-	STATUS draft
-	DESC "drafted on 2026-10-02, not refined: the last adjustments are listed with the owner on the"
-		+ "running application when the task starts, the home page and the page of an unknown"
-		+ "address among them"
-	SPEC "every page of the save manager wears the titles, the cards and the buttons of page F;"
+	STATUS todo
+	DESC "ratified on 2026-10-02 without refinement; carried out in an interactive session with the"
+		+ "owner, never by a background agent: the last adjustments are listed with the owner on"
+		+ "the running application when the task starts; the home page is kept as it is for now"
+	SPEC "every page that shows the menu wears the titles, the cards and the buttons of page F;"
 		+ "none shows a centred section title, a glowing card title or a field group of the earlier"
 		+ "look"
-	SPEC "the styles and the components no page uses are deleted, and a style is declared once"
+	SPEC "the styles and the components no page uses are deleted, a style is declared once, and the"
+		+ "home page looks as it did before the task"
 	SPEC "each adjustment the owner listed when the task started is delivered or recorded as a task"
 	AFTER @TASK.FEAT145
 	AFTER @TASK.FEAT186
