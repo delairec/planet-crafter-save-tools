@@ -87,35 +87,8 @@ select:focus {
     min-width: var(--save-file-field-label-width);
 }
 
-.merge-slots {
-    display: grid;
-    grid-template-columns: var(--merge-slots-swap-column-width) auto;
-    gap: var(--space-lg) var(--merge-slots-column-gap);
-    align-items: center;
-    width: fit-content;
-    margin-block: var(--space-lg);
-}
-
-.merge-slots p {
-    margin: 0;
-}
-
-.merge-slots-swap {
-    grid-column: 1;
-    justify-self: start;
-    grid-row: 1 / span 2;
-}
-
-.merge-slots > .drop-zone {
-    grid-column: 2;
-}
-
 .save-file-row {
     padding-inline-start: var(--save-file-row-inset);
-}
-
-.merge-option {
-    padding-inline-start: calc(var(--save-file-row-inset) + var(--save-file-field-label-width));
 }
 
 .checkbox-field input {
@@ -125,4 +98,66 @@ select:focus {
 .checkbox-field .tooltip {
     top: calc(100% + var(--space-sm));
     bottom: auto;
+}
+
+.merge-page > .card {
+    margin-block: var(--space-lg);
+}
+
+.merge-form {
+    padding: var(--space-lg);
+}
+
+.merge-save-areas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-lg);
+}
+
+.merge-save-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border: 2px dashed var(--muted);
+    text-align: center;
+}
+
+.merge-save-area.drop-zone-active {
+    border-color: var(--neon-pink);
+}
+
+.merge-save-area p {
+    margin: 0;
+}
+
+.merge-save-area .save-file-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 100%;
+}
+
+.merge-save-area .save-file-field-label {
+    min-width: 0;
+    font-weight: var(--semibold);
+}
+
+.merge-save-area input {
+    max-width: 100%;
+    margin-right: 0;
+}
+
+.merge-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md) var(--space-lg);
+    margin-top: var(--space-lg);
+}
+
+.merge-actions-submit {
+    margin-inline-start: auto;
 }

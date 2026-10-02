@@ -7,6 +7,7 @@ import CheckboxField from '~/components/structure/CheckboxField';
 import IconButton from '~/components/structure/IconButton';
 import SaveFileField from '~/components/structure/SaveFileField';
 import Notification from '~/components/structure/Notification';
+import SectionTitle from '~/components/structure/SectionTitle';
 import {yieldToPaint} from '~/lib/yieldToPaint';
 import {selectFileInInput} from '~/lib/selectFileInInput';
 import {orderDroppedSaves} from '~/lib/orderDroppedSaves';
@@ -15,11 +16,11 @@ import {
   mergeSectionCallFailedMessage,
   mergeSectionPreferLegacyFormatDescription,
   mergeSectionPreferLegacyFormatLabel,
-  mergeSectionSaveAAreaLabel,
+  mergeSectionHint,
   mergeSectionSaveALabel,
   mergeSectionSaveAPrecedenceNotice,
-  mergeSectionSaveBAreaLabel,
   mergeSectionSaveBLabel,
+  mergeSectionSaveDropHint,
   mergeSectionSwapButtonLabel,
   mergeSectionSwapIcon,
   mergeSectionTitle
@@ -89,41 +90,44 @@ export default function MergeSection(props: MergeSectionProps) {
   };
 
   return (
-    <DropZone label={mergeSectionTitle} testId="merge-area" maximumFileCount={2} tooManyFilesMessage={tooManyFilesForTwoSavesMessage}
-              onFilesDropped={handleSavesDropped}>
-      <div class="inline-block">
-        <h2 data-testid="merge-title">{mergeSectionTitle}</h2>
-        <Notification severity="information" testId="merge-precedence-notice">{mergeSectionSaveAPrecedenceNotice}</Notification>
-        <div class="merge-slots">
-          <IconButton class="merge-slots-swap" icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-saves"
-                      onClick={handleSwap} disabled={!fileA() && !fileB()}/>
-          <DropZone label={mergeSectionSaveAAreaLabel} testId="save-a-area" maximumFileCount={1}
-                    tooManyFilesMessage={tooManyFilesForOneSaveMessage}
+    <>
+      <SectionTitle testId="merge-title" hint={mergeSectionHint}>{mergeSectionTitle}</SectionTitle>
+      <Notification severity="information" testId="merge-precedence-notice">{mergeSectionSaveAPrecedenceNotice}</Notification>
+      <DropZone label={mergeSectionTitle} testId="merge-area" maximumFileCount={2} tooManyFilesMessage={tooManyFilesForTwoSavesMessage}
+                onFilesDropped={handleSavesDropped} class="card merge-form">
+        <div class="merge-save-areas">
+          <DropZone label={mergeSectionSaveALabel} testId="save-a-area" maximumFileCount={1}
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="merge-save-area"
                     onFilesDropped={(files) => selectFileInInput(saveAInput, files[0])}>
-            <p><SaveFileField label={mergeSectionSaveALabel} testId="save-a" ref={saveAInput}
-                              onChange={(event) => setFileA(event.currentTarget.files?.[0] ?? null)}/></p>
+            <SaveFileField label={mergeSectionSaveALabel} testId="save-a" ref={saveAInput}
+                           onChange={(event) => setFileA(event.currentTarget.files?.[0] ?? null)}/>
+            <p class="text-color-muted" data-testid="save-a-drop-hint">{mergeSectionSaveDropHint}</p>
           </DropZone>
-          <DropZone label={mergeSectionSaveBAreaLabel} testId="save-b-area" maximumFileCount={1}
-                    tooManyFilesMessage={tooManyFilesForOneSaveMessage}
+          <DropZone label={mergeSectionSaveBLabel} testId="save-b-area" maximumFileCount={1}
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="merge-save-area"
                     onFilesDropped={(files) => selectFileInInput(saveBInput, files[0])}>
-            <p><SaveFileField label={mergeSectionSaveBLabel} testId="save-b" ref={saveBInput}
-                              onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/></p>
+            <SaveFileField label={mergeSectionSaveBLabel} testId="save-b" ref={saveBInput}
+                           onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/>
+            <p class="text-color-muted" data-testid="save-b-drop-hint">{mergeSectionSaveDropHint}</p>
           </DropZone>
         </div>
-        <p class="merge-option">
+        <div class="merge-actions">
+          <IconButton icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-saves"
+                      onClick={handleSwap} disabled={!fileA() && !fileB()}/>
           <CheckboxField label={mergeSectionPreferLegacyFormatLabel}
                          description={mergeSectionPreferLegacyFormatDescription}
                          testId="prefer-legacy-format"
                          checked={preferLegacyFormat()} onChange={setPreferLegacyFormat}/>
-        </p>
-      </div>
-      <button data-testid="merge" onClick={handleMerge} disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
-      <Show when={isMerging()}>
-        <Spinner testId="merge-busy-indicator"/>
-      </Show>
-      <Show when={hasMergeCallFailed()}>
-        <p class="text-color-danger">{mergeSectionCallFailedMessage}</p>
-      </Show>
-    </DropZone>
+          <button class="button-neon-pink merge-actions-submit" data-testid="merge" onClick={handleMerge}
+                  disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
+        </div>
+        <Show when={isMerging()}>
+          <Spinner testId="merge-busy-indicator"/>
+        </Show>
+        <Show when={hasMergeCallFailed()}>
+          <p class="text-color-danger">{mergeSectionCallFailedMessage}</p>
+        </Show>
+      </DropZone>
+    </>
   );
 }
