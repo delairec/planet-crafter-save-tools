@@ -6,6 +6,7 @@ import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {ConfigurationPagePresenterPort} from "./ports/ConfigurationPagePresenterPort";
 import {LoadConfigurationPage} from "./LoadConfigurationPage";
 import {ConfigurationPageResponse} from "./responses/ConfigurationPageResponse";
+import {createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 
 function createPresenter(): ConfigurationPagePresenterPort {
   return {displayConfigurationPage: mock(), displaySaveWithUnreadableLines: mock()};
@@ -49,6 +50,24 @@ describe('LoadConfigurationPage', () => {
         }
       }
     } satisfies ConfigurationPageResponse);
+  });
+
+  describe('When the save records whether the drone logistics is paused', () => {
+    it('should present the drone logistics with its effect on the player', async () => {
+      // Arrange
+      const saveSections = new FakeSaveSectionsMapperService();
+      saveSections.getGlobalProgression = () => createGlobalProgressionValueObject({allTimeTerraTokens: 500, logisticsPaused: true});
+      const presenter = createPresenter();
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections}), presenter);
+
+      // Act
+      await useCase.execute({content: SAVE_CONTENT});
+
+      // Assert
+      expect(presenter.displayConfigurationPage).toHaveBeenCalledWith(expect.objectContaining({
+        globalProgression: {allTimeTerraTokens: 500, droneLogistics: {paused: true, effect: 'penalisesThePlayer'}}
+      }));
+    });
   });
 
   describe('When the save has no statistics', () => {

@@ -1,3 +1,5 @@
+import {WorldObjectLabelsResponse} from "../responses/WorldObjectLabelsResponse";
+
 export interface WorldObjectLabelsReaderPort {
-  readWorldObjectLabels(): Readonly<Record<string, string>>;
+  readWorldObjectLabels(): WorldObjectLabelsResponse;
 }

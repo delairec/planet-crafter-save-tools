@@ -3,6 +3,7 @@ import {PlayerEntity, type PlayerEntityInput} from './PlayerEntity';
 
 function createPlayerInput(overrides: Partial<PlayerEntityInput> = {}): PlayerEntityInput {
   return {
+    id: '76561190000000001',
     name: 'Nikowa',
     inventory: ['Backpack4'],
     equipment: ['OxygenTank5'],
@@ -21,27 +22,12 @@ describe('PlayerEntity', () => {
     const player = new PlayerEntity(input);
 
     // Assert
+    expect(player.id).toBe('76561190000000001');
     expect(player.name).toBe('Nikowa');
     expect(player.inventory).toEqual(['Backpack4']);
     expect(player.equipment).toEqual(['OxygenTank5']);
     expect(player.planetId).toBe('Toxicity');
     expect(player.isHost).toBe(true);
-  });
-
-  describe('When the planet it stands on is asked', () => {
-    it.each([
-      {situation: 'a planet', planetId: 'Toxicity', expected: 'Toxicity'},
-      {situation: 'no planet', planetId: undefined, expected: undefined}
-    ])('should answer $expected for $situation', ({planetId, expected}) => {
-      // Arrange
-      const player = new PlayerEntity(createPlayerInput({planetId}));
-
-      // Act
-      const planet = player.findPlanetStoodOn();
-
-      // Assert
-      expect(planet).toBe(expected);
-    });
   });
 
   describe('When its belongings are read', () => {

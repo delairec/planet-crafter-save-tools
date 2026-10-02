@@ -1,6 +1,5 @@
 import {parseSaveSections} from "shared-save-processing/parseSaveSections.js";
 import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
-import {UnknownFormatReleaseError} from "shared-save-processing/gameReleases.js";
 import {stringifyEntry} from "shared-save-processing/stringifyEntry.js";
 import {ParsedSections, SaveSectionIndexes, UnreadableSaveLine} from "shared-save-processing/gameDefinitions";
 import {SaveSectionsParserPort} from "../application/ports/SaveSectionsParserPort";
@@ -24,6 +23,7 @@ import {
 } from "./saveEntryCodecs";
 import {locateUnreadableLine} from "./locateUnreadableLine";
 import {locateSaveSection} from "./locateSaveSection";
+import {UnknownSaveFormatReleaseError} from "./errors/UnknownSaveFormatReleaseError";
 
 type SectionRecords<Record> = Iterable<Record> | (() => Iterable<Record>);
 
@@ -40,7 +40,7 @@ export class SaveSectionsParserService implements SaveSectionsParserPort {
     const {formatRelease, sections, errors} = parseSaveSections(content);
 
     if (formatRelease === undefined) {
-      throw new UnknownFormatReleaseError(formatRelease);
+      throw new UnknownSaveFormatReleaseError(formatRelease);
     }
 
     const undecodableEntries: UnreadableLine[] = [];

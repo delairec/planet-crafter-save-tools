@@ -6,7 +6,6 @@ This is a Bun workspace monorepo, organized around package prefixes:
 |--------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | `shared-save-processing` | Save file wire format: types, parsing, serialization and JSON schemas.                                                               |
 | `shared-platforms`       | Runtime platform adapters (filesystem/process) for Bun and Node, and the reading of `--name=value` and `--name` arguments.           |
-| `util-types`             | `RuntimePlatform` contract type, consumed (type-only) by `shared-platforms`.                                                         |
 | `core-mapping`           | Validation, merge and display engines in Clean Architecture layers, one folder per business, reusable across front ends (CLIs, UIs). |
 | `cli-merge`              | Thin CLI: parses `--input`/`--output`/`--prefer-legacy` arguments and delegates to `core-mapping`.                                   |
 | `cli-validate`           | Thin CLI: parses `--file` argument and delegates to `core-mapping`.                                                                  |

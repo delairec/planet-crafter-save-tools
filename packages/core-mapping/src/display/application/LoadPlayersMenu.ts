@@ -20,7 +20,7 @@ export class LoadPlayersMenu implements UseCase<LoadSaveSectionsRequest> {
 
     const players = saveSections.getPlayers().map((player): PlayerMenuEntryResponse => ({
       name: player.name,
-      planet: player.findPlanetStoodOn(),
+      planet: player.planetId,
       isHost: player.isHost
     }));
 

@@ -1,5 +1,6 @@
 /**
- * @import { SaveWarning, UnreadableSaveLine } from 'shared-save-processing/gameDefinitions'
+ * @import { UnreadableSaveLine } from 'shared-save-processing/gameDefinitions'
+ * @import { SaveWarning } from '../domain/validation/SaveWarning'
  * @import { ValidationIssue } from '../domain/validation/ValidationIssue'
  */
 
@@ -8,6 +9,7 @@ import {verifySectionCount} from 'shared-save-processing/verifySectionCount.js';
 import {resolveSectionIndexes, SAVE_CONFIGURATION_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
 import {createSectionEntryValidator, findSaveFileSchema, validateSchemas} from './validateSchemas.js';
 import {validateFloatSerialization} from './validateFloatSerialization.ts';
+import {mapSaveWarning} from './mapSaveWarning.ts';
 import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes.ts';
 import {locateSaveSection} from './locateSaveSection.ts';
 import {locateUnreadableLine} from './locateUnreadableLine.ts';
@@ -17,7 +19,7 @@ import {locateUnreadableLine} from './locateUnreadableLine.ts';
  * @returns {{isValid: boolean, errors: ValidationIssue[], warnings: SaveWarning[], declaredVersion?: string, carriedRelease?: string}}
  */
 export function validateSaveContent(saveContent) {
-  const [sectionCountError] = verifySectionCount(saveContent.split('@'));
+  const [sectionCountError] = verifySectionCount(saveContent);
   if (sectionCountError !== undefined) {
     return {
       isValid: false,
@@ -32,7 +34,8 @@ export function validateSaveContent(saveContent) {
 
   const parsedSave = parseSaveSections(saveContent);
   const formatRelease = /** @type {string} */ (parsedSave.formatRelease);
-  const {sections, errors: parseErrors, warnings} = parsedSave;
+  const {sections, errors: parseErrors} = parsedSave;
+  const warnings = parsedSave.warnings.map(mapSaveWarning);
 
   const sectionIndexes = resolveSectionIndexes(formatRelease);
   const worldObjectIssues = validateWorldObjectsSection(

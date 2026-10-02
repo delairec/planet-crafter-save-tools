@@ -1,6 +1,13 @@
+export type DroneLogisticsEffectResponse = 'penalisesThePlayer' | 'helpsThePlayer';
+
+export interface DroneLogisticsResponse {
+  readonly paused: boolean;
+  readonly effect: DroneLogisticsEffectResponse;
+}
+
 export interface GlobalProgressionResponse {
   readonly allTimeTerraTokens: number;
-  readonly logisticsPaused?: boolean;
+  readonly droneLogistics?: DroneLogisticsResponse;
 }
 
 export interface StatisticsResponse {

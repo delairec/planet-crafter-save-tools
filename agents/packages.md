@@ -7,5 +7,5 @@ dans le corpus.
 **Ce que fait chaque package est dans le corpus** : `awawa status PACKAGE .`, puis `awawa show @PACKAGE.<Nom> .`.
 Ne pas tenir la liste ici en double.
 
-Note historique : `util-parsing`, `util-messages` et `shared-mapping` ont été dissous, `util-platforms` renommé
-`shared-platforms` (@DECISION.DissolvedPackagesAreNotRecreated).
+Note historique : `util-parsing`, `util-messages`, `shared-mapping` et `util-types` ont été dissous, ce dernier dans
+`shared-platforms`, et `util-platforms` renommé `shared-platforms` (@DECISION.DissolvedPackagesAreNotRecreated).

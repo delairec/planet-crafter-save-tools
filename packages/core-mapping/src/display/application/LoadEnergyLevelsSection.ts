@@ -9,7 +9,8 @@ import {LoadSaveSectionsRequest} from "./requests/LoadSaveSectionsRequest";
 import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
 import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorldObjectName";
-import {UNMODIFIED_POWER_CONSUMPTION_MODIFIER} from "../domain/powerConsumptionModifier";
+import {GAME_DEFAULT_MODIFIER} from "../domain/gameDefaultModifier";
+import {isPowerConsumptionModified} from "../domain/rules/isPowerConsumptionModified";
 import {resolvePlanetName} from "../domain/rules/resolvePlanetName";
 import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
 import {createPlanetWorldObjectsValueObject, PlanetWorldObjectsValueObject} from "../domain/valueObjects/PlanetWorldObjectsValueObject";
@@ -63,7 +64,7 @@ export class LoadEnergyLevelsSection implements UseCase<LoadSaveSectionsRequest>
 
     const allWorldObjects = saveSections.getWorldObjects();
     const inventories = saveSections.getInventories();
-    const powerConsumptionModifier = saveSections.getSaveConfiguration()?.modifiers.powerConsumption ?? UNMODIFIED_POWER_CONSUMPTION_MODIFIER;
+    const powerConsumptionModifier = saveSections.getSaveConfiguration()?.modifiers.powerConsumption ?? GAME_DEFAULT_MODIFIER;
     const gameReleases = this.gameReleasesReader.readGameReleases();
     const energyLevels = selectEnergyLevelsOfDeclaredVersion(saveSections.getDeclaredVersion(), {
       energyLevels: this.energyLevelsReader.readEnergyLevels(),
@@ -76,7 +77,7 @@ export class LoadEnergyLevelsSection implements UseCase<LoadSaveSectionsRequest>
       gameRelease: energyLevels.release,
       gameReleaseIsEarlierThanCurrent: precedesCurrentGameRelease(energyLevels.release, gameReleases),
       powerConsumptionModifier,
-      powerConsumptionIsModified: powerConsumptionModifier !== UNMODIFIED_POWER_CONSUMPTION_MODIFIER,
+      powerConsumptionIsModified: isPowerConsumptionModified(powerConsumptionModifier),
       planets: saveSections.getPlacedWorldObjectsByPlanet()
         .map((planet) => this.nameThePlanet(planet, knownPlanetNames))
         .map((planet) => new PlanetEnergyGrid({planet, allWorldObjects, inventories, energyLevels, optimizerRanges, powerConsumptionModifier}).levels())

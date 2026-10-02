@@ -10,8 +10,5 @@
   "scripts": {
     "test": "bun test",
     "lint:types": "tsc --noEmit"
-  },
-  "dependencies": {
-    "util-types": "*"
   }
 }

@@ -6,11 +6,13 @@
 
 import saveFileSchema from 'shared-save-processing/schemas/save-file.schema.json' with {type: 'json'};
 import legacySaveFileSchema from 'shared-save-processing/schemas/legacy-save-file.schema.json' with {type: 'json'};
-import {findSplitPartsCount, UnknownFormatReleaseError} from 'shared-save-processing/gameReleases.js';
+import {findSplitPartsCount} from 'shared-save-processing/gameReleases.js';
 import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
 import {locateSaveSection} from './locateSaveSection.ts';
 import {mapSchemaErrorToValidationIssue} from './mapSchemaErrorToValidationIssue.ts';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
+import {UnknownSaveFormatReleaseError} from './errors/UnknownSaveFormatReleaseError.ts';
+import {MissingSectionEntrySchemaError} from './errors/MissingSectionEntrySchemaError.ts';
 import {SECTION_VALIDATORS_BY_SCHEMA_ID} from 'shared-save-processing/sectionValidators.generated.js';
 
 /**
@@ -42,7 +44,7 @@ export function findSaveFileSchema(formatRelease) {
   const saveFileSchemaOfFormat = SAVE_FILE_SCHEMAS.find((schema) => schema.maxItems === splitPartsCount);
 
   if (saveFileSchemaOfFormat === undefined) {
-    throw new UnknownFormatReleaseError(formatRelease);
+    throw new UnknownSaveFormatReleaseError(formatRelease);
   }
 
   return saveFileSchemaOfFormat;
@@ -58,7 +60,7 @@ function getSectionValidator(formatRelease, sectionIndex) {
   const validate = sectionSchemaId === undefined ? undefined : SECTION_VALIDATORS[sectionSchemaId];
 
   if (validate === undefined) {
-    throw new Error(`No schema describes the entries of section ${sectionIndex} in the format of ${formatRelease}`);
+    throw new MissingSectionEntrySchemaError(sectionIndex, formatRelease);
   }
 
   return validate;

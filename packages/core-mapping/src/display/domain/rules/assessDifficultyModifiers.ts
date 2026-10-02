@@ -1,4 +1,5 @@
 import {SaveConfigurationValueObject} from "../valueObjects/SaveConfigurationValueObject";
+import {GAME_DEFAULT_MODIFIER} from "../gameDefaultModifier";
 
 export type DifficultyModifiers = SaveConfigurationValueObject['modifiers'];
 
@@ -10,7 +11,6 @@ export type DifficultyModifierEffects = Record<DifficultyModifierName, Difficult
 
 type PenalisingSide = 'above' | 'below';
 
-const GAME_DEFAULT_MODIFIER = 1;
 const MULTIPLAYER_DEFAULT_MODIFIER = 0.5;
 
 const penalisingSideByModifier: Record<DifficultyModifierName, PenalisingSide> = {

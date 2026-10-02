@@ -36,7 +36,7 @@ function createSectionsWithTwoPlayers(): SaveSections {
     terraformationLevels: [createTerraformationLevelEntry()],
     players: [
       createPlayerEntry({name: 'Nikowa'}),
-      createPlayerEntry({name: 'Chileny', inventoryId: 46, equipmentId: 47, host: false})
+      createPlayerEntry({id: '76561190000000007', name: 'Chileny', inventoryId: 46, equipmentId: 47, host: false})
     ],
     worldObjects: CARRIED_WORLD_OBJECTS,
     inventories: [
@@ -106,12 +106,14 @@ describe('SaveSectionsMapperService', () => {
 
     // Assert
     expect<PlayerEntity[]>(players).toEqual([new PlayerEntity({
+      id: '76561190000000001',
       name: 'Nikowa',
       inventory: ['Phytoplankton3', 'MagnetarQuartz'],
       equipment: ['Backpack4', 'OxygenTank5'],
       planetId: 'Toxicity',
       host: true
     }), new PlayerEntity({
+      id: '76561190000000007',
       name: 'Chileny',
       inventory: ['Phytoplankton1', 'PulsarQuartz'],
       equipment: ['Backpack7', 'OxygenTank4'],
