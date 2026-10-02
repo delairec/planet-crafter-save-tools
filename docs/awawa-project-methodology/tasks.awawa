@@ -2199,15 +2199,23 @@ TASK FIX171
 
 TASK FEAT183
 	TITLE "Show one card per planet on the Overview page: terraformation first, power in the foot"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, split and ratified on 2026-10-02 from the Overview task"
-		+ "ratified on 2026-09-27; the common scale of the power bars, and what a planet present in"
-		+ "the terraformation levels only or in the energy only shows, are settled with the owner"
-		+ "when the task starts"
+		+ "ratified on 2026-09-27"
 	SPEC "under a Planets title counting them, one card per planet shows, in this order, the planet"
 		+ "name, its Terraformation Index, then O2, heat, pressure, purification when unlocked, and"
 		+ "biomass; the foot of the card shows the production and the consumption as two bars on a"
 		+ "scale common to every card, the share of production consumed and the available power"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should title the Planets"
+			+ "section with the count of planets the save carries"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the Terraformation"
+			+ "Index of the planet and its figures"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the power the"
+			+ "planet produces, consumes and has available, and the share of its production"
+			+ "consumed"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should draw the consumption bar"
+			+ "at the share of the production bar the consumption is"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts"
 	SPEC "a card joins the terraformation levels and the energy of a planet by the planet"
 		+ "identifier the terraformation entry carries, the energy planets being resolved to that"
 		+ "identifier; the card carries no surplus, tight or deficit badge, the place of the"
@@ -2215,15 +2223,34 @@ TASK FEAT183
 		+ "planet page"
 		REF @TASK.FEAT131
 		REF @TASK.FEAT143
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::planet.planetName"
+			+ "=== level.planetId"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.spec.ts"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::overview-planet-name"
 	SPEC "the notifications of the save, those that qualify the power figures, show under the"
 		+ "identity of the save, built by a presentation helper the Power page reuses"
 		REF @TASK.FEAT139
+		IMPL "packages/core-mapping/src/display/presentation/createPowerNotifications.ts"
+		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.ts::createPowerNotifications(energyLevels)"
+		IMPL "packages/ui-save-manager/src/routes/overview.tsx::overview-notification-"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the power"
+			+ "notifications of the save under its identity title"
 	SPEC "the production and the consumption bars keep one colour each, cyan and pink as page F"
 		+ "shows; the tokens are the pair measured on the mockup, catalogued by the contrast guard"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-production"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-consumption"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::GRAPHIC_TOKEN_PAIRS"
 	SPEC "the overview view model gains the cards, with the width of each bar, its use case reading"
 		+ "the terraformation levels and the energy of every planet; the figures of a card are"
 		+ "formatted by presentation helpers the Power and Terraformation pages reuse"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/OverviewPageViewModel.ts::widthPercentage"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::describePlanets(terraformationLevels,"
+			+ "planetsEnergyLevels)"
+		IMPL "packages/core-mapping/src/display/presentation/formatPowerFigures.ts"
+		IMPL "packages/core-mapping/src/display/presentation/TerraformationLevelsPresenter.ts::formatTerraformationFigures(level)"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
 	AFTER @TASK.FEAT142
 	WAVE @WAVE.15
 	RATIONALE "The owner shaped the cards on the mockup: the terraformation of a planet comes"
@@ -2250,6 +2277,7 @@ TASK FEAT183
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	DELIVERED_BY 264
 
 TASK FEAT184
 	TITLE "Chart the share of each machine type in the production and the consumption of a planet"

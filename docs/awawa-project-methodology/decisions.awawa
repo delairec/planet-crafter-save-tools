@@ -1732,6 +1732,7 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		PR 211
 	SOURCE "Ruled while delivering FEAT183: the series colours fill the power bars, never text,"
 		+ "checked at the non-text floor"
+		PR 264
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"
@@ -4109,6 +4110,7 @@ DECISION TheOverviewPowerBarsShareTheLargestFigureOfTheSaveAsTheirScale
 	REJECTED "each planet's share of the total of the save: the bars of a small planet fall to"
 		+ "almost nothing"
 	SOURCE "Owner ruling of 2026-10-02 at the launch of FEAT183"
+		PR 264
 
 DECISION TheOverviewShowsACardForEveryPlanetOfEitherList
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -4128,6 +4130,7 @@ DECISION TheOverviewShowsACardForEveryPlanetOfEitherList
 		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js::overviewPageNoMachinePlaced"
 		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js::overviewPageNoTerraformationLevelRecorded"
 		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::card.absentSide"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::overview-planet-absent-side"
 		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
 			+ "show its terraformation figures and say that no machine is placed"
 		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
@@ -4138,3 +4141,4 @@ DECISION TheOverviewShowsACardForEveryPlanetOfEitherList
 	REJECTED "cards for the terraformation planets only: a planet with machines placed vanishes"
 		+ "from the Overview"
 	SOURCE "Owner ruling of 2026-10-02 at the launch of FEAT183"
+		PR 264
