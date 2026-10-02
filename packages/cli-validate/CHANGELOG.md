@@ -1,5 +1,9 @@
 # Changelog of cli-validate
 
+## 0.1.3 — 2026-10-02
+
+- Core engine updated
+
 ## 0.1.2 — 2026-09-28
 
 - Core engine updated
