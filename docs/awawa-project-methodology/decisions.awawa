@@ -4003,3 +4003,27 @@ DECISION APlanetWithoutPurificationCarriesNoPurificationLevel
 		+ "and the format keeps its value"
 	SOURCE "Owner ruling of 2026-10-02 on the Clean Architecture review of core-mapping: -1 means"
 		+ "the planet does not handle purification, so the save manager does not display it"
+
+DECISION TheApplicationTitleIsTheFirstLevelHeadingOfEveryPage
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT187
+	SPEC "the application title is the one first-level heading of every page: at the top of the"
+		+ "menu on a page that shows the menu, above the content on the home page; a page title is"
+		+ "a heading of a lower level"
+		IMPL "packages/ui-save-manager/src/components/shell/ApplicationTitle.tsx::<h1"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::<ApplicationTitle"
+		IMPL "packages/ui-save-manager/src/app.tsx::<ApplicationTitle"
+	SPEC "the title at the top of the menu sits in a header of its own above the navigation"
+		+ "landmark, never inside it"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::<header"
+			+ "class=\"menu-header\">"
+	REJECTED "the page title as the first-level heading and the title of the menu as a plain line,"
+		+ "as page F draws it: page titles are third-level headings rendered by components the page"
+		+ "tasks of the wave own, so pages would hold none or two first-level headings until the"
+		+ "last of them lands"
+		REF @WAVE.15
+	REJECTED "the title inside the navigation landmark: the landmark then opens on the name of the"
+		+ "application rather than on its first group of pages"
+	SOURCE "Ruled while delivering FEAT187, the title moving from the header above the shell to the"
+		+ "top of the menu"
+		PR 260
