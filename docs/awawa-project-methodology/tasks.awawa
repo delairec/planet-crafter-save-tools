@@ -2332,7 +2332,7 @@ TASK FEAT186
 		+ "the form, beside the hint that a merge produces a new file and never modifies the"
 		+ "originals, the notice that save A prevails over save B under it"
 		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::<SectionTitle"
-			+ "testId=\"merge-title\">"
+			+ "testId=\"merge-title\" hint={mergeSectionHint}>"
 		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should tell that a merge produces a new"
 			+ "file and never modifies the originals"
 	SPEC "the form sits in a card: two drop zones side by side, each a visible dashed area naming"

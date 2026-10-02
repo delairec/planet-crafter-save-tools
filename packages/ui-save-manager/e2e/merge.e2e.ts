@@ -205,7 +205,7 @@ test.describe('Save merge', () => {
       await page.goto('/merge');
 
       // Assert
-      await expect(page.getByTestId('merge-hint')).toHaveText(mergeHint);
+      await expect(page.getByTestId('merge-title-hint')).toHaveText(mergeHint);
     });
 
     test('should offer to drop a save or choose a file in the area of each save', async ({page}) => {

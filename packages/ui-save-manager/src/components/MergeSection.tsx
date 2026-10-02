@@ -91,8 +91,7 @@ export default function MergeSection(props: MergeSectionProps) {
 
   return (
     <>
-      <SectionTitle testId="merge-title">{mergeSectionTitle}</SectionTitle>
-      <p class="text-color-muted" data-testid="merge-hint">{mergeSectionHint}</p>
+      <SectionTitle testId="merge-title" hint={mergeSectionHint}>{mergeSectionTitle}</SectionTitle>
       <Notification severity="information" testId="merge-precedence-notice">{mergeSectionSaveAPrecedenceNotice}</Notification>
       <DropZone label={mergeSectionTitle} testId="merge-area" maximumFileCount={2} tooManyFilesMessage={tooManyFilesForTwoSavesMessage}
                 onFilesDropped={handleSavesDropped} class="card merge-form">
