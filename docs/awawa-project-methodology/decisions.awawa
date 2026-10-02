@@ -7,7 +7,7 @@ DECISION MergeRulesHaveOnePublicHome
 		IMPL "README.md::This README deliberately does not restate the"
 	SPEC "The global save file schema is kept as the formal description of the format, although no"
 		+ "code consumes it"
-		IMPL "packages/shared-save-processing/schemas/save-file.schema.json"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json"
 	REJECTED "Keeping a markdown document of the rules beside the corpus: a second copy maintained"
 		+ "by hand"
 	RATIONALE "The duplication had let the README claim behaviours the code did not have"
@@ -124,13 +124,13 @@ DECISION UserTextLivesInCoreMappingPresentation
 		IMPL "packages/core-mapping/src/display/presentation/messages"
 		ENFORCED_BY "packages/core-mapping/src/save/presentation/formatValidationError.spec.ts"
 	SPEC "A validation issue and a parse error carry a code and its data, never a sentence; neither"
-		+ "the infrastructure of core-mapping nor shared-save-processing builds a sentence shown to"
+		+ "the infrastructure of core-mapping nor its wire format modules build a sentence shown to"
 		+ "the user"
 		IMPL "packages/core-mapping/src/save/domain/validation/ValidationIssue.ts::export type"
 			+ "ValidationIssue"
-		IMPL "packages/shared-save-processing/gameDefinitions/SaveParseError.ts::export type"
-			+ "SaveParseError"
-		IMPL "packages/shared-save-processing/saveParseErrorCodes.js::SAVE_PARSE_ERROR_CODES"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/gameDefinitions/SaveParseError.ts::export"
+			+ "type SaveParseError"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/saveParseErrorCodes.js::SAVE_PARSE_ERROR_CODES"
 	SPEC "An outcome that already carries its messages gets no additional sentence"
 		IMPL "packages/core-mapping/src/merge/presentation/messages/mergeFailureMessages.js::mergedSaveUnusableMessage"
 	SPEC "An unknown code falls back to a generic message, and the code itself is never displayed"
@@ -270,10 +270,10 @@ DECISION ADomainRuleIgnoresValidationVocabulary
 DECISION OneModuleAloneParsesASaveLine
 	SPEC "The parser is the only point of production code where a save line reaches JSON.parse;"
 		+ "validation and merge both use it"
-		IMPL "packages/shared-save-processing/parseSaveSections.js"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js"
 		ENFORCED_BY "scripts/check-save-line-reader.spec.ts"
 	SPEC "Failure is per line and located, without taking down the valid entries around it"
-		IMPL "packages/shared-save-processing/parseSaveSections.js"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js"
 	REJECTED "A second parser in the validator: the divergence let validation accept a save whose"
 		+ "merge lost a section"
 	REJECTED "A non-lazy variant of the parser"
@@ -284,14 +284,14 @@ DECISION OneModuleAloneParsesASaveLine
 DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 	SPEC "An identifier of the save format beyond the exact integer range of a double is carried by"
 		+ "its exact decimal text, never by a number; any future int64 field follows it"
-		IMPL "packages/shared-save-processing/int64Identifiers.js::RAW_INTEGER_FIELDS"
-		ENFORCED_BY "packages/shared-save-processing/serializeSave.spec.js::When a save holding an"
-			+ "int64 player identifier is read back"
-	SPEC "Exactness is produced and consumed in shared-save-processing alone, and the section"
-		+ "schema declares a decimal string"
-		IMPL "packages/shared-save-processing/parseSaveSections.js::keepInt64IdentifierText"
-		IMPL "packages/shared-save-processing/schemas/section2-players.schema.json::Player Steam ID"
-			+ "(primary key, int64)"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/int64Identifiers.js::RAW_INTEGER_FIELDS"
+		ENFORCED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.spec.js::When"
+			+ "a save holding an int64 player identifier is read back"
+	SPEC "Exactness is produced and consumed in the wire format modules of core-mapping alone, and"
+		+ "the section schema declares a decimal string"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js::keepInt64IdentifierText"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::Player"
+			+ "Steam ID (primary key, int64)"
 	REJECTED "Typing the field as BigInt: JSON.stringify throws on it and ajv cannot validate it"
 	REJECTED "Keeping the raw text of the section entries: the merge rebuilds every player entry"
 	REJECTED "A validation rule on integer precision: a large literal in a save is normal"
@@ -303,12 +303,13 @@ DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 DECISION TheFloatSuffixIsAppliedAtEmission
 	SPEC "The .0 suffix of float fields is applied at emission, field by field, never by textual"
 		+ "post-processing of the produced string"
-		IMPL "packages/shared-save-processing/stringifyEntry.js::export function stringifyEntry"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/stringifyEntry.js::export"
+			+ "function stringifyEntry"
 	SPEC "A non-flat entry throws instead of being serialized silently"
-		IMPL "packages/shared-save-processing/stringifyEntry.js::save entries are expected to be"
-			+ "flat"
-		ENFORCED_BY "packages/shared-save-processing/stringifyEntry.spec.js::When a field holds a"
-			+ "nested value"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/stringifyEntry.js::save"
+			+ "entries are expected to be flat"
+		ENFORCED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/stringifyEntry.spec.js::When"
+			+ "a field holds a nested value"
 	REJECTED "Textual post-processing: a sign whose player text was FLOAT:5 came out as a number"
 	REJECTED "Narrowing the parameter type instead of the runtime check: the type binds only"
 		+ "type-checked callers"
@@ -319,13 +320,13 @@ DECISION TheFloatSuffixIsAppliedAtEmission
 DECISION ASchemaRuleHoldsByMeaningBeforeMeasurement
 	SPEC "Every bound or schema rule holds by meaning before holding by measurement; no implication"
 		+ "holding by a coincidence of the sample is written"
-		IMPL "packages/shared-save-processing/schemas/section3-world-objects.schema.json::\"dependencies\""
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section3-world-objects.schema.json::\"dependencies\""
 	SPEC "additionalProperties stays closed: the format is described exhaustively"
-		IMPL "packages/shared-save-processing/schemas/section3-world-objects.schema.json::\"additionalProperties\":"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section3-world-objects.schema.json::\"additionalProperties\":"
 			+ "false"
 	SPEC "The ten section schemas stay in draft-07 and express their implications with dependencies"
 		+ "in array form"
-		IMPL "packages/shared-save-processing/schemas"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas"
 	REJECTED "Fitting a bound to the reference saves: it refuses a legitimate save tomorrow"
 	REJECTED "Deducing a missing value from a regularity observed between tiers"
 	REJECTED "dependentRequired: a draft 2019-09 keyword Ajv 8 refuses under the draft-07"
@@ -426,9 +427,9 @@ DECISION AMergeProducesAnOrdinarySave
 		+ "none imports a section index or the parsed tuple"
 		IMPL "packages/core-mapping/src/save/domain/save"
 		IMPL "packages/core-mapping/src/merge/domain/rules"
-	SPEC "An identifier list is read and written in shared-save-processing, beside its DTO, and"
-		+ "called from the infrastructure mappers only"
-		IMPL "packages/shared-save-processing/idList.js::parseIdList"
+	SPEC "An identifier list is read and written in the wire format modules of core-mapping, beside"
+		+ "its DTO, and called from the infrastructure mappers only"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/idList.js::parseIdList"
 	REJECTED "A serializer specific to the merge result: a service for one case, and a merge rule"
 		+ "in infrastructure"
 	REJECTED "A second read port for the merge: two ports reading a save from its content"
@@ -436,7 +437,6 @@ DECISION AMergeProducesAnOrdinarySave
 		+ "(ARCH-CA-APP-3)"
 	REJECTED "Merge rules taking wire DTO strings: the domain would parse a persistence encoding"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	SOURCE "Owner ruling in review"
 		PR 62
 
@@ -593,14 +593,21 @@ DECISION DependabotTracksTwoEcosystemsInWeeklyGroups
 	SOURCE "Pull request"
 		PR 53
 
-DECISION SharedSaveProcessingOwnsSectionParsingAndSerialization
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
-	SPEC "shared-save-processing exposes the parsing and the serialization of save sections"
-		IMPL "packages/shared-save-processing/package.json::Save file wire format: types, parsing,"
-			+ "serialization and schemas"
-	REJECTED "Parse or serialize save sections in a package other than shared-save-processing"
+DECISION TheWireFormatModulesOwnSectionParsingAndSerialization
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	SPEC "the wire format modules of core-mapping, under src/save/infrastructure/wireFormat, expose"
+		+ "the parsing and the serialization of save sections"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js::export"
+			+ "function parseSaveSections"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.js::export"
+			+ "function serializeSave"
+	REJECTED "Parse or serialize save sections outside the wire format modules of core-mapping"
+	REJECTED "A shared- package holding the wire format: core-mapping is the only package whose"
+		+ "production code reads it, and code used by one package belongs to that package"
 	SOURCE "Package rule"
 		PR 61
+	SOURCE "Owner ruling of 2026-10-02: shared-save-processing dissolved into core-mapping, outside"
+		+ "any task"
 
 DECISION BothPlatformAdaptersHonourOneSharedContract
 	APPLIES_TO_PACKAGE @PACKAGE.shared_platforms
@@ -664,7 +671,8 @@ DECISION EachUseCaseResponseIsDeclaredInItsOwnFile
 
 DECISION DissolvedPackagesAreNotRecreated
 	DESC "util-parsing, util-messages and shared-mapping were dissolved into shared-save-processing"
-		+ "and core-mapping, util-types into shared-platforms"
+		+ "and core-mapping, util-types into shared-platforms, shared-save-processing into"
+		+ "core-mapping"
 	SPEC "No dissolved package is recreated, and no util-* package is created except for a truly"
 		+ "generic helper"
 		IMPL "agents/packages.md::ont été dissous"
@@ -673,25 +681,24 @@ DECISION DissolvedPackagesAreNotRecreated
 	SOURCE "Private AGENTS.md, tag pcst/before-awawa"
 		REF @PROJECT.DNC
 
-DECISION WireAbbreviationsStayInSharedSaveProcessing
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+DECISION WireAbbreviationsStayInTheWireFormatRecords
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.CHORE158
 	APPLIES_TO_TASK @TASK.REFACTOR170
-	SPEC "Wire format abbreviations are tolerated only in the shared-save-processing records,"
-		+ "stated by the package description, and translated at the domain boundary"
+	SPEC "Wire format abbreviations are tolerated only in the records of the wire format modules of"
+		+ "core-mapping, and translated at the domain boundary"
 		IMPL "packages/core-mapping/src/save/infrastructure/saveEntryCodecs.ts"
-		IMPL "packages/shared-save-processing/package.json::Save file wire format"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/gameDefinitions/WorldObject.ts::gId"
 	SPEC "No file under domain/ of a core- package, spec files included, uses gId, liId, woIds,"
 		+ "siIds or linkedWo in code"
 		IMPL "scripts/check-wire-format.ts::findWireAbbreviations"
 		ENFORCED_BY "scripts/check-wire-format.ts"
-	SPEC "No file of a core- package outside infrastructure/ imports"
-		+ "shared-save-processing/gameDefinitions, and check:workspace-imports alone states that"
-		+ "refusal, as part of its refusal of any other workspace package"
-		IMPL "scripts/check-workspace-imports.ts::export function findWorkspacePackageImports"
-		ENFORCED_BY "scripts/check-workspace-imports.spec.ts"
-	REJECTED "Tolerate wire abbreviations beyond this package"
+	SPEC "No file under domain/, application/, presentation/ or controllers/ of a core- package"
+		+ "imports the records of the wire format modules, and check:layers states that refusal, as"
+		+ "part of the dependency rule"
+		IMPL "scripts/check-layers.ts::const LAYER_RULES"
+		ENFORCED_BY "scripts/check-layers.spec.ts"
+	REJECTED "Tolerate wire abbreviations beyond these records"
 	REJECTED "A header comment in each DTO file: it names a section by an index no test holds"
 	REJECTED "Refusing the abbreviations alone: a domain module handling a save format record"
 		+ "without naming an abbreviation would pass"
@@ -708,13 +715,13 @@ DECISION WireAbbreviationsStayInSharedSaveProcessing
 		PR 245
 
 DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
-	SPEC "The save record builders are declared once, in the shared-save-processing testing"
-		+ "directory, imported one by one without a barrel"
-		IMPL "packages/shared-save-processing/testing/createSaveRecords.js::createPlayer"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	SPEC "The save record builders are declared once, in the testing directory of the wire format"
+		+ "modules of core-mapping, imported one by one without a barrel"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/testing/createSaveRecords.js::createPlayer"
 	SPEC "Every wire format record in the arrange phase of a spec goes through its builder;"
 		+ "expected values stay literal"
-		IMPL "packages/shared-save-processing/testing/createSaveRecords.js"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/testing/createSaveRecords.js"
 	REJECTED "Generate the fixtures from the JSON schemas: generated data nobody reads"
 	REJECTED "A barrel on the testing directory: it recreates the coupling removed"
 	REJECTED "Build the expected values too: they would be recomputed"
@@ -723,14 +730,13 @@ DECISION CreateSaveRecordsIsTheOnlySourceOfRecordBuilders
 		PR 46
 
 DECISION ASectionIndexIsNeverHardCoded
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR170
 	SPEC "Section indexes and counters, legacy format and reserved part included, are declared once"
 		+ "with a name and read from their module"
-		IMPL "packages/shared-save-processing/sectionIndexes.js::PLAYERS_SECTION_INDEX"
-		IMPL "packages/shared-save-processing/sectionIndexes.js::SAVE_SPLIT_PARTS_COUNT"
-		IMPL "packages/shared-save-processing/sectionIndexes.js::resolveSectionIndexes"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::PLAYERS_SECTION_INDEX"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::SAVE_SPLIT_PARTS_COUNT"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::resolveSectionIndexes"
 	SPEC "Outside infrastructure/, no module of core-mapping, spec files and testing/ included,"
 		+ "imports the declaration of the section order or restates that order: the infrastructure"
 		+ "sets the index of each section location, and the domain, the application and the"
@@ -1158,14 +1164,13 @@ DECISION MockIsolationIsAGlobalPreload
 	REJECTED "A cleanup block per spec file"
 	SPEC "A test runner preload restores and clears the doubles after every test, declared at the"
 		+ "root and in every package whose test script runs bun test: cli-merge, cli-validate,"
-		+ "core-mapping, shared-platforms and shared-save-processing"
+		+ "core-mapping and shared-platforms"
 		IMPL "testing/testIsolation.ts::enforceTestIsolation"
 		IMPL "bunfig.toml::preload"
 		IMPL "packages/cli-merge/bunfig.toml::preload"
 		IMPL "packages/cli-validate/bunfig.toml::preload"
 		IMPL "packages/core-mapping/bunfig.toml::preload"
 		IMPL "packages/shared-platforms/bunfig.toml::preload"
-		IMPL "packages/shared-save-processing/bunfig.toml::preload"
 		ENFORCED_BY "testIsolation.spec.ts"
 	SPEC "ui-save-manager carries no bunfig.toml and no bun test script: its spec files run from"
 		+ "the root, under the root preload"
@@ -1461,18 +1466,17 @@ DECISION TheMergedSaveDisplayNameComesFromTheCaller
 			+ "saveDisplayName,"
 		ENFORCED_BY "packages/core-mapping/src/merge/domain/rules/mergeSaveConfigurations.spec.ts::should"
 			+ "use the saveDisplayName parameter and take save configuration from save A"
-	SPEC "the serializer of shared-save-processing replaces by _ every @ of an entry's text, the"
+	SPEC "the serializer of the save wire format replaces by _ every @ of an entry's text, the"
 		+ "section separator of the save format, whatever the field"
-		IMPL "packages/shared-save-processing/serializeSave.js::replaceSeparator"
-		ENFORCED_BY "packages/shared-save-processing/serializeSave.spec.js::should leave no"
-			+ "separator inside any section of the serialized save"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.js::replaceSeparator"
+		ENFORCED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.spec.js::should"
+			+ "leave no separator inside any section of the serialized save"
 	REJECTED "Escaping @ instead of replacing it: the parser splits the text on @ and knows no"
 		+ "escape"
 	REJECTED "Replacing @ in the display name alone: any other field holding @ would split the save"
 	SOURCE "Owner ruling during the refinement of REFACTOR162: the serializer of"
 		+ "shared-save-processing replaces every @ of an entry"
 		PR 236
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	REJECTED "Refusing a folder name holding @: the merge would fail on a name the save format can"
 		+ "carry once replaced"
 	REJECTED "Replacing @ in cli-merge alone: any other caller of the merge would still write a"
@@ -1518,7 +1522,7 @@ DECISION AValueTableIsAJsonFileBesideTheModuleThatReadsIt
 		IMPL "packages/core-mapping/src/display/application/ports/EnergyLevelsReaderPort.ts::EnergyLevelsReaderPort"
 		IMPL "packages/core-mapping/src/display/infrastructure/EnergyLevelsReaderService.ts::selectEnergyLevelRows().map(mapEnergyLevelRow)"
 		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts::worldObjectLabels"
-		IMPL "packages/shared-save-processing/gameReleases.js::selectGameReleaseRows()"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/gameReleases.js::selectGameReleaseRows()"
 	SPEC "core- and shared- packages alone depend on a data- package, and a data- package depends"
 		+ "on no workspace package"
 		IMPL "scripts/check-package-dependencies.ts::'data-': []"
@@ -1582,8 +1586,8 @@ DECISION APullRequestIsCitedByItsNumberNeverByAnEntity
 DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 	SPEC "The code reads a save by what it carries, never by its declared version alone: the format"
 		+ "of 1.618 and earlier is recognised by its twelve parts"
-		IMPL "packages/shared-save-processing/parseSaveSections.js::splitPartsCount ==="
-			+ "LEGACY_SPLIT_PARTS_COUNT"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js::splitPartsCount"
+			+ "=== LEGACY_SPLIT_PARTS_COUNT"
 	SPEC "The releases HOLDS_FOR names are the rows of one table, in release order, each with the"
 		+ "number of parts the saves it writes split into"
 		IMPL "packages/data-save-format/gameReleases.json"
@@ -1594,7 +1598,8 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 		+ "resolves no declared version"
 		IMPL "packages/core-mapping/src/save/application/ports/GameReleasesReaderPort.ts::readGameReleases"
 		IMPL "packages/core-mapping/src/save/infrastructure/GameReleasesReaderService.ts::selectGameReleaseRows().map"
-		IMPL "packages/shared-save-processing/gameReleases.js::export function findCarriedRelease"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/gameReleases.js::export"
+			+ "function findCarriedRelease"
 		ENFORCED_BY "packages/core-mapping/src/save/infrastructure/GameReleasesReaderService.spec.ts"
 	SPEC "A declared version resolves to the last release of the table not later than it, a version"
 		+ "earlier than the first release to the first release, and a version not made of"
@@ -1625,8 +1630,8 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 			+ "present the contradiction among the warnings of the save"
 		ENFORCED_BY "packages/core-mapping/src/merge/application/MergeSaveFiles.spec.ts::should"
 			+ "present the contradiction among the warnings of that save"
-		IMPL "packages/shared-save-processing/parseSaveSections.spec.js::should still read the save"
-			+ "by the format it carries"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.spec.js::should"
+			+ "still read the save by the format it carries"
 		IMPL "packages/core-mapping/src/save/presentation/formatSaveWarning.spec.ts::should name"
 			+ "the declared version, its release and the release whose format the save carries"
 	REJECTED "Reading a save by its declared version alone: a hand-edited save contradicts its"
@@ -1740,10 +1745,10 @@ DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 DECISION ASaveKeepsTheFormatItWasWrittenIn
 	SPEC "loading a save keeps every part it carries: no section is dropped and no index is shifted"
 		+ "to bring the save to a single canonical format"
-		IMPL "packages/shared-save-processing/parseSaveSections.js"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js"
 	SPEC "the format a save was read in travels with it and is the format it is written back in, so"
 		+ "reading a save and writing it back reproduces the part count of the file read"
-		IMPL "packages/shared-save-processing/serializeSave.js"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.js"
 	SPEC "the legacy-save-format warning states that the save was written by an earlier game"
 		+ "release, never that the loader adapted it"
 		IMPL "packages/core-mapping/src/save/presentation/messages/saveWarningMessages.js"
@@ -1753,7 +1758,6 @@ DECISION ASaveKeepsTheFormatItWasWrittenIn
 	REJECTED "Converting a legacy save to the current format at the user-input boundary: a merge"
 		+ "whose save A was legacy then wrote a file declaring 1.618 in eleven parts, a"
 		+ "contradiction our own validator warns on"
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.cli_merge
 	APPLIES_TO_PACKAGE @PACKAGE.cli_validate
@@ -1847,7 +1851,7 @@ DECISION EachSaveFormatIsValidatedByAWholeFileSchemaOfItsOwn
 		+ "validated against the section schema that whole-file schema names at the index of the"
 		+ "entry"
 		IMPL "packages/core-mapping/src/save/infrastructure/validateSchemas.js::findSaveFileSchema"
-		IMPL "packages/shared-save-processing/schemas/legacy-save-file.schema.json"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/legacy-save-file.schema.json"
 		ENFORCED_BY "packages/core-mapping/src/save/infrastructure/validateSchemas.spec.js"
 	SPEC "a validation issue or an unreadable line located in a section carries the name the format"
 		+ "of the save gives its index, resolved by the infrastructure"
@@ -1861,7 +1865,6 @@ DECISION EachSaveFormatIsValidatedByAWholeFileSchemaOfItsOwn
 		+ "by its version alone"
 		REF @DECISION.ASaveIsNeverDiscriminatedByItsVersionAlone
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	RESTS_ON @RULE.ALegacySaveCarriesTerrainLayersInTwelveParts
 	RATIONALE "The part count decides which section sits at each index, so a validator reading the"
 		+ "indexes of one format misreads the other"
@@ -1968,9 +1971,9 @@ DECISION ACallerReachesASaveSectionThroughASharedFunction
 	SPEC "A caller needing to replace one section of a raw save string calls"
 		+ "replaceSaveSection(saveString, sectionIndex, updateSection) and never calls"
 		+ "saveString.split on the section separator itself"
-		IMPL "packages/shared-save-processing/replaceSaveSection.js"
-		ENFORCED_BY "packages/shared-save-processing/replaceSaveSection.spec.js"
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/replaceSaveSection.js"
+		ENFORCED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/replaceSaveSection.spec.js"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RATIONALE "Four call sites split a save string on '@', mutated the array at a section index and"
 		+ "rejoined it by hand; a fifth caller repeating that pattern with a different mutation is"
 		+ "what this closes off"
@@ -2159,24 +2162,21 @@ DECISION TheReadmeBadgesShowTheStateOfMaster
 		PR 144
 
 DECISION TheSectionValidatorsAreGeneratedAndVersioned
-	SPEC "The section validators are Ajv standalone code that shared-save-processing, which owns"
-		+ "the JSON Schemas, generates from them, versions and exports; the infrastructure of"
-		+ "core-mapping imports that module, the CLI and the web UI validate through it, and no"
-		+ "schema is compiled at run time"
-		IMPL "packages/shared-save-processing/scripts/generate-section-validators.ts::standaloneCode"
-		IMPL "packages/core-mapping/src/save/infrastructure/validateSchemas.js::shared-save-processing/sectionValidators.generated.js"
+	SPEC "The section validators are Ajv standalone code that core-mapping, which owns the JSON"
+		+ "Schemas, generates from them, versions and exports; the infrastructure of core-mapping"
+		+ "imports that module, the CLI and the web UI validate through it, and no schema is"
+		+ "compiled at run time"
+		IMPL "packages/core-mapping/scripts/generate-section-validators.ts::standaloneCode"
+		IMPL "packages/core-mapping/src/save/infrastructure/validateSchemas.js::./wireFormat/sectionValidators.generated.js"
 	SPEC "bun run guards fails when the versioned module differs from what the generator writes"
-		IMPL "packages/shared-save-processing/scripts/check-section-validators.ts"
-		ENFORCED_BY "packages/shared-save-processing/scripts/check-section-validators.spec.ts"
-	SPEC "Ajv is a development dependency of shared-save-processing alone: the generated module"
-		+ "imports no Ajv runtime helper"
-		IMPL "packages/shared-save-processing/package.json::ajv"
+		IMPL "packages/core-mapping/scripts/check-section-validators.ts"
+		ENFORCED_BY "packages/core-mapping/scripts/check-section-validators.spec.ts"
+	SPEC "Ajv is a development dependency of core-mapping alone: the generated module imports no"
+		+ "Ajv runtime helper"
+		IMPL "packages/core-mapping/package.json::ajv"
 	REJECTED "A Vite plugin generating the validators at build time: the CLI would keep a second"
 		+ "path compiling at run time"
 	REJECTED "An unversioned generation: bun test and the CLI would depend on a step having run"
-	REJECTED "Generating from core-mapping/scripts/: a core- package would import the schemas of"
-		+ "another workspace package outside its infrastructure"
-	APPLIES_TO_PACKAGE @PACKAGE.shared_save_processing
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR170
 	RATIONALE "Ajv compiles a schema with new Function, which the content security policy of the"
@@ -2591,7 +2591,7 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 		+ "receives, and the test passes a fake"
 		IMPL "scripts/specSources.ts::readOwnSourceFiles(io: ScriptIo"
 		IMPL "scripts/scriptIo.ts::export interface ScriptIo"
-		IMPL "packages/shared-save-processing/scripts/sectionValidatorsFile.ts::export interface"
+		IMPL "packages/core-mapping/scripts/sectionValidatorsFile.ts::export interface"
 			+ "SectionValidatorsFileIo"
 	SPEC "The entry of a script hands its main function and import.meta.main to runAsEntryPoint,"
 		+ "which alone gives it the input and output of the process"
@@ -2599,8 +2599,8 @@ DECISION AScriptTestInjectsItsInputAndOutputAndCoverageIgnoresTheRealAdapter
 		IMPL "scripts/scriptIo.ts::export function runAsEntryPoint"
 		IMPL "scripts/generate-scenario-fixtures.ts::await runAsEntryPointWith(import.meta.main,"
 			+ "generateScenarioFixtures, console.log)"
-		IMPL "packages/shared-save-processing/scripts/sectionValidatorsFile.ts::export async"
-			+ "function runAsEntryPoint"
+		IMPL "packages/core-mapping/scripts/sectionValidatorsFile.ts::export async function"
+			+ "runAsEntryPoint"
 	SPEC "Only a module holding the real input and output is ignored by the coverage, listed in the"
 		+ "coveragePathIgnorePatterns of bunfig.toml"
 		IMPL "bunfig.toml::coveragePathIgnorePatterns ="
@@ -3685,7 +3685,7 @@ DECISION GameReleasesKeepsItsApiUntilTheReleaseRulesMove
 	ARCHIVED_ON 2026-09-30
 	SPEC "shared-save-processing/gameReleases.js reads the releases table through the selector of"
 		+ "data-save-format and keeps the API it exports, the release rules moving with REFACTOR163"
-		IMPL "packages/shared-save-processing/gameReleases.js::selectGameReleaseRows()"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/gameReleases.js::selectGameReleaseRows()"
 		REF @TASK.REFACTOR163
 	REJECTED "Moving the release rules behind a port of core-mapping in this task: REFACTOR163 owns"
 		+ "that move, and two tasks rewriting the same rules meet in a rebase"
@@ -3932,26 +3932,35 @@ DECISION AnInterfaceReachesTheSaveFormatThroughACoreOnly
 		IMPL "packages/cli-merge/cli/initMergeCli.js::function hasJsonExtension"
 		ENFORCED_BY "packages/cli-merge/cli/initMergeCli.spec.js::When a folder contains non-JSON"
 			+ "files alongside JSON files"
-	SPEC "A CLI declares shared-save-processing under devDependencies, its specs alone importing it"
-		IMPL "packages/cli-merge/package.json::\"devDependencies\""
-		IMPL "packages/cli-validate/package.json::\"devDependencies\""
-	REJECTED "A deny list naming shared-save-processing: a shared package created later would stay"
-		+ "reachable from an interface until someone listed it"
+	SPEC "A spec of a CLI builds no save and parses none: it reads the saves it needs from the"
+		+ "files generate:scenario-fixtures writes into the testing/fixtures folder of its package,"
+		+ "before the first spec runs"
+		IMPL "packages/cli-merge/testing/fakeSaveStrings.js::function readSaveFixture"
+		IMPL "packages/cli-validate/testing/fakeSaveContents.js::function readSaveFixture"
+		IMPL "scripts/generate-scenario-fixtures.ts::MERGE_CLI_SPECS_DIRECTORY"
+		IMPL "packages/cli-merge/testSetup.ts::await writeScenarioFixtures();"
+		IMPL "packages/cli-validate/testSetup.ts::await writeScenarioFixtures();"
+		IMPL "testSetup.ts::await writeScenarioFixtures();"
+	REJECTED "A deny list naming the packages an interface may not import: a shared package created"
+		+ "later would stay reachable from an interface until someone listed it"
 	REJECTED "A guard on the manifest section a dependency is declared under: what reaches the save"
-		+ "format is an import, which the guard judges, and the specs of an interface keep the"
-		+ "package declared for the fixtures of shared-save-processing/testing"
+		+ "format is an import, which the guard judges"
 	REJECTED "A file name predicate imported from a shared package or exported by a core: choosing"
 		+ "which entries of a folder to hand to the core is the interface's, and the merge use case"
 		+ "still refuses a file name without the .json extension"
+	REJECTED "core-mapping exporting its save builders and its parser to the specs of an interface:"
+		+ "a spec of a CLI would write and read back the format the core alone reads"
 	RATIONALE "An interface that reads the save format itself bypasses the core offered to every"
 		+ "interface, and with it the rules the core applies to a save. The guard names what a"
 		+ "production source may import rather than what it may not, so a shared package is refused"
 		+ "the day it is created"
-		REF @PACKAGE.shared_save_processing
 		REF @PACKAGE.shared_platforms
 	SOURCE "Owner rulings of 2026-10-01: the filter is local to cli-merge, the guard names what is"
 		+ "allowed, the manifest moves without a guard; owner request of 2026-10-02 to deliver it"
 		+ "outside any task, on the branch laying core-mapping out by business"
+	SOURCE "Owner ruling of 2026-10-02, shared-save-processing dissolved into core-mapping: the"
+		+ "specs of a CLI read generated save files rather than build saves with the test support"
+		+ "of the core"
 
 DECISION APlanetWithoutPurificationCarriesNoPurificationLevel
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping

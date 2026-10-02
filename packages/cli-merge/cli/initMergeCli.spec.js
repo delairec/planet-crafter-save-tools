@@ -5,11 +5,14 @@ import {mergeSaveFilesController} from 'core-mapping/merge/composition/compositi
 import {initMergeCli, UNEXPECTED_ERROR_EXIT_CODE} from './initMergeCli.js';
 import {
   FAKE_SAVE_STRING_A,
-  FAKE_SAVE_STRING_A_WITHOUT_GLOBAL_METADATA,
   FAKE_SAVE_STRING_B,
-  FAKE_SAVE_STRING_B_WITHOUT_GLOBAL_METADATA,
   FAKE_SAVE_STRING_WITH_INVALID_ENTRY,
-  LEGACY_FAKE_SAVE_STRING_A
+  FAKE_SAVE_STRING_WITHOUT_GLOBAL_METADATA,
+  LEGACY_FAKE_SAVE_STRING_A,
+  LEGACY_SAVE_WITHOUT_DEPRECATED_GROUP_ID,
+  RELEASE_2_102_SAVE_WITHOUT_DEPRECATED_GROUP_ID,
+  SAVE_CARRYING_DEPRECATED_GROUP_IDS,
+  SAVE_WITHOUT_DEPRECATED_GROUP_ID
 } from '../testing/fakeSaveStrings.js';
 import {
   MERGED_SAVE_OUTPUT_PATH,
@@ -21,21 +24,12 @@ import {
   OUTPUT_DIR
 } from '../testing/fakePaths.js';
 import {MERGE_CLI_HELP} from '../testing/mergeCliHelp.js';
-import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
-import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
-import {createSaveConfiguration, createWorldObject} from 'shared-save-processing/testing/createSaveRecords.js';
 
 const NO_INPUT_FOLDERS = [];
 const CLI_RELEASE = {name: 'cli-merge', version: '1.4.2'};
 const SINGLE_SAVE_FILENAME = 'only-one.json';
 const KEEP_LEGACY_FORMAT_REMINDER = '  Run the merge again with --prefer-legacy to write the legacy format instead.';
-const SAVE_CARRYING_DEPRECATED_GROUP_IDS = createFakeSaveContent({
-  worldObjects: [
-    createWorldObject({id: 79111656, gId: 'Phytoplankton2'}),
-    createWorldObject({id: 79111657, gId: 'Phytoplankton3'})
-  ]
-});
-const WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID = [createWorldObject({id: 15974863, gId: 'Phytoplankton1'})];
+const TERRAIN_LAYER_OF_THE_LEGACY_SAVE = '"layerId":"PC-Toxicity-Layer2"';
 
 describe('Merge CLI', () => {
   let consoleLogSpy;
@@ -545,8 +539,7 @@ describe('Merge CLI', () => {
         await main();
 
         // Assert
-        const {formatRelease} = parseSaveSections(writeTextFile.mock.calls[0][1]);
-        expect(formatRelease).toBe('1.618');
+        expect(writeTextFile.mock.calls[0][1]).toContain(TERRAIN_LAYER_OF_THE_LEGACY_SAVE);
       });
 
       it('should report the legacy format written', async () => {
@@ -582,8 +575,8 @@ describe('Merge CLI', () => {
       await main();
 
       // Assert
-      expect(parseSaveSections(writeTextFile.mock.calls[0][1]).formatRelease).toBe('1.618');
-      expect(parseSaveSections(writeTextFile.mock.calls[1][1]).formatRelease).toBe('1.618');
+      expect(writeTextFile.mock.calls[0][1]).toContain(TERRAIN_LAYER_OF_THE_LEGACY_SAVE);
+      expect(writeTextFile.mock.calls[1][1]).toContain(TERRAIN_LAYER_OF_THE_LEGACY_SAVE);
     });
   });
 
@@ -647,8 +640,8 @@ describe('Merge CLI', () => {
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);
       readDirectory.mockResolvedValueOnce([SAVE_A_FILENAME, SAVE_B_FILENAME]);
       serveSaves({
-        [SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_A_WITHOUT_GLOBAL_METADATA,
-        [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_B_WITHOUT_GLOBAL_METADATA
+        [SAVE_A_INPUT_PATH]: FAKE_SAVE_STRING_WITHOUT_GLOBAL_METADATA,
+        [SAVE_B_INPUT_PATH]: FAKE_SAVE_STRING_WITHOUT_GLOBAL_METADATA
       });
     });
 
@@ -803,12 +796,9 @@ describe('Merge CLI', () => {
 
   describe('When one save of a folder carries group ids that game release 2.102 deprecated', () => {
     it.each([
-      ['1.618', createLegacyFakeSaveContent({worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID})],
-      ['2.004', createFakeSaveContent({worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID})],
-      ['2.102', createFakeSaveContent({
-        saveConfiguration: createSaveConfiguration({version: '2.102'}),
-        worldObjects: WORLD_OBJECTS_WITHOUT_DEPRECATED_GROUP_ID
-      })]
+      ['1.618', LEGACY_SAVE_WITHOUT_DEPRECATED_GROUP_ID],
+      ['2.004', SAVE_WITHOUT_DEPRECATED_GROUP_ID],
+      ['2.102', RELEASE_2_102_SAVE_WITHOUT_DEPRECATED_GROUP_ID]
     ])('should write those group ids unchanged when the other save declares release %s', async (_otherSaveRelease, otherSave) => {
       // Arrange
       readDirectory.mockResolvedValueOnce([INPUT_SUBFOLDER_ALPHA]);

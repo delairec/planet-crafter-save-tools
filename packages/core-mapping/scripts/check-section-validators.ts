@@ -1,7 +1,7 @@
 import {generateSectionValidatorsSource} from './generate-section-validators.ts';
 import {runAsEntryPoint, SECTION_VALIDATORS_PATH, type SectionValidatorsFileIo} from './sectionValidatorsFile.ts';
 
-const DIVERGED_VALIDATORS_REASON = 'regenerating them from the JSON Schemas of shared-save-processing does not reproduce the versioned module: run bun run generate:section-validators and commit what it writes';
+const DIVERGED_VALIDATORS_REASON = 'regenerating them from the JSON Schemas of the save wire format does not reproduce the versioned module: run bun run generate:section-validators and commit what it writes';
 const MISSING_VALIDATORS_REASON = 'the repository does not carry the generated module: run bun run generate:section-validators and commit what it writes';
 
 export function findSectionValidatorsDivergence({regeneratedSource, versionedSource}: {

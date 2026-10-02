@@ -15,9 +15,9 @@ open a fixture or check it with `bun validate`.
 `bun run check:scenario-fixtures`, part of `bun run guards`, refuses any scenario reaching into `input/`.
 
 Every fixture is the output of `createFakeSaveContent()`, from
-`packages/shared-save-processing/testing/createFakeSaveContent.js` (a wrapper around `createFakeSaveString.js`, the
+`packages/core-mapping/src/save/infrastructure/wireFormat/testing/createFakeSaveContent.js` (a wrapper around `createFakeSaveString.js`, the
 generator the unit tests already rely on). Pass an override object to build a variant; the record builders the
-overrides use come from `packages/shared-save-processing/testing/createSaveRecords.js`. A fixture meant to be valid is
+overrides use come from `packages/core-mapping/src/save/infrastructure/wireFormat/testing/createSaveRecords.js`. A fixture meant to be valid is
 checked with `bun validate -- --file=<path>`.
 
 ## Naming

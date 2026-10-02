@@ -6,8 +6,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {text} from 'node:stream/consumers';
 import {fileURLToPath} from 'node:url';
-import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
-import {createGlobalMetadata} from 'shared-save-processing/testing/createSaveRecords.js';
+import {LEGACY_SAVE_UNLOCKING_GROUP_A_ONLY, SAVE_UNLOCKING_GROUP_A_ONLY, SAVE_UNLOCKING_GROUP_B_ONLY} from '../testing/fakeSaveStrings.js';
 
 const REPOSITORY_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 const NODE_LOADER_PATH = join(REPOSITORY_ROOT, 'scripts/node/register.js');
@@ -21,24 +20,6 @@ const GROUP_UNLOCKED_BY_SAVE_A_ONLY = 'UnlockedFromSaveA';
 const GROUP_UNLOCKED_BY_SAVE_B_ONLY = 'UnlockedFromSaveB';
 const BYTE_ORDER_MARK = '﻿';
 const NO_PREFIX = '';
-
-/**
- * Each save unlocks one group no other save unlocks, so the merged file names the saves that
- * actually reached the merge engine.
- * @param {string} unlockedGroup
- * @returns {string}
- */
-function createSaveUnlockingOnly(unlockedGroup) {
-  return createFakeSaveContent({globalMetadata: createGlobalMetadata({unlockedGroups: unlockedGroup})});
-}
-
-/**
- * @param {string} unlockedGroup
- * @returns {string}
- */
-function createLegacySaveUnlockingOnly(unlockedGroup) {
-  return createLegacyFakeSaveContent({globalMetadata: createGlobalMetadata({unlockedGroups: unlockedGroup})});
-}
 
 /**
  * @param {string} inputDirectory
@@ -81,7 +62,7 @@ describe('Merge CLI run as a Node process', () => {
     const saveFolderPath = join(inputDirectory, SAVE_FOLDER_NAME);
     await mkdir(saveFolderPath, {recursive: true});
     await writeFile(join(saveFolderPath, SAVE_A_FILE_NAME), saveAContent, 'utf8');
-    await writeFile(join(saveFolderPath, SAVE_B_FILE_NAME), saveBPrefix + createSaveUnlockingOnly(GROUP_UNLOCKED_BY_SAVE_B_ONLY), 'utf8');
+    await writeFile(join(saveFolderPath, SAVE_B_FILE_NAME), saveBPrefix + SAVE_UNLOCKING_GROUP_B_ONLY, 'utf8');
   }
 
   beforeEach(async () => {
@@ -97,7 +78,7 @@ describe('Merge CLI run as a Node process', () => {
 
   describe('When an input folder holds two saves', () => {
     beforeEach(async () => {
-      await writeInputSaves(createSaveUnlockingOnly(GROUP_UNLOCKED_BY_SAVE_A_ONLY), NO_PREFIX);
+      await writeInputSaves(SAVE_UNLOCKING_GROUP_A_ONLY, NO_PREFIX);
       await mkdir(outputDirectory, {recursive: true});
     });
 
@@ -123,7 +104,7 @@ describe('Merge CLI run as a Node process', () => {
   describe('When the output directory does not exist yet', () => {
     it('should create it and write the merged save in it', async () => {
       // Arrange
-      await writeInputSaves(createSaveUnlockingOnly(GROUP_UNLOCKED_BY_SAVE_A_ONLY), NO_PREFIX);
+      await writeInputSaves(SAVE_UNLOCKING_GROUP_A_ONLY, NO_PREFIX);
 
       // Act
       const {exitCode} = await runMergeCliUnderNode(inputDirectory, outputDirectory);
@@ -149,7 +130,7 @@ describe('Merge CLI run as a Node process', () => {
   describe('When an input folder holds a save in the legacy format', () => {
     it('should warn that the save was written by 1.618 or earlier without failing', async () => {
       // Arrange
-      await writeInputSaves(createLegacySaveUnlockingOnly(GROUP_UNLOCKED_BY_SAVE_A_ONLY), NO_PREFIX);
+      await writeInputSaves(LEGACY_SAVE_UNLOCKING_GROUP_A_ONLY, NO_PREFIX);
 
       // Act
       const {exitCode, stderr} = await runMergeCliUnderNode(inputDirectory, outputDirectory);
@@ -164,7 +145,7 @@ describe('Merge CLI run as a Node process', () => {
   describe('When an input save is prefixed with a byte order mark', () => {
     it('should carry the contribution of that save into the merged file', async () => {
       // Arrange
-      await writeInputSaves(createSaveUnlockingOnly(GROUP_UNLOCKED_BY_SAVE_A_ONLY), BYTE_ORDER_MARK);
+      await writeInputSaves(SAVE_UNLOCKING_GROUP_A_ONLY, BYTE_ORDER_MARK);
 
       // Act
       const {exitCode} = await runMergeCliUnderNode(inputDirectory, outputDirectory);

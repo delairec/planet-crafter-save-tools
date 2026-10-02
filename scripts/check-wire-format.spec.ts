@@ -79,7 +79,7 @@ describe('findWireAbbreviations', () => {
   describe('When the file sits outside domain/ of a core- package', () => {
     it.each([
       ['an infrastructure record', 'packages/core-mapping/src/infrastructure/dto/WorldObjectDto.ts'],
-      ['the shared save records', 'packages/shared-save-processing/gameDefinitions/WorldObject.ts'],
+      ['the save wire format records', 'packages/core-mapping/src/save/infrastructure/wireFormat/gameDefinitions/WorldObject.ts'],
       ['a domain directory of a ui- package', 'packages/ui-save-manager/src/domain/WorldObjectView.ts'],
       ['an installed dependency', 'packages/core-mapping/node_modules/x/domain/Thing.ts'],
       ['a build output', 'packages/core-mapping/dist/domain/save/WorldObjectEntry.js']

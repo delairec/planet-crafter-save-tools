@@ -1,19 +1,19 @@
 /**
- * @import { ParsedSections } from 'shared-save-processing/gameDefinitions'
+ * @import { ParsedSections } from './wireFormat/gameDefinitions'
  * @import { ValidationIssue } from '../domain/validation/ValidationIssue.ts'
  * @import { SectionEntrySchemaError } from './mapSchemaErrorToValidationIssue.ts'
  */
 
-import saveFileSchema from 'shared-save-processing/schemas/save-file.schema.json' with {type: 'json'};
-import legacySaveFileSchema from 'shared-save-processing/schemas/legacy-save-file.schema.json' with {type: 'json'};
-import {findSplitPartsCount} from 'shared-save-processing/gameReleases.js';
-import {resolveSectionIndexes} from 'shared-save-processing/sectionIndexes.js';
+import saveFileSchema from './wireFormat/schemas/save-file.schema.json' with {type: 'json'};
+import legacySaveFileSchema from './wireFormat/schemas/legacy-save-file.schema.json' with {type: 'json'};
+import {findSplitPartsCount} from './wireFormat/gameReleases.js';
+import {resolveSectionIndexes} from './wireFormat/sectionIndexes.js';
 import {locateSaveSection} from './locateSaveSection.ts';
 import {mapSchemaErrorToValidationIssue} from './mapSchemaErrorToValidationIssue.ts';
 import {UnexpectedSaveSectionError} from './errors/UnexpectedSaveSectionError.ts';
 import {UnknownSaveFormatReleaseError} from './errors/UnknownSaveFormatReleaseError.ts';
 import {MissingSectionEntrySchemaError} from './errors/MissingSectionEntrySchemaError.ts';
-import {SECTION_VALIDATORS_BY_SCHEMA_ID} from 'shared-save-processing/sectionValidators.generated.js';
+import {SECTION_VALIDATORS_BY_SCHEMA_ID} from './wireFormat/sectionValidators.generated.js';
 
 /**
  * @typedef {object} SaveFileSectionSchema

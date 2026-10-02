@@ -1,6 +1,6 @@
-import type {SaveSectionName} from "shared-save-processing/gameDefinitions";
-import {findSplitPartsCount} from "shared-save-processing/gameReleases.js";
-import {resolveSectionIndexes} from "shared-save-processing/sectionIndexes.js";
+import type {SaveSectionName} from "./wireFormat/gameDefinitions";
+import {findSplitPartsCount} from "./wireFormat/gameReleases.js";
+import {resolveSectionIndexes} from "./wireFormat/sectionIndexes.js";
 import {type LocatedSaveSectionName, RESERVED_SAVE_PART, type SaveSectionLocation} from "../domain/save/SaveSectionLocation";
 import {SectionOutsideTheSaveFormatError} from "./errors/SectionOutsideTheSaveFormatError";
 

@@ -23,7 +23,7 @@ HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 	DESC "the hunger level of an animal lies between -100 and 100"
 	UNTIL "a legitimate save is rejected by the hunger bounds"
-	OBSERVED_IN "packages/shared-save-processing/schemas/section3-world-objects.schema.json::ranging"
+	OBSERVED_IN "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section3-world-objects.schema.json::ranging"
 		+ "from -100 to 94.22"
 	RATIONALE "The field was observed on the entries of a single group identifier only, 345"
 		+ "occurrences over 190338, ranging from -100 to 94.22. The symmetric scale rests on an"
@@ -51,7 +51,7 @@ HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 		+ "object stands on"
 	UNTIL "a save carrying liPlanet on a world object that is not an"
 		+ "InterplanetaryExchangePlatform1, or naming the planet the object stands on"
-	OBSERVED_IN "packages/shared-save-processing/schemas/section3-world-objects.schema.json::liPlanet"
+	OBSERVED_IN "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section3-world-objects.schema.json::liPlanet"
 	RATIONALE "The field appears 21 times over the 190338 world object entries surveyed, every time"
 		+ "on an InterplanetaryExchangePlatform1 and every time naming another planet; 21"
 		+ "occurrences of one object type prove a habit, not a rule of the game"

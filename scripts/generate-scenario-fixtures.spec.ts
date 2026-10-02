@@ -4,7 +4,7 @@ import {generateScenarioFixtures, resolveScenarioFixturePath, SCENARIO_FIXTURES}
 
 describe('generateScenarioFixtures', () => {
   describe('When the fixtures are generated', () => {
-    it('should write every fixture into the directory the scenarios read, then print their count', async () => {
+    it('should write every fixture into the directory its scenarios read, then print their count', async () => {
       // Arrange
       const printed: string[] = [];
 
@@ -12,9 +12,9 @@ describe('generateScenarioFixtures', () => {
       await generateScenarioFixtures(line => printed.push(line));
 
       // Assert
-      const writtenContents = await Promise.all(SCENARIO_FIXTURES.map(({fileName}) => readFile(resolveScenarioFixturePath(fileName), 'utf8')));
+      const writtenContents = await Promise.all(SCENARIO_FIXTURES.map(fixture => readFile(resolveScenarioFixturePath(fixture), 'utf8')));
       expect(writtenContents).toEqual(SCENARIO_FIXTURES.map(({generateContent}) => generateContent()));
-      expect(printed).toEqual(['generate:scenario-fixtures: 6 fixture(s) written to packages/ui-save-manager/e2e/fixtures.']);
+      expect(printed).toEqual(['generate:scenario-fixtures: 21 fixture(s) written to packages/ui-save-manager/e2e/fixtures, packages/cli-merge/testing/fixtures, packages/cli-validate/testing/fixtures.']);
     });
   });
 });

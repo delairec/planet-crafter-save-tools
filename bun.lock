@@ -20,9 +20,6 @@
         "core-mapping": "*",
         "shared-platforms": "*",
       },
-      "devDependencies": {
-        "shared-save-processing": "*",
-      },
     },
     "packages/cli-validate": {
       "name": "cli-validate",
@@ -30,9 +27,6 @@
       "dependencies": {
         "core-mapping": "*",
         "shared-platforms": "*",
-      },
-      "devDependencies": {
-        "shared-save-processing": "*",
       },
     },
     "packages/core-mapping": {
@@ -43,7 +37,9 @@
         "data-planets": "*",
         "data-save-format": "*",
         "data-world-objects": "*",
-        "shared-save-processing": "*",
+      },
+      "devDependencies": {
+        "ajv": "^8.20.0",
       },
     },
     "packages/data-energy": {
@@ -65,16 +61,6 @@
     "packages/shared-platforms": {
       "name": "shared-platforms",
       "version": "1.0.0",
-    },
-    "packages/shared-save-processing": {
-      "name": "shared-save-processing",
-      "version": "1.0.0",
-      "dependencies": {
-        "data-save-format": "*",
-      },
-      "devDependencies": {
-        "ajv": "^8.20.0",
-      },
     },
     "packages/ui-save-manager": {
       "name": "ui-save-manager",
@@ -659,8 +645,6 @@
     "seroval-plugins": ["seroval-plugins@1.6.2", "", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-TfxuUjlbBESzUOWdTkTKqvSmav0ABym+itetDXLK6mDz8SmrpdI30aF8RTXE8Bvq+tH/1yIDkvy3W0lfQb1ipQ=="],
 
     "shared-platforms": ["shared-platforms@workspace:packages/shared-platforms"],
-
-    "shared-save-processing": ["shared-save-processing@workspace:packages/shared-save-processing"],
 
     "shiki": ["shiki@4.4.2", "", { "dependencies": { "@shikijs/core": "4.4.2", "@shikijs/engine-javascript": "4.4.2", "@shikijs/engine-oniguruma": "4.4.2", "@shikijs/langs": "4.4.2", "@shikijs/themes": "4.4.2", "@shikijs/types": "4.4.2", "@shikijs/vscode-textmate": "^10.0.2", "@types/hast": "^3.0.5" } }, "sha512-P8F/dFhRevaw2uSdeIYlq/5SXZNY85DPtmXQ947gD1Zj2JqO5AkNvVVBar0Me9JkFx3uzVud/qOtP5ek9NEQGA=="],
 

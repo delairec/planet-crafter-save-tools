@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {SaveSectionsSerializerService} from './SaveSectionsSerializerService';
-import {parseSaveSections} from 'shared-save-processing/parseSaveSections.js';
-import {INVENTORIES_SECTION_INDEX, LEGACY_TERRAIN_LAYERS_SECTION_INDEX, LEGACY_WORLD_EVENTS_SECTION_INDEX, PLAYERS_SECTION_INDEX, SAVE_CONFIGURATION_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from 'shared-save-processing/sectionIndexes.js';
+import {parseSaveSections} from '../../save/infrastructure/wireFormat/parseSaveSections.js';
+import {INVENTORIES_SECTION_INDEX, LEGACY_TERRAIN_LAYERS_SECTION_INDEX, LEGACY_WORLD_EVENTS_SECTION_INDEX, PLAYERS_SECTION_INDEX, SAVE_CONFIGURATION_SECTION_INDEX, WORLD_OBJECTS_SECTION_INDEX} from '../../save/infrastructure/wireFormat/sectionIndexes.js';
 import {createPlayerEntry, createSaveConfigurationEntry, createTerrainLayerEntry, createWorldEventEntry} from '../../save/testing/createSaveEntries';
 import {createSaveSections} from '../../save/testing/createSaveSections';
 

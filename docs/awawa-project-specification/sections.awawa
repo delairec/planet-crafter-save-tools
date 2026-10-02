@@ -3,11 +3,11 @@ SECTION GlobalMetadata
 	LABEL "Global metadata"
 	INDEX 0
 	LEGACY_INDEX 0
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::GLOBAL_METADATA_SECTION_INDEX ="
-		+ "0"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 0 — Player"
-		+ "progression"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::GLOBAL_METADATA_SECTION_INDEX"
+		+ "= 0"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "0 — Player progression"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -16,11 +16,11 @@ SECTION TerraformationLevels
 	LABEL "Terraformation levels"
 	INDEX 1
 	LEGACY_INDEX 1
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::TERRAFORMATION_LEVELS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::TERRAFORMATION_LEVELS_SECTION_INDEX"
 		+ "= 1"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 1 —"
-		+ "Terraformation levels"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "1 — Terraformation levels"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -29,9 +29,11 @@ SECTION Players
 	LABEL "Players"
 	INDEX 2
 	LEGACY_INDEX 2
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::PLAYERS_SECTION_INDEX = 2"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 2 — Players"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::PLAYERS_SECTION_INDEX"
+		+ "= 2"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "2 — Players"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -40,10 +42,11 @@ SECTION WorldObjects
 	LABEL "World objects"
 	INDEX 3
 	LEGACY_INDEX 3
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::WORLD_OBJECTS_SECTION_INDEX = 3"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 3 — World"
-		+ "objects"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::WORLD_OBJECTS_SECTION_INDEX"
+		+ "= 3"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "3 — World objects"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -52,10 +55,11 @@ SECTION Inventories
 	LABEL "Inventories"
 	INDEX 4
 	LEGACY_INDEX 4
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::INVENTORIES_SECTION_INDEX = 4"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 4 —"
-		+ "Inventories & equipment"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::INVENTORIES_SECTION_INDEX"
+		+ "= 4"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "4 — Inventories & equipment"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -64,10 +68,11 @@ SECTION Statistics
 	LABEL "Statistics"
 	INDEX 5
 	LEGACY_INDEX 5
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::STATISTICS_SECTION_INDEX = 5"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 5 —"
-		+ "Statistics"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::STATISTICS_SECTION_INDEX"
+		+ "= 5"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "5 — Statistics"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -76,11 +81,11 @@ SECTION MailboxMessages
 	LABEL "Mailbox messages"
 	INDEX 6
 	LEGACY_INDEX 6
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::MAILBOX_MESSAGES_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::MAILBOX_MESSAGES_SECTION_INDEX"
 		+ "= 6"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 6 — Read"
-		+ "messages"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "6 — Read messages"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -89,10 +94,11 @@ SECTION StoryEvents
 	LABEL "Story events"
 	INDEX 7
 	LEGACY_INDEX 7
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::STORY_EVENTS_SECTION_INDEX = 7"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 7 —"
-		+ "Triggered story events"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::STORY_EVENTS_SECTION_INDEX"
+		+ "= 7"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "7 — Triggered story events"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -101,11 +107,11 @@ SECTION SaveConfiguration
 	LABEL "Save configuration"
 	INDEX 8
 	LEGACY_INDEX 8
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::SAVE_CONFIGURATION_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::SAVE_CONFIGURATION_SECTION_INDEX"
 		+ "= 8"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 8 — Save"
-		+ "configuration"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "8 — Save configuration"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
@@ -114,13 +120,14 @@ SECTION WorldEvents
 	LABEL "World events"
 	INDEX 9
 	LEGACY_INDEX 10
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::WORLD_EVENTS_SECTION_INDEX = 9"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_WORLD_EVENTS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::WORLD_EVENTS_SECTION_INDEX"
+		+ "= 9"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_WORLD_EVENTS_SECTION_INDEX"
 		+ "= 10"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 9 — World"
-		+ "events"
-	ATTESTED_BY "packages/shared-save-processing/schemas/legacy-save-file.schema.json::Section 10 —"
-		+ "World events"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "9 — World events"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/legacy-save-file.schema.json::Section"
+		+ "10 — World events"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION Reserved
@@ -130,12 +137,12 @@ SECTION Reserved
 	LEGACY_INDEX 11
 	DESC "the empty trailing part the terminating separator produces; the game writes no entry in"
 		+ "it"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::RESERVED_TRAILING_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::RESERVED_TRAILING_SECTION_INDEX"
 		+ "= SAVE_SECTIONS_COUNT"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::const"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::const"
 		+ "LEGACY_SAVE_SECTIONS_COUNT = 11"
-	ATTESTED_BY "packages/shared-save-processing/schemas/save-file.schema.json::Section 10 —"
-		+ "Reserved"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json::Section"
+		+ "10 — Reserved"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"
 
 SECTION TerrainLayers
@@ -145,9 +152,9 @@ SECTION TerrainLayers
 	LEGACY_INDEX 9
 	DESC "the section a game update removed; a legacy save still carries it, and parsing reads it"
 		+ "into entries like any other section"
-	ATTESTED_BY "packages/shared-save-processing/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/sectionIndexes.js::LEGACY_TERRAIN_LAYERS_SECTION_INDEX"
 		+ "= 9"
-	ATTESTED_BY "packages/shared-save-processing/testing/createSaveRecords.js::PC-Toxicity-Layer2"
-	ATTESTED_BY "packages/shared-save-processing/schemas/legacy-save-file.schema.json::Section 9 —"
-		+ "Terrain layers"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/testing/createSaveRecords.js::PC-Toxicity-Layer2"
+	ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/legacy-save-file.schema.json::Section"
+		+ "9 — Terrain layers"
 	SOURCE "Extracted from docs/save-format.md and from the section index module on 2026-09-18"

@@ -3,8 +3,8 @@
 > ❗Docs written by AI from save file analysis (proofread, but still can include mistakes)
 
 ---
-**JSON Schemas** : each section has a validation schema in [`packages/shared-save-processing/schemas/`](../packages/shared-save-processing/schemas/), and validation applies every one of the ten, entry by entry. The world objects section is no exception, although it reaches validation as a generator: its entries meet their schema one at a time as the section is walked, so a save of any size only ever holds one world object in memory.
-The root schema [`save-file.schema.json`](../packages/shared-save-processing/schemas/save-file.schema.json) validates a fully parsed save (array of 11 sections, indexes 0 to 10).
+**JSON Schemas** : each section has a validation schema in [`packages/core-mapping/src/save/infrastructure/wireFormat/schemas/`](../packages/core-mapping/src/save/infrastructure/wireFormat/schemas/), and validation applies every one of the ten, entry by entry. The world objects section is no exception, although it reaches validation as a generator: its entries meet their schema one at a time as the section is walked, so a save of any size only ever holds one world object in memory.
+The root schema [`save-file.schema.json`](../packages/core-mapping/src/save/infrastructure/wireFormat/schemas/save-file.schema.json) validates a fully parsed save (array of 11 sections, indexes 0 to 10).
 
 ## General structure
 
@@ -22,7 +22,7 @@ The file ends with `@`.
 > serializing it in the format of 1.618 writes the same bytes back. A warning states that the save was written by 1.618
 > or earlier; validation is the single source of that warning, on every outcome and in every flow (displaying a save,
 > merging saves, `bun validate`, `bun merge`). The warning travels as the code defined in
-> `packages/shared-save-processing/saveWarningCodes.js` and is turned into the sentence shown to the user by
+> `packages/core-mapping/src/save/infrastructure/wireFormat/saveWarningCodes.js` and is turned into the sentence shown to the user by
 > `packages/core-mapping/src/save/presentation/formatSaveWarning.ts`. core-mapping still reads the sections the format of
 > 2.004 shares with it, and a merge still writes the format of 2.004.
 
@@ -33,7 +33,7 @@ entry3
 ```
 
 A section is read line by line, and a line that is not valid JSON is **reported and located**, never ignored:
-`packages/shared-save-processing/parseSaveSections.js` is the single reader of this format and reports
+`packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js` is the single reader of this format and reports
 `{code, sectionIndex, entryIndex, line}` for every line it could not read, keeping the readable entries around it.
 Validation turns those reports into located errors (`bun validate` exits 1 and names the section and the entry
 position), and merging refuses to write a save whose input carries one. Blank sections stay silent: each section is

@@ -1,4 +1,4 @@
-import {stripJsonExtension} from "shared-save-processing/jsonExtension.js";
+import {stripJsonExtension} from "../../save/infrastructure/wireFormat/jsonExtension.js";
 import {FileNameSanitizerPort} from "../application/ports/FileNameSanitizerPort";
 import {FileNamePartsResponse} from "../application/responses/FileNamePartsResponse";
 import {SanitizedFileNameResponse} from "../application/responses/SanitizedFileNameResponse";

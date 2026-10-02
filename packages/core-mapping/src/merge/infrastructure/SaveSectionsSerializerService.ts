@@ -1,4 +1,4 @@
-import {serializeSave} from "shared-save-processing/serializeSave.js";
+import {serializeSave} from "../../save/infrastructure/wireFormat/serializeSave.js";
 import {SaveSectionsSerializerPort} from "../application/ports/SaveSectionsSerializerPort";
 import {SaveSections} from "../../save/domain/save/SaveSections";
 import {

@@ -12,7 +12,7 @@ const COMMENT_OR_STRING_LITERAL = /\/\*[\s\S]*?\*\/|\/\/[^\n]*|'(?:\\.|[^'\\\n])
 const MASKED_CHARACTER = /[^\n]/g;
 const JSON_PARSE_CALL = /\bJSON\s*\.\s*parse\b/;
 
-const ADMITTED_PARSER_MODULE = 'packages/shared-save-processing/parseSaveSections.js';
+const ADMITTED_PARSER_MODULE = 'packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js';
 const UNADMITTED_CALL_REASON = `a save line reaches JSON.parse through ${ADMITTED_PARSER_MODULE} alone; parse through parseSaveSections instead`;
 
 const CHECK_NAME = 'check:save-line-reader';

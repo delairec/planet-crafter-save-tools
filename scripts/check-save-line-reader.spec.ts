@@ -2,16 +2,16 @@ import {describe, expect, it} from 'bun:test';
 import {createFakeScriptIo} from './testing/createFakeScriptIo.ts';
 import {checkSaveLineReader, findUnadmittedJsonParseCalls, isProductionSourceFile} from './check-save-line-reader.ts';
 
-const PARSER_MODULE = 'packages/shared-save-processing/parseSaveSections.js';
+const PARSER_MODULE = 'packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js';
 
 describe('isProductionSourceFile', () => {
 
   describe('When the file is a source module of a package', () => {
     it.each([
-      'packages/shared-save-processing/int64Identifiers.js',
+      'packages/core-mapping/src/save/infrastructure/wireFormat/int64Identifiers.js',
       'packages/core-mapping/src/application/MergeSaveFilesController.ts',
       'packages/ui-save-manager/src/components/structure/FieldsGroup.tsx',
-      'packages/shared-save-processing/jsonSourceTextAccess.d.ts'
+      'packages/core-mapping/src/save/infrastructure/wireFormat/jsonSourceTextAccess.d.ts'
     ])('should read %s', filePath => {
       // Act
       const isProduction = isProductionSourceFile(filePath);
@@ -23,7 +23,7 @@ describe('isProductionSourceFile', () => {
 
   describe('When the file is a spec or a test', () => {
     it.each([
-      'packages/shared-save-processing/parseSaveSections.spec.js',
+      'packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.spec.js',
       'packages/core-mapping/src/application/MergeSaveFilesController.spec.ts',
       'packages/ui-save-manager/src/components/FieldsGroup.test.tsx'
     ])('should leave %s alone', filePath => {
@@ -68,7 +68,7 @@ describe('isProductionSourceFile', () => {
 
   describe('When the file is not a script', () => {
     it.each([
-      'packages/shared-save-processing/schemas/players.schema.json',
+      'packages/core-mapping/src/save/infrastructure/wireFormat/schemas/players.schema.json',
       'packages/ui-save-manager/src/app.css',
       'packages/cli-merge/README.md'
     ])('should leave %s alone', filePath => {
@@ -152,7 +152,7 @@ describe('findUnadmittedJsonParseCalls', () => {
       const source = 'const identifier = text; // JSON.parse would round it';
 
       // Act
-      const lines = findUnadmittedJsonParseCalls({filePath: 'packages/shared-save-processing/int64Identifiers.js', source});
+      const lines = findUnadmittedJsonParseCalls({filePath: 'packages/core-mapping/src/save/infrastructure/wireFormat/int64Identifiers.js', source});
 
       // Assert
       expect(lines).toEqual([]);
@@ -169,7 +169,7 @@ describe('findUnadmittedJsonParseCalls', () => {
       ].join('\n');
 
       // Act
-      const lines = findUnadmittedJsonParseCalls({filePath: 'packages/shared-save-processing/int64Identifiers.js', source});
+      const lines = findUnadmittedJsonParseCalls({filePath: 'packages/core-mapping/src/save/infrastructure/wireFormat/int64Identifiers.js', source});
 
       // Assert
       expect(lines).toEqual([]);
@@ -197,7 +197,7 @@ describe('checkSaveLineReader', () => {
       // Arrange
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
-          'packages/shared-save-processing/parseSaveSections.js': 'return JSON.parse(line, keepInt64IdentifierText);',
+          'packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js': 'return JSON.parse(line, keepInt64IdentifierText);',
           'packages/cli-validate/src/readPlayers.js': 'const players = parseSaveSections(content);'
         }
       });
@@ -207,7 +207,7 @@ describe('checkSaveLineReader', () => {
 
       // Assert
       expect({printed, exitCodes}).toEqual({
-        printed: ['check:save-line-reader: no production module calls JSON.parse outside packages/shared-save-processing/parseSaveSections.js.'],
+        printed: ['check:save-line-reader: no production module calls JSON.parse outside packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js.'],
         exitCodes: [0]
       });
     });
@@ -228,8 +228,8 @@ describe('checkSaveLineReader', () => {
       // Assert
       expect({printed, exitCodes}).toEqual({
         printed: [
-          'packages/cli-validate/src/readPlayers.js:1\n  a save line reaches JSON.parse through packages/shared-save-processing/parseSaveSections.js alone; parse through parseSaveSections instead',
-          'check:save-line-reader: 1 JSON.parse call(s) outside packages/shared-save-processing/parseSaveSections.js.'
+          'packages/cli-validate/src/readPlayers.js:1\n  a save line reaches JSON.parse through packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js alone; parse through parseSaveSections instead',
+          'check:save-line-reader: 1 JSON.parse call(s) outside packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js.'
         ],
         exitCodes: [1]
       });

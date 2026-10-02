@@ -1,10 +1,10 @@
 import {describe, expect, it} from 'bun:test';
 import {validateSaveContent} from './validateSaveContent.js';
 import {VALIDATION_ISSUE_CODES} from '../domain/validation/validationIssueCodes.ts';
-import {createFakeSaveString} from 'shared-save-processing/testing/createFakeSaveString.js';
-import {createFakeSaveContent, createLegacyFakeSaveContent} from 'shared-save-processing/testing/createFakeSaveContent.js';
-import {stringifyEntry} from 'shared-save-processing/stringifyEntry.js';
-import {replaceSaveSection} from 'shared-save-processing/replaceSaveSection.js';
+import {createFakeSaveString} from './wireFormat/testing/createFakeSaveString.js';
+import {createFakeSaveContent, createLegacyFakeSaveContent} from './wireFormat/testing/createFakeSaveContent.js';
+import {stringifyEntry} from './wireFormat/stringifyEntry.js';
+import {replaceSaveSection} from './wireFormat/replaceSaveSection.js';
 import {
   createEquipment,
   createGlobalMetadata,
@@ -16,7 +16,7 @@ import {
   createTerraformationLevel,
   createTerrainLayer,
   createWorldObject
-} from 'shared-save-processing/testing/createSaveRecords.js';
+} from './wireFormat/testing/createSaveRecords.js';
 import {
   GLOBAL_METADATA_SECTION_INDEX,
   INVENTORIES_SECTION_INDEX,
@@ -29,7 +29,7 @@ import {
   TERRAFORMATION_LEVELS_SECTION_INDEX,
   WORLD_EVENTS_SECTION_INDEX,
   WORLD_OBJECTS_SECTION_INDEX
-} from 'shared-save-processing/sectionIndexes.js';
+} from './wireFormat/sectionIndexes.js';
 
 describe('validateSaveContent', () => {
 

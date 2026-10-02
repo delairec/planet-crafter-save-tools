@@ -338,7 +338,7 @@ TASK FEAT78
 		REF @RULE.ASaveDesignatesExactlyOneHostPlayer
 		REF @TASK.FEAT77
 		REF @PACKAGE.core_mapping
-		REF @PACKAGE.shared_save_processing
+		REF @PACKAGE.core_mapping
 	SOURCE "User ruling of 2026-09-21 on pull request #108: the defects of the save are detected by"
 		+ "the existing validator and presented as a table of the fixes to apply, the user ideally"
 		+ "ticking which ones"
@@ -348,7 +348,7 @@ TASK FEAT78
 		+ "entry serializer writes the dot zero suffix back for the twelve float fields the check"
 		+ "scans"
 		REF @PROJECT.PCST
-		REF @PACKAGE.shared_save_processing
+		REF @PACKAGE.core_mapping
 
 TASK FEAT79
 	TITLE "Write a new save file applying the fixes the caller selected"
@@ -397,7 +397,7 @@ TASK FEAT79
 		+ "and the round trip of an int64 player identifier is covered by the serializer"
 		+ "specification"
 		REF @PROJECT.PCST
-		REF @PACKAGE.shared_save_processing
+		REF @PACKAGE.core_mapping
 
 TASK FEAT80
 	TITLE "Repair a rejected save from the save manager"
@@ -1122,7 +1122,7 @@ TASK CHORE158
 		+ "requires the translation at the domain boundary; the guard makes it checked"
 		REF @TASK.CHORE157
 		REF @TASK.REFACTOR162
-		REF @DECISION.WireAbbreviationsStayInSharedSaveProcessing
+		REF @DECISION.WireAbbreviationsStayInTheWireFormatRecords
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
 	SOURCE "Owner ruling during the refinement of the task: refuse the import of the save format"
@@ -1336,9 +1336,9 @@ TASK REFACTOR162
 		+ "in place: neither names an allow-list of check:wire-format nor this task, and their"
 		+ "anchors name the code as the task leaves it"
 		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
-			+ "WireAbbreviationsStayInSharedSaveProcessing"
+			+ "WireAbbreviationsStayInTheWireFormatRecords"
 		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION AGuardAllowListOnlyShrinks"
-		REF @DECISION.WireAbbreviationsStayInSharedSaveProcessing
+		REF @DECISION.WireAbbreviationsStayInTheWireFormatRecords
 		REF @DECISION.AGuardAllowListOnlyShrinks
 	SPEC "no module under domain/ splits or joins a list of the save text nor reads an empty string"
 		+ "as an absence: the infrastructure hands the domain lists as arrays and absence as"
@@ -1355,7 +1355,7 @@ TASK REFACTOR162
 		+ "application/ of core-mapping names the separator, and"
 		+ "TheMergedSaveDisplayNameComesFromTheCaller is rewritten in place to anchor that"
 		+ "replacement"
-		IMPL "packages/shared-save-processing/serializeSave.js::replaceSeparator"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/serializeSave.js::replaceSeparator"
 		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
 			+ "TheMergedSaveDisplayNameComesFromTheCaller"
 		REF @DECISION.TheMergedSaveDisplayNameComesFromTheCaller
@@ -1405,7 +1405,7 @@ TASK REFACTOR162
 		+ "scenario fixtures are generated at each run, so the text written is compared between the"
 		+ "branch and its base on those, the reviewer replaying the command"
 		REF @TASK.REFACTOR160
-		REF @DECISION.SharedSaveProcessingOwnsSectionParsingAndSerialization
+		REF @DECISION.TheWireFormatModulesOwnSectionParsingAndSerialization
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
 	SOURCE "Owner ruling during the refinement of CHORE158: the domain defines a business type per"
@@ -1429,7 +1429,8 @@ TASK REFACTOR163
 		IMPL "packages/core-mapping/src/save/domain/rules/resolveDeclaredGameRelease.spec.ts::describe('resolveDeclaredGameRelease'"
 		IMPL "packages/core-mapping/src/save/domain/rules/compareGameReleases.spec.ts::describe('compareGameReleases'"
 		IMPL "packages/core-mapping/src/display/domain/rules/resolveCurrentGameRelease.spec.ts::describe('resolveCurrentGameRelease'"
-		IMPL "packages/shared-save-processing/gameReleases.js::export function findCarriedRelease"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/gameReleases.js::export"
+			+ "function findCarriedRelease"
 	SPEC "the warning that a declared version contradicts the format the save carries is raised by"
 		+ "a domain rule the use cases that validate, load and merge a save call, no longer by the"
 		+ "parser of shared-save-processing; cli-validate, cli-merge and the save manager show it"
@@ -1529,8 +1530,8 @@ TASK REFACTOR164
 		+ "does today"
 		IMPL "packages/core-mapping/src/save/domain/validation/ValidationIssue.ts::export type"
 			+ "ValidationIssue"
-		IMPL "packages/shared-save-processing/gameDefinitions/SaveParseError.ts::export type"
-			+ "SaveParseError"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/gameDefinitions/SaveParseError.ts::export"
+			+ "type SaveParseError"
 		IMPL "packages/core-mapping/src/save/presentation/messages/validationIssueMessages.js"
 	SPEC "no sentence shown to the user is built in the infrastructure of core-mapping nor in"
 		+ "shared-save-processing, verifySectionCount, parseSaveSections and the entry count, float"
@@ -1539,7 +1540,7 @@ TASK REFACTOR164
 		+ "the constraint, never the text of the schema validator"
 		IMPL "packages/core-mapping/src/save/infrastructure/mapSchemaErrorToValidationIssue.ts::export"
 			+ "function mapSchemaErrorToValidationIssue"
-		IMPL "packages/shared-save-processing/verifySectionCount.js::SAVE_PARSE_ERROR_CODES.UNEXPECTED_SECTION_COUNT"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/verifySectionCount.js::SAVE_PARSE_ERROR_CODES.UNEXPECTED_SECTION_COUNT"
 		IMPL "packages/core-mapping/src/save/infrastructure/validateFloatSerialization.ts"
 		REF @DECISION.EachBrokenSchemaConstraintIsAValidationIssueOfItsOwn
 	SPEC "an issue located in the save carries the name and the index of its section, both resolved"
@@ -1815,7 +1816,7 @@ TASK REFACTOR168
 		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts::worldObjectLabels"
 	SPEC "shared-save-processing and the infrastructure adapters of core-mapping read a table"
 		+ "through the selectors of its data- package, never through the JSON file"
-		IMPL "packages/shared-save-processing/gameReleases.js::selectGameReleaseRows()"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/gameReleases.js::selectGameReleaseRows()"
 		IMPL "packages/core-mapping/src/display/infrastructure/EnergyLevelsReaderService.ts::selectEnergyLevelRows()"
 		IMPL "packages/core-mapping/src/display/infrastructure/PlanetNamesReaderService.ts::selectPlanetNameOfNumericId(numericId)"
 		IMPL "packages/core-mapping/src/display/infrastructure/WorldObjectLabelsReaderService.ts::selectWorldObjectLabelRows()"

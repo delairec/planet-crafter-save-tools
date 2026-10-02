@@ -126,7 +126,7 @@ bun run check:fixtures
 
 Fails on any spec making a fixture compile instead of typing it: `as unknown`, `as never`, an `any` annotation —
 including the JSDoc forms `/** @type {any} */` and `@param {any}`, which a search for `: any` does not see — and
-`@ts-ignore`. A test fixture is built by its builder (`packages/shared-save-processing/testing/createSaveRecords.js`
+`@ts-ignore`. A test fixture is built by its builder (`packages/core-mapping/src/save/infrastructure/wireFormat/testing/createSaveRecords.js`
 for the save records) so that a record gaining a field breaks the build rather than a test. An input that is illegal
 on purpose is declared with `@ts-expect-error`, which fails the day the error disappears, and the check requires that
 directive to carry the justification saying which invalidity is under test. String literals are masked before the

@@ -7,7 +7,7 @@ const versionedSectionValidators = await Bun.file(SECTION_VALIDATORS_PATH).text(
 
 describe('generateSectionValidators', () => {
 
-  describe('When the JSON Schemas of shared-save-processing are those the versioned module was generated from', () => {
+  describe('When the JSON Schemas of the save wire format are those the versioned module was generated from', () => {
     it('should write that module again, byte for byte', async () => {
       // Arrange
       const noVersionedSource = null;

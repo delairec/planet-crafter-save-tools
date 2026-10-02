@@ -1,5 +1,5 @@
-import {parseIdList, serializeIdList} from "shared-save-processing/idList.js";
-import {parseGroupList, serializeGroupList} from "shared-save-processing/groupList.js";
+import {parseIdList, serializeIdList} from "./wireFormat/idList.js";
+import {parseGroupList, serializeGroupList} from "./wireFormat/groupList.js";
 import {
   GlobalMetadata,
   Inventory,
@@ -13,7 +13,7 @@ import {
   TerrainLayer,
   WorldEvent,
   WorldObject
-} from "shared-save-processing/gameDefinitions";
+} from "./wireFormat/gameDefinitions";
 import {GlobalMetadataEntry} from "../domain/save/GlobalMetadataEntry";
 import {InventoryEntry} from "../domain/save/InventoryEntry";
 import {MailboxMessageEntry} from "../domain/save/MailboxMessageEntry";
