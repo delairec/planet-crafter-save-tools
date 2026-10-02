@@ -1515,7 +1515,7 @@ TASK REFACTOR163
 	SPEC "the Power section names the release of its values only for a release earlier than the"
 		+ "current game release, the presenter learning it from its response and importing no"
 		+ "release constant"
-		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.ts::gameReleaseIsEarlierThanCurrent"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerNotifications.ts::gameReleaseIsEarlierThanCurrent"
 		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.spec.ts::When it"
 			+ "presents the values of the current game release"
 		IMPL "packages/core-mapping/src/display/domain/rules/precedesCurrentGameRelease.spec.ts::describe('precedesCurrentGameRelease'"

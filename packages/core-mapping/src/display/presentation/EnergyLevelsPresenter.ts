@@ -6,7 +6,6 @@ import {
   PlanetEnergyLevelsResponse
 } from "../application/responses/EnergyLevelsResponse";
 import {EnergyLevelsViewModel} from "./viewModels/EnergyLevelsViewModel";
-import {NotificationViewModel} from "./viewModels/NotificationViewModel";
 import {PlanetEnergyLevelsViewModel} from "./viewModels/PlanetEnergyLevelsViewModel";
 import {EnergyBreakdownRowViewModel} from "./viewModels/EnergyBreakdownRowViewModel";
 import {OptimizerViewModel} from "./viewModels/OptimizerViewModel";
@@ -20,17 +19,10 @@ import {
   energyLevelsSectionConsumptionTitle,
   energyLevelsSectionKilowattUnit,
   energyLevelsSectionProductionTitle,
-  energyLevelsSectionSubmergedMachinesNotification,
-  resolveEnergyLevelsSectionGameReleaseNotification,
-  resolveEnergyLevelsSectionPowerConsumptionModifierNotification,
   resolveEnergyLevelsSectionUnnamedPlanetName
 } from "./messages/energyLevelsSectionMessages.js";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
-
-const submergedMachinesNotification: NotificationViewModel = {
-  severity: 'limitation',
-  message: energyLevelsSectionSubmergedMachinesNotification
-};
+import {createPowerNotifications, submergedMachinesNotification} from "./createPowerNotifications";
 
 export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
   private _viewModel: EnergyLevelsViewModel;
@@ -48,35 +40,13 @@ export class EnergyLevelsPresenter implements EnergyLevelsPresenterPort {
 
   displayEnergyLevels(energyLevels: EnergyLevelsResponse): void {
     this._viewModel = {
-      notifications: this.buildNotifications(energyLevels),
+      notifications: createPowerNotifications(energyLevels),
       planets: energyLevels.planets.map((planet): PlanetEnergyLevelsViewModel => this.buildPlanet(planet, energyLevels.worldObjectLabels))
     };
   }
 
   displaySaveWithUnreadableLines({unreadableLines}: UnreadableLinesResponse): void {
     this._viewModel = {notifications: [], planets: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
-  }
-
-  private buildNotifications(energyLevels: EnergyLevelsResponse): NotificationViewModel[] {
-    const notifications: NotificationViewModel[] = [submergedMachinesNotification];
-
-    if (energyLevels.gameReleaseIsEarlierThanCurrent) {
-      notifications.push({
-        severity: 'warning',
-        message: resolveEnergyLevelsSectionGameReleaseNotification(energyLevels.gameRelease)
-      });
-    }
-
-    if (energyLevels.powerConsumptionIsModified) {
-      notifications.push({
-        severity: 'information',
-        message: resolveEnergyLevelsSectionPowerConsumptionModifierNotification(
-          formatNumber(energyLevels.powerConsumptionModifier, FormatNumberStrategies.PERCENTAGE)
-        )
-      });
-    }
-
-    return notifications;
   }
 
   private buildPlanet(planet: PlanetEnergyLevelsResponse, worldObjectLabels: WorldObjectLabelsResponse): PlanetEnergyLevelsViewModel {
