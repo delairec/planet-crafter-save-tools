@@ -89,3 +89,24 @@
     margin-top: var(--space-xs);
     background-color: var(--neon-pink);
 }
+
+.menu-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.menu-application-title {
+    margin: 0;
+    padding: 0 var(--space-md);
+    font-size: var(--text-lg);
+    line-height: var(--line-height-sm);
+}
+
+.menu .application-title-link {
+    padding: 0;
+}
+
+.menu-application-title-highlight {
+    color: var(--neon-pink);
+}
