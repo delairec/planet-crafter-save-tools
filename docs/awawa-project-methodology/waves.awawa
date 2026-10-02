@@ -6,23 +6,6 @@ WAVE 7
 	MILESTONE "fix-corrupted-save"
 	BRANCH "integration/fix-corrupted-save"
 
-WAVE 11
-	MILESTONE "save-manager-planets"
-	BRANCH "integration/save-manager-planets"
-	DESC "the Power, Terraformation and Overview pages and the planet page read view models of"
-		+ "their own, figures and statuses decided by the domain and rendered by the presenters,"
-		+ "the power chart and the SysTi included"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-
-WAVE 12
-	MILESTONE "save-manager-players"
-	BRANCH "integration/save-manager-players"
-	DESC "the Players page reads a view model of its own, the section controllers no page reads are"
-		+ "retired, and the whole save manager is usable at phone width and by keyboard"
-		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-
 WAVE 13
 	MILESTONE "save-manager-history"
 	BRANCH "integration/save-manager-history"
@@ -47,3 +30,20 @@ WAVE 14
 		REF @PACKAGE.core_mapping
 	SOURCE "Owner ruling on the Clean Architecture audit of 2026-09-28"
 		PR 222
+
+WAVE 15
+	MILESTONE "save-manager-redesign"
+	BRANCH "integration/save-manager-redesign"
+	DESC "the save manager wears page F, page by page, each page reading a view model of its own:"
+		+ "the Overview first, then Power, its tables before its charts, Terraformation and the"
+		+ "planet page, Players, and the Merge two saves page with the application title at the top"
+		+ "of the menu and the Load save page harmonised; the redesign closes in the wave, no"
+		+ "section controller left, nothing of the earlier look left, the whole save manager usable"
+		+ "at phone width and by keyboard"
+		REF @URL.SaveManagerRedesignMockup
+		REF @DECISION.AViewModelServesOneView
+	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
+		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
+		+ "Players, and the Merge two saves page with the last adjustments; the pages first planned"
+		+ "as six waves are one wave, their tasks being few"
+		REF @URL.SaveManagerRedesignMockup
