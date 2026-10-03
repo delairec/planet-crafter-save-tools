@@ -4144,3 +4144,17 @@ DECISION TheOverviewShowsACardForEveryPlanetOfEitherList
 		+ "from the Overview"
 	SOURCE "Owner ruling of 2026-10-02 at the launch of FEAT183"
 		PR 264
+
+DECISION TheStylesOfOnePageLiveInAStylesheetNamedAfterIt
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT183
+	SPEC "the rules whose selectors serve one page of ui-save-manager live in a stylesheet of"
+		+ "src/styles named after that page and imported by app.css; components.css keeps the rules"
+		+ "of the pieces several pages share"
+		IMPL "packages/ui-save-manager/src/styles/overview.css::.overview-planet-card"
+		IMPL "packages/ui-save-manager/src/app.css::@import \"styles/overview.css\";"
+		IMPL "packages/ui-save-manager/src/styles/home.css::.home-page"
+	REJECTED "the rules of each page appended to components.css: the file mixes the layout of one"
+		+ "page with the pieces every page shares, and grows with every page of the redesign"
+	SOURCE "Owner review of 2026-10-03, r4170801024: \"on pourrait avoir un overview.css\""
+		PR 264

@@ -371,14 +371,14 @@ export const TOKEN_PAIRS: TokenPair[] = [
   },
   {
     description: 'the label of an overview tile, on the tile',
-    file: 'packages/ui-save-manager/src/styles/components.css',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-tile dt',
     foreground: 'muted',
     background: 'surface'
   },
   {
     description: 'the unit after the figure of an overview tile, on the tile',
-    file: 'packages/ui-save-manager/src/styles/components.css',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-tile-unit',
     foreground: 'muted',
     background: 'surface'
@@ -392,28 +392,28 @@ export const TOKEN_PAIRS: TokenPair[] = [
   },
   {
     description: 'the label under the Terraformation Index of a planet card of the Overview page, on the card',
-    file: 'packages/ui-save-manager/src/styles/components.css',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-planet-index-label',
     foreground: 'muted',
     background: 'surface'
   },
   {
     description: 'the label of a power row of a planet card of the Overview page, on the card',
-    file: 'packages/ui-save-manager/src/styles/components.css',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-planet-power-row dt',
     foreground: 'muted',
     background: 'surface'
   },
   {
     description: 'the share of production consumed of a planet card of the Overview page, on the card',
-    file: 'packages/ui-save-manager/src/styles/components.css',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-planet-share',
     foreground: 'muted',
     background: 'surface'
   },
   {
     description: 'the line naming the side a planet card of the Overview page lacks, on the card',
-    file: 'packages/ui-save-manager/src/styles/components.css',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-planet-absent-side',
     foreground: 'muted',
     background: 'surface'
@@ -425,14 +425,14 @@ export const MINIMUM_GRAPHIC_CONTRAST_RATIO = 3;
 export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
   {
     description: 'the production bar of a planet card of the Overview page, on its track',
-    file: 'packages/ui-save-manager/src/styles/components.css',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-planet-bar-production',
     foreground: 'series-production',
     background: 'elevated'
   },
   {
     description: 'the consumption bar of a planet card of the Overview page, on its track',
-    file: 'packages/ui-save-manager/src/styles/components.css',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-planet-bar-consumption',
     foreground: 'series-consumption',
     background: 'elevated'
