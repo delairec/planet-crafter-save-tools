@@ -138,6 +138,14 @@ test.describe('Overview page', () => {
       await expect(page.getByTestId('overview-system-terraformation-index-caption')).toHaveText('multiplied over 1 planet');
     });
 
+    test('should open the tiles on the SysTi, on the left', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, energyConsumptionSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-tiles').getByTestId(/-value$/).first()).toHaveText('2.8 kSysTi');
+    });
+
     test('should show the power the planet produces, consumes and has available, and the share of its production consumed', async ({page}) => {
       // Act
       await visualizeTheSave(page, energyConsumptionSaveFixturePath);
