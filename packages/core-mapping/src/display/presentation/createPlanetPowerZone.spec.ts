@@ -5,7 +5,7 @@ import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLab
 import {TonedValueViewModel} from "./viewModels/ConfigurationPageViewModel";
 import {PlanetPowerZoneViewModel, PowerBreakdownTableViewModel, PowerLoadMeterViewModel, PowerOptimizersViewModel} from "./viewModels/PlanetPowerZoneViewModel";
 
-const nbsp = ' ';
+const nbsp = '\u00A0';
 const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {
   Drill2: 'Drill T3',
   EnergyGenerator3: 'Solar panel T2',

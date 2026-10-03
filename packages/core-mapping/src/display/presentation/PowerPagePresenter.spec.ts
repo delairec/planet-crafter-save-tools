@@ -4,7 +4,7 @@ import {WORLD_OBJECTS_SECTION} from "../../save/testing/saveSectionLocations";
 import {PowerPagePresenter} from "./PowerPagePresenter";
 import {PowerPageViewModel} from "./viewModels/PowerPageViewModel";
 
-const nbsp = ' ';
+const nbsp = '\u00A0';
 
 describe('PowerPagePresenter', () => {
   it('should initialize with the submerged machines limitation and no planet', () => {
