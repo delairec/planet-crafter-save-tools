@@ -2633,3 +2633,42 @@ TASK FEAT190
 	SOURCE "Owner's check in game of 2026-10-03, stated in the review of pull request 263: the"
 		+ "toxicity meter starts at its maximum and runs down to 0"
 		PR 263
+
+TASK DOCS192
+	TITLE "Verify the rules and hypotheses of the specification against the files of the game"
+	STATUS todo
+	DESC "the owner installs dotnet and ilspycmd before the task starts; either missing, stop and"
+		+ "say so rather than read the game by strings alone"
+	SPEC "every active RULE and HYPOTHESIS of the specification area that describes the game or its"
+		+ "save, the rules of the merge excepted, carries a SOURCE naming the release read, the"
+		+ "file and the type, member or string that settles it, or, where the files of the game"
+		+ "cannot settle it, what was searched"
+		REF @GAME_RELEASE.2.103
+	SPEC "a HYPOTHESIS the files of the game prove becomes a RULE"
+	SPEC "a RULE or HYPOTHESIS the files of the game contradict is corrected in the corpus, and the"
+		+ "code and the tests that applied it are corrected in the same pull request"
+	SPEC "no decompiled code and no file of the game reaches the public repository: only the fact"
+		+ "read and where it was read"
+	SPEC "a PROCESS of the methodology area states how the files of the game are read and what of"
+		+ "them may be published, and agents/jeu-lire.md, named by a row of the loading table of"
+		+ "AGENTS.md, carries the tool and the command, so that a check can be repeated"
+	WAVE @WAVE.15
+	PRIORITY high
+	RATIONALE "The rules and hypotheses of the specification come from reference saves and from the"
+		+ "wiki; the review of PR 268 found the wiki contradicting the game on the SysTi units, and"
+		+ "settled them by reading the game assembly instead. The game ships its logic as a Mono"
+		+ "assembly, Planet Crafter_Data/Managed/Assembly-CSharp.dll under the Steam install: its"
+		+ "strings name members and units, a decompiler reads its constants and methods. The pages"
+		+ "left in wave 15, Power, Terraformation and the planet page, apply rules on power,"
+		+ "difficulty modifiers and terraformation that the same reading can confirm before they"
+		+ "are drawn; the rules of the merge are rulings of the project, which no file of the game"
+		+ "can contradict"
+		REF @GAME_RELEASE.2.103
+		REF @WAVE.15
+	SOURCE "Owner request of 2026-10-03, after the review of PR 268 confirmed the SysTi units in"
+		+ "the game assembly: verify the other rules and hypotheses the same way, as a priority of"
+		+ "wave 15, so that the next pages build on verified rules"
+		PR 268
+	SOURCE "Owner rulings of 2026-10-03, refining the task: the rules of the merge are out of"
+		+ "scope; the owner installs the decompiler; the reading is recorded in a PROCESS and in"
+		+ "agents/jeu-lire.md; a contradicted rule has its code corrected in the same pull request"
