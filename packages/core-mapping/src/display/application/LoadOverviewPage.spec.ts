@@ -4,24 +4,21 @@ import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperSe
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {stubGameReleasesReader} from "../../save/testing/stubGameReleasesReader";
 import {WORLD_OBJECTS_SECTION} from "../../save/testing/saveSectionLocations";
-import {OPTIMIZER_RANGES} from "../testing/energyLevelTablesFixture";
+import {stubEnergyLevelsReader} from "../testing/stubEnergyLevelsReader";
+import {stubOptimizerRangesReader} from "../testing/stubOptimizerRangesReader";
+import {PRIME_PLANET_NUMERIC_ID, stubPlanetNamesReader} from "../testing/stubPlanetNamesReader";
 import {createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {
   createPlanetWorldObjectsValueObject,
   PlanetWorldObjectsValueObject
 } from "../domain/valueObjects/PlanetWorldObjectsValueObject";
-import {EnergyLevelValueObject} from "../domain/valueObjects/EnergyLevelValueObject";
 import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
 import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
-import {EnergyLevelsReaderPort} from "./ports/EnergyLevelsReaderPort";
-import {OptimizerRangesReaderPort} from "./ports/OptimizerRangesReaderPort";
-import {PlanetNamesReaderPort} from "./ports/PlanetNamesReaderPort";
 import {OverviewPagePresenterPort} from "./ports/OverviewPagePresenterPort";
 import {LoadOverviewPage} from "./LoadOverviewPage";
 
-const PRIME_PLANET_NUMERIC_ID = -1140328421;
 const UNNAMED_PLANET_NUMERIC_ID = 1;
 
 const PRIME_TERRAFORMATION_LEVEL = new TerraformationLevelEntity({
@@ -84,24 +81,18 @@ class SaveSectionsWithAnUnnamedPlanetEquippedBeforePrime extends FakeSaveSection
   }
 }
 
-const ENERGY_LEVELS: readonly EnergyLevelValueObject[] = [
-  {worldObjectName: 'EnergyGenerator1', role: 'production', kilowatts: 1.2},
-  {worldObjectName: 'EnergyGenerator6', role: 'production', kilowatts: 1_485},
-  {worldObjectName: 'Drill4', role: 'consumption', kilowatts: 375.5}
-];
-
-const PLANET_NAMES_BY_NUMERIC_ID: Readonly<Record<number, string>> = {[PRIME_PLANET_NUMERIC_ID]: 'Prime'};
-
 function createPresenter(): OverviewPagePresenterPort {
   return {displayOverviewPage: mock(), displaySaveWithUnreadableLines: mock()};
 }
 
 function createUseCase(presenter: OverviewPagePresenterPort, saveSectionsReader: SaveSectionsReaderPort = stubSaveSectionsReader()): LoadOverviewPage {
-  const energyLevelsReader: EnergyLevelsReaderPort = {readEnergyLevels: () => ENERGY_LEVELS, readDivergingEnergyLevelsByRelease: () => ({})};
-  const optimizerRangesReader: OptimizerRangesReaderPort = {readOptimizerRanges: () => OPTIMIZER_RANGES};
-  const planetNamesReader: PlanetNamesReaderPort = {findPlanetNameOfNumericId: (numericId) => PLANET_NAMES_BY_NUMERIC_ID[numericId]};
-
-  return new LoadOverviewPage({saveSectionsReader, gameReleasesReader: stubGameReleasesReader(), energyLevelsReader, optimizerRangesReader, planetNamesReader}, presenter);
+  return new LoadOverviewPage({
+    saveSectionsReader,
+    gameReleasesReader: stubGameReleasesReader(),
+    energyLevelsReader: stubEnergyLevelsReader(),
+    optimizerRangesReader: stubOptimizerRangesReader(),
+    planetNamesReader: stubPlanetNamesReader()
+  }, presenter);
 }
 
 const SAVE_FILE_SIZE = 2_540;

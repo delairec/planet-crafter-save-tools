@@ -20,7 +20,7 @@ import {resolveGameReleaseOfDeclaredVersion} from "../domain/rules/resolveGameRe
 import {assessDroneLogistics} from "../domain/rules/assessDroneLogistics";
 import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorldObjectName";
-import {GAME_DEFAULT_MODIFIER} from "../domain/gameDefaultModifier";
+import {resolvePowerConsumptionModifier} from "../domain/rules/resolvePowerConsumptionModifier";
 import {isPowerConsumptionModified} from "../domain/rules/isPowerConsumptionModified";
 import {resolvePlanetName} from "../domain/rules/resolvePlanetName";
 import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
@@ -62,12 +62,9 @@ export class LoadOverviewPage implements UseCase<LoadOverviewPageRequest> {
       return;
     }
 
-    const powerConsumptionModifier = saveSections.getSaveConfiguration()?.modifiers.powerConsumption ?? GAME_DEFAULT_MODIFIER;
+    const powerConsumptionModifier = resolvePowerConsumptionModifier(saveSections.getSaveConfiguration());
     const gameReleases = this.gameReleasesReader.readGameReleases();
-    const energyLevels = selectEnergyLevelsOfDeclaredVersion(saveSections.getDeclaredVersion(), {
-      energyLevels: this.energyLevelsReader.readEnergyLevels(),
-      divergingEnergyLevelsByRelease: this.energyLevelsReader.readDivergingEnergyLevelsByRelease()
-    }, gameReleases);
+    const energyLevels = selectEnergyLevelsOfDeclaredVersion(saveSections.getDeclaredVersion(), this.energyLevelsReader.readEnergyLevelTables(), gameReleases);
     const terraformationLevels = saveSections.getTerraformationLevels();
     const knownPlanetNames = [...new Set(terraformationLevels.map((level) => level.planetId))];
     const allWorldObjects = saveSections.getWorldObjects();

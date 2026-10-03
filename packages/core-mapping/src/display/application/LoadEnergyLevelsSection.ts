@@ -9,7 +9,7 @@ import {LoadSaveSectionsRequest} from "./requests/LoadSaveSectionsRequest";
 import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
 import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorldObjectName";
-import {GAME_DEFAULT_MODIFIER} from "../domain/gameDefaultModifier";
+import {resolvePowerConsumptionModifier} from "../domain/rules/resolvePowerConsumptionModifier";
 import {isPowerConsumptionModified} from "../domain/rules/isPowerConsumptionModified";
 import {resolvePlanetName} from "../domain/rules/resolvePlanetName";
 import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
@@ -64,12 +64,9 @@ export class LoadEnergyLevelsSection implements UseCase<LoadSaveSectionsRequest>
 
     const allWorldObjects = saveSections.getWorldObjects();
     const inventories = saveSections.getInventories();
-    const powerConsumptionModifier = saveSections.getSaveConfiguration()?.modifiers.powerConsumption ?? GAME_DEFAULT_MODIFIER;
+    const powerConsumptionModifier = resolvePowerConsumptionModifier(saveSections.getSaveConfiguration());
     const gameReleases = this.gameReleasesReader.readGameReleases();
-    const energyLevels = selectEnergyLevelsOfDeclaredVersion(saveSections.getDeclaredVersion(), {
-      energyLevels: this.energyLevelsReader.readEnergyLevels(),
-      divergingEnergyLevelsByRelease: this.energyLevelsReader.readDivergingEnergyLevelsByRelease()
-    }, gameReleases);
+    const energyLevels = selectEnergyLevelsOfDeclaredVersion(saveSections.getDeclaredVersion(), this.energyLevelsReader.readEnergyLevelTables(), gameReleases);
     const optimizerRanges = this.optimizerRangesReader.readOptimizerRanges();
     const knownPlanetNames = [...new Set(saveSections.getTerraformationLevels().map((level) => level.planetId))];
 

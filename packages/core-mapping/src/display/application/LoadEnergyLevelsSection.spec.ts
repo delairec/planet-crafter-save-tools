@@ -14,13 +14,11 @@ import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
 import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
-import {EnergyLevelsReaderPort} from "./ports/EnergyLevelsReaderPort";
-import {OptimizerRangesReaderPort} from "./ports/OptimizerRangesReaderPort";
-import {PlanetNamesReaderPort} from "./ports/PlanetNamesReaderPort";
 import {WorldObjectLabelsResponse} from "./responses/WorldObjectLabelsResponse";
-import {EnergyLevelValueObject} from "../domain/valueObjects/EnergyLevelValueObject";
 import {InventoryEntity} from "../domain/entities/InventoryEntity";
-import {OPTIMIZER_RANGES} from "../testing/energyLevelTablesFixture";
+import {stubEnergyLevelsReader} from "../testing/stubEnergyLevelsReader";
+import {stubOptimizerRangesReader} from "../testing/stubOptimizerRangesReader";
+import {PRIME_PLANET_NUMERIC_ID, stubPlanetNamesReader} from "../testing/stubPlanetNamesReader";
 
 const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
@@ -60,7 +58,6 @@ class SaveSectionsWithoutSaveConfiguration extends FakeSaveSectionsMapperService
   }
 }
 
-const PRIME_PLANET_NUMERIC_ID = -1140328421;
 const UNKNOWN_PLANET_NUMERIC_ID = 1;
 
 class SaveSectionsWithPlanetsToName extends FakeSaveSectionsMapperService {
@@ -94,14 +91,6 @@ class SaveSectionsWithPlanetsToName extends FakeSaveSectionsMapperService {
   }
 }
 
-const ENERGY_LEVELS: readonly EnergyLevelValueObject[] = [
-  {worldObjectName: 'EnergyGenerator1', role: 'production', kilowatts: 1.2},
-  {worldObjectName: 'EnergyGenerator6', role: 'production', kilowatts: 1_485},
-  {worldObjectName: 'Drill4', role: 'consumption', kilowatts: 375.5}
-];
-
-const PLANET_NAMES_BY_NUMERIC_ID: Readonly<Record<number, string>> = {[PRIME_PLANET_NUMERIC_ID]: 'Prime'};
-
 const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {Drill4: 'Drill T5'};
 
 function createPresenter(): EnergyLevelsPresenterPort {
@@ -109,12 +98,16 @@ function createPresenter(): EnergyLevelsPresenterPort {
 }
 
 function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: EnergyLevelsPresenterPort): LoadEnergyLevelsSection {
-  const energyLevelsReader: EnergyLevelsReaderPort = {readEnergyLevels: () => ENERGY_LEVELS, readDivergingEnergyLevelsByRelease: () => ({})};
-  const optimizerRangesReader: OptimizerRangesReaderPort = {readOptimizerRanges: () => OPTIMIZER_RANGES};
-  const planetNamesReader: PlanetNamesReaderPort = {findPlanetNameOfNumericId: (numericId) => PLANET_NAMES_BY_NUMERIC_ID[numericId]};
   const worldObjectLabelsReader: WorldObjectLabelsReaderPort = {readWorldObjectLabels: () => WORLD_OBJECT_LABELS};
 
-  return new LoadEnergyLevelsSection({saveSectionsReader, energyLevelsReader, gameReleasesReader: stubGameReleasesReader(), optimizerRangesReader, planetNamesReader, worldObjectLabelsReader}, presenter);
+  return new LoadEnergyLevelsSection({
+    saveSectionsReader,
+    energyLevelsReader: stubEnergyLevelsReader(),
+    gameReleasesReader: stubGameReleasesReader(),
+    optimizerRangesReader: stubOptimizerRangesReader(),
+    planetNamesReader: stubPlanetNamesReader(),
+    worldObjectLabelsReader
+  }, presenter);
 }
 
 describe('LoadEnergyLevelsSection', () => {
