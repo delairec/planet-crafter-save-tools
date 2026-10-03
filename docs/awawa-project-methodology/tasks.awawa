@@ -2449,7 +2449,7 @@ TASK FEAT187
 
 TASK FEAT188
 	TITLE "Harmonise the Load save page with the Merge two saves page"
-	STATUS todo
+	STATUS implemented
 	DESC "ratified on 2026-10-02 without refinement: the mockup has no Load save page, the Merge"
 		+ "two saves page is its model; the tasks of the saves kept in the browser change the same"
 		+ "page, whichever lands second builds on the first"
@@ -2459,10 +2459,26 @@ TASK FEAT188
 	SPEC "the Load save page has the structure of the Merge two saves page: its title is the"
 		+ "section title over the form, a hint beside it, and the form sits in a card with one"
 		+ "visible drop zone and the button that loads the save in the primary pink"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::<SectionTitle"
+			+ "testId=\"display-title\" hint={displayRouteHint}>"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::<div class=\"card"
+			+ "save-form\">"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::class=\"button-neon-pink"
+			+ "save-form-submit\" data-testid=\"visualize\""
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should tell that loading reads the"
+			+ "save in this browser and never modifies the file"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should offer to drop a save or choose"
+			+ "a file in the display area"
 	SPEC "the busy indicator, a refused drop, and the errors and the warnings of the save show"
 		+ "where and how the Merge two saves page shows them, the file name once"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::<Spinner"
+			+ "testId=\"display-busy-indicator\"/>"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveResultSection.tsx::data-testid=\"display-file-name\""
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should name the save file once, under"
+			+ "the Visualize button"
 	AFTER @TASK.FEAT186
 	WAVE @WAVE.15
+	DELIVERED_BY 267
 	RATIONALE "The two tools pages load files the same way and differ today in where the button,"
 		+ "the busy indicator and the messages sit. The merge page is redesigned from the mockup"
 		+ "first, so this page follows the pieces it leaves rather than inventing its own"
