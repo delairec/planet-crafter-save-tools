@@ -5,6 +5,10 @@ const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
 const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
 
+const loadHint = 'Loading reads and validates the save in this browser and never modifies the file.';
+
+const saveDropHint = 'Drop a save here or choose a file.';
+
 test.describe('Load save page', () => {
   test.describe('When its own address is opened before a save is loaded', () => {
     test('should open the Load save page', async ({page}) => {
@@ -23,6 +27,37 @@ test.describe('Load save page', () => {
       // Assert
       await expect(findTheMenu(page).getByTestId('load-save-page-link')).toHaveText('Load save');
       await expect(findTheMenu(page).getByTestId('load-save-page-link')).toHaveAttribute('aria-current', 'page');
+    });
+  });
+
+  test.describe('When the load form is shown', () => {
+    test('should tell that loading reads and validates the save in this browser and never modifies the file', async ({page}) => {
+      // Act
+      await page.goto('/load-save');
+
+      // Assert
+      await expect(page.getByTestId('display-title-hint')).toHaveText(loadHint);
+    });
+
+    test('should offer to drop a save or choose a file in the display area', async ({page}) => {
+      // Act
+      await page.goto('/load-save');
+
+      // Assert
+      await expect(page.getByTestId('display-drop-hint')).toHaveText(saveDropHint);
+    });
+  });
+
+  test.describe('When an invalid save is visualized', () => {
+    test('should name the save file once, under the Visualize button', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, invalidSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('display-file-name')).toHaveText('negative-gauge_invalid.json');
+      const visualizeButton = (await page.getByTestId('visualize').boundingBox())!;
+      const fileNameTop = (await page.getByTestId('display-file-name').boundingBox())!.y;
+      expect(visualizeButton.y + visualizeButton.height).toBeLessThanOrEqual(fileNameTop);
     });
   });
 
