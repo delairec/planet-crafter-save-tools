@@ -61,7 +61,7 @@
     "fallow:coverage-gaps": "fallow health --config ./fallow.toml --coverage-gaps --no-cache --ci",
     "release": "bun scripts/release/release.ts",
     "release:tag": "bun scripts/release/release-tag.ts",
-    "audit": "bun audit --audit-level=moderate",
+    "audit": "bun audit --audit-level=moderate --ignore=GHSA-vfj7-8cjw-p6xm",
     "dev:ui": "bun run --filter ui-save-manager dev",
     "preview:ui": "bun run --filter ui-save-manager preview",
     "clean:ui": "bun run --filter ui-save-manager clean",

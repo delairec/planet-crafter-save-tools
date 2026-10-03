@@ -207,3 +207,12 @@ USAGE_REPORT PR113_219
 		+ "2026-09-28, on the owner's instruction: an aggregate over all of them and the full"
 		+ "collection on the eleven pull requests EVALUATES lists; committed as a docs pull request"
 		+ "of its own"
+
+URL BracesStackExhaustionAdvisory
+	LOCATION "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm"
+	DESC "braces <= 3.0.3: stack exhaustion through deeply nested brace patterns, high, no patched"
+		+ "version"
+
+URL BracesNestedPatternFix
+	LOCATION "https://github.com/micromatch/braces/pull/72"
+	DESC "upstream fix of GHSA-vfj7-8cjw-p6xm, open and unmerged"
