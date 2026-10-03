@@ -5,7 +5,7 @@ import {OptimizerRangesByWorldObjectName} from "../domain/valueObjects/Optimizer
 export class OptimizerRangesReaderService implements OptimizerRangesReaderPort {
   readOptimizerRanges(): OptimizerRangesByWorldObjectName {
     return Object.fromEntries(
-      selectOptimizerConfigRows().map((row) => [row.worldObjectName, {radius: row.radius, maxMachines: row.maxMachines}])
+      selectOptimizerConfigRows().map((row) => [row.worldObjectName, {radius: row.radius, maxMachines: row.maxMachines, fuseSlots: row.fuseSlots}])
     );
   }
 }

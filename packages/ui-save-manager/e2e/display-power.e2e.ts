@@ -9,20 +9,20 @@ const submergedMachinesNotification = 'Submerged machines may distort the comput
 const gameReleaseNotificationPrefix = 'Values of game release';
 
 function findTheNotifications(page: Page, notificationText: string): Locator {
-  return page.getByTestId(/^energy-levels-notification-\d+$/).filter({hasText: notificationText});
+  return page.getByTestId(/^power-notification-\d+$/).filter({hasText: notificationText});
 }
 
 test.describe('Power page', () => {
   test.describe('When the Power page of a visualized save is opened', () => {
-    test('should open on a breadcrumb naming the Save group and the Power page', async ({page}) => {
+    test('should open on a breadcrumb naming the Save group, the Power page and the planet of the selected tab', async ({page}) => {
       // Arrange
-      await visualizeTheSave(page, baselineSaveFixturePath);
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
 
       // Act
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(findTheBreadcrumbSteps(page)).toHaveText(['Save', 'Power']);
+      await expect(findTheBreadcrumbSteps(page)).toHaveText(['Save', 'Power', 'Skeo']);
     });
   });
 
@@ -35,8 +35,40 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByTestId(/^energy-levels-planet-\d+-title$/)).toHaveText(['Skeo']);
-      await expect(page.getByTestId(/^energy-production-\d+-item-label-\d+$/)).toContainText(['Wind turbine T2']);
+      await expect(page.getByTestId('power-planet-tab-0')).toHaveText('Skeo');
+      await expect(page.getByTestId('power-planet-tab-0')).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByTestId('power-planet-name')).toHaveText('Skeo');
+      await expect(page.getByTestId(/^power-producers-row-\d+$/)).toContainText(['Wind turbine T2']);
+    });
+
+    test('should show the production, the consumption and the available power, the available one carrying the status pill', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+
+      // Act
+      await openThePageOfTheMenu(page, 'Power');
+
+      // Assert
+      await expect(page.getByTestId('power-production')).toContainText('Production');
+      await expect(page.getByTestId('power-consumption')).toContainText('Consumption');
+      await expect(page.getByTestId('power-available')).toContainText('Available');
+      await expect(page.getByTestId('power-available-balance')).toHaveText(await page.getByTestId('power-planet-balance').textContent() ?? '');
+    });
+
+    test('should show the optimizers before the producers and the consumers, each table ending on a total row', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+
+      // Act
+      await openThePageOfTheMenu(page, 'Power');
+
+      // Assert
+      const optimizersTop = (await page.getByTestId('power-optimizers-title').boundingBox())!.y;
+      const producersTop = (await page.getByTestId('power-producers-title').boundingBox())!.y;
+      expect(optimizersTop).toBeLessThan(producersTop);
+      await expect(page.getByTestId('power-producers-total')).toHaveText(/^Total/);
+      await expect(page.getByTestId('power-consumers-total')).toHaveText(/^Total/);
+      await expect(page.getByTestId('power-breakdown-summary')).toHaveText(/producers? · \d+ consumers? · \d+ optimizers?$/);
     });
 
     test('should warn once, under the Power title, that submerged machines may distort the computed available energy', async ({page}) => {
@@ -47,7 +79,7 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(page.getByTestId('energy-levels-title')).toHaveText('Power');
+      await expect(page.getByTestId('power-title')).toHaveText('Power');
       await expect(findTheNotifications(page, submergedMachinesNotification)).toHaveCount(1);
       await expect(findTheNotifications(page, submergedMachinesNotification)).toBeVisible();
     });
@@ -60,7 +92,7 @@ test.describe('Power page', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      await expect(findTheNotifications(page, submergedMachinesNotification).getByTestId(/^energy-levels-notification-\d+-severity$/))
+      await expect(findTheNotifications(page, submergedMachinesNotification).getByTestId(/^power-notification-\d+-severity$/))
         .toHaveText('Limitation');
     });
   });
@@ -92,9 +124,9 @@ test.describe('Power page', () => {
       await expect(gameReleaseNotification).toHaveText(/Values of game release 2\.004$/);
       const submergedMachinesNotificationTop = (await findTheNotifications(page, submergedMachinesNotification).boundingBox())!.y;
       const gameReleaseNotificationTop = (await gameReleaseNotification.boundingBox())!.y;
-      const firstPlanetTop = (await page.getByTestId('energy-levels-planet-0-title').boundingBox())!.y;
+      const figureTilesTop = (await page.getByTestId('power-production').boundingBox())!.y;
       expect(gameReleaseNotificationTop).toBeGreaterThan(submergedMachinesNotificationTop);
-      expect(gameReleaseNotificationTop).toBeLessThan(firstPlanetTop);
+      expect(gameReleaseNotificationTop).toBeLessThan(figureTilesTop);
     });
   });
 });

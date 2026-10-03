@@ -7,14 +7,14 @@ import {WorldObjectLabelsReaderService} from "../infrastructure/WorldObjectLabel
 import {GameReleasesReaderService} from "../../save/infrastructure/GameReleasesReaderService";
 import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPort";
 import {LoadConfigurationPage} from "../application/LoadConfigurationPage";
-import {LoadEnergyLevelsSection} from "../application/LoadEnergyLevelsSection";
+import {LoadPowerPage} from "../application/LoadPowerPage";
 import {LoadPlayersMenu} from "../application/LoadPlayersMenu";
 import {LoadSaveIdentity} from "../application/LoadSaveIdentity";
 import {LoadTerraformationLevelsSection} from "../application/LoadTerraformationLevelsSection";
 import {ConfigurationPagePresenter} from "../presentation/ConfigurationPagePresenter";
 import {ConfigurationPageViewModel} from "../presentation/viewModels/ConfigurationPageViewModel";
-import {EnergyLevelsPresenter} from "../presentation/EnergyLevelsPresenter";
-import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsViewModel";
+import {PowerPagePresenter} from "../presentation/PowerPagePresenter";
+import {PowerPageViewModel} from "../presentation/viewModels/PowerPageViewModel";
 import {PlayersMenuPresenter} from "../presentation/PlayersMenuPresenter";
 import {PlayersMenuViewModel} from "../presentation/viewModels/PlayersMenuViewModel";
 import {SaveIdentityPresenter} from "../presentation/SaveIdentityPresenter";
@@ -47,13 +47,13 @@ function createLoadConfigurationPageUseCase(presenter: ConfigurationPagePresente
   return new LoadConfigurationPage(createSaveSectionsReader(), presenter);
 }
 
-export function createLoadEnergyLevelsSection(): UseCaseWithPresenter<LoadSaveSectionsRequest, EnergyLevelsViewModel> {
-  const presenter = new EnergyLevelsPresenter();
-  return {useCase: createLoadEnergyLevelsSectionUseCase(presenter), presenter};
+export function createLoadPowerPage(): UseCaseWithPresenter<LoadSaveSectionsRequest, PowerPageViewModel> {
+  const presenter = new PowerPagePresenter();
+  return {useCase: createLoadPowerPageUseCase(presenter), presenter};
 }
 
-function createLoadEnergyLevelsSectionUseCase(presenter: EnergyLevelsPresenter): LoadEnergyLevelsSection {
-  return new LoadEnergyLevelsSection({
+function createLoadPowerPageUseCase(presenter: PowerPagePresenter): LoadPowerPage {
+  return new LoadPowerPage({
     saveSectionsReader: createSaveSectionsReader(),
     energyLevelsReader: new EnergyLevelsReaderService(),
     gameReleasesReader: new GameReleasesReaderService(),

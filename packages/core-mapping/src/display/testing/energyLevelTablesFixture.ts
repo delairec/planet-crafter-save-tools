@@ -25,6 +25,6 @@ export const ENERGY_LEVEL_TABLES: EnergyLevelTables = {
 };
 
 export const OPTIMIZER_RANGES: OptimizerRangesByWorldObjectName = {
-  Optimizer1: {radius: 120, maxMachines: 5},
-  Optimizer2: {radius: 250, maxMachines: 8}
+  Optimizer1: {radius: 120, maxMachines: 5, fuseSlots: 1},
+  Optimizer2: {radius: 250, maxMachines: 8, fuseSlots: 3}
 };

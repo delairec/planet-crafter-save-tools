@@ -1,0 +1,131 @@
+.power-planet-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.power-planet-tab {
+    padding: var(--space-xs) var(--space-md);
+    border: 2px solid var(--neon-purple);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+    color: var(--content);
+    font: inherit;
+    cursor: pointer;
+}
+
+.power-planet-tab[aria-selected="true"] {
+    background-color: var(--neon-purple);
+    color: var(--inverted);
+    font-weight: var(--semibold);
+}
+
+.power-planet-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.power-planet-zone .notification {
+    margin: 0 0 var(--space-sm);
+}
+
+.power-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: var(--space-md);
+    margin: var(--space-md) 0;
+}
+
+.power-tile {
+    min-width: 0;
+    padding: var(--space-sm) var(--space-md);
+    border: 3px solid var(--neon-purple);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+}
+
+.power-tile dt {
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
+.power-tile dd {
+    margin: 0;
+}
+
+.power-tile-value {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-xxs);
+    font-size: var(--text-xl);
+    font-weight: var(--semibold);
+    overflow-wrap: anywhere;
+}
+
+.power-load-meter {
+    display: grid;
+    gap: var(--space-xxs);
+    margin-top: var(--space-sm);
+}
+
+.power-load-meter-track {
+    display: block;
+    height: var(--space-sm);
+    overflow: hidden;
+    border-radius: var(--radius-xs);
+    background-color: var(--elevated);
+}
+
+.power-load-meter-fill {
+    display: block;
+    height: 100%;
+    background-color: var(--series-consumption);
+}
+
+.power-load-meter-label,
+.power-table-summary,
+.power-breakdown-summary {
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
+.power-table-section {
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.power-table-title {
+    margin: var(--space-md) 0 var(--space-xs);
+}
+
+.power-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.power-table th,
+.power-table td {
+    padding: var(--space-xxs) var(--space-sm);
+    border-bottom: 1px solid var(--border-color-inverted);
+    text-align: left;
+}
+
+.power-table .power-table-figure {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.power-table tfoot {
+    font-weight: var(--semibold);
+}
+
+.power-breakdown-tables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: var(--space-md);
+}

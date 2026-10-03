@@ -678,3 +678,21 @@ RULE APlayerWearsAtMostOneItemOfEachEquipmentKind
 		+ "twice, and the equipment size 4 with nothing worn, then 12, 16, 20 and 24 with the"
 		+ "exoskeleton tiers 2 to 5"
 		REF @PROJECT.DNC
+
+RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the power balance of a planet producing power is deficit when its available power is"
+		+ "negative, tight when the available power is below a tenth of its production, and surplus"
+		+ "otherwise"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/assessPowerBalance.spec.ts::When"
+			+ "the planet produces power"
+	SPEC "a planet producing nothing is in deficit when it consumes and balanced otherwise"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/assessPowerBalance.spec.ts::When"
+			+ "the planet produces nothing"
+	RATIONALE "The game shows no status for the power of a planet, only its figures; the balance"
+		+ "reads them as the owner does, a tenth of the production left being the margin under"
+		+ "which a new machine may tip the planet into deficit"
+	SOURCE "Owner ruling at the launch of FEAT139 on 2026-10-03: the threshold between a tight and"
+		+ "a surplus balance is a tenth of the production"
+		REF @TASK.FEAT139
