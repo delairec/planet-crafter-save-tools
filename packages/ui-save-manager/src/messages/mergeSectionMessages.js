@@ -13,4 +13,3 @@ export const mergeSectionSaveAPrecedenceNotice =
   + 'swap the saves to change which one prevails. When only one of them is on Prime, that save acts as save A '
   + 'whatever their order.';
 export const mergeSectionHint = 'A merge produces a new file and never modifies the originals.';
-export const mergeSectionSaveDropHint = 'Drop a save here or choose a file.';

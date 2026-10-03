@@ -20,12 +20,11 @@ import {
   mergeSectionSaveALabel,
   mergeSectionSaveAPrecedenceNotice,
   mergeSectionSaveBLabel,
-  mergeSectionSaveDropHint,
   mergeSectionSwapButtonLabel,
   mergeSectionSwapIcon,
   mergeSectionTitle
 } from '~/messages/mergeSectionMessages';
-import {tooManyFilesForOneSaveMessage, tooManyFilesForTwoSavesMessage} from '~/messages/dropZoneMessages';
+import {saveDropHint, tooManyFilesForOneSaveMessage, tooManyFilesForTwoSavesMessage} from '~/messages/dropZoneMessages';
 
 interface MergeSectionProps {
   onMergeStarted: () => void;
@@ -94,31 +93,31 @@ export default function MergeSection(props: MergeSectionProps) {
       <SectionTitle testId="merge-title" hint={mergeSectionHint}>{mergeSectionTitle}</SectionTitle>
       <Notification severity="information" testId="merge-precedence-notice">{mergeSectionSaveAPrecedenceNotice}</Notification>
       <DropZone label={mergeSectionTitle} testId="merge-area" maximumFileCount={2} tooManyFilesMessage={tooManyFilesForTwoSavesMessage}
-                onFilesDropped={handleSavesDropped} class="card merge-form">
+                onFilesDropped={handleSavesDropped} class="card save-form">
         <div class="merge-save-areas">
           <DropZone label={mergeSectionSaveALabel} testId="save-a-area" maximumFileCount={1}
-                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="merge-save-area"
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area"
                     onFilesDropped={(files) => selectFileInInput(saveAInput, files[0])}>
             <SaveFileField label={mergeSectionSaveALabel} testId="save-a" ref={saveAInput}
                            onChange={(event) => setFileA(event.currentTarget.files?.[0] ?? null)}/>
-            <p class="text-color-muted" data-testid="save-a-drop-hint">{mergeSectionSaveDropHint}</p>
+            <p class="text-color-muted" data-testid="save-a-drop-hint">{saveDropHint}</p>
           </DropZone>
           <DropZone label={mergeSectionSaveBLabel} testId="save-b-area" maximumFileCount={1}
-                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="merge-save-area"
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area"
                     onFilesDropped={(files) => selectFileInInput(saveBInput, files[0])}>
             <SaveFileField label={mergeSectionSaveBLabel} testId="save-b" ref={saveBInput}
                            onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/>
-            <p class="text-color-muted" data-testid="save-b-drop-hint">{mergeSectionSaveDropHint}</p>
+            <p class="text-color-muted" data-testid="save-b-drop-hint">{saveDropHint}</p>
           </DropZone>
         </div>
-        <div class="merge-actions">
+        <div class="save-form-actions">
           <IconButton icon={mergeSectionSwapIcon} label={mergeSectionSwapButtonLabel} testId="swap-saves"
                       onClick={handleSwap} disabled={!fileA() && !fileB()}/>
           <CheckboxField label={mergeSectionPreferLegacyFormatLabel}
                          description={mergeSectionPreferLegacyFormatDescription}
                          testId="prefer-legacy-format"
                          checked={preferLegacyFormat()} onChange={setPreferLegacyFormat}/>
-          <button class="button-neon-pink merge-actions-submit" data-testid="merge" onClick={handleMerge}
+          <button class="button-neon-pink save-form-submit" data-testid="merge" onClick={handleMerge}
                   disabled={!fileA() || !fileB() || isMerging()}>{mergeButtonLabel}</button>
         </div>
         <Show when={isMerging()}>

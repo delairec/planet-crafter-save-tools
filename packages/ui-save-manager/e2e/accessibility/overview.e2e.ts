@@ -59,14 +59,14 @@ test.describe('Overview page accessibility', () => {
       await expect(page.getByTestId('visualize')).toHaveAccessibleName('Visualize');
     });
 
-    test('should title the display area with a second level heading', async ({page}) => {
+    test('should title the display area with a third level heading', async ({page}) => {
       // Act
       await page.goto('/load-save');
 
       // Assert
       await expect(page.getByTestId('display-title')).toHaveRole('heading');
       await expect(page.getByTestId('display-title')).toHaveAccessibleName('Display a save\'s data');
-      await expect(page.getByTestId('display-title')).toMatchAriaSnapshot('- heading [level=2]');
+      await expect(page.getByTestId('display-title')).toMatchAriaSnapshot('- heading [level=3]');
     });
 
     test('should mark the version footer as the page footer', async ({page}) => {
