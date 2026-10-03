@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "equipmentKinds.schema.json",
+  "title": "Equipment kinds",
+  "description": "Equipment kind of each world object a player can wear, the kinds in the order the player card shows their slots.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "worldObjectName",
+      "kind"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "worldObjectName": {
+        "type": "string",
+        "minLength": 1
+      },
+      "kind": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

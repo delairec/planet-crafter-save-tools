@@ -71,6 +71,7 @@ export class FakeSaveSectionsMapperService implements SaveSectionsMapperPort {
       id: '76561190000000001',
       name: 'Nikowa',
       inventory: ['Backpack4'],
+      inventorySize: 12,
       equipment: ['OxygenTank3'],
       planetId: 'Toxicity',
       host: true,
@@ -79,6 +80,7 @@ export class FakeSaveSectionsMapperService implements SaveSectionsMapperPort {
       id: '76561190000000007',
       name: 'Chileny',
       inventory: [],
+      inventorySize: 12,
       equipment: [],
       host: false,
       gauges: {oxygen: 100, health: 100, thirst: 0}

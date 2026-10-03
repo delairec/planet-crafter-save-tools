@@ -31,6 +31,19 @@ test.describe('Players page', () => {
       await expect(page.getByTestId('player-0-gauge-thirst-amount')).toHaveText('96 / 100');
     });
 
+    test('should show the equipment of each player as slots and their inventory grouped', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, otherPlayerSaveFixturePath);
+
+      // Act
+      await page.getByTestId('more-players').click();
+
+      // Assert
+      await expect(page.getByTestId('player-0-equipment-caption')).toHaveText('Equipment · 2 of 20 slots');
+      await expect(page.getByTestId('player-0-inventory-caption')).toHaveText('Inventory · 2 of 20 slots, 2 kinds');
+      await expect(page.getByTestId('player-0-inventory-empty-slots')).toHaveText('Empty slots ×18');
+    });
+
     test('should open on a breadcrumb naming the Players group and the Players page', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, otherPlayerSaveFixturePath);

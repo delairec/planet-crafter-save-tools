@@ -1,6 +1,7 @@
 import {For, Show} from 'solid-js';
-import FieldsGroup from '~/components/structure/FieldsGroup';
+import EquipmentSlots from '~/components/players/EquipmentSlots';
 import HostBadge from '~/components/players/HostBadge';
+import InventoryChips from '~/components/players/InventoryChips';
 import PlayerGauge from '~/components/players/PlayerGauge';
 import {PlayerCardViewModel} from 'core-mapping/display/presentation/viewModels/PlayersPageViewModel';
 
@@ -27,9 +28,8 @@ export default function PlayerCard(props: PlayerCardProps) {
             {(gauge) => <PlayerGauge gauge={gauge} testId={`player-${props.index}-gauge-${gauge.kind}`}/>}
           </For>
         </div>
-        <div class="fields-group-container">
-          <FieldsGroup columns={() => props.player.columns}/>
-        </div>
+        <EquipmentSlots equipment={props.player.equipment} index={props.index}/>
+        <InventoryChips inventory={props.player.inventory} index={props.index}/>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import {UnreadableLine} from "../../save/domain/save/SaveSectionLocation";
 import {describe, expect, it, mock} from 'bun:test';
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {LoadPlayersPage} from './LoadPlayersPage';
+import {EquipmentKindsReaderPort} from './ports/EquipmentKindsReaderPort';
 import {OxygenTankCapacitiesReaderPort} from './ports/OxygenTankCapacitiesReaderPort';
 import {PlayersPagePresenterPort} from './ports/PlayersPagePresenterPort';
 import {SaveSectionsReaderPort} from './ports/SaveSectionsReaderPort';
@@ -18,12 +19,15 @@ function createPresenter(): PlayersPagePresenterPort {
 function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: PlayersPagePresenterPort): LoadPlayersPage {
   const worldObjectLabelsReader: WorldObjectLabelsReaderPort = {readWorldObjectLabels: () => WORLD_OBJECT_LABELS};
   const oxygenTankCapacitiesReader: OxygenTankCapacitiesReaderPort = {readOxygenTankCapacities: () => ({OxygenTank3: 280})};
+  const equipmentKindsReader: EquipmentKindsReaderPort = {
+    readEquipmentKinds: () => [{worldObjectName: 'OxygenTank3', kind: 'Oxygen tank'}, {worldObjectName: 'Backpack4', kind: 'Backpack'}]
+  };
 
-  return new LoadPlayersPage({saveSectionsReader, worldObjectLabelsReader, oxygenTankCapacitiesReader}, presenter);
+  return new LoadPlayersPage({saveSectionsReader, worldObjectLabelsReader, oxygenTankCapacitiesReader, equipmentKindsReader}, presenter);
 }
 
 describe('LoadPlayersPage', () => {
-  it('should present a card per player, its gauges measured against the maximum its equipment gives', async () => {
+  it('should present a card per player, its gauges measured against the maximum its equipment gives, its equipment in slots and its inventory grouped', async () => {
     // Arrange
     const displayPlayersPage = mock<PlayersPagePresenterPort['displayPlayersPage']>();
     const presenter: PlayersPagePresenterPort = {displayPlayersPage, displaySaveWithUnreadableLines: mock()};
@@ -45,8 +49,8 @@ describe('LoadPlayersPage', () => {
             health: {value: 72.5, maximum: 100, percentage: 72.5},
             thirst: {value: 96, maximum: 100, percentage: 96}
           },
-          equipment: ['OxygenTank3'],
-          inventory: ['Backpack4']
+          equipment: {slots: [{kind: 'Oxygen tank', worldObjectName: 'OxygenTank3'}, {kind: 'Backpack'}], wornCount: 1, slotCount: 2},
+          inventory: {items: [{worldObjectName: 'Backpack4', count: 1}], itemCount: 1, slotCount: 12, kindCount: 1, freeSlotCount: 11}
         },
         {
           name: 'Chileny',
@@ -57,8 +61,8 @@ describe('LoadPlayersPage', () => {
             health: {value: 100, maximum: 100, percentage: 100},
             thirst: {value: 0, maximum: 100, percentage: 0}
           },
-          equipment: [],
-          inventory: []
+          equipment: {slots: [{kind: 'Oxygen tank'}, {kind: 'Backpack'}], wornCount: 0, slotCount: 2},
+          inventory: {items: [], itemCount: 0, slotCount: 12, kindCount: 0, freeSlotCount: 12}
         }
       ],
       worldObjectLabels: {Backpack4: 'Backpack T4'}

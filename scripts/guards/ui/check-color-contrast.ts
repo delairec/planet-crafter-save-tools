@@ -139,6 +139,20 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
+    description: 'an empty equipment slot on its card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot.empty',
+    foreground: 'muted',
+    background: 'surface-card'
+  },
+  {
+    description: 'the kind of an equipment slot on its card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot-kind',
+    foreground: 'muted',
+    background: 'surface-card'
+  },
+  {
     description: 'a loading or placeholder message on the page background',
     file: 'packages/ui-save-manager/src/styles/typography.css',
     selector: '.text-color-muted',
