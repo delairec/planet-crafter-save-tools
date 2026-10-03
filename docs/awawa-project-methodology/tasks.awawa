@@ -872,7 +872,8 @@ TASK FEAT143
 
 TASK FEAT144
 	TITLE "Give the Players page its view model: player cards with the host badge and vital gauges"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 263
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27 and narrowed on"
 		+ "2026-10-02 to the cards and the gauges, the equipment slots and the grouped inventory"
 		+ "being a task of their own; the maximum of each gauge and whether the toxicity gauge is"
@@ -883,18 +884,32 @@ TASK FEAT144
 		+ "oxygen, a sandwich for health and a flask for thirst, with a clear outline and a visible"
 		+ "empty part, the percentage next to the label and the value over its maximum under the"
 		+ "gauge"
+		IMPL "packages/ui-save-manager/src/routes/players.tsx"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerCard.tsx"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerGauge.tsx"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts"
 	SPEC "inside a card the equipment and the inventory stay listed item by item, as the page lists"
 		+ "them today, until the task of the slots lands"
 		REF @TASK.FEAT185
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts::PlayerCardViewModel"
 	SPEC "a gauge maximum that depends on the equipment worn is read from a value table of a data-"
 		+ "package, by an infrastructure adapter behind an application port; the use case computes"
 		+ "the percentages from domain values and hands them to the presenter as primitives of its"
 		+ "application response, and the presenter renders them"
+		IMPL "packages/data-world-objects/oxygenTankCapacities.json"
+		IMPL "packages/core-mapping/src/display/infrastructure/OxygenTankCapacitiesReaderService.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerGaugeResponse"
 	SPEC "the Players page reads one view model, one card per player, built by one presenter from"
 		+ "one use case; the Players section controller, presenter and view model of today are"
 		+ "retired, every module left without an importer is deleted, and the anchors and the"
 		+ "wording of the decisions naming them are rewritten"
+		IMPL "packages/core-mapping/src/display/controllers/LoadPlayersPageController.ts"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts::loadPlayersPageController"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge"
+		IMPL "packages/cli-validate"
 	WAVE @WAVE.15
 	RATIONALE "The Players section lists today the equipment and the inventory item by item, in"
 		+ "save order, without quantities, and shows no gauge. The owner asked for more graphics on"
@@ -1197,7 +1212,7 @@ TASK REFACTOR159
 		+ "application responses holding primitives, built by their use case, and no longer value"
 		+ "objects of the domain; no entity builds a projection for a presenter"
 		IMPL "packages/core-mapping/src/display/application/responses/PlayerMenuEntryResponse.ts"
-		IMPL "packages/core-mapping/src/display/application/responses/PlayerSummaryResponse.ts"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerCardResponse"
 		IMPL "packages/core-mapping/src/display/application/responses/SaveIdentityResponse.ts"
 		IMPL "packages/core-mapping/src/display/application/responses/TerraformationLevelSummaryResponse.ts"
 		IMPL "packages/core-mapping/src/display/domain/entities/TerraformationLevelEntity.ts::get"
@@ -1870,7 +1885,7 @@ TASK REFACTOR168
 		IMPL "packages/core-mapping/src/display/application/ports/OptimizerRangesReaderPort.ts::OptimizerRangesReaderPort"
 		IMPL "packages/core-mapping/src/display/application/ports/PlanetNamesReaderPort.ts::PlanetNamesReaderPort"
 		IMPL "packages/core-mapping/src/display/application/ports/WorldObjectLabelsReaderPort.ts::WorldObjectLabelsReaderPort"
-		IMPL "packages/core-mapping/src/display/application/responses/PlayersResponse.ts::worldObjectLabels"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::worldObjectLabels"
 		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts::worldObjectLabels"
 	SPEC "shared-save-processing and the infrastructure adapters of core-mapping read a table"
 		+ "through the selectors of its data- package, never through the JSON file"
@@ -2464,7 +2479,9 @@ TASK FEAT189
 	STATUS todo
 	DESC "ratified on 2026-10-02 without refinement; carried out in an interactive session with the"
 		+ "owner, never by a background agent: the last adjustments are listed with the owner on"
-		+ "the running application when the task starts; the home page is kept as it is for now"
+		+ "the running application when the task starts; the home page is kept as it is for now;"
+		+ "the icons of the gauges of the player card are revisited with the owner"
+		REF @TASK.FEAT144
 	SPEC "every page that shows the menu wears the titles, the cards and the buttons of page F;"
 		+ "none shows a centred section title, a glowing card title or a field group of the earlier"
 		+ "look"
@@ -2486,6 +2503,9 @@ TASK FEAT189
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner comment of 2026-10-03 on pull request 263: the icons of the gauges of the player"
+		+ "card are to be revisited"
+		PR 263
 
 TASK CHORE191
 	TITLE "Stop ignoring GHSA-vfj7-8cjw-p6xm in the audit script once braces publishes a fix"
@@ -2497,3 +2517,48 @@ TASK CHORE191
 		+ "until; upstream fix read open on 2026-10-03"
 		PR 265
 		REF @URL.BracesNestedPatternFix
+
+TASK FEAT190
+	TITLE "Show the toxicity gauge on the player card"
+	STATUS draft
+	DESC "split from FEAT144 in the review of pull request 263; when the task starts, two facts are"
+		+ "observed in game: the toxicity maximum each of the three Toxins Filter tiers gives, and"
+		+ "whether a filter outside the equipment counts"
+		REF @HYPOTHESIS.EachToxinsFilterTierRaisesTheToxicityMaximumByFive
+	SPEC "each player card shows a fourth flat gauge for toxicity, filled by percentage of its"
+		+ "maximum like the three vital gauges, the percentage next to the label and the value over"
+		+ "its maximum under the gauge"
+	SPEC "the toxicity gauge is full when playerGaugeToxic equals its maximum and empty at 0, the"
+		+ "value being the protection left, as the toxicity meter of the game runs down from its"
+		+ "maximum to 0"
+	SPEC "the toxicity maximum is 5 without a Toxins Filter in the equipment; the maximum each"
+		+ "Toxins Filter tier, T1 to T3, gives is read from a value table of a data- package, by an"
+		+ "infrastructure adapter behind an application port, a filter in any other inventory"
+		+ "counting for nothing, and the use case hands value, maximum and percentage to the"
+		+ "presenter as primitives of its application response"
+	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.FEAT144
+	RATIONALE "The save carries the toxicity of each player as playerGaugeToxic, without its"
+		+ "maximum. The base maximum is 5, and a Toxins Filter in the equipment is assumed to raise"
+		+ "it by an amount not yet observed, which the wiki contradicts by saying a filter slows"
+		+ "the depletion of the meter: a gauge drawn before the observation would measure a"
+		+ "filtered player against a wrong maximum. The meter starts at its maximum and runs down"
+		+ "to 0, so playerGaugeToxic is the protection left and the 4.9999995 of the private"
+		+ "reference save Standard-5-toxic.json is a full gauge"
+		REF @SECTION.Players
+		REF @DECISION.APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
+		REF @URL.WikiToxinsFilters
+	SOURCE "Owner reply of 2026-10-03 in the review of pull request 263: the toxicity gauge is 5 at"
+		+ "base and the Toxins Filter T1 and T2 raise it by an amount to verify in game; the"
+		+ "private reference save Standard-5-toxic.json holds a player at 5 with no Toxins Filter"
+		PR 263
+		REF @PROJECT.DNC
+	SOURCE "Owner ruling of 2026-10-03 in the review of pull request 263: a T3 Toxins Filter gives"
+		+ "20, and a filter counts only in the equipment, pending a check in game"
+		PR 263
+	SOURCE "Read on 2026-10-03 in the review of pull request 263: the wiki page Toxins Filters"
+		PR 263
+		REF @URL.WikiToxinsFilters
+	SOURCE "Owner's check in game of 2026-10-03, stated in the review of pull request 263: the"
+		+ "toxicity meter starts at its maximum and runs down to 0"
+		PR 263

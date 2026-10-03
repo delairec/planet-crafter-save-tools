@@ -619,3 +619,22 @@ RULE ASaveDesignatesExactlyOneHostPlayer
 	SOURCE "Owner ruling during the refinement of REFACTOR160: the unique host check the validator"
 		+ "carried is a statement about the save, recorded in the specification area"
 		PR 231
+
+RULE TheOxygenMaximumIsTheCapacityOfTheTankWorn
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the oxygen gauge of a player fills up to the capacity of the oxygen tank in their"
+		+ "equipment, 100 without a tank; health and thirst fill up to 100 whatever is worn"
+		ATTESTED_BY "packages/data-world-objects/oxygenTankCapacities.json"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/resolveOxygenCapacity.spec.ts"
+	APPLIES_TO_SECTION @SECTION.Players
+	VALUES_FROM @DATATABLE.OxygenTankCapacities
+	RATIONALE "The save stores the current value of each gauge and not its maximum, which the"
+		+ "equipment decides; a player wears one tank at a time"
+	SOURCE "Wiki page Oxygen Tanks read on 2026-10-02: base 100, then 145, 200, 280, 370 and 450"
+		+ "for the tiers 1 to 5"
+		REF @URL.WikiOxygenTanks
+	SOURCE "Gauges of the players of the reference saves, compared on 2026-10-02 with the tank each"
+		+ "wears: full players at 280, 370 and 450 with the tiers 3, 4 and 5, at 100 without a"
+		+ "tank, health and thirst never above 100"
+		REF @PROJECT.DNC

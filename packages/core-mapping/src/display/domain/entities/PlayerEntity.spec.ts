@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {PlayerEntity, type PlayerEntityInput} from './PlayerEntity';
+import {PlayerGaugesValueObject} from '../valueObjects/PlayerGaugesValueObject';
 
 function createPlayerInput(overrides: Partial<PlayerEntityInput> = {}): PlayerEntityInput {
   return {
@@ -9,6 +10,7 @@ function createPlayerInput(overrides: Partial<PlayerEntityInput> = {}): PlayerEn
     equipment: ['OxygenTank5'],
     planetId: 'Toxicity',
     host: true,
+    gauges: {oxygen: 280, health: 72.5, thirst: 96},
     ...overrides
   };
 }
@@ -28,6 +30,7 @@ describe('PlayerEntity', () => {
     expect(player.equipment).toEqual(['OxygenTank5']);
     expect(player.planetId).toBe('Toxicity');
     expect(player.isHost).toBe(true);
+    expect<PlayerGaugesValueObject>(player.gauges).toEqual({oxygen: 280, health: 72.5, thirst: 96});
   });
 
   describe('When its belongings are read', () => {

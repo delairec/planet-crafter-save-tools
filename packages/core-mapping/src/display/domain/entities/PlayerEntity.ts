@@ -1,3 +1,5 @@
+import {PlayerGaugesValueObject} from "../valueObjects/PlayerGaugesValueObject";
+
 export interface PlayerEntityInput {
   readonly id: string;
   readonly name: string;
@@ -5,6 +7,7 @@ export interface PlayerEntityInput {
   readonly equipment: readonly string[];
   readonly planetId?: string;
   readonly host: boolean;
+  readonly gauges: PlayerGaugesValueObject;
 }
 
 export class PlayerEntity {
@@ -14,6 +17,7 @@ export class PlayerEntity {
   private readonly _equipment: readonly string[];
   private readonly _planetId: string | undefined;
   private readonly _host: boolean;
+  private readonly _gauges: PlayerGaugesValueObject;
 
   constructor(input: PlayerEntityInput) {
     this._id = input.id;
@@ -22,6 +26,7 @@ export class PlayerEntity {
     this._equipment = [...input.equipment];
     this._planetId = input.planetId;
     this._host = input.host;
+    this._gauges = {...input.gauges};
   }
 
   get id(): string {
@@ -46,5 +51,9 @@ export class PlayerEntity {
 
   get isHost(): boolean {
     return this._host;
+  }
+
+  get gauges(): PlayerGaugesValueObject {
+    return this._gauges;
   }
 }

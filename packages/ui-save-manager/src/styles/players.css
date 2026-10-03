@@ -1,0 +1,70 @@
+.players-count {
+    font-size: var(--text-sm);
+}
+
+.player-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+    .player-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+.player-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.player-gauges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-md);
+}
+
+.player-gauge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.player-gauge-empty {
+    fill: var(--subtle);
+}
+
+.player-gauge-oxygen .player-gauge-filled {
+    fill: var(--neon-cyan);
+}
+
+.player-gauge-health .player-gauge-filled {
+    fill: var(--neon-pink);
+}
+
+.player-gauge-thirst .player-gauge-filled {
+    fill: var(--information);
+}
+
+.player-gauge-outline {
+    fill: none;
+    stroke: var(--content);
+    stroke-width: 2;
+}
+
+.player-gauge-readings {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-gauge-label {
+    font-weight: var(--semibold);
+}
+
+.player-gauge-amount {
+    font-size: var(--text-sm);
+}
