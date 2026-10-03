@@ -25,7 +25,7 @@ ours — our method, our starter, our conduct — stays in the reports.
 | CTX | Context savings example | 2026-09-22 | what one session loaded into the agent's context by reading the corpus and its instructions, in lines of output, and the levers that would lower it |
 | M4 | Migration 4 | 2026-09-25 | the second walk of the starter, on its version 2: a corpus built from scratch for 23 files of agent instructions, 478 statements replaced by 237 entities |
 | PR | Pull requests #113 to #219 | 2026-09-28 | a week of delivery on the corpus: 106 pull requests measured in aggregate, eleven of them collected in full — 140 transcripts, 2,891 `awawa` calls |
-| AG | Agent roles report | 2026-10-03 | a type added to the corpus of agent instructions so that one `context` call prints what each of seven agent roles starts with: 14 entities added, and a week of 5,402 `awawa` calls as its baseline |
+| AG | Agent roles report | 2026-10-03 | a type added to the corpus of agent instructions so that one `context` call prints what each of seven agent roles starts with: 14 entities added, and as its baseline a week of 346 transcripts and 7,905 `awawa` calls |
 
 A reference reads « report · number »: `F·02` is defect 02 of the field report, `M3·5` defect 5 of section 5 of
 Migration 3. Migration 1, the context report and Migration 4 number nothing; `M1·6` is the sixth row of the « What went wrong »
@@ -68,7 +68,7 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R51 | `show` takes `--skip CATEGORY`, as `context` does | `CTX·1` a task read by `show` carries its `RATIONALE` and `SOURCE`: about 60 lines where only its `SPEC` lines were used | CTX |
 | R56 | `lint --closure` takes `--skip CATEGORY`, as `context` does | `PR·3` the closure footer carries the provenance hub: 111 to 132 names for four tasks, and it scales with the hub, not the task | PR |
 | R57 | `status --where FIELD==VALUE` without a type selects across the types that declare the field | `PR·5` `status --where STATUS==archived .` exits 2: a cleanup lists one type at a time | PR |
-| R58 | `context` cuts its output on request, at entity boundaries — `--max-chars N --part K`, « part k of n » on the first line | `AG·1` a package cannot be bounded: the entry is 23 445 characters and a role package up to 57 682 where one hook of the harness may add 10 000, so a script stands between the tool and the hook; 122 of 316 `context` outputs of a week pass that size | AG |
+| R58 | `context` cuts its output on request, at entity boundaries — `--max-chars N --part K`, « part k of n » on the first line | `AG·1` a package cannot be bounded: the entry is 23 445 characters and a role package up to 57 682 where one hook of the harness may add 10 000, so a script stands between the tool and the hook; of the 316 `context` calls a week ran alone, 122 returned more than that | AG |
 | R59 | A depth per field — `--depth ASSUMES=2,OFFERS=1` — or a `--skip` limited to what a named field reaches | `AG·3` one `--depth` for every edge: a package cannot expand the rules of the triggers a role assumes and only name those it is offered, and that edge was left out of the type | AG |
 
 ## Writing a corpus
@@ -162,7 +162,7 @@ above are asked of a tool that carried the method through four migrations and 10
 
 ---
 
-*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example, on 2026-09-25 with Migration 4
+*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example, on 2026-09-25 with Migration 4,
 on 2026-09-29 with the pull-request report of 2026-09-28 and on 2026-10-03 with the agent roles report of that day, all written on awawa 2.7.0. One defect was probed again for this
 page and withdrawn, `M2·15`; every other figure keeps the perimeter of the report it comes from, and a claim wrong
 at the source is wrong here.*
