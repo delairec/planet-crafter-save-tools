@@ -49,3 +49,10 @@ DATATABLE OxygenTankCapacities
 	KEY worldObjectName
 	JSON_SCHEMA "packages/data-world-objects/oxygenTankCapacities.schema.json"
 	DESC "the oxygen capacity of a player wearing each oxygen tank tier"
+
+DATATABLE EquipmentKinds
+	TABLE "packages/data-world-objects/equipmentKinds.json"
+	KEY worldObjectName
+	JSON_SCHEMA "packages/data-world-objects/equipmentKinds.schema.json"
+	DESC "the equipment kind of each world object a player can wear, the kinds in the order of the"
+		+ "slots of the player card"
