@@ -4342,6 +4342,10 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 		+ "SysTi, as in 4.369 SpdSysTi"
 		IMPL "packages/core-mapping/src/display/presentation/formatters/formatNumber/systemTerraformationIndex.strategy.ts"
 		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js"
+	SPEC "the SysTi tile opens the overview tiles, on the left"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewTiles.tsx::overview-system-terraformation-index"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should open the tiles on the"
+			+ "SysTi, on the left"
 	REJECTED "the plain sum of the Terraformation Index of the planets, the arithmetic of the"
 		+ "sample data of the mockup: the wiki gives the product, and a reference save whose"
 		+ "indexes sum to 3.65e14 holds objects the game unlocks at 1.5e31 SysTi"
@@ -4354,6 +4358,8 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 		+ "while a SysTi passes 1e54, and the game writes Qi, No and Ud where SI writes E, Z and Y"
 	REJECTED "the label SysTi alone, as the mockup writes it: the tile label spells out the System"
 		+ "Terraformation Index, the abbreviation kept as the unit of the figure"
+	REJECTED "the prefixes UDc, DDc, TDc on up to SpDc, OcDc and NoDc of the first SysTi table of"
+		+ "the wiki: the game assembly writes Ud, Dd, Td on up to Spd, Ocd and Nod"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT132
@@ -4364,4 +4370,6 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 		+ "reference saves"
 		REF @URL.WikiTerraformationIndex
 		REF @PROJECT.DNC
+		PR 268
+	SOURCE "Owner review of 2026-10-03: the SysTi is the first card of the list, on the left"
 		PR 268
