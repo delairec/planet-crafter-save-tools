@@ -5,7 +5,7 @@ const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
 const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
 
-const loadHint = 'Loading reads the save in this browser and never modifies the file.';
+const loadHint = 'Loading reads and validates the save in this browser and never modifies the file.';
 
 const saveDropHint = 'Drop a save here or choose a file.';
 
@@ -31,7 +31,7 @@ test.describe('Load save page', () => {
   });
 
   test.describe('When the load form is shown', () => {
-    test('should tell that loading reads the save in this browser and never modifies the file', async ({page}) => {
+    test('should tell that loading reads and validates the save in this browser and never modifies the file', async ({page}) => {
       // Act
       await page.goto('/load-save');
 
