@@ -4373,3 +4373,24 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 		PR 268
 	SOURCE "Owner review of 2026-10-03: the SysTi is the first card of the list, on the left"
 		PR 268
+
+DECISION TheScrollingBodyOfATableCardIsANamedRegionInTheTabSequence
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	SPEC "the body of a table card that scrolls on its own is a region in the tab sequence, named"
+		+ "by the title of its card, so that the keyboard can scroll it"
+		IMPL "packages/ui-save-manager/src/components/power/PowerBreakdownTable.tsx::role=\"region\""
+			+ "aria-labelledby={titleId} tabindex=\"0\""
+		IMPL "packages/ui-save-manager/src/components/power/PowerOptimizersTable.tsx::role=\"region\""
+			+ "aria-labelledby={titleId} tabindex=\"0\""
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::should let the"
+			+ "keyboard reach the scrolling body of each table"
+	REJECTED "removing the horizontal scroll of the table body: on a narrow viewport the table then"
+		+ "overflows its card and the page"
+	REJECTED "a tab stop without a role and a name: a screen reader announces an unnamed group when"
+		+ "the keyboard lands on it"
+	RATIONALE "axe reports scrollable-region-focusable on a scrolling body no key can reach, in"
+		+ "firefox and webkit where the Power tables overflow their card"
+		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
+	SOURCE "Owner ruling of 2026-10-03: the Power page accessibility failure inherited from #269 is"
+		+ "fixed in this pull request"
+		PR 268
