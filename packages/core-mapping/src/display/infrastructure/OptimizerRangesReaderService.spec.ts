@@ -8,7 +8,7 @@ describe('OptimizerRangesReaderService', () => {
     const range = new OptimizerRangesReaderService().readOptimizerRanges().Optimizer1;
 
     // Assert
-    expect<OptimizerRangeValueObject | undefined>(range).toEqual({radius: 120, maxMachines: 5});
+    expect<OptimizerRangeValueObject | undefined>(range).toEqual({radius: 120, maxMachines: 5, fuseSlots: 1});
   });
 
   it('should read no range for a machine that is no optimizer', () => {

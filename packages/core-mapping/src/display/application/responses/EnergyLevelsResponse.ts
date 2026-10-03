@@ -17,10 +17,13 @@ export interface OptimizerBoostedMachineResponse {
 export interface OptimizerResponse {
   readonly name: string;
   readonly fuseCount: number;
+  readonly fuseSlots: number;
   readonly boostedMachines: readonly OptimizerBoostedMachineResponse[];
   readonly contribution: number;
   readonly productionRatio?: number;
 }
+
+export type PowerBalanceResponse = 'deficit' | 'tight' | 'surplus' | 'balanced';
 
 export interface PlanetEnergyLevelsResponse {
   readonly planetId: number;
@@ -28,6 +31,7 @@ export interface PlanetEnergyLevelsResponse {
   readonly production: number;
   readonly consumption: number;
   readonly available: number;
+  readonly balance: PowerBalanceResponse;
   readonly productionBreakdown: readonly EnergyBreakdownEntryResponse[];
   readonly consumptionBreakdown: readonly EnergyBreakdownEntryResponse[];
   readonly optimizers: readonly OptimizerResponse[];
