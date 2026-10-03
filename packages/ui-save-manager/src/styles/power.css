@@ -21,13 +21,6 @@
     font-weight: var(--semibold);
 }
 
-.power-planet-title {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-sm);
-}
-
 .power-planet-zone .notification {
     margin: 0 0 var(--space-sm);
 }
@@ -88,24 +81,31 @@
 }
 
 .power-load-meter-label,
-.power-table-summary,
 .power-breakdown-summary {
     color: var(--muted);
     font-size: var(--text-xs);
 }
 
-.power-table-section {
+.power-table-card {
     min-width: 0;
-    overflow-x: auto;
+    margin: var(--space-md) 0;
 }
 
-.power-table-title {
-    margin: var(--space-md) 0 var(--space-xs);
+.power-table-card .card-header h5 {
+    margin: 0;
+    color: var(--inverted);
+    font-size: var(--text-lg);
+    font-weight: var(--bold);
+}
+
+.power-table-body {
+    overflow-x: auto;
 }
 
 .power-table {
     width: 100%;
     border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
 }
 
 .power-table th,
@@ -115,12 +115,27 @@
     text-align: left;
 }
 
+.power-table thead th {
+    color: var(--muted);
+    font-size: var(--text-xs);
+    font-weight: var(--semibold);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.power-table tbody tr:last-child > * {
+    border-bottom: 0;
+}
+
 .power-table .power-table-figure {
     text-align: right;
     white-space: nowrap;
 }
 
-.power-table tfoot {
+.power-table tfoot > tr > * {
+    border-top: 2px solid var(--border-color-inverted);
+    border-bottom: 0;
     font-weight: var(--semibold);
 }
 

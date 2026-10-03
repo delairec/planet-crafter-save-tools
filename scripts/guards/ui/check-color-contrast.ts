@@ -454,11 +454,25 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'surface'
   },
   {
-    description: 'the load meter label of the Power page, on its tile, and its summary lines, on the page background, the darker of the two',
+    description: 'the load meter label of the Power page, on its tile, and its breakdown summary line, on the page background, the darker of the two',
     file: 'packages/ui-save-manager/src/styles/power.css',
-    selector: '.power-load-meter-label, .power-table-summary, .power-breakdown-summary',
+    selector: '.power-load-meter-label, .power-breakdown-summary',
     foreground: 'muted',
     background: 'canvas'
+  },
+  {
+    description: 'the title of a table card of the Power page, on the neon-cyan pill of its header',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table-card .card-header h5',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'a column header of a table of the Power page, on its card',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table thead th',
+    foreground: 'muted',
+    background: 'surface'
   }
 ];
 
