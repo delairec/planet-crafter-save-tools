@@ -29,6 +29,7 @@ import {LoadOverviewPageRequest} from "../application/requests/LoadOverviewPageR
 import {OverviewPagePresenter} from "../presentation/OverviewPagePresenter";
 import {OverviewPageViewModel} from "../presentation/viewModels/OverviewPageViewModel";
 import {LoadPlayersPage} from "../application/LoadPlayersPage";
+import {EquipmentKindsReaderService} from "../infrastructure/EquipmentKindsReaderService";
 import {OxygenTankCapacitiesReaderService} from "../infrastructure/OxygenTankCapacitiesReaderService";
 import {PlayersPagePresenter} from "../presentation/PlayersPagePresenter";
 import {PlayersPageViewModel} from "../presentation/viewModels/PlayersPageViewModel";
@@ -113,6 +114,7 @@ function createLoadPlayersPageUseCase(presenter: PlayersPagePresenter): LoadPlay
   return new LoadPlayersPage({
     saveSectionsReader: createSaveSectionsReader(),
     worldObjectLabelsReader: new WorldObjectLabelsReaderService(),
-    oxygenTankCapacitiesReader: new OxygenTankCapacitiesReaderService()
+    oxygenTankCapacitiesReader: new OxygenTankCapacitiesReaderService(),
+    equipmentKindsReader: new EquipmentKindsReaderService()
   }, presenter);
 }

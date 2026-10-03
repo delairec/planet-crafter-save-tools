@@ -1,20 +1,29 @@
 import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
 import {PlayersPagePresenterPort} from "../application/ports/PlayersPagePresenterPort";
-import {PlayerCardResponse, PlayerGaugeResponse, PlayersPageResponse} from "../application/responses/PlayersPageResponse";
+import {PlayerCardResponse, PlayerEquipmentResponse, PlayerGaugeResponse, PlayerInventoryResponse, PlayersPageResponse} from "../application/responses/PlayersPageResponse";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
-import {PlayerCardViewModel, PlayerGaugeKindViewModel, PlayerGaugeViewModel, PlayersPageViewModel} from "./viewModels/PlayersPageViewModel";
 import {
-  playersPageEquipmentLabel,
+  PlayerCardViewModel,
+  PlayerEquipmentViewModel,
+  PlayerGaugeKindViewModel,
+  PlayerGaugeViewModel,
+  PlayerInventoryViewModel,
+  PlayersPageViewModel
+} from "./viewModels/PlayersPageViewModel";
+import {
+  playersPageEmptySlotLabel,
+  playersPageEmptySlotsLabel,
   playersPageHealthGaugeLabel,
   playersPageHostBadgeLabel,
-  playersPageInventoryLabel,
-  playersPageNoEquipmentMessage,
-  playersPageNoItemsMessage,
+  playersPageOtherKindLabel,
   playersPageOxygenGaugeLabel,
   playersPageThirstGaugeLabel,
   resolvePlayersPageCountHint,
+  resolvePlayersPageCountLabel,
+  resolvePlayersPageEquipmentCaption,
+  resolvePlayersPageInventoryCaption,
   resolvePlayersPagePlanetLabel,
   resolvePlayersPageUnknownItemLabel
 } from "./messages/playersPageMessages.js";
@@ -48,10 +57,8 @@ function createPlayerCard(player: PlayerCardResponse, worldObjectLabels: WorldOb
       createGauge('health', playersPageHealthGaugeLabel, player.gauges.health),
       createGauge('thirst', playersPageThirstGaugeLabel, player.gauges.thirst)
     ],
-    columns: [
-      {header: playersPageEquipmentLabel, values: labelWorldObjects(player.equipment, playersPageNoEquipmentMessage, worldObjectLabels)},
-      {header: playersPageInventoryLabel, values: labelWorldObjects(player.inventory, playersPageNoItemsMessage, worldObjectLabels)}
-    ]
+    equipment: createEquipment(player.equipment, worldObjectLabels),
+    inventory: createInventory(player.inventory, worldObjectLabels)
   };
 }
 
@@ -65,9 +72,31 @@ function createGauge(kind: PlayerGaugeKindViewModel, label: string, {value, maxi
   };
 }
 
-function labelWorldObjects(worldObjectNames: readonly string[], emptyMessage: string, worldObjectLabels: WorldObjectLabelsResponse): string[] {
-  if (worldObjectNames.length === 0) {
-    return [emptyMessage];
-  }
-  return worldObjectNames.map((worldObjectName) => worldObjectLabels[worldObjectName] ?? resolvePlayersPageUnknownItemLabel(worldObjectName));
+function createEquipment({slots, wornCount, slotCount}: PlayerEquipmentResponse, worldObjectLabels: WorldObjectLabelsResponse): PlayerEquipmentViewModel {
+  return {
+    caption: resolvePlayersPageEquipmentCaption(wornCount, slotCount),
+    slots: slots.map(({kind, worldObjectName}) => ({
+      kindLabel: kind ?? playersPageOtherKindLabel,
+      itemLabel: worldObjectName === undefined ? playersPageEmptySlotLabel : labelWorldObject(worldObjectName, worldObjectLabels),
+      isEmpty: worldObjectName === undefined
+    }))
+  };
+}
+
+function createInventory(
+  {items, itemCount, slotCount, kindCount, freeSlotCount}: PlayerInventoryResponse,
+  worldObjectLabels: WorldObjectLabelsResponse
+): PlayerInventoryViewModel {
+  return {
+    caption: resolvePlayersPageInventoryCaption(itemCount, slotCount, kindCount),
+    items: items.map(({worldObjectName, count}) => ({
+      label: labelWorldObject(worldObjectName, worldObjectLabels),
+      countLabel: resolvePlayersPageCountLabel(count)
+    })),
+    emptySlots: {label: playersPageEmptySlotsLabel, countLabel: resolvePlayersPageCountLabel(freeSlotCount)}
+  };
+}
+
+function labelWorldObject(worldObjectName: string, worldObjectLabels: WorldObjectLabelsResponse): string {
+  return worldObjectLabels[worldObjectName] ?? resolvePlayersPageUnknownItemLabel(worldObjectName);
 }
