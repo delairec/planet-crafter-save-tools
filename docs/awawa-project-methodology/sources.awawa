@@ -225,9 +225,3 @@ URL WikiToxinsFilters
 	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&oldid=17273&prop=wikitext&format=json"
 	DESC "fandom wiki page Toxins Filters, revision 17273: three tiers, an equipped filter slows"
 		+ "the depletion of the Toxicity meter, no figure"
-
-URL AkarnokdCheatAutoConsumeToxicGauge
-	LOCATION "https://github.com/akarnokd/ThePlanetCrafterMods/blob/332a0aa35ac83d0c5e4acf5a35af111c48d3bd4e/CheatAutoConsume/Plugin.cs#L171-L190"
-	DESC "community mod CheatAutoConsume, commit of 2026-04-15: reads gaugeValue and maxValue of"
-		+ "PlayerGaugeToxic and takes (maxValue - gaugeValue) * 100 / maxValue as the share left"
-		+ "before it consumes a purifier"
