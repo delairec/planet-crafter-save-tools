@@ -638,3 +638,43 @@ RULE TheOxygenMaximumIsTheCapacityOfTheTankWorn
 		+ "wears: full players at 280, 370 and 450 with the tiers 3, 4 and 5, at 100 without a"
 		+ "tank, health and thirst never above 100"
 		REF @PROJECT.DNC
+
+RULE TheInventorySizeOfAPlayerCountsTheSlotsOfTheirBackpack
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the size of the inventory a player entry names counts every slot the player can fill,"
+		+ "those of the backpack worn included: 12 without a backpack, then 16, 20, 24, 28, 35, 45"
+		+ "and 54 with the tiers 1 to 7; the free slots are that size less the items the inventory"
+		+ "holds"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/entities/PlayerEntity.spec.ts"
+	APPLIES_TO_SECTION @SECTION.Inventories
+	APPLIES_TO_SECTION @SECTION.Players
+	RATIONALE "The game writes the size of the inventory again when a backpack is worn, so the save"
+		+ "already carries the capacity the player sees and no backpack table is needed"
+	SOURCE "Wiki page Backpacks, revision 16348, read on 2026-10-03: 12 slots with no backpack, 16,"
+		+ "20, 24, 28 and 35 for the tiers 1 to 5, 45 at the tier 6"
+		REF @URL.WikiBackpacks
+	SOURCE "Inventories of the players of the reference saves, compared on 2026-10-03 with the"
+		+ "backpack each wears: size 12 without a backpack, 24, 28, 35, 45 and 54 with the tiers 3"
+		+ "to 7"
+		REF @PROJECT.DNC
+
+RULE APlayerWearsAtMostOneItemOfEachEquipmentKind
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "a player wears at most one item of each equipment kind, the kind of a wearable world"
+		+ "object being the one the equipment kinds table names"
+		ATTESTED_BY "packages/data-world-objects/equipmentKinds.json"
+	APPLIES_TO_SECTION @SECTION.Inventories
+	VALUES_FROM @DATATABLE.EquipmentKinds
+	RATIONALE "The equipment inventory is a grid of untyped slots, 4 and 4 more per exoskeleton"
+		+ "tier, and the game refuses a second item of a kind already worn; a kind is the family a"
+		+ "world object name belongs to, its tiers and variants sharing it"
+	SOURCE "Wiki page Backpacks, revision 16348, read on 2026-10-03: the player can not equip"
+		+ "multiple backpacks; wiki page Equipment, revision 16330, for the families"
+		REF @URL.WikiBackpacks
+		REF @URL.WikiEquipment
+	SOURCE "Equipment of the 21 players of the reference saves, read on 2026-10-03: no kind worn"
+		+ "twice, and the equipment size 4 with nothing worn, then 12, 16, 20 and 24 with the"
+		+ "exoskeleton tiers 2 to 5"
+		REF @PROJECT.DNC

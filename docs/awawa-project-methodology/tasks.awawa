@@ -2333,7 +2333,8 @@ TASK FEAT184
 
 TASK FEAT185
 	TITLE "Show the equipment of a player as slots and their inventory grouped by kind"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 270
 	DESC "from page F of the mockup, split and ratified on 2026-10-02 from the Players task"
 		+ "ratified on 2026-09-27; whether the inventory size the save carries includes the"
 		+ "backpack slots, and the value table naming the kind of each equipment slot and of each"
@@ -2342,13 +2343,24 @@ TASK FEAT185
 		+ "named by its kind and marked Empty; the inventory groups the items by kind with their"
 		+ "count, under a caption counting the items, the slots and the kinds, and ends on an Empty"
 		+ "slots chip counting the free slots"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts::createEquipment"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts::createInventory"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentSlots.tsx"
+		IMPL "packages/ui-save-manager/src/components/players/InventoryChips.tsx"
 	SPEC "the kind of each slot is a value table of a data- package, read by an infrastructure"
 		+ "adapter behind an application port; the use case computes the counts from domain values"
 		+ "and hands them to the presenter as primitives of its application response, and the"
 		+ "presenter renders them"
+		IMPL "packages/data-world-objects/equipmentKinds.json"
+		IMPL "packages/core-mapping/src/display/infrastructure/EquipmentKindsReaderService.ts"
+		IMPL "packages/core-mapping/src/display/application/ports/EquipmentKindsReaderPort.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts::createPlayerCard"
 	SPEC "the item by item lists of the equipment and of the inventory are gone from the player"
 		+ "card"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerCard.tsx::<EquipmentSlots"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
+		IMPL "packages/cli-validate/cli/validate-cli.node.spec.js"
 	AFTER @TASK.FEAT144
 	WAVE @WAVE.15
 	RATIONALE "The owner asked for empty equipment slots to show and for the inventory to stay"

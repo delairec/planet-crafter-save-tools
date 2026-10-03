@@ -4229,3 +4229,47 @@ DECISION TheToolsPagesDrawTheirSaveFormWithSharedStyles
 	SOURCE "Ruled while delivering FEAT188: the Load save page takes the form pieces the Merge two"
 		+ "saves page leaves"
 		PR 267
+
+DECISION AnEquipmentSlotIsAKindOfTheEquipmentKindsTable
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT185
+	SPEC "the player card shows one equipment slot per kind of the EquipmentKinds table, in the"
+		+ "order of the table, each holding the item worn of that kind or marked Empty; a worn item"
+		+ "the table names no kind for takes a slot of its own after them; the caption counts the"
+		+ "worn slots of all slots"
+		IMPL "packages/core-mapping/src/display/domain/rules/arrangeEquipmentSlots.ts::arrangeEquipmentSlots"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentSlots.tsx"
+	SPEC "the inventory is grouped by world object with its count, in the order the items first"
+		+ "appear, and ends on a chip counting the free slots, the inventory size the save carries"
+		+ "less the items, never below zero"
+		IMPL "packages/core-mapping/src/display/domain/rules/groupInventoryItems.ts::groupInventoryItems"
+		IMPL "packages/core-mapping/src/display/domain/entities/PlayerEntity.ts::get"
+			+ "freeInventorySlotCount()"
+		IMPL "packages/ui-save-manager/src/components/players/InventoryChips.tsx"
+	SPEC "the table is read behind EquipmentKindsReaderPort by an infrastructure adapter; the use"
+		+ "case computes the slots and the counts and hands them to the presenter as primitives of"
+		+ "PlayerCardResponse, and the presenter only labels them"
+		IMPL "packages/core-mapping/src/display/application/ports/EquipmentKindsReaderPort.ts"
+		IMPL "packages/core-mapping/src/display/infrastructure/EquipmentKindsReaderService.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts::createPlayerCard"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts"
+	REJECTED "As many slots as the equipment inventory of the save has: the game's slots are"
+		+ "untyped, and an empty one would have no kind to name"
+	REJECTED "A kind derived from the world object name by a pattern in the domain: a value table"
+		+ "is read by infrastructure, and a new tier or skin would need code"
+	REJECTED "Kind codes in the table translated by presentation messages: a second home for the"
+		+ "kinds; the table carries the English title the card shows, as worldObjectLabels does for"
+		+ "the items"
+	REJECTED "Dropping a worn item the table does not name: the card would hide what the player"
+		+ "wears"
+	RATIONALE "No export of the game gives an equipable type; the kind of each wearable is the"
+		+ "family of its world object, and in the reference saves no player wears two items of one"
+		+ "kind. The mockup page F draws one slot per kind with its title, which is what the table"
+		+ "orders"
+		REF @DATATABLE.EquipmentKinds
+		REF @RULE.APlayerWearsAtMostOneItemOfEachEquipmentKind
+		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Ruled while implementing the equipment slots and the grouped inventory of the player"
+		+ "card"
+		PR 270

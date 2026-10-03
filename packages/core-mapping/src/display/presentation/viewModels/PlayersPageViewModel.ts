@@ -1,5 +1,4 @@
 import {SaveValidationMessageViewModel} from "../../../save/presentation/viewModels/SaveValidationMessageViewModel";
-import {TableViewModel} from "./TableViewModel";
 
 export type PlayerGaugeKindViewModel = 'oxygen' | 'health' | 'thirst';
 
@@ -11,11 +10,35 @@ export interface PlayerGaugeViewModel {
   amount: string;
 }
 
-export interface PlayerCardViewModel extends TableViewModel {
+export interface EquipmentSlotViewModel {
+  kindLabel: string;
+  itemLabel: string;
+  isEmpty: boolean;
+}
+
+export interface PlayerEquipmentViewModel {
+  caption: string;
+  slots: EquipmentSlotViewModel[];
+}
+
+export interface InventoryChipViewModel {
+  label: string;
+  countLabel: string;
+}
+
+export interface PlayerInventoryViewModel {
+  caption: string;
+  items: InventoryChipViewModel[];
+  emptySlots: InventoryChipViewModel;
+}
+
+export interface PlayerCardViewModel {
   name: string;
   planetLabel?: string;
   hostBadge?: string;
   gauges: PlayerGaugeViewModel[];
+  equipment: PlayerEquipmentViewModel;
+  inventory: PlayerInventoryViewModel;
 }
 
 export interface PlayersPageViewModel {

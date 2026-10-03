@@ -7,6 +7,7 @@ function createPlayerInput(overrides: Partial<PlayerEntityInput> = {}): PlayerEn
     id: '76561190000000001',
     name: 'Nikowa',
     inventory: ['Backpack4'],
+    inventorySize: 12,
     equipment: ['OxygenTank5'],
     planetId: 'Toxicity',
     host: true,
@@ -27,6 +28,7 @@ describe('PlayerEntity', () => {
     expect(player.id).toBe('76561190000000001');
     expect(player.name).toBe('Nikowa');
     expect(player.inventory).toEqual(['Backpack4']);
+    expect(player.inventorySize).toBe(12);
     expect(player.equipment).toEqual(['OxygenTank5']);
     expect(player.planetId).toBe('Toxicity');
     expect(player.isHost).toBe(true);
@@ -45,6 +47,23 @@ describe('PlayerEntity', () => {
       // Assert
       expect(player.inventory).toEqual(['Backpack4']);
       expect(player.equipment).toEqual(['OxygenTank5']);
+    });
+  });
+
+  describe('When the free slots of the inventory are counted', () => {
+    it.each([
+      {inventory: ['Iron', 'Iron', 'Cobalt'], inventorySize: 12, freeSlotCount: 9},
+      {inventory: ['Iron', 'Iron', 'Cobalt'], inventorySize: 3, freeSlotCount: 0},
+      {inventory: ['Iron', 'Iron', 'Cobalt'], inventorySize: 2, freeSlotCount: 0}
+    ])('should give $freeSlotCount free slots for $inventory.length items in $inventorySize slots', ({inventory, inventorySize, freeSlotCount}) => {
+      // Arrange
+      const player = new PlayerEntity(createPlayerInput({inventory, inventorySize}));
+
+      // Act
+      const freeInventorySlotCount = player.freeInventorySlotCount;
+
+      // Assert
+      expect(freeInventorySlotCount).toBe(freeSlotCount);
     });
   });
 });
