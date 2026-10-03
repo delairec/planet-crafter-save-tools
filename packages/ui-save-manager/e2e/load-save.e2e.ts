@@ -50,12 +50,8 @@ test.describe('Load save page', () => {
 
   test.describe('When an invalid save is visualized', () => {
     test('should name the save file once, under the Visualize button', async ({page}) => {
-      // Arrange
-      await page.goto('/load-save');
-      await page.getByTestId('save-file').setInputFiles(invalidSaveFixturePath);
-
       // Act
-      await page.getByTestId('visualize').click();
+      await visualizeTheSave(page, invalidSaveFixturePath);
 
       // Assert
       await expect(page.getByTestId('display-file-name')).toHaveText('negative-gauge_invalid.json');
