@@ -136,7 +136,7 @@ test.describe('Home page', () => {
 
       // Assert
       await expect(page.getByTestId('merged-file-name')).toHaveText('baseline_valid-legacy-format_valid-merged.json');
-      await expect(page.getByTestId('earlier-merged-saves')).toHaveCount(0);
+      await expect(page.getByTestId('earlier-merged-saves-card')).toHaveCount(0);
     });
   });
 
@@ -245,7 +245,7 @@ test.describe('Home page', () => {
 
       // Assert
       await expect(page).toHaveURL(/\/overview$/);
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 

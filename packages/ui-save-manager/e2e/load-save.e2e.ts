@@ -5,6 +5,10 @@ const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 const otherPlayerSaveFixturePath = locateTheFixture('other-player_valid.json');
 const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
 
+const loadHint = 'Loading reads and validates the save in this browser and never modifies the file.';
+
+const saveDropHint = 'Drop a save here or choose a file.';
+
 test.describe('Load save page', () => {
   test.describe('When its own address is opened before a save is loaded', () => {
     test('should open the Load save page', async ({page}) => {
@@ -26,13 +30,44 @@ test.describe('Load save page', () => {
     });
   });
 
+  test.describe('When the load form is shown', () => {
+    test('should tell that loading reads and validates the save in this browser and never modifies the file', async ({page}) => {
+      // Act
+      await page.goto('/load-save');
+
+      // Assert
+      await expect(page.getByTestId('display-title-hint')).toHaveText(loadHint);
+    });
+
+    test('should offer to drop a save or choose a file in the display area', async ({page}) => {
+      // Act
+      await page.goto('/load-save');
+
+      // Assert
+      await expect(page.getByTestId('display-drop-hint')).toHaveText(saveDropHint);
+    });
+  });
+
+  test.describe('When an invalid save is visualized', () => {
+    test('should name the save file once, under the Visualize button', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, invalidSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('display-file-name')).toHaveText('negative-gauge_invalid.json');
+      const visualizeButton = (await page.getByTestId('visualize').boundingBox())!;
+      const fileNameTop = (await page.getByTestId('display-file-name').boundingBox())!.y;
+      expect(visualizeButton.y + visualizeButton.height).toBeLessThanOrEqual(fileNameTop);
+    });
+  });
+
   test.describe('When a valid save is visualized', () => {
     test('should open the Overview page at its own address', async ({page}) => {
       // Act
       await visualizeTheSave(page, baselineSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
       await expect(page).toHaveURL(/\/overview$/);
     });
   });
@@ -73,8 +108,8 @@ test.describe('Load save page', () => {
       await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: other-player_valid.json');
-      await expect(findTheBreadcrumbSteps(page)).toHaveCount(0);
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Companion Save');
+      await expect(findTheBreadcrumbSteps(page)).toHaveText(['Overview']);
     });
   });
 
@@ -89,7 +124,7 @@ test.describe('Load save page', () => {
       await openThePageOfTheMenu(page, 'Overview');
 
       // Assert
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 
@@ -106,7 +141,7 @@ test.describe('Load save page', () => {
       // Assert
       await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
       await openThePageOfTheMenu(page, 'Overview');
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
 });

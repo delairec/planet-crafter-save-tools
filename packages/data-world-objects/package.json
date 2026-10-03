@@ -1,7 +1,7 @@
 {
   "name": "data-world-objects",
   "version": "1.0.0",
-  "description": "World object value tables: the label shown for each world object name and the configuration of each optimizer",
+  "description": "World object value tables: the label shown for each world object name, the configuration of each optimizer, the oxygen capacity of each oxygen tank and the equipment kind of each wearable world object",
   "changelogLine": "World object values updated",
   "type": "module",
   "exports": {

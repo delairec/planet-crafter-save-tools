@@ -7,16 +7,40 @@ const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
 
 type ShellPart = 'title' | 'disclaimers' | 'page' | 'footer';
 
+async function orderTheShellPartsFromTopToBottom(partLocators: [ShellPart, Locator][]): Promise<ShellPart[]> {
+  const partTops = await Promise.all(partLocators.map(async ([part, locator]) => ({part, top: (await locator.boundingBox())!.y})));
+
+  return partTops.sort((first, second) => first.top - second.top).map(({part}) => part);
+}
+
 async function readTheShellPartsFromTopToBottom(page: Page, pageContentTestId: string): Promise<ShellPart[]> {
-  const partLocators: [ShellPart, Locator][] = [
+  return orderTheShellPartsFromTopToBottom([
     ['title', page.getByTestId('application-title')],
     ['disclaimers', page.getByTestId('disclaimers')],
     ['page', page.getByTestId(pageContentTestId)],
     ['footer', page.getByTestId('application-version')]
-  ];
-  const partTops = await Promise.all(partLocators.map(async ([part, locator]) => ({part, top: (await locator.boundingBox())!.y})));
+  ]);
+}
 
-  return partTops.sort((first, second) => first.top - second.top).map(({part}) => part);
+async function readThePageColumnFromTopToBottom(page: Page, pageContentTestId: string): Promise<ShellPart[]> {
+  return orderTheShellPartsFromTopToBottom([
+    ['disclaimers', page.getByTestId('disclaimers')],
+    ['page', page.getByTestId(pageContentTestId)],
+    ['footer', page.getByTestId('application-version')]
+  ]);
+}
+
+type TitlePlacement = {aboveTheMenuGroups: boolean; besideThePage: boolean};
+
+async function readThePlacementOfTheTitle(page: Page, pageContentTestId: string): Promise<TitlePlacement> {
+  const titleBox = (await page.getByTestId('application-title').boundingBox())!;
+  const firstMenuGroupBox = (await page.getByTestId('tools-pages').boundingBox())!;
+  const pageBox = (await page.getByTestId(pageContentTestId).boundingBox())!;
+
+  return {
+    aboveTheMenuGroups: titleBox.y + titleBox.height <= firstMenuGroupBox.y,
+    besideThePage: titleBox.x + titleBox.width <= pageBox.x
+  };
 }
 
 async function holdEveryFurtherFileRead(page: Page): Promise<void> {
@@ -36,16 +60,40 @@ function recordTheDocumentLoads(page: Page): string[] {
 }
 
 test.describe('Save manager shell', () => {
-  test.describe('When the Overview page is opened', () => {
+  test.describe('When the home page is opened', () => {
     test('should show the disclaimers under the title, above the page and above the version footer', async ({page}) => {
+      // Arrange
+      await page.goto('/');
+
+      // Act
+      const shellParts = await readTheShellPartsFromTopToBottom(page, 'home-page');
+
+      // Assert
+      expect(shellParts).toEqual(['title', 'disclaimers', 'page', 'footer']);
+    });
+  });
+
+  test.describe('When the Load save page is opened', () => {
+    test('should show the title at the top of the menu, beside the page rather than above it', async ({page}) => {
       // Arrange
       await page.goto('/load-save');
 
       // Act
-      const shellParts = await readTheShellPartsFromTopToBottom(page, 'display-area');
+      const titlePlacement = await readThePlacementOfTheTitle(page, 'display-area');
 
       // Assert
-      expect(shellParts).toEqual(['title', 'disclaimers', 'page', 'footer']);
+      expect(titlePlacement).toEqual({aboveTheMenuGroups: true, besideThePage: true});
+    });
+
+    test('should show the disclaimers above the page and above the version footer', async ({page}) => {
+      // Arrange
+      await page.goto('/load-save');
+
+      // Act
+      const pageColumnParts = await readThePageColumnFromTopToBottom(page, 'display-area');
+
+      // Assert
+      expect(pageColumnParts).toEqual(['disclaimers', 'page', 'footer']);
     });
 
     test('should offer the Tools group alone, holding Merge two saves and Load save', async ({page}) => {
@@ -124,16 +172,41 @@ test.describe('Save manager shell', () => {
   });
 
   test.describe('When a page of the save is opened', () => {
-    test('should show the disclaimers under the title, above the page and above the version footer', async ({page}) => {
+    test('should show the title at the top of the menu, beside the page rather than above it', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);
       await openThePageOfTheMenu(page, 'Configuration');
 
       // Act
-      const shellParts = await readTheShellPartsFromTopToBottom(page, 'global-progression-title');
+      const titlePlacement = await readThePlacementOfTheTitle(page, 'global-progression-title');
 
       // Assert
-      expect(shellParts).toEqual(['title', 'disclaimers', 'page', 'footer']);
+      expect(titlePlacement).toEqual({aboveTheMenuGroups: true, besideThePage: true});
+    });
+
+    test('should show the disclaimers above the page and above the version footer', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+      await openThePageOfTheMenu(page, 'Configuration');
+
+      // Act
+      const pageColumnParts = await readThePageColumnFromTopToBottom(page, 'global-progression-title');
+
+      // Assert
+      expect(pageColumnParts).toEqual(['disclaimers', 'page', 'footer']);
+    });
+  });
+
+  test.describe('When the title is chosen at the top of the menu', () => {
+    test('should lead to the home page', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Act
+      await page.getByTestId('application-title-link').click();
+
+      // Assert
+      await expect(page.getByTestId('home-page')).toBeVisible();
     });
   });
 
@@ -141,7 +214,7 @@ test.describe('Save manager shell', () => {
     test('should keep the loaded save without reading its file again nor reloading the page', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, baselineSaveFixturePath);
-      await expect(page.getByTestId('loaded-save-title')).toHaveText('Loaded save: baseline_valid.json');
+      await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
       await holdEveryFurtherFileRead(page);
       const loadedDocumentUrls = recordTheDocumentLoads(page);
       await openThePageOfTheMenu(page, 'Power');

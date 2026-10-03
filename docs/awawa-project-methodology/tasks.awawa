@@ -530,7 +530,7 @@ TASK TEST91
 		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::describeTheColorRulesAuditInTheDarkColorScheme(showASaveVisualization)"
 	SPEC "a violation the dark audits find is fixed in the same pull request; no rule is silenced"
 		+ "and no element is excluded"
-		IMPL "packages/ui-save-manager/src/styles/shell/shell.css::.overview-pages a"
+		IMPL "packages/ui-save-manager/e2e/helpers/describeTheColorRulesAuditInTheDarkColorScheme.ts::expect(violations).toEqual(noViolation);"
 	SPEC "@DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest states that the color rules of"
 		+ "the axe audit are replayed in the dark color scheme, anchored on the dark audits"
 		IMPL "docs/awawa-project-methodology/decisions.awawa::are replayed on"
@@ -589,20 +589,28 @@ TASK FEAT131
 
 TASK FEAT132
 	TITLE "Display the SysTi, the Terraformation Index accumulated over every planet of the save"
-	STATUS todo
+	STATUS implemented
 	DESC "ratified on the reviewed plan on 2026-09-27 without research; whether the SysTi is the"
 		+ "plain sum of the planets' Ti or weighs them is established when the task starts"
 	SPEC "the Overview page shows the SysTi of the save in a tile of its own, computed from the"
 		+ "accumulation of the Terraformation Index of each of its planets, under a caption"
 		+ "counting those planets"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the SysTi of the"
+			+ "save in a tile captioned with the count of planets it multiplies"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::When"
+			+ "the save has a SysTi"
 	SPEC "the SysTi is computed by the domain and carried by the overview view model"
+		IMPL "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
 	AFTER @TASK.FEAT142
 	WAVE @WAVE.15
-	RATIONALE "The game sums the terraformation of the planets of a save into one system-wide"
-		+ "index, the SysTi, that the save manager does not compute: it prints one Terraformation"
-		+ "Index per planet and nothing for the save as a whole. Page F shows it in the overview"
-		+ "tiles and under the hero figure of a planet; the tile lands with the Overview page,"
-		+ "delivered first, and the share under the hero figure with the Terraformation page"
+	RATIONALE "The game multiplies the Terraformation Index of the planets of a save into one"
+		+ "system-wide index, the SysTi, that the save manager does not compute: it prints one"
+		+ "Terraformation Index per planet and nothing for the save as a whole. Page F shows it in"
+		+ "the overview tiles and under the hero figure of a planet; the tile lands with the"
+		+ "Overview page, delivered first, and the share under the hero figure with the"
+		+ "Terraformation page"
 		REF @SECTION.TerraformationLevels
 		REF @DECISION.AViewModelServesOneView
 		REF @TASK.FEAT141
@@ -614,39 +622,74 @@ TASK FEAT132
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	DELIVERED_BY 268
 
 TASK FEAT139
 	TITLE "Give the Power page its view model: figures with a status, optimizers first, tables"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the threshold"
 		+ "between a tight and a surplus balance is settled with the owner when the task starts"
-	SPEC "the Power page shows planet tabs and, for the planet of the selected tab, a title"
-		+ "carrying the status pill, the notifications under it, then three figure tiles,"
-		+ "production, consumption and available, the available one carrying the status pill and a"
-		+ "load meter with the share of production consumed; the breadcrumb names the planet"
+	SPEC "the Power page shows planet tabs and, for the planet of the selected tab, a title naming"
+		+ "the planet, the notifications under it, then three figure tiles, production, consumption"
+		+ "and available, the available one carrying the status pill and a load meter with the"
+		+ "share of production consumed; the title carries no status pill, the available tile"
+		+ "showing it already; the breadcrumb names the planet"
+		IMPL "packages/ui-save-manager/src/routes/power.tsx::aria-label={powerPlanetTabsLabel}"
+		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<h4"
+			+ "data-testid=\"power-planet-title\">{props.zone.planetName}</h4>"
+		IMPL "packages/ui-save-manager/src/components/power/PowerFigureTiles.tsx::<ToneBadge"
+			+ "badge={props.zone.balance} testId=\"power-available-balance\"/>"
+		IMPL "packages/ui-save-manager/src/components/power/PowerFigureTiles.tsx::power-load-meter-fill"
+		IMPL "packages/ui-save-manager/src/components/shell/Breadcrumb.tsx::current-page-subject"
 	SPEC "the balance of a planet is a rule of the domain, recorded as a RULE of the specification"
 		+ "area: deficit when the available power is negative, tight when it is below a tenth of"
 		+ "the production, surplus otherwise, a planet producing nothing being in deficit when it"
 		+ "consumes and balanced otherwise; the use case hands it to the presenter as a primitive"
 		+ "of its response, and the presenter maps it to a word and a tone, the word being shown"
+		IMPL "packages/core-mapping/src/display/domain/rules/assessPowerBalance.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::assessPowerBalance("
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::BADGE_BY_BALANCE"
 	SPEC "the optimizers come before the breakdown, under a header counting them and their boost"
 		+ "with its share of production, as a table of optimizer, energy fuses held over the fuse"
 		+ "slots of its tier, boosted machines and contribution with its share of production"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::function"
+			+ "createOptimizers("
+		IMPL "packages/core-mapping/src/display/infrastructure/OptimizerRangesReaderService.ts::fuseSlots"
+		IMPL "packages/ui-save-manager/src/components/power/PowerOptimizersTable.tsx"
 	SPEC "the producers and the consumers are two tables, machine, quantity, unit, total and share,"
 		+ "largest total first, ending on a total row, under a line counting the producers, the"
 		+ "consumers and the optimizers; the cards of today disappear"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::function"
+			+ "createBreakdownTable("
+		IMPL "packages/ui-save-manager/src/components/power/PowerBreakdownTable.tsx::<tfoot>"
+	SPEC "each table sits in a card of page F, its title and, for the optimizers, its summary in"
+		+ "the header of the card; its column headers are set apart from its rows, and its total"
+		+ "row from the rows above it"
+		IMPL "packages/ui-save-manager/src/components/power/PowerOptimizersTable.tsx::<section"
+			+ "class=\"card power-table-card\">"
+		IMPL "packages/ui-save-manager/src/components/power/PowerBreakdownTable.tsx::<section"
+			+ "class=\"card power-table-card\">"
+		IMPL "packages/ui-save-manager/src/styles/power.css::.power-table thead th"
 	SPEC "the Power page reads one view model, the notifications and one zone per planet, built by"
 		+ "one presenter from the application response of one use case, plain records of primitives"
 		+ "with no value object of the domain, as EnergyLevelsResponse is; the planet zone is built"
 		+ "by a presentation helper the planet page reuses, and its figures are formatted by the"
 		+ "helpers that format the planet cards of the Overview page"
+		IMPL "packages/core-mapping/src/display/presentation/PowerPagePresenter.ts"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::formatPowerFigures(planet)"
+		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts::PowerBalanceResponse"
 	SPEC "the Power section controller, presenter and view model of today are retired, every module"
 		+ "left without an importer is deleted, and the anchors and the wording of the decisions"
 		+ "naming them are rewritten"
+		IMPL "packages/core-mapping/src/display/controllers/LoadPowerPageController.ts"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts::loadPowerPageController"
 	SPEC "the tables are the only form the page offers: it shows no Display as selector and no"
 		+ "chart, which come with the chart tasks"
+		IMPL "packages/ui-save-manager/src/routes/power.tsx::<PowerPlanetZone"
 		REF @TASK.FEAT140
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
 	AFTER @TASK.FEAT183
 	WAVE @WAVE.15
 	RATIONALE "The Power section is the largest of the page on a real save, one card per machine"
@@ -679,6 +722,7 @@ TASK FEAT139
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	DELIVERED_BY 269
 
 TASK FEAT140
 	TITLE "Chart the production and the consumption of a planet as bars by machine, with a selector"
@@ -776,7 +820,7 @@ TASK FEAT141
 
 TASK FEAT142
 	TITLE "Give the Overview page its view model: identity and progression tiles"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27 and narrowed on"
 		+ "2026-10-02 to the identity and the tiles, the planet cards being a task of their own;"
 		+ "how the file size reaches the view model is settled when the task starts"
@@ -784,15 +828,34 @@ TASK FEAT142
 		+ "name, the mode, the game release and the file size, then a row of tiles with the"
 		+ "all-time Terra Tokens, the total crafted objects and the drone logistics as a badge; a"
 		+ "save without statistics shows the tiles it can"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should title the page with the"
+			+ "display name of the save"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the progression"
+			+ "tiles the save carries"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts"
 	SPEC "the breadcrumb reads Overview, the warnings of the save stay above the content, and the"
 		+ "links to the Configuration, Power and Terraformation pages are gone, the menu leading"
 		+ "there"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should read Overview alone in"
+			+ "the breadcrumb"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show its warnings above"
+			+ "the content of the page"
 	SPEC "the title of a section is left-aligned in neon pink over a pink line, a muted hint beside"
 		+ "it, as page F shows, and every page already redesigned wears the same title"
+		IMPL "packages/ui-save-manager/src/components/structure/SectionTitle.tsx::section-title-hint"
+		IMPL "packages/ui-save-manager/src/styles/components.css::.section-title-hint"
+		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle"
+			+ "testId=\"configuration-title\">"
 	SPEC "the Overview page reads one view model, identity and tiles, built by one presenter from"
 		+ "one use case that reads the configuration and the progression; the page computes no"
 		+ "figure"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
+		IMPL "packages/core-mapping/src/display/controllers/LoadOverviewPageController.ts"
+		IMPL "packages/ui-save-manager/src/routes/overview.tsx::loadedSave.viewModels.overviewPage"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
 	WAVE @WAVE.15
 	RATIONALE "The overview is the page the save opens on and the one the owner shaped most on the"
 		+ "mockup, so the redesign delivers it first. The route shows today a title and three links"
@@ -812,6 +875,7 @@ TASK FEAT142
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	DELIVERED_BY 262
 
 TASK FEAT143
 	TITLE "Give each planet a page with a Power tab and a Terraformation tab"
@@ -852,7 +916,8 @@ TASK FEAT143
 
 TASK FEAT144
 	TITLE "Give the Players page its view model: player cards with the host badge and vital gauges"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 263
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27 and narrowed on"
 		+ "2026-10-02 to the cards and the gauges, the equipment slots and the grouped inventory"
 		+ "being a task of their own; the maximum of each gauge and whether the toxicity gauge is"
@@ -863,18 +928,32 @@ TASK FEAT144
 		+ "oxygen, a sandwich for health and a flask for thirst, with a clear outline and a visible"
 		+ "empty part, the percentage next to the label and the value over its maximum under the"
 		+ "gauge"
+		IMPL "packages/ui-save-manager/src/routes/players.tsx"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerCard.tsx"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerGauge.tsx"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts"
 	SPEC "inside a card the equipment and the inventory stay listed item by item, as the page lists"
 		+ "them today, until the task of the slots lands"
 		REF @TASK.FEAT185
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts::PlayerCardViewModel"
 	SPEC "a gauge maximum that depends on the equipment worn is read from a value table of a data-"
 		+ "package, by an infrastructure adapter behind an application port; the use case computes"
 		+ "the percentages from domain values and hands them to the presenter as primitives of its"
 		+ "application response, and the presenter renders them"
+		IMPL "packages/data-world-objects/oxygenTankCapacities.json"
+		IMPL "packages/core-mapping/src/display/infrastructure/OxygenTankCapacitiesReaderService.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerGaugeResponse"
 	SPEC "the Players page reads one view model, one card per player, built by one presenter from"
 		+ "one use case; the Players section controller, presenter and view model of today are"
 		+ "retired, every module left without an importer is deleted, and the anchors and the"
 		+ "wording of the decisions naming them are rewritten"
+		IMPL "packages/core-mapping/src/display/controllers/LoadPlayersPageController.ts"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts::loadPlayersPageController"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge"
+		IMPL "packages/cli-validate"
 	WAVE @WAVE.15
 	RATIONALE "The Players section lists today the equipment and the inventory item by item, in"
 		+ "save order, without quantities, and shows no gauge. The owner asked for more graphics on"
@@ -1177,7 +1256,7 @@ TASK REFACTOR159
 		+ "application responses holding primitives, built by their use case, and no longer value"
 		+ "objects of the domain; no entity builds a projection for a presenter"
 		IMPL "packages/core-mapping/src/display/application/responses/PlayerMenuEntryResponse.ts"
-		IMPL "packages/core-mapping/src/display/application/responses/PlayerSummaryResponse.ts"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerCardResponse"
 		IMPL "packages/core-mapping/src/display/application/responses/SaveIdentityResponse.ts"
 		IMPL "packages/core-mapping/src/display/application/responses/TerraformationLevelSummaryResponse.ts"
 		IMPL "packages/core-mapping/src/display/domain/entities/TerraformationLevelEntity.ts::get"
@@ -1185,7 +1264,7 @@ TASK REFACTOR159
 	SPEC "EnergyLevels is an application response built by its use case, which may hold the planet"
 		+ "energy value objects the domain computes"
 		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts"
-		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts"
 	SPEC "a save loaded with unreadable lines reaches the presenter through an outcome of its own,"
 		+ "distinct from a save loaded with warnings only, and is never rendered valid"
 		IMPL "packages/core-mapping/src/validation/presentation/LoadSaveFilePresenter.ts::presentSaveFileWithUnreadableLines"
@@ -1226,7 +1305,9 @@ TASK REFACTOR160
 		+ "and resolvePlanetName are called by the use cases"
 		IMPL "packages/core-mapping/src/save/infrastructure/validateSaveContent.js"
 		IMPL "packages/core-mapping/src/display/infrastructure/SaveSectionsMapperService.ts"
-		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts::planetName:"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::namePlanet(planet,"
+			+ "this.planetNamesReader.findPlanetNameOfNumericId(planet.planetId)"
+		IMPL "packages/core-mapping/src/display/domain/rules/namePlanet.ts::planetName:"
 			+ "resolvePlanetName("
 		IMPL "packages/core-mapping/src/save/domain/rules/checkSaveInvariants.ts::validateUniqueHost(sections.players)"
 		IMPL "packages/core-mapping/src/merge/application/MergeSaveFiles.ts::checkSaveInvariants(saveA.sections,"
@@ -1314,7 +1395,7 @@ TASK REFACTOR161
 		+ "EnergyLevelsRawDataValueObject are gone, and the energy use case assembles its data from"
 		+ "port methods of one concept each"
 		IMPL "packages/core-mapping/src/display/application/ports/SaveSectionsMapperPort.ts::getPlacedWorldObjectsByPlanet"
-		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts"
 	SPEC "APlanetEnergyGridIsAnAggregate is rewritten in place: it keeps the grid built once per"
 		+ "planet, drops its rejection of assembling in presentation, and its anchors name the code"
 		+ "as the task leaves it"
@@ -1495,9 +1576,8 @@ TASK REFACTOR163
 	SPEC "the Power section names the release of its values only for a release earlier than the"
 		+ "current game release, the presenter learning it from its response and importing no"
 		+ "release constant"
-		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.ts::gameReleaseIsEarlierThanCurrent"
-		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.spec.ts::When it"
-			+ "presents the values of the current game release"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerNotifications.ts::gameReleaseIsEarlierThanCurrent"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerNotifications.spec.ts"
 		IMPL "packages/core-mapping/src/display/domain/rules/precedesCurrentGameRelease.spec.ts::describe('precedesCurrentGameRelease'"
 	SPEC "ASaveIsNeverDiscriminatedByItsVersionAlone,"
 		+ "AMergeReportsItsFormatOnlyWhenTheTwoSavesDiffer and"
@@ -1848,7 +1928,7 @@ TASK REFACTOR168
 		IMPL "packages/core-mapping/src/display/application/ports/OptimizerRangesReaderPort.ts::OptimizerRangesReaderPort"
 		IMPL "packages/core-mapping/src/display/application/ports/PlanetNamesReaderPort.ts::PlanetNamesReaderPort"
 		IMPL "packages/core-mapping/src/display/application/ports/WorldObjectLabelsReaderPort.ts::WorldObjectLabelsReaderPort"
-		IMPL "packages/core-mapping/src/display/application/responses/PlayersResponse.ts::worldObjectLabels"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::worldObjectLabels"
 		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts::worldObjectLabels"
 	SPEC "shared-save-processing and the infrastructure adapters of core-mapping read a table"
 		+ "through the selectors of its data- package, never through the JSON file"
@@ -2179,15 +2259,23 @@ TASK FIX171
 
 TASK FEAT183
 	TITLE "Show one card per planet on the Overview page: terraformation first, power in the foot"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, split and ratified on 2026-10-02 from the Overview task"
-		+ "ratified on 2026-09-27; the common scale of the power bars, and what a planet present in"
-		+ "the terraformation levels only or in the energy only shows, are settled with the owner"
-		+ "when the task starts"
+		+ "ratified on 2026-09-27"
 	SPEC "under a Planets title counting them, one card per planet shows, in this order, the planet"
 		+ "name, its Terraformation Index, then O2, heat, pressure, purification when unlocked, and"
 		+ "biomass; the foot of the card shows the production and the consumption as two bars on a"
 		+ "scale common to every card, the share of production consumed and the available power"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should title the Planets"
+			+ "section with the count of planets the save carries"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the Terraformation"
+			+ "Index of the planet and its figures"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the power the"
+			+ "planet produces, consumes and has available, and the share of its production"
+			+ "consumed"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should draw the consumption bar"
+			+ "at the share of the production bar the consumption is"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts"
 	SPEC "a card joins the terraformation levels and the energy of a planet by the planet"
 		+ "identifier the terraformation entry carries, the energy planets being resolved to that"
 		+ "identifier; the card carries no surplus, tight or deficit badge, the place of the"
@@ -2195,15 +2283,34 @@ TASK FEAT183
 		+ "planet page"
 		REF @TASK.FEAT131
 		REF @TASK.FEAT143
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::planet.planetName"
+			+ "=== level.planetId"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.spec.ts"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::overview-planet-name"
 	SPEC "the notifications of the save, those that qualify the power figures, show under the"
 		+ "identity of the save, built by a presentation helper the Power page reuses"
 		REF @TASK.FEAT139
+		IMPL "packages/core-mapping/src/display/presentation/createPowerNotifications.ts"
+		IMPL "packages/core-mapping/src/display/presentation/PowerPagePresenter.ts::createPowerNotifications(energyLevels)"
+		IMPL "packages/ui-save-manager/src/routes/overview.tsx::overview-notification-"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the power"
+			+ "notifications of the save under its identity title"
 	SPEC "the production and the consumption bars keep one colour each, cyan and pink as page F"
 		+ "shows; the tokens are the pair measured on the mockup, catalogued by the contrast guard"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-production"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-consumption"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::GRAPHIC_TOKEN_PAIRS"
 	SPEC "the overview view model gains the cards, with the width of each bar, its use case reading"
 		+ "the terraformation levels and the energy of every planet; the figures of a card are"
 		+ "formatted by presentation helpers the Power and Terraformation pages reuse"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/OverviewPageViewModel.ts::widthPercentage"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::describePlanets(terraformationLevels,"
+			+ "planetsEnergyLevels)"
+		IMPL "packages/core-mapping/src/display/presentation/formatPowerFigures.ts"
+		IMPL "packages/core-mapping/src/display/presentation/TerraformationLevelsPresenter.ts::formatTerraformationFigures(level)"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
 	AFTER @TASK.FEAT142
 	WAVE @WAVE.15
 	RATIONALE "The owner shaped the cards on the mockup: the terraformation of a planet comes"
@@ -2230,6 +2337,7 @@ TASK FEAT183
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	DELIVERED_BY 264
 
 TASK FEAT184
 	TITLE "Chart the share of each machine type in the production and the consumption of a planet"
@@ -2268,7 +2376,8 @@ TASK FEAT184
 
 TASK FEAT185
 	TITLE "Show the equipment of a player as slots and their inventory grouped by kind"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 270
 	DESC "from page F of the mockup, split and ratified on 2026-10-02 from the Players task"
 		+ "ratified on 2026-09-27; whether the inventory size the save carries includes the"
 		+ "backpack slots, and the value table naming the kind of each equipment slot and of each"
@@ -2277,13 +2386,24 @@ TASK FEAT185
 		+ "named by its kind and marked Empty; the inventory groups the items by kind with their"
 		+ "count, under a caption counting the items, the slots and the kinds, and ends on an Empty"
 		+ "slots chip counting the free slots"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts::createEquipment"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts::createInventory"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentSlots.tsx"
+		IMPL "packages/ui-save-manager/src/components/players/InventoryChips.tsx"
 	SPEC "the kind of each slot is a value table of a data- package, read by an infrastructure"
 		+ "adapter behind an application port; the use case computes the counts from domain values"
 		+ "and hands them to the presenter as primitives of its application response, and the"
 		+ "presenter renders them"
+		IMPL "packages/data-world-objects/equipmentKinds.json"
+		IMPL "packages/core-mapping/src/display/infrastructure/EquipmentKindsReaderService.ts"
+		IMPL "packages/core-mapping/src/display/application/ports/EquipmentKindsReaderPort.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts::createPlayerCard"
 	SPEC "the item by item lists of the equipment and of the inventory are gone from the player"
 		+ "card"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerCard.tsx::<EquipmentSlots"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
+		IMPL "packages/cli-validate/cli/validate-cli.node.spec.js"
 	AFTER @TASK.FEAT144
 	WAVE @WAVE.15
 	RATIONALE "The owner asked for empty equipment slots to show and for the inventory to stay"
@@ -2306,19 +2426,36 @@ TASK FEAT185
 TASK FEAT186
 	TITLE "Give the Merge two saves page the look of page F: title over the form, drop zones in a"
 		+ "card"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on 2026-10-02 without refinement"
 	SPEC "the title of the Merge two saves page leaves the drop zone: it is the section title over"
 		+ "the form, beside the hint that a merge produces a new file and never modifies the"
 		+ "originals, the notice that save A prevails over save B under it"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::<SectionTitle"
+			+ "testId=\"merge-title\" hint={mergeSectionHint}>"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should tell that a merge produces a new"
+			+ "file and never modifies the originals"
 	SPEC "the form sits in a card: two drop zones side by side, each a visible dashed area naming"
 		+ "its save and offering to drop a save or choose a file, then one row with the Swap"
 		+ "button, the Prefer legacy format checkbox and the Merge button, in the primary pink"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::class=\"card save-form\""
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-drop-area {"
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-form-actions {"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::.button-neon-pink {"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should offer to drop a save or choose a"
+			+ "file in the area of each save"
 	SPEC "everything the page shows today is still shown and behaves the same, in the pieces of the"
 		+ "redesigned pages: the busy indicator, a refused drop, the warnings and the errors of"
 		+ "each save and of the merge, the reminder of the legacy format, the merged save with its"
 		+ "download, and the earlier merged saves"
+		IMPL "packages/ui-save-manager/src/components/MergeResultSection.tsx::<Card"
+			+ "title={mergeResultSectionMergedSaveTitle}"
+		IMPL "packages/ui-save-manager/src/components/EarlierMergedSavesSection.tsx::<Card"
+			+ "title={earlierMergedSavesTitle}"
+		IMPL "packages/ui-save-manager/e2e/merge.e2e.ts::should present the merged save under its"
+			+ "own title"
 	WAVE @WAVE.15
+	DELIVERED_BY 261
 	RATIONALE "The merge form is today one drop zone holding the page title, the notice and two"
 		+ "native file inputs whose drop areas are an outline; page F gives the page the structure"
 		+ "of the others, a section title then a card. The mockup draws the form only, so what the"
@@ -2334,16 +2471,27 @@ TASK FEAT186
 
 TASK FEAT187
 	TITLE "Show the application title at the top of the menu"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on 2026-10-02 without refinement; the home page is"
 		+ "kept as it is for now"
 	SPEC "on every page that shows the menu, the application title sits at the top of the menu, as"
 		+ "page F shows, and leads to the home page; it no longer sits in a header above the menu"
 		+ "and the page"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::<ApplicationTitle"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the title at the top of the"
+			+ "menu, beside the page rather than above it"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::When the title is chosen at the top of the"
+			+ "menu"
 	SPEC "the home page, which shows no menu, stays as it is today, the application title above its"
 		+ "content; every page keeps one first-level heading, and the disclaimer block stays"
 		+ "unchanged at the top of the page"
+		IMPL "packages/ui-save-manager/src/app.tsx::<Show when={isHomePage()}>"
+		IMPL "packages/ui-save-manager/src/components/shell/ApplicationTitle.tsx::<h1"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::When the home page is opened"
+		IMPL "packages/ui-save-manager/e2e/shell.e2e.ts::should show the disclaimers above the page"
+			+ "and above the version footer"
 	WAVE @WAVE.15
+	DELIVERED_BY 260
 	RATIONALE "The title is today a centred heading above the shell, on every page, and takes the"
 		+ "height page F gives to the content. The menu validated in the navigation wave has no"
 		+ "brand; the title is the one addition page F makes to it"
@@ -2356,7 +2504,7 @@ TASK FEAT187
 
 TASK FEAT188
 	TITLE "Harmonise the Load save page with the Merge two saves page"
-	STATUS todo
+	STATUS implemented
 	DESC "ratified on 2026-10-02 without refinement: the mockup has no Load save page, the Merge"
 		+ "two saves page is its model; the tasks of the saves kept in the browser change the same"
 		+ "page, whichever lands second builds on the first"
@@ -2366,10 +2514,26 @@ TASK FEAT188
 	SPEC "the Load save page has the structure of the Merge two saves page: its title is the"
 		+ "section title over the form, a hint beside it, and the form sits in a card with one"
 		+ "visible drop zone and the button that loads the save in the primary pink"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::<SectionTitle"
+			+ "testId=\"display-title\" hint={displayRouteHint}>"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::<div class=\"card"
+			+ "save-form\">"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::class=\"button-neon-pink"
+			+ "save-form-submit\" data-testid=\"visualize\""
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should tell that loading reads and"
+			+ "validates the save in this browser and never modifies the file"
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should offer to drop a save or choose"
+			+ "a file in the display area"
 	SPEC "the busy indicator, a refused drop, and the errors and the warnings of the save show"
 		+ "where and how the Merge two saves page shows them, the file name once"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::<Spinner"
+			+ "testId=\"display-busy-indicator\"/>"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveResultSection.tsx::data-testid=\"display-file-name\""
+		IMPL "packages/ui-save-manager/e2e/load-save.e2e.ts::should name the save file once, under"
+			+ "the Visualize button"
 	AFTER @TASK.FEAT186
 	WAVE @WAVE.15
+	DELIVERED_BY 267
 	RATIONALE "The two tools pages load files the same way and differ today in where the button,"
 		+ "the busy indicator and the messages sit. The merge page is redesigned from the mockup"
 		+ "first, so this page follows the pieces it leaves rather than inventing its own"
@@ -2386,7 +2550,9 @@ TASK FEAT189
 	STATUS todo
 	DESC "ratified on 2026-10-02 without refinement; carried out in an interactive session with the"
 		+ "owner, never by a background agent: the last adjustments are listed with the owner on"
-		+ "the running application when the task starts; the home page is kept as it is for now"
+		+ "the running application when the task starts; the home page is kept as it is for now;"
+		+ "the icons of the gauges of the player card are revisited with the owner"
+		REF @TASK.FEAT144
 	SPEC "every page that shows the menu wears the titles, the cards and the buttons of page F;"
 		+ "none shows a centred section title, a glowing card title or a field group of the earlier"
 		+ "look"
@@ -2408,6 +2574,9 @@ TASK FEAT189
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner comment of 2026-10-03 on pull request 263: the icons of the gauges of the player"
+		+ "card are to be revisited"
+		PR 263
 
 TASK CHORE191
 	TITLE "Stop ignoring GHSA-vfj7-8cjw-p6xm in the audit script once braces publishes a fix"
@@ -2419,3 +2588,48 @@ TASK CHORE191
 		+ "until; upstream fix read open on 2026-10-03"
 		PR 265
 		REF @URL.BracesNestedPatternFix
+
+TASK FEAT190
+	TITLE "Show the toxicity gauge on the player card"
+	STATUS draft
+	DESC "split from FEAT144 in the review of pull request 263; when the task starts, two facts are"
+		+ "observed in game: the toxicity maximum each of the three Toxins Filter tiers gives, and"
+		+ "whether a filter outside the equipment counts"
+		REF @HYPOTHESIS.EachToxinsFilterTierRaisesTheToxicityMaximumByFive
+	SPEC "each player card shows a fourth flat gauge for toxicity, filled by percentage of its"
+		+ "maximum like the three vital gauges, the percentage next to the label and the value over"
+		+ "its maximum under the gauge"
+	SPEC "the toxicity gauge is full when playerGaugeToxic equals its maximum and empty at 0, the"
+		+ "value being the protection left, as the toxicity meter of the game runs down from its"
+		+ "maximum to 0"
+	SPEC "the toxicity maximum is 5 without a Toxins Filter in the equipment; the maximum each"
+		+ "Toxins Filter tier, T1 to T3, gives is read from a value table of a data- package, by an"
+		+ "infrastructure adapter behind an application port, a filter in any other inventory"
+		+ "counting for nothing, and the use case hands value, maximum and percentage to the"
+		+ "presenter as primitives of its application response"
+	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.FEAT144
+	RATIONALE "The save carries the toxicity of each player as playerGaugeToxic, without its"
+		+ "maximum. The base maximum is 5, and a Toxins Filter in the equipment is assumed to raise"
+		+ "it by an amount not yet observed, which the wiki contradicts by saying a filter slows"
+		+ "the depletion of the meter: a gauge drawn before the observation would measure a"
+		+ "filtered player against a wrong maximum. The meter starts at its maximum and runs down"
+		+ "to 0, so playerGaugeToxic is the protection left and the 4.9999995 of the private"
+		+ "reference save Standard-5-toxic.json is a full gauge"
+		REF @SECTION.Players
+		REF @DECISION.APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
+		REF @URL.WikiToxinsFilters
+	SOURCE "Owner reply of 2026-10-03 in the review of pull request 263: the toxicity gauge is 5 at"
+		+ "base and the Toxins Filter T1 and T2 raise it by an amount to verify in game; the"
+		+ "private reference save Standard-5-toxic.json holds a player at 5 with no Toxins Filter"
+		PR 263
+		REF @PROJECT.DNC
+	SOURCE "Owner ruling of 2026-10-03 in the review of pull request 263: a T3 Toxins Filter gives"
+		+ "20, and a filter counts only in the equipment, pending a check in game"
+		PR 263
+	SOURCE "Read on 2026-10-03 in the review of pull request 263: the wiki page Toxins Filters"
+		PR 263
+		REF @URL.WikiToxinsFilters
+	SOURCE "Owner's check in game of 2026-10-03, stated in the review of pull request 263: the"
+		+ "toxicity meter starts at its maximum and runs down to 0"
+		PR 263

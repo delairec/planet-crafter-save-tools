@@ -1,0 +1,11 @@
+export const powerSectionTitle = 'Power';
+export const powerPlanetTabsLabel = 'Planets';
+export const powerOptimizerHeader = 'Optimizer';
+export const powerEnergyFusesHeader = 'Energy fuses';
+export const powerBoostedMachinesHeader = 'Boosted machines';
+export const powerContributionHeader = 'Contribution';
+export const powerMachineHeader = 'Machine';
+export const powerQuantityHeader = 'Quantity';
+export const powerUnitHeader = 'Unit';
+export const powerTotalHeader = 'Total';
+export const powerShareHeader = 'Share';

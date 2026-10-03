@@ -15,7 +15,7 @@ async function openTheLoadSavePage(page: Page): Promise<void> {
 
 async function showASaveVisualization(page: Page): Promise<void> {
   await visualizeTheSave(page, saveAFixturePath);
-  await expect(page.getByTestId('loaded-save-title')).toBeVisible();
+  await expect(page.getByTestId('overview-identity-title')).toBeVisible();
 }
 
 test.describe('Overview page accessibility', () => {
@@ -59,14 +59,14 @@ test.describe('Overview page accessibility', () => {
       await expect(page.getByTestId('visualize')).toHaveAccessibleName('Visualize');
     });
 
-    test('should title the display area with a second level heading', async ({page}) => {
+    test('should title the display area with a third level heading', async ({page}) => {
       // Act
       await page.goto('/load-save');
 
       // Assert
       await expect(page.getByTestId('display-title')).toHaveRole('heading');
       await expect(page.getByTestId('display-title')).toHaveAccessibleName('Display a save\'s data');
-      await expect(page.getByTestId('display-title')).toMatchAriaSnapshot('- heading [level=2]');
+      await expect(page.getByTestId('display-title')).toMatchAriaSnapshot('- heading [level=3]');
     });
 
     test('should mark the version footer as the page footer', async ({page}) => {
@@ -105,6 +105,25 @@ test.describe('Overview page accessibility', () => {
     });
 
     describeTheColorRulesAuditInTheDarkColorScheme(showASaveVisualization);
+
+    test('should title the identity of the save with a third level heading', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, saveAFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-identity-title')).toHaveRole('heading');
+      await expect(page.getByTestId('overview-identity-title')).toHaveAccessibleName('Merged Save');
+      await expect(page.getByTestId('overview-identity-title')).toMatchAriaSnapshot('- heading [level=3]');
+    });
+
+    test('should name the identity zone of the save as a region', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, saveAFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-identity')).toHaveRole('region');
+      await expect(page.getByTestId('overview-identity')).toHaveAccessibleName('Overview');
+    });
   });
 
   test.describe('When the warnings of a visualized save are revealed', () => {

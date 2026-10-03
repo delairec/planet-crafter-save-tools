@@ -1,4 +1,5 @@
 .shell {
+    grid-row: 2;
     display: grid;
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
     gap: var(--space-xl);
@@ -21,6 +22,7 @@
 }
 
 .application-version {
+    grid-row: 3;
     padding: var(--space-sm) 0;
     font-size: var(--text-xs);
     color: var(--muted);
@@ -30,16 +32,6 @@
 
 .shell-page {
     min-width: 0;
-}
-
-.overview-pages {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-lg);
-}
-
-.overview-pages a {
-    color: var(--content);
 }
 
 .home-page-links {

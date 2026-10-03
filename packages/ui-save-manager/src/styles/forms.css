@@ -1,9 +1,5 @@
 :root {
     --fields-group-width: 220px;
-    --save-file-field-label-width: 6rem;
-    --merge-slots-swap-column-width: 1.75rem;
-    --merge-slots-column-gap: var(--space-sm);
-    --save-file-row-inset: calc(var(--merge-slots-swap-column-width) + var(--merge-slots-column-gap));
 }
 
 input,
@@ -82,42 +78,6 @@ select:focus {
     outline-color: var(--neon-pink);
 }
 
-.save-file-field-label {
-    display: inline-block;
-    min-width: var(--save-file-field-label-width);
-}
-
-.merge-slots {
-    display: grid;
-    grid-template-columns: var(--merge-slots-swap-column-width) auto;
-    gap: var(--space-lg) var(--merge-slots-column-gap);
-    align-items: center;
-    width: fit-content;
-    margin-block: var(--space-lg);
-}
-
-.merge-slots p {
-    margin: 0;
-}
-
-.merge-slots-swap {
-    grid-column: 1;
-    justify-self: start;
-    grid-row: 1 / span 2;
-}
-
-.merge-slots > .drop-zone {
-    grid-column: 2;
-}
-
-.save-file-row {
-    padding-inline-start: var(--save-file-row-inset);
-}
-
-.merge-option {
-    padding-inline-start: calc(var(--save-file-row-inset) + var(--save-file-field-label-width));
-}
-
 .checkbox-field input {
     margin: 0 var(--space-sm) 0 0;
 }
@@ -125,4 +85,66 @@ select:focus {
 .checkbox-field .tooltip {
     top: calc(100% + var(--space-sm));
     bottom: auto;
+}
+
+.merge-page > .card {
+    margin-block: var(--space-lg);
+}
+
+.save-form {
+    margin-block: var(--space-lg);
+    padding: var(--space-lg);
+}
+
+.merge-save-areas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-lg);
+}
+
+.save-drop-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border: 2px dashed var(--muted);
+    text-align: center;
+}
+
+.save-drop-area.drop-zone-active {
+    border-color: var(--neon-pink);
+}
+
+.save-drop-area p {
+    margin: 0;
+}
+
+.save-drop-area .save-file-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 100%;
+}
+
+.save-drop-area .save-file-field-label {
+    font-weight: var(--semibold);
+}
+
+.save-drop-area input {
+    max-width: 100%;
+    margin-right: 0;
+}
+
+.save-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md) var(--space-lg);
+    margin-top: var(--space-lg);
+}
+
+.save-form-submit {
+    margin-inline-start: auto;
 }

@@ -25,20 +25,13 @@ export interface ThemeTokens {
 }
 
 export interface TokenPair {
-  /** what a reader sees, in one line */
   description: string;
-  /** the stylesheet declaring the foreground color, for the coverage check and the violation message */
   file: string;
-  /** the selector citation printed in a violation message */
   selector: string;
   foreground: string;
   background: string;
 }
 
-/**
- * Every place a stylesheet of `packages/ui-save-manager/src/` sets a text color, paired with the
- * background it renders against.
- */
 export const TOKEN_PAIRS: TokenPair[] = [
   {
     description: 'page body text on the page background',
@@ -144,6 +137,20 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: 'ul, ol',
     foreground: 'muted',
     background: 'canvas'
+  },
+  {
+    description: 'an empty equipment slot on its card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot.empty',
+    foreground: 'muted',
+    background: 'surface-card'
+  },
+  {
+    description: 'the kind of an equipment slot on its card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot-kind',
+    foreground: 'muted',
+    background: 'surface-card'
   },
   {
     description: 'a loading or placeholder message on the page background',
@@ -279,6 +286,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'surface'
   },
   {
+    description: 'the Save Manager part of the application title, at the top of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-application-title-highlight',
+    foreground: 'neon-pink',
+    background: 'surface-card'
+  },
+  {
     description: 'the Host badge of a player, on its neon fill',
     file: 'packages/ui-save-manager/src/styles/components.css',
     selector: '.host-badge',
@@ -356,26 +370,145 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
-    description: 'the links of the overview to the pages of the save, on the page background',
-    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
-    selector: '.overview-pages a',
-    foreground: 'content',
-    background: 'canvas'
-  },
-  {
     description: 'the file name of a merged save attached to the home message, on its chip',
     file: 'packages/ui-save-manager/src/styles/home.css',
     selector: '.home-message-attachment-download',
     foreground: 'content',
     background: 'canvas'
+  },
+  {
+    description: 'the hint beside a section title, on the page background',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.section-title-hint',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the label of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-tile dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the unit after the figure of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-tile-unit',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the caption under the figure of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-tile-caption',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'a label of the terraformation figures of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.key-value dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the label under the Terraformation Index of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-index-label',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the label of a power row of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-power-row dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the share of production consumed of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-share',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the line naming the side a planet card of the Overview page lacks, on the card',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-absent-side',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the name of a planet tab of the Power page, on the tab',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-planet-tab',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the name of the selected planet tab of the Power page, on its neon purple fill',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-planet-tab[aria-selected="true"]',
+    foreground: 'inverted',
+    background: 'neon-purple'
+  },
+  {
+    description: 'the label of a figure tile of the Power page, on the tile',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-tile dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the load meter label of the Power page, on its tile, and its breakdown summary line, on the page background, the darker of the two',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-load-meter-label, .power-breakdown-summary',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the title of a table card of the Power page, on the neon-cyan pill of its header',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table-card .card-header h5',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'a column header of a table of the Power page, on its card',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table thead th',
+    foreground: 'muted',
+    background: 'surface'
   }
 ];
 
-/**
- * @param {string} source the whole content of colors.css
- * @returns the custom properties of the plain `:root` block and of the one nested under
- * `@media (prefers-color-scheme: dark)`, by theme
- */
+export const MINIMUM_GRAPHIC_CONTRAST_RATIO = 3;
+
+export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
+  {
+    description: 'the production bar of a planet card of the Overview page, on its track',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-bar-production',
+    foreground: 'series-production',
+    background: 'elevated'
+  },
+  {
+    description: 'the consumption bar of a planet card of the Overview page, on its track',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-bar-consumption',
+    foreground: 'series-consumption',
+    background: 'elevated'
+  },
+  {
+    description: 'the fill of the load meter of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-load-meter-fill',
+    foreground: 'series-consumption',
+    background: 'elevated'
+  }
+];
+
 export function parseColorTokens(source: string): ThemeTokens {
   const darkSchemeIndex = source.indexOf(DARK_SCHEME_MARKER);
   const light: Record<string, string> = {};
@@ -406,23 +539,12 @@ function relativeLuminance(hex: string): number {
   return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 }
 
-/**
- * The WCAG 2.1 contrast ratio of two colors, order-independent, from 1 (identical) to 21 (black on white).
- * @param {string} first a `#rgb`/`#rrggbb` color
- * @param {string} second a `#rgb`/`#rrggbb` color
- */
 export function contrastRatio(first: string, second: string): number {
   const lighter = Math.max(relativeLuminance(first), relativeLuminance(second));
   const darker = Math.min(relativeLuminance(first), relativeLuminance(second));
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-/**
- * @param {TokenPair[]} pairs the catalog to check
- * @param {ThemeTokens} tokens the color tokens read from colors.css
- * @param {number} minimumRatio the WCAG floor a pair must reach in both themes
- * @returns one violation per pair that misses the floor, or whose token is undeclared, in either theme
- */
 export function findContrastViolations(pairs: TokenPair[], tokens: ThemeTokens, minimumRatio: number): string[] {
   const themes: [ThemeName, Record<string, string>][] = [['light', tokens.light], ['dark', tokens.dark]];
   return pairs.flatMap(pair => themes.flatMap(([themeName, themeTokens]) => {
@@ -440,39 +562,20 @@ export function findContrastViolations(pairs: TokenPair[], tokens: ThemeTokens, 
   }));
 }
 
-/**
- * @param {string} source a stylesheet
- * @returns the stylesheet with every comment replaced by spaces of the same length, its newlines kept
- */
 function maskComments(source: string): string {
   return source.replace(COMMENT_PATTERN, comment => comment.replace(/[^\n]/g, ' '));
 }
 
-/**
- * @param {string} selector a selector or a selector list, as written in a stylesheet
- * @returns each selector of the list, trimmed and with its whitespace collapsed
- */
 function splitSelectorList(selector: string): string[] {
   return selector.split(',').map(part => part.trim().replace(/\s+/g, ' ')).filter(part => part.length > 0);
 }
 
-/**
- * @param {string} maskedSource a stylesheet whose comments are masked
- * @param {number} declarationIndex the offset of a declaration inside it
- * @returns the selectors of the rule enclosing that declaration
- */
 function readEnclosingSelectors(maskedSource: string, declarationIndex: number): string[] {
   const ruleOpeningIndex = maskedSource.lastIndexOf('{', declarationIndex);
   const selectorStartIndex = Math.max(...RULE_BOUNDARIES.map(boundary => maskedSource.lastIndexOf(boundary, ruleOpeningIndex - 1))) + 1;
   return splitSelectorList(maskedSource.slice(selectorStartIndex, ruleOpeningIndex));
 }
 
-/**
- * @param {TokenPair[]} filePairs the pairs catalogued for the stylesheet declaring the color
- * @param {string} token the foreground token the declaration names
- * @param {string[]} ruleSelectors the selectors of the rule holding the declaration
- * @returns whether one pair names that token for every one of those selectors, and so states their background
- */
 function isCoveredByCatalog(filePairs: TokenPair[], token: string, ruleSelectors: string[]): boolean {
   return filePairs.some(pair => {
     const pairSelectors = splitSelectorList(pair.selector);
@@ -480,13 +583,6 @@ function isCoveredByCatalog(filePairs: TokenPair[], token: string, ruleSelectors
   });
 }
 
-/**
- * @param {string} source the whole content of one stylesheet of `packages/ui-save-manager/src/`
- * @param {string} filePath that stylesheet's path, matching a `TokenPair.file`
- * @param {TokenPair[]} pairs the catalog every foreground declaration must appear in
- * @returns one violation per `color:` declaration that names no token, or whose token and selector no pair of the
- * file covers
- */
 export function findUncataloguedForegroundDeclarations(source: string, filePath: string, pairs: TokenPair[]): string[] {
   const maskedSource = maskComments(source);
   const filePairs = pairs.filter(pair => pair.file === filePath);
@@ -510,11 +606,6 @@ export function findUncataloguedForegroundDeclarations(source: string, filePath:
   return violations;
 }
 
-/**
- * @param io
- * @returns every foreground violation of the stylesheets of `packages/ui-save-manager/src/`, generated ones excluded,
- * each cited by its path relative to the workspace root
- */
 async function findForegroundViolationsInStylesheets(io: ScriptIo): Promise<string[]> {
   const violations: string[] = [];
   for await (const filePath of io.scanFiles(STYLESHEET_FILES_PATTERN)) {
@@ -531,13 +622,14 @@ export async function checkColorContrast(io: ScriptIo): Promise<void> {
   const tokens = parseColorTokens(await io.readText(COLORS_FILE_PATH));
   const violations = [
     ...findContrastViolations(TOKEN_PAIRS, tokens, MINIMUM_CONTRAST_RATIO),
+    ...findContrastViolations(GRAPHIC_TOKEN_PAIRS, tokens, MINIMUM_GRAPHIC_CONTRAST_RATIO),
     ...await findForegroundViolationsInStylesheets(io)
   ];
 
   reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
-    nothingFound: 'every catalogued text/background pair meets WCAG 2.1 AA (4.5:1) in both themes.',
+    nothingFound: `every catalogued text/background pair meets WCAG 2.1 AA (${MINIMUM_CONTRAST_RATIO}:1), and every catalogued graphic/background pair ${MINIMUM_GRAPHIC_CONTRAST_RATIO}:1, in both themes.`,
     summarize: count => `${count} color contrast violation(s); see @DECISION.ColorTokenPairsMeetWcagAaByCatalog.`
   });
 }

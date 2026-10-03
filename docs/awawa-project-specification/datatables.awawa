@@ -43,3 +43,16 @@ DATATABLE EnergyLevelsOfRelease2004
 	DESC "base kW of the world objects whose value in release 2.004 differs from the energy levels"
 		+ "table; applies to 2.004 and every earlier release"
 		REF @DATATABLE.EnergyLevels
+
+DATATABLE OxygenTankCapacities
+	TABLE "packages/data-world-objects/oxygenTankCapacities.json"
+	KEY worldObjectName
+	JSON_SCHEMA "packages/data-world-objects/oxygenTankCapacities.schema.json"
+	DESC "the oxygen capacity of a player wearing each oxygen tank tier"
+
+DATATABLE EquipmentKinds
+	TABLE "packages/data-world-objects/equipmentKinds.json"
+	KEY worldObjectName
+	JSON_SCHEMA "packages/data-world-objects/equipmentKinds.schema.json"
+	DESC "the equipment kind of each world object a player can wear, the kinds in the order of the"
+		+ "slots of the player card"

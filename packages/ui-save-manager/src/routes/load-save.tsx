@@ -18,7 +18,7 @@ export default function LoadSavePage() {
       return;
     }
 
-    loadedSave.loadSave({content: result.content, fileName: result.fileName, warnings: result.warnings});
+    loadedSave.loadSave({content: result.content, fileName: result.fileName, fileSize: result.fileSize, warnings: result.warnings});
     navigate(PAGE_PATHS.overviewPath);
   };
 

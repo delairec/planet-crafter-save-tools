@@ -2,30 +2,34 @@ import {Accessor, createContext, createResource, createSignal, JSX, Resource} fr
 import {SaveValidationMessageViewModel} from "core-mapping/save/presentation/viewModels/SaveValidationMessageViewModel";
 import {
   loadConfigurationPageController,
-  loadEnergyLevelsSectionController,
+  loadPowerPageController,
   loadPlayersMenuController,
-  loadPlayersSectionController,
   loadSaveIdentityController,
-  loadTerraformationLevelsSectionController
+  loadTerraformationLevelsSectionController,
+  loadPlayersPageController
 } from "core-mapping/display/composition/compositionRoot";
+import {loadOverviewPageController} from "core-mapping/display/composition/compositionRoot";
+import {OverviewPageViewModel} from "core-mapping/display/presentation/viewModels/OverviewPageViewModel";
 import {ConfigurationPageViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
-import {EnergyLevelsViewModel} from "core-mapping/display/presentation/viewModels/EnergyLevelsViewModel";
+import {PowerPageViewModel} from "core-mapping/display/presentation/viewModels/PowerPageViewModel";
 import {TerraformationLevelsViewModel} from "core-mapping/display/presentation/viewModels/TerraformationLevelsViewModel";
-import {PlayersViewModel} from "core-mapping/display/presentation/viewModels/PlayersViewModel";
+import {PlayersPageViewModel} from "core-mapping/display/presentation/viewModels/PlayersPageViewModel";
 import {SaveIdentityViewModel} from "core-mapping/display/presentation/viewModels/SaveIdentityViewModel";
 import {PlayersMenuViewModel} from "core-mapping/display/presentation/viewModels/PlayersMenuViewModel";
 
 export interface LoadedSaveViewModels {
   configurationPage: Resource<ConfigurationPageViewModel>;
-  energyLevels: Resource<EnergyLevelsViewModel>;
+  powerPage: Resource<PowerPageViewModel>;
   terraformationLevels: Resource<TerraformationLevelsViewModel>;
-  players: Resource<PlayersViewModel>;
+  playersPage: Resource<PlayersPageViewModel>;
   saveIdentity: Resource<SaveIdentityViewModel>;
   playersMenu: Resource<PlayersMenuViewModel>;
+  overviewPage: Resource<OverviewPageViewModel>;
 }
 export interface ValidatedSave {
   content: string;
   fileName: string;
+  fileSize: number;
   warnings: SaveValidationMessageViewModel[];
 }
 
@@ -50,16 +54,18 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
 
   const [configurationPage] = createResource(validatedContent,
     (content) => loadConfigurationPageController.loadConfigurationPage(content));
-  const [energyLevels] = createResource(validatedContent,
-    (content) => loadEnergyLevelsSectionController.loadEnergyLevelsSection(content));
+  const [powerPage] = createResource(validatedContent,
+    (content) => loadPowerPageController.loadPowerPage(content));
   const [terraformationLevels] = createResource(validatedContent,
     (content) => loadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
-  const [players] = createResource(validatedContent,
-    (content) => loadPlayersSectionController.loadPlayersSection(content));
+  const [playersPage] = createResource(validatedContent,
+    (content) => loadPlayersPageController.loadPlayersPage(content));
   const [saveIdentity] = createResource(validatedSave,
     ({content, fileName}) => loadSaveIdentityController.loadSaveIdentity(content, fileName));
   const [playersMenu] = createResource(validatedContent,
     (content) => loadPlayersMenuController.loadPlayersMenu(content));
+  const [overviewPage] = createResource(validatedSave,
+    ({content, fileName, fileSize}) => loadOverviewPageController.loadOverviewPage({content, fileName, fileSize}));
 
   const loadedSave: LoadedSave = {
     validatedSave,
@@ -68,7 +74,7 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     loadSave: setValidatedSave,
     unloadSave: () => setValidatedSave(null),
     viewModels: {
-      configurationPage, energyLevels, terraformationLevels, players, saveIdentity, playersMenu
+      configurationPage, powerPage, terraformationLevels, playersPage, saveIdentity, playersMenu, overviewPage
     }
   };
 

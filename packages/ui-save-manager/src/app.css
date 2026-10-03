@@ -10,6 +10,9 @@
 @import "styles/shell/menu.css";
 @import "styles/home.css";
 @import "styles/components.css";
+@import "styles/overview.css";
+@import "styles/players.css";
+@import "styles/power.css";
 
 .app {
     height: var(--app-height);

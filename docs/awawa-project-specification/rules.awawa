@@ -619,3 +619,109 @@ RULE ASaveDesignatesExactlyOneHostPlayer
 	SOURCE "Owner ruling during the refinement of REFACTOR160: the unique host check the validator"
 		+ "carried is a statement about the save, recorded in the specification area"
 		PR 231
+
+RULE TheOxygenMaximumIsTheCapacityOfTheTankWorn
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the oxygen gauge of a player fills up to the capacity of the oxygen tank in their"
+		+ "equipment, 100 without a tank; health and thirst fill up to 100 whatever is worn"
+		ATTESTED_BY "packages/data-world-objects/oxygenTankCapacities.json"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/resolveOxygenCapacity.spec.ts"
+	APPLIES_TO_SECTION @SECTION.Players
+	VALUES_FROM @DATATABLE.OxygenTankCapacities
+	RATIONALE "The save stores the current value of each gauge and not its maximum, which the"
+		+ "equipment decides; a player wears one tank at a time"
+	SOURCE "Wiki page Oxygen Tanks read on 2026-10-02: base 100, then 145, 200, 280, 370 and 450"
+		+ "for the tiers 1 to 5"
+		REF @URL.WikiOxygenTanks
+	SOURCE "Gauges of the players of the reference saves, compared on 2026-10-02 with the tank each"
+		+ "wears: full players at 280, 370 and 450 with the tiers 3, 4 and 5, at 100 without a"
+		+ "tank, health and thirst never above 100"
+		REF @PROJECT.DNC
+
+RULE TheInventorySizeOfAPlayerCountsTheSlotsOfTheirBackpack
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the size of the inventory a player entry names counts every slot the player can fill,"
+		+ "those of the backpack worn included: 12 without a backpack, then 16, 20, 24, 28, 35, 45"
+		+ "and 54 with the tiers 1 to 7; the free slots are that size less the items the inventory"
+		+ "holds"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/entities/PlayerEntity.spec.ts"
+	APPLIES_TO_SECTION @SECTION.Inventories
+	APPLIES_TO_SECTION @SECTION.Players
+	RATIONALE "The game writes the size of the inventory again when a backpack is worn, so the save"
+		+ "already carries the capacity the player sees and no backpack table is needed"
+	SOURCE "Wiki page Backpacks, revision 16348, read on 2026-10-03: 12 slots with no backpack, 16,"
+		+ "20, 24, 28 and 35 for the tiers 1 to 5, 45 at the tier 6"
+		REF @URL.WikiBackpacks
+	SOURCE "Inventories of the players of the reference saves, compared on 2026-10-03 with the"
+		+ "backpack each wears: size 12 without a backpack, 24, 28, 35, 45 and 54 with the tiers 3"
+		+ "to 7"
+		REF @PROJECT.DNC
+
+RULE APlayerWearsAtMostOneItemOfEachEquipmentKind
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "a player wears at most one item of each equipment kind, the kind of a wearable world"
+		+ "object being the one the equipment kinds table names"
+		ATTESTED_BY "packages/data-world-objects/equipmentKinds.json"
+	APPLIES_TO_SECTION @SECTION.Inventories
+	VALUES_FROM @DATATABLE.EquipmentKinds
+	RATIONALE "The equipment inventory is a grid of untyped slots, 4 and 4 more per exoskeleton"
+		+ "tier, and the game refuses a second item of a kind already worn; a kind is the family a"
+		+ "world object name belongs to, its tiers and variants sharing it"
+	SOURCE "Wiki page Backpacks, revision 16348, read on 2026-10-03: the player can not equip"
+		+ "multiple backpacks; wiki page Equipment, revision 16330, for the families"
+		REF @URL.WikiBackpacks
+		REF @URL.WikiEquipment
+	SOURCE "Equipment of the 21 players of the reference saves, read on 2026-10-03: no kind worn"
+		+ "twice, and the equipment size 4 with nothing worn, then 12, 16, 20 and 24 with the"
+		+ "exoskeleton tiers 2 to 5"
+		REF @PROJECT.DNC
+
+RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the power balance of a planet producing power is deficit when its available power is"
+		+ "negative, tight when the available power is below a tenth of its production, and surplus"
+		+ "otherwise"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/assessPowerBalance.spec.ts::When"
+			+ "the planet produces power"
+	SPEC "a planet producing nothing is in deficit when it consumes and balanced otherwise"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/assessPowerBalance.spec.ts::When"
+			+ "the planet produces nothing"
+	RATIONALE "The game shows no status for the power of a planet, only its figures; the balance"
+		+ "reads them as the owner does, a tenth of the production left being the margin under"
+		+ "which a new machine may tip the planet into deficit"
+	SOURCE "Owner ruling at the launch of FEAT139 on 2026-10-03: the threshold between a tight and"
+		+ "a surplus balance is a tenth of the production"
+		PR 269
+		REF @TASK.FEAT139
+
+RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the SysTi of a save is the product of the Terraformation Index of its planets, a planet"
+		+ "whose index is zero left out"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.spec.ts"
+	SPEC "the game writes the SysTi with one short-scale prefix per power of 1,000, k, M, B, T, Qa,"
+		+ "Qi, Sx, Sp, Oc, No, Dc, Ud and on up to Qitg, the unit SysTi glued to the prefix"
+		ATTESTED_BY "packages/core-mapping/src/display/presentation/formatters/formatNumber/systemTerraformationIndex.strategy.spec.ts"
+	APPLIES_TO_SECTION @SECTION.TerraformationLevels
+	RATIONALE "No save stores a SysTi field: the game derives it from the Terraformation Index of"
+		+ "each planet, which the save stores as its terraformation levels"
+	SOURCE "Wiki page Terraformation Index read on 2026-10-03, section System Terraformation Index:"
+		+ "SysTi = Prime x Humble x Toxicity x Selenea x Aqualis, neglecting any Ti of zero;"
+		+ "unlocks given as 100.00 QiSysTi, 15.00 NoSysTi and 5.00 UdSysTi"
+		REF @URL.WikiTerraformationIndex
+		PR 268
+	SOURCE "Reference saves compared on 2026-10-03: a Standard save with four planets holds objects"
+		+ "the game unlocks at 1e20, 1e25 and 1.5e31 SysTi; the sum of its Ti, 3.65e14, reaches"
+		+ "none of them, their product, 4.37e54, reaches them all"
+		REF @PROJECT.DNC
+		PR 268
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, read on"
+		+ "2026-10-03: its strings list the units SysTi, kSysTi, MSysTi on up to QitgSysTi, the"
+		+ "prefix and its order of every power of 1,000 from 1 to 1e108"
+		REF @GAME_RELEASE.2.103
+		PR 268

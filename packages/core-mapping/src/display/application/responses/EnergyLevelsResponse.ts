@@ -1,4 +1,5 @@
 import {WorldObjectLabelsResponse} from "./WorldObjectLabelsResponse";
+import {EnergySettingsResponse} from "./EnergySettingsResponse";
 
 export interface EnergyBreakdownEntryResponse {
   readonly name: string;
@@ -16,10 +17,13 @@ export interface OptimizerBoostedMachineResponse {
 export interface OptimizerResponse {
   readonly name: string;
   readonly fuseCount: number;
+  readonly fuseSlots: number;
   readonly boostedMachines: readonly OptimizerBoostedMachineResponse[];
   readonly contribution: number;
   readonly productionRatio?: number;
 }
+
+export type PowerBalanceResponse = 'deficit' | 'tight' | 'surplus' | 'balanced';
 
 export interface PlanetEnergyLevelsResponse {
   readonly planetId: number;
@@ -27,16 +31,13 @@ export interface PlanetEnergyLevelsResponse {
   readonly production: number;
   readonly consumption: number;
   readonly available: number;
+  readonly balance: PowerBalanceResponse;
   readonly productionBreakdown: readonly EnergyBreakdownEntryResponse[];
   readonly consumptionBreakdown: readonly EnergyBreakdownEntryResponse[];
   readonly optimizers: readonly OptimizerResponse[];
 }
 
-export interface EnergyLevelsResponse {
-  readonly gameRelease: string;
-  readonly gameReleaseIsEarlierThanCurrent: boolean;
-  readonly powerConsumptionModifier: number;
-  readonly powerConsumptionIsModified: boolean;
+export interface EnergyLevelsResponse extends EnergySettingsResponse {
   readonly planets: readonly PlanetEnergyLevelsResponse[];
   readonly worldObjectLabels: WorldObjectLabelsResponse;
 }

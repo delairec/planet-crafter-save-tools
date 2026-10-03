@@ -41,6 +41,10 @@
     --danger-surface: #fde6e6;
     --positive-on-surface: #146c35;
     --danger-on-surface: #b91c1c;
+
+    /* SÉRIES */
+    --series-production: #0891b2;
+    --series-consumption: #d9007d;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -80,5 +84,8 @@
         --danger-surface: #3a1515;
         --positive-on-surface: #4ade80;
         --danger-on-surface: #f87171;
+
+        --series-production: #06a6c4;
+        --series-consumption: #d9007d;
     }
 }

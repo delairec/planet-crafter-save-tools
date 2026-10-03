@@ -307,8 +307,54 @@ describe('checkColorContrast', () => {
 
       // Assert
       expect({printed, exitCodes}).toEqual({
-        printed: ['check:contrast: every catalogued text/background pair meets WCAG 2.1 AA (4.5:1) in both themes.'],
+        printed: ['check:contrast: every catalogued text/background pair meets WCAG 2.1 AA (4.5:1), and every catalogued graphic/background pair 3:1, in both themes.'],
         exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a fill that draws a graphic reaches 3:1 on its background but not 4.5:1', () => {
+    it('should accept it, a graphic needing 3:1 where a text needs 4.5:1', async () => {
+      // Arrange
+      const consumptionBarAtThreePointFourToOneOnTheDarkTrack = '\n@media (prefers-color-scheme: dark) {\n    :root {\n        --series-consumption: #d9007d;\n    }\n}\n';
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          [COLORS_FILE_PATH]: palette + consumptionBarAtThreePointFourToOneOnTheDarkTrack
+        }
+      });
+
+      // Act
+      await checkColorContrast(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: ['check:contrast: every catalogued text/background pair meets WCAG 2.1 AA (4.5:1), and every catalogued graphic/background pair 3:1, in both themes.'],
+        exitCodes: [0]
+      });
+    });
+  });
+
+  describe('When a fill that draws a graphic misses 3:1 on its background in one theme', () => {
+    it('should print the graphic pair at the 3:1 floor, then the count, and exit with one', async () => {
+      // Arrange
+      const consumptionBarTheColorOfTheDarkTrack = '\n@media (prefers-color-scheme: dark) {\n    :root {\n        --series-consumption: #161b36;\n    }\n}\n';
+      const {io, printed, exitCodes} = createFakeScriptIo({
+        files: {
+          [COLORS_FILE_PATH]: palette + consumptionBarTheColorOfTheDarkTrack
+        }
+      });
+
+      // Act
+      await checkColorContrast(io);
+
+      // Assert
+      expect({printed, exitCodes}).toEqual({
+        printed: [
+          'packages/ui-save-manager/src/styles/overview.css: .overview-planet-bar-consumption (dark theme) — the consumption bar of a planet card of the Overview page, on its track: --series-consumption on --elevated is 1.00:1, below the WCAG 2.1 AA floor of 3:1',
+          'packages/ui-save-manager/src/styles/power.css: .power-load-meter-fill (dark theme) — the fill of the load meter of the Power page, on its track: --series-consumption on --elevated is 1.00:1, below the WCAG 2.1 AA floor of 3:1',
+          'check:contrast: 2 color contrast violation(s); see @DECISION.ColorTokenPairsMeetWcagAaByCatalog.'
+        ],
+        exitCodes: [1]
       });
     });
   });

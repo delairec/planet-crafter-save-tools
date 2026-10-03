@@ -4,19 +4,22 @@ import {SaveValidationMessageViewModel} from 'core-mapping/save/presentation/vie
 import Spinner from '~/components/structure/Spinner';
 import DropZone from '~/components/structure/DropZone';
 import SaveFileField from '~/components/structure/SaveFileField';
+import SectionTitle from '~/components/structure/SectionTitle';
 import {selectFileInInput} from '~/lib/selectFileInInput';
 import {yieldToPaint} from '~/lib/yieldToPaint';
 import {
   displayRouteCallFailedMessage,
   displayRouteDisplayTitle,
   displayRouteFileInputLabel,
+  displayRouteHint,
   displayRouteLoadingLabel,
   displayRouteSubmitButtonLabel
 } from '~/messages/displayRouteMessages';
-import {tooManyFilesForOneSaveMessage} from '~/messages/dropZoneMessages';
+import {saveDropHint, tooManyFilesForOneSaveMessage} from '~/messages/dropZoneMessages';
 
 export interface LoadSaveResult {
   fileName: string;
+  fileSize: number;
   content: string;
   isValid: boolean;
   errors: SaveValidationMessageViewModel[];
@@ -66,6 +69,7 @@ export default function LoadSaveSection(props: LoadSaveSectionProps) {
       if (!isDisposed) {
         props.onLoadResult({
           fileName: selectedFile.name,
+          fileSize: selectedFile.size,
           content,
           isValid: viewModel.status === 'valid',
           errors: viewModel.errors,
@@ -81,23 +85,28 @@ export default function LoadSaveSection(props: LoadSaveSectionProps) {
   };
 
   return (
-    <Show when={isReady()} fallback={<p class="text-color-muted">{displayRouteLoadingLabel}</p>}>
-      <DropZone label={displayRouteDisplayTitle} testId="display-area" maximumFileCount={1}
-                tooManyFilesMessage={tooManyFilesForOneSaveMessage}
-                onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
-        <h2 data-testid="display-title">{displayRouteDisplayTitle}</h2>
-        <p class="save-file-row">
-          <SaveFileField label={displayRouteFileInputLabel} testId="save-file" ref={fileInputElement} onChange={handleFileChange}/>
-          <button data-testid="visualize" onClick={handleVisualize} disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
-        </p>
-      </DropZone>
-
-      <Show when={isLoading()}>
-        <Spinner testId="display-busy-indicator"/>
+    <>
+      <SectionTitle testId="display-title" hint={displayRouteHint}>{displayRouteDisplayTitle}</SectionTitle>
+      <Show when={isReady()} fallback={<p class="text-color-muted">{displayRouteLoadingLabel}</p>}>
+        <div class="card save-form">
+          <DropZone label={displayRouteDisplayTitle} testId="display-area" maximumFileCount={1}
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area"
+                    onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
+            <SaveFileField label={displayRouteFileInputLabel} testId="save-file" ref={fileInputElement} onChange={handleFileChange}/>
+            <p class="text-color-muted" data-testid="display-drop-hint">{saveDropHint}</p>
+          </DropZone>
+          <div class="save-form-actions">
+            <button class="button-neon-pink save-form-submit" data-testid="visualize" onClick={handleVisualize}
+                    disabled={!file() || isLoading()}>{displayRouteSubmitButtonLabel}</button>
+          </div>
+          <Show when={isLoading()}>
+            <Spinner testId="display-busy-indicator"/>
+          </Show>
+          <Show when={hasLoadCallFailed()}>
+            <p class="text-color-danger" data-testid="display-failure-message">{displayRouteCallFailedMessage}</p>
+          </Show>
+        </div>
       </Show>
-      <Show when={hasLoadCallFailed()}>
-        <p class="text-color-danger" data-testid="display-failure-message">{displayRouteCallFailedMessage}</p>
-      </Show>
-    </Show>
+    </>
   );
 }
