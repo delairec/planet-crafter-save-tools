@@ -4244,3 +4244,4 @@ DECISION AnEquipmentSlotIsAKindOfTheEquipmentKindsTable
 		REF @URL.SaveManagerRedesignMockup
 	SOURCE "Ruled while implementing the equipment slots and the grouped inventory of the player"
 		+ "card"
+		PR 270
