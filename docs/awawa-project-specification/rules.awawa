@@ -695,4 +695,5 @@ RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
 		+ "which a new machine may tip the planet into deficit"
 	SOURCE "Owner ruling at the launch of FEAT139 on 2026-10-03: the threshold between a tight and"
 		+ "a surplus balance is a tenth of the production"
+		PR 269
 		REF @TASK.FEAT139

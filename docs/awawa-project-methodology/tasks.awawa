@@ -617,36 +617,59 @@ TASK FEAT132
 
 TASK FEAT139
 	TITLE "Give the Power page its view model: figures with a status, optimizers first, tables"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27; the threshold"
 		+ "between a tight and a surplus balance is settled with the owner when the task starts"
 	SPEC "the Power page shows planet tabs and, for the planet of the selected tab, a title"
 		+ "carrying the status pill, the notifications under it, then three figure tiles,"
 		+ "production, consumption and available, the available one carrying the status pill and a"
 		+ "load meter with the share of production consumed; the breadcrumb names the planet"
+		IMPL "packages/ui-save-manager/src/routes/power.tsx::aria-label={powerPlanetTabsLabel}"
+		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<ToneBadge"
+			+ "badge={props.zone.balance}"
+		IMPL "packages/ui-save-manager/src/components/power/PowerFigureTiles.tsx::power-load-meter-fill"
+		IMPL "packages/ui-save-manager/src/components/shell/Breadcrumb.tsx::current-page-subject"
 	SPEC "the balance of a planet is a rule of the domain, recorded as a RULE of the specification"
 		+ "area: deficit when the available power is negative, tight when it is below a tenth of"
 		+ "the production, surplus otherwise, a planet producing nothing being in deficit when it"
 		+ "consumes and balanced otherwise; the use case hands it to the presenter as a primitive"
 		+ "of its response, and the presenter maps it to a word and a tone, the word being shown"
+		IMPL "packages/core-mapping/src/display/domain/rules/assessPowerBalance.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::assessPowerBalance("
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::BADGE_BY_BALANCE"
 	SPEC "the optimizers come before the breakdown, under a header counting them and their boost"
 		+ "with its share of production, as a table of optimizer, energy fuses held over the fuse"
 		+ "slots of its tier, boosted machines and contribution with its share of production"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::function"
+			+ "createOptimizers("
+		IMPL "packages/core-mapping/src/display/infrastructure/OptimizerRangesReaderService.ts::fuseSlots"
+		IMPL "packages/ui-save-manager/src/components/power/PowerOptimizersTable.tsx"
 	SPEC "the producers and the consumers are two tables, machine, quantity, unit, total and share,"
 		+ "largest total first, ending on a total row, under a line counting the producers, the"
 		+ "consumers and the optimizers; the cards of today disappear"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::function"
+			+ "createBreakdownTable("
+		IMPL "packages/ui-save-manager/src/components/power/PowerBreakdownTable.tsx::<tfoot>"
 	SPEC "the Power page reads one view model, the notifications and one zone per planet, built by"
 		+ "one presenter from the application response of one use case, plain records of primitives"
 		+ "with no value object of the domain, as EnergyLevelsResponse is; the planet zone is built"
 		+ "by a presentation helper the planet page reuses, and its figures are formatted by the"
 		+ "helpers that format the planet cards of the Overview page"
+		IMPL "packages/core-mapping/src/display/presentation/PowerPagePresenter.ts"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::formatPowerFigures(planet)"
+		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts::PowerBalanceResponse"
 	SPEC "the Power section controller, presenter and view model of today are retired, every module"
 		+ "left without an importer is deleted, and the anchors and the wording of the decisions"
 		+ "naming them are rewritten"
+		IMPL "packages/core-mapping/src/display/controllers/LoadPowerPageController.ts"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts::loadPowerPageController"
 	SPEC "the tables are the only form the page offers: it shows no Display as selector and no"
 		+ "chart, which come with the chart tasks"
+		IMPL "packages/ui-save-manager/src/routes/power.tsx::<PowerPlanetZone"
 		REF @TASK.FEAT140
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
 	AFTER @TASK.FEAT183
 	WAVE @WAVE.15
 	RATIONALE "The Power section is the largest of the page on a real save, one card per machine"
@@ -679,6 +702,7 @@ TASK FEAT139
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	DELIVERED_BY 269
 
 TASK FEAT140
 	TITLE "Chart the production and the consumption of a planet as bars by machine, with a selector"

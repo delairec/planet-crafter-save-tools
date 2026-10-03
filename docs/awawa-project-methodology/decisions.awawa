@@ -4247,6 +4247,7 @@ DECISION AConsumerShareOnThePowerPageIsItsShareOfProduction
 		+ "and the table would contradict the load meter"
 	SOURCE "Ruling of the FEAT139 agent on 2026-10-03, the mockup of page F leaving the base of the"
 		+ "share open"
+		PR 269
 		REF @URL.SaveManagerRedesignMockup
 
 DECISION ATightPowerBalanceTakesTheNeutralTone
@@ -4263,6 +4264,7 @@ DECISION ATightPowerBalanceTakesTheNeutralTone
 		+ "the contrast guard approves in both themes, a change of the palette this task does not"
 		+ "carry"
 	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
+		PR 269
 		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
 
 DECISION ThePowerBreakdownSummaryCountsMachines
@@ -4276,6 +4278,7 @@ DECISION ThePowerBreakdownSummaryCountsMachines
 	REJECTED "the number of machine types: it is the number of rows of each table, which the line"
 		+ "would only repeat"
 	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
+		PR 269
 
 DECISION ThePowerUseCaseIsNamedAfterItsPageItsResponseAfterTheEnergyLevels
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
@@ -4296,3 +4299,4 @@ DECISION ThePowerUseCaseIsNamedAfterItsPageItsResponseAfterTheEnergyLevels
 		+ "Power page alone"
 		REF @DECISION.AViewModelServesOneView
 	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
+		PR 269
