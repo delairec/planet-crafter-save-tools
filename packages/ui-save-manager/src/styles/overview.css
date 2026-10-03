@@ -31,6 +31,12 @@
     font-size: var(--text-xs);
 }
 
+.overview-tile-caption {
+    margin: var(--space-xxs) 0 0;
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
 .overview-identity .notification {
     margin: 0 0 var(--space-sm);
 }

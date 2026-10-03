@@ -137,6 +137,25 @@ describe('OverviewPagePresenter', () => {
     });
   });
 
+  describe('When the save has a SysTi', () => {
+    it.each<{situation: string; index: number; planetCount: number; value: string; caption: string}>([
+      {situation: 'one planet', index: 7_500, planetCount: 1, value: `7.5${nbsp}kSysTi`, caption: 'multiplied over 1 planet'},
+      {situation: 'several planets', index: 4.369e54, planetCount: 4, value: `4.369${nbsp}SpdSysTi`, caption: 'multiplied over 4 planets'}
+    ])('should show the SysTi tile in the game unit, its caption counting $situation', ({index, planetCount, value, caption}) => {
+      // Arrange
+      const presenter = new OverviewPagePresenter();
+
+      // Act
+      presenter.displayOverviewPage({...OVERVIEW_WITHOUT_PLANETS, systemTerraformationIndex: {index, planetCount}});
+
+      // Assert
+      expect(presenter.viewModel.tiles).toEqual({
+        allTimeTerraTokens: {label: 'All time Terra Tokens', value: '42,000', unit: '=tt='},
+        systemTerraformationIndex: {label: 'System Terraformation Index', value, caption}
+      });
+    });
+  });
+
   describe('When the save has no configuration', () => {
     it('should name the save after its file and give its size alone', () => {
       // Arrange

@@ -129,6 +129,15 @@ test.describe('Overview page', () => {
       await expect(page.getByTestId(/^overview-planet-0-figure-\d+-value$/)).toHaveText(['100 ppq', '200 pK', '300 nPa', '700 Pu', '1.5 kg']);
     });
 
+    test('should show the SysTi of the save in a tile captioned with the count of planets it multiplies', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, energyConsumptionSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-system-terraformation-index-value')).toHaveText('2.8 kSysTi');
+      await expect(page.getByTestId('overview-system-terraformation-index-caption')).toHaveText('multiplied over 1 planet');
+    });
+
     test('should show the power the planet produces, consumes and has available, and the share of its production consumed', async ({page}) => {
       // Act
       await visualizeTheSave(page, energyConsumptionSaveFixturePath);

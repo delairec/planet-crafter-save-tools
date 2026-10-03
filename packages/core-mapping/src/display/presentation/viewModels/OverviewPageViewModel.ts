@@ -11,6 +11,7 @@ export interface OverviewFigureTileViewModel {
   label: string;
   value: string;
   unit?: string;
+  caption?: string;
 }
 
 export interface OverviewBadgeTileViewModel {
@@ -21,6 +22,7 @@ export interface OverviewBadgeTileViewModel {
 export interface OverviewTilesViewModel {
   allTimeTerraTokens?: OverviewFigureTileViewModel;
   totalCraftedObjects?: OverviewFigureTileViewModel;
+  systemTerraformationIndex?: OverviewFigureTileViewModel;
   droneLogistics?: OverviewBadgeTileViewModel;
 }
 

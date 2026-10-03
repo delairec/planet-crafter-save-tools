@@ -17,6 +17,9 @@ function OverviewFigureTile(props: OverviewFigureTileProps) {
           {(unit) => <small class="overview-tile-unit">{unit()}</small>}
         </Show>
       </dd>
+      <Show when={props.tile.caption}>
+        {(caption) => <dd class="overview-tile-caption" data-testid={`${props.testId}-caption`}>{caption()}</dd>}
+      </Show>
     </div>
   );
 }
@@ -33,6 +36,9 @@ export default function OverviewTiles(props: OverviewTilesProps) {
       </Show>
       <Show when={props.tiles.totalCraftedObjects}>
         {(tile) => <OverviewFigureTile tile={tile()} testId="overview-total-crafted-objects"/>}
+      </Show>
+      <Show when={props.tiles.systemTerraformationIndex}>
+        {(tile) => <OverviewFigureTile tile={tile()} testId="overview-system-terraformation-index"/>}
       </Show>
       <Show when={props.tiles.droneLogistics}>
         {(tile) => (

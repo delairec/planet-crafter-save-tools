@@ -4328,3 +4328,39 @@ DECISION ThePowerUseCaseIsNamedAfterItsPageItsResponseAfterTheEnergyLevels
 		REF @DECISION.AViewModelServesOneView
 	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
 		PR 269
+
+DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
+	SPEC "the Overview page shows the SysTi of the save in a tile of its own, the product of the"
+		+ "non-zero Terraformation Index of its planets computed by a domain rule, captioned with"
+		+ "how many planets it multiplies; a save where no planet has an index shows no SysTi tile"
+		IMPL "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewTiles.tsx::overview-system-terraformation-index"
+		REF @RULE.TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+	SPEC "the SysTi figure is written in the unit of the game, the short-scale prefix glued to"
+		+ "SysTi, as in 4.369 SpdSysTi"
+		IMPL "packages/core-mapping/src/display/presentation/formatters/formatNumber/systemTerraformationIndex.strategy.ts"
+		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js"
+	REJECTED "the plain sum of the Terraformation Index of the planets, the arithmetic of the"
+		+ "sample data of the mockup: the wiki gives the product, and a reference save whose"
+		+ "indexes sum to 3.65e14 holds objects the game unlocks at 1.5e31 SysTi"
+		REF @URL.SaveManagerRedesignMockup
+	REJECTED "a weighted sum of the indexes: no source names a weight, and the product already"
+		+ "reaches every unlock the reference saves hold"
+	REJECTED "a SysTi of 1 or 0 when no planet has an index: the empty product is no figure of the"
+		+ "game; the tile is left out, as the crafted objects tile is for a save without statistics"
+	REJECTED "the SI symbol strategy of the Terraformation Index of a planet: it stops at Y, 1e24,"
+		+ "while a SysTi passes 1e54, and the game writes Qi, No and Ud where SI writes E, Z and Y"
+	REJECTED "the label SysTi alone, as the mockup writes it: the tile label spells out the System"
+		+ "Terraformation Index, the abbreviation kept as the unit of the figure"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT132
+	RATIONALE "The task left open whether the SysTi sums or weighs the Ti of the planets. The wiki"
+		+ "states a product that leaves out the planets at zero, and the reference saves confirm"
+		+ "it: the objects they hold are unlocked at thresholds only the product reaches"
+	SOURCE "Research of task FEAT132 on 2026-10-03: the wiki page Terraformation Index and the"
+		+ "reference saves"
+		REF @URL.WikiTerraformationIndex
+		REF @PROJECT.DNC
