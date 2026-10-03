@@ -1,7 +1,6 @@
 import {For} from 'solid-js';
 import {PlanetPowerZoneViewModel} from 'core-mapping/display/presentation/viewModels/PlanetPowerZoneViewModel';
 import {NotificationViewModel} from 'core-mapping/display/presentation/viewModels/NotificationViewModel';
-import ToneBadge from '~/components/structure/ToneBadge';
 import Notification from '~/components/structure/Notification';
 import PowerFigureTiles from '~/components/power/PowerFigureTiles';
 import PowerOptimizersTable from '~/components/power/PowerOptimizersTable';
@@ -15,10 +14,7 @@ interface PowerPlanetZoneProps {
 export default function PowerPlanetZone(props: PowerPlanetZoneProps) {
   return (
     <div class="power-planet-zone">
-      <h4 class="power-planet-title" data-testid="power-planet-title">
-        <span data-testid="power-planet-name">{props.zone.planetName}</span>
-        <ToneBadge badge={props.zone.balance} testId="power-planet-balance"/>
-      </h4>
+      <h4 data-testid="power-planet-title">{props.zone.planetName}</h4>
       <For each={props.notifications}>
         {(notification, index) => <Notification severity={notification.severity} testId={`power-notification-${index()}`}>{notification.message}</Notification>}
       </For>

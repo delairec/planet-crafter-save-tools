@@ -37,7 +37,7 @@ test.describe('Power page', () => {
       // Assert
       await expect(page.getByTestId('power-planet-tab-0')).toHaveText('Skeo');
       await expect(page.getByTestId('power-planet-tab-0')).toHaveAttribute('aria-selected', 'true');
-      await expect(page.getByTestId('power-planet-name')).toHaveText('Skeo');
+      await expect(page.getByTestId('power-planet-title')).toHaveText('Skeo');
       await expect(page.getByTestId(/^power-producers-row-\d+$/)).toContainText(['Wind turbine T2']);
     });
 
@@ -52,7 +52,7 @@ test.describe('Power page', () => {
       await expect(page.getByTestId('power-production')).toContainText('Production');
       await expect(page.getByTestId('power-consumption')).toContainText('Consumption');
       await expect(page.getByTestId('power-available')).toContainText('Available');
-      await expect(page.getByTestId('power-available-balance')).toHaveText(await page.getByTestId('power-planet-balance').textContent() ?? '');
+      await expect(page.getByTestId('power-available-balance')).toHaveText(/^Surplus, /);
     });
 
     test('should show the optimizers before the producers and the consumers, each table ending on a total row', async ({page}) => {
