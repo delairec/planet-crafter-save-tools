@@ -1,7 +1,6 @@
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
-import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
-import {energyLevelsSectionKilowattUnit} from "./messages/energyLevelsSectionMessages.js";
+import {formatKilowatts} from "./formatKilowatts";
 
 const SURPLUS_SIGN = '+';
 const DEFICIT_SIGN = '−';
@@ -27,10 +26,6 @@ export function formatPowerFigures({production, consumption, available}: PowerLe
     available: selectAvailablePowerSign(available) + formatKilowatts(Math.abs(available)),
     ...formatShareOfProductionConsumed(production, consumption)
   };
-}
-
-function formatKilowatts(kilowatts: number): string {
-  return formatNumber(kilowatts) + NON_BREAKING_SPACE + energyLevelsSectionKilowattUnit;
 }
 
 function selectAvailablePowerSign(available: number): string {

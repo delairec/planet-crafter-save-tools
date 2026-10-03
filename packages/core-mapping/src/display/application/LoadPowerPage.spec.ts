@@ -3,14 +3,14 @@ import {describe, expect, it, mock} from 'bun:test';
 import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {stubGameReleasesReader} from "../../save/testing/stubGameReleasesReader";
-import {LoadEnergyLevelsSection} from "./LoadEnergyLevelsSection";
+import {LoadPowerPage} from "./LoadPowerPage";
 import {
   createPlanetWorldObjectsValueObject,
   PlanetWorldObjectsValueObject
 } from "../domain/valueObjects/PlanetWorldObjectsValueObject";
 import {PlacedWorldObjectEntity} from "../domain/entities/PlacedWorldObjectEntity";
 import {WorldObjectEntity} from "../domain/entities/WorldObjectEntity";
-import {EnergyLevelsPresenterPort} from "./ports/EnergyLevelsPresenterPort";
+import {PowerPagePresenterPort} from "./ports/PowerPagePresenterPort";
 import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
@@ -93,14 +93,14 @@ class SaveSectionsWithPlanetsToName extends FakeSaveSectionsMapperService {
 
 const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {Drill4: 'Drill T5'};
 
-function createPresenter(): EnergyLevelsPresenterPort {
-  return {displayEnergyLevels: mock(), displaySaveWithUnreadableLines: mock()};
+function createPresenter(): PowerPagePresenterPort {
+  return {displayPowerPage: mock(), displaySaveWithUnreadableLines: mock()};
 }
 
-function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: EnergyLevelsPresenterPort): LoadEnergyLevelsSection {
+function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: PowerPagePresenterPort): LoadPowerPage {
   const worldObjectLabelsReader: WorldObjectLabelsReaderPort = {readWorldObjectLabels: () => WORLD_OBJECT_LABELS};
 
-  return new LoadEnergyLevelsSection({
+  return new LoadPowerPage({
     saveSectionsReader,
     energyLevelsReader: stubEnergyLevelsReader(),
     gameReleasesReader: stubGameReleasesReader(),
@@ -110,7 +110,7 @@ function createUseCase(saveSectionsReader: SaveSectionsReaderPort, presenter: En
   }, presenter);
 }
 
-describe('LoadEnergyLevelsSection', () => {
+describe('LoadPowerPage', () => {
   it('should present computed energy levels from parsed save', async () => {
     // Arrange
     const presenter = createPresenter();
@@ -120,8 +120,8 @@ describe('LoadEnergyLevelsSection', () => {
     await useCase.execute({content: SAVE_CONTENT});
 
     // Assert
-    expect(presenter.displayEnergyLevels).toHaveBeenCalledTimes(1);
-    expect(presenter.displayEnergyLevels).toHaveBeenCalledWith({
+    expect(presenter.displayPowerPage).toHaveBeenCalledTimes(1);
+    expect(presenter.displayPowerPage).toHaveBeenCalledWith({
       gameRelease: '2.004',
       gameReleaseIsEarlierThanCurrent: true,
       powerConsumptionModifier: 0.5,
@@ -132,6 +132,7 @@ describe('LoadEnergyLevelsSection', () => {
         production: 1_485,
         consumption: 187.75,
         available: 1_297.25,
+        balance: 'surplus',
         productionBreakdown: [{
           name: 'EnergyGenerator6',
           quantity: 1,
@@ -143,7 +144,8 @@ describe('LoadEnergyLevelsSection', () => {
           name: 'Drill4',
           quantity: 1,
           unitLevel: 187.75,
-          totalLevel: 187.75
+          totalLevel: 187.75,
+          productionRatio: 0.12643097643097642
         }],
         optimizers: []
       }],
@@ -161,7 +163,7 @@ describe('LoadEnergyLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
+      expect(presenter.displayPowerPage).toHaveBeenCalledWith(expect.objectContaining({
         powerConsumptionModifier: 1,
         powerConsumptionIsModified: false,
         planets: [expect.objectContaining({consumption: 375.5})]
@@ -179,11 +181,12 @@ describe('LoadEnergyLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
+      expect(presenter.displayPowerPage).toHaveBeenCalledWith(expect.objectContaining({
         planets: [expect.objectContaining({
           optimizers: [{
             name: 'Optimizer1',
             fuseCount: 1,
+            fuseSlots: 1,
             boostedMachines: [{name: 'EnergyGenerator1', quantity: 1}],
             contribution: 0.6,
             productionRatio: 0.33333333333333337
@@ -205,7 +208,7 @@ describe('LoadEnergyLevelsSection', () => {
 
       // Assert
       expect(presenter.displaySaveWithUnreadableLines).toHaveBeenCalledWith({unreadableLines: [{code: 'invalid-json', section: {name: 'worldObjects', index: 78}, entryIndex: 2, line: '{not valid json'}]});
-      expect(presenter.displayEnergyLevels).not.toHaveBeenCalled();
+      expect(presenter.displayPowerPage).not.toHaveBeenCalled();
     });
   });
 
@@ -219,7 +222,7 @@ describe('LoadEnergyLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
+      expect(presenter.displayPowerPage).toHaveBeenCalledWith(expect.objectContaining({
         planets: [expect.objectContaining({planetId: PRIME_PLANET_NUMERIC_ID, planetName: 'Prime'}), expect.anything()]
       }));
     });
@@ -233,7 +236,7 @@ describe('LoadEnergyLevelsSection', () => {
       await useCase.execute({content: SAVE_CONTENT});
 
       // Assert
-      expect(presenter.displayEnergyLevels).toHaveBeenCalledWith(expect.objectContaining({
+      expect(presenter.displayPowerPage).toHaveBeenCalledWith(expect.objectContaining({
         planets: [expect.anything(), expect.objectContaining({planetId: UNKNOWN_PLANET_NUMERIC_ID, planetName: 'Humble'})]
       }));
     });

@@ -10,7 +10,7 @@ const skeoUpdateSaveFixturePath = locateTheFixture('skeo-update_valid.json');
 async function openThePowerPageOfAVisualizedSave(page: Page): Promise<void> {
   await visualizeTheSave(page, baselineSaveFixturePath);
   await openThePageOfTheMenu(page, 'Power');
-  await expect(page.getByTestId('energy-levels-title')).toBeVisible();
+  await expect(page.getByTestId('power-title')).toBeVisible();
 }
 
 test.describe('Power page accessibility', () => {
@@ -33,19 +33,28 @@ test.describe('Power page accessibility', () => {
       await openThePowerPageOfAVisualizedSave(page);
 
       // Assert
-      await expect(page.getByTestId('energy-levels-title')).toHaveRole('heading');
-      await expect(page.getByTestId('energy-levels-title')).toHaveAccessibleName('Power');
-      await expect(page.getByTestId('energy-levels-title')).toMatchAriaSnapshot('- heading [level=3]');
+      await expect(page.getByTestId('power-title')).toHaveRole('heading');
+      await expect(page.getByTestId('power-title')).toHaveAccessibleName('Power');
+      await expect(page.getByTestId('power-title')).toMatchAriaSnapshot('- heading [level=3]');
     });
 
-    test('should title each planet with a fourth level heading', async ({page}) => {
+    test('should title the planet of the selected tab with a fourth level heading', async ({page}) => {
       // Act
       await openThePowerPageOfAVisualizedSave(page);
 
       // Assert
-      await expect(page.getByTestId('energy-levels-planet-0-title')).toHaveRole('heading');
-      await expect(page.getByTestId('energy-levels-planet-0-title')).toHaveAccessibleName('Planet 1');
-      await expect(page.getByTestId('energy-levels-planet-0-title')).toMatchAriaSnapshot('- heading [level=4]');
+      await expect(page.getByTestId('power-planet-title')).toHaveRole('heading');
+      await expect(page.getByTestId('power-planet-title')).toHaveAccessibleName(/^Planet 1\b/);
+      await expect(page.getByTestId('power-planet-title')).toMatchAriaSnapshot('- heading [level=4]');
+    });
+
+    test('should offer the planets as tabs, the first one selected', async ({page}) => {
+      // Act
+      await openThePowerPageOfAVisualizedSave(page);
+
+      // Assert
+      await expect(page.getByTestId('power-planet-tab-0')).toHaveRole('tab');
+      await expect(page.getByTestId('power-planet-tab-0')).toHaveAttribute('aria-selected', 'true');
     });
   });
 
@@ -58,7 +67,7 @@ test.describe('Power page accessibility', () => {
       await openThePageOfTheMenu(page, 'Power');
 
       // Assert
-      const submergedMachinesNotification = page.getByTestId(/^energy-levels-notification-\d+$/)
+      const submergedMachinesNotification = page.getByTestId(/^power-notification-\d+$/)
         .filter({hasText: 'Submerged machines may distort the computed available energy.'});
       await expect(submergedMachinesNotification)
         .toMatchAriaSnapshot('- paragraph: /^Limitation ?:\\sSubmerged machines may distort the computed available energy\\.$/');
