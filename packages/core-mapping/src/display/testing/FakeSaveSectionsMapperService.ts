@@ -70,16 +70,18 @@ export class FakeSaveSectionsMapperService implements SaveSectionsMapperPort {
     return [new PlayerEntity({
       id: '76561190000000001',
       name: 'Nikowa',
-      inventory: [],
-      equipment: [],
+      inventory: ['Backpack4'],
+      equipment: ['OxygenTank3'],
       planetId: 'Toxicity',
-      host: true
+      host: true,
+      gauges: {oxygen: 140, health: 72.5, thirst: 96}
     }), new PlayerEntity({
       id: '76561190000000007',
       name: 'Chileny',
       inventory: [],
       equipment: [],
-      host: false
+      host: false,
+      gauges: {oxygen: 100, health: 100, thirst: 0}
     })];
   }
 

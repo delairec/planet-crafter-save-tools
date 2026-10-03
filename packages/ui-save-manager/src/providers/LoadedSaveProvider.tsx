@@ -4,16 +4,16 @@ import {
   loadConfigurationPageController,
   loadEnergyLevelsSectionController,
   loadPlayersMenuController,
-  loadPlayersSectionController,
   loadSaveIdentityController,
-  loadTerraformationLevelsSectionController
+  loadTerraformationLevelsSectionController,
+  loadPlayersPageController
 } from "core-mapping/display/composition/compositionRoot";
 import {loadOverviewPageController} from "core-mapping/display/composition/compositionRoot";
 import {OverviewPageViewModel} from "core-mapping/display/presentation/viewModels/OverviewPageViewModel";
 import {ConfigurationPageViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
 import {EnergyLevelsViewModel} from "core-mapping/display/presentation/viewModels/EnergyLevelsViewModel";
 import {TerraformationLevelsViewModel} from "core-mapping/display/presentation/viewModels/TerraformationLevelsViewModel";
-import {PlayersViewModel} from "core-mapping/display/presentation/viewModels/PlayersViewModel";
+import {PlayersPageViewModel} from "core-mapping/display/presentation/viewModels/PlayersPageViewModel";
 import {SaveIdentityViewModel} from "core-mapping/display/presentation/viewModels/SaveIdentityViewModel";
 import {PlayersMenuViewModel} from "core-mapping/display/presentation/viewModels/PlayersMenuViewModel";
 
@@ -21,7 +21,7 @@ export interface LoadedSaveViewModels {
   configurationPage: Resource<ConfigurationPageViewModel>;
   energyLevels: Resource<EnergyLevelsViewModel>;
   terraformationLevels: Resource<TerraformationLevelsViewModel>;
-  players: Resource<PlayersViewModel>;
+  playersPage: Resource<PlayersPageViewModel>;
   saveIdentity: Resource<SaveIdentityViewModel>;
   playersMenu: Resource<PlayersMenuViewModel>;
   overviewPage: Resource<OverviewPageViewModel>;
@@ -58,8 +58,8 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     (content) => loadEnergyLevelsSectionController.loadEnergyLevelsSection(content));
   const [terraformationLevels] = createResource(validatedContent,
     (content) => loadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
-  const [players] = createResource(validatedContent,
-    (content) => loadPlayersSectionController.loadPlayersSection(content));
+  const [playersPage] = createResource(validatedContent,
+    (content) => loadPlayersPageController.loadPlayersPage(content));
   const [saveIdentity] = createResource(validatedSave,
     ({content, fileName}) => loadSaveIdentityController.loadSaveIdentity(content, fileName));
   const [playersMenu] = createResource(validatedContent,
@@ -74,7 +74,7 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     loadSave: setValidatedSave,
     unloadSave: () => setValidatedSave(null),
     viewModels: {
-      configurationPage, energyLevels, terraformationLevels, players, saveIdentity, playersMenu, overviewPage
+      configurationPage, energyLevels, terraformationLevels, playersPage, saveIdentity, playersMenu, overviewPage
     }
   };
 

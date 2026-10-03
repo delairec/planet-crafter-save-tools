@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "oxygenTankCapacities.schema.json",
+  "title": "Oxygen tank capacities",
+  "description": "Oxygen capacity of a player wearing each oxygen tank tier.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["worldObjectName", "oxygenCapacity"],
+    "additionalProperties": false,
+    "properties": {
+      "worldObjectName": {"type": "string", "pattern": "^OxygenTank[0-9]+$"},
+      "oxygenCapacity": {"type": "integer", "exclusiveMinimum": 100}
+    }
+  }
+}

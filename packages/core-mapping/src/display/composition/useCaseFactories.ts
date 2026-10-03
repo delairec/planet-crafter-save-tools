@@ -9,7 +9,6 @@ import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPor
 import {LoadConfigurationPage} from "../application/LoadConfigurationPage";
 import {LoadEnergyLevelsSection} from "../application/LoadEnergyLevelsSection";
 import {LoadPlayersMenu} from "../application/LoadPlayersMenu";
-import {LoadPlayersSection} from "../application/LoadPlayersSection";
 import {LoadSaveIdentity} from "../application/LoadSaveIdentity";
 import {LoadTerraformationLevelsSection} from "../application/LoadTerraformationLevelsSection";
 import {ConfigurationPagePresenter} from "../presentation/ConfigurationPagePresenter";
@@ -18,8 +17,6 @@ import {EnergyLevelsPresenter} from "../presentation/EnergyLevelsPresenter";
 import {EnergyLevelsViewModel} from "../presentation/viewModels/EnergyLevelsViewModel";
 import {PlayersMenuPresenter} from "../presentation/PlayersMenuPresenter";
 import {PlayersMenuViewModel} from "../presentation/viewModels/PlayersMenuViewModel";
-import {PlayersPresenter} from "../presentation/PlayersPresenter";
-import {PlayersViewModel} from "../presentation/viewModels/PlayersViewModel";
 import {SaveIdentityPresenter} from "../presentation/SaveIdentityPresenter";
 import {SaveIdentityViewModel} from "../presentation/viewModels/SaveIdentityViewModel";
 import {TerraformationLevelsPresenter} from "../presentation/TerraformationLevelsPresenter";
@@ -31,6 +28,10 @@ import {LoadOverviewPage} from "../application/LoadOverviewPage";
 import {LoadOverviewPageRequest} from "../application/requests/LoadOverviewPageRequest";
 import {OverviewPagePresenter} from "../presentation/OverviewPagePresenter";
 import {OverviewPageViewModel} from "../presentation/viewModels/OverviewPageViewModel";
+import {LoadPlayersPage} from "../application/LoadPlayersPage";
+import {OxygenTankCapacitiesReaderService} from "../infrastructure/OxygenTankCapacitiesReaderService";
+import {PlayersPagePresenter} from "../presentation/PlayersPagePresenter";
+import {PlayersPageViewModel} from "../presentation/viewModels/PlayersPageViewModel";
 
 function createSaveSectionsReader(): SaveSectionsReaderPort {
   return new SaveSectionsReaderService(new SaveSectionsParserService());
@@ -70,15 +71,6 @@ function createLoadPlayersMenuUseCase(presenter: PlayersMenuPresenter): LoadPlay
   return new LoadPlayersMenu(createSaveSectionsReader(), presenter);
 }
 
-export function createLoadPlayersSection(): UseCaseWithPresenter<LoadSaveSectionsRequest, PlayersViewModel> {
-  const presenter = new PlayersPresenter();
-  return {useCase: createLoadPlayersSectionUseCase(presenter), presenter};
-}
-
-function createLoadPlayersSectionUseCase(presenter: PlayersPresenter): LoadPlayersSection {
-  return new LoadPlayersSection(createSaveSectionsReader(), new WorldObjectLabelsReaderService(), presenter);
-}
-
 export function createLoadSaveIdentity(): UseCaseWithPresenter<LoadSaveIdentityRequest, SaveIdentityViewModel> {
   const presenter = new SaveIdentityPresenter();
   return {useCase: createLoadSaveIdentityUseCase(presenter), presenter};
@@ -109,5 +101,18 @@ function createLoadOverviewPageUseCase(presenter: OverviewPagePresenter): LoadOv
     energyLevelsReader: new EnergyLevelsReaderService(),
     optimizerRangesReader: new OptimizerRangesReaderService(),
     planetNamesReader: new PlanetNamesReaderService()
+  }, presenter);
+}
+
+export function createLoadPlayersPage(): UseCaseWithPresenter<LoadSaveSectionsRequest, PlayersPageViewModel> {
+  const presenter = new PlayersPagePresenter();
+  return {useCase: createLoadPlayersPageUseCase(presenter), presenter};
+}
+
+function createLoadPlayersPageUseCase(presenter: PlayersPagePresenter): LoadPlayersPage {
+  return new LoadPlayersPage({
+    saveSectionsReader: createSaveSectionsReader(),
+    worldObjectLabelsReader: new WorldObjectLabelsReaderService(),
+    oxygenTankCapacitiesReader: new OxygenTankCapacitiesReaderService()
   }, presenter);
 }

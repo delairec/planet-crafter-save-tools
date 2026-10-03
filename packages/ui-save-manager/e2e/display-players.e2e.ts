@@ -17,6 +17,20 @@ test.describe('Players page', () => {
       await expect(page.getByTestId(/^player-name-\d+$/)).toContainText(['Sakia']);
     });
 
+    test('should show the vital gauges of each player against their maximum', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, otherPlayerSaveFixturePath);
+
+      // Act
+      await page.getByTestId('more-players').click();
+
+      // Assert
+      await expect(page.getByTestId('players-count')).toHaveText('1 in this save');
+      await expect(page.getByTestId('player-0-gauge-oxygen-amount')).toHaveText('280 / 280');
+      await expect(page.getByTestId('player-0-gauge-health-percentage')).toHaveText('73\u00a0%');
+      await expect(page.getByTestId('player-0-gauge-thirst-amount')).toHaveText('96 / 100');
+    });
+
     test('should open on a breadcrumb naming the Players group and the Players page', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, otherPlayerSaveFixturePath);
