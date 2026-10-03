@@ -646,7 +646,7 @@ RULE TheInventorySizeOfAPlayerCountsTheSlotsOfTheirBackpack
 		+ "those of the backpack worn included: 12 without a backpack, then 16, 20, 24, 28, 35, 45"
 		+ "and 54 with the tiers 1 to 7; the free slots are that size less the items the inventory"
 		+ "holds"
-		ATTESTED_BY "packages/core-mapping/src/display/application/LoadPlayersPage.spec.ts"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/entities/PlayerEntity.spec.ts"
 	APPLIES_TO_SECTION @SECTION.Inventories
 	APPLIES_TO_SECTION @SECTION.Players
 	RATIONALE "The game writes the size of the inventory again when a backpack is worn, so the save"
