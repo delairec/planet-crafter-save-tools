@@ -10,7 +10,7 @@ export const powerPageOptimizersTitle = 'Optimizers';
 export const powerPageProducersTitle = 'Producers';
 export const powerPageConsumersTitle = 'Consumers';
 export const powerPageTotalLabel = 'Total';
-export const powerPageSummarySeparator = ' · ';
+const powerPageSummarySeparator = ' · ';
 
 /** @param {string} share */
 export const resolvePowerPageLoadMeterLabel = (share) => `${share} of production consumed`;
