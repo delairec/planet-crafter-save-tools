@@ -1,9 +1,9 @@
 import {SaveValidationMessageViewModel} from "../../../save/presentation/viewModels/SaveValidationMessageViewModel";
 import {NotificationViewModel} from "./NotificationViewModel";
-import {PlanetEnergyLevelsViewModel} from "./PlanetEnergyLevelsViewModel";
+import {PlanetPowerZoneViewModel} from "./PlanetPowerZoneViewModel";
 
-export interface EnergyLevelsViewModel {
+export interface PowerPageViewModel {
   unreadableLines?: SaveValidationMessageViewModel[];
   notifications: NotificationViewModel[];
-  planets: PlanetEnergyLevelsViewModel[];
+  planets: PlanetPowerZoneViewModel[];
 }

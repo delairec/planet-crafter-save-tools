@@ -431,6 +431,48 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.overview-planet-absent-side',
     foreground: 'muted',
     background: 'surface'
+  },
+  {
+    description: 'the name of a planet tab of the Power page, on the tab',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-planet-tab',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the name of the selected planet tab of the Power page, on its neon purple fill',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-planet-tab[aria-selected="true"]',
+    foreground: 'inverted',
+    background: 'neon-purple'
+  },
+  {
+    description: 'the label of a figure tile of the Power page, on the tile',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-tile dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the load meter label of the Power page, on its tile, and its breakdown summary line, on the page background, the darker of the two',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-load-meter-label, .power-breakdown-summary',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the title of a table card of the Power page, on the neon-cyan pill of its header',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table-card .card-header h5',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'a column header of a table of the Power page, on its card',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table thead th',
+    foreground: 'muted',
+    background: 'surface'
   }
 ];
 
@@ -448,6 +490,13 @@ export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
     description: 'the consumption bar of a planet card of the Overview page, on its track',
     file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-planet-bar-consumption',
+    foreground: 'series-consumption',
+    background: 'elevated'
+  },
+  {
+    description: 'the fill of the load meter of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-load-meter-fill',
     foreground: 'series-consumption',
     background: 'elevated'
   }

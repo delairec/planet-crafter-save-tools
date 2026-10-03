@@ -2,7 +2,7 @@ import {Accessor, createContext, createResource, createSignal, JSX, Resource} fr
 import {SaveValidationMessageViewModel} from "core-mapping/save/presentation/viewModels/SaveValidationMessageViewModel";
 import {
   loadConfigurationPageController,
-  loadEnergyLevelsSectionController,
+  loadPowerPageController,
   loadPlayersMenuController,
   loadSaveIdentityController,
   loadTerraformationLevelsSectionController,
@@ -11,7 +11,7 @@ import {
 import {loadOverviewPageController} from "core-mapping/display/composition/compositionRoot";
 import {OverviewPageViewModel} from "core-mapping/display/presentation/viewModels/OverviewPageViewModel";
 import {ConfigurationPageViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
-import {EnergyLevelsViewModel} from "core-mapping/display/presentation/viewModels/EnergyLevelsViewModel";
+import {PowerPageViewModel} from "core-mapping/display/presentation/viewModels/PowerPageViewModel";
 import {TerraformationLevelsViewModel} from "core-mapping/display/presentation/viewModels/TerraformationLevelsViewModel";
 import {PlayersPageViewModel} from "core-mapping/display/presentation/viewModels/PlayersPageViewModel";
 import {SaveIdentityViewModel} from "core-mapping/display/presentation/viewModels/SaveIdentityViewModel";
@@ -19,7 +19,7 @@ import {PlayersMenuViewModel} from "core-mapping/display/presentation/viewModels
 
 export interface LoadedSaveViewModels {
   configurationPage: Resource<ConfigurationPageViewModel>;
-  energyLevels: Resource<EnergyLevelsViewModel>;
+  powerPage: Resource<PowerPageViewModel>;
   terraformationLevels: Resource<TerraformationLevelsViewModel>;
   playersPage: Resource<PlayersPageViewModel>;
   saveIdentity: Resource<SaveIdentityViewModel>;
@@ -54,8 +54,8 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
 
   const [configurationPage] = createResource(validatedContent,
     (content) => loadConfigurationPageController.loadConfigurationPage(content));
-  const [energyLevels] = createResource(validatedContent,
-    (content) => loadEnergyLevelsSectionController.loadEnergyLevelsSection(content));
+  const [powerPage] = createResource(validatedContent,
+    (content) => loadPowerPageController.loadPowerPage(content));
   const [terraformationLevels] = createResource(validatedContent,
     (content) => loadTerraformationLevelsSectionController.loadTerraformationLevelsSection(content));
   const [playersPage] = createResource(validatedContent,
@@ -74,7 +74,7 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     loadSave: setValidatedSave,
     unloadSave: () => setValidatedSave(null),
     viewModels: {
-      configurationPage, energyLevels, terraformationLevels, playersPage, saveIdentity, playersMenu, overviewPage
+      configurationPage, powerPage, terraformationLevels, playersPage, saveIdentity, playersMenu, overviewPage
     }
   };
 
