@@ -3,6 +3,15 @@ export const overviewPageTerraTokenUnit = '=tt=';
 export const overviewPageTotalCraftedObjectsLabel = 'Total crafted objects';
 export const overviewPageDroneLogisticsLabel = 'Drone logistics';
 export const overviewPageIdentityHintSeparator = ' · ';
+export const overviewPagePlanetsTitle = 'Planets';
+export const overviewPageNoMachinePlaced = 'No machine placed';
+export const overviewPageNoTerraformationLevelRecorded = 'No terraformation level recorded';
 
 /** @param {string} gameRelease */
 export const resolveOverviewPageGameReleaseLabel = (gameRelease) => `Game release ${gameRelease}`;
+
+/** @param {number} planetCount */
+export const resolveOverviewPagePlanetsHint = (planetCount) => planetCount === 1 ? '1 planet' : `${planetCount} planets`;
+
+/** @param {string} share */
+export const resolveOverviewPageShareOfProductionConsumed = (share) => `${share} of production consumed`;

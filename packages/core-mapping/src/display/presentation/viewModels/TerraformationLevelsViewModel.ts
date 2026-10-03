@@ -6,7 +6,7 @@ export interface TerraformationLevelsViewModel {
   planets: PlanetLevelsViewModel[]
 }
 
-interface PlanetLevelsViewModel {
+export interface PlanetLevelsViewModel {
   name: string;
   environmentalLevels: TableViewModel;
   organicLevels: TableViewModel;

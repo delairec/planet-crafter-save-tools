@@ -1,4 +1,5 @@
 import {WorldObjectLabelsResponse} from "./WorldObjectLabelsResponse";
+import {EnergySettingsResponse} from "./EnergySettingsResponse";
 
 export interface EnergyBreakdownEntryResponse {
   readonly name: string;
@@ -32,11 +33,7 @@ export interface PlanetEnergyLevelsResponse {
   readonly optimizers: readonly OptimizerResponse[];
 }
 
-export interface EnergyLevelsResponse {
-  readonly gameRelease: string;
-  readonly gameReleaseIsEarlierThanCurrent: boolean;
-  readonly powerConsumptionModifier: number;
-  readonly powerConsumptionIsModified: boolean;
+export interface EnergyLevelsResponse extends EnergySettingsResponse {
   readonly planets: readonly PlanetEnergyLevelsResponse[];
   readonly worldObjectLabels: WorldObjectLabelsResponse;
 }

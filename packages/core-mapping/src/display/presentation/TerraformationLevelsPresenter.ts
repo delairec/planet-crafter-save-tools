@@ -1,10 +1,9 @@
 import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
-import {TerraformationLevelsViewModel} from "./viewModels/TerraformationLevelsViewModel";
+import {PlanetLevelsViewModel, TerraformationLevelsViewModel} from "./viewModels/TerraformationLevelsViewModel";
 import {ColumnViewModel} from "./viewModels/TableViewModel";
 import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
 import {TerraformationLevelsPresenterPort} from "../application/ports/TerraformationLevelsPresenterPort";
-import {formatNumber} from "./formatters/formatNumber/formatNumber";
-import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
+import {formatTerraformationFigures, FormattedTerraformationFigures} from "./formatTerraformationFigures";
 import {
   terraformationLevelsSectionAnimalsLabel,
   terraformationLevelsSectionDefaultPlanetName,
@@ -13,21 +12,19 @@ import {
   terraformationLevelsSectionOxygenLabel,
   terraformationLevelsSectionPlantsLabel,
   terraformationLevelsSectionPressureLabel,
-  terraformationLevelsSectionPurificationLabel,
-  terraformationLevelsSectionPurificationUnit,
-  terraformationLevelsSectionTerraformationIndexUnit
+  terraformationLevelsSectionPurificationLabel
 } from "./messages/terraformationLevelsSectionMessages.js";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 
-function presentPurificationColumns(unitPurificationLevel: number | undefined): ColumnViewModel[] {
-  if (unitPurificationLevel === undefined) {
+function presentPurificationColumns(purification: string | undefined): ColumnViewModel[] {
+  if (purification === undefined) {
     return [];
   }
 
   return [
     {
       header: terraformationLevelsSectionPurificationLabel,
-      values: [formatNumber(unitPurificationLevel, FormatNumberStrategies.SYMBOL) + terraformationLevelsSectionPurificationUnit]
+      values: [purification]
     }
   ];
 }
@@ -89,48 +86,52 @@ export class TerraformationLevelsPresenter implements TerraformationLevelsPresen
 
   displayTerraformationLevels(levels: TerraformationLevelSummaryResponse[]): void {
     this._viewModel = {
-      planets: levels.map(level => ({
-        name: level.planetId,
-        environmentalLevels: {
-          columns: [
-            {
-              header: terraformationLevelsSectionOxygenLabel,
-              values: [formatNumber(level.unitOxygenLevel, FormatNumberStrategies.PARTS_PER)]
-            },
-            {
-              header: terraformationLevelsSectionHeatLabel,
-              values: [formatNumber(level.unitHeatLevel, FormatNumberStrategies.KELVIN)]
-            },
-            {
-              header: terraformationLevelsSectionPressureLabel,
-              values: [formatNumber(level.unitPressureLevel, FormatNumberStrategies.PASCAL)]
-            },
-            ...presentPurificationColumns(level.unitPurificationLevel)
-          ]
-        },
-        organicLevels: {
-          columns: [
-            {
-              header: terraformationLevelsSectionPlantsLabel,
-              values: [formatNumber(level.unitPlantsLevel, FormatNumberStrategies.WEIGHT)]
-            },
-            {
-              header: terraformationLevelsSectionInsectsLabel,
-              values: [formatNumber(level.unitInsectsLevel, FormatNumberStrategies.WEIGHT)]
-            },
-            {
-              header: terraformationLevelsSectionAnimalsLabel,
-              values: [formatNumber(level.unitAnimalsLevel, FormatNumberStrategies.WEIGHT)]
-            },
-          ]
-        },
-        terraformationIndex: formatNumber(level.terraformationIndex, FormatNumberStrategies.SYMBOL) + terraformationLevelsSectionTerraformationIndexUnit,
-        biomass: formatNumber(level.biomass, FormatNumberStrategies.WEIGHT)
-      }))
+      planets: levels.map(level => presentPlanet(level.planetId, formatTerraformationFigures(level)))
     };
   }
 
   displaySaveWithUnreadableLines({unreadableLines}: UnreadableLinesResponse): void {
     this._viewModel = {planets: [], unreadableLines: unreadableLines.map(formatUnreadableLine)};
   }
+}
+
+function presentPlanet(name: string, figures: FormattedTerraformationFigures): PlanetLevelsViewModel {
+  return {
+    name,
+    environmentalLevels: {
+      columns: [
+        {
+          header: terraformationLevelsSectionOxygenLabel,
+          values: [figures.oxygen]
+        },
+        {
+          header: terraformationLevelsSectionHeatLabel,
+          values: [figures.heat]
+        },
+        {
+          header: terraformationLevelsSectionPressureLabel,
+          values: [figures.pressure]
+        },
+        ...presentPurificationColumns(figures.purification)
+      ]
+    },
+    organicLevels: {
+      columns: [
+        {
+          header: terraformationLevelsSectionPlantsLabel,
+          values: [figures.plants]
+        },
+        {
+          header: terraformationLevelsSectionInsectsLabel,
+          values: [figures.insects]
+        },
+        {
+          header: terraformationLevelsSectionAnimalsLabel,
+          values: [figures.animals]
+        },
+      ]
+    },
+    terraformationIndex: figures.terraformationIndex,
+    biomass: figures.biomass
+  };
 }
