@@ -31,14 +31,14 @@ interface OverviewTilesProps {
 export default function OverviewTiles(props: OverviewTilesProps) {
   return (
     <dl class="overview-tiles" data-testid="overview-tiles">
+      <Show when={props.tiles.systemTerraformationIndex}>
+        {(tile) => <OverviewFigureTile tile={tile()} testId="overview-system-terraformation-index"/>}
+      </Show>
       <Show when={props.tiles.allTimeTerraTokens}>
         {(tile) => <OverviewFigureTile tile={tile()} testId="overview-all-time-terra-tokens"/>}
       </Show>
       <Show when={props.tiles.totalCraftedObjects}>
         {(tile) => <OverviewFigureTile tile={tile()} testId="overview-total-crafted-objects"/>}
-      </Show>
-      <Show when={props.tiles.systemTerraformationIndex}>
-        {(tile) => <OverviewFigureTile tile={tile()} testId="overview-system-terraformation-index"/>}
       </Show>
       <Show when={props.tiles.droneLogistics}>
         {(tile) => (
