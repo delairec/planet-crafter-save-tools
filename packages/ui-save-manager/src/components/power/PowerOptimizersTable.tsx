@@ -1,4 +1,4 @@
-import {For} from 'solid-js';
+import {createUniqueId, For} from 'solid-js';
 import {PowerOptimizersViewModel} from 'core-mapping/display/presentation/viewModels/PlanetPowerZoneViewModel';
 import {
   powerBoostedMachinesHeader,
@@ -13,13 +13,14 @@ interface PowerOptimizersTableProps {
 }
 
 export default function PowerOptimizersTable(props: PowerOptimizersTableProps) {
+  const titleId = createUniqueId();
   return (
     <section class="card power-table-card">
       <div class="card-header">
-        <h5 data-testid="power-optimizers-title">{props.optimizers.title}</h5>
+        <h5 id={titleId} data-testid="power-optimizers-title">{props.optimizers.title}</h5>
         <span class="card-summary" data-testid="power-optimizers-summary">{props.optimizers.summary}</span>
       </div>
-      <div class="card-body power-table-body">
+      <div class="card-body power-table-body" role="region" aria-labelledby={titleId} tabindex="0" data-testid="power-optimizers-body">
         <table class="power-table" data-testid="power-optimizers">
           <thead>
             <tr>

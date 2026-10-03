@@ -32,10 +32,16 @@ export interface OverviewPlanetResponse {
   readonly energy?: OverviewPlanetEnergyResponse;
 }
 
+export interface OverviewSystemTerraformationIndexResponse {
+  readonly index: number;
+  readonly planetCount: number;
+}
+
 export interface OverviewPageResponse {
   readonly saveFile: SaveFileResponse;
   readonly saveConfiguration?: OverviewSaveConfigurationResponse;
   readonly progression: OverviewProgressionResponse;
+  readonly systemTerraformationIndex?: OverviewSystemTerraformationIndexResponse;
   readonly planets: readonly OverviewPlanetResponse[];
   readonly energySettings: EnergySettingsResponse;
 }

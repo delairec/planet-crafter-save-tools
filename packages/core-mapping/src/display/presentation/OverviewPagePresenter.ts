@@ -6,6 +6,7 @@ import {
   OverviewPlanetResponse,
   OverviewProgressionResponse,
   OverviewSaveConfigurationResponse,
+  OverviewSystemTerraformationIndexResponse,
   SaveFileResponse
 } from "../application/responses/OverviewPageResponse";
 import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
@@ -33,11 +34,14 @@ import {
   overviewPageNoMachinePlaced,
   overviewPageNoTerraformationLevelRecorded,
   overviewPagePlanetsTitle,
+  overviewPageSystemTerraformationIndexLabel,
+  overviewPageSystemTerraformationIndexUnit,
   overviewPageTerraTokenUnit,
   overviewPageTotalCraftedObjectsLabel,
   resolveOverviewPageGameReleaseLabel,
   resolveOverviewPagePlanetsHint,
-  resolveOverviewPageShareOfProductionConsumed
+  resolveOverviewPageShareOfProductionConsumed,
+  resolveOverviewPageSystemTerraformationIndexCaption
 } from "./messages/overviewPageMessages.js";
 import {
   terraformationLevelsSectionBiomassLabel,
@@ -67,11 +71,11 @@ export class OverviewPagePresenter implements OverviewPagePresenterPort {
     return this._viewModel;
   }
 
-  displayOverviewPage({saveFile, saveConfiguration, progression, planets, energySettings}: OverviewPageResponse): void {
+  displayOverviewPage({saveFile, saveConfiguration, progression, systemTerraformationIndex, planets, energySettings}: OverviewPageResponse): void {
     this._viewModel = {
       identity: createIdentity(saveFile, saveConfiguration),
       notifications: createPowerNotifications(energySettings),
-      tiles: createTiles(progression),
+      tiles: createTiles(progression, systemTerraformationIndex),
       planets: createPlanets(planets)
     };
   }
@@ -92,12 +96,23 @@ function createIdentity(saveFile: SaveFileResponse, saveConfiguration: OverviewS
   };
 }
 
-function createTiles({allTimeTerraTokens, totalCraftedObjects, droneLogistics}: OverviewProgressionResponse): OverviewTilesViewModel {
+function createTiles(
+  {allTimeTerraTokens, totalCraftedObjects, droneLogistics}: OverviewProgressionResponse,
+  systemTerraformationIndex: OverviewSystemTerraformationIndexResponse | undefined
+): OverviewTilesViewModel {
   const tiles: OverviewTilesViewModel = {
     allTimeTerraTokens: {label: overviewPageAllTimeTerraTokensLabel, value: formatNumber(allTimeTerraTokens), unit: overviewPageTerraTokenUnit}
   };
   if (totalCraftedObjects !== undefined) {
     tiles.totalCraftedObjects = {label: overviewPageTotalCraftedObjectsLabel, value: formatNumber(totalCraftedObjects)};
+  }
+  if (systemTerraformationIndex) {
+    const {index, planetCount} = systemTerraformationIndex;
+    tiles.systemTerraformationIndex = {
+      label: overviewPageSystemTerraformationIndexLabel,
+      value: formatNumber(index, FormatNumberStrategies.SYSTEM_TERRAFORMATION_INDEX) + overviewPageSystemTerraformationIndexUnit,
+      caption: resolveOverviewPageSystemTerraformationIndexCaption(planetCount)
+    };
   }
   if (droneLogistics) {
     tiles.droneLogistics = {label: overviewPageDroneLogisticsLabel, badge: createDroneLogisticsBadge(droneLogistics)};

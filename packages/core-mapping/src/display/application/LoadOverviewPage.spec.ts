@@ -81,6 +81,12 @@ class SaveSectionsWithAnUnnamedPlanetEquippedBeforePrime extends FakeSaveSection
   }
 }
 
+class SaveSectionsWithoutTerraformationLevels extends FakeSaveSectionsMapperService {
+  override getTerraformationLevels(): TerraformationLevelEntity[] {
+    return [];
+  }
+}
+
 function createPresenter(): OverviewPagePresenterPort {
   return {displayOverviewPage: mock(), displaySaveWithUnreadableLines: mock()};
 }
@@ -290,6 +296,36 @@ describe('LoadOverviewPage', () => {
             energy: {numericPlanetId: UNNAMED_PLANET_NUMERIC_ID, production: 1.2, consumption: 0, available: 1.2}
           }
         ]
+      }));
+    });
+  });
+
+  describe('When a planet of the save has a Terraformation Index', () => {
+    it('should present the SysTi of the save and how many planets it multiplies', async () => {
+      // Arrange
+      const presenter = createPresenter();
+
+      // Act
+      await createUseCase(presenter).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
+
+      // Assert
+      expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.objectContaining({
+        systemTerraformationIndex: {index: 2_800, planetCount: 1}
+      }));
+    });
+  });
+
+  describe('When no planet of the save has a Terraformation Index', () => {
+    it('should present the overview without a SysTi', async () => {
+      // Arrange
+      const presenter = createPresenter();
+
+      // Act
+      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new SaveSectionsWithoutTerraformationLevels()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
+
+      // Assert
+      expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.not.objectContaining({
+        systemTerraformationIndex: expect.anything()
       }));
     });
   });

@@ -398,6 +398,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'surface'
   },
   {
+    description: 'the caption under the figure of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-tile-caption',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
     description: 'a label of the terraformation figures of a planet card of the Overview page, on the card',
     file: 'packages/ui-save-manager/src/styles/components.css',
     selector: '.key-value dt',

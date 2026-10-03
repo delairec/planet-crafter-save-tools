@@ -17,6 +17,7 @@ import {
 import {DroneLogisticsResponse} from "./responses/DroneLogisticsResponse";
 import {TerraformationLevelSummaryResponse} from "./responses/TerraformationLevelSummaryResponse";
 import {resolveGameReleaseOfDeclaredVersion} from "../domain/rules/resolveGameReleaseOfDeclaredVersion";
+import {computeSystemTerraformationIndex} from "../domain/rules/computeSystemTerraformationIndex";
 import {assessDroneLogistics} from "../domain/rules/assessDroneLogistics";
 import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorldObjectName";
@@ -73,10 +74,13 @@ export class LoadOverviewPage implements UseCase<LoadOverviewPageRequest> {
       .map((planet) => namePlanet(planet, this.planetNamesReader.findPlanetNameOfNumericId(planet.planetId), knownPlanetNames))
       .map((planet) => new PlanetEnergyGrid({planet, allWorldObjects, inventories, energyLevels, optimizerRanges, powerConsumptionModifier}).levels());
 
+    const systemTerraformationIndex = computeSystemTerraformationIndex(terraformationLevels);
+
     this.presenter.displayOverviewPage({
       saveFile: {name: fileName, size: fileSize},
       saveConfiguration: describeSaveConfiguration(saveSections, gameReleases),
       progression: describeProgression(saveSections),
+      ...(systemTerraformationIndex && {systemTerraformationIndex: {index: systemTerraformationIndex.index, planetCount: systemTerraformationIndex.planetCount}}),
       planets: describePlanets(terraformationLevels, planetsEnergyLevels),
       energySettings: {
         gameRelease: energyLevels.release,

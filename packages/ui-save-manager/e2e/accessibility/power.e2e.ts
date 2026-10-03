@@ -56,6 +56,22 @@ test.describe('Power page accessibility', () => {
       await expect(page.getByTestId('power-planet-tab-0')).toHaveRole('tab');
       await expect(page.getByTestId('power-planet-tab-0')).toHaveAttribute('aria-selected', 'true');
     });
+
+    test('should let the keyboard reach the scrolling body of each table, a region named after its title', async ({page}) => {
+      // Act
+      await openThePowerPageOfAVisualizedSave(page);
+
+      // Assert
+      await expect(page.getByTestId('power-optimizers-body')).toHaveRole('region');
+      await expect(page.getByTestId('power-optimizers-body')).toHaveAccessibleName('Optimizers');
+      await expect(page.getByTestId('power-optimizers-body')).toHaveAttribute('tabindex', '0');
+      await expect(page.getByTestId('power-producers-body')).toHaveRole('region');
+      await expect(page.getByTestId('power-producers-body')).toHaveAccessibleName('Producers');
+      await expect(page.getByTestId('power-producers-body')).toHaveAttribute('tabindex', '0');
+      await expect(page.getByTestId('power-consumers-body')).toHaveRole('region');
+      await expect(page.getByTestId('power-consumers-body')).toHaveAccessibleName('Consumers');
+      await expect(page.getByTestId('power-consumers-body')).toHaveAttribute('tabindex', '0');
+    });
   });
 
   test.describe('When the Power page of a save written by the Skeo update is opened', () => {
