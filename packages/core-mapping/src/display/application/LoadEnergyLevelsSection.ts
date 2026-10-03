@@ -11,9 +11,8 @@ import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorldObjectName";
 import {resolvePowerConsumptionModifier} from "../domain/rules/resolvePowerConsumptionModifier";
 import {isPowerConsumptionModified} from "../domain/rules/isPowerConsumptionModified";
-import {resolvePlanetName} from "../domain/rules/resolvePlanetName";
+import {namePlanet} from "../domain/rules/namePlanet";
 import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
-import {createPlanetWorldObjectsValueObject, PlanetWorldObjectsValueObject} from "../domain/valueObjects/PlanetWorldObjectsValueObject";
 import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
 import {EnergyBreakdownEntryValueObject} from "../domain/valueObjects/EnergyBreakdownEntryValueObject";
 import {OptimizerValueObject} from "../domain/valueObjects/OptimizerValueObject";
@@ -76,21 +75,10 @@ export class LoadEnergyLevelsSection implements UseCase<LoadSaveSectionsRequest>
       powerConsumptionModifier,
       powerConsumptionIsModified: isPowerConsumptionModified(powerConsumptionModifier),
       planets: saveSections.getPlacedWorldObjectsByPlanet()
-        .map((planet) => this.nameThePlanet(planet, knownPlanetNames))
+        .map((planet) => namePlanet(planet, this.planetNamesReader.findPlanetNameOfNumericId(planet.planetId), knownPlanetNames))
         .map((planet) => new PlanetEnergyGrid({planet, allWorldObjects, inventories, energyLevels, optimizerRanges, powerConsumptionModifier}).levels())
         .map(describePlanetEnergyLevels),
       worldObjectLabels: this.worldObjectLabelsReader.readWorldObjectLabels()
-    });
-  }
-
-  private nameThePlanet(planet: PlanetWorldObjectsValueObject, knownPlanetNames: string[]): PlanetWorldObjectsValueObject {
-    return createPlanetWorldObjectsValueObject({
-      ...planet,
-      planetName: resolvePlanetName(
-        this.planetNamesReader.findPlanetNameOfNumericId(planet.planetId),
-        planet.placedWorldObjects.map((placedWorldObject) => placedWorldObject.name),
-        knownPlanetNames
-      )
     });
   }
 }
