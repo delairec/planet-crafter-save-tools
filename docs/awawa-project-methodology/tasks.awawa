@@ -2479,7 +2479,9 @@ TASK FEAT189
 	STATUS todo
 	DESC "ratified on 2026-10-02 without refinement; carried out in an interactive session with the"
 		+ "owner, never by a background agent: the last adjustments are listed with the owner on"
-		+ "the running application when the task starts; the home page is kept as it is for now"
+		+ "the running application when the task starts; the home page is kept as it is for now;"
+		+ "the icons of the gauges of the player card are revisited with the owner"
+		REF @TASK.FEAT144
 	SPEC "every page that shows the menu wears the titles, the cards and the buttons of page F;"
 		+ "none shows a centred section title, a glowing card title or a field group of the earlier"
 		+ "look"
@@ -2501,6 +2503,9 @@ TASK FEAT189
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner comment of 2026-10-03 on pull request 263: the icons of the gauges of the player"
+		+ "card are to be revisited"
+		PR 263
 
 TASK CHORE191
 	TITLE "Stop ignoring GHSA-vfj7-8cjw-p6xm in the audit script once braces publishes a fix"
