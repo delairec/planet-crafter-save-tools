@@ -190,3 +190,26 @@ LIMITATION ARuntimeReachedModuleEscapesTheStaticCoverageGate
 	SOURCE "The review of CHORE112, the owner asking for the exemption reasons to be a limitation"
 		+ "the configuration refers to rather than comments and a decision"
 		PR 181
+
+LIMITATION TheDependencyAuditIgnoresTheBracesStackExhaustionAdvisory
+	SYMPTOM "bun run audit, the dependency gate of the Dependencies workflow and of release:verify,"
+		+ "ignores GHSA-vfj7-8cjw-p6xm by name: braces 3.0.3, reached through ui-save-manager >"
+		+ "@solidjs/start > micromatch, stays installed with a high stack-exhaustion advisory and"
+		+ "the gate passes; any other advisory, on braces or elsewhere, still fails it"
+	WORKAROUND "Before a change of @solidjs/start or micromatch, check that braces is still reached"
+		+ "only at build time: after bun run build:ui, packages/ui-save-manager/.output holds no"
+		+ "micromatch, braces, fill-range nor toRegexRange"
+	UNTIL @TASK.CHORE191
+	SEEN_IN "package.json::--ignore=GHSA-vfj7-8cjw-p6xm"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	RATIONALE "No published version fixes it: braces 3.0.3 is the latest release and the affected"
+		+ "range is <= 3.0.3, the versions below also carry GHSA-grv7-fg5c-xmjg, micromatch 4.0.8"
+		+ "requires braces ^3.0.3 and @solidjs/start 2.0.5 is already the latest. micromatch is"
+		+ "imported only by the build-time file router of @solidjs/start, on a pattern built from"
+		+ "the project's own routes directory with one level of braces, never from user input, so"
+		+ "the nesting depth the attack needs never reaches it"
+		REF @URL.BracesStackExhaustionAdvisory
+	SOURCE "The owner ruling on 2026-10-03 that ignoring the advisory is a limitation with an"
+		+ "until, not a decision; advisory and upstream fix read on 2026-10-03"
+		REF @URL.BracesStackExhaustionAdvisory
+		REF @URL.BracesNestedPatternFix

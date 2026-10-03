@@ -2408,3 +2408,13 @@ TASK FEAT189
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+
+TASK CHORE191
+	TITLE "Stop ignoring GHSA-vfj7-8cjw-p6xm in the audit script once braces publishes a fix"
+	STATUS draft
+	DESC "due when braces publishes a version patching GHSA-vfj7-8cjw-p6xm"
+	SPEC "the audit script of the root package.json ignores no advisory and bun run audit exits 0"
+	SPEC "bun.lock resolves braces to a version outside the range GHSA-vfj7-8cjw-p6xm affects"
+	SOURCE "The owner ruling on 2026-10-03 that the ignore of the advisory is a limitation with an"
+		+ "until; upstream fix read open on 2026-10-03"
+		REF @URL.BracesNestedPatternFix
