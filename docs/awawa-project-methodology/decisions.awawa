@@ -4079,7 +4079,7 @@ DECISION ASaveAreaOfTheMergePageShowsItsNativeFileInput
 		+ "the name of the save, above the hint to drop a save or choose a file: the input is the"
 		+ "choose a file of page F, and it shows the name of the chosen save"
 		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::data-testid=\"save-a-drop-hint\""
-		IMPL "packages/ui-save-manager/src/styles/forms.css::.merge-save-area .save-file-field {"
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-drop-area .save-file-field {"
 		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::should label each"
 			+ "save file input"
 	REJECTED "A visually hidden file input behind a choose a file link, as page F draws it: the"
@@ -4201,3 +4201,30 @@ DECISION APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
 		REF @URL.WikiOxygenTanks
 		REF @PROJECT.DNC
 		PR 263
+
+DECISION TheToolsPagesDrawTheirSaveFormWithSharedStyles
+	SPEC "the Load save and the Merge two saves pages draw their form with the same style rules of"
+		+ "forms.css: a card holding each visible drop zone, a dashed area showing the native file"
+		+ "input above the hint to drop a save or choose a file, then a row ending on the submit"
+		+ "button in the primary pink"
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-form {"
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-drop-area {"
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-form-actions {"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::class=\"save-drop-area\""
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::class=\"save-drop-area\""
+	SPEC "the Load save page has one drop zone, its dashed area; the card around it takes no drop"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::<div class=\"card"
+			+ "save-form\">"
+	REJECTED "the merge rules reused on the Load save page under their merge names, or copied under"
+		+ "load names: one look would carry the name of one page, or drift between two"
+	REJECTED "the card of the Load save page as a second drop zone around the dashed area, as the"
+		+ "merge card is: with one save to pick, it adds a zone the reader does not see for the"
+		+ "button row alone"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT188
+	RATIONALE "The two tools pages load files the same way, so their form is one piece of two"
+		+ "pages: its rules stay in the shared forms stylesheet rather than in a stylesheet named"
+		+ "after one page"
+		REF @DECISION.TheStylesOfOnePageLiveInAStylesheetNamedAfterIt
+	SOURCE "Ruled while delivering FEAT188: the Load save page takes the form pieces the Merge two"
+		+ "saves page leaves"

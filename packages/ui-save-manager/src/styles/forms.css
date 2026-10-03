@@ -1,9 +1,5 @@
 :root {
     --fields-group-width: 220px;
-    --save-file-field-label-width: 6rem;
-    --merge-slots-swap-column-width: 1.75rem;
-    --merge-slots-column-gap: var(--space-sm);
-    --save-file-row-inset: calc(var(--merge-slots-swap-column-width) + var(--merge-slots-column-gap));
 }
 
 input,
@@ -82,15 +78,6 @@ select:focus {
     outline-color: var(--neon-pink);
 }
 
-.save-file-field-label {
-    display: inline-block;
-    min-width: var(--save-file-field-label-width);
-}
-
-.save-file-row {
-    padding-inline-start: var(--save-file-row-inset);
-}
-
 .checkbox-field input {
     margin: 0 var(--space-sm) 0 0;
 }
@@ -104,7 +91,8 @@ select:focus {
     margin-block: var(--space-lg);
 }
 
-.merge-form {
+.save-form {
+    margin-block: var(--space-lg);
     padding: var(--space-lg);
 }
 
@@ -114,7 +102,7 @@ select:focus {
     gap: var(--space-lg);
 }
 
-.merge-save-area {
+.save-drop-area {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -124,15 +112,15 @@ select:focus {
     text-align: center;
 }
 
-.merge-save-area.drop-zone-active {
+.save-drop-area.drop-zone-active {
     border-color: var(--neon-pink);
 }
 
-.merge-save-area p {
+.save-drop-area p {
     margin: 0;
 }
 
-.merge-save-area .save-file-field {
+.save-drop-area .save-file-field {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -140,17 +128,16 @@ select:focus {
     max-width: 100%;
 }
 
-.merge-save-area .save-file-field-label {
-    min-width: 0;
+.save-drop-area .save-file-field-label {
     font-weight: var(--semibold);
 }
 
-.merge-save-area input {
+.save-drop-area input {
     max-width: 100%;
     margin-right: 0;
 }
 
-.merge-actions {
+.save-form-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -158,6 +145,6 @@ select:focus {
     margin-top: var(--space-lg);
 }
 
-.merge-actions-submit {
+.save-form-submit {
     margin-inline-start: auto;
 }
