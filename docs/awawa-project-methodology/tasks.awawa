@@ -2517,3 +2517,30 @@ TASK CHORE191
 		+ "until; upstream fix read open on 2026-10-03"
 		PR 265
 		REF @URL.BracesNestedPatternFix
+
+TASK FEAT190
+	TITLE "Show the toxicity gauge on the player card"
+	STATUS draft
+	DESC "split from FEAT144 in the review of pull request 263; the toxicity maximum each Toxins"
+		+ "Filter tier gives is observed in game when the task starts"
+		REF @HYPOTHESIS.EachToxinsFilterTierRaisesTheToxicityMaximumByFive
+	SPEC "each player card shows a fourth flat gauge for toxicity, filled by percentage of its"
+		+ "maximum like the three vital gauges, the percentage next to the label and the value over"
+		+ "its maximum under the gauge"
+	SPEC "the toxicity maximum is 5 without a Toxins Filter; the maximum each Toxins Filter tier"
+		+ "gives is read from a value table of a data- package, by an infrastructure adapter behind"
+		+ "an application port, and the use case hands value, maximum and percentage to the"
+		+ "presenter as primitives of its application response"
+	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.FEAT144
+	RATIONALE "The save carries the toxicity of each player as playerGaugeToxic, without its"
+		+ "maximum. The base maximum is 5, and a Toxins Filter raises it by an amount not yet"
+		+ "observed: a gauge drawn before that observation would measure a filtered player against"
+		+ "a wrong maximum"
+		REF @SECTION.Players
+		REF @DECISION.APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
+	SOURCE "Owner reply of 2026-10-03 in the review of pull request 263: the toxicity gauge is 5 at"
+		+ "base and the Toxins Filter T1 and T2 raise it by an amount to verify in game; the"
+		+ "private reference save Standard-5-toxic.json holds a player at 5 with no Toxins Filter"
+		PR 263
+		REF @PROJECT.DNC

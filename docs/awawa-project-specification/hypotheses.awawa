@@ -140,3 +140,13 @@ HYPOTHESIS AGameOf1618DropsTheContentItDoesNotKnow
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 	SOURCE "Owner review, 2026-09-24: the in-game checks left for later"
 		PR 127
+
+HYPOTHESIS EachToxinsFilterTierRaisesTheToxicityMaximumByFive
+	DESC "a Toxins Filter worn raises the toxicity maximum of a player from 5 by 5 per tier: 10"
+		+ "with the T1, 15 with the T2"
+		REF @SECTION.Players
+	UNTIL @TASK.FEAT190
+	RATIONALE "The base maximum and the fact that each filter raises it are known, the amount is"
+		+ "not; a step of 5 per tier is the guess the in-game observation confirms or refutes"
+	SOURCE "Owner reply of 2026-10-03 in the review of pull request 263"
+		PR 263

@@ -4183,9 +4183,11 @@ DECISION APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
 		+ "players are all half full would show them full"
 	REJECTED "a percentage above 100 drawn as an overflow: the gauge shape has no room for it, and"
 		+ "the value over its maximum already says it"
-	REJECTED "a fourth gauge for toxicity: the save carries it, every reference save holds it at"
-		+ "zero and its maximum is unknown; left to an open question"
-		REF @OPEN_QUESTION.TheToxicityGaugeIsShownOnThePlayerCard
+	REJECTED "a fourth gauge for toxicity in this task: its maximum is 5 without a Toxins Filter,"
+		+ "and the increase each filter tier gives is not yet observed in game; left to a task of"
+		+ "its own"
+		REF @TASK.FEAT190
+		REF @HYPOTHESIS.EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT144
