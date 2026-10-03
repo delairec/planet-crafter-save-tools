@@ -142,11 +142,26 @@ HYPOTHESIS AGameOf1618DropsTheContentItDoesNotKnow
 		PR 127
 
 HYPOTHESIS EachToxinsFilterTierRaisesTheToxicityMaximumByFive
-	DESC "a Toxins Filter worn raises the toxicity maximum of a player from 5 by 5 per tier: 10"
-		+ "with the T1, 15 with the T2"
+	DESC "a Toxins Filter in the equipment of a player raises their toxicity maximum from 5 by 5"
+		+ "per tier, 10 with the T1, 15 with the T2 and 20 with the T3; a filter in any other"
+		+ "inventory has no effect"
 		REF @SECTION.Players
 	UNTIL @TASK.FEAT190
-	RATIONALE "The base maximum and the fact that each filter raises it are known, the amount is"
-		+ "not; a step of 5 per tier is the guess the in-game observation confirms or refutes"
+	RATIONALE "The base maximum of 5 is observed in a reference save, and the game data lists three"
+		+ "tiers, ToxinsFilter1 to ToxinsFilter3, with no figure; a step of 5 per tier, counted"
+		+ "only from the equipment, is the guess the in-game observation confirms or refutes. The"
+		+ "wiki states otherwise: an equipped filter slows the depletion of the Toxicity meter,"
+		+ "with no figure, rather than raising its maximum; the in-game check decides between the"
+		+ "two"
+		REF @URL.CompanionAppGameDataV2103
+		REF @URL.WikiToxinsFilters
 	SOURCE "Owner reply of 2026-10-03 in the review of pull request 263"
 		PR 263
+	SOURCE "Owner ruling of 2026-10-03 in the review of pull request 263: 20 with a T3 Toxins"
+		+ "Filter, and a filter counts only in the equipment, pending a check in game"
+		PR 263
+	SOURCE "Read on 2026-10-03 in the review of pull request 263: the wiki page Toxins Filters and"
+		+ "the game data of v2.103"
+		PR 263
+		REF @URL.WikiToxinsFilters
+		REF @URL.CompanionAppGameDataV2103

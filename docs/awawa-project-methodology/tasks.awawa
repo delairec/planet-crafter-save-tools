@@ -2521,26 +2521,46 @@ TASK CHORE191
 TASK FEAT190
 	TITLE "Show the toxicity gauge on the player card"
 	STATUS draft
-	DESC "split from FEAT144 in the review of pull request 263; the toxicity maximum each Toxins"
-		+ "Filter tier gives is observed in game when the task starts"
+	DESC "split from FEAT144 in the review of pull request 263; when the task starts, three facts"
+		+ "are observed in game: the toxicity maximum each of the three Toxins Filter tiers gives,"
+		+ "whether a filter outside the equipment counts, and whether playerGaugeToxic counts the"
+		+ "toxicity accumulated or the protection left"
 		REF @HYPOTHESIS.EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 	SPEC "each player card shows a fourth flat gauge for toxicity, filled by percentage of its"
 		+ "maximum like the three vital gauges, the percentage next to the label and the value over"
 		+ "its maximum under the gauge"
-	SPEC "the toxicity maximum is 5 without a Toxins Filter; the maximum each Toxins Filter tier"
-		+ "gives is read from a value table of a data- package, by an infrastructure adapter behind"
-		+ "an application port, and the use case hands value, maximum and percentage to the"
+	SPEC "the toxicity gauge fills in the direction the toxicity meter of the game fills, as"
+		+ "observed in game"
+	SPEC "the toxicity maximum is 5 without a Toxins Filter in the equipment; the maximum each"
+		+ "Toxins Filter tier, T1 to T3, gives is read from a value table of a data- package, by an"
+		+ "infrastructure adapter behind an application port, a filter in any other inventory"
+		+ "counting for nothing, and the use case hands value, maximum and percentage to the"
 		+ "presenter as primitives of its application response"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT144
 	RATIONALE "The save carries the toxicity of each player as playerGaugeToxic, without its"
-		+ "maximum. The base maximum is 5, and a Toxins Filter raises it by an amount not yet"
-		+ "observed: a gauge drawn before that observation would measure a filtered player against"
-		+ "a wrong maximum"
+		+ "maximum. The base maximum is 5, and a Toxins Filter in the equipment is assumed to raise"
+		+ "it by an amount not yet observed, which the wiki contradicts by saying a filter slows"
+		+ "the depletion of the meter: a gauge drawn before the observation would measure a"
+		+ "filtered player against a wrong maximum. A community mod computes the share left before"
+		+ "it consumes a purifier as (maxValue - gaugeValue) * 100 / maxValue on PlayerGaugeToxic,"
+		+ "a hint, not a proof, that the value counts the toxicity accumulated; the 4.9999995 of"
+		+ "the private reference save Standard-5-toxic.json is then a player at the limit rather"
+		+ "than fully protected, which the observation settles"
 		REF @SECTION.Players
 		REF @DECISION.APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
+		REF @URL.WikiToxinsFilters
+		REF @URL.AkarnokdCheatAutoConsumeToxicGauge
 	SOURCE "Owner reply of 2026-10-03 in the review of pull request 263: the toxicity gauge is 5 at"
 		+ "base and the Toxins Filter T1 and T2 raise it by an amount to verify in game; the"
 		+ "private reference save Standard-5-toxic.json holds a player at 5 with no Toxins Filter"
 		PR 263
 		REF @PROJECT.DNC
+	SOURCE "Owner ruling of 2026-10-03 in the review of pull request 263: a T3 Toxins Filter gives"
+		+ "20, and a filter counts only in the equipment, pending a check in game"
+		PR 263
+	SOURCE "Read on 2026-10-03 in the review of pull request 263: the wiki page Toxins Filters and"
+		+ "the CheatAutoConsume mod"
+		PR 263
+		REF @URL.WikiToxinsFilters
+		REF @URL.AkarnokdCheatAutoConsumeToxicGauge
