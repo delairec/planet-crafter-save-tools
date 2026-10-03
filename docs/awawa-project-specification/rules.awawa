@@ -714,7 +714,9 @@ RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
 		+ "SysTi = Prime x Humble x Toxicity x Selenea x Aqualis, neglecting any Ti of zero;"
 		+ "unlocks given as 100.00 QiSysTi, 15.00 NoSysTi and 5.00 UdSysTi"
 		REF @URL.WikiTerraformationIndex
+		PR 268
 	SOURCE "Reference saves compared on 2026-10-03: a Standard save with four planets holds objects"
 		+ "the game unlocks at 1e20, 1e25 and 1.5e31 SysTi; the sum of its Ti, 3.65e14, reaches"
 		+ "none of them, their product, 4.37e54, reaches them all"
 		REF @PROJECT.DNC
+		PR 268
