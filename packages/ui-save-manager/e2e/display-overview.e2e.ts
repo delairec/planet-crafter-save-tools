@@ -4,6 +4,7 @@ import {findTheBreadcrumbSteps, findTheMenuGroupTitles, locateTheFixture, visual
 const baselineSaveFixturePath = locateTheFixture('baseline_valid.json');
 const legacySaveFixturePath = locateTheFixture('legacy-format_valid.json');
 const skeoUpdateSaveFixturePath = locateTheFixture('skeo-update_valid.json');
+const energyConsumptionSaveFixturePath = locateTheFixture('energy-consumption_valid.json');
 const invalidSaveFixturePath = locateTheFixture('negative-gauge_invalid.json');
 
 test.describe('Overview page', () => {
@@ -39,6 +40,63 @@ test.describe('Overview page', () => {
       await expect(page.getByTestId('overview-drone-logistics')).toBeHidden();
     });
 
+    test('should show the power notifications of the save under its identity title', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId(/^overview-notification-\d+$/)).toHaveCount(3);
+      await expect(page.getByTestId(/^overview-notification-\d+$/)).toContainText([
+        'Submerged machines may distort the computed available energy.',
+        'Values of game release 2.004',
+        "Consumption applies the save's Power Consumption modifier: 20%"
+      ]);
+      const identityTitleTop = (await page.getByTestId('overview-identity-title').boundingBox())!.y;
+      const firstNotificationTop = (await page.getByTestId('overview-notification-0').boundingBox())!.y;
+      expect(firstNotificationTop).toBeGreaterThan(identityTitleTop);
+    });
+
+    test('should title the Planets section with the count of planets the save carries', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-planets-title')).toHaveText('Planets');
+      await expect(page.getByTestId('overview-planets-title-hint')).toHaveText('2 planets');
+    });
+
+    test('should give each planet a card named after it', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId(/^overview-planet-\d+-name$/)).toHaveText(['Toxicity', 'Planet 1']);
+    });
+
+    test('should say no machine is placed in place of the power of a planet that places none', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-0-absent-side')).toHaveText('No machine placed');
+      await expect(page.getByTestId('overview-planet-0-production')).toBeHidden();
+      const lastFigureTop = (await page.getByTestId('overview-planet-0-figure-4').boundingBox())!.y;
+      const absentSideTop = (await page.getByTestId('overview-planet-0-absent-side').boundingBox())!.y;
+      expect(absentSideTop).toBeGreaterThan(lastFigureTop);
+    });
+
+    test('should say no terraformation level is recorded in place of the figures of a planet that records none', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-1-absent-side')).toHaveText('No terraformation level recorded');
+      await expect(page.getByTestId('overview-planet-1-terraformation-index')).toBeHidden();
+      const absentSideTop = (await page.getByTestId('overview-planet-1-absent-side').boundingBox())!.y;
+      const productionTop = (await page.getByTestId('overview-planet-1-production').boundingBox())!.y;
+      expect(absentSideTop).toBeLessThan(productionTop);
+    });
+
     test('should read Overview alone in the breadcrumb and leave the pages of the save to the menu', async ({page}) => {
       // Act
       await visualizeTheSave(page, baselineSaveFixturePath);
@@ -57,6 +115,39 @@ test.describe('Overview page', () => {
       // Assert
       await expect(page.getByTestId('overview-drone-logistics-badge')).toContainText('Paused');
       await expect(page.getByTestId('overview-drone-logistics-badge-tone')).toHaveText(', penalises the player');
+    });
+  });
+
+  test.describe('When a save whose planet records terraformation levels and places machines is visualized', () => {
+    test('should show the Terraformation Index of the planet and its figures', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, energyConsumptionSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-0-terraformation-index')).toHaveText('2.8 kTi');
+      await expect(page.getByTestId(/^overview-planet-0-figure-\d+-label$/)).toHaveText(['O²', 'Heat', 'Pressure', 'Purification', 'Biomass']);
+      await expect(page.getByTestId(/^overview-planet-0-figure-\d+-value$/)).toHaveText(['100 ppq', '200 pK', '300 nPa', '700 Pu', '1.5 kg']);
+    });
+
+    test('should show the power the planet produces, consumes and has available, and the share of its production consumed', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, energyConsumptionSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-0-production')).toHaveText('497.25 kW');
+      await expect(page.getByTestId('overview-planet-0-consumption')).toHaveText('285 kW');
+      await expect(page.getByTestId('overview-planet-0-available')).toHaveText('+212.25 kW');
+      await expect(page.getByTestId('overview-planet-0-share')).toHaveText('57% of production consumed');
+    });
+
+    test('should draw the consumption bar at the share of the production bar the consumption is', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, energyConsumptionSaveFixturePath);
+
+      // Assert
+      const productionBarWidth = (await page.getByTestId('overview-planet-0-production-bar').boundingBox())!.width;
+      const consumptionBarWidth = (await page.getByTestId('overview-planet-0-consumption-bar').boundingBox())!.width;
+      expect(consumptionBarWidth / productionBarWidth).toBeCloseTo(0.57, 2);
     });
   });
 

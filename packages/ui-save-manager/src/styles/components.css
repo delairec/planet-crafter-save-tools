@@ -129,36 +129,3 @@
     color: var(--muted);
     font-size: var(--text-sm);
 }
-
-.overview-tiles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-    gap: var(--space-md);
-    margin: 0;
-}
-
-.overview-tile {
-    min-width: 0;
-    padding: var(--space-sm) var(--space-md);
-    border: 3px solid var(--neon-purple);
-    border-radius: var(--radius-sm);
-    background-color: var(--surface);
-}
-
-.overview-tile dt {
-    color: var(--muted);
-    font-size: var(--text-xs);
-}
-
-.overview-tile-value {
-    margin: var(--space-xxs) 0 0;
-    font-size: var(--text-xl);
-    font-weight: var(--semibold);
-    overflow-wrap: anywhere;
-}
-
-.overview-tile-unit {
-    margin-left: var(--space-xs);
-    color: var(--muted);
-    font-size: var(--text-xs);
-}

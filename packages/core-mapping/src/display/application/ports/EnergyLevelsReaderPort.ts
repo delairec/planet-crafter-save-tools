@@ -1,8 +1,5 @@
-import {EnergyLevelValueObject} from "../../domain/valueObjects/EnergyLevelValueObject";
-import {DivergingEnergyLevelsByRelease} from "../../domain/energyLevelsByWorldObjectName";
+import {EnergyLevelTables} from "../../domain/energyLevelsByWorldObjectName";
 
 export interface EnergyLevelsReaderPort {
-  readEnergyLevels(): readonly EnergyLevelValueObject[];
-
-  readDivergingEnergyLevelsByRelease(): DivergingEnergyLevelsByRelease;
+  readEnergyLevelTables(): EnergyLevelTables;
 }

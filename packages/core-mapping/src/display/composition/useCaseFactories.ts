@@ -103,5 +103,11 @@ export function createLoadOverviewPage(): UseCaseWithPresenter<LoadOverviewPageR
 }
 
 function createLoadOverviewPageUseCase(presenter: OverviewPagePresenter): LoadOverviewPage {
-  return new LoadOverviewPage(createSaveSectionsReader(), new GameReleasesReaderService(), presenter);
+  return new LoadOverviewPage({
+    saveSectionsReader: createSaveSectionsReader(),
+    gameReleasesReader: new GameReleasesReaderService(),
+    energyLevelsReader: new EnergyLevelsReaderService(),
+    optimizerRangesReader: new OptimizerRangesReaderService(),
+    planetNamesReader: new PlanetNamesReaderService()
+  }, presenter);
 }

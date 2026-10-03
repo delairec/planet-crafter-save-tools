@@ -5,7 +5,7 @@ import {OverviewPageViewModel} from '../presentation/viewModels/OverviewPageView
 
 type ExecuteLoadOverviewPage = (request: LoadOverviewPageRequest) => Promise<void>;
 
-const INITIAL_VIEW_MODEL: OverviewPageViewModel = {identity: {title: '', hint: ''}, tiles: {}};
+const INITIAL_VIEW_MODEL: OverviewPageViewModel = {identity: {title: '', hint: ''}, notifications: [], tiles: {}, planets: {title: 'Planets', hint: '', cards: []}};
 
 function createController(execute: ExecuteLoadOverviewPage, presenter: {viewModel: OverviewPageViewModel}): LoadOverviewPageController {
   return new LoadOverviewPageController(() => ({useCase: {execute}, presenter}));
@@ -27,7 +27,7 @@ describe('LoadOverviewPageController', () => {
   it('should return the view model its presenter holds once the use case has run', async () => {
     // Arrange
     const presenter: {viewModel: OverviewPageViewModel} = {viewModel: INITIAL_VIEW_MODEL};
-    const viewModelAfterRun: OverviewPageViewModel = {identity: {title: 'Merged Save', hint: 'Standard'}, tiles: {}};
+    const viewModelAfterRun: OverviewPageViewModel = {identity: {title: 'Merged Save', hint: 'Standard'}, notifications: [], tiles: {}, planets: {title: 'Planets', hint: '0 planets', cards: []}};
     const controller = createController(async () => {
       await Promise.resolve();
       presenter.viewModel = viewModelAfterRun;

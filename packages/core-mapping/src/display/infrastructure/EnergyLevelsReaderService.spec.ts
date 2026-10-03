@@ -8,10 +8,7 @@ import {selectEnergyLevelsOfDeclaredVersion} from '../domain/energyLevelsByWorld
 import {WorldObjectName, worldObjectNamesByEnergyRole} from '../domain/worldObjectNames';
 
 const ENERGY_LEVELS_READER = new EnergyLevelsReaderService();
-const GAME_ENERGY_TABLES = {
-  energyLevels: ENERGY_LEVELS_READER.readEnergyLevels(),
-  divergingEnergyLevelsByRelease: ENERGY_LEVELS_READER.readDivergingEnergyLevelsByRelease()
-};
+const GAME_ENERGY_TABLES = ENERGY_LEVELS_READER.readEnergyLevelTables();
 const GAME_RELEASES = new GameReleasesReaderService().readGameReleases();
 const CURRENT_GAME_RELEASE = resolveCurrentGameRelease(GAME_RELEASES);
 
