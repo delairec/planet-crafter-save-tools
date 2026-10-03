@@ -697,3 +697,31 @@ RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
 		+ "a surplus balance is a tenth of the production"
 		PR 269
 		REF @TASK.FEAT139
+
+RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the SysTi of a save is the product of the Terraformation Index of its planets, a planet"
+		+ "whose index is zero left out"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.spec.ts"
+	SPEC "the game writes the SysTi with one short-scale prefix per power of 1,000, k, M, B, T, Qa,"
+		+ "Qi, Sx, Sp, Oc, No, Dc, Ud and on up to Qitg, the unit SysTi glued to the prefix"
+		ATTESTED_BY "packages/core-mapping/src/display/presentation/formatters/formatNumber/systemTerraformationIndex.strategy.spec.ts"
+	APPLIES_TO_SECTION @SECTION.TerraformationLevels
+	RATIONALE "No save stores a SysTi field: the game derives it from the Terraformation Index of"
+		+ "each planet, which the save stores as its terraformation levels"
+	SOURCE "Wiki page Terraformation Index read on 2026-10-03, section System Terraformation Index:"
+		+ "SysTi = Prime x Humble x Toxicity x Selenea x Aqualis, neglecting any Ti of zero;"
+		+ "unlocks given as 100.00 QiSysTi, 15.00 NoSysTi and 5.00 UdSysTi"
+		REF @URL.WikiTerraformationIndex
+		PR 268
+	SOURCE "Reference saves compared on 2026-10-03: a Standard save with four planets holds objects"
+		+ "the game unlocks at 1e20, 1e25 and 1.5e31 SysTi; the sum of its Ti, 3.65e14, reaches"
+		+ "none of them, their product, 4.37e54, reaches them all"
+		REF @PROJECT.DNC
+		PR 268
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, read on"
+		+ "2026-10-03: its strings list the units SysTi, kSysTi, MSysTi on up to QitgSysTi, the"
+		+ "prefix and its order of every power of 1,000 from 1 to 1e108"
+		REF @GAME_RELEASE.2.103
+		PR 268

@@ -589,20 +589,28 @@ TASK FEAT131
 
 TASK FEAT132
 	TITLE "Display the SysTi, the Terraformation Index accumulated over every planet of the save"
-	STATUS todo
+	STATUS implemented
 	DESC "ratified on the reviewed plan on 2026-09-27 without research; whether the SysTi is the"
 		+ "plain sum of the planets' Ti or weighs them is established when the task starts"
 	SPEC "the Overview page shows the SysTi of the save in a tile of its own, computed from the"
 		+ "accumulation of the Terraformation Index of each of its planets, under a caption"
 		+ "counting those planets"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should show the SysTi of the"
+			+ "save in a tile captioned with the count of planets it multiplies"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::When"
+			+ "the save has a SysTi"
 	SPEC "the SysTi is computed by the domain and carried by the overview view model"
+		IMPL "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
 	AFTER @TASK.FEAT142
 	WAVE @WAVE.15
-	RATIONALE "The game sums the terraformation of the planets of a save into one system-wide"
-		+ "index, the SysTi, that the save manager does not compute: it prints one Terraformation"
-		+ "Index per planet and nothing for the save as a whole. Page F shows it in the overview"
-		+ "tiles and under the hero figure of a planet; the tile lands with the Overview page,"
-		+ "delivered first, and the share under the hero figure with the Terraformation page"
+	RATIONALE "The game multiplies the Terraformation Index of the planets of a save into one"
+		+ "system-wide index, the SysTi, that the save manager does not compute: it prints one"
+		+ "Terraformation Index per planet and nothing for the save as a whole. Page F shows it in"
+		+ "the overview tiles and under the hero figure of a planet; the tile lands with the"
+		+ "Overview page, delivered first, and the share under the hero figure with the"
+		+ "Terraformation page"
 		REF @SECTION.TerraformationLevels
 		REF @DECISION.AViewModelServesOneView
 		REF @TASK.FEAT141
@@ -614,6 +622,7 @@ TASK FEAT132
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	DELIVERED_BY 268
 
 TASK FEAT139
 	TITLE "Give the Power page its view model: figures with a status, optimizers first, tables"

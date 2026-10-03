@@ -233,3 +233,7 @@ URL WikiBackpacks
 URL WikiEquipment
 	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&page=Equipment&prop=wikitext&format=json"
 	DESC "fandom wiki page Equipment, revision 16330, read on 2026-10-03"
+
+URL WikiTerraformationIndex
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&page=Terraformation_Index&prop=wikitext&format=json"
+	DESC "fandom wiki page Terraformation Index, read on 2026-10-03"

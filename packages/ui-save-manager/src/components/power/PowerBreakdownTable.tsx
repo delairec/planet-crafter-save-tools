@@ -1,4 +1,4 @@
-import {For} from 'solid-js';
+import {createUniqueId, For} from 'solid-js';
 import {PowerBreakdownRowViewModel, PowerBreakdownTableViewModel} from 'core-mapping/display/presentation/viewModels/PlanetPowerZoneViewModel';
 import {
   powerMachineHeader,
@@ -31,12 +31,13 @@ interface PowerBreakdownTableProps {
 }
 
 export default function PowerBreakdownTable(props: PowerBreakdownTableProps) {
+  const titleId = createUniqueId();
   return (
     <section class="card power-table-card">
       <div class="card-header">
-        <h5 data-testid={`${props.testId}-title`}>{props.table.title}</h5>
+        <h5 id={titleId} data-testid={`${props.testId}-title`}>{props.table.title}</h5>
       </div>
-      <div class="card-body power-table-body">
+      <div class="card-body power-table-body" role="region" aria-labelledby={titleId} tabindex="0" data-testid={`${props.testId}-body`}>
         <table class="power-table" data-testid={props.testId}>
           <thead>
             <tr>
