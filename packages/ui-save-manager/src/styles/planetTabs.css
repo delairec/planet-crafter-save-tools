@@ -2,7 +2,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs);
-    margin-bottom: var(--space-md);
 }
 
 .planet-tab {
@@ -13,6 +12,10 @@
     color: var(--content);
     font: inherit;
     cursor: pointer;
+}
+
+.planet-tab:hover {
+    background-color: var(--elevated);
 }
 
 .planet-tab[aria-selected="true"] {

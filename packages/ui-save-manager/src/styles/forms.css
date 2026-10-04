@@ -72,6 +72,11 @@ select:focus {
     text-align: center;
 }
 
+.save-drop-area.drop-zone-holds-a-file {
+    border-style: solid;
+    border-color: var(--neon-cyan);
+}
+
 .save-drop-area.drop-zone-active {
     border-color: var(--neon-pink);
 }

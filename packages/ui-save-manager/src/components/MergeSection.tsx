@@ -96,14 +96,14 @@ export default function MergeSection(props: MergeSectionProps) {
                 onFilesDropped={handleSavesDropped} class="card save-form">
         <div class="merge-save-areas">
           <DropZone label={mergeSectionSaveALabel} testId="save-a-area" maximumFileCount={1}
-                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area"
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area" holdsAFile={!!fileA()}
                     onFilesDropped={(files) => selectFileInInput(saveAInput, files[0])}>
             <SaveFileField label={mergeSectionSaveALabel} testId="save-a" ref={saveAInput}
                            onChange={(event) => setFileA(event.currentTarget.files?.[0] ?? null)}/>
             <p class="text-color-muted" data-testid="save-a-drop-hint">{saveDropHint}</p>
           </DropZone>
           <DropZone label={mergeSectionSaveBLabel} testId="save-b-area" maximumFileCount={1}
-                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area"
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area" holdsAFile={!!fileB()}
                     onFilesDropped={(files) => selectFileInInput(saveBInput, files[0])}>
             <SaveFileField label={mergeSectionSaveBLabel} testId="save-b" ref={saveBInput}
                            onChange={(event) => setFileB(event.currentTarget.files?.[0] ?? null)}/>

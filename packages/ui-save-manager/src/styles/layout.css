@@ -184,6 +184,42 @@ code {
     color: var(--muted);
 }
 
+.message-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin: var(--space-lg) 0;
+}
+
+.message-group-title {
+    margin: 0;
+    font-weight: var(--semibold);
+}
+
+.message-group-details {
+    --summary-marker: '▸ ';
+}
+
+.message-group-details[open] {
+    --summary-marker: '▾ ';
+}
+
+.message-group-details summary {
+    width: fit-content;
+    color: var(--muted);
+    font-size: var(--text-sm);
+}
+
+.message-group-details summary:hover {
+    color: var(--content);
+}
+
+.message-group-list {
+    margin: var(--space-sm) 0 0;
+    padding-left: 0;
+    list-style: none;
+}
+
 /* A validation message reads like a stack frame: the message, then its origin on the line below. */
 .validation-message + .validation-message {
     margin-top: var(--space-sm);

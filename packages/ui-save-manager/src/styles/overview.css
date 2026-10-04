@@ -47,7 +47,7 @@
 }
 
 .overview-planet-cards {
-    --card-min-width: 16rem;
+    --card-min-width: 20rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--card-min-width), 1fr));
     gap: var(--space-md);
@@ -78,7 +78,12 @@
     gap: var(--space-xs) var(--space-sm);
 }
 
-.overview-planet-head .tooltip {
+.overview-planet-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.overview-planet-actions .tooltip {
     left: auto;
     right: 0;
 }

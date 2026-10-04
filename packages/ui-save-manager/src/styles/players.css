@@ -14,6 +14,12 @@
     }
 }
 
+@media (min-width: 1280px) {
+    .player-cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 .player-card-header {
     display: flex;
     flex-wrap: wrap;
@@ -22,16 +28,26 @@
 }
 
 .player-gauges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-lg);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-sm);
     margin-bottom: var(--space-md);
 }
 
 .player-gauge {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: var(--space-sm);
+    gap: var(--space-xs);
+    text-align: center;
+}
+
+.player-gauge-shape {
+    --gauge-icon-height: 2rem;
+
+    flex: none;
+    width: auto;
+    height: var(--gauge-icon-height);
 }
 
 .player-gauge-empty {
@@ -43,7 +59,7 @@
 }
 
 .player-gauge-health .player-gauge-filled {
-    fill: var(--neon-pink);
+    fill: var(--success);
 }
 
 .player-gauge-thirst .player-gauge-filled {
@@ -62,6 +78,8 @@
 }
 
 .player-gauge-label {
+    display: flex;
+    flex-direction: column;
     font-weight: var(--semibold);
 }
 

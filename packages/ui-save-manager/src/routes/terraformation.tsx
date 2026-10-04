@@ -21,11 +21,10 @@ export default function TerraformationPage() {
 
   return (
     <SavePage group={saveGroupTitle} page={terraformationPageTitle} subject={selectedPlanetName()}>
-      <SectionTitle testId="terraformation-title">{terraformationSectionTitle}</SectionTitle>
       <SectionState title={terraformationSectionTitle} resource={loadedSave.viewModels.terraformationPage}>
-        {(terraformationPage) => (
-          <Show when={terraformationPage().planets[selectedPlanetIndex()]}>
-            {(zone) => (<>
+        {(terraformationPage) => (<>
+          <SectionTitle testId="terraformation-title" aside={
+            <Show when={terraformationPage().planets.length}>
               <PlanetTabs
                 planetNames={terraformationPage().planets.map((planet) => planet.planetName)}
                 selectedIndex={selectedPlanetIndex()}
@@ -34,12 +33,16 @@ export default function TerraformationPage() {
                 testIdPrefix={TERRAFORMATION_TAB_ID_PREFIX}
                 label={terraformationPlanetTabsLabel}
               />
+            </Show>
+          }>{terraformationSectionTitle}</SectionTitle>
+          <Show when={terraformationPage().planets[selectedPlanetIndex()]}>
+            {(zone) => (
               <div role="tabpanel" id={TERRAFORMATION_PANEL_ID} aria-labelledby={`${TERRAFORMATION_TAB_ID_PREFIX}${selectedPlanetIndex()}`}>
                 <TerraformationPlanetZone zone={zone()}/>
               </div>
-            </>)}
+            )}
           </Show>
-        )}
+        </>)}
       </SectionState>
     </SavePage>
   );

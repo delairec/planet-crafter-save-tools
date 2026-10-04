@@ -214,7 +214,8 @@ DECISION BothMessageListsShareOneRendering
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	SPEC "A single component renders both lists, foldable and monospace; that rendering is never a"
 		+ "parameter of the component"
-		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::<details>"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::<details"
+			+ "class=\"message-group-details\">"
 	SPEC "The severity of a list sets the colour of its title alone"
 		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::text-color-${props.severity}"
 	SPEC "A validation message reads as a stack frame: monospace, the message first, its origin"
