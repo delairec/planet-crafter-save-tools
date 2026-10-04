@@ -810,13 +810,15 @@ TASK FEAT141
 	STATUS todo
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27"
 	SPEC "the Terraformation page shows planet tabs and, for the planet of the selected tab, two"
-		+ "hero figures, the Terraformation Index, naming the share of the SysTi the planet holds,"
-		+ "and the biomass, naming the shares of plants and insects; the breadcrumb names the"
-		+ "planet"
+		+ "hero figures, the Terraformation Index, naming the SysTi of the save and how many"
+		+ "planets it multiplies, and the biomass, naming the shares of plants and insects; the"
+		+ "breadcrumb names the planet"
+		REF @DECISION.TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 	SPEC "two tables follow, O2, heat, pressure and purification, then plants, insects and animals;"
 		+ "each row carries a bar in a column of its own, scaled to the largest row of its table"
-		+ "and aligned with the other rows, and its value right-aligned; a value of zero and a"
-		+ "purification not unlocked show a dash"
+		+ "and aligned with the other rows, and its value right-aligned; a value of zero shows a"
+		+ "dash, and a planet without purification shows no purification row"
+		REF @DECISION.APlanetWithoutPurificationCarriesNoPurificationLevel
 	SPEC "the Terraformation page reads one view model, one zone per planet with its hero figures,"
 		+ "its rows and the width of each bar, built by one presenter from one use case; the planet"
 		+ "zone is built by a presentation helper the planet page reuses, and its figures are"
@@ -831,10 +833,11 @@ TASK FEAT141
 		+ "groups of values and adds a bar per row so the reader sees which value carries the"
 		+ "index. The planet zone of this view model is what the planet page shows in its"
 		+ "Terraformation tab, built by the same helper. The SysTi is computed since the Overview"
-		+ "page, which this page reads for the share under its hero figure, and the planet tabs"
-		+ "come with the Power page"
+		+ "page, which this page reads for the caption under its hero figure, naming the SysTi the"
+		+ "Ti of the planet is a factor of, and the planet tabs come with the Power page"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
+		REF @DECISION.TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 		REF @TASK.FEAT132
 		REF @TASK.FEAT139
 		REF @SECTION.TerraformationLevels
@@ -848,6 +851,10 @@ TASK FEAT141
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner ruling of 2026-10-04 at the launch of the task: the Terraformation Index is a"
+		+ "factor of the SysTi, which is a product, so its caption names the SysTi and its number"
+		+ "of planets instead of a share"
+		REF @DECISION.TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 
 TASK FEAT142
 	TITLE "Give the Overview page its view model: identity and progression tiles"

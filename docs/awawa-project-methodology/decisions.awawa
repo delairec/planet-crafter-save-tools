@@ -4503,3 +4503,33 @@ DECISION TheDisplayFormOfThePowerLivesInAProviderAboveTheRouter
 		REF @DECISION.TheMergedSavesLiveInAStoreAboveTheRouter
 	SOURCE "Ruling of the FEAT140 agent on 2026-10-04"
 		PR 273
+
+DECISION TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
+	SPEC "the caption under the Terraformation Index hero figure of a planet names the SysTi of the"
+		+ "save and how many planets it multiplies, as the SysTi tile of the Overview page does,"
+		+ "and states no share of the SysTi"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT141"
+		REF @RULE.TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+	SPEC "the caption of a planet whose Terraformation Index is zero, left out of the SysTi, names"
+		+ "no SysTi"
+		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT141"
+	REJECTED "the share of the SysTi the planet holds, as the task first wrote it: the SysTi is a"
+		+ "product, in which no percentage share exists"
+	REJECTED "the share of the sum of the Ti of the planets, the arithmetic of the mockup labelled"
+		+ "of the total Ti: a figure the game shows nowhere"
+		REF @URL.SaveManagerRedesignMockup
+	REJECTED "the logarithmic share, log(Ti) / log(SysTi), the one reading where the share of a"
+		+ "product is defined: on four planets between 1e12 and 1e14 every share falls between 24 %"
+		+ "and 27 %, a figure that tells the planets apart hardly at all"
+	REJECTED "no SysTi in the caption, the Ti figure alone: the Terraformation page then drops the"
+		+ "SysTi the Overview page already computes"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT141
+	RESTS_ON @RULE.TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+	RATIONALE "The task was written when the SysTi was thought a sum, of which a planet holds a"
+		+ "share; the SysTi is the product of the non-zero Ti of the planets, so the Ti of a planet"
+		+ "is one of its factors. Naming the SysTi and its number of factors is true to the game,"
+		+ "invents no figure and reuses the SysTi already computed; a planet at zero is no factor,"
+		+ "so its caption cannot name one"
+	SOURCE "Owner ruling of 2026-10-04 at the launch of FEAT141, to the question what the caption"
+		+ "under the Ti names: the factor of the SysTi, without a share"
