@@ -352,7 +352,9 @@ describe('checkColorContrast', () => {
         printed: [
           'packages/ui-save-manager/src/styles/overview.css: .overview-planet-bar-consumption (dark theme) — the consumption bar of a planet card of the Overview page, on its track: --series-consumption on --elevated is 1.00:1, below the WCAG 2.1 AA floor of 3:1',
           'packages/ui-save-manager/src/styles/power.css: .power-load-meter-fill (dark theme) — the fill of the load meter of the Power page, on its track: --series-consumption on --elevated is 1.00:1, below the WCAG 2.1 AA floor of 3:1',
-          'check:contrast: 2 color contrast violation(s); see @DECISION.ColorTokenPairsMeetWcagAaByCatalog.'
+          'packages/ui-save-manager/src/styles/power.css: .power-chart-fill-consumption (dark theme) — a consumer bar of the chart of the Power page, on its track: --series-consumption on --elevated is 1.00:1, below the WCAG 2.1 AA floor of 3:1',
+          'packages/ui-save-manager/src/styles/power.css: .power-chart-swatch-consumption (dark theme) — the consumers swatch of the legend of the chart of the Power page, on the page background: --series-consumption on --canvas is 1.15:1, below the WCAG 2.1 AA floor of 3:1',
+          'check:contrast: 4 color contrast violation(s); see @DECISION.ColorTokenPairsMeetWcagAaByCatalog.'
         ],
         exitCodes: [1]
       });

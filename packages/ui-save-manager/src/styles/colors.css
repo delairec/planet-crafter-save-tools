@@ -45,6 +45,7 @@
     /* SÉRIES */
     --series-production: #0891b2;
     --series-consumption: #d9007d;
+    --series-optimizer-boost: #7f4af5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -87,5 +88,6 @@
 
         --series-production: #06a6c4;
         --series-consumption: #d9007d;
+        --series-optimizer-boost: #9061f9;
     }
 }

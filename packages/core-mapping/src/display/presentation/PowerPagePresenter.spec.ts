@@ -63,7 +63,20 @@ describe('PowerPagePresenter', () => {
           rows: [{label: 'Solar panel T2', quantity: '1', unitLevel: `50${nbsp}kW`, totalLevel: `50${nbsp}kW`, share: '100%'}],
           total: {label: 'Total', quantity: '1', unitLevel: '', totalLevel: `50${nbsp}kW`, share: '100%'}
         },
-        consumers: {title: 'Consumers', rows: [], total: {label: 'Total', quantity: '0', unitLevel: '', totalLevel: `0${nbsp}kW`, share: ''}}
+        consumers: {title: 'Consumers', rows: [], total: {label: 'Total', quantity: '0', unitLevel: '', totalLevel: `0${nbsp}kW`, share: ''}},
+        chart: {
+          production: {
+            title: 'Production',
+            summary: `1 type · 50${nbsp}kW`,
+            bars: [{label: 'Solar panel T2', series: 'production', widthPercentage: 62.5, value: `50${nbsp}kW`, detail: `1 × 50${nbsp}kW = 50${nbsp}kW · 100% of production`}],
+            ticks: ['0', '20', '40', '60', '80']
+          },
+          consumption: {title: 'Consumption', summary: `0 types · 0${nbsp}kW`, bars: [], ticks: []},
+          legend: [
+            {label: 'Producers', series: 'production'},
+            {label: 'Consumers', series: 'consumption'}
+          ]
+        }
       }]
     });
   });

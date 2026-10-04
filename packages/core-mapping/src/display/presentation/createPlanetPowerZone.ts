@@ -14,6 +14,7 @@ import {
   PowerOptimizersViewModel
 } from "./viewModels/PlanetPowerZoneViewModel";
 import {formatPowerFigures} from "./formatPowerFigures";
+import {createPowerChart} from "./createPowerChart";
 import {formatKilowatts} from "./formatKilowatts";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
@@ -72,7 +73,8 @@ export function createPlanetPowerZone(planet: PlanetEnergyLevelsResponse, worldO
       planet.optimizers.length
     ),
     producers: createBreakdownTable(powerPageProducersTitle, planet.productionBreakdown, worldObjectLabels),
-    consumers: createBreakdownTable(powerPageConsumersTitle, planet.consumptionBreakdown, worldObjectLabels)
+    consumers: createBreakdownTable(powerPageConsumersTitle, planet.consumptionBreakdown, worldObjectLabels),
+    chart: createPowerChart(planet, worldObjectLabels)
   };
   if (figures.shareOfProductionConsumed !== undefined) {
     zone.loadMeter = createLoadMeter(figures.shareOfProductionConsumed, planet);

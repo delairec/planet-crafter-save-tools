@@ -1,4 +1,5 @@
 import {TonedValueViewModel} from "./ConfigurationPageViewModel";
+import {PowerChartViewModel} from "./PowerChartViewModel";
 
 export interface PowerFigureTileViewModel {
   label: string;
@@ -49,4 +50,5 @@ export interface PlanetPowerZoneViewModel {
   breakdownSummary: string;
   producers: PowerBreakdownTableViewModel;
   consumers: PowerBreakdownTableViewModel;
+  chart: PowerChartViewModel;
 }

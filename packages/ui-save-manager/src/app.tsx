@@ -11,6 +11,7 @@ import {PAGE_PATHS} from "~/lib/pagePaths";
 import {version} from "../package.json";
 import {LoadedSaveProvider} from "~/providers/LoadedSaveProvider.tsx";
 import {MergedSavesProvider} from "~/providers/MergedSavesProvider.tsx";
+import {PowerDisplayFormProvider} from "~/providers/PowerDisplayFormProvider.tsx";
 
 const Layout: Component<RouteSectionProps> = (props) => {
   preventDropOutsideAreas();
@@ -45,9 +46,11 @@ export default function App() {
   return (
     <Suspense>
       <MergedSavesProvider>
-        <Router root={Layout}>
-          <FileRoutes/>
-        </Router>
+        <PowerDisplayFormProvider>
+          <Router root={Layout}>
+            <FileRoutes/>
+          </Router>
+        </PowerDisplayFormProvider>
       </MergedSavesProvider>
     </Suspense>
   );

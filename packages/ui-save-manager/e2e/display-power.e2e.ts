@@ -12,6 +12,10 @@ function findTheNotifications(page: Page, notificationText: string): Locator {
   return page.getByTestId(/^power-notification-\d+$/).filter({hasText: notificationText});
 }
 
+async function displayThePowerAs(page: Page, formLabel: string): Promise<void> {
+  await page.getByTestId('power-display-form').selectOption({label: formLabel});
+}
+
 test.describe('Power page', () => {
   test.describe('When the Power page of a visualized save is opened', () => {
     test('should open on a breadcrumb naming the Save group, the Power page and the planet of the selected tab', async ({page}) => {
@@ -38,7 +42,50 @@ test.describe('Power page', () => {
       await expect(page.getByTestId('power-planet-tab-0')).toHaveText('Skeo');
       await expect(page.getByTestId('power-planet-tab-0')).toHaveAttribute('aria-selected', 'true');
       await expect(page.getByTestId('power-planet-title')).toHaveText('Skeo');
-      await expect(page.getByTestId(/^power-producers-row-\d+$/)).toContainText(['Wind turbine T2']);
+      await expect(page.getByTestId(/^power-chart-production-bar-\d+-label$/)).toContainText(['Wind turbine T2']);
+    });
+
+    test('should offer Bars by machine and Table under Display as, Bars by machine chosen', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+
+      // Act
+      await openThePageOfTheMenu(page, 'Power');
+
+      // Assert
+      await expect(page.getByTestId('power-display-form-label')).toHaveText('Display as');
+      await expect(page.getByTestId(/^power-display-form-option-/)).toHaveText(['Bars by machine', 'Table']);
+      await expect(page.getByTestId('power-display-form')).toHaveValue('bars');
+    });
+
+    test('should chart the production and the consumption side by side as bars, each ending on its value, over ticks and a legend', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+
+      // Act
+      await openThePageOfTheMenu(page, 'Power');
+
+      // Assert
+      await expect(page.getByTestId('power-chart-production-title')).toHaveText('Production');
+      await expect(page.getByTestId('power-chart-consumption-title')).toHaveText('Consumption');
+      await expect(page.getByTestId('power-chart-production-bar-0-value')).toHaveText(/\skW$/);
+      await expect(page.getByTestId(/^power-chart-production-tick-\d+$/)).toHaveCount(5);
+      await expect(page.getByTestId(/^power-chart-legend-\d+$/)).toContainText(['Producers', 'Consumers']);
+      await expect(page.getByTestId('power-producers')).toHaveCount(0);
+    });
+
+    test('should name the type, its quantity, its unit, its total and its share once a bar holds the keyboard focus', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+      await openThePageOfTheMenu(page, 'Power');
+
+      // Act
+      await page.getByTestId('power-chart-production-bar-0').focus();
+
+      // Assert
+      await expect(page.getByTestId('power-chart-production-bar-0-description')).toBeVisible();
+      await expect(page.getByTestId('power-chart-production-bar-0-description'))
+        .toHaveText(/^Wind turbine T2\s+\d+ × [\d.,]+\skW = [\d.,]+\skW · \d+% of production$/);
     });
 
     test('should show the production, the consumption and the available power, the available one carrying the status pill', async ({page}) => {
@@ -55,12 +102,13 @@ test.describe('Power page', () => {
       await expect(page.getByTestId('power-available-balance')).toHaveText(/^Surplus, /);
     });
 
-    test('should show the optimizers before the producers and the consumers, each table ending on a total row', async ({page}) => {
+    test('should show the optimizers before the producers and the consumers, each table ending on a total row, once Table is chosen', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+      await openThePageOfTheMenu(page, 'Power');
 
       // Act
-      await openThePageOfTheMenu(page, 'Power');
+      await displayThePowerAs(page, 'Table');
 
       // Assert
       const optimizersTop = (await page.getByTestId('power-optimizers-title').boundingBox())!.y;
@@ -94,6 +142,24 @@ test.describe('Power page', () => {
       // Assert
       await expect(findTheNotifications(page, submergedMachinesNotification).getByTestId(/^power-notification-\d+-severity$/))
         .toHaveText('Limitation');
+    });
+  });
+
+  test.describe('When Table is chosen and the reader comes back to the Power page from another page', () => {
+    test('should keep the tables chosen', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+      await openThePageOfTheMenu(page, 'Power');
+      await displayThePowerAs(page, 'Table');
+      await openThePageOfTheMenu(page, 'Overview');
+
+      // Act
+      await openThePageOfTheMenu(page, 'Power');
+
+      // Assert
+      await expect(page.getByTestId('power-display-form')).toHaveValue('table');
+      await expect(page.getByTestId('power-producers-total')).toHaveText(/^Total/);
+      await expect(page.getByTestId('power-chart-production-title')).toHaveCount(0);
     });
   });
 

@@ -9,3 +9,6 @@ export const powerQuantityHeader = 'Quantity';
 export const powerUnitHeader = 'Unit';
 export const powerTotalHeader = 'Total';
 export const powerShareHeader = 'Share';
+export const powerDisplayFormLabel = 'Display as';
+export const powerDisplayFormBarsOption = 'Bars by machine';
+export const powerDisplayFormTableOption = 'Table';
