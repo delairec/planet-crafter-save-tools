@@ -57,6 +57,12 @@ HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 		+ "occurrences of one object type prove a habit, not a rule of the game"
 	SOURCE "Extracted from docs/save-format.md, what the reference saves say about the rarest"
 		+ "three, on 2026-09-18"
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: liPlanet is set only by WorldObject.SetPlanetLinkedHash through"
+		+ "LinkedPlanetProxy, which MachineRocketBackAndForthInterplanetaryExchange drives from the"
+		+ "destination chosen in UiWindowInterplanetaryExchange; which group carries that machine,"
+		+ "and whether the planet the platform stands on is offered, are data of the assets"
+		REF @GAME_RELEASE.2.103
 
 HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 	DESC "terraTokens and allTimeTerraTokens stay below 2^53 in a real save, so reading them as a"
@@ -70,6 +76,11 @@ HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 		+ "counts now stored as a unsigned 64bits value; read on 2026-09-21"
 		REF @URL.SteamNewsOfThePlanetCrafter
 		REF @GAME_RELEASE.2.102
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JsonableWorldState.terraTokens and allTimeTerraTokens are ulong, so the type"
+		+ "bounds nothing below 2^64 and the reach of a real save is not settled by the files of"
+		+ "the game"
+		REF @GAME_RELEASE.2.103
 
 HYPOTHESIS PodUndergroundAndRocketAnimals2DrawNoPower
 	DESC "PodUnderground and RocketAnimals2 neither draw nor produce power in game 2.103"
@@ -140,6 +151,10 @@ HYPOTHESIS AGameOf1618DropsTheContentItDoesNotKnow
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 	SOURCE "Owner review, 2026-09-24: the in-game checks left for later"
 		PR 127
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: the assembly read is release 2.103: what release 1.618 drops on load cannot"
+		+ "be read there"
+		REF @GAME_RELEASE.2.103
 
 HYPOTHESIS EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 	DESC "a Toxins Filter in the equipment of a player raises their toxicity maximum from 5 by 5"
