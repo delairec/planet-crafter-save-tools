@@ -57,9 +57,31 @@ test.describe('Power page accessibility', () => {
       await expect(page.getByTestId('power-planet-tab-0')).toHaveAttribute('aria-selected', 'true');
     });
 
-    test('should let the keyboard reach the scrolling body of each table, a region named after its title', async ({page}) => {
+    test('should name the selector of the form by its Display as label', async ({page}) => {
       // Act
       await openThePowerPageOfAVisualizedSave(page);
+
+      // Assert
+      await expect(page.getByTestId('power-display-form')).toHaveRole('combobox');
+      await expect(page.getByTestId('power-display-form')).toHaveAccessibleName('Display as');
+    });
+
+    test('should name a bar by its type and value and describe it by its tooltip', async ({page}) => {
+      // Act
+      await openThePowerPageOfAVisualizedSave(page);
+
+      // Assert
+      await expect(page.getByTestId('power-chart-production-bar-0')).toHaveAttribute('tabindex', '0');
+      await expect(page.getByTestId('power-chart-production-bar-0')).toHaveAccessibleName(/\skW$/);
+      await expect(page.getByTestId('power-chart-production-bar-0')).toHaveAccessibleDescription(/ × .* = /);
+    });
+
+    test('should let the keyboard reach the scrolling body of each table, a region named after its title, once Table is chosen', async ({page}) => {
+      // Arrange
+      await openThePowerPageOfAVisualizedSave(page);
+
+      // Act
+      await page.getByTestId('power-display-form').selectOption({label: 'Table'});
 
       // Assert
       await expect(page.getByTestId('power-optimizers-body')).toHaveRole('region');

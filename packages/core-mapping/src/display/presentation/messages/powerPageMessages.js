@@ -27,3 +27,23 @@ export const resolvePowerPageBreakdownSummary = (producerCount, consumerCount, o
   countOf(consumerCount, 'consumer', 'consumers'),
   countOf(optimizerCount, 'optimizer', 'optimizers')
 ].join(powerPageSummarySeparator);
+export const powerPageOptimizerBoostLabel = 'Optimizer boost';
+export const powerPageFoldedTailLabel = 'Folded tail';
+
+/** @param {number} typeCount */
+export const resolvePowerPageFoldedTailBarLabel = (typeCount) => `Other (${countOf(typeCount, 'type', 'types')})`;
+
+/** @param {number} typeCount @param {string} total */
+export const resolvePowerPageChartSummary = (typeCount, total) => `${countOf(typeCount, 'type', 'types')}${powerPageSummarySeparator}${total}`;
+
+/** @param {string} quantity @param {string} unitLevel @param {string} totalLevel */
+export const resolvePowerPageMachineBarDetail = (quantity, unitLevel, totalLevel) => `${quantity} × ${unitLevel} = ${totalLevel}`;
+
+/** @param {number} machineCount @param {string} totalLevel */
+export const resolvePowerPageFoldedTailBarDetail = (machineCount, totalLevel) => `${countOf(machineCount, 'machine', 'machines')}${powerPageSummarySeparator}${totalLevel}`;
+
+/** @param {number} optimizerCount @param {string} totalLevel */
+export const resolvePowerPageOptimizerBoostBarDetail = (optimizerCount, totalLevel) => `${countOf(optimizerCount, 'optimizer', 'optimizers')}${powerPageSummarySeparator}${totalLevel}`;
+
+/** @param {string} detail @param {string} share */
+export const resolvePowerPageBarDetailWithShare = (detail, share) => `${detail}${powerPageSummarySeparator}${share} of production`;

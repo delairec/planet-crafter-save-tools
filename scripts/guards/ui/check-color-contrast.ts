@@ -480,6 +480,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.power-table thead th',
     foreground: 'muted',
     background: 'surface'
+  },
+  {
+    description: 'the summary of a chart panel of the Power page and the ticks under its bars, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-summary, .power-chart-tick',
+    foreground: 'muted',
+    background: 'canvas'
   }
 ];
 
@@ -506,6 +513,62 @@ export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
     selector: '.power-load-meter-fill',
     foreground: 'series-consumption',
     background: 'elevated'
+  },
+  {
+    description: 'a producer bar of the chart of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-fill-production',
+    foreground: 'series-production',
+    background: 'elevated'
+  },
+  {
+    description: 'a consumer bar of the chart of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-fill-consumption',
+    foreground: 'series-consumption',
+    background: 'elevated'
+  },
+  {
+    description: 'the optimizer boost bar of the chart of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-fill-optimizerBoost',
+    foreground: 'series-optimizer-boost',
+    background: 'elevated'
+  },
+  {
+    description: 'the folded tail bar of the chart of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-fill-foldedTail',
+    foreground: 'subtle',
+    background: 'elevated'
+  },
+  {
+    description: 'the producers swatch of the legend of the chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-swatch-production',
+    foreground: 'series-production',
+    background: 'canvas'
+  },
+  {
+    description: 'the consumers swatch of the legend of the chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-swatch-consumption',
+    foreground: 'series-consumption',
+    background: 'canvas'
+  },
+  {
+    description: 'the optimizer boost swatch of the legend of the chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-swatch-optimizerBoost',
+    foreground: 'series-optimizer-boost',
+    background: 'canvas'
+  },
+  {
+    description: 'the folded tail swatch of the legend of the chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-swatch-foldedTail',
+    foreground: 'subtle',
+    background: 'canvas'
   }
 ];
 

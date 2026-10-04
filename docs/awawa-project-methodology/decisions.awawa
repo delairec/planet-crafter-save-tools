@@ -1687,11 +1687,12 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 			+ "var(--primary-idle);"
 		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::When a merge result"
 			+ "is shown"
-	SPEC "a series colour, --series-production or --series-consumption, fills a graphic and never"
-		+ "serves as text; every graphic/background pair the catalog names reaches the WCAG 2.1"
-		+ "non-text floor, 3:1, in both themes"
+	SPEC "a series colour, --series-production, --series-consumption or --series-optimizer-boost,"
+		+ "fills a graphic and never serves as text; every graphic/background pair the catalog"
+		+ "names reaches the WCAG 2.1 non-text floor, 3:1, in both themes"
 		IMPL "scripts/guards/ui/check-color-contrast.ts::GRAPHIC_TOKEN_PAIRS"
 		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-production"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-optimizer-boost"
 		ENFORCED_BY "scripts/guards/ui/check-color-contrast.ts::MINIMUM_GRAPHIC_CONTRAST_RATIO"
 		ENFORCED_BY "scripts/guards/ui/check-color-contrast.spec.ts::should print the graphic pair"
 			+ "at the 3:1 floor, then the count, and exit with one"
@@ -4447,3 +4448,58 @@ DECISION TheOverviewCardOfAPlanetNamesTheTerraformationStageItHasReached
 		REF @GAME_RELEASE.2.103
 		REF @URL.WikiTerraformationStages
 		PR 274
+
+DECISION AnOtherPowerBarFoldsTwoMachineTypesOrMore
+	SPEC "a panel of Bars by machine draws every machine type when it counts twelve or fewer, and"
+		+ "folds the types beyond the eleven largest into one Other bar, drawn last, only when it"
+		+ "counts more than twelve"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::UNFOLDED_MACHINE_TYPE_LIMIT"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::should"
+			+ "keep the twelfth type as the last bar, folding none"
+	SPEC "the optimizer boost is counted among no machine type: its bar takes its place by its"
+		+ "total among the kept bars, and the fold counts machine types alone"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::companionBars:"
+			+ "optimizerBoostBars"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::while"
+			+ "the optimizer boost keeps its own bar"
+	SPEC "each panel scales its bars on its own ticks, the largest bar of the panel reaching the"
+		+ "last tick or near it"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::TICK_INTERVALS"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::each"
+			+ "panel on its own ticks"
+	REJECTED "folding from the twelfth type whatever the count, as the task's wording read alone"
+		+ "allows: an Other bar of one type hides a name its own bar could show in the same space"
+	REJECTED "the optimizer boost counted among the twelve bars, as the mockup did: the task keeps"
+		+ "it out of the fold, and counting it would fold one more machine type for a bar that"
+		+ "never folds"
+	REJECTED "one scale for the two panels, as the planet cards of the Overview page share one:"
+		+ "page F draws each panel on its own ticks, and the figure tiles above already compare the"
+		+ "two totals"
+		REF @DECISION.TheOverviewPowerBarsShareTheLargestFigureOfTheSaveAsTheirScale
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT140
+	SOURCE "Ruling of the FEAT140 agent on 2026-10-04, page F folding from the twelfth row"
+		PR 273
+		REF @URL.SaveManagerRedesignMockup
+
+DECISION TheDisplayFormOfThePowerLivesInAProviderAboveTheRouter
+	SPEC "the form chosen under Display as lives in a provider mounted around the router, read by"
+		+ "every page that draws the power breakdown, so it stays chosen across planet tabs and"
+		+ "pages; Bars by machine is chosen until the reader picks another"
+		IMPL "packages/ui-save-manager/src/app.tsx::<PowerDisplayFormProvider>"
+		ENFORCED_BY "packages/ui-save-manager/e2e/display-power.e2e.ts::should keep the tables"
+			+ "chosen"
+	REJECTED "a signal of the route component: it is disposed when the reader opens another page"
+		+ "and the choice would be lost"
+	REJECTED "a signal declared at the top of a module: the server renders every request with the"
+		+ "same module instance, so one reader's choice would leak to the next"
+	REJECTED "the choice in the query of the address: the planet page is another route and would"
+		+ "not carry it"
+		REF @TASK.FEAT143
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT140
+	RATIONALE "The same reason as for the merged saves: only a store above the router outlives"
+		+ "every page"
+		REF @DECISION.TheMergedSavesLiveInAStoreAboveTheRouter
+	SOURCE "Ruling of the FEAT140 agent on 2026-10-04"
+		PR 273
