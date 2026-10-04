@@ -351,7 +351,6 @@ RULE APlayerIdentifierIsCarriedAsExactDecimalText
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/mergePlayers.spec.ts::should mark"
 			+ "only the save A host"
 	APPLIES_TO_SECTION @SECTION.Players
-	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-6 and GR-ID-7)"
 	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
 		+ "2026-10-04: JsonablePlayerState.id is a ulong, an unsigned 64-bit integer"
@@ -420,10 +419,10 @@ RULE APlanetNumericIdIsStableAcrossSaves
 RULE APurificationLevelOfMinusOneMeansNotUnlocked
 	HOLDS_FOR all
 	DOMAIN format
-	SPEC "unitPurificationLevel carries -1 while purification is not unlocked, and a non-negative"
-		+ "value once it is"
+	SPEC "unitPurificationLevel carries -1 on a planet that needs no purification, and a"
+		+ "non-negative value on a planet that needs it"
 		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section1-terraformation-levels.schema.json::-1"
-			+ "is a sentinel value meaning purification is not unlocked yet"
+			+ "is a sentinel value carried by a planet that needs no purification"
 		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section1-terraformation-levels.schema.json::\"minimum\":"
 			+ "-1"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
@@ -848,3 +847,43 @@ RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
 		+ "WorldUnitTerraformation.GetTerraformationStartingValue makes the Ti of a planet its"
 		+ "oxygen, heat, pressure, plants, insects, animals and max(purification, 0)"
 		REF @GAME_RELEASE.2.103
+
+RULE AnAnimalHungerLevelLiesBetweenMinus100And100
+	HOLDS_FOR all
+	DOMAIN game
+	DOMAIN format
+	SPEC "the hunger level of an animal lies between -100 and 100: the game sets it to 100 when the"
+		+ "animal is fed by a feeder, lowers it by 0.1 per second down to -100 and raises it by"
+		+ "what the animal eats up to 100"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section3-world-objects.schema.json::The"
+			+ "game keeps it between -100 and 100"
+	APPLIES_TO_SECTION @SECTION.WorldObjects
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: InventorySpawnContent sets the hunger of a fed animal to 100, lowers it with"
+		+ "math.max(-100, hunger - 0.1 per second) and raises it on feeding with math.min(100, ...)"
+		REF @GAME_RELEASE.2.103
+	SOURCE "Observed on 2026-09-10 in pull request 48: 345 occurrences over 190338 world objects,"
+		+ "from -100 to 94.22"
+		PR 48
+
+RULE APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
+	HOLDS_FOR all
+	DOMAIN game
+	DOMAIN format
+	SPEC "a player identifier is the Steam account identifier of the player when the game runs"
+		+ "under Steam, and the network client identifier of the player otherwise"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::the"
+			+ "Steam ID under Steam, the network client id otherwise"
+	APPLIES_TO_SECTION @SECTION.Players
+	RATIONALE "An account carries the same identifier in every save it plays, and without Steam the"
+		+ "host is client 0 of every game and a client id is given again in a later session, so an"
+		+ "identifier is unique neither across two saves nor, formally, within one; a save written"
+		+ "before multiplayer carries no identifier, which the game reads as 0"
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: PlayerMainController.OnNetworkSpawn sets the identifier to"
+		+ "SteamUser.GetSteamID() when SteamManager.Initialized, otherwise to"
+		+ "NetworkObject.OwnerClientId; JSONExport inserts an id of 0 into the player entry of a"
+		+ "save written before multiplayer"
+		REF @GAME_RELEASE.2.103
+	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07"
+		PR 39

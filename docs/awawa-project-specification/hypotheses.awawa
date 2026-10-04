@@ -6,6 +6,12 @@ HYPOTHESIS APlayerIdentifierIsASteamAccountReusedAcrossGames
 	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07, pull request 39,"
 		+ "recorded on 2026-09-18"
 		PR 39
+	SOURCE "Corrected by the game assembly of release 2.103 read on 2026-10-04: the identifier is a"
+		+ "Steam account only when the game runs under Steam"
+		REF @RULE.APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
+		REF @GAME_RELEASE.2.103
+	STATUS archived
+	ARCHIVED_ON 2026-10-04
 
 HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 	DESC "a world object may carry woIds, the list of the world objects it holds"
@@ -33,6 +39,11 @@ HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 		REF @DECISION.ASchemaRuleHoldsByMeaningBeforeMeasurement
 	SOURCE "Found on 2026-09-10 in pull request 48, recorded on 2026-09-18"
 		PR 48
+	SOURCE "Proven by the game assembly of release 2.103 read on 2026-10-04"
+		REF @RULE.AnAnimalHungerLevelLiesBetweenMinus100And100
+		REF @GAME_RELEASE.2.103
+	STATUS archived
+	ARCHIVED_ON 2026-10-04
 
 HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 	DESC "the ProceduralWreck objects and ProceduralInstanceGenerator are spawned by"
@@ -44,6 +55,15 @@ HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 		REF @DATATABLE.WorldObjectLabels
 	SOURCE "User ruling of 2026-09-14 in the review of pull request 76, recorded on 2026-09-18"
 		PR 76
+	SOURCE "Refuted by the game assembly Assembly-CSharp.dll of release 2.103, Steam build"
+		+ "25296421, decompiled on 2026-10-04: ProceduralInstancesHandler.LoadInstanceFromScene"
+		+ "creates the ProceduralInstanceGenerator world object for a ProceduralSceneInstance"
+		+ "placed in the scene of a planet; MachinePortalGenerator only registers with"
+		+ "WorldInstanceHandler, and WorldInstanceScene loads the wrecks of a portal world instance"
+		+ "without that world object"
+		REF @GAME_RELEASE.2.103
+	STATUS archived
+	ARCHIVED_ON 2026-10-04
 
 HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 	DESC "liPlanet, the planet of the inventory a world object is linked to, is carried only by an"
@@ -180,3 +200,11 @@ HYPOTHESIS EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 		PR 263
 		REF @URL.WikiToxinsFilters
 		REF @URL.CompanionAppGameDataV2103
+	SOURCE "Refuted by the game assembly Assembly-CSharp.dll of release 2.103, Steam build"
+		+ "25296421, decompiled on 2026-10-04: PlayerGaugesHandler sets the toxicity maximum to"
+		+ "ToxicArea.GetToxicTime of the area the player stands in; the Toxins Filter value v read"
+		+ "from the equipment alone, PlayerEquipment.GetEquipmentValue, multiplies the filling of"
+		+ "the gauge by 1 - v/100 and its emptying by 1 + v/100, and no filter raises the maximum"
+		REF @GAME_RELEASE.2.103
+	STATUS archived
+	ARCHIVED_ON 2026-10-04

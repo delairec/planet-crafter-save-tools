@@ -149,7 +149,7 @@ erDiagram
 
 | Property            | Type     | Description                                            |
 |---------------------|----------|--------------------------------------------------------|
-| `id`                | `int64`  | Steam ID of the player (primary key)                   |
+| `id`                | `int64`  | Steam ID, or client id without Steam (primary key)     |
 | `name`              | `string` | Steam Name of the player (deduplication key)           |
 | `inventoryId`       | `int`    | → `Inventory.id` (section 4) — inventory of the player |
 | `equipmentId`       | `int`    | → `Inventory.id` (section 4) — equipment of the player |
@@ -210,9 +210,8 @@ carried by every entry of the ten reference saves (190338 world objects); the ne
 **What the reference saves say about the rarest three:** `liPlanet` appears 21 times, every time on an
 `InterplanetaryExchangePlatform1` and every time naming a planet other than the object's own — an exchange
 platform points at an inventory sitting on another planet. `hunger` appears 345 times, on entries of `gId`
-`DNASequence` only, between `-100` and `94.22`; the bounds the schema states are the symmetric scale the game
-is assumed to work on (an animal yields a DNA sequence while its hunger is positive) rather than a documented
-range, and the first legitimate save they reject lifts them. `woIds` is on no world object of the ten saves,
+`DNASequence` only, between `-100` and `94.22`; the game itself keeps it between `-100` and `100`
+(`@RULE.AnAnimalHungerLevelLiesBetweenMinus100And100`). `woIds` is on no world object of the ten saves,
 but the merge remaps it (`GR-ID-3`), so the schema declares it rather than reject a save the merge handles.
 
 **Planet numeric IDs:** `planet` (here) as well as `WorldEvent.planet` (see below) reference a planet using a

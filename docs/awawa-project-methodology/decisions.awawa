@@ -290,8 +290,8 @@ DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 	SPEC "Exactness is produced and consumed in the wire format modules of core-mapping alone, and"
 		+ "the section schema declares a decimal string"
 		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js::keepInt64IdentifierText"
-		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::Player"
-			+ "Steam ID (primary key, int64)"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::Primary"
+			+ "key, int64"
 	REJECTED "Typing the field as BigInt: JSON.stringify throws on it and ajv cannot validate it"
 	REJECTED "Keeping the raw text of the section entries: the merge rebuilds every player entry"
 	REJECTED "A validation rule on integer precision: a large literal in a save is normal"
@@ -370,7 +370,7 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 		+ "account"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RESTS_ON @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
-	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
+	RESTS_ON @RULE.APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
 	SOURCE "Pull request"
 		PR 39
 		PR 41
