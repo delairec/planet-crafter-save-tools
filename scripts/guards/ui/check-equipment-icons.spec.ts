@@ -39,7 +39,7 @@ describe('checkEquipmentIcons', () => {
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
           'packages/data-world-objects/equipmentKinds.json': '[{"worldObjectName": "Backpack1", "kind": "Backpack", "icon": "backpack"}]',
-          'packages/ui-save-manager/public/icons/equipment.svg': SPRITE
+          'packages/ui-save-manager/src/components/players/EquipmentIconSprite.tsx': SPRITE
         }
       });
 
@@ -60,7 +60,7 @@ describe('checkEquipmentIcons', () => {
       const {io, printed, exitCodes} = createFakeScriptIo({
         files: {
           'packages/data-world-objects/equipmentKinds.json': '[{"worldObjectName": "Jetpack1", "kind": "Jetpack", "icon": "jetpack"}]',
-          'packages/ui-save-manager/public/icons/equipment.svg': SPRITE
+          'packages/ui-save-manager/src/components/players/EquipmentIconSprite.tsx': SPRITE
         }
       });
 
@@ -70,7 +70,7 @@ describe('checkEquipmentIcons', () => {
       // Assert
       expect({printed, exitCodes}).toEqual({
         printed: [
-          'packages/data-world-objects/equipmentKinds.json names the icon jetpack, which packages/ui-save-manager/public/icons/equipment.svg does not draw',
+          'packages/data-world-objects/equipmentKinds.json names the icon jetpack, which packages/ui-save-manager/src/components/players/EquipmentIconSprite.tsx does not draw',
           'check:equipment-icons: 1 icon(s) the sprite does not draw.'
         ],
         exitCodes: [1]

@@ -79,13 +79,17 @@
 }
 
 .slots {
+    --slot-min-width: 12rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--slot-min-width), 1fr));
     gap: var(--space-sm);
 }
 
 .slot {
-    border: 1px solid var(--subtle);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    border: var(--border-width-thin) solid var(--subtle);
     padding: var(--space-sm);
 }
 
@@ -94,22 +98,92 @@
     color: var(--muted);
 }
 
+.slot-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
 .slot-kind {
-    display: block;
     color: var(--muted);
 }
 
+.slot-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.slot-tile {
+    --slot-tile-size: 2.75rem;
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--slot-tile-size);
+    height: var(--slot-tile-size);
+}
+
+.slot-tile-shape {
+    --slot-tile-dash: 4 3;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: var(--elevated);
+    stroke: var(--subtle);
+    stroke-width: 1;
+}
+
+.slot.empty .slot-tile-shape {
+    fill: none;
+    stroke-dasharray: var(--slot-tile-dash);
+}
+
 .slot-icon {
-    --slot-icon-size: 1.5rem;
-    --empty-slot-icon-dash: 0.1 2.6;
+    --slot-icon-size: 1.75rem;
+    position: relative;
     display: block;
     width: var(--slot-icon-size);
     height: var(--slot-icon-size);
-    margin-bottom: var(--space-xs);
+}
+
+.slot:not(.empty) .slot-icon {
+    --slot-accent-orange: var(--equipment-accent-orange);
+    --slot-accent-blue: var(--equipment-accent-blue);
+    --slot-accent-yellow: var(--equipment-accent-yellow);
 }
 
 .slot.empty .slot-icon {
-    stroke-dasharray: var(--empty-slot-icon-dash);
+    opacity: 0.35;
+}
+
+.equipment-icon-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.equipment-accent-orange {
+    stroke: var(--slot-accent-orange, currentColor);
+}
+
+.equipment-accent-blue {
+    stroke: var(--slot-accent-blue, currentColor);
+}
+
+.equipment-accent-blue.equipment-accent-solid {
+    fill: var(--slot-accent-blue, currentColor);
+}
+
+.equipment-accent-yellow {
+    stroke: var(--slot-accent-yellow, currentColor);
+}
+
+.equipment-accent-yellow.equipment-accent-solid {
+    fill: var(--slot-accent-yellow, currentColor);
 }
 
 .inv {
@@ -119,7 +193,7 @@
 }
 
 .inv-chip {
-    border: 1px solid var(--subtle);
+    border: var(--border-width-thin) solid var(--subtle);
     border-radius: var(--radius-sm);
     padding: var(--space-xs) var(--space-sm);
 }

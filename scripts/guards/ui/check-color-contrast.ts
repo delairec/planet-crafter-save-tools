@@ -529,6 +529,27 @@ export const MINIMUM_GRAPHIC_CONTRAST_RATIO = 3;
 
 export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
   {
+    description: 'the orange accent of an equipment icon, on the tile of a worn slot',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot:not(.empty) .slot-icon',
+    foreground: 'equipment-accent-orange',
+    background: 'elevated'
+  },
+  {
+    description: 'the pale blue accent of an equipment icon, on the tile of a worn slot',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot:not(.empty) .slot-icon',
+    foreground: 'equipment-accent-blue',
+    background: 'elevated'
+  },
+  {
+    description: 'the yellow accent of an equipment icon, on the tile of a worn slot',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot:not(.empty) .slot-icon',
+    foreground: 'equipment-accent-yellow',
+    background: 'elevated'
+  },
+  {
     description: 'the production bar of a planet card of the Overview page, on its track',
     file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-planet-bar-production',

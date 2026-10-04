@@ -2,7 +2,7 @@ import {runAsEntryPoint, type ScriptIo} from '../../common/scriptIo.ts';
 import {reportViolations} from '../common/specSources.ts';
 
 const EQUIPMENT_KINDS_PATH = 'packages/data-world-objects/equipmentKinds.json';
-const EQUIPMENT_SPRITE_PATH = 'packages/ui-save-manager/public/icons/equipment.svg';
+const EQUIPMENT_SPRITE_PATH = 'packages/ui-save-manager/src/components/players/EquipmentIconSprite.tsx';
 const SYMBOL_ID = /<symbol\b[^>]*\bid="([^"]+)"/g;
 const CHECK_NAME = 'check:equipment-icons';
 

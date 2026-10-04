@@ -16,8 +16,10 @@ export default function EquipmentSlots(props: EquipmentSlotsProps) {
           {(slot) => (
             <div class={slot.isEmpty ? 'slot empty' : 'slot'}>
               <EquipmentKindIcon icon={slot.icon}/>
-              <small class="slot-kind">{slot.kindLabel}</small>
-              <div>{slot.itemLabel}</div>
+              <div class="slot-text">
+                <small class="slot-kind">{slot.kindLabel}</small>
+                <span class="slot-item">{slot.itemLabel}</span>
+              </div>
             </div>
           )}
         </For>
