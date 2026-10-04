@@ -1,7 +1,8 @@
 .terraformation-heroes,
 .terraformation-tables {
+    --card-min-width: 16rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--card-min-width), 100%), 1fr));
     gap: var(--space-md);
     margin: var(--space-md) 0;
 }
@@ -39,8 +40,9 @@
 }
 
 .terraformation-levels {
+    --level-bar-width: 8rem;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 8rem auto;
+    grid-template-columns: minmax(0, 1fr) var(--level-bar-width) auto;
     align-items: center;
     gap: var(--space-xs) var(--space-sm);
     margin: 0;

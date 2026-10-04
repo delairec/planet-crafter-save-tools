@@ -830,7 +830,7 @@ TASK FEAT141
 		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.ts::function"
 			+ "scaleBar"
 		IMPL "packages/ui-save-manager/src/styles/terraformation.css::grid-template-columns:"
-			+ "minmax(0, 1fr) 8rem auto;"
+			+ "minmax(0, 1fr) var(--level-bar-width) auto;"
 		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should start the bars of"
 			+ "every row of a table at the same place"
 		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.spec.ts::should"

@@ -1,6 +1,7 @@
 .overview-tiles {
+    --tile-min-width: 10rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--tile-min-width), 1fr));
     gap: var(--space-md);
     margin: 0;
 }
@@ -46,8 +47,9 @@
 }
 
 .overview-planet-cards {
+    --card-min-width: 16rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--card-min-width), 1fr));
     gap: var(--space-md);
 }
 

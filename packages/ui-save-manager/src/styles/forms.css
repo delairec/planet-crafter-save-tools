@@ -56,8 +56,9 @@ select:focus {
 }
 
 .merge-save-areas {
+    --area-min-width: 16rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--area-min-width)), 1fr));
     gap: var(--space-lg);
 }
 
