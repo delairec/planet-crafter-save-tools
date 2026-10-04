@@ -4513,7 +4513,7 @@ DECISION TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.ts::resolveOverviewPageSystemTerraformationIndexCaption"
 		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.spec.ts::should"
 			+ "present the hero"
-		REF @RULE.TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 	SPEC "the caption of a planet whose Terraformation Index is zero, which the SysTi does not"
 		+ "count among the planets it multiplies, names no SysTi"
 		IMPL "packages/core-mapping/src/display/domain/rules/isFactorOfTheSystemTerraformationIndex.ts"
@@ -4532,7 +4532,7 @@ DECISION TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 		+ "SysTi the Overview page already computes"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT141
-	RESTS_ON @RULE.TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+	RESTS_ON @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 	RATIONALE "The task was written when the SysTi was thought a sum, of which a planet holds a"
 		+ "share; the SysTi multiplies the Ti of the planets, so the Ti of a planet is one of its"
 		+ "factors. Naming the SysTi and its number of planets, as the domain rule computes them,"
