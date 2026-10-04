@@ -17,7 +17,7 @@ test.describe('Save warnings', () => {
       await visualizeAndRevealTheMessages(page, legacySaveFixturePath, 'display-warnings');
 
       // Assert
-      await expect(page.getByTestId('display-warnings-title')).toHaveText('Warnings');
+      await expect(page.getByTestId('display-warnings-title')).toHaveText('Validation Warnings');
       await expect(page.getByTestId('display-warnings-messages')).toContainText(legacyFormatWarningFragment);
       await expect(page.getByTestId('display-warnings-messages')).not.toContainText(legacyFormatWarningCode);
     });
@@ -31,7 +31,7 @@ test.describe('Save warnings', () => {
       await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByTestId('display-warnings-title')).toHaveText('Warnings');
+      await expect(page.getByTestId('display-warnings-title')).toHaveText('Validation Warnings');
       await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });
   });
@@ -45,7 +45,7 @@ test.describe('Save warnings', () => {
       await mergeAndRevealTheMessages(page, legacySaveFixturePath, currentFormatSaveFixturePath, 'save-a-warnings');
 
       // Assert
-      await expect(page.getByTestId('save-a-warnings-title')).toHaveText('Save A warnings');
+      await expect(page.getByTestId('save-a-warnings-title')).toHaveText('Save A validation warnings');
       await expect(page.getByTestId('save-b-warnings-title')).toBeHidden();
       await expect(page.getByTestId('save-a-warnings-messages')).toContainText(legacyFormatWarningFragment);
       await expect(page.getByTestId('merged-save-download')).toBeVisible();

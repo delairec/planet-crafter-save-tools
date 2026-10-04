@@ -13,9 +13,9 @@ export default function PlayersPage() {
 
   return (
     <SavePage group={playersGroupTitle} page={playersPageTitle}>
-      <SectionTitle testId="players-title">{playersSectionTitle}</SectionTitle>
       <SectionState title={playersSectionTitle} resource={loadedSave.viewModels.playersPage}>
         {(playersPage) => (<>
+          <SectionTitle testId="players-title">{playersSectionTitle}</SectionTitle>
           <Show when={playersPage().playerCountHint}>
             {(playerCountHint) => <p class="players-count" data-testid="players-count">{playerCountHint()}</p>}
           </Show>

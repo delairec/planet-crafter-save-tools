@@ -60,8 +60,10 @@ export default function MergeResultSection(props: MergeResultSectionProps) {
           </Show>
 
           <Show when={result().status === 'mergeFailed'}>
-            <p class="text-color-danger">{mergeResultSectionMergeFailedTitle}</p>
-            <p>{result().mergeFailureMessage}</p>
+            <div class="message-group">
+              <p class="message-group-title text-color-danger">{mergeResultSectionMergeFailedTitle}</p>
+              <p>{result().mergeFailureMessage}</p>
+            </div>
           </Show>
 
           <Show when={result().status === 'validationError'}>

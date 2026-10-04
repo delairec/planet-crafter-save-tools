@@ -1,7 +1,3 @@
-.power-planet-zone .notification {
-    margin: 0 0 var(--space-sm);
-}
-
 .power-tiles {
     --tile-min-width: 12rem;
 

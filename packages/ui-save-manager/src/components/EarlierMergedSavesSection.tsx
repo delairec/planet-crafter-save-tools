@@ -11,13 +11,13 @@ export default function EarlierMergedSavesSection(props: EarlierMergedSavesSecti
   return (
     <Show when={props.mergedSaves().length > 0}>
       <Card title={earlierMergedSavesTitle} testId="earlier-merged-saves">
-        <ul>
+        <ul class="earlier-merged-saves">
           <For each={props.mergedSaves()}>
             {(mergedSave, index) => (
-              <li data-testid={`earlier-merged-save-${index()}`}>
-                <code data-testid={`earlier-merged-save-file-name-${index()}`}>{mergedSave.fileName}</code> <a class="button-link" data-testid={`earlier-merged-save-download-${index()}`}
-                                                                                                href={mergedSave.downloadUrl}
-                                                                                                download={mergedSave.fileName}>{mergeResultSectionDownloadLinkLabel}</a>
+              <li class="earlier-merged-save" data-testid={`earlier-merged-save-${index()}`}>
+                <code data-testid={`earlier-merged-save-file-name-${index()}`}>{mergedSave.fileName}</code>
+                <a class="button-link button-compact" data-testid={`earlier-merged-save-download-${index()}`}
+                   href={mergedSave.downloadUrl} download={mergedSave.fileName}>{mergeResultSectionDownloadLinkLabel}</a>
               </li>
             )}
           </For>

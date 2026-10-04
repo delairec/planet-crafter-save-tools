@@ -227,7 +227,7 @@ test.describe('Overview page', () => {
       await visualizeTheSave(page, invalidSaveFixturePath);
 
       // Assert
-      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Validation Errors');
       await expect(findTheMenuGroupTitles(page)).toHaveText(['Tools']);
     });
   });

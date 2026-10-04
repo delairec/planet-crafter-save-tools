@@ -53,7 +53,6 @@ export default function OverviewPlanetCard(props: OverviewPlanetCardProps) {
             </p>
           )}
         </Show>
-        <OverviewPlanetDetailsButton testId={props.testId}/>
       </header>
       <Show when={props.card.terraformation} fallback={<OverviewPlanetAbsentSide absentSide={props.card.absentSide} testId={props.testId}/>}>
         {(terraformation) => <OverviewPlanetTerraformation terraformation={terraformation()} testId={props.testId}/>}
@@ -61,6 +60,9 @@ export default function OverviewPlanetCard(props: OverviewPlanetCardProps) {
       <Show when={props.card.power} fallback={<div class="overview-planet-foot"><OverviewPlanetAbsentSide absentSide={props.card.absentSide} testId={props.testId}/></div>}>
         {(power) => <OverviewPlanetPower power={power()} testId={props.testId}/>}
       </Show>
+      <footer class="overview-planet-actions">
+        <OverviewPlanetDetailsButton testId={props.testId}/>
+      </footer>
     </article>
   );
 }

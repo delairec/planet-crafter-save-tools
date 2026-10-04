@@ -21,18 +21,10 @@ export default function PowerPage() {
 
   return (
     <SavePage group={saveGroupTitle} page={powerPageTitle} subject={selectedPlanetName()}>
-      <SectionTitle testId="power-title">{powerSectionTitle}</SectionTitle>
       <SectionState title={powerSectionTitle} resource={loadedSave.viewModels.powerPage}>
-        {(powerPage) => (
-          <Show
-            when={powerPage().planets[selectedPlanetIndex()]}
-            fallback={
-              <For each={powerPage().notifications}>
-                {(notification, index) => <Notification severity={notification.severity} testId={`power-notification-${index()}`}>{notification.message}</Notification>}
-              </For>
-            }
-          >
-            {(zone) => (<>
+        {(powerPage) => (<>
+          <SectionTitle testId="power-title" aside={
+            <Show when={powerPage().planets.length}>
               <PlanetTabs
                 planetNames={powerPage().planets.map((planet) => planet.planetName)}
                 selectedIndex={selectedPlanetIndex()}
@@ -41,12 +33,23 @@ export default function PowerPage() {
                 testIdPrefix="power-planet-tab-"
                 label={powerPlanetTabsLabel}
               />
+            </Show>
+          }>{powerSectionTitle}</SectionTitle>
+          <Show
+            when={powerPage().planets[selectedPlanetIndex()]}
+            fallback={
+              <For each={powerPage().notifications}>
+                {(notification, index) => <Notification severity={notification.severity} testId={`power-notification-${index()}`}>{notification.message}</Notification>}
+              </For>
+            }
+          >
+            {(zone) => (
               <div role="tabpanel" id={POWER_PANEL_ID} aria-labelledby={`power-planet-tab-${selectedPlanetIndex()}`}>
                 <PowerPlanetZone zone={zone()} notifications={powerPage().notifications}/>
               </div>
-            </>)}
+            )}
           </Show>
-        )}
+        </>)}
       </SectionState>
     </SavePage>
   );

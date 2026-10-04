@@ -4,5 +4,5 @@ export const displayRouteHint = 'Loading reads and validates the save in this br
 export const displayRouteFileInputLabel = 'Save file: ';
 export const displayRouteSubmitButtonLabel = 'Visualize';
 export const displayRouteCallFailedMessage = 'The save file could not be displayed. Please try again.';
-export const displayRouteErrorsTitle = 'Errors';
-export const displayRouteWarningsTitle = 'Warnings';
+export const displayRouteErrorsTitle = 'Validation Errors';
+export const displayRouteWarningsTitle = 'Validation Warnings';

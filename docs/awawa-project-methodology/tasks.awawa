@@ -2659,23 +2659,44 @@ TASK FEAT188
 
 TASK FEAT189
 	TITLE "Leave no page and no style of the earlier look in the save manager"
-	STATUS todo
+	STATUS implemented
 	DESC "ratified on 2026-10-02 without refinement; carried out in an interactive session with the"
 		+ "owner, never by a background agent: the last adjustments are listed with the owner on"
 		+ "the running application when the task starts; the home page is kept as it is for now;"
 		+ "the icons of the gauges of the player card are revisited with the owner"
 		REF @TASK.FEAT144
 	SPEC "every page that shows the menu wears the titles, the cards and the buttons of page F;"
-		+ "none shows a centred section title, a glowing card title or a field group of the earlier"
-		+ "look"
+		+ "none shows a centred section title or a field group of the earlier look"
+		IMPL "packages/ui-save-manager/src/components/structure/SectionState.tsx::<SectionTitle"
+			+ "testId=\"section-state-title\">"
+		IMPL "packages/ui-save-manager/src/styles/components.css::.section-title h3 {"
+		REF @DECISION.TheGlowingCyanCardHeaderBelongsToTheRedesignedLook
 	SPEC "the styles and the components no page uses are deleted, a style is declared once, and the"
 		+ "home page looks as it did before the task"
+		IMPL "packages/ui-save-manager/src/styles/typography.css::h3 {"
+		IMPL "packages/ui-save-manager/src/styles/home.css"
 	SPEC "each adjustment the owner listed when the task started is delivered or recorded as a task"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::message-group-title"
+		IMPL "packages/ui-save-manager/src/messages/displayRouteMessages.js::Validation Warnings"
+		IMPL "packages/ui-save-manager/src/components/structure/DropZone.tsx::drop-zone-holds-a-file"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::overview-planet-actions"
+		IMPL "packages/ui-save-manager/src/styles/overview.css::--card-min-width: 20rem;"
+		IMPL "packages/ui-save-manager/src/styles/players.css::grid-template-columns: repeat(3,"
+			+ "minmax(0, 1fr));"
+		IMPL "packages/ui-save-manager/src/components/structure/SectionTitle.tsx::section-title-aside"
+		IMPL "packages/ui-save-manager/src/styles/planetTabs.css::.planet-tab:hover"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerGauge.tsx::resolveFilledHeightShareOfATriangleStandingOnItsBase"
+		IMPL "packages/ui-save-manager/src/styles/players.css::--gauge-icon-height: 2rem;"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification + .notification"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::.button-compact {"
+		IMPL "packages/ui-save-manager/src/styles/players.css::--slot-min-width: 9rem;"
+		IMPL "packages/ui-save-manager/src/styles/players.css::hyphens: auto;"
 	AFTER @TASK.FEAT145
 	AFTER @TASK.FEAT186
 	AFTER @TASK.FEAT187
 	AFTER @TASK.FEAT188
 	WAVE @WAVE.15
+	DELIVERED_BY 284
 	RATIONALE "Each page task restyles its page and leaves the global styles of the earlier look in"
 		+ "place for the pages not yet redesigned: the centred headings, the field groups, a"
 		+ "surface declared twice. Once the last page is done nothing needs them, and the owner"

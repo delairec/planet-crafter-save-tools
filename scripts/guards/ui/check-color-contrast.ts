@@ -384,6 +384,20 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
+    description: 'the fold toggle of a message group, on the surface of the card a merged save shows it in; on the page background the same pair is held by .section-title-hint',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.message-group-details summary',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the hovered fold toggle of a message group, on the surface of the card a merged save shows it in',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.message-group-details summary:hover',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
     description: 'the label of an overview tile, on the tile',
     file: 'packages/ui-save-manager/src/styles/overview.css',
     selector: '.overview-tile dt',

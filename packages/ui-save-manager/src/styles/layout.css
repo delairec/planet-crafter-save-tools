@@ -114,8 +114,21 @@ summary::marker {
     align-items: baseline;
     gap: var(--space-sm);
     padding: var(--space-sm) var(--space-md);
+    margin-block: 0;
     border-left: var(--notification-border);
     border-radius: 0 var(--space-xs) var(--space-xs) 0;
+}
+
+.notification:not(.notification + .notification) {
+    margin-top: var(--space-xl);
+}
+
+.notification + .notification {
+    margin-top: var(--space-sm);
+}
+
+.notification:not(:has(+ .notification)) {
+    margin-bottom: var(--space-xl);
 }
 
 .notification-warning {
@@ -156,10 +169,6 @@ summary::marker {
     color: var(--information);
 }
 
-.inline-block {
-    display: inline-block;
-}
-
 .visually-hidden {
     --visually-hidden-size: 1px;
 
@@ -182,6 +191,42 @@ code {
     border-radius: var(--space-sm);
     background-color: var(--elevated);
     color: var(--muted);
+}
+
+.message-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin: var(--space-lg) 0;
+}
+
+.message-group-title {
+    margin: 0;
+    font-weight: var(--semibold);
+}
+
+.message-group-details {
+    --summary-marker: '▸ ';
+}
+
+.message-group-details[open] {
+    --summary-marker: '▾ ';
+}
+
+.message-group-details summary {
+    width: fit-content;
+    color: var(--muted);
+    font-size: var(--text-sm);
+}
+
+.message-group-details summary:hover {
+    color: var(--content);
+}
+
+.message-group-list {
+    margin: var(--space-sm) 0 0;
+    padding-left: 0;
+    list-style: none;
 }
 
 /* A validation message reads like a stack frame: the message, then its origin on the line below. */

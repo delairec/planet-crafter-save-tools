@@ -90,7 +90,7 @@ export default function LoadSaveSection(props: LoadSaveSectionProps) {
       <Show when={isReady()} fallback={<p class="text-color-muted">{displayRouteLoadingLabel}</p>}>
         <div class="card save-form">
           <DropZone label={displayRouteDisplayTitle} testId="display-area" maximumFileCount={1}
-                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area"
+                    tooManyFilesMessage={tooManyFilesForOneSaveMessage} class="save-drop-area" holdsAFile={!!file()}
                     onFilesDropped={(files) => selectFileInInput(fileInputElement, files[0])}>
             <SaveFileField label={displayRouteFileInputLabel} testId="save-file" ref={fileInputElement} onChange={handleFileChange}/>
             <p class="text-color-muted" data-testid="display-drop-hint">{saveDropHint}</p>

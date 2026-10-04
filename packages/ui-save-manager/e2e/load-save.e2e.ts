@@ -139,7 +139,7 @@ test.describe('Load save page', () => {
       await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Validation Errors');
       await openThePageOfTheMenu(page, 'Overview');
       await expect(page.getByTestId('overview-identity-title')).toHaveText('Merged Save');
     });

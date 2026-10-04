@@ -13,9 +13,9 @@ export default function ConfigurationPage() {
 
   return (
     <SavePage group={saveGroupTitle} page={configurationPageTitle}>
-      <SectionTitle testId="configuration-title">{configurationPageTitle}</SectionTitle>
       <SectionState title={configurationPageTitle} resource={loadedSave.viewModels.configurationPage}>
-        {(configurationPage) => (
+        {(configurationPage) => (<>
+          <SectionTitle testId="configuration-title">{configurationPageTitle}</SectionTitle>
           <div class="configuration-cards">
             <ProgressionCard progression={configurationPage().progression}/>
             <Show when={configurationPage().modifiers}>
@@ -25,7 +25,7 @@ export default function ConfigurationPage() {
               {(unlocks) => <UnlocksCard unlocks={unlocks()}/>}
             </Show>
           </div>
-        )}
+        </>)}
       </SectionState>
     </SavePage>
   );

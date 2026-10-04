@@ -214,7 +214,8 @@ DECISION BothMessageListsShareOneRendering
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	SPEC "A single component renders both lists, foldable and monospace; that rendering is never a"
 		+ "parameter of the component"
-		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::<details>"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::<details"
+			+ "class=\"message-group-details\">"
 	SPEC "The severity of a list sets the colour of its title alone"
 		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::text-color-${props.severity}"
 	SPEC "A validation message reads as a stack frame: monospace, the message first, its origin"
@@ -4725,3 +4726,41 @@ DECISION AnEquipmentKindNamesTheOriginalIconItsSlotShows
 		+ "Les filtres pourrait avoir un dessin commun et se distinguer par une icône air/eau/toxic"
 		+ "»; « bretelles oranges, disposition C, lance la reprise de #282 »"
 		PR 282
+
+DECISION TheGlowingCyanCardHeaderBelongsToTheRedesignedLook
+	SPEC "A card title and the title of a planet zone sit on the glowing neon-cyan header; the"
+		+ "redesign keeps it"
+		IMPL "packages/ui-save-manager/src/styles/components.css::.card-header {"
+		IMPL "packages/ui-save-manager/src/styles/typography.css::h4 {"
+	REJECTED "Removing the glowing card title as a remnant of the earlier look, as the first"
+		+ "acceptance line of FEAT189 listed it: the owner keeps it"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT189
+	SOURCE "Owner ruling of 2026-10-04 on the running application, during FEAT189"
+		PR 284
+
+DECISION TheHealthGaugeFillsItsTriangleByArea
+	SPEC "The health gauge fills its triangle by area, its filled height being 1 - sqrt(1 - p) of"
+		+ "the triangle height for a fill share p"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerGauge.tsx::resolveFilledHeightShareOfATriangleStandingOnItsBase"
+	SPEC "The health gauge is filled in the success green"
+		IMPL "packages/ui-save-manager/src/styles/players.css::fill: var(--success);"
+	REJECTED "Filling the triangle by height: at 75 % the gauge covers 94 % of its area and shows"
+		+ "almost no consumption"
+	REJECTED "The neon pink of the earlier health gauge: the owner reads health in green"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT189
+	SOURCE "Owner ruling of 2026-10-04 on the running application, during FEAT189"
+		PR 284
+
+DECISION AValidationListTitleNamesTheValidation
+	SPEC "The title of a list of validation messages names the validation"
+		IMPL "packages/ui-save-manager/src/messages/displayRouteMessages.js::Validation Errors"
+		IMPL "packages/ui-save-manager/src/messages/mergeResultSectionMessages.js::Save A"
+			+ "validation warnings"
+	REJECTED "Naming the validation in the Merge warnings title: the merge raises those warnings,"
+		+ "not the validation"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT189
+	SOURCE "Owner ruling of 2026-10-04 on the running application, during FEAT189"
+		PR 284

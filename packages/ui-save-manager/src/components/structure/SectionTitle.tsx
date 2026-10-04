@@ -4,6 +4,7 @@ interface SectionTitleProps {
   children: JSX.Element;
   testId: string;
   hint?: string;
+  aside?: JSX.Element;
 }
 
 export default function SectionTitle(props: SectionTitleProps) {
@@ -12,6 +13,9 @@ export default function SectionTitle(props: SectionTitleProps) {
       <h3 data-testid={props.testId}>{props.children}</h3>
       <Show when={props.hint}>
         {(hint) => <span class="section-title-hint" data-testid={`${props.testId}-hint`}>{hint()}</span>}
+      </Show>
+      <Show when={props.aside}>
+        {(aside) => <div class="section-title-aside">{aside()}</div>}
       </Show>
     </div>
   );

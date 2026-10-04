@@ -92,6 +92,10 @@ button:focus-visible {
     text-decoration: none;
 }
 
+.button-compact {
+    padding: var(--space-xs) var(--space-md);
+}
+
 .button-link:hover {
     background-color: var(--button-primary-bg-hover);
     cursor: pointer;
