@@ -14,7 +14,7 @@
 .power-tile {
     min-width: 0;
     padding: var(--space-sm) var(--space-md);
-    border: 3px solid var(--neon-purple);
+    border: var(--border-card);
     border-radius: var(--radius-sm);
     background-color: var(--surface);
 }
