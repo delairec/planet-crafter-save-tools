@@ -1,0 +1,81 @@
+.terraformation-heroes,
+.terraformation-tables {
+    --card-min-width: 16rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--card-min-width), 100%), 1fr));
+    gap: var(--space-md);
+    margin: var(--space-md) 0;
+}
+
+.terraformation-hero {
+    min-width: 0;
+    padding: var(--space-sm) var(--space-md);
+    border: var(--border-card);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+}
+
+.terraformation-hero-value {
+    margin: 0;
+    font-size: var(--text-2xl);
+    font-weight: var(--semibold);
+    overflow-wrap: anywhere;
+}
+
+.terraformation-hero-caption {
+    margin: var(--space-xxs) 0 0;
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
+.terraformation-table-card {
+    min-width: 0;
+}
+
+.terraformation-table-card .card-header h5 {
+    margin: 0;
+    color: var(--inverted);
+    font-size: var(--text-lg);
+    font-weight: var(--bold);
+}
+
+.terraformation-levels {
+    --level-bar-width: 8rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--level-bar-width) auto;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.terraformation-level-row {
+    display: contents;
+}
+
+.terraformation-level-row dt {
+    color: var(--muted);
+}
+
+.terraformation-level-row dd {
+    margin: 0;
+}
+
+.terraformation-level-bar {
+    height: var(--space-sm);
+    overflow: hidden;
+    border-radius: var(--radius-xs);
+    background-color: var(--elevated);
+}
+
+.terraformation-level-bar-fill {
+    display: block;
+    height: 100%;
+    background-color: var(--neon-purple);
+}
+
+.terraformation-level-value {
+    font-weight: var(--semibold);
+    text-align: right;
+    white-space: nowrap;
+}

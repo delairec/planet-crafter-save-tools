@@ -11,7 +11,7 @@ import {LoadConfigurationPage} from "../application/LoadConfigurationPage";
 import {LoadPowerPage} from "../application/LoadPowerPage";
 import {LoadPlayersMenu} from "../application/LoadPlayersMenu";
 import {LoadSaveIdentity} from "../application/LoadSaveIdentity";
-import {LoadTerraformationLevelsSection} from "../application/LoadTerraformationLevelsSection";
+import {LoadTerraformationPage} from "../application/LoadTerraformationPage";
 import {ConfigurationPagePresenter} from "../presentation/ConfigurationPagePresenter";
 import {ConfigurationPageViewModel} from "../presentation/viewModels/ConfigurationPageViewModel";
 import {PowerPagePresenter} from "../presentation/PowerPagePresenter";
@@ -20,8 +20,8 @@ import {PlayersMenuPresenter} from "../presentation/PlayersMenuPresenter";
 import {PlayersMenuViewModel} from "../presentation/viewModels/PlayersMenuViewModel";
 import {SaveIdentityPresenter} from "../presentation/SaveIdentityPresenter";
 import {SaveIdentityViewModel} from "../presentation/viewModels/SaveIdentityViewModel";
-import {TerraformationLevelsPresenter} from "../presentation/TerraformationLevelsPresenter";
-import {TerraformationLevelsViewModel} from "../presentation/viewModels/TerraformationLevelsViewModel";
+import {TerraformationPagePresenter} from "../presentation/TerraformationPagePresenter";
+import {TerraformationPageViewModel} from "../presentation/viewModels/TerraformationPageViewModel";
 import {LoadSaveIdentityRequest} from "../application/requests/LoadSaveIdentityRequest";
 import {LoadSaveSectionsRequest} from "../application/requests/LoadSaveSectionsRequest";
 import {UseCaseWithPresenter} from "../../save/controllers/UseCaseFactory";
@@ -82,13 +82,13 @@ function createLoadSaveIdentityUseCase(presenter: SaveIdentityPresenter): LoadSa
   return new LoadSaveIdentity(createSaveSectionsReader(), new GameReleasesReaderService(), presenter);
 }
 
-export function createLoadTerraformationLevelsSection(): UseCaseWithPresenter<LoadSaveSectionsRequest, TerraformationLevelsViewModel> {
-  const presenter = new TerraformationLevelsPresenter();
-  return {useCase: createLoadTerraformationLevelsSectionUseCase(presenter), presenter};
+export function createLoadTerraformationPage(): UseCaseWithPresenter<LoadSaveSectionsRequest, TerraformationPageViewModel> {
+  const presenter = new TerraformationPagePresenter();
+  return {useCase: createLoadTerraformationPageUseCase(presenter), presenter};
 }
 
-function createLoadTerraformationLevelsSectionUseCase(presenter: TerraformationLevelsPresenter): LoadTerraformationLevelsSection {
-  return new LoadTerraformationLevelsSection(createSaveSectionsReader(), presenter);
+function createLoadTerraformationPageUseCase(presenter: TerraformationPagePresenter): LoadTerraformationPage {
+  return new LoadTerraformationPage(createSaveSectionsReader(), presenter);
 }
 
 export function createLoadOverviewPage(): UseCaseWithPresenter<LoadOverviewPageRequest, OverviewPageViewModel> {

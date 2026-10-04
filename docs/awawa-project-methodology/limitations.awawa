@@ -214,3 +214,28 @@ LIMITATION TheDependencyAuditIgnoresTheBracesStackExhaustionAdvisory
 		PR 265
 		REF @URL.BracesStackExhaustionAdvisory
 		REF @URL.BracesNestedPatternFix
+
+LIMITATION TheDisplayUseCasesRepeatTheLinesTheyShare
+	SYMPTOM "fallow reports clone groups across the use cases of display: the unreadable lines"
+		+ "guard of LoadConfigurationPage, LoadPlayersMenu, LoadPowerPage and"
+		+ "LoadTerraformationPage, and the terraformation level mapping of LoadOverviewPage and"
+		+ "LoadTerraformationPage"
+	WORKAROUND "The groups stay reported as fallow warnings, which do not fail its audit gate; a"
+		+ "change to one copy is made to the others"
+	UNTIL "a rule of the instructions lets two use cases share a module of the application layer"
+	SEEN_IN "packages/core-mapping/src/display/application/LoadConfigurationPage.ts::this.presenter.displaySaveWithUnreadableLines"
+	SEEN_IN "packages/core-mapping/src/display/application/LoadPlayersMenu.ts::this.presenter.displaySaveWithUnreadableLines"
+	SEEN_IN "packages/core-mapping/src/display/application/LoadPowerPage.ts::this.presenter.displaySaveWithUnreadableLines"
+	SEEN_IN "packages/core-mapping/src/display/application/LoadTerraformationPage.ts::this.presenter.displaySaveWithUnreadableLines"
+	SEEN_IN "packages/core-mapping/src/display/application/LoadOverviewPage.ts::function"
+		+ "describeTerraformationLevel"
+	SEEN_IN "packages/core-mapping/src/display/application/LoadTerraformationPage.ts::function"
+		+ "describeTerraformationLevel"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	RATIONALE "The rule application_holds_use_cases_ports_requests_responses of the instructions"
+		+ "holds the application layer to use cases, ports, requests and responses: a computation"
+		+ "several use cases share is a domain rule each calls, or stays written in each use case."
+		+ "Neither group is a domain rule: the guard calls a port and selects the outcome on a"
+		+ "presenter, and the mapping builds an application Response the domain may not name"
+	SOURCE "Pull request review, the owner relaying the fallow warning on LoadTerraformationPage"
+		PR 275

@@ -651,7 +651,7 @@ TASK FEAT139
 		+ "and available, the available one carrying the status pill and a load meter with the"
 		+ "share of production consumed; the title carries no status pill, the available tile"
 		+ "showing it already; the breadcrumb names the planet"
-		IMPL "packages/ui-save-manager/src/routes/power.tsx::aria-label={powerPlanetTabsLabel}"
+		IMPL "packages/ui-save-manager/src/routes/power.tsx::label={powerPlanetTabsLabel}"
 		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<h4"
 			+ "data-testid=\"power-planet-title\">{props.zone.planetName}</h4>"
 		IMPL "packages/ui-save-manager/src/components/power/PowerFigureTiles.tsx::<ToneBadge"
@@ -807,23 +807,51 @@ TASK FEAT140
 
 TASK FEAT141
 	TITLE "Give the Terraformation page its view model: hero figures and bar-aligned tables"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27"
 	SPEC "the Terraformation page shows planet tabs and, for the planet of the selected tab, two"
-		+ "hero figures, the Terraformation Index, naming the share of the SysTi the planet holds,"
-		+ "and the biomass, naming the shares of plants and insects; the breadcrumb names the"
-		+ "planet"
+		+ "hero figures, the Terraformation Index, naming the SysTi of the save and how many"
+		+ "planets it multiplies, and the biomass, naming the shares of plants and insects; the"
+		+ "breadcrumb names the planet"
+		IMPL "packages/ui-save-manager/src/components/structure/PlanetTabs.tsx"
+		IMPL "packages/ui-save-manager/src/routes/terraformation.tsx::subject={selectedPlanetName()}"
+		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should open on a"
+			+ "breadcrumb naming the Save group, the Terraformation page and the planet of the"
+			+ "selected tab"
+		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should show the"
+			+ "Terraformation Index of the planet captioned with the SysTi it multiplies"
+		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should show the biomass"
+			+ "of the planet captioned with the shares of plants and insects"
+		REF @DECISION.TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 	SPEC "two tables follow, O2, heat, pressure and purification, then plants, insects and animals;"
 		+ "each row carries a bar in a column of its own, scaled to the largest row of its table"
-		+ "and aligned with the other rows, and its value right-aligned; a value of zero and a"
-		+ "purification not unlocked show a dash"
+		+ "and aligned with the other rows, and its value right-aligned; a value of zero shows a"
+		+ "dash, and a planet without purification shows no purification row"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.ts::function"
+			+ "scaleBar"
+		IMPL "packages/ui-save-manager/src/styles/terraformation.css::grid-template-columns:"
+			+ "minmax(0, 1fr) var(--level-bar-width) auto;"
+		IMPL "packages/ui-save-manager/e2e/display-terraformation.e2e.ts::should start the bars of"
+			+ "every row of a table at the same place"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.spec.ts::should"
+			+ "show a dash and an empty bar on every row of a table"
+		REF @DECISION.APlanetWithoutPurificationCarriesNoPurificationLevel
 	SPEC "the Terraformation page reads one view model, one zone per planet with its hero figures,"
 		+ "its rows and the width of each bar, built by one presenter from one use case; the planet"
 		+ "zone is built by a presentation helper the planet page reuses, and its figures are"
 		+ "formatted by the helpers that format the planet cards of the Overview page"
+		IMPL "packages/core-mapping/src/display/application/LoadTerraformationPage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/TerraformationPagePresenter.ts"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.ts::formatTerraformationFigures(levels)"
+		IMPL "packages/ui-save-manager/src/providers/LoadedSaveProvider.tsx::loadTerraformationPageController.loadTerraformationPage"
 	SPEC "the Terraformation section controller, presenter and view model of today are retired and"
 		+ "every module left without an importer is deleted"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts::export const"
+			+ "loadTerraformationPageController"
+		IMPL "packages/ui-save-manager/src/routes/terraformation.tsx::<TerraformationPlanetZone"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
 	AFTER @TASK.FEAT132
 	AFTER @TASK.FEAT139
 	WAVE @WAVE.15
@@ -831,10 +859,11 @@ TASK FEAT141
 		+ "groups of values and adds a bar per row so the reader sees which value carries the"
 		+ "index. The planet zone of this view model is what the planet page shows in its"
 		+ "Terraformation tab, built by the same helper. The SysTi is computed since the Overview"
-		+ "page, which this page reads for the share under its hero figure, and the planet tabs"
-		+ "come with the Power page"
+		+ "page, which this page reads for the caption under its hero figure, naming the SysTi the"
+		+ "Ti of the planet is a factor of, and the planet tabs come with the Power page"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
+		REF @DECISION.TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 		REF @TASK.FEAT132
 		REF @TASK.FEAT139
 		REF @SECTION.TerraformationLevels
@@ -848,6 +877,12 @@ TASK FEAT141
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner ruling of 2026-10-04 at the launch of the task: the Terraformation Index is a"
+		+ "factor of the SysTi, which is a product, so its caption names the SysTi and its number"
+		+ "of planets instead of a share"
+		REF @DECISION.TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
+		PR 275
+	DELIVERED_BY 275
 
 TASK FEAT142
 	TITLE "Give the Overview page its view model: identity and progression tiles"
@@ -2338,7 +2373,7 @@ TASK FEAT183
 		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::describePlanets(terraformationLevels,"
 			+ "planetsEnergyLevels,"
 		IMPL "packages/core-mapping/src/display/presentation/formatPowerFigures.ts"
-		IMPL "packages/core-mapping/src/display/presentation/TerraformationLevelsPresenter.ts::formatTerraformationFigures(level)"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.ts::formatTerraformationFigures(levels)"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 		IMPL "packages/cli-merge/cli/initMergeCli.spec.js::describe('Merge CLI'"
 		IMPL "packages/cli-validate/cli/initValidateCli.spec.js::describe('Validate CLI'"
@@ -2778,3 +2813,37 @@ TASK DOCS193
 	SOURCE "Owner request of 2026-10-04, after the reading of PR 276: verify the values the game"
 		+ "assembly leaves to the assets by reading the asset files of the game"
 		PR 276
+
+TASK REFACTOR194
+	TITLE "Keep the presenters alone at the root of the display presentation, its mappers in a"
+		+ "folder"
+	STATUS draft
+	SPEC "the root of packages/core-mapping/src/display/presentation/ holds the presenters alone,"
+		+ "with their specs, beside the folders of view models and of messages"
+	SPEC "every other module of that presentation, a mapper (a create factory, a format formatter,"
+		+ "a sum computation, the formatters/ folder), sits under presentation/mappers/"
+	SPEC "a mapper is imported from presentation/ only, by a presenter or by another mapper: never"
+		+ "by a use case, a controller or any other module outside presentation/"
+	SPEC "a guard of the repository, run by bun run guards, fails on a module other than a"
+		+ "presenter at the root of the display presentation and on an import of a mapper from"
+		+ "outside presentation/"
+	AFTER @TASK.FEAT140
+	AFTER @TASK.FEAT141
+	WAVE @WAVE.15
+	PRIORITY low
+	RATIONALE "The root of display/presentation mixes the presenters with the factories, formatters"
+		+ "and sums they build their view models with, and nothing in a path tells a presenter from"
+		+ "the mappers it calls. The owner ruled the layout a general rule of the instructions,"
+		+ "presentation_root_holds_presenters_only, in force since delairec/.ai#70 merged, rather"
+		+ "than recorded here, and this task brings display in line with it. A use case already"
+		+ "reaches no mapper, as check:layers holds the application to the application and the"
+		+ "domain; a controller may, and the guard closes that, extending check:layers or"
+		+ "check:presentation. The move waits for the Power chart and Terraformation pull requests,"
+		+ "both of which add mappers at the root, the first createPowerChart, sumOptimizerBoost and"
+		+ "sumProductionRatios"
+		REF @DECISION.AViewModelServesOneView
+	REJECTED "moving the mappers in the Terraformation page pull request: it would move the files"
+		+ "the open Power chart pull request changes"
+	SOURCE "Owner ruling of 2026-10-04 on the review of the presentation layer of the"
+		+ "Terraformation page pull request"
+		PR 275

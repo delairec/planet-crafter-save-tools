@@ -6,9 +6,9 @@ import {
   OverviewPlanetResponse,
   OverviewProgressionResponse,
   OverviewSaveConfigurationResponse,
-  OverviewSystemTerraformationIndexResponse,
   SaveFileResponse
 } from "../application/responses/OverviewPageResponse";
+import {SystemTerraformationIndexResponse} from "../application/responses/SystemTerraformationIndexResponse";
 import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
@@ -17,6 +17,7 @@ import {createDroneLogisticsBadge} from "./createDroneLogisticsBadge";
 import {createPowerNotifications} from "./createPowerNotifications";
 import {formatPowerFigures} from "./formatPowerFigures";
 import {formatTerraformationFigures} from "./formatTerraformationFigures";
+import {formatSystemTerraformationIndex} from "./formatSystemTerraformationIndex";
 import {
   OverviewIdentityViewModel,
   OverviewPageViewModel,
@@ -35,14 +36,12 @@ import {
   overviewPageNoTerraformationLevelRecorded,
   overviewPagePlanetsTitle,
   overviewPageSystemTerraformationIndexLabel,
-  overviewPageSystemTerraformationIndexUnit,
   overviewPageTerraformationStageLabel,
   overviewPageTerraTokenUnit,
   overviewPageTotalCraftedObjectsLabel,
   resolveOverviewPageGameReleaseLabel,
   resolveOverviewPagePlanetsHint,
-  resolveOverviewPageShareOfProductionConsumed,
-  resolveOverviewPageSystemTerraformationIndexCaption
+  resolveOverviewPageShareOfProductionConsumed
 } from "./messages/overviewPageMessages.js";
 import {
   terraformationLevelsSectionBiomassLabel,
@@ -50,7 +49,8 @@ import {
   terraformationLevelsSectionOxygenLabel,
   terraformationLevelsSectionPressureLabel,
   terraformationLevelsSectionPurificationLabel,
-  terraformationLevelsSectionTerraformationIndexLabel
+  terraformationLevelsSectionTerraformationIndexLabel,
+  resolveTerraformationLevelsSectionMultipliedPlanets
 } from "./messages/terraformationLevelsSectionMessages.js";
 import {
   energyLevelsSectionAvailableTitle,
@@ -99,7 +99,7 @@ function createIdentity(saveFile: SaveFileResponse, saveConfiguration: OverviewS
 
 function createTiles(
   {allTimeTerraTokens, totalCraftedObjects, droneLogistics}: OverviewProgressionResponse,
-  systemTerraformationIndex: OverviewSystemTerraformationIndexResponse | undefined
+  systemTerraformationIndex: SystemTerraformationIndexResponse | undefined
 ): OverviewTilesViewModel {
   const tiles: OverviewTilesViewModel = {
     allTimeTerraTokens: {label: overviewPageAllTimeTerraTokensLabel, value: formatNumber(allTimeTerraTokens), unit: overviewPageTerraTokenUnit}
@@ -111,8 +111,8 @@ function createTiles(
     const {index, planetCount} = systemTerraformationIndex;
     tiles.systemTerraformationIndex = {
       label: overviewPageSystemTerraformationIndexLabel,
-      value: formatNumber(index, FormatNumberStrategies.SYSTEM_TERRAFORMATION_INDEX) + overviewPageSystemTerraformationIndexUnit,
-      caption: resolveOverviewPageSystemTerraformationIndexCaption(planetCount)
+      value: formatSystemTerraformationIndex(index),
+      caption: resolveTerraformationLevelsSectionMultipliedPlanets(planetCount)
     };
   }
   if (droneLogistics) {

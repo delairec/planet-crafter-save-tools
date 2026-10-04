@@ -1,6 +1,7 @@
 .overview-tiles {
+    --tile-min-width: 10rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--tile-min-width), 1fr));
     gap: var(--space-md);
     margin: 0;
 }
@@ -8,7 +9,7 @@
 .overview-tile {
     min-width: 0;
     padding: var(--space-sm) var(--space-md);
-    border: 3px solid var(--neon-purple);
+    border: var(--border-card);
     border-radius: var(--radius-sm);
     background-color: var(--surface);
 }
@@ -46,8 +47,9 @@
 }
 
 .overview-planet-cards {
+    --card-min-width: 16rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--card-min-width), 1fr));
     gap: var(--space-md);
 }
 
@@ -57,7 +59,7 @@
     gap: var(--space-md);
     min-width: 0;
     padding: var(--space-md);
-    border: 3px solid var(--neon-purple);
+    border: var(--border-card);
     border-radius: var(--radius-sm);
     background-color: var(--surface);
 }

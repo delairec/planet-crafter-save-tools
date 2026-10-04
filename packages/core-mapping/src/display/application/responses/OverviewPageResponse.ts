@@ -1,5 +1,6 @@
 import type {DroneLogisticsResponse} from "./DroneLogisticsResponse";
 import type {EnergySettingsResponse} from "./EnergySettingsResponse";
+import type {SystemTerraformationIndexResponse} from "./SystemTerraformationIndexResponse";
 import type {TerraformationLevelSummaryResponse} from "./TerraformationLevelSummaryResponse";
 
 export interface SaveFileResponse {
@@ -33,16 +34,11 @@ export interface OverviewPlanetResponse {
   readonly energy?: OverviewPlanetEnergyResponse;
 }
 
-export interface OverviewSystemTerraformationIndexResponse {
-  readonly index: number;
-  readonly planetCount: number;
-}
-
 export interface OverviewPageResponse {
   readonly saveFile: SaveFileResponse;
   readonly saveConfiguration?: OverviewSaveConfigurationResponse;
   readonly progression: OverviewProgressionResponse;
-  readonly systemTerraformationIndex?: OverviewSystemTerraformationIndexResponse;
+  readonly systemTerraformationIndex?: SystemTerraformationIndexResponse;
   readonly planets: readonly OverviewPlanetResponse[];
   readonly energySettings: EnergySettingsResponse;
 }
