@@ -130,8 +130,8 @@ function createPlanets(planets: readonly OverviewPlanetResponse[]): OverviewPlan
   };
 }
 
-function createPlanetCard({planetName, terraformation, terraformationStage, energy}: OverviewPlanetResponse, fullBarKilowatts: number): OverviewPlanetCardViewModel {
-  const card: OverviewPlanetCardViewModel = {name: planetName ?? resolveEnergyLevelsSectionUnnamedPlanetName(energy?.numericPlanetId)};
+function createPlanetCard({planetIdentifier, planetName, terraformation, terraformationStage, energy}: OverviewPlanetResponse, fullBarKilowatts: number): OverviewPlanetCardViewModel {
+  const card: OverviewPlanetCardViewModel = {planetIdentifier, name: planetName ?? resolveEnergyLevelsSectionUnnamedPlanetName(energy?.numericPlanetId)};
   if (terraformationStage) {
     card.terraformationStage = {label: overviewPageTerraformationStageLabel, value: terraformationStage};
   }

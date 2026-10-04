@@ -8,6 +8,8 @@ import {LoadOverviewPageController} from "../controllers/LoadOverviewPageControl
 import {createLoadOverviewPage} from "./useCaseFactories";
 import {LoadPlayersPageController} from "../controllers/LoadPlayersPageController";
 import {createLoadPlayersPage} from "./useCaseFactories";
+import {LoadPlanetPageController} from "../controllers/LoadPlanetPageController";
+import {createLoadPlanetPage} from "./useCaseFactories";
 
 export const loadConfigurationPageController = new LoadConfigurationPageController(createLoadConfigurationPage);
 export const loadPowerPageController = new LoadPowerPageController(createLoadPowerPage);
@@ -16,3 +18,4 @@ export const loadSaveIdentityController = new LoadSaveIdentityController(createL
 export const loadTerraformationPageController = new LoadTerraformationPageController(createLoadTerraformationPage);
 export const loadOverviewPageController = new LoadOverviewPageController(createLoadOverviewPage);
 export const loadPlayersPageController = new LoadPlayersPageController(createLoadPlayersPage);
+export const loadPlanetPageController = new LoadPlanetPageController(createLoadPlanetPage);

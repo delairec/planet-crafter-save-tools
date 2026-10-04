@@ -1,4 +1,4 @@
-import {Accessor, createContext, createResource, createSignal, JSX, Resource} from "solid-js";
+import {Accessor, createContext, createResource, createSignal, getOwner, JSX, Resource, runWithOwner} from "solid-js";
 import {SaveValidationMessageViewModel} from "core-mapping/save/presentation/viewModels/SaveValidationMessageViewModel";
 import {
   loadConfigurationPageController,
@@ -9,6 +9,7 @@ import {
   loadPlayersPageController
 } from "core-mapping/display/composition/compositionRoot";
 import {loadOverviewPageController} from "core-mapping/display/composition/compositionRoot";
+import {loadPlanetPageController} from "core-mapping/display/composition/compositionRoot";
 import {OverviewPageViewModel} from "core-mapping/display/presentation/viewModels/OverviewPageViewModel";
 import {ConfigurationPageViewModel} from "core-mapping/display/presentation/viewModels/ConfigurationPageViewModel";
 import {PowerPageViewModel} from "core-mapping/display/presentation/viewModels/PowerPageViewModel";
@@ -16,6 +17,7 @@ import {TerraformationPageViewModel} from "core-mapping/display/presentation/vie
 import {PlayersPageViewModel} from "core-mapping/display/presentation/viewModels/PlayersPageViewModel";
 import {SaveIdentityViewModel} from "core-mapping/display/presentation/viewModels/SaveIdentityViewModel";
 import {PlayersMenuViewModel} from "core-mapping/display/presentation/viewModels/PlayersMenuViewModel";
+import {PlanetPageViewModel} from "core-mapping/display/presentation/viewModels/PlanetPageViewModel";
 
 export interface LoadedSaveViewModels {
   configurationPage: Resource<ConfigurationPageViewModel>;
@@ -40,6 +42,7 @@ export interface LoadedSave {
   loadSave: (save: ValidatedSave) => void;
   unloadSave: () => void;
   viewModels: LoadedSaveViewModels;
+  planetPage: (planetIdentifier: string) => Resource<PlanetPageViewModel>;
 }
 
 export const LoadedSaveContext = createContext<LoadedSave>();
@@ -67,6 +70,23 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
   const [overviewPage] = createResource(validatedSave,
     ({content, fileName, fileSize}) => loadOverviewPageController.loadOverviewPage({content, fileName, fileSize}));
 
+  const owner = getOwner();
+  const planetPages = new Map<string, Resource<PlanetPageViewModel>>();
+  const createPlanetPage = (planetIdentifier: string): Resource<PlanetPageViewModel> => {
+    const [planetPage] = createResource(validatedContent,
+      (content) => loadPlanetPageController.loadPlanetPage({content, planetIdentifier}));
+    return planetPage;
+  };
+  const planetPage = (planetIdentifier: string): Resource<PlanetPageViewModel> => {
+    const knownPlanetPage = planetPages.get(planetIdentifier);
+    if (knownPlanetPage) {
+      return knownPlanetPage;
+    }
+    const createdPlanetPage = runWithOwner(owner, () => createPlanetPage(planetIdentifier))!;
+    planetPages.set(planetIdentifier, createdPlanetPage);
+    return createdPlanetPage;
+  };
+
   const loadedSave: LoadedSave = {
     validatedSave,
     warnings: () => validatedSave()?.warnings ?? [],
@@ -75,7 +95,8 @@ export function LoadedSaveProvider(props: LoadedSaveProviderProps) {
     unloadSave: () => setValidatedSave(null),
     viewModels: {
       configurationPage, powerPage, terraformationPage, playersPage, saveIdentity, playersMenu, overviewPage
-    }
+    },
+    planetPage
   };
 
   return <LoadedSaveContext.Provider value={loadedSave}>{props.children}</LoadedSaveContext.Provider>;

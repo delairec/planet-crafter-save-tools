@@ -12,6 +12,10 @@
     font-weight: var(--semibold);
 }
 
+.breadcrumb-page a {
+    color: var(--content);
+}
+
 .breadcrumb-page::before {
     content: '›';
     margin-right: var(--space-sm);

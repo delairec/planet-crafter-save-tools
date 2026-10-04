@@ -307,6 +307,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
+    description: 'the link of the breadcrumb leading back to the page a subject belongs to, on the page background',
+    file: 'packages/ui-save-manager/src/styles/shell/breadcrumb.css',
+    selector: '.breadcrumb-page a',
+    foreground: 'content',
+    background: 'canvas'
+  },
+  {
     description: 'the summary figure of a card header, on the neon-cyan pill of that header',
     file: 'packages/ui-save-manager/src/styles/components.css',
     selector: '.card-summary',

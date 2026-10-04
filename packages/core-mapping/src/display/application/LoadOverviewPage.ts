@@ -25,6 +25,7 @@ import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorld
 import {resolvePowerConsumptionModifier} from "../domain/rules/resolvePowerConsumptionModifier";
 import {isPowerConsumptionModified} from "../domain/rules/isPowerConsumptionModified";
 import {namePlanet} from "../domain/rules/namePlanet";
+import {identifyPlanet} from "../domain/rules/identifyPlanet";
 import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
 import {findReachedTerraformationStage} from "../domain/rules/findReachedTerraformationStage";
 import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
@@ -120,6 +121,7 @@ function describePlanets(
     const planetEnergyLevels = planetsEnergyLevels.find((planet) => planet.planetName === level.planetId);
     const terraformationStage = findReachedTerraformationStage(level, terraformationStages);
     return {
+      planetIdentifier: level.planetId,
       planetName: level.planetId,
       terraformation: describeTerraformationLevel(level),
       ...(terraformationStage && {terraformationStage: terraformationStage.stageName}),
@@ -128,7 +130,7 @@ function describePlanets(
   });
   const energyOnlyPlanets = planetsEnergyLevels
     .filter((planet) => !terraformationLevels.some((level) => level.planetId === planet.planetName))
-    .map((planet): OverviewPlanetResponse => ({planetName: planet.planetName, energy: describePlanetEnergy(planet)}));
+    .map((planet): OverviewPlanetResponse => ({planetIdentifier: identifyPlanet(planet), planetName: planet.planetName, energy: describePlanetEnergy(planet)}));
 
   return [...terraformedPlanets, ...energyOnlyPlanets];
 }

@@ -1,0 +1,5 @@
+.planet-absent-zone {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-style: italic;
+}
