@@ -38,10 +38,6 @@
     font-size: var(--text-xs);
 }
 
-.overview-identity .notification {
-    margin: 0 0 var(--space-sm);
-}
-
 .overview-planets {
     margin-top: var(--space-xl);
 }

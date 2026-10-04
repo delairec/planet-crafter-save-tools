@@ -114,8 +114,21 @@ summary::marker {
     align-items: baseline;
     gap: var(--space-sm);
     padding: var(--space-sm) var(--space-md);
+    margin-block: 0;
     border-left: var(--notification-border);
     border-radius: 0 var(--space-xs) var(--space-xs) 0;
+}
+
+.notification:not(.notification + .notification) {
+    margin-top: var(--space-xl);
+}
+
+.notification + .notification {
+    margin-top: var(--space-sm);
+}
+
+.notification:not(:has(+ .notification)) {
+    margin-bottom: var(--space-xl);
 }
 
 .notification-warning {
