@@ -4788,3 +4788,49 @@ DECISION TheSaveManagerIsHeldAtAScreen360PixelsWide
 		+ "narrowest width the page holds without a horizontal scroll, and « test.use viewport"
 		+ "(Recommandé) », the file fixing {width: 360, height: 800} on the three existing engines"
 		PR 285
+
+DECISION AtPhoneWidthATooltipIsFixedAlongTheBottomOfTheScreen
+	SPEC "at 768 pixels wide and below, a tooltip is fixed along the bottom of the screen inside"
+		+ "the side gutter, so that a hidden tooltip never widens the page and a shown one stays on"
+		+ "the screen"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::position: fixed;"
+		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit its figures and"
+			+ "its bars by machine to the screen without a horizontal scroll"
+		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit the merge form and"
+			+ "the merged save to the screen without a horizontal scroll"
+	REJECTED "hiding a tooltip with display: none instead of visibility: hidden: the shown tooltip"
+		+ "of a mark anchored right of the left edge still runs past the screen"
+	REJECTED "an absolute tooltip with a narrower max-width: a stylesheet cannot know how far its"
+		+ "anchor sits from the right edge of the screen"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT146
+	RATIONALE "a hidden absolute box still counts in the scrollable overflow of the page: the"
+		+ "tooltips of the Power bars and of the Prefer legacy format checkbox made a 360 pixel"
+		+ "screen scroll sideways"
+	SOURCE "Ruled while delivering FEAT146, on the phone-width scenarios that measured the page"
+		+ "widened by the hidden tooltips"
+		PR 285
+
+DECISION EveryControlTheKeyboardReachesDrawsOneSolidOutline
+	SPEC "every element the keyboard reaches draws one solid neon pink outline, declared once by a"
+		+ ":focus-visible rule; no rule sets outline: none on a focused control"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::outline: var(--focus-ring-width)"
+			+ "solid var(--neon-pink);"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/menu.e2e.ts::should show a visible"
+			+ "focus on the page link the Tab key reaches"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::should show a visible"
+			+ "focus on the Display as selector the Tab key reaches"
+	SPEC "the focus outline reaches the 3:1 non-text floor on the page background, on a card and in"
+		+ "the menu, in both themes"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::the focus outline of the control the"
+			+ "keyboard reaches"
+		ENFORCED_BY "scripts/guards/ui/check-color-contrast.ts::MINIMUM_GRAPHIC_CONTRAST_RATIO"
+	REJECTED "a box-shadow ring: a forced colours mode drops box-shadows and leaves the focus"
+		+ "invisible"
+	REJECTED "the outline the browser draws by default: its colour and width differ by engine, and"
+		+ "nothing holds its contrast on the neon palette"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT146
+	SOURCE "Ruled while delivering FEAT146: the box-shadow rings of the buttons and the form"
+		+ "controls and the default outline of the links gave way to one outline"
+		PR 285
