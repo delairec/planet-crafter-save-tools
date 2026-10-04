@@ -50,6 +50,23 @@ select:focus {
     margin-block: var(--space-lg);
 }
 
+.earlier-merged-saves {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.earlier-merged-save {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-md);
+}
+
 .save-form {
     margin-block: var(--space-lg);
     padding: var(--space-lg);
