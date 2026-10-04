@@ -10,3 +10,7 @@ export const terraformationLevelsSectionTerraformationIndexLabel = 'Terraformati
 
 export const terraformationLevelsSectionPurificationUnit = 'Pu';
 export const terraformationLevelsSectionTerraformationIndexUnit = 'Ti';
+export const terraformationLevelsSectionSystemTerraformationIndexUnit = 'SysTi';
+
+/** @param {number} planetCount */
+export const resolveTerraformationLevelsSectionMultipliedPlanets = (planetCount) => planetCount === 1 ? 'multiplied over 1 planet' : `multiplied over ${planetCount} planets`;

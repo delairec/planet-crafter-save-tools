@@ -4510,7 +4510,7 @@ DECISION TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 		+ "and states no share of the SysTi; both figures are those the domain rule of the SysTi"
 		+ "computes, and the page computes no product of its own"
 		IMPL "packages/core-mapping/src/display/application/LoadTerraformationPage.ts::computeSystemTerraformationIndex(terraformationLevels)"
-		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.ts::resolveOverviewPageSystemTerraformationIndexCaption"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.ts::resolveTerraformationLevelsSectionMultipliedPlanets"
 		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPlanetTerraformationZone.spec.ts::should"
 			+ "present the hero"
 		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne

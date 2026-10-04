@@ -20,9 +20,9 @@ import {
   terraformationLevelsSectionPlantsLabel,
   terraformationLevelsSectionPressureLabel,
   terraformationLevelsSectionPurificationLabel,
-  terraformationLevelsSectionTerraformationIndexLabel
+  terraformationLevelsSectionTerraformationIndexLabel,
+  resolveTerraformationLevelsSectionMultipliedPlanets
 } from "./messages/terraformationLevelsSectionMessages.js";
-import {resolveOverviewPageSystemTerraformationIndexCaption} from "./messages/overviewPageMessages.js";
 import {
   resolveTerraformationPageBiomassShares,
   resolveTerraformationPageFactorOfTheSystemTerraformationIndex,
@@ -66,7 +66,7 @@ function captionTerraformationIndex(systemTerraformationIndex: SystemTerraformat
   }
   const factorOfTheSystemTerraformationIndex = resolveTerraformationPageFactorOfTheSystemTerraformationIndex(
     formatSystemTerraformationIndex(systemTerraformationIndex.index),
-    resolveOverviewPageSystemTerraformationIndexCaption(systemTerraformationIndex.planetCount)
+    resolveTerraformationLevelsSectionMultipliedPlanets(systemTerraformationIndex.planetCount)
   );
   return [terraformationLevelsSectionTerraformationIndexLabel, factorOfTheSystemTerraformationIndex].join(terraformationPageCaptionSeparator);
 }

@@ -41,8 +41,7 @@ import {
   overviewPageTotalCraftedObjectsLabel,
   resolveOverviewPageGameReleaseLabel,
   resolveOverviewPagePlanetsHint,
-  resolveOverviewPageShareOfProductionConsumed,
-  resolveOverviewPageSystemTerraformationIndexCaption
+  resolveOverviewPageShareOfProductionConsumed
 } from "./messages/overviewPageMessages.js";
 import {
   terraformationLevelsSectionBiomassLabel,
@@ -50,7 +49,8 @@ import {
   terraformationLevelsSectionOxygenLabel,
   terraformationLevelsSectionPressureLabel,
   terraformationLevelsSectionPurificationLabel,
-  terraformationLevelsSectionTerraformationIndexLabel
+  terraformationLevelsSectionTerraformationIndexLabel,
+  resolveTerraformationLevelsSectionMultipliedPlanets
 } from "./messages/terraformationLevelsSectionMessages.js";
 import {
   energyLevelsSectionAvailableTitle,
@@ -112,7 +112,7 @@ function createTiles(
     tiles.systemTerraformationIndex = {
       label: overviewPageSystemTerraformationIndexLabel,
       value: formatSystemTerraformationIndex(index),
-      caption: resolveOverviewPageSystemTerraformationIndexCaption(planetCount)
+      caption: resolveTerraformationLevelsSectionMultipliedPlanets(planetCount)
     };
   }
   if (droneLogistics) {
