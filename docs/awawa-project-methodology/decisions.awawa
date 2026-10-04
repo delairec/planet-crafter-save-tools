@@ -4764,3 +4764,27 @@ DECISION AValidationListTitleNamesTheValidation
 	APPLIES_TO_TASK @TASK.FEAT189
 	SOURCE "Owner ruling of 2026-10-04 on the running application, during FEAT189"
 		PR 284
+
+DECISION TheSaveManagerIsHeldAtAScreen360PixelsWide
+	SPEC "every page of the save manager fits a screen 360 pixels wide without a horizontal scroll"
+		+ "of the page, a wide table scrolling inside its own card"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::test.use({viewport: {width: 360,"
+			+ "height: 800}});"
+		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit the screen without"
+			+ "a horizontal scroll"
+	SPEC "the phone-width scenarios fix their viewport in their own file with test.use and run on"
+		+ "the three desktop engine projects; the Playwright configuration declares no phone"
+		+ "project"
+		IMPL "packages/ui-save-manager/playwright.config.ts::{name: 'webkit', use:"
+			+ "{...devices['Desktop Safari']}}"
+	REJECTED "a device descriptor project, devices['Pixel 7'] or devices['iPhone 13'] with isMobile"
+		+ "and hasTouch: one more project lengthens the continuous integration run, and isMobile"
+		+ "does not exist under Firefox"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT146
+	RATIONALE "360 pixels is the smallest common Android screen; a page that fits it fits the 375"
+		+ "and 390 pixel screens of the iPhone SE, 13 and 14"
+	SOURCE "Owner ruling of 2026-10-04 at the start of FEAT146: « 360 px (Recommandé) » as the"
+		+ "narrowest width the page holds without a horizontal scroll, and « test.use viewport"
+		+ "(Recommandé) », the file fixing {width: 360, height: 800} on the three existing engines"
+		PR 285
