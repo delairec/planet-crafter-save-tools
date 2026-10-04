@@ -6,7 +6,7 @@ import PowerFigureTiles from '~/components/power/PowerFigureTiles';
 import PowerOptimizersTable from '~/components/power/PowerOptimizersTable';
 import PowerBreakdownTable from '~/components/power/PowerBreakdownTable';
 import PowerBarsChart from '~/components/power/PowerBarsChart';
-import PowerDisplayFormSelect from '~/components/power/PowerDisplayFormSelect';
+import PowerDisplayFormMenu from '~/components/power/PowerDisplayFormMenu';
 import {usePowerDisplayForm} from '~/hooks/usePowerDisplayForm';
 
 interface PowerPlanetZoneProps {
@@ -25,7 +25,7 @@ export default function PowerPlanetZone(props: PowerPlanetZoneProps) {
       <PowerFigureTiles zone={props.zone}/>
       <PowerOptimizersTable optimizers={props.zone.optimizers}/>
       <div class="power-breakdown-header">
-        <PowerDisplayFormSelect/>
+        <PowerDisplayFormMenu/>
         <p class="power-breakdown-summary" data-testid="power-breakdown-summary">{props.zone.breakdownSummary}</p>
       </div>
       <Show when={displayForm.form() === 'bars'} fallback={

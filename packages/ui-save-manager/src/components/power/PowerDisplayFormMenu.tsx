@@ -13,7 +13,7 @@ const DISPLAY_FORM_OPTIONS: PowerDisplayFormOption[] = [
   {form: 'table', label: powerDisplayFormTableOption}
 ];
 
-export default function PowerDisplayFormSelect() {
+export default function PowerDisplayFormMenu() {
   const displayForm = usePowerDisplayForm();
   const selectId = createUniqueId();
   return (
