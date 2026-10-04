@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "terraformationStages.schema.json",
+  "title": "Terraformation stages",
+  "description": "The terraformation stages of the game, each starting at a Terraformation Index on the planets that list it, named as the game names it in English.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["terraformStage", "planetNames", "startTerraformationIndex", "stageName"],
+    "additionalProperties": false,
+    "properties": {
+      "terraformStage": {"type": "string", "minLength": 1},
+      "planetNames": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {"type": "string", "pattern": "^[A-Z][A-Za-z]*$"}
+      },
+      "startTerraformationIndex": {"type": "number", "minimum": 0},
+      "stageName": {"type": "string", "minLength": 1}
+    }
+  }
+}

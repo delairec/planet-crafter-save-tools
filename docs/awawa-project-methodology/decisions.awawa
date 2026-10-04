@@ -4403,3 +4403,46 @@ DECISION TheScrollingBodyOfATableCardIsANamedRegionInTheTabSequence
 	SOURCE "Owner ruling of 2026-10-03: the Power page accessibility failure inherited from #269 is"
 		+ "fixed in this pull request"
 		PR 268
+
+DECISION TheOverviewCardOfAPlanetNamesTheTerraformationStageItHasReached
+	SPEC "the overview card of a planet with terraformation levels carries, beside its name, a"
+		+ "neutral badge naming the stage the planet has reached, found by a domain rule from its"
+		+ "Terraformation Index; a planet no stage lists, or without terraformation levels, carries"
+		+ "no badge"
+		IMPL "packages/core-mapping/src/display/domain/rules/findReachedTerraformationStage.ts::export"
+			+ "function findReachedTerraformationStage"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::findReachedTerraformationStage("
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::overviewPageTerraformationStageLabel"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::terraformation-stage"
+		ENFORCED_BY "packages/ui-save-manager/e2e/display-overview.e2e.ts::should name the"
+			+ "terraformation stage the planet has reached in a badge beside its name"
+		REF @RULE.APlanetIsAtTheLatestOfItsStagesStartedAtOrBelowItsTerraformationIndex
+	SPEC "the stages are the rows of the TerraformationStages table of data-planets, one per stage"
+		+ "object of the game, keyed by its name, listing the planets that use it, its start and"
+		+ "its English name; an adapter reads it behind TerraformationStagesReaderPort, and the use"
+		+ "case hands the stage name to the presenter as a primitive of OverviewPlanetResponse"
+		IMPL "packages/data-planets/terraformationStages.json"
+		IMPL "packages/core-mapping/src/display/application/ports/TerraformationStagesReaderPort.ts::TerraformationStagesReaderPort"
+		IMPL "packages/core-mapping/src/display/infrastructure/TerraformationStagesReaderService.ts::selectTerraformationStageRows()"
+		IMPL "packages/core-mapping/src/display/application/responses/OverviewPageResponse.ts::terraformationStage"
+		REF @DATATABLE.TerraformationStages
+	REJECTED "One row per planet and stage: Prime and Humble share the stage objects of the game,"
+		+ "and a row each would state every start of that list twice"
+	REJECTED "The starts of the wiki: it gives Herds on Skeo a start of 0 Ti, where the game data"
+		+ "gives 2.5 TTi"
+		REF @URL.WikiTerraformationStages
+	REJECTED "Stage codes translated by presentation messages: a second home for the names; the"
+		+ "table carries the English name the game shows, as EquipmentKinds carries the kinds"
+		REF @DATATABLE.EquipmentKinds
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_PACKAGE @PACKAGE.data_planets
+	APPLIES_TO_TASK @TASK.FEAT131
+	RESTS_ON @RULE.APlanetIsAtTheLatestOfItsStagesStartedAtOrBelowItsTerraformationIndex
+	RATIONALE "The task left the stages, their thresholds and the value they are read from to its"
+		+ "start. The game reads them from its own data, per planet, against the Terraformation"
+		+ "Index; the card shows the stage the game would show, under the name the game gives it"
+	SOURCE "Ruled while implementing the terraformation stage badge of the overview planet cards on"
+		+ "2026-10-04, from the game files of release 2.103 and the wiki"
+		REF @GAME_RELEASE.2.103
+		REF @URL.WikiTerraformationStages

@@ -29,6 +29,7 @@ export interface OverviewPlanetEnergyResponse {
 export interface OverviewPlanetResponse {
   readonly planetName?: string;
   readonly terraformation?: TerraformationLevelSummaryResponse;
+  readonly terraformationStage?: string;
   readonly energy?: OverviewPlanetEnergyResponse;
 }
 

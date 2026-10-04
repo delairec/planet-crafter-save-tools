@@ -24,7 +24,17 @@ interface OverviewPlanetCardProps {
 export default function OverviewPlanetCard(props: OverviewPlanetCardProps) {
   return (
     <article class="overview-planet-card" data-testid={props.testId}>
-      <h4 class="overview-planet-name" data-testid={`${props.testId}-name`}>{props.card.name}</h4>
+      <header class="overview-planet-head">
+        <h4 class="overview-planet-name" data-testid={`${props.testId}-name`}>{props.card.name}</h4>
+        <Show when={props.card.terraformationStage}>
+          {(stage) => (
+            <p class="overview-planet-stage">
+              <span class="visually-hidden" data-testid={`${props.testId}-terraformation-stage-label`}>{stage().label}</span>
+              <span class="tone-badge tone-badge-neutral" data-testid={`${props.testId}-terraformation-stage`}>{stage().value}</span>
+            </p>
+          )}
+        </Show>
+      </header>
       <Show when={props.card.terraformation} fallback={<OverviewPlanetAbsentSide absentSide={props.card.absentSide} testId={props.testId}/>}>
         {(terraformation) => <OverviewPlanetTerraformation terraformation={terraformation()} testId={props.testId}/>}
       </Show>

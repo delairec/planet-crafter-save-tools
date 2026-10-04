@@ -63,10 +63,21 @@
 }
 
 .overview-planet-name {
-    align-self: flex-start;
     margin: 0;
     padding: var(--space-xxs) var(--space-md);
     font-size: var(--text-base);
+}
+
+.overview-planet-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs) var(--space-sm);
+}
+
+.overview-planet-stage {
+    margin: 0;
 }
 
 .overview-planet-terraformation {

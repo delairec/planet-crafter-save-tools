@@ -576,6 +576,7 @@ TASK FEAT131
 	SPEC "the stages and their thresholds are a value table of a data- package, one row per stage,"
 		+ "read by an infrastructure adapter behind an application port; the stage reaches the"
 		+ "presenter as a primitive of the response its use case builds"
+	WAVE @WAVE.15
 	RATIONALE "The save manager knows no stage: it prints the Terraformation Index of a planet as a"
 		+ "number, and the reader has to know the thresholds of the game to tell where a planet"
 		+ "stands. The redesign puts the terraformation data first on the planet cards of the"
@@ -586,6 +587,11 @@ TASK FEAT131
 	SOURCE "Owner request of 2026-09-26, while choosing the redesign of the save manager on the"
 		+ "mockup of three proposals, to draft for memory outside any wave"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner ruling of 2026-10-04, asked on which base to launch the task, the Overview planet"
+		+ "card it completes existing only on the integration branch of wave 15: « La rattacher à"
+		+ "la wave 15 », launched on integration/save-manager-redesign with the milestone"
+		+ "save-manager-redesign, the wave delivered only once the task merges; rejected: «"
+		+ "Attendre la fusion de #266 », the task left out of any wave on master"
 
 TASK FEAT132
 	TITLE "Display the SysTi, the Terraformation Index accumulated over every planet of the save"
@@ -2305,7 +2311,7 @@ TASK FEAT183
 		+ "formatted by presentation helpers the Power and Terraformation pages reuse"
 		IMPL "packages/core-mapping/src/display/presentation/viewModels/OverviewPageViewModel.ts::widthPercentage"
 		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::describePlanets(terraformationLevels,"
-			+ "planetsEnergyLevels)"
+			+ "planetsEnergyLevels,"
 		IMPL "packages/core-mapping/src/display/presentation/formatPowerFigures.ts"
 		IMPL "packages/core-mapping/src/display/presentation/TerraformationLevelsPresenter.ts::formatTerraformationFigures(level)"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
