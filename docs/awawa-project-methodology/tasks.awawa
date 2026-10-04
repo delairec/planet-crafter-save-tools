@@ -2813,3 +2813,21 @@ TASK DOCS193
 	SOURCE "Owner request of 2026-10-04, after the reading of PR 276: verify the values the game"
 		+ "assembly leaves to the assets by reading the asset files of the game"
 		PR 276
+
+TASK REFACTOR194
+	TITLE "Group the presentation of display by view"
+	STATUS draft
+	SPEC "each view of display, a page or a zone, has a folder of its own under presentation/,"
+		+ "holding its presenter, the factories of its zones, its view models and its messages"
+	SPEC "what several views share, a formatter or the messages of a section of the save, sits in a"
+		+ "folder named after that concept, and no module of presentation/ imports the folder of"
+		+ "another view"
+	PRIORITY low
+	RATIONALE "The root of display/presentation holds fifteen modules, seven presenters and the"
+		+ "eight factories and formatters of three pages, beside one folder of messages and one of"
+		+ "view models for every view; nothing in a path tells which view a module serves. No rule"
+		+ "of the architecture is broken, so the regrouping waits for the pages of the redesign"
+		+ "still open, each of which moves files the regrouping would move"
+		REF @DECISION.AViewModelServesOneView
+	SOURCE "Owner review of the presentation layer on the Terraformation page pull request"
+		PR 275
