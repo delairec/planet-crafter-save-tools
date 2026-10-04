@@ -2863,17 +2863,30 @@ TASK DOCS193
 TASK REFACTOR194
 	TITLE "Keep the presenters alone at the root of every presentation folder of core-mapping,"
 		+ "their mappers in a folder"
-	STATUS todo
+	STATUS implemented
 	SPEC "the root of each presentation/ folder of packages/core-mapping/src holds the presenters"
 		+ "alone, with their specs, beside the folders of view models, of messages and of mappers"
+		IMPL "scripts/guards/architecture/isMisplacedAtPresentationRoot.ts::PRESENTER_FILE_NAME"
+		IMPL "packages/core-mapping/src/display/presentation/PowerPagePresenter.ts::./mappers/createPlanetPowerZone"
 	SPEC "every other module of those folders, a mapper (a create factory, a format formatter, a"
 		+ "sum computation, the formatters/ folder of display), sits under the mappers/ folder of"
 		+ "its presentation, with its spec"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerChart.ts"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/formatters/formatNumber/formatNumber.ts"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatValidationError.ts"
+		IMPL "packages/core-mapping/src/merge/presentation/mappers/formatMergeWarning.ts"
 	SPEC "a mapper is imported only by a presenter, by another mapper or by the spec of either:"
 		+ "never by a view model, a messages file, a use case, a controller or any other module"
+		IMPL "scripts/guards/architecture/check-presentation-entities.ts::MAPPER_REFUSAL"
 	SPEC "a guard of the repository, run by bun run guards, fails on a module other than a"
 		+ "presenter at the root of a presentation folder of a core- package and on an import of a"
 		+ "mapper by a module that is neither a presenter nor a mapper nor the spec of either"
+		IMPL "scripts/guards/architecture/check-presentation-entities.ts::isMisplacedAtPresentationRoot(filePath)"
+		IMPL "scripts/guards/architecture/check-presentation-entities.spec.ts::findRefusedImports,"
+			+ "for a mapper"
+		IMPL "scripts/guards/architecture/isMisplacedAtPresentationRoot.spec.ts::When a module"
+			+ "other than a presenter"
+	DELIVERED_BY 283
 	AFTER @TASK.FEAT140
 	AFTER @TASK.FEAT141
 	AFTER @TASK.FEAT184
