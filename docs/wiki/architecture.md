@@ -46,7 +46,7 @@ A business imports `save/` and no file of another business; `save/` imports no b
 
 The dependency rule between the layers holds across the areas as inside one: `merge/application` may import `save/domain`, never `save/infrastructure`. `bun run check:layers` holds it on the production files.
 
-Each business wires its controllers in a composition root of its own, `<business>/composition/compositionRoot.ts`. The manifest of `core-mapping` exports these three composition roots and the `presentation/viewModels/` folder of each area, nothing else. An interface imports the composition roots of the businesses it calls, and so loads no other: `cli-validate` the one of `validation/`, `cli-merge` the one of `merge/`, `ui-save-manager` all three.
+Each business wires its controllers in a composition root of its own, `<business>/composition/compositionRoot.ts`. The manifest of `core-mapping` exports these three composition roots and the `presentation/viewModels/` folder of each area, nothing else. An interface imports the composition roots of the businesses it calls, and so loads no other: `cli-validate` the one of `validation/`, `cli-merge` the one of `merge/`, `ui-save-manager` all three. `bun run check:core-mapping-exports` holds that boundary, and refuses a composition root exporting a `Load*SectionController`.
 
 The ruling and its reasons: `awawa show @DECISION.EachBusinessOfCoreMappingLivesInAFolderOfItsOwn .`.
 
