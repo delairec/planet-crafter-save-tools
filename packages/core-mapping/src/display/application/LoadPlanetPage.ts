@@ -8,6 +8,7 @@ import {WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
 import {PlanetPagePresenterPort} from "./ports/PlanetPagePresenterPort";
 import {LoadPlanetPageRequest} from "./requests/LoadPlanetPageRequest";
 import {PlanetTerraformationResponse} from "./responses/TerraformationPageResponse";
+import {PlanetPageResponse} from "./responses/PlanetPageResponse";
 import {TerraformationLevelSummaryResponse} from "./responses/TerraformationLevelSummaryResponse";
 import {
   EnergyBreakdownEntryResponse,
@@ -92,19 +93,39 @@ export class LoadPlanetPage implements UseCase<LoadPlanetPageRequest> {
       return;
     }
 
-    const planetName = terraformationLevel?.planetId ?? energyPlanet?.planetName;
-
     this.presenter.displayPlanetPage({
       gameRelease: energyLevels.release,
       gameReleaseIsEarlierThanCurrent: precedesCurrentGameRelease(energyLevels.release, gameReleases),
       powerConsumptionModifier,
       powerConsumptionIsModified: isPowerConsumptionModified(powerConsumptionModifier),
-      ...(planetName !== undefined && {planetName}),
-      ...(energyPlanet && {energyLevels: describePlanetEnergyLevels(energyPlanet, optimizerRanges)}),
-      ...(terraformationLevel && {terraformation: describePlanetTerraformation(terraformationLevel, systemTerraformationIndex)}),
+      ...describePlanetName(terraformationLevel, energyPlanet),
+      ...describeEnergyPlanet(energyPlanet, optimizerRanges),
+      ...describeTerraformedPlanet(terraformationLevel, systemTerraformationIndex),
       worldObjectLabels: this.worldObjectLabelsReader.readWorldObjectLabels()
     });
   }
+}
+
+function describePlanetName(terraformationLevel: TerraformationLevelEntity | undefined, energyPlanet: PlanetEnergyLevelsValueObject | undefined): Pick<PlanetPageResponse, 'planetName'> {
+  const planetName = terraformationLevel?.planetId ?? energyPlanet?.planetName;
+  if (planetName === undefined) {
+    return {};
+  }
+  return {planetName};
+}
+
+function describeEnergyPlanet(energyPlanet: PlanetEnergyLevelsValueObject | undefined, optimizerRanges: OptimizerRangesByWorldObjectName): Pick<PlanetPageResponse, 'energyLevels'> {
+  if (!energyPlanet) {
+    return {};
+  }
+  return {energyLevels: describePlanetEnergyLevels(energyPlanet, optimizerRanges)};
+}
+
+function describeTerraformedPlanet(terraformationLevel: TerraformationLevelEntity | undefined, systemTerraformationIndex: SystemTerraformationIndex | undefined): Pick<PlanetPageResponse, 'terraformation'> {
+  if (!terraformationLevel) {
+    return {};
+  }
+  return {terraformation: describePlanetTerraformation(terraformationLevel, systemTerraformationIndex)};
 }
 
 function describePlanetEnergyLevels(planet: PlanetEnergyLevelsValueObject, optimizerRanges: OptimizerRangesByWorldObjectName): PlanetEnergyLevelsResponse {
