@@ -290,8 +290,8 @@ DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 	SPEC "Exactness is produced and consumed in the wire format modules of core-mapping alone, and"
 		+ "the section schema declares a decimal string"
 		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js::keepInt64IdentifierText"
-		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::Player"
-			+ "Steam ID (primary key, int64)"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::Primary"
+			+ "key, int64"
 	REJECTED "Typing the field as BigInt: JSON.stringify throws on it and ajv cannot validate it"
 	REJECTED "Keeping the raw text of the section entries: the merge rebuilds every player entry"
 	REJECTED "A validation rule on integer precision: a large literal in a save is normal"
@@ -370,7 +370,7 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 		+ "account"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RESTS_ON @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
-	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
+	RESTS_ON @RULE.APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
 	SOURCE "Pull request"
 		PR 39
 		PR 41
@@ -4008,7 +4008,7 @@ DECISION APlanetWithoutPurificationCarriesNoPurificationLevel
 		+ "section printed"
 	REJECTED "A Purification column showing a placeholder for such a planet: the planet does not"
 		+ "handle purification, so there is nothing to show"
-	RESTS_ON @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+	RESTS_ON @RULE.APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification
 	RATIONALE "The value is how the save format writes that a planet has no purification; decoded"
 		+ "at the boundary, the merge rule and the display reason on a level that is there or not,"
 		+ "and the format keeps its value"
@@ -4170,11 +4170,9 @@ DECISION APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
 		+ "players are all half full would show them full"
 	REJECTED "a percentage above 100 drawn as an overflow: the gauge shape has no room for it, and"
 		+ "the value over its maximum already says it"
-	REJECTED "a fourth gauge for toxicity in this task: its maximum is 5 without a Toxins Filter,"
-		+ "and what each of the three filter tiers changes is not yet observed in game; left to a"
-		+ "task of its own"
+	REJECTED "a fourth gauge for toxicity in this task: its maximum is the toxic time of the area"
+		+ "the player stands in, which the save does not carry; left to a task of its own"
 		REF @TASK.FEAT190
-		REF @HYPOTHESIS.EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT144
@@ -4329,15 +4327,16 @@ DECISION ThePowerUseCaseIsNamedAfterItsPageItsResponseAfterTheEnergyLevels
 	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
 		PR 269
 
-DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
-	SPEC "the Overview page shows the SysTi of the save in a tile of its own, the product of the"
-		+ "non-zero Terraformation Index of its planets computed by a domain rule, captioned with"
-		+ "how many planets it multiplies; a save where no planet has an index shows no SysTi tile"
+DECISION TheOverviewShowsTheSysTiOfTheSaveInATileOfItsOwn
+	SPEC "the Overview page shows the SysTi of the save in a tile of its own, folded from the"
+		+ "Terraformation Index of its planets by a domain rule as the game folds it, captioned"
+		+ "with how many planets have a non-zero index; a save where no planet has an index shows"
+		+ "no SysTi tile"
 		IMPL "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.ts"
 		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
 		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
 		IMPL "packages/ui-save-manager/src/components/overview/OverviewTiles.tsx::overview-system-terraformation-index"
-		REF @RULE.TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 	SPEC "the SysTi figure is written in the unit of the game, the short-scale prefix glued to"
 		+ "SysTi, as in 4.369 SpdSysTi"
 		IMPL "packages/core-mapping/src/display/presentation/formatters/formatNumber/systemTerraformationIndex.strategy.ts"
@@ -4352,6 +4351,10 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 		REF @URL.SaveManagerRedesignMockup
 	REJECTED "a weighted sum of the indexes: no source names a weight, and the product already"
 		+ "reaches every unlock the reference saves hold"
+	REJECTED "the plain product of the non-zero indexes the wiki gives: the game assembly of 2.103"
+		+ "multiplies by max(Ti, 1) once the SysTi has a value, so a later planet below 1 leaves it"
+		+ "unchanged"
+		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 	REJECTED "a SysTi of 1 or 0 when no planet has an index: the empty product is no figure of the"
 		+ "game; the tile is left out, as the crafted objects tile is for a save without statistics"
 	REJECTED "the SI symbol strategy of the Terraformation Index of a planet: it stops at Y, 1e24,"
@@ -4363,6 +4366,7 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT132
+	APPLIES_TO_TASK @TASK.DOCS192
 	RATIONALE "The task left open whether the SysTi sums or weighs the Ti of the planets. The wiki"
 		+ "states a product that leaves out the planets at zero, and the reference saves confirm"
 		+ "it: the objects they hold are unlocked at thresholds only the product reaches"
@@ -4373,6 +4377,11 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 		PR 268
 	SOURCE "Owner review of 2026-10-03: the SysTi is the first card of the list, on the left"
 		PR 268
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: WorldUnitSystemTerraformation.GetValue multiplies the SysTi by max(Ti, 1)"
+		+ "once it is above 2.220446049250313E-16"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 DECISION TheScrollingBodyOfATableCardIsANamedRegionInTheTabSequence
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager

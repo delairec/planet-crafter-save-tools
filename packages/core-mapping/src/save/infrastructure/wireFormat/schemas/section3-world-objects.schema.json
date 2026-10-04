@@ -77,10 +77,6 @@
       "type": "string",
       "description": "CSV ids of the sub-inventories internal to the object"
     },
-    "woIds": {
-      "type": "string",
-      "description": "→ WorldObject.id — CSV ids of the world objects the object holds, remapped by the merge (@RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide). Not observed in the ten reference saves, where an object's contents are reached through its inventory instead."
-    },
     "trtVal": {
       "type": "integer",
       "description": "Numeric contribution to terraformation — stored as an integer by Unity. An object that holds a contribution also names the stage it contributes to."
@@ -89,7 +85,7 @@
       "type": "number",
       "minimum": -100,
       "maximum": 100,
-      "description": "Hunger level of an animal, observed on entries of gId DNASequence only — 345 occurrences over the 190338 world objects surveyed, ranging from -100 to 94.22. The bounds are the symmetric scale the game is assumed to work on, an animal yielding a DNA sequence while its hunger is positive; they come from that reading rather than from a source, and the first legitimate save they reject lifts them. (Unity float — serialized with a trailing .0)"
+      "description": "Hunger level of an animal, observed on entries of gId DNASequence only — 345 occurrences over the 190338 world objects surveyed, ranging from -100 to 94.22. The game keeps it between -100 and 100 (@RULE.AnAnimalHungerLevelLiesBetweenMinus100And100). (Unity float — serialized with a trailing .0)"
     },
     "set": {
       "type": "integer",

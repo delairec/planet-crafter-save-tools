@@ -6,6 +6,13 @@ HYPOTHESIS APlayerIdentifierIsASteamAccountReusedAcrossGames
 	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07, pull request 39,"
 		+ "recorded on 2026-09-18"
 		PR 39
+	SOURCE "Corrected by the game assembly of release 2.103 read on 2026-10-04: the identifier is a"
+		+ "Steam account only when the game runs under Steam"
+		REF @RULE.APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
+		REF @GAME_RELEASE.2.103
+		PR 276
+	STATUS archived
+	ARCHIVED_ON 2026-10-04
 
 HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 	DESC "a world object may carry woIds, the list of the world objects it holds"
@@ -19,6 +26,15 @@ HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 		+ "identifier rule go together, not the schema alone"
 	SOURCE "Found on 2026-09-10, left open in the review of pull request 48, recorded on 2026-09-18"
 		PR 48
+	SOURCE "Refuted by the game assembly Assembly-CSharp.dll of release 2.103, Steam build"
+		+ "25296421, decompiled on 2026-10-04: JsonableWorldObject, the entry the game writes for a"
+		+ "world object, declares no woIds, only liId, siIds and linkedWo, and no load path of the"
+		+ "assembly reads one; the contents of a world object are reached through its linked"
+		+ "inventory"
+		REF @GAME_RELEASE.2.103
+		PR 276
+	STATUS archived
+	ARCHIVED_ON 2026-10-04
 
 HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 	DESC "the hunger level of an animal lies between -100 and 100"
@@ -33,6 +49,12 @@ HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 		REF @DECISION.ASchemaRuleHoldsByMeaningBeforeMeasurement
 	SOURCE "Found on 2026-09-10 in pull request 48, recorded on 2026-09-18"
 		PR 48
+	SOURCE "Proven by the game assembly of release 2.103 read on 2026-10-04"
+		REF @RULE.AnAnimalHungerLevelLiesBetweenMinus100And100
+		REF @GAME_RELEASE.2.103
+		PR 276
+	STATUS archived
+	ARCHIVED_ON 2026-10-04
 
 HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 	DESC "the ProceduralWreck objects and ProceduralInstanceGenerator are spawned by"
@@ -44,6 +66,16 @@ HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 		REF @DATATABLE.WorldObjectLabels
 	SOURCE "User ruling of 2026-09-14 in the review of pull request 76, recorded on 2026-09-18"
 		PR 76
+	SOURCE "Refuted by the game assembly Assembly-CSharp.dll of release 2.103, Steam build"
+		+ "25296421, decompiled on 2026-10-04: ProceduralInstancesHandler.LoadInstanceFromScene"
+		+ "creates the ProceduralInstanceGenerator world object for a ProceduralSceneInstance"
+		+ "placed in the scene of a planet; MachinePortalGenerator only registers with"
+		+ "WorldInstanceHandler, and WorldInstanceScene loads the wrecks of a portal world instance"
+		+ "without that world object"
+		REF @GAME_RELEASE.2.103
+		PR 276
+	STATUS archived
+	ARCHIVED_ON 2026-10-04
 
 HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 	DESC "liPlanet, the planet of the inventory a world object is linked to, is carried only by an"
@@ -57,6 +89,13 @@ HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 		+ "occurrences of one object type prove a habit, not a rule of the game"
 	SOURCE "Extracted from docs/save-format.md, what the reference saves say about the rarest"
 		+ "three, on 2026-09-18"
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: liPlanet is set only by WorldObject.SetPlanetLinkedHash through"
+		+ "LinkedPlanetProxy, which MachineRocketBackAndForthInterplanetaryExchange drives from the"
+		+ "destination chosen in UiWindowInterplanetaryExchange; which group carries that machine,"
+		+ "and whether the planet the platform stands on is offered, are data of the assets"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 	DESC "terraTokens and allTimeTerraTokens stay below 2^53 in a real save, so reading them as a"
@@ -70,6 +109,12 @@ HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 		+ "counts now stored as a unsigned 64bits value; read on 2026-09-21"
 		REF @URL.SteamNewsOfThePlanetCrafter
 		REF @GAME_RELEASE.2.102
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JsonableWorldState.terraTokens and allTimeTerraTokens are ulong, so the type"
+		+ "bounds nothing below 2^64 and the reach of a real save is not settled by the files of"
+		+ "the game"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 HYPOTHESIS PodUndergroundAndRocketAnimals2DrawNoPower
 	DESC "PodUnderground and RocketAnimals2 neither draw nor produce power in game 2.103"
@@ -140,6 +185,11 @@ HYPOTHESIS AGameOf1618DropsTheContentItDoesNotKnow
 		REF @DECISION.AMergedSaveTakesTheMoreRecentFormatUnlessAsked
 	SOURCE "Owner review, 2026-09-24: the in-game checks left for later"
 		PR 127
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: the assembly read is release 2.103: what release 1.618 drops on load cannot"
+		+ "be read there"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 HYPOTHESIS EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 	DESC "a Toxins Filter in the equipment of a player raises their toxicity maximum from 5 by 5"
@@ -165,3 +215,12 @@ HYPOTHESIS EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 		PR 263
 		REF @URL.WikiToxinsFilters
 		REF @URL.CompanionAppGameDataV2103
+	SOURCE "Refuted by the game assembly Assembly-CSharp.dll of release 2.103, Steam build"
+		+ "25296421, decompiled on 2026-10-04: PlayerGaugesHandler sets the toxicity maximum to"
+		+ "ToxicArea.GetToxicTime of the area the player stands in; the Toxins Filter value v read"
+		+ "from the equipment alone, PlayerEquipment.GetEquipmentValue, multiplies the filling of"
+		+ "the gauge by 1 - v/100 and its emptying by 1 + v/100, and no filter raises the maximum"
+		REF @GAME_RELEASE.2.103
+		PR 276
+	STATUS archived
+	ARCHIVED_ON 2026-10-04

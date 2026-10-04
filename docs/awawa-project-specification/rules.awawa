@@ -11,6 +11,11 @@ RULE ASaveHasElevenSectionsTheLastReservedAndEmpty
 	SOURCE "Extracted from the ruling on section counters, names settled in the review of pull"
 		+ "request 47, recorded on 2026-09-18"
 		PR 47
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JSONExport.SaveToJson writes ten parts and SaveStringsInFile closes each"
+		+ "with @, so a split on @ yields eleven parts, the last empty"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE ASectionLineIsOneJsonEntry
 	HOLDS_FOR all
@@ -22,6 +27,12 @@ RULE ASectionLineIsOneJsonEntry
 	SOURCE "Extracted from the ruling on the single save parser, pull request 47, recorded on"
 		+ "2026-09-18"
 		PR 47
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JSONExport.GetListForExport joins the JsonUtility.ToJson of each record with"
+		+ "|, and ParseStringAndAddJsonablesToList splits a part on | and reads each piece with"
+		+ "JsonUtility.FromJson"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 	HOLDS_FOR all
@@ -35,6 +46,12 @@ RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 	SOURCE "Extracted from the ruling on int64 identifiers, delivered by pull request 49, recorded"
 		+ "on 2026-09-18"
 		PR 49
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JsonablePlayerState.id is a ulong; JsonableWorldState.terraTokens and"
+		+ "allTimeTerraTokens and JsonablePlayerState.totalTerraTokenEarned are ulong too, which"
+		+ "the reference saves keep within the exact range of a double"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 	HOLDS_FOR all
@@ -51,6 +68,12 @@ RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 	SOURCE "Extracted from the ruling on float suffix emission, pull request 36, recorded on"
 		+ "2026-09-18"
 		PR 36
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JSONExport.SaveStringsInFile strips a hunger key written 0.0, the form"
+		+ "JsonUtility writes for a float zero, and every Jsonable record declares fields of"
+		+ "primitive and string types only"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheSaveOnPrimeBecomesSaveA
 	HOLDS_FOR all
@@ -306,6 +329,13 @@ RULE IdentifiersAreSharedByInventoriesAndWorldObjects
 	APPLIES_TO_SECTION @SECTION.Inventories
 	APPLIES_TO_SECTION @SECTION.WorldObjects
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-1)"
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: InventoriesHandler gives a new inventory the largest inventory id plus one,"
+		+ "WorldObjectsIdHandler a new world object 200,000,000 plus a random seven-digit number,"
+		+ "the objects of a scene staying below 200,000,000: two allocators over one integer space,"
+		+ "which may give one number to an inventory and a world object"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlayerIdentifierIsCarriedAsExactDecimalText
 	HOLDS_FOR all
@@ -326,8 +356,11 @@ RULE APlayerIdentifierIsCarriedAsExactDecimalText
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/mergePlayers.spec.ts::should mark"
 			+ "only the save A host"
 	APPLIES_TO_SECTION @SECTION.Players
-	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-6 and GR-ID-7)"
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JsonablePlayerState.id is a ulong, an unsigned 64-bit integer"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 	HOLDS_FOR all
@@ -342,11 +375,11 @@ RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/resolveIdConflicts.spec.ts::should"
 			+ "renumber the save B inventory above that world object"
 	SPEC "every back-reference to a remapped id is rewritten: inventoryId, equipmentId, liId,"
-		+ "siIds, linkedWo and the two woIds lists"
+		+ "siIds, linkedWo and the woIds list of an inventory"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/rewriteReferences.spec.ts::should"
 			+ "point the save B player at the new inventory id"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/rewriteReferences.spec.ts::should"
-			+ "point the contained world object ids of a save B world object at the new id"
+			+ "point its contents at the new world object id"
 	SPEC "only a save B entry carries rewritten references; a save A entry keeps the ids it always"
 		+ "used"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/rewriteReferences.spec.ts::should"
@@ -357,7 +390,6 @@ RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 	APPLIES_TO_SECTION @SECTION.Players
 	APPLIES_TO_SECTION @SECTION.Inventories
 	APPLIES_TO_SECTION @SECTION.WorldObjects
-	ASSUMES @HYPOTHESIS.AWorldObjectMayCarryALinkedObjectList
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-2, GR-ID-3 and GR-ID-5); GR-ID-4"
 		+ "placed the step in the pipeline and was already @DECISION.AMergeProducesAnOrdinarySave,"
 		+ "so it was deleted"
@@ -382,20 +414,34 @@ RULE APlanetNumericIdIsStableAcrossSaves
 		+ "2026-09-21 and recomputed for the six names"
 		REF @URL.PceditPlanetHash
 		REF @URL.PceditPlanetHashTests
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: PlanetData.GetPlanetHash returns the GetStableHashCode of the planet id, and"
+		+ "SavedDataHandler.LoadSavedData keys the units of each planet by"
+		+ "planetId.GetStableHashCode(): a hash of the planet name, owing nothing to the seed or to"
+		+ "the save"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
-RULE APurificationLevelOfMinusOneMeansNotUnlocked
+RULE APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification
 	HOLDS_FOR all
 	DOMAIN format
-	SPEC "unitPurificationLevel carries -1 while purification is not unlocked, and a non-negative"
-		+ "value once it is"
+	SPEC "unitPurificationLevel carries -1 on a planet that needs no purification, and a"
+		+ "non-negative value on a planet that needs it"
 		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section1-terraformation-levels.schema.json::-1"
-			+ "is a sentinel value meaning purification is not unlocked yet"
+			+ "is a sentinel value carried by a planet that needs no purification"
 		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section1-terraformation-levels.schema.json::\"minimum\":"
 			+ "-1"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-TERRA-3, a"
 		+ "fact about the save left inside @RULE.TerraformationLevelsTakeTheHigherValue"
 		REF @RULE.TerraformationLevelsTakeTheHigherValue
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: WorldUnitPurification.InitPurificationValues sets the purification of a"
+		+ "planet whose PlanetData does not need purification to -1, and"
+		+ "WorldUnitTerraformation.GetTerraformationStartingValue counts max(unitPurificationLevel,"
+		+ "0)"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 	HOLDS_FOR @GAME_RELEASE.2.004
@@ -409,6 +455,13 @@ RULE APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18: the first sentence of GR-PLAYER-4, a"
 		+ "fact about the save left inside @RULE.PlayersAreDeduplicatedByName"
 		REF @RULE.PlayersAreDeduplicatedByName
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JsonablePlayerState declares cameraView, totalCraftedObjects and"
+		+ "totalTerraTokenEarned; SavedDataHandler.LoadSavedData fills the two totals of the host"
+		+ "from the statistics and allTimeTerraTokens when both read zero, as for a save written"
+		+ "without them"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheGlobalMetadataEntryCarriesLogisticsPaused
 	HOLDS_FOR @GAME_RELEASE.2.102
@@ -427,6 +480,11 @@ RULE TheGlobalMetadataEntryCarriesLogisticsPaused
 		+ "false"
 		REF @URL.PceditSaveDiff
 		REF @PROJECT.DNC
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JsonableWorldState declares logisticsPaused, a bool false by default, which"
+		+ "SavedDataHandler.LoadSavedData hands to LogisticManager.SetPaused"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 	HOLDS_FOR @GAME_RELEASE.1.618
@@ -447,6 +505,12 @@ RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 		+ "colour four numbers separated by dashes, each intensity an integer up to 101"
 		PR 141
 		REF @PROJECT.DNC
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: JSONExport.LoadFromJson skips a part 9 whose first entry opens on layerId"
+		+ "and reads the procedural instances from part 10; no type of the assembly holds a terrain"
+		+ "layer record, so the six properties are not settled there"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheGameKeepsDeprecatedPhytoplanktonGroupIds
 	HOLDS_FOR @GAME_RELEASE.2.102
@@ -466,6 +530,12 @@ RULE TheGameKeepsDeprecatedPhytoplanktonGroupIds
 		+ "same for Phytoplankton3"
 		PR 127
 		REF @GAME_RELEASE.2.103
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: no Phytoplankton string in the assembly, group ids being data of the assets,"
+		+ "and JSONExport.LoadFromJson renames only SpaceMultiplierBiomass, DeparturePlatformHumble"
+		+ "and BlueprintDeparturePlatformHumble on load"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 	HOLDS_FOR all
@@ -488,6 +558,12 @@ RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 		PR 178
 		REF @GAME_RELEASE.2.103
 		REF @PROJECT.DNC
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: searched the group ids of the seven machines and GroupData: none appears in"
+		+ "the assembly, the energy level of a group being data of the game assets, so the files of"
+		+ "the game do not settle it"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 	HOLDS_FOR all
@@ -521,6 +597,14 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 	SOURCE "Owner's answer of 2026-09-26 while promoting TEST125: fuses have never changed the"
 		+ "consumption, in any game release"
 		PR 191
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: GameSettingsHandler.ChangeGenerationForGroups multiplies by"
+		+ "modifierPowerConsumption the energy generation of every constructible group whose"
+		+ "generation is negative, the consumers alone; MachineOptimizer applies a unit fuse"
+		+ "through AddUnitGenerationMultiplier to the machines of its range; the base levels are"
+		+ "data of the game assets, not of the assembly"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 	HOLDS_FOR all
@@ -566,6 +650,15 @@ RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 		+ "(terraformationPace, meteo occurrences, vitals depletion...), for every game release; at"
 		+ "0 a coefficient remains a multiplier"
 		PR 188
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: GameSettingsHandler.ChangeGenerationForGroups multiplies the generation of"
+		+ "every terraformation unit by modifierTerraformationPace and the consumption by"
+		+ "modifierPowerConsumption, GaugesConsumptionHandler every gauge rate by"
+		+ "modifierGaugeDrain, and MeteoHandler divides the interval between weather attempts by"
+		+ "modifierMeteoOccurence; the bounds of each slider of GameSettingsUi are data of the game"
+		+ "assets"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
 	HOLDS_FOR all
@@ -601,6 +694,16 @@ RULE EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
 		+ "and helps below 1"
 		REF @URL.SaveManagerRedesignMockup
 		PR 249
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: modifierTerraformationPace multiplies the terraformation generation,"
+		+ "modifierPowerConsumption the consumption, modifierGaugeDrain every gauge rate in"
+		+ "GaugesConsumptionHandler, MeteoHandler divides the interval between weather attempts by"
+		+ "modifierMeteoOccurence, and GameSettingsHandler divides the terraformation of a"
+		+ "multiplayer game by 1 + (players - 1) x modifierMultiplayerTerraformationFactor;"
+		+ "JsonableGameState sets the first four to 1 and leaves the multiplayer factor at 0, the"
+		+ "value a new game takes coming from the presets of the assets"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE ASaveDesignatesExactlyOneHostPlayer
 	HOLDS_FOR all
@@ -619,6 +722,11 @@ RULE ASaveDesignatesExactlyOneHostPlayer
 	SOURCE "Owner ruling during the refinement of REFACTOR160: the unique host check the validator"
 		+ "carried is a statement about the save, recorded in the specification area"
 		PR 231
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: SavedDataHandler.InitSavedData loads the planet of the first player entry"
+		+ "flagged host; searched for a check of the count of hosts: the assembly makes none"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheOxygenMaximumIsTheCapacityOfTheTankWorn
 	HOLDS_FOR all
@@ -638,6 +746,12 @@ RULE TheOxygenMaximumIsTheCapacityOfTheTankWorn
 		+ "wears: full players at 280, 370 and 450 with the tiers 3, 4 and 5, at 100 without a"
 		+ "tank, health and thirst never above 100"
 		REF @PROJECT.DNC
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: PlayerGaugesHandler sets the oxygen maximum to its initial value of 100 plus"
+		+ "the group value of the OxygenTank in the equipment, 100 without one; the value of each"
+		+ "tier is data of the assets"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheInventorySizeOfAPlayerCountsTheSlotsOfTheirBackpack
 	HOLDS_FOR all
@@ -658,6 +772,13 @@ RULE TheInventorySizeOfAPlayerCountsTheSlotsOfTheirBackpack
 		+ "backpack each wears: size 12 without a backpack, 24, 28, 35, 45 and 54 with the tiers 3"
 		+ "to 7"
 		REF @PROJECT.DNC
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: PlayerEquipment.UpdateAfterEquipmentChange adds the group value of a"
+		+ "BackpackIncrease to the size of the player inventory when it is worn and takes it off"
+		+ "when it is removed, GameConfig.startPlayerInventorySize being 12; the value of each tier"
+		+ "is data of the assets"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlayerWearsAtMostOneItemOfEachEquipmentKind
 	HOLDS_FOR all
@@ -678,6 +799,12 @@ RULE APlayerWearsAtMostOneItemOfEachEquipmentKind
 		+ "twice, and the equipment size 4 with nothing worn, then 12, 16, 20 and 24 with the"
 		+ "exoskeleton tiers 2 to 5"
 		REF @PROJECT.DNC
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: Inventory.HasSameEquipableTypeItemInEquipment refuses an item whose"
+		+ "EquipableType the equipment already holds; the kinds are the EquipableType enum of"
+		+ "DataConfig, and the kind of each group id is data of the game assets"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
 	HOLDS_FOR all
@@ -697,12 +824,20 @@ RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
 		+ "a surplus balance is a tenth of the production"
 		PR 269
 		REF @TASK.FEAT139
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: searched for a power status or threshold: none exists; RequireEnergyHandler"
+		+ "only asks whether the energy unit of a planet is increasing, so the tenth stays the"
+		+ "owner's ruling"
+		REF @GAME_RELEASE.2.103
+		PR 276
 
-RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+RULE TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 	HOLDS_FOR all
 	DOMAIN game
-	SPEC "the SysTi of a save is the product of the Terraformation Index of its planets, a planet"
-		+ "whose index is zero left out"
+	SPEC "the SysTi of a save folds the Terraformation Index of its planets in save order: while"
+		+ "the value folded so far is below 2.220446049250313E-16 it takes the index of the next"
+		+ "planet, otherwise it is multiplied by that index, or by 1 when the index is below 1; a"
+		+ "planet whose index is zero leaves it unchanged"
 		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.spec.ts"
 	SPEC "the game writes the SysTi with one short-scale prefix per power of 1,000, k, M, B, T, Qa,"
 		+ "Qi, Sx, Sp, Oc, No, Dc, Ud and on up to Qitg, the unit SysTi glued to the prefix"
@@ -725,3 +860,53 @@ RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
 		+ "prefix and its order of every power of 1,000 from 1 to 1e108"
 		REF @GAME_RELEASE.2.103
 		PR 268
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: WorldUnitSystemTerraformation.GetValue folds the Ti of the planets in the"
+		+ "order of the save: below 2.220446049250313E-16 the running value takes the Ti of the"
+		+ "planet, otherwise it is multiplied by max(Ti, 1);"
+		+ "WorldUnitTerraformation.GetTerraformationStartingValue makes the Ti of a planet its"
+		+ "oxygen, heat, pressure, plants, insects, animals and max(purification, 0)"
+		REF @GAME_RELEASE.2.103
+		PR 276
+
+RULE AnAnimalHungerLevelLiesBetweenMinus100And100
+	HOLDS_FOR all
+	DOMAIN game
+	DOMAIN format
+	SPEC "the hunger level of an animal lies between -100 and 100: the game sets it to 100 when the"
+		+ "animal is fed by a feeder, lowers it by 0.1 per second down to -100 and raises it by"
+		+ "what the animal eats up to 100"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section3-world-objects.schema.json::The"
+			+ "game keeps it between -100 and 100"
+	APPLIES_TO_SECTION @SECTION.WorldObjects
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: InventorySpawnContent sets the hunger of a fed animal to 100, lowers it with"
+		+ "math.max(-100, hunger - 0.1 per second) and raises it on feeding with math.min(100, ...)"
+		REF @GAME_RELEASE.2.103
+		PR 276
+	SOURCE "Observed on 2026-09-10 in pull request 48: 345 occurrences over 190338 world objects,"
+		+ "from -100 to 94.22"
+		PR 48
+
+RULE APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
+	HOLDS_FOR all
+	DOMAIN game
+	DOMAIN format
+	SPEC "a player identifier is the Steam account identifier of the player when the game runs"
+		+ "under Steam, and the network client identifier of the player otherwise"
+		ATTESTED_BY "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::the"
+			+ "Steam ID under Steam, the network client id otherwise"
+	APPLIES_TO_SECTION @SECTION.Players
+	RATIONALE "An account carries the same identifier in every save it plays, and without Steam the"
+		+ "host is client 0 of every game and a client id is given again in a later session, so an"
+		+ "identifier is unique neither across two saves nor, formally, within one; a save written"
+		+ "before multiplayer carries no identifier, which the game reads as 0"
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: PlayerMainController.OnNetworkSpawn sets the identifier to"
+		+ "SteamUser.GetSteamID() when SteamManager.Initialized, otherwise to"
+		+ "NetworkObject.OwnerClientId; JSONExport inserts an id of 0 into the player entry of a"
+		+ "save written before multiplayer"
+		REF @GAME_RELEASE.2.103
+		PR 276
+	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07"
+		PR 39

@@ -47,6 +47,53 @@ describe('computeSystemTerraformationIndex', () => {
     });
   });
 
+  describe('When a planet has a Terraformation Index below one', () => {
+    it('should multiply the SysTi by one for a planet after the first planet with an index', () => {
+      // Arrange
+      const terraformationLevels = [
+        createTerraformationLevel('Prime', 7_500),
+        createTerraformationLevel('Humble', 0.5)
+      ];
+
+      // Act
+      const systemTerraformationIndex = computeSystemTerraformationIndex(terraformationLevels);
+
+      // Assert
+      expect<SystemTerraformationIndex | undefined>(systemTerraformationIndex).toEqual({index: 7_500, planetCount: 2});
+    });
+
+    it('should start the SysTi at the index of the first planet with an index', () => {
+      // Arrange
+      const terraformationLevels = [
+        createTerraformationLevel('Prime', 0),
+        createTerraformationLevel('Humble', 0.5),
+        createTerraformationLevel('Selenea', 0.25)
+      ];
+
+      // Act
+      const systemTerraformationIndex = computeSystemTerraformationIndex(terraformationLevels);
+
+      // Assert
+      expect<SystemTerraformationIndex | undefined>(systemTerraformationIndex).toEqual({index: 0.5, planetCount: 2});
+    });
+  });
+
+  describe('When the SysTi folded so far is below the precision of a double', () => {
+    it('should replace it with the index of the next planet', () => {
+      // Arrange
+      const terraformationLevels = [
+        createTerraformationLevel('Prime', 1e-17),
+        createTerraformationLevel('Humble', 20)
+      ];
+
+      // Act
+      const systemTerraformationIndex = computeSystemTerraformationIndex(terraformationLevels);
+
+      // Assert
+      expect<SystemTerraformationIndex | undefined>(systemTerraformationIndex).toEqual({index: 20, planetCount: 2});
+    });
+  });
+
   describe('When no planet has a Terraformation Index above zero', () => {
     it.each<{situation: string; terraformationLevels: TerraformationLevelEntity[]}>([
       {situation: 'no terraformation level', terraformationLevels: []},
