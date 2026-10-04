@@ -2688,3 +2688,52 @@ TASK DOCS192
 	SOURCE "Owner rulings of 2026-10-03, refining the task: the rules of the merge are out of"
 		+ "scope; the owner installs the decompiler; the reading is recorded in a PROCESS and in"
 		+ "agents/jeu-lire.md; a contradicted rule has its code corrected in the same pull request"
+
+TASK DOCS193
+	TITLE "Verify the rules and value tables the game assembly leaves to the assets against the"
+		+ "asset files of the game"
+	STATUS draft
+	DESC "the owner installs UnityPy before the task starts; missing, stop and say so rather than"
+		+ "read the assets by strings alone"
+	SPEC "every active RULE and HYPOTHESIS whose SOURCE of release 2.103 leaves it to the data of"
+		+ "the game assets carries a SOURCE naming the release read, the asset file and the object"
+		+ "or field that settles it, or, where the assets cannot settle it, what was searched"
+		REF @GAME_RELEASE.2.103
+		REF @RULE.AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
+		REF @RULE.APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
+		REF @RULE.APlayerWearsAtMostOneItemOfEachEquipmentKind
+		REF @RULE.EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
+		REF @RULE.EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
+		REF @RULE.TheGameKeepsDeprecatedPhytoplanktonGroupIds
+		REF @RULE.TheInventorySizeOfAPlayerCountsTheSlotsOfTheirBackpack
+		REF @RULE.TheOxygenMaximumIsTheCapacityOfTheTankWorn
+		REF @HYPOTHESIS.ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
+	SPEC "every value of the value tables EnergyLevels, EquipmentKinds and OxygenTankCapacities is"
+		+ "compared with the group data of the assets, and a value the assets contradict is"
+		+ "corrected in its table, with the code and the tests that applied it, in the same pull"
+		+ "request"
+		REF @DATATABLE.EnergyLevels
+		REF @DATATABLE.EquipmentKinds
+		REF @DATATABLE.OxygenTankCapacities
+	SPEC "the Toxins Filter value of each tier, T1 to T3, is recorded in a RULE, so that the"
+		+ "toxicity gauge can be drawn from it"
+		REF @TASK.FEAT190
+	SPEC "no extracted asset and no file of the game reaches the public repository: only the value"
+		+ "read and where it was read"
+	SPEC "the PROCESS that states how the files of the game are read, and agents/jeu-lire.md, name"
+		+ "the tool and the command that read the assets, so that a check can be repeated"
+		REF @PROCESS.TheGameFilesAreReadByDecompilingTheirAssemblyInAScratchDirectory
+	AFTER @TASK.DOCS192
+	PRIORITY high
+	RATIONALE "The reading of the game assembly by DOCS192 settles the mechanics but not the"
+		+ "figures: the energy level of a machine, the value of an equipment tier, the kind of an"
+		+ "equipment, the bounds of a difficulty slider and the group ids are fields of the group"
+		+ "data that Unity serialises in the asset files under Planet Crafter_Data, which a"
+		+ "decompiler does not open. The Power and Players pages draw these figures, and the"
+		+ "toxicity gauge of FEAT190 waits on the value of each Toxins Filter tier"
+		REF @TASK.DOCS192
+		REF @TASK.FEAT190
+		REF @GAME_RELEASE.2.103
+	SOURCE "Owner request of 2026-10-04, after the reading of PR 276: verify the values the game"
+		+ "assembly leaves to the assets by reading the asset files of the game"
+		PR 276
