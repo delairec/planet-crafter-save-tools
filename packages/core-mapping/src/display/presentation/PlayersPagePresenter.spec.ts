@@ -17,7 +17,7 @@ const FULL_GAUGES: PlayerGaugesResponse = {
   thirst: {value: 100, maximum: 100, percentage: 100}
 };
 
-const NO_EQUIPMENT: PlayerEquipmentResponse = {slots: [{kind: 'Oxygen tank'}], wornCount: 0, slotCount: 1};
+const NO_EQUIPMENT: PlayerEquipmentResponse = {slots: [{kind: 'Oxygen tank', icon: 'oxygen-tank'}], wornCount: 0, slotCount: 1};
 
 const EMPTY_INVENTORY: PlayerInventoryResponse = {items: [], itemCount: 0, slotCount: 12, kindCount: 0, freeSlotCount: 12};
 
@@ -46,7 +46,11 @@ describe('PlayersPagePresenter', () => {
         health: {value: 72.67363739013672, maximum: 100, percentage: 72.67363739013672},
         thirst: {value: 450, maximum: 100, percentage: 100}
       },
-      equipment: {slots: [{kind: 'Oxygen tank', worldObjectName: 'OxygenTank3'}, {kind: 'Backpack'}], wornCount: 1, slotCount: 2},
+      equipment: {
+        slots: [{kind: 'Oxygen tank', icon: 'oxygen-tank', worldObjectName: 'OxygenTank3'}, {kind: 'Backpack', icon: 'backpack'}],
+        wornCount: 1,
+        slotCount: 2
+      },
       inventory: {
         items: [{worldObjectName: 'MagnetarQuartz', count: 2}, {worldObjectName: 'Backpack4', count: 1}],
         itemCount: 3,
@@ -75,8 +79,8 @@ describe('PlayersPagePresenter', () => {
           equipment: {
             caption: 'Equipment · 1 of 2 slots',
             slots: [
-              {kindLabel: 'Oxygen tank', itemLabel: 'Oxygen tank T3', isEmpty: false},
-              {kindLabel: 'Backpack', itemLabel: 'Empty', isEmpty: true}
+              {icon: 'oxygen-tank', kindLabel: 'Oxygen tank', itemLabel: 'Oxygen tank T3', isEmpty: false},
+              {icon: 'backpack', kindLabel: 'Backpack', itemLabel: 'Empty', isEmpty: true}
             ]
           },
           inventory: {
@@ -94,7 +98,7 @@ describe('PlayersPagePresenter', () => {
           ],
           equipment: {
             caption: 'Equipment · 0 of 1 slots',
-            slots: [{kindLabel: 'Oxygen tank', itemLabel: 'Empty', isEmpty: true}]
+            slots: [{icon: 'oxygen-tank', kindLabel: 'Oxygen tank', itemLabel: 'Empty', isEmpty: true}]
           },
           inventory: {
             caption: 'Inventory · 0 of 12 slots, 0 kinds',
@@ -111,7 +115,7 @@ describe('PlayersPagePresenter', () => {
       // Arrange
       const presenter = new PlayersPagePresenter();
       const player = createPlayerCard({
-        equipment: {slots: [{kind: 'Backpack', worldObjectName: 'Backpack99'}], wornCount: 1, slotCount: 1},
+        equipment: {slots: [{kind: 'Backpack', icon: 'backpack', worldObjectName: 'Backpack99'}], wornCount: 1, slotCount: 1},
         inventory: {items: [{worldObjectName: 'Phytoplankton99', count: 1}], itemCount: 1, slotCount: 12, kindCount: 1, freeSlotCount: 11}
       });
 
@@ -135,6 +139,18 @@ describe('PlayersPagePresenter', () => {
 
       // Assert
       expect(presenter.viewModel.players[0]?.equipment.slots[0]?.kindLabel).toBe('Other');
+    });
+
+    it('should show the generic equipment icon in its slot', () => {
+      // Arrange
+      const presenter = new PlayersPagePresenter();
+      const player = createPlayerCard({equipment: {slots: [{worldObjectName: 'OxygenTank3'}], wornCount: 1, slotCount: 1}});
+
+      // Act
+      presenter.displayPlayersPage({players: [player], worldObjectLabels: WORLD_OBJECT_LABELS});
+
+      // Assert
+      expect(presenter.viewModel.players[0]?.equipment.slots[0]?.icon).toBe('generic-equipment');
     });
   });
 

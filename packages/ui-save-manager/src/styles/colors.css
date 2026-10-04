@@ -42,6 +42,11 @@
     --positive-on-surface: #146c35;
     --danger-on-surface: #b91c1c;
 
+    /* ÉQUIPEMENT */
+    --equipment-accent-orange: #c2410c;
+    --equipment-accent-blue: #0369a1;
+    --equipment-accent-yellow: #a16207;
+
     /* SÉRIES */
     --series-production: #0891b2;
     --series-consumption: #d9007d;
@@ -104,6 +109,10 @@
         --danger-surface: #3a1515;
         --positive-on-surface: #4ade80;
         --danger-on-surface: #f87171;
+
+        --equipment-accent-orange: #fb923c;
+        --equipment-accent-blue: #7dd3fc;
+        --equipment-accent-yellow: #facc15;
 
         --series-production: #06a6c4;
         --series-consumption: #d9007d;

@@ -1,5 +1,6 @@
 import {For} from 'solid-js';
 import {PlayerEquipmentViewModel} from 'core-mapping/display/presentation/viewModels/PlayersPageViewModel';
+import EquipmentKindIcon from '~/components/players/EquipmentKindIcon';
 
 interface EquipmentSlotsProps {
   equipment: PlayerEquipmentViewModel;
@@ -14,8 +15,11 @@ export default function EquipmentSlots(props: EquipmentSlotsProps) {
         <For each={props.equipment.slots}>
           {(slot) => (
             <div class={slot.isEmpty ? 'slot empty' : 'slot'}>
-              <small class="slot-kind">{slot.kindLabel}</small>
-              <div>{slot.itemLabel}</div>
+              <EquipmentKindIcon icon={slot.icon}/>
+              <div class="slot-text">
+                <small class="slot-kind">{slot.kindLabel}</small>
+                <span class="slot-item">{slot.itemLabel}</span>
+              </div>
             </div>
           )}
         </For>

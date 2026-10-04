@@ -2,13 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "equipmentKinds.schema.json",
   "title": "Equipment kinds",
-  "description": "Equipment kind of each world object a player can wear, the kinds in the order the player card shows their slots.",
+  "description": "Equipment kind of each world object a player can wear, the kinds in the order the player card shows their slots, each kind naming the icon of its slot.",
   "type": "array",
   "items": {
     "type": "object",
     "required": [
       "worldObjectName",
-      "kind"
+      "kind",
+      "icon"
     ],
     "additionalProperties": false,
     "properties": {
@@ -19,6 +20,10 @@
       "kind": {
         "type": "string",
         "minLength": 1
+      },
+      "icon": {
+        "type": "string",
+        "pattern": "^[a-z]+(-[a-z]+)*$"
       }
     }
   }

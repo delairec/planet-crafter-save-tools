@@ -28,6 +28,8 @@ import {
   resolvePlayersPageUnknownItemLabel
 } from "./messages/playersPageMessages.js";
 
+const GENERIC_EQUIPMENT_ICON = 'generic-equipment';
+
 export class PlayersPagePresenter implements PlayersPagePresenterPort {
   private _viewModel: PlayersPageViewModel = {players: []};
 
@@ -75,7 +77,8 @@ function createGauge(kind: PlayerGaugeKindViewModel, label: string, {value, maxi
 function createEquipment({slots, wornCount, slotCount}: PlayerEquipmentResponse, worldObjectLabels: WorldObjectLabelsResponse): PlayerEquipmentViewModel {
   return {
     caption: resolvePlayersPageEquipmentCaption(wornCount, slotCount),
-    slots: slots.map(({kind, worldObjectName}) => ({
+    slots: slots.map(({kind, icon, worldObjectName}) => ({
+      icon: icon ?? GENERIC_EQUIPMENT_ICON,
       kindLabel: kind ?? playersPageOtherKindLabel,
       itemLabel: worldObjectName === undefined ? playersPageEmptySlotLabel : labelWorldObject(worldObjectName, worldObjectLabels),
       isEmpty: worldObjectName === undefined

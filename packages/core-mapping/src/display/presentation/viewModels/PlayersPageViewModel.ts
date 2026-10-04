@@ -11,6 +11,7 @@ export interface PlayerGaugeViewModel {
 }
 
 export interface EquipmentSlotViewModel {
+  icon: string;
   kindLabel: string;
   itemLabel: string;
   isEmpty: boolean;

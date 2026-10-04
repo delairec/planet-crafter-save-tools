@@ -14,6 +14,7 @@ export interface PlayerGaugesResponse {
 
 export interface EquipmentSlotResponse {
   readonly kind?: string;
+  readonly icon?: string;
   readonly worldObjectName?: string;
 }
 
