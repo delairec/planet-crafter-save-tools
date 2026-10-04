@@ -97,7 +97,7 @@
 }
 
 .slots {
-    --slot-min-width: 12rem;
+    --slot-min-width: 9rem;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(var(--slot-min-width), 1fr));
     gap: var(--space-sm);
@@ -106,7 +106,7 @@
 .slot {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    gap: var(--space-sm);
     border: var(--border-width-thin) solid var(--subtle);
     padding: var(--space-sm);
 }
@@ -127,9 +127,8 @@
 }
 
 .slot-item {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
 .slot-tile {
