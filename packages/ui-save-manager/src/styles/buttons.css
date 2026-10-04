@@ -43,11 +43,6 @@ button[aria-disabled='true'] {
     cursor: not-allowed;
 }
 
-button:focus-visible {
-    outline: none;
-    box-shadow: var(--shadow-medium) var(--neon-pink), var(--shadow-thick) var(--neon-pink);
-}
-
 .tooltip-anchor {
     position: relative;
     display: inline-flex;
@@ -88,6 +83,18 @@ button:focus-visible {
     visibility: visible;
 }
 
+@media (max-width: 768px) {
+    .tooltip-anchor .tooltip {
+        position: fixed;
+        top: auto;
+        right: var(--space-lg);
+        bottom: var(--space-lg);
+        left: var(--space-lg);
+        width: auto;
+        max-width: none;
+    }
+}
+
 .button-link {
     text-decoration: none;
 }
@@ -99,11 +106,6 @@ button:focus-visible {
 .button-link:hover {
     background-color: var(--button-primary-bg-hover);
     cursor: pointer;
-}
-
-.button-link:focus-visible {
-    outline: none;
-    box-shadow: var(--shadow-medium) var(--neon-pink), var(--shadow-thick) var(--neon-pink);
 }
 
 .button-link-neon-pink,

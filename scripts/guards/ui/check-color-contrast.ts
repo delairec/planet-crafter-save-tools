@@ -647,6 +647,62 @@ export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
     foreground: 'neon-purple',
     background: 'elevated'
   },
+  {
+    description: 'the focus outline of the control the keyboard reaches, on the page background',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: ':focus-visible',
+    foreground: 'neon-pink',
+    background: 'canvas'
+  },
+  {
+    description: 'the focus outline of the control the keyboard reaches, on a card',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: ':focus-visible',
+    foreground: 'neon-pink',
+    background: 'surface'
+  },
+  {
+    description: 'the focus outline of the control the keyboard reaches, in the menu',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: ':focus-visible',
+    foreground: 'neon-pink',
+    background: 'surface-card'
+  },
+  {
+    description: 'the empty part of a gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-empty',
+    foreground: 'subtle',
+    background: 'surface'
+  },
+  {
+    description: 'the filled part of the oxygen gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-oxygen .player-gauge-filled',
+    foreground: 'neon-cyan',
+    background: 'surface'
+  },
+  {
+    description: 'the filled part of the health gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-health .player-gauge-filled',
+    foreground: 'success',
+    background: 'surface'
+  },
+  {
+    description: 'the filled part of the thirst gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-thirst .player-gauge-filled',
+    foreground: 'information',
+    background: 'surface'
+  },
+  {
+    description: 'the outline of a gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-outline',
+    foreground: 'content',
+    background: 'surface'
+  },
   ...SHARE_FILLS.flatMap(({fill, token}) => [
     {
       description: `a ${fill} segment of the share chart of the Power page, on its track`,

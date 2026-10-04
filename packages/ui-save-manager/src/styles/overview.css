@@ -79,9 +79,11 @@
     justify-content: flex-end;
 }
 
-.overview-planet-actions .tooltip {
-    left: auto;
-    right: 0;
+@media (min-width: 769px) {
+    .overview-planet-actions .tooltip {
+        left: auto;
+        right: 0;
+    }
 }
 
 .overview-planet-stage {

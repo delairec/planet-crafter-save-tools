@@ -21,9 +21,7 @@ select:hover {
 input:focus,
 textarea:focus,
 select:focus {
-    outline: none;
     border-color: var(--neon-pink);
-    box-shadow: var(--shadow-medium) var(--neon-pink);
 }
 
 .drop-zone {

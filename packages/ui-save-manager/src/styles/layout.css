@@ -40,13 +40,13 @@
     --radius-xs: var(--space-xs);
     --radius-sm: var(--space-sm);
 
+    /** Focus **/
+    --focus-ring-width: var(--border-width-medium);
+    --focus-ring-offset: var(--space-xxs);
+
     /** Shadows **/
-    --ring-width-medium: 2px;
-    --ring-width-thick: 4px;
     --glow-radius: 1rem;
     --text-shadow-offset: 1px;
-    --shadow-medium: 0 0 0 var(--ring-width-medium);
-    --shadow-thick: 0 0 0 var(--ring-width-thick);
     --shadow-glow: 0 0 var(--glow-radius) 0;
     --text-shadow-thin: calc(-1 * var(--text-shadow-offset)) var(--text-shadow-offset);
 }
@@ -62,6 +62,11 @@ body {
     background: var(--canvas);
     color: var(--content);
     line-height: var(--line-height-md);
+}
+
+:focus-visible {
+    outline: var(--focus-ring-width) solid var(--neon-pink);
+    outline-offset: var(--focus-ring-offset);
 }
 
 details.surface summary {

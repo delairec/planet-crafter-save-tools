@@ -215,12 +215,6 @@
     background-color: var(--elevated);
 }
 
-.power-chart-track:focus-visible {
-    outline: var(--border-medium);
-    outline-color: var(--neon-pink);
-    outline-offset: var(--space-xxs);
-}
-
 .power-chart-fill {
     display: block;
     height: 100%;
@@ -341,12 +335,6 @@
 .power-share-anchor:last-child .power-share-segment {
     border-top-right-radius: var(--radius-xs);
     border-bottom-right-radius: var(--radius-xs);
-}
-
-.power-share-segment:focus-visible {
-    outline: var(--border-medium);
-    outline-color: var(--neon-pink);
-    outline-offset: var(--space-xxs);
 }
 
 .power-share-written-share {
