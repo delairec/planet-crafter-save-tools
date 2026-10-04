@@ -945,24 +945,41 @@ TASK FEAT142
 
 TASK FEAT143
 	TITLE "Give each planet a page with a Power tab and a Terraformation tab"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27"
 	SPEC "each planet card of the Overview page gains a Details button that opens the page of that"
 		+ "planet, the request carrying the planet identifier the card holds, stable for a planet"
 		+ "without a name; the breadcrumb reads Save, Overview, then the planet name, Overview"
 		+ "leading back"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::-details`}"
+		IMPL "packages/ui-save-manager/e2e/display-planet.e2e.ts::should open on a breadcrumb"
+			+ "naming the Save group, the Overview and the planet"
+		IMPL "packages/ui-save-manager/e2e/display-planet.e2e.ts::should lead back to the Overview"
+		IMPL "packages/ui-save-manager/e2e/display-planet.e2e.ts::should name the planet after its"
+			+ "numeric identifier"
 	SPEC "the planet page carries two tabs, Power first and Terraformation second, opening on"
 		+ "Power; the Power tab shows the notifications, the figures, the optimizers, the chart and"
 		+ "the tables the Power page shows for that planet, the Terraformation tab the hero figures"
 		+ "and the tables the Terraformation page shows for it"
+		IMPL "packages/ui-save-manager/e2e/display-planet.e2e.ts::should offer the Power tab then"
+			+ "the Terraformation tab, opening on Power"
+		IMPL "packages/ui-save-manager/e2e/display-planet.e2e.ts::should show on the Power tab the"
+			+ "notifications and the power"
+		IMPL "packages/ui-save-manager/e2e/display-planet.e2e.ts::should show the hero figures and"
+			+ "the tables"
 	SPEC "the planet page reads one view model composed of its own instance of the power zone and"
 		+ "of the terraformation zone of that planet, built by one presenter through the"
 		+ "presentation helpers of the Power and Terraformation pages, from one use case that takes"
 		+ "the planet"
+		IMPL "packages/core-mapping/src/display/presentation/PlanetPagePresenter.ts::createPlanetPowerZone(energyLevels"
+		IMPL "packages/core-mapping/src/display/presentation/PlanetPagePresenter.ts::createPlanetTerraformationZone(terraformation)"
+		IMPL "packages/core-mapping/src/display/application/LoadPlanetPage.spec.ts::should present"
+			+ "the power and the terraformation of the planet the request names"
 	AFTER @TASK.FEAT183
 	AFTER @TASK.FEAT184
 	AFTER @TASK.FEAT141
 	WAVE @WAVE.15
+	DELIVERED_BY 280
 	RATIONALE "Proposal C opened the detail of a planet in a side drawer over the comparison; the"
 		+ "owner kept the detail and made it a page of its own, reached from the overview card. Its"
 		+ "view model composes the two planet zones already built for the Power and Terraformation"
