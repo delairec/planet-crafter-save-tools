@@ -4767,7 +4767,7 @@ DECISION AValidationListTitleNamesTheValidation
 
 DECISION TheSaveManagerIsHeldAtAScreen360PixelsWide
 	SPEC "every page of the save manager fits a screen 360 pixels wide without a horizontal scroll"
-		+ "of the page, a wide table scrolling inside its own card"
+		+ "of the page"
 		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::test.use({viewport: {width: 360,"
 			+ "height: 800}});"
 		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit the screen without"
@@ -4777,9 +4777,22 @@ DECISION TheSaveManagerIsHeldAtAScreen360PixelsWide
 		+ "project"
 		IMPL "packages/ui-save-manager/playwright.config.ts::{name: 'webkit', use:"
 			+ "{...devices['Desktop Safari']}}"
+	SPEC "at 768 pixels wide and below, the menu folds behind a Menu button, the rows of a table"
+		+ "become cards and the equipment of a player card is folded when the Players page opens"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::should show the save identity and a"
+			+ "Menu button in place of the pages of the menu"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::should show each row of its tables"
+			+ "as a card inside the screen, its figures one under the other"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::should show the inventory of each"
+			+ "player first, the equipment folded"
 	REJECTED "a device descriptor project, devices['Pixel 7'] or devices['iPhone 13'] with isMobile"
 		+ "and hasTouch: one more project lengthens the continuous integration run, and isMobile"
 		+ "does not exist under Firefox"
+	REJECTED "480 pixels as the width below which the menu folds and the tables turn to cards: the"
+		+ "shell already drops its side menu to one column at 768 pixels, and a table already"
+		+ "overflows its card well above 480"
+	REJECTED "the equipment unfolded when the Players page opens: the card shows the inventory"
+		+ "first, and a folded equipment makes it the shortest card on a phone"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT146
 	RATIONALE "360 pixels is the smallest common Android screen; a page that fits it fits the 375"
@@ -4788,18 +4801,31 @@ DECISION TheSaveManagerIsHeldAtAScreen360PixelsWide
 		+ "narrowest width the page holds without a horizontal scroll, and « test.use viewport"
 		+ "(Recommandé) », the file fixing {width: 360, height: 800} on the three existing engines"
 		PR 285
+	SOURCE "Owner review of 2026-10-04 on PR 285: « le menu devrait être complètement revu pour le"
+		+ "mobile. On fout un bouton rose MENU et seule la save identity reste visible [...]"
+		+ "Lorsqu'il y a des tableaux, il faut qu'on ait une vue adaptée qui affiche les rows comme"
+		+ "des sortes de cartes. Pour les inventaires des joueurs [...] un moyen de cacher/déplier"
+		+ "l'équipement »; rulings « 768 px et moins (Recommandé) » and « Replié par défaut"
+		+ "(Recommandé) »"
+		PR 285
 
 DECISION AtPhoneWidthATooltipIsFixedAlongTheBottomOfTheScreen
 	SPEC "at 768 pixels wide and below, a tooltip is fixed along the bottom of the screen inside"
-		+ "the side gutter, so that a hidden tooltip never widens the page and a shown one stays on"
-		+ "the screen"
+		+ "the side gutter, under the mouse as under the touch, so that a hidden tooltip never"
+		+ "widens the page and a shown one stays on the screen"
 		IMPL "packages/ui-save-manager/src/styles/buttons.css::position: fixed;"
 		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit its figures and"
 			+ "its bars by machine to the screen without a horizontal scroll"
 		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit the merge form and"
 			+ "the merged save to the screen without a horizontal scroll"
+	SPEC "a shown tooltip is painted above every other element of the page, the Details button of a"
+		+ "later planet card included"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::should show its tooltip above the"
+			+ "Details button of the next planet card"
 	REJECTED "hiding a tooltip with display: none instead of visibility: hidden: the shown tooltip"
 		+ "of a mark anchored right of the left edge still runs past the screen"
+	REJECTED "a tooltip next to its element when the pointer hovers, under @media (hover: hover):"
+		+ "the owner keeps one place along the bottom of a narrow screen whatever the pointer"
 	REJECTED "an absolute tooltip with a narrower max-width: a stylesheet cannot know how far its"
 		+ "anchor sits from the right edge of the screen"
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
@@ -4809,6 +4835,11 @@ DECISION AtPhoneWidthATooltipIsFixedAlongTheBottomOfTheScreen
 		+ "screen scroll sideways"
 	SOURCE "Ruled while delivering FEAT146, on the phone-width scenarios that measured the page"
 		+ "widened by the hidden tooltips"
+		PR 285
+	SOURCE "Owner review of 2026-10-04 on PR 285: « le tooltip s'affiche toujours en bas, mais du"
+		+ "coup le bouton détail d'une autre carte peut passer au dessus (z-index) [...] Au survol"
+		+ "à la souris l'infobulle est en bas de l'écran comme au touch »; ruling « En bas, c'est"
+		+ "bien »"
 		PR 285
 
 DECISION EveryControlTheKeyboardReachesDrawsOneSolidOutline
