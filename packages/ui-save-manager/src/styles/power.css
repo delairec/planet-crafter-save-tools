@@ -113,15 +113,17 @@
 .power-table th,
 .power-table td {
     padding: var(--space-xxs) var(--space-sm);
-    border-bottom: 1px solid var(--border-color-inverted);
+    border-bottom: var(--border-thin);
     text-align: left;
 }
 
 .power-table thead th {
+    --column-heading-tracking: 0.03em;
+
     color: var(--muted);
     font-size: var(--text-xs);
     font-weight: var(--semibold);
-    letter-spacing: 0.03em;
+    letter-spacing: var(--column-heading-tracking);
     text-transform: uppercase;
     white-space: nowrap;
 }
@@ -136,7 +138,7 @@
 }
 
 .power-table tfoot > tr > * {
-    border-top: 2px solid var(--border-color-inverted);
+    border-top: var(--border-medium);
     border-bottom: 0;
     font-weight: var(--semibold);
 }
@@ -174,7 +176,11 @@
 }
 
 .power-chart-panels {
-    --panel-min-width: 22rem;
+    --label-max-width: 12rem;
+    --track-min-width: 4rem;
+    --value-room: 5rem;
+    --bar-column-gap: var(--space-sm);
+    --panel-min-width: calc(var(--label-max-width) + var(--track-min-width) + var(--value-room) + 2 * var(--bar-column-gap));
 
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--panel-min-width)), 1fr));
@@ -206,12 +212,10 @@
 }
 
 .power-chart-rows {
-    --track-min-width: 4rem;
-
     display: grid;
     grid-template-columns: minmax(0, max-content) minmax(var(--track-min-width), 1fr) max-content;
     align-items: center;
-    gap: var(--space-xs) var(--space-sm);
+    gap: var(--space-xs) var(--bar-column-gap);
     font-variant-numeric: tabular-nums;
 }
 
@@ -220,7 +224,7 @@
 }
 
 .power-chart-label {
-    max-width: 12rem;
+    max-width: var(--label-max-width);
     overflow-wrap: anywhere;
 }
 
@@ -239,8 +243,9 @@
 }
 
 .power-chart-track:focus-visible {
-    outline: 2px solid var(--neon-pink);
-    outline-offset: 2px;
+    outline: var(--border-medium);
+    outline-color: var(--neon-pink);
+    outline-offset: var(--space-xxs);
 }
 
 .power-chart-fill {
