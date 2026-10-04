@@ -946,17 +946,28 @@ TASK FEAT142
 TASK FEAT143
 	TITLE "Show a disabled Details button on each planet card, the planet page announced for a"
 		+ "later version"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27, narrowed by the"
 		+ "owner on 2026-10-04"
 	SPEC "each planet card of the Overview page shows a Details button, disabled, that opens no"
 		+ "page"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::aria-disabled=\"true\""
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should offer on each planet"
+			+ "card a Details button, disabled"
 	SPEC "a tooltip describes the Details button, shown on hover and while the button holds the"
 		+ "keyboard focus, saying that the page of the planet comes in a later version"
+		IMPL "packages/ui-save-manager/src/messages/overviewPageMessages.js::overviewPlanetDetailsButtonDescription"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should say in a tooltip over"
+			+ "the Details button that the page of the planet comes in a later version"
+		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::should describe the"
+			+ "Details button of a planet card by its tooltip"
+		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::should show the tooltip"
+			+ "of the Details button while the button holds the keyboard focus"
 	AFTER @TASK.FEAT183
 	AFTER @TASK.FEAT184
 	AFTER @TASK.FEAT141
 	WAVE @WAVE.15
+	DELIVERED_BY 280
 	RATIONALE "The planet page first specified here, a Power tab and a Terraformation tab composed"
 		+ "of the zones the Power and Terraformation pages show for that planet, repeated those"
 		+ "pages; the owner withdrew it and kept the button, which marks on the card where the"

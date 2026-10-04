@@ -1,7 +1,8 @@
-import {Show} from 'solid-js';
+import {createUniqueId, Show} from 'solid-js';
 import {OverviewPlanetCardViewModel} from 'core-mapping/display/presentation/viewModels/OverviewPageViewModel';
 import OverviewPlanetTerraformation from '~/components/overview/OverviewPlanetTerraformation';
 import OverviewPlanetPower from '~/components/overview/OverviewPlanetPower';
+import {overviewPlanetDetailsButtonDescription, overviewPlanetDetailsButtonLabel} from '~/messages/overviewPageMessages';
 
 interface OverviewPlanetAbsentSideProps {
   absentSide: string | undefined;
@@ -13,6 +14,24 @@ function OverviewPlanetAbsentSide(props: OverviewPlanetAbsentSideProps) {
     <Show when={props.absentSide}>
       {(absentSide) => <p class="overview-planet-absent-side" data-testid={`${props.testId}-absent-side`}>{absentSide()}</p>}
     </Show>
+  );
+}
+
+interface OverviewPlanetDetailsButtonProps {
+  testId: string;
+}
+
+function OverviewPlanetDetailsButton(props: OverviewPlanetDetailsButtonProps) {
+  const tooltipId = createUniqueId();
+  return (
+    <span class="tooltip-anchor">
+      <button type="button" aria-disabled="true" aria-describedby={tooltipId} data-testid={`${props.testId}-details`}>
+        {overviewPlanetDetailsButtonLabel}
+      </button>
+      <span id={tooltipId} role="tooltip" class="tooltip" data-testid={`${props.testId}-details-description`}>
+        {overviewPlanetDetailsButtonDescription}
+      </span>
+    </span>
   );
 }
 
@@ -34,6 +53,7 @@ export default function OverviewPlanetCard(props: OverviewPlanetCardProps) {
             </p>
           )}
         </Show>
+        <OverviewPlanetDetailsButton testId={props.testId}/>
       </header>
       <Show when={props.card.terraformation} fallback={<OverviewPlanetAbsentSide absentSide={props.card.absentSide} testId={props.testId}/>}>
         {(terraformation) => <OverviewPlanetTerraformation terraformation={terraformation()} testId={props.testId}/>}
