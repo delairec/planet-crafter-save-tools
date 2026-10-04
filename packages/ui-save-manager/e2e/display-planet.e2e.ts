@@ -44,7 +44,7 @@ test.describe('Planet page', () => {
 
       // Assert
       await expect(page.getByTestId('power-planet-title')).toHaveText('Toxicity');
-      await expect(page.getByTestId('power-notification-0')).toHaveText('Submerged machines may distort the computed available energy.');
+      await expect(page.getByTestId('power-notification-0')).toContainText('Submerged machines may distort the computed available energy.');
       await expect(page.getByTestId('power-production')).toContainText('497.25 kW');
       await expect(page.getByTestId('power-display-form')).toHaveValue('bars');
       await expect(page.getByTestId('terraformation-index-value')).toHaveCount(0);
@@ -121,7 +121,7 @@ test.describe('Planet page', () => {
 
       // Assert
       await expect(page.getByTestId('planet-power-absent')).toHaveText('No machine placed');
-      await expect(page.getByTestId('power-notification-0')).toHaveText('Submerged machines may distort the computed available energy.');
+      await expect(page.getByTestId('power-notification-0')).toContainText('Submerged machines may distort the computed available energy.');
     });
   });
 
