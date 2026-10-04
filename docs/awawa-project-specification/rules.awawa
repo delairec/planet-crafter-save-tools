@@ -815,8 +815,10 @@ RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
 RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
 	HOLDS_FOR all
 	DOMAIN game
-	SPEC "the SysTi of a save is the product of the Terraformation Index of its planets, a planet"
-		+ "whose index is zero left out"
+	SPEC "the SysTi of a save folds the Terraformation Index of its planets in save order: while"
+		+ "the value folded so far is below 2.220446049250313E-16 it takes the index of the next"
+		+ "planet, otherwise it is multiplied by that index, or by 1 when the index is below 1; a"
+		+ "planet whose index is zero leaves it unchanged"
 		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.spec.ts"
 	SPEC "the game writes the SysTi with one short-scale prefix per power of 1,000, k, M, B, T, Qa,"
 		+ "Qi, Sx, Sp, Oc, No, Dc, Ud and on up to Qitg, the unit SysTi glued to the prefix"
