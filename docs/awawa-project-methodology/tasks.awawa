@@ -2885,3 +2885,48 @@ TASK REFACTOR194
 		+ "Terraformation page pull request, widened to every presentation folder of core-mapping"
 		+ "on the refinement of the task"
 		PR 275
+
+TASK FEAT195
+	TITLE "Draw an original icon for each equipment kind and show it in the equipment slots of the"
+		+ "player card"
+	STATUS todo
+	SPEC "each kind of the EquipmentKinds table names its icon in a column of the table, the tiers"
+		+ "of a kind sharing it; the icon reaches the slot through the view model of the player"
+		+ "card, never through a second table of the kinds in the interface"
+		REF @DATATABLE.EquipmentKinds
+	SPEC "each equipment slot of the player card shows the icon of its kind, hidden from screen"
+		+ "readers; an empty slot shows the icon of its kind drawn in dotted lines"
+		REF @DECISION.AnEquipmentSlotIsAKindOfTheEquipmentKindsTable
+		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
+	SPEC "a worn item the table names no kind for shows a generic equipment icon"
+	SPEC "the icons take the colour of the text, in the light theme and in the dark theme"
+	SPEC "every icon shipped is an original drawing, simplified, versioned in the public"
+		+ "repository: no file of the game, nothing extracted from it and no image of the wiki is"
+		+ "committed, shipped or loaded"
+	SPEC "a decision records the ruling and the options refused, so that none is proposed again"
+		+ "once the task is deleted with its wave"
+	SPEC "the inventory items keep no icon"
+	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+	AFTER @TASK.FEAT185
+	WAVE @WAVE.15
+	RATIONALE "The owner wanted the game's icons in the equipment slots; they are assets of Miju"
+		+ "Games that the public repository cannot carry, so the owner ruled that original"
+		+ "simplified icons are drawn, for the equipment only, the game's icons being looked at as"
+		+ "a reference only, never traced, converted or extracted. Refused: extracting the game's"
+		+ "icons from the player's own install at run time, by a cli- command reading"
+		+ "resources.assets; hot-linking the images of the wiki; asking Miju Games for"
+		+ "redistribution rights, not pursued; one icon per tier, the tier being read in the label"
+		+ "of the item already. The icon is named by the table because a ui- package imports no"
+		+ "data- package and the kinds have one home, the table; a map of the interface keyed by"
+		+ "the title of a kind would break when a title changes"
+		REF @PROCESS.TheGameFilesAreReadByDecompilingTheirAssemblyInAScratchDirectory
+		REF @PACKAGE.data_world_objects
+		REF @PACKAGE.ui_save_manager
+		REF @DECISION.AnEquipmentSlotIsAKindOfTheEquipmentKindsTable
+		REF @DECISION.AnInterfaceReachesTheSaveFormatThroughACoreOnly
+	SOURCE "Owner ruling of 2026-10-04, once told that the game's icons are Miju Games assets that"
+		+ "cannot enter the public repository: icons are created for the equipment only, drawn from"
+		+ "the real assets by simplifying them"
+	SOURCE "Refinement with the owner, 2026-10-04: one icon per kind, named by a column of the"
+		+ "table, an empty slot drawing its icon in dotted lines, a decision written by the"
+		+ "delivering pull request"
