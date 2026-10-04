@@ -910,3 +910,33 @@ RULE APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
 		PR 276
 	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07"
 		PR 39
+
+RULE APlanetIsAtTheLatestOfItsStagesStartedAtOrBelowItsTerraformationIndex
+	HOLDS_FOR all
+	DOMAIN game
+	SPEC "the terraformation stage of a planet is, among the stages its planet lists, the one with"
+		+ "the highest start not above its Terraformation Index; Prime and Humble list the same"
+		+ "stages, every other planet stages of its own"
+		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/findReachedTerraformationStage.spec.ts"
+	APPLIES_TO_SECTION @SECTION.TerraformationLevels
+	VALUES_FROM @DATATABLE.TerraformationStages
+	RATIONALE "No save stores a stage: the game derives it from the Terraformation Index of the"
+		+ "planet, which the save stores as its terraformation levels, and from the stages the"
+		+ "planet lists, which are game data"
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, read on"
+		+ "2026-10-04: TerraformStagesHandler takes for current stage, among the stages of the"
+		+ "planet, the one with the highest start value not above the value of the Terraformation"
+		+ "world unit"
+		REF @GAME_RELEASE.2.103
+		PR 274
+	SOURCE "Game data file resources.assets of release 2.103, Steam build 25296421, read on"
+		+ "2026-10-04: one TerraformStage object per stage, its id, the Terraformation unit and its"
+		+ "start value, in sets prefixed Aqualis, Selenea, Skeo and Toxicity and one unprefixed"
+		+ "set; the English name of each stage under the text key TERRASTAGE_ and its id"
+		REF @GAME_RELEASE.2.103
+		PR 274
+	SOURCE "Wiki page Terraformation Stages: Prime and Humble share one list of stages, the"
+		+ "unprefixed set of the game data; it gives Herds on Skeo a start of 0 Ti, where the game"
+		+ "data gives 2.5 TTi"
+		REF @URL.WikiTerraformationStages
+		PR 274

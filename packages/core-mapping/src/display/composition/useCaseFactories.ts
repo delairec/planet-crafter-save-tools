@@ -3,6 +3,7 @@ import {SaveSectionsReaderService} from "../infrastructure/SaveSectionsReaderSer
 import {EnergyLevelsReaderService} from "../infrastructure/EnergyLevelsReaderService";
 import {OptimizerRangesReaderService} from "../infrastructure/OptimizerRangesReaderService";
 import {PlanetNamesReaderService} from "../infrastructure/PlanetNamesReaderService";
+import {TerraformationStagesReaderService} from "../infrastructure/TerraformationStagesReaderService";
 import {WorldObjectLabelsReaderService} from "../infrastructure/WorldObjectLabelsReaderService";
 import {GameReleasesReaderService} from "../../save/infrastructure/GameReleasesReaderService";
 import {SaveSectionsReaderPort} from "../application/ports/SaveSectionsReaderPort";
@@ -101,7 +102,8 @@ function createLoadOverviewPageUseCase(presenter: OverviewPagePresenter): LoadOv
     gameReleasesReader: new GameReleasesReaderService(),
     energyLevelsReader: new EnergyLevelsReaderService(),
     optimizerRangesReader: new OptimizerRangesReaderService(),
-    planetNamesReader: new PlanetNamesReaderService()
+    planetNamesReader: new PlanetNamesReaderService(),
+    terraformationStagesReader: new TerraformationStagesReaderService()
   }, presenter);
 }
 

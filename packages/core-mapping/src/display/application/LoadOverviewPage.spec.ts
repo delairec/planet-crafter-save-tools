@@ -7,6 +7,7 @@ import {WORLD_OBJECTS_SECTION} from "../../save/testing/saveSectionLocations";
 import {stubEnergyLevelsReader} from "../testing/stubEnergyLevelsReader";
 import {stubOptimizerRangesReader} from "../testing/stubOptimizerRangesReader";
 import {PRIME_PLANET_NUMERIC_ID, stubPlanetNamesReader} from "../testing/stubPlanetNamesReader";
+import {stubTerraformationStagesReader} from "../testing/stubTerraformationStagesReader";
 import {createGlobalProgressionValueObject} from "../domain/valueObjects/GlobalProgressionValueObject";
 import {
   createPlanetWorldObjectsValueObject,
@@ -97,7 +98,8 @@ function createUseCase(presenter: OverviewPagePresenterPort, saveSectionsReader:
     gameReleasesReader: stubGameReleasesReader(),
     energyLevelsReader: stubEnergyLevelsReader(),
     optimizerRangesReader: stubOptimizerRangesReader(),
-    planetNamesReader: stubPlanetNamesReader()
+    planetNamesReader: stubPlanetNamesReader(),
+    terraformationStagesReader: stubTerraformationStagesReader()
   }, presenter);
 }
 
@@ -230,6 +232,7 @@ describe('LoadOverviewPage', () => {
             terraformationIndex: 7_500,
             biomass: 1_500
           },
+          terraformationStage: 'Barren',
           energy: {numericPlanetId: PRIME_PLANET_NUMERIC_ID, production: 1_485, consumption: 187.75, available: 1_297.25}
         }]
       }));
@@ -259,7 +262,8 @@ describe('LoadOverviewPage', () => {
             unitPurificationLevel: undefined,
             terraformationIndex: 7_500,
             biomass: 1_500
-          }
+          },
+          terraformationStage: 'Barren'
         }]
       }));
     });
@@ -290,6 +294,7 @@ describe('LoadOverviewPage', () => {
               terraformationIndex: 7_500,
               biomass: 1_500
             },
+            terraformationStage: 'Barren',
             energy: {numericPlanetId: PRIME_PLANET_NUMERIC_ID, production: 1_485, consumption: 187.75, available: 1_297.25}
           },
           {

@@ -7,6 +7,7 @@ import {OverviewPagePresenterPort} from "./ports/OverviewPagePresenterPort";
 import {EnergyLevelsReaderPort} from "./ports/EnergyLevelsReaderPort";
 import {OptimizerRangesReaderPort} from "./ports/OptimizerRangesReaderPort";
 import {PlanetNamesReaderPort} from "./ports/PlanetNamesReaderPort";
+import {TerraformationStagesReaderPort} from "./ports/TerraformationStagesReaderPort";
 import {LoadOverviewPageRequest} from "./requests/LoadOverviewPageRequest";
 import {
   OverviewPlanetEnergyResponse,
@@ -25,8 +26,10 @@ import {resolvePowerConsumptionModifier} from "../domain/rules/resolvePowerConsu
 import {isPowerConsumptionModified} from "../domain/rules/isPowerConsumptionModified";
 import {namePlanet} from "../domain/rules/namePlanet";
 import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
+import {findReachedTerraformationStage} from "../domain/rules/findReachedTerraformationStage";
 import {PlanetEnergyLevelsValueObject} from "../domain/valueObjects/PlanetEnergyLevelsValueObject";
 import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelEntity";
+import {TerraformationStageValueObject} from "../domain/valueObjects/TerraformationStageValueObject";
 
 export interface LoadOverviewPageReaders {
   readonly saveSectionsReader: SaveSectionsReaderPort;
@@ -34,6 +37,7 @@ export interface LoadOverviewPageReaders {
   readonly energyLevelsReader: EnergyLevelsReaderPort;
   readonly optimizerRangesReader: OptimizerRangesReaderPort;
   readonly planetNamesReader: PlanetNamesReaderPort;
+  readonly terraformationStagesReader: TerraformationStagesReaderPort;
 }
 
 export class LoadOverviewPage implements UseCase<LoadOverviewPageRequest> {
@@ -42,9 +46,10 @@ export class LoadOverviewPage implements UseCase<LoadOverviewPageRequest> {
   private readonly energyLevelsReader: EnergyLevelsReaderPort;
   private readonly optimizerRangesReader: OptimizerRangesReaderPort;
   private readonly planetNamesReader: PlanetNamesReaderPort;
+  private readonly terraformationStagesReader: TerraformationStagesReaderPort;
 
   constructor(
-    {saveSectionsReader, gameReleasesReader, energyLevelsReader, optimizerRangesReader, planetNamesReader}: LoadOverviewPageReaders,
+    {saveSectionsReader, gameReleasesReader, energyLevelsReader, optimizerRangesReader, planetNamesReader, terraformationStagesReader}: LoadOverviewPageReaders,
     private readonly presenter: OverviewPagePresenterPort
   ) {
     this.saveSectionsReader = saveSectionsReader;
@@ -52,6 +57,7 @@ export class LoadOverviewPage implements UseCase<LoadOverviewPageRequest> {
     this.energyLevelsReader = energyLevelsReader;
     this.optimizerRangesReader = optimizerRangesReader;
     this.planetNamesReader = planetNamesReader;
+    this.terraformationStagesReader = terraformationStagesReader;
   }
 
   async execute({content, fileName, fileSize}: LoadOverviewPageRequest): Promise<void> {
@@ -75,13 +81,14 @@ export class LoadOverviewPage implements UseCase<LoadOverviewPageRequest> {
       .map((planet) => new PlanetEnergyGrid({planet, allWorldObjects, inventories, energyLevels, optimizerRanges, powerConsumptionModifier}).levels());
 
     const systemTerraformationIndex = computeSystemTerraformationIndex(terraformationLevels);
+    const terraformationStages = this.terraformationStagesReader.readTerraformationStages();
 
     this.presenter.displayOverviewPage({
       saveFile: {name: fileName, size: fileSize},
       saveConfiguration: describeSaveConfiguration(saveSections, gameReleases),
       progression: describeProgression(saveSections),
       ...(systemTerraformationIndex && {systemTerraformationIndex: {index: systemTerraformationIndex.index, planetCount: systemTerraformationIndex.planetCount}}),
-      planets: describePlanets(terraformationLevels, planetsEnergyLevels),
+      planets: describePlanets(terraformationLevels, planetsEnergyLevels, terraformationStages),
       energySettings: {
         gameRelease: energyLevels.release,
         gameReleaseIsEarlierThanCurrent: precedesCurrentGameRelease(energyLevels.release, gameReleases),
@@ -106,13 +113,16 @@ function describeSaveConfiguration(saveSections: SaveSectionsMapperPort, gameRel
 
 function describePlanets(
   terraformationLevels: readonly TerraformationLevelEntity[],
-  planetsEnergyLevels: readonly PlanetEnergyLevelsValueObject[]
+  planetsEnergyLevels: readonly PlanetEnergyLevelsValueObject[],
+  terraformationStages: readonly TerraformationStageValueObject[]
 ): OverviewPlanetResponse[] {
   const terraformedPlanets = terraformationLevels.map((level): OverviewPlanetResponse => {
     const planetEnergyLevels = planetsEnergyLevels.find((planet) => planet.planetName === level.planetId);
+    const terraformationStage = findReachedTerraformationStage(level, terraformationStages);
     return {
       planetName: level.planetId,
       terraformation: describeTerraformationLevel(level),
+      ...(terraformationStage && {terraformationStage: terraformationStage.stageName}),
       ...(planetEnergyLevels && {energy: describePlanetEnergy(planetEnergyLevels)})
     };
   });

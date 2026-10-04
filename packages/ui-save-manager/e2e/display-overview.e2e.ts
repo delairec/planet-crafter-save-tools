@@ -129,6 +129,15 @@ test.describe('Overview page', () => {
       await expect(page.getByTestId(/^overview-planet-0-figure-\d+-value$/)).toHaveText(['100 ppq', '200 pK', '300 nPa', '700 Pu', '1.5 kg']);
     });
 
+    test('should name the terraformation stage the planet has reached in a badge beside its name', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, energyConsumptionSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-0-terraformation-stage')).toHaveText('Toxic wasteland');
+      await expect(page.getByTestId('overview-planet-0-terraformation-stage-label')).toHaveText('Terraformation stage');
+    });
+
     test('should show the SysTi of the save in a tile captioned with the count of planets it multiplies', async ({page}) => {
       // Act
       await visualizeTheSave(page, energyConsumptionSaveFixturePath);

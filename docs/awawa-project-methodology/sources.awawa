@@ -237,3 +237,7 @@ URL WikiEquipment
 URL WikiTerraformationIndex
 	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&page=Terraformation_Index&prop=wikitext&format=json"
 	DESC "fandom wiki page Terraformation Index, read on 2026-10-03"
+
+URL WikiTerraformationStages
+	LOCATION "https://planet-crafter.fandom.com/api.php?action=parse&page=Terraformation_Stages&prop=wikitext&format=json"
+	DESC "fandom wiki page Terraformation Stages, revision 19224, read on 2026-10-04"

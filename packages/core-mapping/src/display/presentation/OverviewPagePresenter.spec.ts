@@ -257,6 +257,19 @@ describe('OverviewPagePresenter', () => {
     });
   });
 
+  describe('When a planet has reached a terraformation stage', () => {
+    it('should name the stage on the card of the planet', () => {
+      // Arrange
+      const presenter = new OverviewPagePresenter();
+
+      // Act
+      presenter.displayOverviewPage({...OVERVIEW_WITHOUT_PLANETS, planets: [{...TOXICITY_PLANET_WITHOUT_MACHINES, terraformationStage: 'Toxic wasteland'}]});
+
+      // Assert
+      expect<OverviewPlanetCardViewModel['terraformationStage']>(presenter.viewModel.planets.cards[0]?.terraformationStage).toEqual({label: 'Terraformation stage', value: 'Toxic wasteland'});
+    });
+  });
+
   describe('When a planet has terraformation levels but no machine placed', () => {
     it('should show its terraformation figures and say that no machine is placed', () => {
       // Arrange

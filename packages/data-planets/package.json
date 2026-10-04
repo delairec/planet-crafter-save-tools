@@ -1,8 +1,8 @@
 {
   "name": "data-planets",
   "version": "1.0.0",
-  "description": "Planet value tables: the planet names by numeric identifier",
-  "changelogLine": "Planet names updated",
+  "description": "Planet value tables: the planet names by numeric identifier and the terraformation stages of each planet",
+  "changelogLine": "Planet values updated",
   "type": "module",
   "exports": {
     "./*": "./*.ts"

@@ -36,6 +36,7 @@ import {
   overviewPagePlanetsTitle,
   overviewPageSystemTerraformationIndexLabel,
   overviewPageSystemTerraformationIndexUnit,
+  overviewPageTerraformationStageLabel,
   overviewPageTerraTokenUnit,
   overviewPageTotalCraftedObjectsLabel,
   resolveOverviewPageGameReleaseLabel,
@@ -129,8 +130,11 @@ function createPlanets(planets: readonly OverviewPlanetResponse[]): OverviewPlan
   };
 }
 
-function createPlanetCard({planetName, terraformation, energy}: OverviewPlanetResponse, fullBarKilowatts: number): OverviewPlanetCardViewModel {
+function createPlanetCard({planetName, terraformation, terraformationStage, energy}: OverviewPlanetResponse, fullBarKilowatts: number): OverviewPlanetCardViewModel {
   const card: OverviewPlanetCardViewModel = {name: planetName ?? resolveEnergyLevelsSectionUnnamedPlanetName(energy?.numericPlanetId)};
+  if (terraformationStage) {
+    card.terraformationStage = {label: overviewPageTerraformationStageLabel, value: terraformationStage};
+  }
   if (terraformation) {
     card.terraformation = createTerraformation(terraformation);
   } else {

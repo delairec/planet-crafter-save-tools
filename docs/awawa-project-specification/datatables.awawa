@@ -56,3 +56,10 @@ DATATABLE EquipmentKinds
 	JSON_SCHEMA "packages/data-world-objects/equipmentKinds.schema.json"
 	DESC "the equipment kind of each world object a player can wear, the kinds in the order of the"
 		+ "slots of the player card"
+
+DATATABLE TerraformationStages
+	TABLE "packages/data-planets/terraformationStages.json"
+	KEY terraformStage
+	JSON_SCHEMA "packages/data-planets/terraformationStages.schema.json"
+	DESC "each terraformation stage of the game: the planets that list it, the Terraformation Index"
+		+ "it starts at and the English name the game gives it"

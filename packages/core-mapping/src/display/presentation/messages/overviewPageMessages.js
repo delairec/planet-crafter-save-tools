@@ -8,6 +8,7 @@ export const overviewPageIdentityHintSeparator = ' · ';
 export const overviewPagePlanetsTitle = 'Planets';
 export const overviewPageNoMachinePlaced = 'No machine placed';
 export const overviewPageNoTerraformationLevelRecorded = 'No terraformation level recorded';
+export const overviewPageTerraformationStageLabel = 'Terraformation stage';
 
 /** @param {string} gameRelease */
 export const resolveOverviewPageGameReleaseLabel = (gameRelease) => `Game release ${gameRelease}`;
