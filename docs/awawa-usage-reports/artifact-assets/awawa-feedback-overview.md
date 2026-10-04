@@ -1,19 +1,19 @@
-*Feedback for the awawa dev team · awawa 2.7.0 · 2026-09-29*
+*Feedback for the awawa dev team · awawa 2.7.0 · 2026-10-03*
 
 # awawa feedback: the overview
 
 One project — a seven-package monorepo worked daily by AI agents — moved its specification into an awawa corpus and
-reported what it met, eight times in two and a half weeks. This page gathers the eight reports into one list: **one proposed
+reported what it met, nine times in three weeks. This page gathers the nine reports into one list: **one proposed
 remediation per row, and facing it every defect or gap it would close**, whatever report raised it. Only what is
 yours to handle is kept — the binary, the schema language, the manual, the skills and the distribution. What was
 ours — our method, our starter, our conduct — stays in the reports.
 
-- **8** — reports, 2026-09-12 to 2026-09-28, all on awawa 2.7.0
-- **85** — defects or gaps raised about the tool, 7 of them with nothing asked
-- **56** — remediations once the repetitions are merged
-- **18** — remediations raised by two reports or more
+- **9** — reports, 2026-09-12 to 2026-10-03, all on awawa 2.7.0
+- **91** — defects or gaps raised about the tool, 8 of them with nothing asked
+- **59** — remediations once the repetitions are merged
+- **19** — remediations raised by two reports or more
 
-## The eight reports
+## The nine reports
 
 | Code | Report | Date | What it measured |
 |---|---|---|---|
@@ -25,10 +25,11 @@ ours — our method, our starter, our conduct — stays in the reports.
 | CTX | Context savings example | 2026-09-22 | what one session loaded into the agent's context by reading the corpus and its instructions, in lines of output, and the levers that would lower it |
 | M4 | Migration 4 | 2026-09-25 | the second walk of the starter, on its version 2: a corpus built from scratch for 23 files of agent instructions, 478 statements replaced by 237 entities |
 | PR | Pull requests #113 to #219 | 2026-09-28 | a week of delivery on the corpus: 106 pull requests measured in aggregate, eleven of them collected in full — 140 transcripts, 2,891 `awawa` calls |
+| AG | Agent roles report | 2026-10-03 | a type added to the corpus of agent instructions so that one `context` call prints what each of seven agent roles starts with: 14 entities added, and as its baseline a week of 346 transcripts and 7,905 `awawa` calls |
 
 A reference reads « report · number »: `F·02` is defect 02 of the field report, `M3·5` defect 5 of section 5 of
 Migration 3. Migration 1, the context report and Migration 4 number nothing; `M1·6` is the sixth row of the « What went wrong »
-table of Migration 1, `CTX·1` the first row of the « Additional levers » table of the context report, `M4·11` the eleventh row of the defect table of Migration 4, `PR·1` the first row of the tool's « What went wrong » table of the pull-request report.
+table of Migration 1, `CTX·1` the first row of the « Additional levers » table of the context report, `M4·11` the eleventh row of the defect table of Migration 4, `PR·1` the first row of the tool's « What went wrong » table of the pull-request report, `AG·1` the first row of the « What the tool cost » table of the agent roles report.
 
 ## Where to start
 
@@ -53,7 +54,7 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R2 | The incoming footer splits its count by gating — `BLOCKED_BY (root, 0 live, 4 archived)` | `F·01` closed referrers are counted with the live ones, 10 / 11 · `M2·21` a todo task reads as blocked by a question already ruled | F, M2 |
 | R3 | `context` prints the `STATUS` and the archive date of a suppressed target, or expands it on request | `M3·4` an active entity citing an archived one gets `// suppressed: @X` and loses its body, with no reason and no date | M3 |
 | R4 | `context` opens on a one-line summary: edges in, edges out, anchors | `F·14` a package of twelve lines for a disconnected entity looks like any other; a whole area stayed disconnected for days | F |
-| R5 | The `skipped` and `not expanded` footers print counts, never a name the body already printed; the enumeration moves to `--json` | `M3·13` three `skipped` lines are 20.7 % of the largest package of the corpus, 3 559 of 17 154 characters · `M4·18` at `--depth 1` the `not expanded` footer names again the 155 rules and 5 packages the body printed, 22 518 bytes for the entry package · `M4·19` `--skip` on a reference field saves 24 % of the package, its footer still naming the 160 skipped targets | M3, M4 |
+| R5 | The `skipped` and `not expanded` footers print counts, never a name the body already printed; the enumeration moves to `--json` | `M3·13` three `skipped` lines are 20.7 % of the largest package of the corpus, 3 559 of 17 154 characters · `M4·18` at `--depth 1` the `not expanded` footer names again the 155 rules and 5 packages the body printed, 22 518 bytes for the entry package · `M4·19` `--skip` on a reference field saves 24 % of the package, its footer still naming the 160 skipped targets · `AG·2` the footer is 7 128 of the 23 445 characters of the entry package of a 265-entity corpus, 30 %, and 7 to 14 % of a role package | M3, M4, AG |
 | R6 | `--where` reads nested fields, fields declared only in a `WHEN` block, and `DEFAULT` values | `M2·2` a default cannot be selected on · `M2·9` a nested field is « not a field of » its type · `M2·19` a `WHEN`-only field is unknown until one entity writes it · `M2·17` an edge defaulted by `DEFAULT @X` is invisible to `refs`, `status` and `--where` · `M4·11` `--where STATUS==active` selects 0 of 16 rules whose `STATUS` is the default, while `WHEN STATUS active` fires on them · `PR·1` no `--where STATUS==<default>` matches the 299 of 375 entities at their default | M2, M4, PR |
 | R7 | `status` counts a defaulted `STATUS` under its default | `M2·2` `status` prints `(none)` for an entity that omits a defaulted `STATUS` · `M3·12` the `active` column is 0 on every row, 256 of 275 entities under `(none)` · `M4·11` `status .` prints `active 0` and `(none) 10` · `PR·1` 299 of 375 entities under `(none)`, 137 of them decisions, met again in the sixth report running | M2, M3, M4, PR |
 | R8 | `--where` matches a substring and the identity — `FIELD~=text`, `NAME~=text` | `F·11` equality alone cannot query a free-text field · `M1·8` four grammars of `SOURCE` in two days, none selectable · `M2·13` no listing by name prefix · `PR·4` no command searches field text: 62 of 214 corpus reads outside the tool were `grep` or `git grep` for a text | M1, F, M2, PR |
@@ -67,6 +68,8 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R51 | `show` takes `--skip CATEGORY`, as `context` does | `CTX·1` a task read by `show` carries its `RATIONALE` and `SOURCE`: about 60 lines where only its `SPEC` lines were used | CTX |
 | R56 | `lint --closure` takes `--skip CATEGORY`, as `context` does | `PR·3` the closure footer carries the provenance hub: 111 to 132 names for four tasks, and it scales with the hub, not the task | PR |
 | R57 | `status --where FIELD==VALUE` without a type selects across the types that declare the field | `PR·5` `status --where STATUS==archived .` exits 2: a cleanup lists one type at a time | PR |
+| R58 | `context` cuts its output on request, at entity boundaries — `--max-chars N --part K`, « part k of n » on the first line | `AG·1` a package cannot be bounded: the entry is 23 445 characters and a role package up to 57 682 where one hook of the harness may add 10 000, so a script stands between the tool and the hook; of the 316 `context` calls a week ran alone, 122 returned more than that | AG |
+| R59 | A depth per field — `--depth ASSUMES=2,OFFERS=1` — or a `--skip` limited to what a named field reaches | `AG·3` one `--depth` for every edge: a package cannot expand the rules of the triggers a role assumes and only name those it is offered, and that edge was left out of the type | AG |
 
 ## Writing a corpus
 
@@ -79,7 +82,8 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | R20 | `fmt` writes entities in a canonical order — by name, or by a declared sort key | `M2·22` two pull requests appending to the same file conflict at rebase, one conflict per pair | M2 |
 | R21 | `diff --git <rev> [PATH]` reads the old side from the repository | `F·09` entity-level diff needs a copy made before editing; a session that forgets loses it, 2 / 11 | F |
 | R22 | Declared extra paths are scanned for `@TYPE.Name` mentions: `refs` lists them, `lint` reports an unresolved one, `fmt --rename` rewrites them | `M3·10` at the deletion of a document `lint` saw 6 of 45 citation sites; 51 identity mentions in code and README that a rename leaves stale in silence | M3 |
-| R55 | `fmt` takes `--width N` or `--no-wrap` | `PR·2` strings wrapped at about 95 columns: 24 to 322 of the corpus lines each sampled pull request added are continuations, 44 % on one of them | PR |
+| R55 | `fmt` takes `--width N` or `--no-wrap` | `PR·2` strings wrapped at about 95 columns: 24 to 322 of the corpus lines each sampled pull request added are continuations, 44 % on one of them · `AG·4` ten fields replaced in place by scripts that rebuilt the continuation lines to match the old text | PR, AG |
+| R60 | A command writes one field — `set @TYPE.Name FIELD "text"` — and formats the entity it touches | `AG·4` no command writes a field, and the instructions forbid an agent to read a corpus file: each of ten in-place edits needed a script that found the entity by its header line | AG |
 
 ## The schema language
 
@@ -112,7 +116,7 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 
 | # | Remediation | Defects and gaps it closes | Raised in |
 |---|---|---|---|
-| R38 | The workspace root is told apart from the selection — a root marker or a `--root` flag; at the least, a hint when every anchor misses on the same prefix | `M1·2` `awawa status docs` reports 148 `L016` on a clean corpus · `M3·9` `lint docs` reports 512; no command can be scoped to one area of a two-area workspace, and a probe must copy the repository | M1, M3 |
+| R38 | The workspace root is told apart from the selection — a root marker or a `--root` flag; at the least, a hint when every anchor misses on the same prefix | `M1·2` `awawa status docs` reports 148 `L016` on a clean corpus · `M3·9` `lint docs` reports 512; no command can be scoped to one area of a two-area workspace, and a probe must copy the repository · `AG·5` `show FILE` resolves the file against the working directory, not the root it is given: « is not in the workspace » from any other directory | M1, M3, AG |
 | R39 | The walk warns, once, about a skipped dot-prefixed directory that holds `.awawa` files | `M1·9` a `.awawa` directory is invisible, with no diagnostic | M1 |
 
 ## Diagnostics and help
@@ -147,17 +151,18 @@ Ranked by how many reports raised the gap and by the cost they measured, not by 
 | `M2·11` `--where` compares text | no cost once the corpus lints |
 | `M2·15` a `WHEN` on a reference field is accepted and inert | not reproduced on 2026-09-18: on 2.7.0 `WHEN VIA @SECTION.Main` raises `L006` on the entity that writes that reference, and on the one that omits the field when its `DEFAULT` is that reference. R32, which asked for it, is withdrawn, and its number stays vacant |
 | `M2·18` `status` sorts names as text | no cost with a project prefix |
+| `AG·6` an entity that does not exist exits 1, a name the grammar refuses exits 2 | no cost: a caller mapping a foreign identifier to an entity treats both as « no such entity » |
 
 ## What holds
 
 Every report lists what worked on the same footing as what did not: 8 mechanisms in Migration 1, 18 in the field
-report, 25 in Migration 2, 6 in the IDE report, 24 in Migration 3, 8 in the pull-request report; Migration 4 lists defects only. Three held in all eleven reports of the field
+report, 25 in Migration 2, 6 in the IDE report, 24 in Migration 3, 8 in the pull-request report, 9 in the agent roles report; Migration 4 lists defects only. Three held in all eleven reports of the field
 report: anchor and reference integrity, a required `REJECTED` on a decision, and closure integrity. The remediations
 above are asked of a tool that carried the method through four migrations and 106 pull requests in a week.
 
 ---
 
-*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example, on 2026-09-25 with Migration 4
-and on 2026-09-29 with the pull-request report of 2026-09-28, all written on awawa 2.7.0. One defect was probed again for this
+*Synthesised on 2026-09-18 from the first five reports and extended on 2026-09-22 with the context savings example, on 2026-09-25 with Migration 4,
+on 2026-09-29 with the pull-request report of 2026-09-28 and on 2026-10-03 with the agent roles report of that day, all written on awawa 2.7.0. One defect was probed again for this
 page and withdrawn, `M2·15`; every other figure keeps the perimeter of the report it comes from, and a claim wrong
 at the source is wrong here.*
