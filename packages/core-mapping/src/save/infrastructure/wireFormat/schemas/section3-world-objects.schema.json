@@ -77,10 +77,6 @@
       "type": "string",
       "description": "CSV ids of the sub-inventories internal to the object"
     },
-    "woIds": {
-      "type": "string",
-      "description": "→ WorldObject.id — CSV ids of the world objects the object holds, remapped by the merge (@RULE.DuplicateIdentifiersAreRemappedOnTheSaveBSide). Not observed in the ten reference saves, where an object's contents are reached through its inventory instead."
-    },
     "trtVal": {
       "type": "integer",
       "description": "Numeric contribution to terraformation — stored as an integer by Unity. An object that holds a contribution also names the stage it contributes to."

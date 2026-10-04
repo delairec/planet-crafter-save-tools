@@ -14,7 +14,7 @@ describe('SaveSectionsSerializerService', () => {
       const sections = createSaveSections({
         inventories: [{id: 10, worldObjectIds: [100, 101], size: 20}, {id: 11, worldObjectIds: [], size: 10}],
         worldObjects: [
-          {id: 100, groupId: 'Farm1', subInventoryIds: [10, 11], heldWorldObjectIds: [200]},
+          {id: 100, groupId: 'Farm1', subInventoryIds: [10, 11]},
           {id: 200, groupId: 'Container2', linkedInventoryId: 10}
         ]
       });
@@ -29,7 +29,7 @@ describe('SaveSectionsSerializerService', () => {
         {id: 11, woIds: '', size: 10}
       ]);
       expect([...written[WORLD_OBJECTS_SECTION_INDEX]()]).toEqual([
-        {id: 100, gId: 'Farm1', siIds: '10,11', woIds: '200'},
+        {id: 100, gId: 'Farm1', siIds: '10,11'},
         {id: 200, gId: 'Container2', liId: 10}
       ]);
     });

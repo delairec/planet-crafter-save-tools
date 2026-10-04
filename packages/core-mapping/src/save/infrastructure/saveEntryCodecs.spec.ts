@@ -29,7 +29,7 @@ describe('Save entry codecs', () => {
     it('should name its fields in business terms, its lists as arrays', () => {
       // Arrange
       const record: WorldObject = {
-        id: 100, gId: 'Container2', liId: 10, liGrps: 'Iron,Cobalt', linkedWo: 200, siIds: '10,11', woIds: '200,201',
+        id: 100, gId: 'Container2', liId: 10, liGrps: 'Iron,Cobalt', linkedWo: 200, siIds: '10,11',
         pos: '1751.865,-472.58,1106.104', rot: '0,0.5740051,0,-0.8188518', planet: 1
       };
 
@@ -39,7 +39,7 @@ describe('Save entry codecs', () => {
       // Assert
       expect<WorldObjectEntry>(entry).toEqual({
         id: 100, groupId: 'Container2', linkedInventoryId: 10, logisticGroups: ['Iron', 'Cobalt'], linkedWorldObjectId: 200,
-        subInventoryIds: [10, 11], heldWorldObjectIds: [200, 201],
+        subInventoryIds: [10, 11],
         position: '1751.865,-472.58,1106.104', rotation: '0,0.5740051,0,-0.8188518', planet: 1
       });
     });

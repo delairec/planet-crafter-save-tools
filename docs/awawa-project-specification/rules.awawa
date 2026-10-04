@@ -369,11 +369,11 @@ RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/resolveIdConflicts.spec.ts::should"
 			+ "renumber the save B inventory above that world object"
 	SPEC "every back-reference to a remapped id is rewritten: inventoryId, equipmentId, liId,"
-		+ "siIds, linkedWo and the two woIds lists"
+		+ "siIds, linkedWo and the woIds list of an inventory"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/rewriteReferences.spec.ts::should"
 			+ "point the save B player at the new inventory id"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/rewriteReferences.spec.ts::should"
-			+ "point the contained world object ids of a save B world object at the new id"
+			+ "point its contents at the new world object id"
 	SPEC "only a save B entry carries rewritten references; a save A entry keeps the ids it always"
 		+ "used"
 		ATTESTED_BY "packages/core-mapping/src/merge/domain/rules/rewriteReferences.spec.ts::should"
@@ -384,7 +384,6 @@ RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 	APPLIES_TO_SECTION @SECTION.Players
 	APPLIES_TO_SECTION @SECTION.Inventories
 	APPLIES_TO_SECTION @SECTION.WorldObjects
-	ASSUMES @HYPOTHESIS.AWorldObjectMayCarryALinkedObjectList
 	SOURCE "Extracted from docs/game-rules.md on 2026-09-18 (GR-ID-2, GR-ID-3 and GR-ID-5); GR-ID-4"
 		+ "placed the step in the pipeline and was already @DECISION.AMergeProducesAnOrdinarySave,"
 		+ "so it was deleted"

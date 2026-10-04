@@ -25,6 +25,14 @@ HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 		+ "identifier rule go together, not the schema alone"
 	SOURCE "Found on 2026-09-10, left open in the review of pull request 48, recorded on 2026-09-18"
 		PR 48
+	SOURCE "Refuted by the game assembly Assembly-CSharp.dll of release 2.103, Steam build"
+		+ "25296421, decompiled on 2026-10-04: JsonableWorldObject, the entry the game writes for a"
+		+ "world object, declares no woIds, only liId, siIds and linkedWo, and no load path of the"
+		+ "assembly reads one; the contents of a world object are reached through its linked"
+		+ "inventory"
+		REF @GAME_RELEASE.2.103
+	STATUS archived
+	ARCHIVED_ON 2026-10-04
 
 HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 	DESC "the hunger level of an animal lies between -100 and 100"

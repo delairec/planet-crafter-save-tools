@@ -35,7 +35,7 @@ describe('SaveSectionsParserService', () => {
       const service = new SaveSectionsParserService();
       const content = createFakeSaveString({
         worldObjects: [
-          createWorldObject({id: 100, gId: 'Farm1', siIds: '10,11', woIds: '200'}),
+          createWorldObject({id: 100, gId: 'Farm1', siIds: '10,11'}),
           createWorldObject({id: 200, gId: 'Container2', liId: 10})
         ]
       });
@@ -45,7 +45,7 @@ describe('SaveSectionsParserService', () => {
 
       // Assert
       expect<readonly WorldObjectEntry[]>(sections.worldObjects).toEqual([
-        {id: 100, groupId: 'Farm1', subInventoryIds: [10, 11], heldWorldObjectIds: [200]},
+        {id: 100, groupId: 'Farm1', subInventoryIds: [10, 11]},
         {id: 200, groupId: 'Container2', linkedInventoryId: 10}
       ]);
     });
@@ -197,6 +197,19 @@ describe('SaveSectionsParserService', () => {
 
       // Assert
       expect<UnreadableLine[]>(errors).toEqual([{code: 'undecodable-entry', section: {name: 'inventories', index: 4}, entryIndex: 0, line: '{"id":44,"woIds":"","size":20,"foreignField":3}'}]);
+    });
+
+    it('should report a world object carrying a list of held world objects, which the game never writes', () => {
+      // Arrange
+      const service = new SaveSectionsParserService();
+      const worldObjectWithHeldWorldObjects = {...createWorldObject({id: 100, gId: 'Container2'}), woIds: '200'};
+      const content = createFakeSaveString({worldObjects: [worldObjectWithHeldWorldObjects]});
+
+      // Act
+      const {errors} = service.parse(content);
+
+      // Assert
+      expect<UnreadableLine[]>(errors).toEqual([{code: 'undecodable-entry', section: {name: 'worldObjects', index: 3}, entryIndex: 0, line: '{"id":100,"gId":"Container2","woIds":"200"}'}]);
     });
 
     it('should report an entry whose identifier list is not a text', () => {

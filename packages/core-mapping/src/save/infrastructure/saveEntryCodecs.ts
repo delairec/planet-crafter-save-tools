@@ -136,7 +136,6 @@ export const WORLD_OBJECT_CODEC = defineEntryCodec<WorldObject, WorldObjectEntry
   liGrps: {name: 'logisticGroups', ...groupList},
   linkedWo: {name: 'linkedWorldObjectId'},
   siIds: {name: 'subInventoryIds', ...idList},
-  woIds: {name: 'heldWorldObjectIds', ...idList},
   trtVal: {name: 'terraformationContribution'},
   set: {name: 'equipmentSet'}
 });
