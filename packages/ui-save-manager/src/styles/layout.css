@@ -169,10 +169,6 @@ summary::marker {
     color: var(--information);
 }
 
-.inline-block {
-    display: inline-block;
-}
-
 .visually-hidden {
     --visually-hidden-size: 1px;
 
