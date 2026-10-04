@@ -1,7 +1,12 @@
 import {createUniqueId, For} from 'solid-js';
 import {PowerDisplayForm} from '~/providers/PowerDisplayFormProvider.tsx';
 import {usePowerDisplayForm} from '~/hooks/usePowerDisplayForm';
-import {powerDisplayFormBarsOption, powerDisplayFormLabel, powerDisplayFormTableOption} from '~/messages/powerPageMessages';
+import {
+  powerDisplayFormBarsOption,
+  powerDisplayFormLabel,
+  powerDisplayFormShareOption,
+  powerDisplayFormTableOption
+} from '~/messages/powerPageMessages';
 
 interface PowerDisplayFormOption {
   form: PowerDisplayForm;
@@ -10,6 +15,7 @@ interface PowerDisplayFormOption {
 
 const DISPLAY_FORM_OPTIONS: PowerDisplayFormOption[] = [
   {form: 'bars', label: powerDisplayFormBarsOption},
+  {form: 'share', label: powerDisplayFormShareOption},
   {form: 'table', label: powerDisplayFormTableOption}
 ];
 
