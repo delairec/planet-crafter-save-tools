@@ -2834,35 +2834,40 @@ TASK DOCS193
 		PR 276
 
 TASK REFACTOR194
-	TITLE "Keep the presenters alone at the root of the display presentation, its mappers in a"
-		+ "folder"
-	STATUS draft
-	SPEC "the root of packages/core-mapping/src/display/presentation/ holds the presenters alone,"
-		+ "with their specs, beside the folders of view models and of messages"
-	SPEC "every other module of that presentation, a mapper (a create factory, a format formatter,"
-		+ "a sum computation, the formatters/ folder), sits under presentation/mappers/"
-	SPEC "a mapper is imported from presentation/ only, by a presenter or by another mapper: never"
-		+ "by a use case, a controller or any other module outside presentation/"
+	TITLE "Keep the presenters alone at the root of every presentation folder of core-mapping,"
+		+ "their mappers in a folder"
+	STATUS todo
+	SPEC "the root of each presentation/ folder of packages/core-mapping/src holds the presenters"
+		+ "alone, with their specs, beside the folders of view models, of messages and of mappers"
+	SPEC "every other module of those folders, a mapper (a create factory, a format formatter, a"
+		+ "sum computation, the formatters/ folder of display), sits under the mappers/ folder of"
+		+ "its presentation, with its spec"
+	SPEC "a mapper is imported only by a presenter, by another mapper or by the spec of either:"
+		+ "never by a view model, a messages file, a use case, a controller or any other module"
 	SPEC "a guard of the repository, run by bun run guards, fails on a module other than a"
-		+ "presenter at the root of the display presentation and on an import of a mapper from"
-		+ "outside presentation/"
+		+ "presenter at the root of a presentation folder of a core- package and on an import of a"
+		+ "mapper by a module that is neither a presenter nor a mapper nor the spec of either"
 	AFTER @TASK.FEAT140
 	AFTER @TASK.FEAT141
+	AFTER @TASK.FEAT184
 	WAVE @WAVE.15
 	PRIORITY low
-	RATIONALE "The root of display/presentation mixes the presenters with the factories, formatters"
-		+ "and sums they build their view models with, and nothing in a path tells a presenter from"
-		+ "the mappers it calls. The owner ruled the layout a general rule of the instructions,"
-		+ "presentation_root_holds_presenters_only, in force since delairec/.ai#70 merged, rather"
-		+ "than recorded here, and this task brings display in line with it. A use case already"
-		+ "reaches no mapper, as check:layers holds the application to the application and the"
-		+ "domain; a controller may, and the guard closes that, extending check:layers or"
-		+ "check:presentation. The move waits for the Power chart and Terraformation pull requests,"
-		+ "both of which add mappers at the root, the first createPowerChart, sumOptimizerBoost and"
-		+ "sumProductionRatios"
+	RATIONALE "Three presentation folders of core-mapping mix presenters and mappers: display sets"
+		+ "its presenters beside the factories, formatters and sums they build their view models"
+		+ "with, save holds seven formatters and no presenter, merge keeps formatMergeWarning"
+		+ "beside its presenter; validation alone holds presenters only. Nothing in a path tells a"
+		+ "presenter from the mappers it calls. The owner ruled the layout a general rule of the"
+		+ "instructions, presentation_root_holds_presenters_only, in force since delairec/.ai#70"
+		+ "merged, rather than recorded here, and this task brings the whole of core-mapping in"
+		+ "line with it. A presenter importing a mapper of another business, as those of merge,"
+		+ "validation and display do with the formatters of save, stays allowed: the importer is a"
+		+ "presenter. A use case already reaches no mapper, as check:layers holds the application"
+		+ "to the application and the domain; a controller may, and the guard closes that,"
+		+ "extending check:layers or check:presentation. The move follows the share chart pull"
+		+ "request, which added formatShare at the root of display and changed createPowerChart and"
+		+ "createPlanetPowerZone"
 		REF @DECISION.AViewModelServesOneView
-	REJECTED "moving the mappers in the Terraformation page pull request: it would move the files"
-		+ "the open Power chart pull request changes"
 	SOURCE "Owner ruling of 2026-10-04 on the review of the presentation layer of the"
-		+ "Terraformation page pull request"
+		+ "Terraformation page pull request, widened to every presentation folder of core-mapping"
+		+ "on the refinement of the task"
 		PR 275
