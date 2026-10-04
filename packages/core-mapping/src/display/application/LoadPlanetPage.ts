@@ -16,11 +16,10 @@ import {
   OptimizerResponse,
   PlanetEnergyLevelsResponse
 } from "./responses/EnergyLevelsResponse";
-import {PlanetEnergyGrid} from "../domain/PlanetEnergyGrid";
 import {selectEnergyLevelsOfDeclaredVersion} from "../domain/energyLevelsByWorldObjectName";
 import {resolvePowerConsumptionModifier} from "../domain/rules/resolvePowerConsumptionModifier";
 import {isPowerConsumptionModified} from "../domain/rules/isPowerConsumptionModified";
-import {namePlanet} from "../domain/rules/namePlanet";
+import {measureEnergyOfEachPlanet} from "../domain/rules/measureEnergyOfEachPlanet";
 import {identifyPlanet} from "../domain/rules/identifyPlanet";
 import {precedesCurrentGameRelease} from "../domain/rules/precedesCurrentGameRelease";
 import {assessPowerBalance} from "../domain/rules/assessPowerBalance";
@@ -79,11 +78,16 @@ export class LoadPlanetPage implements UseCase<LoadPlanetPageRequest> {
     const energyLevels = selectEnergyLevelsOfDeclaredVersion(saveSections.getDeclaredVersion(), this.energyLevelsReader.readEnergyLevelTables(), gameReleases);
     const optimizerRanges = this.optimizerRangesReader.readOptimizerRanges();
     const terraformationLevels = saveSections.getTerraformationLevels();
-    const knownPlanetNames = [...new Set(terraformationLevels.map((level) => level.planetId))];
-    const energyPlanets = saveSections.getPlacedWorldObjectsByPlanet()
-      .map((planet) => namePlanet(planet, this.planetNamesReader.findPlanetNameOfNumericId(planet.planetId), knownPlanetNames))
-      .map((planet) => new PlanetEnergyGrid({planet, allWorldObjects, inventories, energyLevels, optimizerRanges, powerConsumptionModifier}).levels());
-    const systemTerraformationIndex = computeSystemTerraformationIndex(terraformationLevels);
+    const energyPlanets = measureEnergyOfEachPlanet({
+      planets: saveSections.getPlacedWorldObjectsByPlanet(),
+      terraformationLevels,
+      findPlanetNameOfNumericId: (numericId) => this.planetNamesReader.findPlanetNameOfNumericId(numericId),
+      allWorldObjects,
+      inventories,
+      energyLevels,
+      optimizerRanges,
+      powerConsumptionModifier
+    });
 
     const terraformationLevel = terraformationLevels.find((level) => level.planetId === planetIdentifier);
     const energyPlanet = energyPlanets.find((planet) => identifyPlanet(planet) === planetIdentifier);
@@ -100,7 +104,7 @@ export class LoadPlanetPage implements UseCase<LoadPlanetPageRequest> {
       powerConsumptionIsModified: isPowerConsumptionModified(powerConsumptionModifier),
       ...describePlanetName(terraformationLevel, energyPlanet),
       ...describeEnergyPlanet(energyPlanet, optimizerRanges),
-      ...describeTerraformedPlanet(terraformationLevel, systemTerraformationIndex),
+      ...describeTerraformedPlanet(terraformationLevel, computeSystemTerraformationIndex(terraformationLevels)),
       worldObjectLabels: this.worldObjectLabelsReader.readWorldObjectLabels()
     });
   }
