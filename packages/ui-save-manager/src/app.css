@@ -13,6 +13,8 @@
 @import "styles/overview.css";
 @import "styles/players.css";
 @import "styles/power.css";
+@import "styles/planetTabs.css";
+@import "styles/terraformation.css";
 
 .app {
     height: var(--app-height);

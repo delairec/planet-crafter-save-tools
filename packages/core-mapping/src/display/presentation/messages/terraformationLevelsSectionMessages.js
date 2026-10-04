@@ -1,4 +1,3 @@
-export const terraformationLevelsSectionDefaultPlanetName = 'Planet';
 export const terraformationLevelsSectionOxygenLabel = 'O²';
 export const terraformationLevelsSectionHeatLabel = 'Heat';
 export const terraformationLevelsSectionPressureLabel = 'Pressure';

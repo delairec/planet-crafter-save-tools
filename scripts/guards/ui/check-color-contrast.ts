@@ -209,20 +209,6 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'surface'
   },
   {
-    description: 'a read-only field label on the panel surface it is nested in',
-    file: 'packages/ui-save-manager/src/styles/forms.css',
-    selector: '.fields-group .label',
-    foreground: 'primary',
-    background: 'surface'
-  },
-  {
-    description: 'a terraformation index or biomass value, nested inside a grid tile',
-    file: 'packages/ui-save-manager/src/styles/forms.css',
-    selector: '.fields-group-main-value span',
-    foreground: 'neon-purple',
-    background: 'elevated'
-  },
-  {
     description: 'the text-selection highlight, on the accent fill',
     file: 'packages/ui-save-manager/src/styles/effects.css',
     selector: '::selection',
@@ -440,16 +426,16 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'surface'
   },
   {
-    description: 'the name of a planet tab of the Power page, on the tab',
-    file: 'packages/ui-save-manager/src/styles/power.css',
-    selector: '.power-planet-tab',
+    description: 'the name of a planet tab of a page with planet tabs, on the tab',
+    file: 'packages/ui-save-manager/src/styles/planetTabs.css',
+    selector: '.planet-tab',
     foreground: 'content',
     background: 'surface'
   },
   {
-    description: 'the name of the selected planet tab of the Power page, on its neon purple fill',
-    file: 'packages/ui-save-manager/src/styles/power.css',
-    selector: '.power-planet-tab[aria-selected="true"]',
+    description: 'the name of the selected planet tab of a page with planet tabs, on its neon purple fill',
+    file: 'packages/ui-save-manager/src/styles/planetTabs.css',
+    selector: '.planet-tab[aria-selected="true"]',
     foreground: 'inverted',
     background: 'neon-purple'
   },
@@ -487,6 +473,27 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.power-chart-summary, .power-chart-tick',
     foreground: 'muted',
     background: 'canvas'
+  },
+  {
+    description: 'the caption under a hero figure of the Terraformation page, on its card',
+    file: 'packages/ui-save-manager/src/styles/terraformation.css',
+    selector: '.terraformation-hero-caption',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the title of a table card of the Terraformation page, on the neon-cyan pill of its header',
+    file: 'packages/ui-save-manager/src/styles/terraformation.css',
+    selector: '.terraformation-table-card .card-header h5',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'the label of a row of a table of the Terraformation page, on its card',
+    file: 'packages/ui-save-manager/src/styles/terraformation.css',
+    selector: '.terraformation-level-row dt',
+    foreground: 'muted',
+    background: 'surface'
   }
 ];
 
@@ -569,6 +576,13 @@ export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
     selector: '.power-chart-swatch-foldedTail',
     foreground: 'subtle',
     background: 'canvas'
+  },
+  {
+    description: 'the bar of a row of a table of the Terraformation page, on its track',
+    file: 'packages/ui-save-manager/src/styles/terraformation.css',
+    selector: '.terraformation-level-bar-fill',
+    foreground: 'neon-purple',
+    background: 'elevated'
   }
 ];
 

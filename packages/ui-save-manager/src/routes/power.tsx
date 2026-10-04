@@ -3,6 +3,7 @@ import SavePage from '~/components/shell/SavePage';
 import SectionTitle from '~/components/structure/SectionTitle';
 import SectionState from '~/components/structure/SectionState';
 import Notification from '~/components/structure/Notification';
+import PlanetTabs from '~/components/structure/PlanetTabs';
 import PowerPlanetZone from '~/components/power/PowerPlanetZone';
 import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {powerPageTitle, saveGroupTitle} from '~/messages/shellMessages';
@@ -32,24 +33,14 @@ export default function PowerPage() {
             }
           >
             {(zone) => (<>
-              <div class="power-planet-tabs" role="tablist" aria-label={powerPlanetTabsLabel}>
-                <For each={powerPage().planets}>
-                  {(planet, index) => (
-                    <button
-                      type="button"
-                      role="tab"
-                      class="power-planet-tab"
-                      id={`power-planet-tab-${index()}`}
-                      aria-selected={index() === selectedPlanetIndex()}
-                      aria-controls={POWER_PANEL_ID}
-                      data-testid={`power-planet-tab-${index()}`}
-                      onClick={() => setSelectedPlanetIndex(index())}
-                    >
-                      {planet.planetName}
-                    </button>
-                  )}
-                </For>
-              </div>
+              <PlanetTabs
+                planetNames={powerPage().planets.map((planet) => planet.planetName)}
+                selectedIndex={selectedPlanetIndex()}
+                onSelect={setSelectedPlanetIndex}
+                panelId={POWER_PANEL_ID}
+                testIdPrefix="power-planet-tab-"
+                label={powerPlanetTabsLabel}
+              />
               <div role="tabpanel" id={POWER_PANEL_ID} aria-labelledby={`power-planet-tab-${selectedPlanetIndex()}`}>
                 <PowerPlanetZone zone={zone()} notifications={powerPage().notifications}/>
               </div>

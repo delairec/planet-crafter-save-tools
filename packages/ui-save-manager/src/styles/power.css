@@ -1,26 +1,3 @@
-.power-planet-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-md);
-}
-
-.power-planet-tab {
-    padding: var(--space-xs) var(--space-md);
-    border: 2px solid var(--neon-purple);
-    border-radius: var(--radius-sm);
-    background-color: var(--surface);
-    color: var(--content);
-    font: inherit;
-    cursor: pointer;
-}
-
-.power-planet-tab[aria-selected="true"] {
-    background-color: var(--neon-purple);
-    color: var(--inverted);
-    font-weight: var(--semibold);
-}
-
 .power-planet-zone .notification {
     margin: 0 0 var(--space-sm);
 }

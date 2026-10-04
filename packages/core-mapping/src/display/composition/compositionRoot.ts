@@ -2,8 +2,8 @@ import {LoadConfigurationPageController} from "../controllers/LoadConfigurationP
 import {LoadPowerPageController} from "../controllers/LoadPowerPageController";
 import {LoadPlayersMenuController} from "../controllers/LoadPlayersMenuController";
 import {LoadSaveIdentityController} from "../controllers/LoadSaveIdentityController";
-import {LoadTerraformationLevelsSectionController} from "../controllers/LoadTerraformationLevelsSectionController";
-import {createLoadConfigurationPage, createLoadPowerPage, createLoadPlayersMenu, createLoadSaveIdentity, createLoadTerraformationLevelsSection} from "./useCaseFactories";
+import {LoadTerraformationPageController} from "../controllers/LoadTerraformationPageController";
+import {createLoadConfigurationPage, createLoadPowerPage, createLoadPlayersMenu, createLoadSaveIdentity, createLoadTerraformationPage} from "./useCaseFactories";
 import {LoadOverviewPageController} from "../controllers/LoadOverviewPageController";
 import {createLoadOverviewPage} from "./useCaseFactories";
 import {LoadPlayersPageController} from "../controllers/LoadPlayersPageController";
@@ -13,6 +13,6 @@ export const loadConfigurationPageController = new LoadConfigurationPageControll
 export const loadPowerPageController = new LoadPowerPageController(createLoadPowerPage);
 export const loadPlayersMenuController = new LoadPlayersMenuController(createLoadPlayersMenu);
 export const loadSaveIdentityController = new LoadSaveIdentityController(createLoadSaveIdentity);
-export const loadTerraformationLevelsSectionController = new LoadTerraformationLevelsSectionController(createLoadTerraformationLevelsSection);
+export const loadTerraformationPageController = new LoadTerraformationPageController(createLoadTerraformationPage);
 export const loadOverviewPageController = new LoadOverviewPageController(createLoadOverviewPage);
 export const loadPlayersPageController = new LoadPlayersPageController(createLoadPlayersPage);
