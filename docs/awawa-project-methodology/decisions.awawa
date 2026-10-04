@@ -4479,6 +4479,7 @@ DECISION AnOtherPowerBarFoldsTwoMachineTypesOrMore
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT140
 	SOURCE "Ruling of the FEAT140 agent on 2026-10-04, page F folding from the twelfth row"
+		PR 273
 		REF @URL.SaveManagerRedesignMockup
 
 DECISION TheDisplayFormOfThePowerLivesInAProviderAboveTheRouter
@@ -4501,3 +4502,4 @@ DECISION TheDisplayFormOfThePowerLivesInAProviderAboveTheRouter
 		+ "every page"
 		REF @DECISION.TheMergedSavesLiveInAStoreAboveTheRouter
 	SOURCE "Ruling of the FEAT140 agent on 2026-10-04"
+		PR 273

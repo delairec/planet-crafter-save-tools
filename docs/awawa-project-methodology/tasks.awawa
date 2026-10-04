@@ -744,28 +744,42 @@ TASK FEAT139
 TASK FEAT140
 	TITLE "Chart the production and the consumption of a planet as bars by machine, with a selector"
 		+ "of the form"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27"
 	SPEC "above the breakdown tables, a Display as selector offers Bars by machine and Table; Bars"
 		+ "by machine is the default on every page, and the chosen form stays chosen across planets"
 		+ "and pages"
+		IMPL "packages/ui-save-manager/src/providers/PowerDisplayFormProvider.tsx::createSignal<PowerDisplayForm>('bars')"
+		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::should keep the tables chosen"
 	SPEC "Bars by machine shows production and consumption side by side, one horizontal bar per"
 		+ "machine type, largest first, the eleven largest kept and the rest folded into one Other"
 		+ "bar naming how many types it holds, the value at the end of each bar and ticks under the"
 		+ "bars; the optimizer boost is one bar of its own and never folds into Other"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::should keep"
+			+ "the eleven largest and fold the rest into one Other bar"
 	SPEC "Table shows the two breakdown tables of the page, as the page showed them before the"
 		+ "selector"
+		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<PowerBreakdownTable"
+			+ "table={props.zone.producers}"
 	SPEC "hovering or focusing a bar names the type, its quantity, its unit, its total and its"
 		+ "share"
+		IMPL "packages/ui-save-manager/src/components/power/PowerChartBar.tsx::aria-describedby={tooltipId}"
+		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::once a bar holds the keyboard"
+			+ "focus"
 	SPEC "the bars, their widths, their labels and the folded tail are a chart zone of the planet"
 		+ "view model, in a module of its own, built by the presenter; the page draws them without"
 		+ "a charting dependency"
+		IMPL "packages/core-mapping/src/display/presentation/createPlanetPowerZone.ts::chart:"
+			+ "createPowerChart(planet, worldObjectLabels)"
 	SPEC "production, consumption and the optimizer boost each keep one colour across the forms and"
 		+ "the legend, cyan, pink and purple as page F shows; the purple token joins the pair the"
 		+ "planet cards of the Overview page brought, catalogued by the contrast guard"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-optimizer-boost"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::.power-chart-fill-optimizerBoost"
 		REF @TASK.FEAT183
 	AFTER @TASK.FEAT139
 	WAVE @WAVE.15
+	DELIVERED_BY 273
 	RATIONALE "A histogram of the power was the owner's first wish for the redesign, with a select"
 		+ "to switch between forms. The balance form of the proposals was dropped: hard to fit on a"
 		+ "phone and adding nothing the share form does not show. Folding the tail and naming it"
