@@ -73,6 +73,28 @@ test.describe('Overview page', () => {
       await expect(page.getByTestId(/^overview-planet-\d+-name$/)).toHaveText(['Toxicity', 'Planet 1']);
     });
 
+    test('should offer on each planet card a Details button, disabled', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Assert
+      await expect(page.getByTestId(/^overview-planet-\d+-details$/)).toHaveText(['Details', 'Details']);
+      await expect(page.getByTestId('overview-planet-0-details')).toHaveRole('button');
+      await expect(page.getByTestId('overview-planet-0-details')).toBeDisabled();
+    });
+
+    test('should say in a tooltip over the Details button that the page of the planet comes in a later version', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, baselineSaveFixturePath);
+
+      // Act
+      await page.getByTestId('overview-planet-0-details').hover();
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-0-details-description')).toBeVisible();
+      await expect(page.getByTestId('overview-planet-0-details-description')).toHaveText('The page of the planet comes in a later version.');
+    });
+
     test('should say no machine is placed in place of the power of a planet that places none', async ({page}) => {
       // Act
       await visualizeTheSave(page, baselineSaveFixturePath);

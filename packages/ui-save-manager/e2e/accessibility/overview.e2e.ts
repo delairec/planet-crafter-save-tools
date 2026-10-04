@@ -124,6 +124,26 @@ test.describe('Overview page accessibility', () => {
       await expect(page.getByTestId('overview-identity')).toHaveRole('region');
       await expect(page.getByTestId('overview-identity')).toHaveAccessibleName('Overview');
     });
+
+    test('should describe the Details button of a planet card by its tooltip', async ({page}) => {
+      // Act
+      await visualizeTheSave(page, saveAFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-0-details-description')).toHaveRole('tooltip');
+      await expect(page.getByTestId('overview-planet-0-details')).toHaveAccessibleDescription('The page of the planet comes in a later version.');
+    });
+
+    test('should show the tooltip of the Details button while the button holds the keyboard focus', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, saveAFixturePath);
+
+      // Act
+      await page.getByTestId('overview-planet-0-details').focus();
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-0-details-description')).toBeVisible();
+    });
   });
 
   test.describe('When the warnings of a visualized save are revealed', () => {
