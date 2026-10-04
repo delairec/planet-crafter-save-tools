@@ -26,8 +26,10 @@
 }
 
 .power-tiles {
+    --tile-min-width: 12rem;
+
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--tile-min-width), 1fr));
     gap: var(--space-md);
     margin: var(--space-md) 0;
 }
@@ -140,8 +142,10 @@
 }
 
 .power-breakdown-tables {
+    --table-min-width: 20rem;
+
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--table-min-width), 1fr));
     gap: var(--space-md);
 }
 
@@ -170,8 +174,10 @@
 }
 
 .power-chart-panels {
+    --panel-min-width: 22rem;
+
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--panel-min-width)), 1fr));
     gap: var(--space-lg);
 }
 
@@ -200,8 +206,10 @@
 }
 
 .power-chart-rows {
+    --track-min-width: 4rem;
+
     display: grid;
-    grid-template-columns: minmax(0, max-content) minmax(4rem, 1fr) max-content;
+    grid-template-columns: minmax(0, max-content) minmax(var(--track-min-width), 1fr) max-content;
     align-items: center;
     gap: var(--space-xs) var(--space-sm);
     font-variant-numeric: tabular-nums;
