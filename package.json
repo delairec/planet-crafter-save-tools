@@ -34,6 +34,7 @@
     "guards": "bun run --sequential --no-exit-on-error \"check:*\" validate:tables",
     "check:assertions": "bun scripts/guards/tests/check-test-assertions.ts",
     "check:contrast": "bun scripts/guards/ui/check-color-contrast.ts",
+    "check:equipment-icons": "bun scripts/guards/ui/check-equipment-icons.ts",
     "check:fixtures": "bun scripts/guards/tests/check-fixture-typing.ts",
     "check:dependencies": "bun scripts/guards/architecture/check-package-dependencies.ts",
     "check:presentation": "bun scripts/guards/architecture/check-presentation-entities.ts",

@@ -3,22 +3,22 @@ import {arrangeEquipmentSlots, EquipmentSlot} from './arrangeEquipmentSlots';
 import {EquipmentKindValueObject} from '../valueObjects/EquipmentKindValueObject';
 
 const EQUIPMENT_KINDS: EquipmentKindValueObject[] = [
-  {worldObjectName: 'OxygenTank1', kind: 'Oxygen tank'},
-  {worldObjectName: 'OxygenTank5', kind: 'Oxygen tank'},
-  {worldObjectName: 'Backpack4', kind: 'Backpack'},
-  {worldObjectName: 'EquipmentIncrease1', kind: 'Exoskeleton'}
+  {worldObjectName: 'OxygenTank1', kind: 'Oxygen tank', icon: 'oxygen-tank'},
+  {worldObjectName: 'OxygenTank5', kind: 'Oxygen tank', icon: 'oxygen-tank'},
+  {worldObjectName: 'Backpack4', kind: 'Backpack', icon: 'backpack'},
+  {worldObjectName: 'EquipmentIncrease1', kind: 'Exoskeleton', icon: 'exoskeleton'}
 ];
 
 describe('arrangeEquipmentSlots', () => {
-  it('should give one slot per equipment kind, in the order of the table, holding the item worn of that kind', () => {
+  it('should give one slot per equipment kind, in the order of the table, with the icon of the kind and the item worn of that kind', () => {
     // Act
     const slots = arrangeEquipmentSlots({equipment: ['Backpack4', 'OxygenTank5'], equipmentKinds: EQUIPMENT_KINDS});
 
     // Assert
     expect<EquipmentSlot[]>(slots).toEqual([
-      {kind: 'Oxygen tank', worldObjectName: 'OxygenTank5'},
-      {kind: 'Backpack', worldObjectName: 'Backpack4'},
-      {kind: 'Exoskeleton'}
+      {kind: 'Oxygen tank', icon: 'oxygen-tank', worldObjectName: 'OxygenTank5'},
+      {kind: 'Backpack', icon: 'backpack', worldObjectName: 'Backpack4'},
+      {kind: 'Exoskeleton', icon: 'exoskeleton'}
     ]);
   });
 
@@ -31,7 +31,11 @@ describe('arrangeEquipmentSlots', () => {
       const slots = arrangeEquipmentSlots({equipment: noEquipment, equipmentKinds: EQUIPMENT_KINDS});
 
       // Assert
-      expect<EquipmentSlot[]>(slots).toEqual([{kind: 'Oxygen tank'}, {kind: 'Backpack'}, {kind: 'Exoskeleton'}]);
+      expect<EquipmentSlot[]>(slots).toEqual([
+        {kind: 'Oxygen tank', icon: 'oxygen-tank'},
+        {kind: 'Backpack', icon: 'backpack'},
+        {kind: 'Exoskeleton', icon: 'exoskeleton'}
+      ]);
     });
   });
 
@@ -42,9 +46,9 @@ describe('arrangeEquipmentSlots', () => {
 
       // Assert
       expect<EquipmentSlot[]>(slots).toEqual([
-        {kind: 'Oxygen tank'},
-        {kind: 'Backpack', worldObjectName: 'Backpack4'},
-        {kind: 'Exoskeleton'},
+        {kind: 'Oxygen tank', icon: 'oxygen-tank'},
+        {kind: 'Backpack', icon: 'backpack', worldObjectName: 'Backpack4'},
+        {kind: 'Exoskeleton', icon: 'exoskeleton'},
         {worldObjectName: 'MultiToolLight9'}
       ]);
     });

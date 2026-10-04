@@ -4,6 +4,6 @@ import {EquipmentKindValueObject} from "../domain/valueObjects/EquipmentKindValu
 
 export class EquipmentKindsReaderService implements EquipmentKindsReaderPort {
   readEquipmentKinds(): readonly EquipmentKindValueObject[] {
-    return selectEquipmentKindRows().map((row) => ({worldObjectName: row.worldObjectName, kind: row.kind}));
+    return selectEquipmentKindRows().map((row) => ({worldObjectName: row.worldObjectName, kind: row.kind, icon: row.icon}));
   }
 }

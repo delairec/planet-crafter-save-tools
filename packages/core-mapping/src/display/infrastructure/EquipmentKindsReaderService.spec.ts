@@ -1,24 +1,25 @@
 import {describe, expect, it} from 'bun:test';
+import {EquipmentKindValueObject} from '../domain/valueObjects/EquipmentKindValueObject';
 import {EquipmentKindsReaderService} from './EquipmentKindsReaderService';
 
-function findEquipmentKind(worldObjectName: string): string | undefined {
-  return new EquipmentKindsReaderService().readEquipmentKinds().find((equipmentKind) => equipmentKind.worldObjectName === worldObjectName)?.kind;
+function findEquipmentKind(worldObjectName: string): EquipmentKindValueObject | undefined {
+  return new EquipmentKindsReaderService().readEquipmentKinds().find((equipmentKind) => equipmentKind.worldObjectName === worldObjectName);
 }
 
 describe('EquipmentKindsReaderService', () => {
-  it('should read the equipment kind of a known wearable world object', () => {
+  it('should read the equipment kind of a known wearable world object and the icon of that kind', () => {
     // Act
-    const kind = findEquipmentKind('Backpack4');
+    const equipmentKind = findEquipmentKind('Backpack4');
 
     // Assert
-    expect(kind).toBe('Backpack');
+    expect<EquipmentKindValueObject | undefined>(equipmentKind).toEqual({worldObjectName: 'Backpack4', kind: 'Backpack', icon: 'backpack'});
   });
 
   it('should read no equipment kind for a world object that is not worn', () => {
     // Act
-    const kind = findEquipmentKind('Iron');
+    const equipmentKind = findEquipmentKind('Iron');
 
     // Assert
-    expect(kind).toBeUndefined();
+    expect(equipmentKind).toBeUndefined();
   });
 });

@@ -4637,3 +4637,48 @@ DECISION TheExportGuardReadsTheManifestAndTheCompositionRootsOfCoreMapping
 		REF @DECISION.AViewModelServesOneView
 	SOURCE "Choice FEAT145 left open until it started, taken by the pull request delivering it"
 		PR 279
+
+DECISION AnEquipmentKindNamesTheOriginalIconItsSlotShows
+	APPLIES_TO_PACKAGE @PACKAGE.data_world_objects
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT195
+	SPEC "each kind of the EquipmentKinds table names its icon in the icon column, the tiers of a"
+		+ "kind sharing it; the icon reaches the slot through the view model of the player card,"
+		+ "and a worn item the table names no kind for takes the generic-equipment icon"
+		IMPL "packages/data-world-objects/equipmentKinds.schema.json::\"icon\""
+		IMPL "packages/core-mapping/src/display/domain/rules/arrangeEquipmentSlots.ts::iconByKind"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts::GENERIC_EQUIPMENT_ICON"
+		REF @DATATABLE.EquipmentKinds
+	SPEC "the icons are original simplified drawings, one symbol per icon in one sprite of the"
+		+ "public folder of ui-save-manager, stroked with the colour of the text and hidden from"
+		+ "screen readers; no file of the game, nothing extracted from it and no image of the wiki"
+		+ "is committed, shipped or loaded"
+		IMPL "packages/ui-save-manager/public/icons/equipment.svg::<symbol id=\"generic-equipment\""
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentKindIcon.tsx::aria-hidden"
+	SPEC "an empty slot draws the icon of its kind in dotted lines"
+		IMPL "packages/ui-save-manager/src/styles/players.css::.slot.empty .slot-icon"
+	SPEC "every icon the table names is a symbol of the sprite"
+		IMPL "scripts/guards/ui/check-equipment-icons.ts::findUndrawnEquipmentIcons"
+		ENFORCED_BY "package.json::check:equipment-icons"
+	REJECTED "Extracting the icons of the game from the install of the player at run time, by a"
+		+ "cli- command reading resources.assets: they stay assets of Miju Games, which the project"
+		+ "may not redistribute in any form"
+	REJECTED "Hot-linking the images of the wiki: third-party images, refused by the img-src 'self'"
+		+ "of the content security policy"
+	REJECTED "Asking Miju Games for redistribution rights: not pursued by the owner"
+	REJECTED "One icon per tier: the label of the item already names its tier"
+	REJECTED "A map of the interface from the title of a kind to its icon: a second home for the"
+		+ "kinds, broken when a title changes"
+	REJECTED "One image file per icon shown by an img element or a CSS mask: an img does not take"
+		+ "the colour of the text, and a mask cannot dot the strokes of an empty slot without a"
+		+ "second file per icon"
+	RATIONALE "A ui- package imports no data- package, so the table names the icon and the view"
+		+ "model carries it; the sprite symbols are drawn with fill none and stroke currentColor,"
+		+ "so one drawing serves both themes and an inherited stroke-dasharray dots it. The generic"
+		+ "icon is named by the presenter alone, outside the reach of the guard"
+		REF @DECISION.AnEquipmentSlotIsAKindOfTheEquipmentKindsTable
+		REF @DECISION.AnInterfaceReachesTheSaveFormatThroughACoreOnly
+	SOURCE "Owner ruling of 2026-10-04: original simplified icons for the equipment only, the"
+		+ "game's icons looked at as a reference only; ruled while delivering the icons of the"
+		+ "equipment slots"

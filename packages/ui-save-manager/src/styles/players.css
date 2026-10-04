@@ -99,6 +99,19 @@
     color: var(--muted);
 }
 
+.slot-icon {
+    --slot-icon-size: 1.5rem;
+    --empty-slot-icon-dash: 0.1 2.6;
+    display: block;
+    width: var(--slot-icon-size);
+    height: var(--slot-icon-size);
+    margin-bottom: var(--space-xs);
+}
+
+.slot.empty .slot-icon {
+    stroke-dasharray: var(--empty-slot-icon-dash);
+}
+
 .inv {
     display: flex;
     flex-wrap: wrap;
