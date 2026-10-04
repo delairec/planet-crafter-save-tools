@@ -1,4 +1,4 @@
-import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
+import {formatUnreadableLine} from "../../save/presentation/mappers/formatUnreadableLine";
 import {OverviewPagePresenterPort} from "../application/ports/OverviewPagePresenterPort";
 import {
   OverviewPageResponse,
@@ -11,13 +11,13 @@ import {
 import {SystemTerraformationIndexResponse} from "../application/responses/SystemTerraformationIndexResponse";
 import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
-import {formatNumber} from "./formatters/formatNumber/formatNumber";
-import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
-import {createDroneLogisticsBadge} from "./createDroneLogisticsBadge";
-import {createPowerNotifications} from "./createPowerNotifications";
-import {formatPowerFigures} from "./formatPowerFigures";
-import {formatTerraformationFigures} from "./formatTerraformationFigures";
-import {formatSystemTerraformationIndex} from "./formatSystemTerraformationIndex";
+import {formatNumber} from "./mappers/formatters/formatNumber/formatNumber";
+import {FormatNumberStrategies} from "./mappers/formatters/formatNumber/FormatNumberStrategies";
+import {createDroneLogisticsBadge} from "./mappers/createDroneLogisticsBadge";
+import {createPowerNotifications} from "./mappers/createPowerNotifications";
+import {formatPowerFigures} from "./mappers/formatPowerFigures";
+import {formatTerraformationFigures} from "./mappers/formatTerraformationFigures";
+import {formatSystemTerraformationIndex} from "./mappers/formatSystemTerraformationIndex";
 import {
   OverviewIdentityViewModel,
   OverviewPageViewModel,

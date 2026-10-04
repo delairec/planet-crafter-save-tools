@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {createPowerChart} from "./createPowerChart";
-import {PlanetEnergyLevelsResponse} from "../application/responses/EnergyLevelsResponse";
+import {PlanetEnergyLevelsResponse} from "../../application/responses/EnergyLevelsResponse";
 import {
   PowerChartBarViewModel,
   PowerChartLegendItemViewModel,
@@ -9,7 +9,7 @@ import {
   PowerShareBarViewModel,
   PowerShareChartViewModel,
   PowerShareSegmentViewModel
-} from "./viewModels/PowerChartViewModel";
+} from "../viewModels/PowerChartViewModel";
 import {
   IDLE_PLANET,
   PLANET_WITH_FIFTEEN_TYPES_OF_PRODUCERS,
@@ -17,7 +17,7 @@ import {
   PLANET_WITH_TWELVE_TYPES_OF_CONSUMERS,
   TIGHT_PLANET,
   WORLD_OBJECT_LABELS
-} from "../testing/planetEnergyLevelsFixture";
+} from "../../testing/planetEnergyLevelsFixture";
 
 const nbsp = '\u00A0';
 

@@ -1,4 +1,4 @@
-import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
+import {formatUnreadableLine} from "../../save/presentation/mappers/formatUnreadableLine";
 import {PlayersMenuViewModel} from "./viewModels/PlayersMenuViewModel";
 import {PlayersMenuPresenterPort} from "../application/ports/PlayersMenuPresenterPort";
 import {PlayerMenuEntryResponse} from "../application/responses/PlayerMenuEntryResponse";

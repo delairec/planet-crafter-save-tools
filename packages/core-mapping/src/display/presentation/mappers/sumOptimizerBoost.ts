@@ -1,4 +1,4 @@
-import {OptimizerResponse} from "../application/responses/EnergyLevelsResponse";
+import {OptimizerResponse} from "../../application/responses/EnergyLevelsResponse";
 import {sumProductionRatios} from "./sumProductionRatios";
 
 export interface OptimizerBoostSum {

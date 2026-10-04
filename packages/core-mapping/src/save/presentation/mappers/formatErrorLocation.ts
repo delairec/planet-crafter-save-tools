@@ -1,5 +1,5 @@
-import {RESERVED_SAVE_PART, type SaveSectionLocationResponse} from "../application/responses/SaveSectionLocationResponse";
-import {saveSectionLabels} from "./messages/saveSectionLabels.js";
+import {RESERVED_SAVE_PART, type SaveSectionLocationResponse} from "../../application/responses/SaveSectionLocationResponse";
+import {saveSectionLabels} from "../messages/saveSectionLabels.js";
 
 interface ErrorLocation {
   readonly section: SaveSectionLocationResponse;

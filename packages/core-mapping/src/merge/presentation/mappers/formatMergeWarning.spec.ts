@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {formatMergeWarning} from './formatMergeWarning';
-import type {MergeWarningResponse} from '../application/responses/MergeWarningResponse';
-import {SaveValidationMessageViewModel} from '../../save/presentation/viewModels/SaveValidationMessageViewModel';
+import type {MergeWarningResponse} from '../../application/responses/MergeWarningResponse';
+import {SaveValidationMessageViewModel} from '../../../save/presentation/viewModels/SaveValidationMessageViewModel';
 
 describe('formatMergeWarning', () => {
 

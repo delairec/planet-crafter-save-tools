@@ -1,4 +1,4 @@
-import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
+import {formatUnreadableLine} from "../../save/presentation/mappers/formatUnreadableLine";
 import {SaveIdentityViewModel} from "./viewModels/SaveIdentityViewModel";
 import {SaveIdentityPresenterPort} from "../application/ports/SaveIdentityPresenterPort";
 import {SaveIdentityResponse} from "../application/responses/SaveIdentityResponse";

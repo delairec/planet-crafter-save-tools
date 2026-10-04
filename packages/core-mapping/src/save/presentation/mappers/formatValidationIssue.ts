@@ -1,4 +1,4 @@
-import type {ValidationIssueResponse} from "../application/responses/ValidationIssueResponse";
+import type {ValidationIssueResponse} from "../../application/responses/ValidationIssueResponse";
 import {
   formatFieldOfWrongTypeMessage,
   formatFloatSerializationMessage,
@@ -11,7 +11,7 @@ import {
   formatValueAboveMaximumMessage,
   formatValueBelowMinimumMessage,
   formatValueNotMatchingPatternMessage
-} from "./messages/validationIssueMessages.js";
+} from "../messages/validationIssueMessages.js";
 
 type ValidationIssueMessageFormatters = {
   [Code in ValidationIssueResponse['code']]: (issue: Extract<ValidationIssueResponse, {code: Code}>) => string

@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'bun:test';
 import {createPlanetPowerZone} from "./createPlanetPowerZone";
-import {PlanetEnergyLevelsResponse, PowerBalanceResponse} from "../application/responses/EnergyLevelsResponse";
-import {TonedValueViewModel} from "./viewModels/ConfigurationPageViewModel";
-import {PlanetPowerZoneViewModel, PowerBreakdownTableViewModel, PowerLoadMeterViewModel, PowerOptimizersViewModel} from "./viewModels/PlanetPowerZoneViewModel";
-import {IDLE_PLANET, TIGHT_PLANET, WORLD_OBJECT_LABELS} from "../testing/planetEnergyLevelsFixture";
+import {PlanetEnergyLevelsResponse, PowerBalanceResponse} from "../../application/responses/EnergyLevelsResponse";
+import {TonedValueViewModel} from "../viewModels/ConfigurationPageViewModel";
+import {PlanetPowerZoneViewModel, PowerBreakdownTableViewModel, PowerLoadMeterViewModel, PowerOptimizersViewModel} from "../viewModels/PlanetPowerZoneViewModel";
+import {IDLE_PLANET, TIGHT_PLANET, WORLD_OBJECT_LABELS} from "../../testing/planetEnergyLevelsFixture";
 
 const nbsp = '\u00A0';
 

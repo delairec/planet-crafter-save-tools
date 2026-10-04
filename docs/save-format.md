@@ -23,7 +23,7 @@ The file ends with `@`.
 > or earlier; validation is the single source of that warning, on every outcome and in every flow (displaying a save,
 > merging saves, `bun validate`, `bun merge`). The warning travels as the code defined in
 > `packages/core-mapping/src/save/infrastructure/wireFormat/saveWarningCodes.js` and is turned into the sentence shown to the user by
-> `packages/core-mapping/src/save/presentation/formatSaveWarning.ts`. core-mapping still reads the sections the format of
+> `packages/core-mapping/src/save/presentation/mappers/formatSaveWarning.ts`. core-mapping still reads the sections the format of
 > 2.004 shares with it, and a merge still writes the format of 2.004.
 
 ```

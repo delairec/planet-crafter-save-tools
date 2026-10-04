@@ -1,10 +1,10 @@
-import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
+import {TerraformationLevelSummaryResponse} from "../../application/responses/TerraformationLevelSummaryResponse";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
 import {
   terraformationLevelsSectionPurificationUnit,
   terraformationLevelsSectionTerraformationIndexUnit
-} from "./messages/terraformationLevelsSectionMessages.js";
+} from "../messages/terraformationLevelsSectionMessages.js";
 
 export interface FormattedTerraformationFigures {
   terraformationIndex: string;

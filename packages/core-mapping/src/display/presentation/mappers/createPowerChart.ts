@@ -2,8 +2,8 @@ import {
   EnergyBreakdownEntryResponse,
   OptimizerResponse,
   PlanetEnergyLevelsResponse
-} from "../application/responses/EnergyLevelsResponse";
-import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
+} from "../../application/responses/EnergyLevelsResponse";
+import {WorldObjectLabelsResponse} from "../../application/responses/WorldObjectLabelsResponse";
 import {
   PowerChartBarViewModel,
   PowerChartLegendItemViewModel,
@@ -13,7 +13,7 @@ import {
   PowerShareBarViewModel,
   PowerShareFill,
   PowerShareSegmentViewModel
-} from "./viewModels/PowerChartViewModel";
+} from "../viewModels/PowerChartViewModel";
 import {formatKilowatts} from "./formatKilowatts";
 import {sumOptimizerBoost} from "./sumOptimizerBoost";
 import {sumProductionRatios} from "./sumProductionRatios";
@@ -22,7 +22,7 @@ import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {
   energyLevelsSectionConsumptionTitle,
   energyLevelsSectionProductionTitle
-} from "./messages/energyLevelsSectionMessages.js";
+} from "../messages/energyLevelsSectionMessages.js";
 import {
   powerPageConsumersTitle,
   powerPageFoldedTailLabel,
@@ -34,7 +34,7 @@ import {
   resolvePowerPageFoldedTailBarLabel,
   resolvePowerPageMachineBarDetail,
   resolvePowerPageOptimizerBoostBarDetail
-} from "./messages/powerPageMessages.js";
+} from "../messages/powerPageMessages.js";
 
 type MachineSeries = 'production' | 'consumption';
 

@@ -1,4 +1,4 @@
-import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
+import {formatUnreadableLine} from "../../save/presentation/mappers/formatUnreadableLine";
 import {ConfigurationPagePresenterPort} from "../application/ports/ConfigurationPagePresenterPort";
 import {
   AssessedSaveConfigurationResponse,
@@ -9,9 +9,9 @@ import {
   UnlocksResponse
 } from "../application/responses/ConfigurationPageResponse";
 import {DroneLogisticsResponse} from "../application/responses/DroneLogisticsResponse";
-import {createDroneLogisticsBadge} from "./createDroneLogisticsBadge";
-import {formatNumber} from "./formatters/formatNumber/formatNumber";
-import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
+import {createDroneLogisticsBadge} from "./mappers/createDroneLogisticsBadge";
+import {formatNumber} from "./mappers/formatters/formatNumber/formatNumber";
+import {NON_BREAKING_SPACE} from "./mappers/formatters/formatNumber/nonBreakingSpace";
 import {
   ConfigurationPageViewModel,
   DroneLogisticsViewModel,

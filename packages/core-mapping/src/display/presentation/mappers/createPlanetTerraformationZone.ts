@@ -1,12 +1,12 @@
-import {PlanetTerraformationResponse} from "../application/responses/TerraformationPageResponse";
-import {TerraformationLevelSummaryResponse} from "../application/responses/TerraformationLevelSummaryResponse";
-import {SystemTerraformationIndexResponse} from "../application/responses/SystemTerraformationIndexResponse";
+import {PlanetTerraformationResponse} from "../../application/responses/TerraformationPageResponse";
+import {TerraformationLevelSummaryResponse} from "../../application/responses/TerraformationLevelSummaryResponse";
+import {SystemTerraformationIndexResponse} from "../../application/responses/SystemTerraformationIndexResponse";
 import {
   PlanetTerraformationZoneViewModel,
   TerraformationHeroFigureViewModel,
   TerraformationLevelRowViewModel,
   TerraformationLevelsTableViewModel
-} from "./viewModels/PlanetTerraformationZoneViewModel";
+} from "../viewModels/PlanetTerraformationZoneViewModel";
 import {formatTerraformationFigures, FormattedTerraformationFigures} from "./formatTerraformationFigures";
 import {formatSystemTerraformationIndex} from "./formatSystemTerraformationIndex";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
@@ -22,13 +22,13 @@ import {
   terraformationLevelsSectionPurificationLabel,
   terraformationLevelsSectionTerraformationIndexLabel,
   resolveTerraformationLevelsSectionMultipliedPlanets
-} from "./messages/terraformationLevelsSectionMessages.js";
+} from "../messages/terraformationLevelsSectionMessages.js";
 import {
   resolveTerraformationPageBiomassShares,
   resolveTerraformationPageFactorOfTheSystemTerraformationIndex,
   terraformationPageCaptionSeparator,
   terraformationPageNoLevelValue
-} from "./messages/terraformationPageMessages.js";
+} from "../messages/terraformationPageMessages.js";
 
 const NO_LEVEL = 0;
 const EMPTY_BAR_PERCENTAGE = 0;
