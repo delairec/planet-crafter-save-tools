@@ -6,7 +6,6 @@ const configurationPath = '/configuration';
 const powerPath = '/power';
 const terraformationPath = '/terraformation';
 const playersPath = '/players';
-const planetPath = '/planet';
 
 export const PAGE_PATHS = {
   homePath,
@@ -16,6 +15,5 @@ export const PAGE_PATHS = {
   configurationPath,
   powerPath,
   terraformationPath,
-  playersPath,
-  planetPath
+  playersPath
 };

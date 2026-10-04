@@ -15,7 +15,6 @@
 @import "styles/power.css";
 @import "styles/planetTabs.css";
 @import "styles/terraformation.css";
-@import "styles/planet.css";
 
 .app {
     height: var(--app-height);

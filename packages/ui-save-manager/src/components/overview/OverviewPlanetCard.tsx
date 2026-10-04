@@ -2,9 +2,6 @@ import {Show} from 'solid-js';
 import {OverviewPlanetCardViewModel} from 'core-mapping/display/presentation/viewModels/OverviewPageViewModel';
 import OverviewPlanetTerraformation from '~/components/overview/OverviewPlanetTerraformation';
 import OverviewPlanetPower from '~/components/overview/OverviewPlanetPower';
-import {A} from '@solidjs/router';
-import {resolvePlanetPagePath} from '~/lib/resolvePlanetPagePath';
-import {overviewPlanetDetailsLinkLabel} from '~/messages/overviewPageMessages';
 
 interface OverviewPlanetAbsentSideProps {
   absentSide: string | undefined;
@@ -37,7 +34,6 @@ export default function OverviewPlanetCard(props: OverviewPlanetCardProps) {
             </p>
           )}
         </Show>
-        <A href={resolvePlanetPagePath(props.card.planetIdentifier)} class="button-link" data-testid={`${props.testId}-details`}>{overviewPlanetDetailsLinkLabel}</A>
       </header>
       <Show when={props.card.terraformation} fallback={<OverviewPlanetAbsentSide absentSide={props.card.absentSide} testId={props.testId}/>}>
         {(terraformation) => <OverviewPlanetTerraformation terraformation={terraformation()} testId={props.testId}/>}

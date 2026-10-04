@@ -34,10 +34,6 @@ import {EquipmentKindsReaderService} from "../infrastructure/EquipmentKindsReade
 import {OxygenTankCapacitiesReaderService} from "../infrastructure/OxygenTankCapacitiesReaderService";
 import {PlayersPagePresenter} from "../presentation/PlayersPagePresenter";
 import {PlayersPageViewModel} from "../presentation/viewModels/PlayersPageViewModel";
-import {LoadPlanetPage} from "../application/LoadPlanetPage";
-import {LoadPlanetPageRequest} from "../application/requests/LoadPlanetPageRequest";
-import {PlanetPagePresenter} from "../presentation/PlanetPagePresenter";
-import {PlanetPageViewModel} from "../presentation/viewModels/PlanetPageViewModel";
 
 function createSaveSectionsReader(): SaveSectionsReaderPort {
   return new SaveSectionsReaderService(new SaveSectionsParserService());
@@ -122,21 +118,5 @@ function createLoadPlayersPageUseCase(presenter: PlayersPagePresenter): LoadPlay
     worldObjectLabelsReader: new WorldObjectLabelsReaderService(),
     oxygenTankCapacitiesReader: new OxygenTankCapacitiesReaderService(),
     equipmentKindsReader: new EquipmentKindsReaderService()
-  }, presenter);
-}
-
-export function createLoadPlanetPage(): UseCaseWithPresenter<LoadPlanetPageRequest, PlanetPageViewModel> {
-  const presenter = new PlanetPagePresenter();
-  return {useCase: createLoadPlanetPageUseCase(presenter), presenter};
-}
-
-function createLoadPlanetPageUseCase(presenter: PlanetPagePresenter): LoadPlanetPage {
-  return new LoadPlanetPage({
-    saveSectionsReader: createSaveSectionsReader(),
-    energyLevelsReader: new EnergyLevelsReaderService(),
-    gameReleasesReader: new GameReleasesReaderService(),
-    optimizerRangesReader: new OptimizerRangesReaderService(),
-    planetNamesReader: new PlanetNamesReaderService(),
-    worldObjectLabelsReader: new WorldObjectLabelsReaderService()
   }, presenter);
 }

@@ -198,7 +198,6 @@ describe('LoadOverviewPage', () => {
       // Assert
       expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.objectContaining({
         planets: [{
-          planetIdentifier: 'Prime',
           planetName: 'Prime',
           terraformation: {
             planetId: 'Prime',
@@ -230,7 +229,6 @@ describe('LoadOverviewPage', () => {
       // Assert
       expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.objectContaining({
         planets: [{
-          planetIdentifier: 'Prime',
           planetName: 'Prime',
           terraformation: {
             planetId: 'Prime',
@@ -262,7 +260,6 @@ describe('LoadOverviewPage', () => {
       expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.objectContaining({
         planets: [
           {
-            planetIdentifier: 'Prime',
             planetName: 'Prime',
             terraformation: {
               planetId: 'Prime',
@@ -280,7 +277,6 @@ describe('LoadOverviewPage', () => {
             energy: {numericPlanetId: PRIME_PLANET_NUMERIC_ID, production: 1_485, consumption: 187.75, available: 1_297.25}
           },
           {
-            planetIdentifier: '1',
             energy: {numericPlanetId: UNNAMED_PLANET_NUMERIC_ID, production: 1.2, consumption: 0, available: 1.2}
           }
         ]

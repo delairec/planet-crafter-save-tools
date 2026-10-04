@@ -50,7 +50,6 @@ export interface OverviewPlanetPowerViewModel {
 }
 
 export interface OverviewPlanetCardViewModel {
-  planetIdentifier: string;
   name: string;
   terraformationStage?: OverviewPlanetFigureViewModel;
   terraformation?: OverviewPlanetTerraformationViewModel;

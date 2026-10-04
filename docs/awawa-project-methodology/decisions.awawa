@@ -890,7 +890,6 @@ DECISION APlanetEnergyGridIsAnAggregate
 		+ "namePlanet and PlanetEnergyGrid itself"
 		IMPL "packages/core-mapping/src/display/domain/rules/measureEnergyOfEachPlanet.ts::export"
 			+ "function measureEnergyOfEachPlanet("
-		IMPL "packages/core-mapping/src/display/application/LoadPlanetPage.ts::measureEnergyOfEachPlanet({"
 		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::measureEnergyOfEachPlanet({"
 		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::measureEnergyOfEachPlanet({"
 	REJECTED "Energy rules taking the same triple of lists: an unnamed object, and the boosts"
@@ -2918,7 +2917,7 @@ DECISION AViewModelServesOneView
 		+ "its own instance of it, built by a presentation helper the presenters of those pages"
 		+ "call; what two views share is that helper, a pure mapping from value objects to the"
 		+ "zone, never one view model read by two views"
-		IMPL "packages/core-mapping/src/display/presentation/PlanetPagePresenter.ts::createPlanetPowerZone(energyLevels"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerNotifications.ts"
 		IMPL "packages/core-mapping/src/display/presentation/createDroneLogisticsBadge.ts"
 	SPEC "a controller serves one view and a presenter builds one view model; a use case is one"
 		+ "meaningful action of the save manager, load one page or one zone, and orchestrates the"
@@ -4531,15 +4530,13 @@ DECISION TheDisplayFormOfThePowerLivesInAProviderAboveTheRouter
 		IMPL "packages/ui-save-manager/src/app.tsx::<PowerDisplayFormProvider>"
 		ENFORCED_BY "packages/ui-save-manager/e2e/display-power.e2e.ts::should keep the tables"
 			+ "chosen"
-		ENFORCED_BY "packages/ui-save-manager/e2e/display-planet.e2e.ts::should keep it chosen on"
-			+ "the Power page"
 	REJECTED "a signal of the route component: it is disposed when the reader opens another page"
 		+ "and the choice would be lost"
 	REJECTED "a signal declared at the top of a module: the server renders every request with the"
 		+ "same module instance, so one reader's choice would leak to the next"
 	REJECTED "the choice in the query of the address: the planet page is another route and would"
 		+ "not carry it"
-		REF @TASK.FEAT143
+		REF @TASK.FEAT196
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT140
 	RATIONALE "The same reason as for the merged saves: only a store above the router outlives"
@@ -4629,7 +4626,7 @@ DECISION TheExportGuardReadsTheManifestAndTheCompositionRootsOfCoreMapping
 		+ "reaches is the composition root"
 	REJECTED "an allow list of the wired controllers: every page task would edit the guard, the"
 		+ "planet page first"
-		REF @TASK.FEAT143
+		REF @TASK.FEAT196
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT145
 	RATIONALE "The section controllers are gone; what keeps one from coming back is the boundary a"
@@ -4640,34 +4637,3 @@ DECISION TheExportGuardReadsTheManifestAndTheCompositionRootsOfCoreMapping
 		REF @DECISION.AViewModelServesOneView
 	SOURCE "Choice FEAT145 left open until it started, taken by the pull request delivering it"
 		PR 279
-
-DECISION APlanetIsAddressedByItsNameOrItsNumericIdentifier
-	SPEC "the page of a planet is addressed by the identifier its Overview card holds: the name of"
-		+ "the planet, or its numeric identifier written in decimal when the planet has no name"
-		IMPL "packages/core-mapping/src/display/domain/rules/identifyPlanet.ts::planet.planetName"
-			+ "?? String(planet.planetId)"
-		IMPL "packages/ui-save-manager/src/lib/resolvePlanetPagePath.ts::encodeURIComponent(planetIdentifier)"
-		ENFORCED_BY "packages/core-mapping/src/display/domain/rules/identifyPlanet.spec.ts::should"
-			+ "identify it by"
-		ENFORCED_BY "packages/ui-save-manager/e2e/display-planet.e2e.ts::should name the planet"
-			+ "after its numeric identifier"
-	SPEC "the use case of the planet page finds the planet by that identifier among the"
-		+ "terraformation entries and the planets with machines placed, and presents a planet none"
-		+ "of them answers to as unknown"
-		IMPL "packages/core-mapping/src/display/application/LoadPlanetPage.ts::this.presenter.displayUnknownPlanet()"
-		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPlanetPage.spec.ts::should"
-			+ "display that the planet is unknown"
-	REJECTED "the index of the card in the Overview: it names no planet, and an address kept from"
-		+ "another save opens another planet"
-	REJECTED "the name the card shows: Planet 1 is a sentence of the presentation, which the use"
-		+ "case would have to parse back"
-	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
-	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
-	APPLIES_TO_TASK @TASK.FEAT143
-	RATIONALE "A terraformation entry always names its planet and a planet with machines placed"
-		+ "always carries a numeric identifier, so the two forms cover every card of the Overview;"
-		+ "the Overview already joins the two lists on the name"
-		REF @DECISION.TheOverviewShowsACardForEveryPlanetOfEitherList
-	SOURCE "Ruling of the FEAT143 agent on 2026-10-04, the task asking an identifier stable for a"
-		+ "planet without a name"
-		PR 280

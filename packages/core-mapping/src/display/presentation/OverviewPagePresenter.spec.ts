@@ -31,7 +31,6 @@ const OVERVIEW_WITHOUT_PLANETS: OverviewPageResponse = {
 };
 
 const PRIME_PLANET: OverviewPlanetResponse = {
-  planetIdentifier: 'Prime',
   planetName: 'Prime',
   terraformation: {
     planetId: 'Prime',
@@ -49,7 +48,6 @@ const PRIME_PLANET: OverviewPlanetResponse = {
 };
 
 const HUMBLE_PLANET: OverviewPlanetResponse = {
-  planetIdentifier: 'Humble',
   planetName: 'Humble',
   terraformation: {
     planetId: 'Humble',
@@ -67,7 +65,6 @@ const HUMBLE_PLANET: OverviewPlanetResponse = {
 };
 
 const TOXICITY_PLANET_WITHOUT_MACHINES: OverviewPlanetResponse = {
-  planetIdentifier: 'Toxicity',
   planetName: 'Toxicity',
   terraformation: {
     planetId: 'Toxicity',
@@ -84,7 +81,6 @@ const TOXICITY_PLANET_WITHOUT_MACHINES: OverviewPlanetResponse = {
 };
 
 const UNNAMED_PLANET_WITHOUT_TERRAFORMATION: OverviewPlanetResponse = {
-  planetIdentifier: '1',
   energy: {numericPlanetId: 1, production: 1_000, consumption: 250, available: 750}
 };
 
@@ -221,7 +217,6 @@ describe('OverviewPagePresenter', () => {
       // Assert
       expect<OverviewPlanetCardViewModel[]>(presenter.viewModel.planets.cards).toEqual([
         {
-          planetIdentifier: 'Prime',
           name: 'Prime',
           terraformation: {
             terraformationIndex: {label: 'Terraformation Index', value: `2.129${nbsp}MTi`},
@@ -241,7 +236,6 @@ describe('OverviewPagePresenter', () => {
           }
         },
         {
-          planetIdentifier: 'Humble',
           name: 'Humble',
           terraformation: {
             terraformationIndex: {label: 'Terraformation Index', value: `1.714${nbsp}MTi`},
@@ -287,7 +281,6 @@ describe('OverviewPagePresenter', () => {
       // Assert
       expect<OverviewPlanetCardViewModel[]>(presenter.viewModel.planets.cards).toEqual([
         {
-          planetIdentifier: 'Toxicity',
           name: 'Toxicity',
           terraformation: {
             terraformationIndex: {label: 'Terraformation Index', value: `7.5${nbsp}kTi`},
@@ -315,7 +308,6 @@ describe('OverviewPagePresenter', () => {
       // Assert
       expect<OverviewPlanetCardViewModel[]>(presenter.viewModel.planets.cards).toEqual([
         {
-          planetIdentifier: '1',
           name: 'Planet 1',
           power: {
             production: {label: 'Production', value: `1,000${nbsp}kW`, widthPercentage: 100},
