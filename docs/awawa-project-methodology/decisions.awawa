@@ -4446,3 +4446,4 @@ DECISION TheOverviewCardOfAPlanetNamesTheTerraformationStageItHasReached
 		+ "2026-10-04, from the game files of release 2.103 and the wiki"
 		REF @GAME_RELEASE.2.103
 		REF @URL.WikiTerraformationStages
+		PR 274

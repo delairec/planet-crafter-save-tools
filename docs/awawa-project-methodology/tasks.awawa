@@ -568,14 +568,24 @@ TASK TEST91
 
 TASK FEAT131
 	TITLE "Show the terraformation stage of each planet as a badge on its overview card"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 274
 	DESC "ratified on the reviewed plan on 2026-09-27 without research; the stages of the game,"
 		+ "their thresholds and the value they are read from are established when the task starts"
 	SPEC "the overview card of a planet carries a badge naming the terraformation stage the planet"
 		+ "has reached, read from its terraformation levels"
+		IMPL "packages/core-mapping/src/display/domain/rules/findReachedTerraformationStage.ts::export"
+			+ "function findReachedTerraformationStage"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::terraformation-stage"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should name the terraformation"
+			+ "stage the planet has reached in a badge beside its name"
 	SPEC "the stages and their thresholds are a value table of a data- package, one row per stage,"
 		+ "read by an infrastructure adapter behind an application port; the stage reaches the"
 		+ "presenter as a primitive of the response its use case builds"
+		IMPL "packages/data-planets/terraformationStages.json"
+		IMPL "packages/core-mapping/src/display/application/ports/TerraformationStagesReaderPort.ts::TerraformationStagesReaderPort"
+		IMPL "packages/core-mapping/src/display/infrastructure/TerraformationStagesReaderService.ts::selectTerraformationStageRows()"
+		IMPL "packages/core-mapping/src/display/application/responses/OverviewPageResponse.ts::terraformationStage"
 	WAVE @WAVE.15
 	RATIONALE "The save manager knows no stage: it prints the Terraformation Index of a planet as a"
 		+ "number, and the reader has to know the thresholds of the game to tell where a planet"
@@ -592,6 +602,7 @@ TASK FEAT131
 		+ "la wave 15 », launched on integration/save-manager-redesign with the milestone"
 		+ "save-manager-redesign, the wave delivered only once the task merges; rejected: «"
 		+ "Attendre la fusion de #266 », the task left out of any wave on master"
+		PR 274
 
 TASK FEAT132
 	TITLE "Display the SysTi, the Terraformation Index accumulated over every planet of the save"
