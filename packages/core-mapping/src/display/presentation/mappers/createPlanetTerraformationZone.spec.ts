@@ -1,11 +1,11 @@
 import {describe, expect, it} from 'bun:test';
 import {createPlanetTerraformationZone} from "./createPlanetTerraformationZone";
-import {PlanetTerraformationResponse} from "../application/responses/TerraformationPageResponse";
+import {PlanetTerraformationResponse} from "../../application/responses/TerraformationPageResponse";
 import {
   PlanetTerraformationZoneViewModel,
   TerraformationHeroFigureViewModel,
   TerraformationLevelsTableViewModel
-} from "./viewModels/PlanetTerraformationZoneViewModel";
+} from "../viewModels/PlanetTerraformationZoneViewModel";
 
 const nbsp = ' ';
 const PRIME_AMONG_THREE_FACTORS: PlanetTerraformationResponse = {

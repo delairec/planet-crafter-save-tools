@@ -3,16 +3,16 @@ import {
   OptimizerResponse,
   PlanetEnergyLevelsResponse,
   PowerBalanceResponse
-} from "../application/responses/EnergyLevelsResponse";
-import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
-import {TonedValueViewModel} from "./viewModels/ConfigurationPageViewModel";
+} from "../../application/responses/EnergyLevelsResponse";
+import {WorldObjectLabelsResponse} from "../../application/responses/WorldObjectLabelsResponse";
+import {TonedValueViewModel} from "../viewModels/ConfigurationPageViewModel";
 import {
   PlanetPowerZoneViewModel,
   PowerBreakdownRowViewModel,
   PowerBreakdownTableViewModel,
   PowerLoadMeterViewModel,
   PowerOptimizersViewModel
-} from "./viewModels/PlanetPowerZoneViewModel";
+} from "../viewModels/PlanetPowerZoneViewModel";
 import {formatPowerFigures} from "./formatPowerFigures";
 import {createPowerChart} from "./createPowerChart";
 import {sumOptimizerBoost} from "./sumOptimizerBoost";
@@ -25,7 +25,7 @@ import {
   energyLevelsSectionConsumptionTitle,
   energyLevelsSectionProductionTitle,
   resolveEnergyLevelsSectionUnnamedPlanetName
-} from "./messages/energyLevelsSectionMessages.js";
+} from "../messages/energyLevelsSectionMessages.js";
 import {
   powerPageBalancedBalance,
   powerPageBalancedToneLabel,
@@ -42,7 +42,7 @@ import {
   resolvePowerPageBreakdownSummary,
   resolvePowerPageLoadMeterLabel,
   resolvePowerPageOptimizersSummary
-} from "./messages/powerPageMessages.js";
+} from "../messages/powerPageMessages.js";
 
 const BADGE_BY_BALANCE: Record<PowerBalanceResponse, TonedValueViewModel> = {
   deficit: {value: powerPageDeficitBalance, tone: 'danger', toneLabel: powerPageDeficitToneLabel},

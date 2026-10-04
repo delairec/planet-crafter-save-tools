@@ -1,11 +1,11 @@
-import type {MergeWarningResponse} from "../application/responses/MergeWarningResponse";
-import {SaveValidationMessageViewModel} from "../../save/presentation/viewModels/SaveValidationMessageViewModel";
+import type {MergeWarningResponse} from "../../application/responses/MergeWarningResponse";
+import {SaveValidationMessageViewModel} from "../../../save/presentation/viewModels/SaveValidationMessageViewModel";
 import {
   formatMergedSaveContentNewerThanFormatWarningMessage,
   formatMergedSaveFormatWarningMessage,
   formatMergedSaveSectionDroppedWarningMessage,
   unknownMergeWarningMessage
-} from "./messages/mergeWarningMessages.js";
+} from "../messages/mergeWarningMessages.js";
 
 type MergeWarningMessageFormatters = {
   [Code in MergeWarningResponse['code']]: (warning: Extract<MergeWarningResponse, {code: Code}>) => string

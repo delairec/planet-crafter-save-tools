@@ -1,10 +1,10 @@
-import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
+import {formatUnreadableLine} from "../../save/presentation/mappers/formatUnreadableLine";
 import {EnergyLevelsResponse} from "../application/responses/EnergyLevelsResponse";
 import {PowerPagePresenterPort} from "../application/ports/PowerPagePresenterPort";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 import {PowerPageViewModel} from "./viewModels/PowerPageViewModel";
-import {createPowerNotifications, submergedMachinesNotification} from "./createPowerNotifications";
-import {createPlanetPowerZone} from "./createPlanetPowerZone";
+import {createPowerNotifications, submergedMachinesNotification} from "./mappers/createPowerNotifications";
+import {createPlanetPowerZone} from "./mappers/createPlanetPowerZone";
 
 export class PowerPagePresenter implements PowerPagePresenterPort {
   private _viewModel: PowerPageViewModel = {notifications: [submergedMachinesNotification], planets: []};

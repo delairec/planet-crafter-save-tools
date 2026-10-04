@@ -5,11 +5,11 @@ import {SaveFileFindingsResponse} from "../application/responses/SaveFileFinding
 import {SaveFilesWithoutUniqueHostResponse} from "../application/responses/SaveFilesWithoutUniqueHostResponse";
 import {MergeResultViewModel} from "./viewModels/MergeResultViewModel";
 import {SaveValidationMessageViewModel} from "../../save/presentation/viewModels/SaveValidationMessageViewModel";
-import {formatValidationError} from "../../save/presentation/formatValidationError";
-import {formatSaveWarning} from "../../save/presentation/formatSaveWarning";
-import {formatMergeWarning} from "./formatMergeWarning";
-import {formatUniqueHostError} from "../../save/presentation/formatUniqueHostError";
-import {formatJsonExtensionError} from "../../save/presentation/formatJsonExtensionError";
+import {formatValidationError} from "../../save/presentation/mappers/formatValidationError";
+import {formatSaveWarning} from "../../save/presentation/mappers/formatSaveWarning";
+import {formatMergeWarning} from "./mappers/formatMergeWarning";
+import {formatUniqueHostError} from "../../save/presentation/mappers/formatUniqueHostError";
+import {formatJsonExtensionError} from "../../save/presentation/mappers/formatJsonExtensionError";
 import {mergedSaveUnusableMessage} from "./messages/mergeFailureMessages.js";
 
 export class MergeResultPresenter implements MergeResultPresenterPort {

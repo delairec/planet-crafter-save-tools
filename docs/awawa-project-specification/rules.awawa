@@ -841,7 +841,7 @@ RULE TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 		ATTESTED_BY "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.spec.ts"
 	SPEC "the game writes the SysTi with one short-scale prefix per power of 1,000, k, M, B, T, Qa,"
 		+ "Qi, Sx, Sp, Oc, No, Dc, Ud and on up to Qitg, the unit SysTi glued to the prefix"
-		ATTESTED_BY "packages/core-mapping/src/display/presentation/formatters/formatNumber/systemTerraformationIndex.strategy.spec.ts"
+		ATTESTED_BY "packages/core-mapping/src/display/presentation/mappers/formatters/formatNumber/systemTerraformationIndex.strategy.spec.ts"
 	APPLIES_TO_SECTION @SECTION.TerraformationLevels
 	RATIONALE "No save stores a SysTi field: the game derives it from the Terraformation Index of"
 		+ "each planet, which the save stores as its terraformation levels"

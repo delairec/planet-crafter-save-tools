@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {formatUnreadableLine} from './formatUnreadableLine';
-import type {UnreadableLineResponse} from '../application/responses/UnreadableLineResponse';
-import {SaveValidationMessageViewModel} from './viewModels/SaveValidationMessageViewModel';
+import type {UnreadableLineResponse} from '../../application/responses/UnreadableLineResponse';
+import {SaveValidationMessageViewModel} from '../viewModels/SaveValidationMessageViewModel';
 
 describe('formatUnreadableLine', () => {
 

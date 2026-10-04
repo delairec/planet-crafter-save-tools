@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'bun:test';
-import {OptimizerResponse} from '../application/responses/EnergyLevelsResponse';
+import {OptimizerResponse} from '../../application/responses/EnergyLevelsResponse';
 import {OptimizerBoostSum, sumOptimizerBoost} from './sumOptimizerBoost';
 
 describe('sumOptimizerBoost', () => {

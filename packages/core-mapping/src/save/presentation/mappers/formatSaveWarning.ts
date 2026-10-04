@@ -1,10 +1,10 @@
-import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
-import {SaveValidationMessageViewModel} from "./viewModels/SaveValidationMessageViewModel";
+import type {SaveWarningResponse} from "../../application/responses/SaveWarningResponse";
+import {SaveValidationMessageViewModel} from "../viewModels/SaveValidationMessageViewModel";
 import {
   formatDeclaredReleaseContradictsContentWarningMessage,
   legacySaveFormatWarningMessage,
   unknownSaveWarningMessage
-} from "./messages/saveWarningMessages.js";
+} from "../messages/saveWarningMessages.js";
 
 type SaveWarningMessageFormatters = {
   [Code in SaveWarningResponse['code']]: (warning: Extract<SaveWarningResponse, {code: Code}>) => string

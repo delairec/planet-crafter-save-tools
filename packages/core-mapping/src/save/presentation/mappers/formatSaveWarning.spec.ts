@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'bun:test';
 import {formatSaveWarning} from './formatSaveWarning';
-import type {SaveWarningResponse} from "../application/responses/SaveWarningResponse";
-import {SaveValidationMessageViewModel} from './viewModels/SaveValidationMessageViewModel';
+import type {SaveWarningResponse} from "../../application/responses/SaveWarningResponse";
+import {SaveValidationMessageViewModel} from '../viewModels/SaveValidationMessageViewModel';
 
 describe('formatSaveWarning', () => {
 

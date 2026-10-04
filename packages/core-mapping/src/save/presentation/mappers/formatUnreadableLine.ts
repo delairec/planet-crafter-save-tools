@@ -1,7 +1,7 @@
-import type {UnreadableLineResponse} from "../application/responses/UnreadableLineResponse";
-import {SaveValidationMessageViewModel} from "./viewModels/SaveValidationMessageViewModel";
+import type {UnreadableLineResponse} from "../../application/responses/UnreadableLineResponse";
+import {SaveValidationMessageViewModel} from "../viewModels/SaveValidationMessageViewModel";
 import {formatErrorLocation} from "./formatErrorLocation";
-import {formatInvalidJsonMessage, formatUndecodableEntryMessage} from "./messages/validationIssueMessages.js";
+import {formatInvalidJsonMessage, formatUndecodableEntryMessage} from "../messages/validationIssueMessages.js";
 
 const UNREADABLE_LINE_MESSAGES = {
   'invalid-json': formatInvalidJsonMessage,

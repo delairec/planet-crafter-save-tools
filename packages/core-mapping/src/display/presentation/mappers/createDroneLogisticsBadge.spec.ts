@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {createDroneLogisticsBadge} from "./createDroneLogisticsBadge";
-import {TonedValueViewModel} from "./viewModels/ConfigurationPageViewModel";
+import {TonedValueViewModel} from "../viewModels/ConfigurationPageViewModel";
 
 describe('createDroneLogisticsBadge', () => {
   describe('When the drone logistics are paused', () => {

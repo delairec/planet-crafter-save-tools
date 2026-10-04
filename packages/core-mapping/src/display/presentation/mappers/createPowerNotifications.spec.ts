@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'bun:test';
 import {createPowerNotifications} from "./createPowerNotifications";
-import {NotificationViewModel} from "./viewModels/NotificationViewModel";
+import {NotificationViewModel} from "../viewModels/NotificationViewModel";
 
 describe('createPowerNotifications', () => {
   describe('When the save takes the values of the current game release at the default power consumption', () => {

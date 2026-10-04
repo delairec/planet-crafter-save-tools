@@ -1,9 +1,9 @@
-import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
+import {formatUnreadableLine} from "../../save/presentation/mappers/formatUnreadableLine";
 import {TerraformationPagePresenterPort} from "../application/ports/TerraformationPagePresenterPort";
 import {TerraformationPageResponse} from "../application/responses/TerraformationPageResponse";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 import {TerraformationPageViewModel} from "./viewModels/TerraformationPageViewModel";
-import {createPlanetTerraformationZone} from "./createPlanetTerraformationZone";
+import {createPlanetTerraformationZone} from "./mappers/createPlanetTerraformationZone";
 
 export class TerraformationPagePresenter implements TerraformationPagePresenterPort {
   private _viewModel: TerraformationPageViewModel = {planets: []};

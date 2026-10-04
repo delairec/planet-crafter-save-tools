@@ -1,9 +1,9 @@
-import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
+import {formatUnreadableLine} from "../../save/presentation/mappers/formatUnreadableLine";
 import {PlayersPagePresenterPort} from "../application/ports/PlayersPagePresenterPort";
 import {PlayerCardResponse, PlayerEquipmentResponse, PlayerGaugeResponse, PlayerInventoryResponse, PlayersPageResponse} from "../application/responses/PlayersPageResponse";
 import type {UnreadableLinesResponse} from "../application/responses/UnreadableLinesResponse";
 import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
-import {NON_BREAKING_SPACE} from "./formatters/formatNumber/nonBreakingSpace";
+import {NON_BREAKING_SPACE} from "./mappers/formatters/formatNumber/nonBreakingSpace";
 import {
   PlayerCardViewModel,
   PlayerEquipmentViewModel,

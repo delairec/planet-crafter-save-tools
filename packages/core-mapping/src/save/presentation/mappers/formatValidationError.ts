@@ -1,5 +1,5 @@
-import type {ValidationIssueResponse} from "../application/responses/ValidationIssueResponse";
-import {SaveValidationMessageViewModel} from "./viewModels/SaveValidationMessageViewModel";
+import type {ValidationIssueResponse} from "../../application/responses/ValidationIssueResponse";
+import {SaveValidationMessageViewModel} from "../viewModels/SaveValidationMessageViewModel";
 import {formatValidationIssue} from "./formatValidationIssue";
 import {formatErrorLocation} from "./formatErrorLocation";
 

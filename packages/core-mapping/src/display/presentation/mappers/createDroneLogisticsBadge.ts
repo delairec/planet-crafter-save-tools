@@ -1,11 +1,11 @@
-import {DroneLogisticsEffectResponse, DroneLogisticsResponse} from "../application/responses/DroneLogisticsResponse";
-import {TonedValueViewModel, ToneViewModel} from "./viewModels/ConfigurationPageViewModel";
+import {DroneLogisticsEffectResponse, DroneLogisticsResponse} from "../../application/responses/DroneLogisticsResponse";
+import {TonedValueViewModel, ToneViewModel} from "../viewModels/ConfigurationPageViewModel";
 import {
   configurationPageDroneLogisticsPausedValue,
   configurationPageDroneLogisticsRunningValue,
   configurationPageHelpingToneLabel,
   configurationPagePenalisingToneLabel
-} from "./messages/configurationPageMessages.js";
+} from "../messages/configurationPageMessages.js";
 
 const toneByDroneLogisticsEffect: Record<DroneLogisticsEffectResponse, ToneViewModel> = {
   penalisesThePlayer: 'danger',
