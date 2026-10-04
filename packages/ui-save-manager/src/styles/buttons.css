@@ -74,6 +74,7 @@ button[aria-disabled='true'] {
     font-size: var(--text-sm);
     width: max-content;
     max-width: min(48ch, calc(var(--app-width) - var(--space-xxl)));
+    z-index: var(--layer-tooltip);
     visibility: hidden;
     pointer-events: none;
 }
@@ -92,6 +93,11 @@ button[aria-disabled='true'] {
         left: var(--space-lg);
         width: auto;
         max-width: none;
+    }
+
+    .tooltip-anchor:hover .tooltip,
+    .tooltip-anchor:focus-within .tooltip {
+        pointer-events: auto;
     }
 }
 

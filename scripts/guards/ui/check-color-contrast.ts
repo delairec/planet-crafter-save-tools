@@ -167,6 +167,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'surface-card'
   },
   {
+    description: 'the button that unfolds the equipment of a player at phone width, on its card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-equipment-toggle',
+    foreground: 'content',
+    background: 'surface-card'
+  },
+  {
     description: 'a loading or placeholder message on the page background',
     file: 'packages/ui-save-manager/src/styles/typography.css',
     selector: '.text-color-muted',
@@ -492,6 +499,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     description: 'a column header of a table of the Power page, on its card',
     file: 'packages/ui-save-manager/src/styles/power.css',
     selector: '.power-table thead th',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the column name of a figure of a table of the Power page shown as a card at phone width, on its card',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table-column',
     foreground: 'muted',
     background: 'surface'
   },

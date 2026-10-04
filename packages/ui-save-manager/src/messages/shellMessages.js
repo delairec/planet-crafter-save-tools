@@ -1,4 +1,6 @@
 export const menuLabel = 'Menu';
+export const menuButtonLabel = 'Menu';
+export const closeMenuButtonLabel = 'Close the menu';
 export const breadcrumbLabel = 'Breadcrumb';
 export const saveIdentityLabel = 'Loaded save';
 
