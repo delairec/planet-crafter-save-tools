@@ -18,8 +18,8 @@ import {createPowerChart} from "./createPowerChart";
 import {sumOptimizerBoost} from "./sumOptimizerBoost";
 import {sumProductionRatios} from "./sumProductionRatios";
 import {formatKilowatts} from "./formatKilowatts";
+import {formatShare} from "./formatShare";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
-import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
 import {
   energyLevelsSectionAvailableTitle,
   energyLevelsSectionConsumptionTitle,
@@ -104,7 +104,7 @@ function createOptimizers(optimizers: readonly OptimizerResponse[], worldObjectL
         .map((machine) => `${formatNumber(machine.quantity)} ${worldObjectLabels[machine.name]}`)
         .join(', '),
       contribution: formatKilowatts(optimizer.contribution),
-      share: formatShare(optimizer.productionRatio)
+      share: formatShareIfAny(optimizer.productionRatio)
     }))
   };
 }
@@ -119,14 +119,14 @@ function createBreakdownTable(title: string, breakdown: readonly EnergyBreakdown
       quantity: formatNumber(entry.quantity),
       unitLevel: formatKilowatts(entry.unitLevel),
       totalLevel: formatKilowatts(entry.totalLevel),
-      share: formatShare(entry.productionRatio)
+      share: formatShareIfAny(entry.productionRatio)
     })),
     total: {
       label: powerPageTotalLabel,
       quantity: formatNumber(totals.quantity),
       unitLevel: NO_UNIT_LEVEL,
       totalLevel: formatKilowatts(totals.totalLevel),
-      share: formatShare(totals.productionRatio)
+      share: formatShareIfAny(totals.productionRatio)
     }
   };
 }
@@ -146,9 +146,9 @@ function formatKilowattsWithShare(kilowatts: number, productionRatio: number | u
   return `${formatKilowatts(kilowatts)} (${formatShare(productionRatio)})`;
 }
 
-function formatShare(productionRatio: number | undefined): string {
+function formatShareIfAny(productionRatio: number | undefined): string {
   if (productionRatio === undefined) {
     return NO_SHARE;
   }
-  return formatNumber(productionRatio, FormatNumberStrategies.PERCENTAGE);
+  return formatShare(productionRatio);
 }

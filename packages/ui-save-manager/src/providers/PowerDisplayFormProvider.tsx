@@ -1,6 +1,6 @@
 import {Accessor, createContext, createSignal, JSX} from "solid-js";
 
-export type PowerDisplayForm = 'bars' | 'table';
+export type PowerDisplayForm = 'bars' | 'share' | 'table';
 
 export interface PowerDisplayFormChoice {
   form: Accessor<PowerDisplayForm>;

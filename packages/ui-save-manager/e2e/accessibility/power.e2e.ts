@@ -13,6 +13,12 @@ async function openThePowerPageOfAVisualizedSave(page: Page): Promise<void> {
   await expect(page.getByTestId('power-title')).toBeVisible();
 }
 
+async function openTheShareOfEachMachineTypeOfAVisualizedSave(page: Page): Promise<void> {
+  await openThePowerPageOfAVisualizedSave(page);
+  await page.getByTestId('power-display-form').selectOption({label: 'Share of each machine type'});
+  await expect(page.getByTestId('power-share-production-title')).toBeVisible();
+}
+
 test.describe('Power page accessibility', () => {
   test.describe('When the Power page of a visualized save is opened', () => {
     test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
@@ -93,6 +99,31 @@ test.describe('Power page accessibility', () => {
       await expect(page.getByTestId('power-consumers-body')).toHaveRole('region');
       await expect(page.getByTestId('power-consumers-body')).toHaveAccessibleName('Consumers');
       await expect(page.getByTestId('power-consumers-body')).toHaveAttribute('tabindex', '0');
+    });
+  });
+
+  test.describe('When Share of each machine type is chosen on the Power page of a visualized save', () => {
+    test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
+      // Arrange
+      await openTheShareOfEachMachineTypeOfAVisualizedSave(page);
+
+      // Act
+      const {violations} = await createAWcag2Audit(page).analyze();
+
+      // Assert
+      expect(violations).toEqual(noViolation);
+    });
+
+    describeTheColorRulesAuditInTheDarkColorScheme(openTheShareOfEachMachineTypeOfAVisualizedSave);
+
+    test('should name a segment by its type and describe it by its tooltip', async ({page}) => {
+      // Act
+      await openTheShareOfEachMachineTypeOfAVisualizedSave(page);
+
+      // Assert
+      await expect(page.getByTestId('power-share-production-segment-0')).toHaveAttribute('tabindex', '0');
+      await expect(page.getByTestId('power-share-production-segment-0')).toHaveAccessibleName(/\S/);
+      await expect(page.getByTestId('power-share-production-segment-0')).toHaveAccessibleDescription(/ of production$/);
     });
   });
 

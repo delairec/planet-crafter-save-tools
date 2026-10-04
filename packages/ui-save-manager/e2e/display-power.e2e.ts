@@ -45,7 +45,7 @@ test.describe('Power page', () => {
       await expect(page.getByTestId(/^power-chart-production-bar-\d+-label$/)).toContainText(['Wind turbine T2']);
     });
 
-    test('should offer Bars by machine and Table under Display as, Bars by machine chosen', async ({page}) => {
+    test('should offer Bars by machine, Share of each machine type and Table under Display as, Bars by machine chosen', async ({page}) => {
       // Arrange
       await visualizeTheSave(page, skeoUpdateSaveFixturePath);
 
@@ -54,7 +54,7 @@ test.describe('Power page', () => {
 
       // Assert
       await expect(page.getByTestId('power-display-form-label')).toHaveText('Display as');
-      await expect(page.getByTestId(/^power-display-form-option-/)).toHaveText(['Bars by machine', 'Table']);
+      await expect(page.getByTestId(/^power-display-form-option-/)).toHaveText(['Bars by machine', 'Share of each machine type', 'Table']);
       await expect(page.getByTestId('power-display-form')).toHaveValue('bars');
     });
 
@@ -86,6 +86,37 @@ test.describe('Power page', () => {
       await expect(page.getByTestId('power-chart-production-bar-0-description')).toBeVisible();
       await expect(page.getByTestId('power-chart-production-bar-0-description'))
         .toHaveText(/^Wind turbine T2\s+\d+ × [\d.,]+\skW = [\d.,]+\skW · \d+% of production$/);
+    });
+
+    test('should chart the production and the consumption as one stacked bar each, the share written inside a segment and a legend naming each type, once Share of each machine type is chosen', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+      await openThePageOfTheMenu(page, 'Power');
+
+      // Act
+      await displayThePowerAs(page, 'Share of each machine type');
+
+      // Assert
+      await expect(page.getByTestId('power-share-production-title')).toHaveText('Production');
+      await expect(page.getByTestId('power-share-consumption-title')).toHaveText('Consumption');
+      await expect(page.getByTestId('power-share-production-segment-0-share')).toHaveText('100%');
+      await expect(page.getByTestId(/^power-share-production-legend-\d+$/)).toHaveText(['Wind turbine T2']);
+      await expect(page.getByTestId('power-chart-production-title')).toHaveCount(0);
+    });
+
+    test('should name the type, its total and its share once a segment holds the keyboard focus', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, skeoUpdateSaveFixturePath);
+      await openThePageOfTheMenu(page, 'Power');
+      await displayThePowerAs(page, 'Share of each machine type');
+
+      // Act
+      await page.getByTestId('power-share-production-segment-0').focus();
+
+      // Assert
+      await expect(page.getByTestId('power-share-production-segment-0-description')).toBeVisible();
+      await expect(page.getByTestId('power-share-production-segment-0-description'))
+        .toHaveText(/^Wind turbine T2\s+\d+ × [\d.,]+\skW = [\d.,]+\skW · 100% of production$/);
     });
 
     test('should show the production, the consumption and the available power, the available one carrying the status pill', async ({page}) => {

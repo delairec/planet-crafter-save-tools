@@ -32,6 +32,20 @@ export interface TokenPair {
   background: string;
 }
 
+interface ShareFill {
+  fill: string;
+  token: string;
+}
+
+const SHARE_SHADES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const SHARE_FILLS: ShareFill[] = [
+  ...SHARE_SHADES.map(shade => ({fill: `production-${shade}`, token: `series-production-shade-${shade}`})),
+  ...SHARE_SHADES.map(shade => ({fill: `consumption-${shade}`, token: `series-consumption-shade-${shade}`})),
+  {fill: 'optimizerBoost', token: 'series-optimizer-boost'},
+  {fill: 'foldedTail', token: 'subtle'}
+];
+
 export const TOKEN_PAIRS: TokenPair[] = [
   {
     description: 'page body text on the page background',
@@ -494,7 +508,21 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.terraformation-level-row dt',
     foreground: 'muted',
     background: 'surface'
-  }
+  },
+  {
+    description: 'the summary of a stacked bar of the share chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-share-summary',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  ...SHARE_FILLS.map(({fill, token}) => ({
+    description: `the share written inside a ${fill} segment of the share chart of the Power page, on that segment`,
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-share-written-share',
+    foreground: 'inverted',
+    background: token
+  }))
 ];
 
 export const MINIMUM_GRAPHIC_CONTRAST_RATIO = 3;
@@ -583,7 +611,23 @@ export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
     selector: '.terraformation-level-bar-fill',
     foreground: 'neon-purple',
     background: 'elevated'
-  }
+  },
+  ...SHARE_FILLS.flatMap(({fill, token}) => [
+    {
+      description: `a ${fill} segment of the share chart of the Power page, on its track`,
+      file: 'packages/ui-save-manager/src/styles/power.css',
+      selector: `.power-share-fill-${fill}`,
+      foreground: token,
+      background: 'elevated'
+    },
+    {
+      description: `the ${fill} swatch of the legend of the share chart of the Power page, on the page background`,
+      file: 'packages/ui-save-manager/src/styles/power.css',
+      selector: `.power-share-fill-${fill}`,
+      foreground: token,
+      background: 'canvas'
+    }
+  ])
 ];
 
 export function parseColorTokens(source: string): ThemeTokens {

@@ -84,6 +84,27 @@ export const PLANET_WITH_FIFTEEN_TYPES_OF_PRODUCERS: PlanetEnergyLevelsResponse 
   ]
 };
 
+export const PLANET_WITH_NINE_TYPES_OF_CONSUMERS: PlanetEnergyLevelsResponse = {
+  planetId: 6,
+  production: 1_000,
+  consumption: 90,
+  available: 910,
+  balance: 'surplus',
+  productionBreakdown: [],
+  consumptionBreakdown: [
+    {name: 'Generator01', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01},
+    {name: 'Generator02', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01},
+    {name: 'Generator03', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01},
+    {name: 'Generator04', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01},
+    {name: 'Generator05', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01},
+    {name: 'Generator06', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01},
+    {name: 'Generator07', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01},
+    {name: 'Generator08', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01},
+    {name: 'Generator09', quantity: 1, unitLevel: 10, totalLevel: 10, productionRatio: 0.01}
+  ],
+  optimizers: []
+};
+
 export const PLANET_WITH_TWELVE_TYPES_OF_CONSUMERS: PlanetEnergyLevelsResponse = {
   planetId: 5,
   production: 1_000,

@@ -1,4 +1,4 @@
-import {For, Show} from 'solid-js';
+import {For, Match, Switch} from 'solid-js';
 import {PlanetPowerZoneViewModel} from 'core-mapping/display/presentation/viewModels/PlanetPowerZoneViewModel';
 import {NotificationViewModel} from 'core-mapping/display/presentation/viewModels/NotificationViewModel';
 import Notification from '~/components/structure/Notification';
@@ -6,6 +6,7 @@ import PowerFigureTiles from '~/components/power/PowerFigureTiles';
 import PowerOptimizersTable from '~/components/power/PowerOptimizersTable';
 import PowerBreakdownTable from '~/components/power/PowerBreakdownTable';
 import PowerBarsChart from '~/components/power/PowerBarsChart';
+import PowerShareChart from '~/components/power/PowerShareChart';
 import PowerDisplayFormMenu from '~/components/power/PowerDisplayFormMenu';
 import {usePowerDisplayForm} from '~/hooks/usePowerDisplayForm';
 
@@ -28,14 +29,20 @@ export default function PowerPlanetZone(props: PowerPlanetZoneProps) {
         <PowerDisplayFormMenu/>
         <p class="power-breakdown-summary" data-testid="power-breakdown-summary">{props.zone.breakdownSummary}</p>
       </div>
-      <Show when={displayForm.form() === 'bars'} fallback={
-        <div class="power-breakdown-tables">
-          <PowerBreakdownTable table={props.zone.producers} testId="power-producers"/>
-          <PowerBreakdownTable table={props.zone.consumers} testId="power-consumers"/>
-        </div>
-      }>
-        <PowerBarsChart chart={props.zone.chart}/>
-      </Show>
+      <Switch>
+        <Match when={displayForm.form() === 'bars'}>
+          <PowerBarsChart chart={props.zone.chart}/>
+        </Match>
+        <Match when={displayForm.form() === 'share'}>
+          <PowerShareChart chart={props.zone.chart.share}/>
+        </Match>
+        <Match when={displayForm.form() === 'table'}>
+          <div class="power-breakdown-tables">
+            <PowerBreakdownTable table={props.zone.producers} testId="power-producers"/>
+            <PowerBreakdownTable table={props.zone.consumers} testId="power-consumers"/>
+          </div>
+        </Match>
+      </Switch>
     </div>
   );
 }

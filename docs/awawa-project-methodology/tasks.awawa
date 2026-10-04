@@ -2407,22 +2407,41 @@ TASK FEAT183
 
 TASK FEAT184
 	TITLE "Chart the share of each machine type in the production and the consumption of a planet"
-	STATUS todo
+	STATUS implemented
 	DESC "from page F of the mockup, split and ratified on 2026-10-02 from the chart task ratified"
 		+ "on 2026-09-27"
 	SPEC "the Display as selector offers a third form, Share of each machine type, between Bars by"
 		+ "machine and Table"
+		IMPL "packages/ui-save-manager/src/components/power/PowerDisplayFormMenu.tsx::{form:"
+			+ "'share', label: powerDisplayFormShareOption}"
+		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::'Share of each machine type',"
+			+ "'Table'"
 	SPEC "Share of each machine type shows one stacked bar for production and one for consumption,"
 		+ "the eight largest types and the rest folded, the share written inside a segment when it"
 		+ "fits, and a legend naming each type; the optimizer boost is a segment of its own, in its"
 		+ "purple, and never folds"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::should keep"
+			+ "the eight largest in the share of the production"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::WRITTEN_SHARE_MIN_WIDTH_PERCENTAGE"
+		IMPL "packages/ui-save-manager/src/components/power/PowerShareBar.tsx::power-chart-legend-item"
+		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::once Share of each machine type is"
+			+ "chosen"
 	SPEC "hovering or focusing a segment names the type, its total and its share"
+		IMPL "packages/ui-save-manager/src/components/power/PowerShareSegment.tsx::aria-describedby={tooltipId}"
+		IMPL "packages/ui-save-manager/e2e/display-power.e2e.ts::once a segment holds the keyboard"
+			+ "focus"
 	SPEC "the segments, their widths, their labels and the folded tail join the chart zone of the"
 		+ "planet view model, built by the presenter; the segments of production are shades of its"
 		+ "cyan and those of consumption shades of its pink, every pair the form composes"
 		+ "catalogued by the contrast guard"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::production:"
+			+ "createShareBar(productionSource"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-production-shade-1"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-consumption-shade-1"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::SHARE_FILLS"
 	AFTER @TASK.FEAT140
 	WAVE @WAVE.15
+	DELIVERED_BY 277
 	RATIONALE "The share form answers what the bars do not: which machine type weighs how much in"
 		+ "the whole. It reuses the selector and the chart zone of the bars task and adds the"
 		+ "shades of the two series, which the mockup draws as gradients of the cyan and of the"

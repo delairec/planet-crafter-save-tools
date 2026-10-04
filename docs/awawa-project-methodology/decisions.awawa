@@ -1696,6 +1696,13 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		ENFORCED_BY "scripts/guards/ui/check-color-contrast.ts::MINIMUM_GRAPHIC_CONTRAST_RATIO"
 		ENFORCED_BY "scripts/guards/ui/check-color-contrast.spec.ts::should print the graphic pair"
 			+ "at the 3:1 floor, then the count, and exit with one"
+	SPEC "a segment of Share of each machine type fills with a shade token,"
+		+ "--series-production-shade-N or --series-consumption-shade-N, nine per series in each"
+		+ "theme, dark in the light theme and light in the dark one, so that every fill carries the"
+		+ "share written on it in --inverted at 4.5:1 and reaches 3:1 on its track and on the page"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-production-shade-1"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::SHARE_FILLS"
+		ENFORCED_BY "scripts/guards/ui/check-color-contrast.ts::MINIMUM_CONTRAST_RATIO"
 	REJECTED "WCAG 2.1 AAA (7:1): unreachable by the neon accent palette (--neon-pink,"
 		+ "--neon-purple, --neon-cyan) without abandoning the palette's own identity"
 	REJECTED "The full cross-product of every declared color token, text or not: produces pairs no"
@@ -1716,6 +1723,9 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		+ "which passes the colour-vision check on both surfaces, would have to darken, while no"
 		+ "text is ever written in them"
 		REF @TASK.FEAT183
+	REJECTED "the shades of the mockup, the series colour lightened toward white with white text on"
+		+ "every segment: the lighter shades fail 4.5:1 under their text and 3:1 on the light"
+		+ "track, and white on --series-production of the light theme is 3.68:1"
 	RATIONALE "The task's SPEC left the threshold and the verification method open. WCAG 2.1 AA is"
 		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
 		+ "-rendered DOM, a gap the axe audits of the accessibility tests close in the light"
@@ -1733,6 +1743,9 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "Ruled while delivering FEAT183: the series colours fill the power bars, never text,"
 		+ "checked at the non-text floor"
 		PR 264
+	SOURCE "Ruled while delivering FEAT184: the share segments take shades that carry their written"
+		+ "share in --inverted"
+		PR 277
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"
@@ -4467,6 +4480,13 @@ DECISION AnOtherPowerBarFoldsTwoMachineTypesOrMore
 		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::TICK_INTERVALS"
 		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::each"
 			+ "panel on its own ticks"
+	SPEC "a stacked bar of Share of each machine type draws every machine type when it counts nine"
+		+ "or fewer, and folds the types beyond the eight largest into one Other segment, drawn"
+		+ "last, only when it counts more than nine; the optimizer boost is a segment of its own"
+		+ "and counts among no type"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::UNFOLDED_SHARE_MACHINE_TYPE_LIMIT"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::should"
+			+ "keep the ninth type as the last segment"
 	REJECTED "folding from the twelfth type whatever the count, as the task's wording read alone"
 		+ "allows: an Other bar of one type hides a name its own bar could show in the same space"
 	REJECTED "the optimizer boost counted among the twelve bars, as the mockup did: the task keeps"
@@ -4478,8 +4498,13 @@ DECISION AnOtherPowerBarFoldsTwoMachineTypesOrMore
 		REF @DECISION.TheOverviewPowerBarsShareTheLargestFigureOfTheSaveAsTheirScale
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT140
+	APPLIES_TO_TASK @TASK.FEAT184
 	SOURCE "Ruling of the FEAT140 agent on 2026-10-04, page F folding from the twelfth row"
 		PR 273
+		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Ruling of the FEAT184 agent on 2026-10-04, the share form folding as the bars do, page"
+		+ "F folding from the eighth segment"
+		PR 277
 		REF @URL.SaveManagerRedesignMockup
 
 DECISION TheDisplayFormOfThePowerLivesInAProviderAboveTheRouter
@@ -4542,3 +4567,32 @@ DECISION TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
 	SOURCE "Owner ruling of 2026-10-04 at the launch of FEAT141, to the question what the caption"
 		+ "under the Ti names: the factor of the SysTi, without a share"
 		PR 275
+
+DECISION TheShareFormDrawsBothBarsOnTheScaleOfTheLargerTotal
+	SPEC "Share of each machine type draws its production bar and its consumption bar on one scale,"
+		+ "the larger of the production and the consumption of the planet, so the consumption bar"
+		+ "ends where the load meter does"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::Math.max(planet.production,"
+			+ "planet.consumption)"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::on"
+			+ "the scale of the consumption"
+	SPEC "a segment writes and names its share of production, written inside it only when it spans"
+		+ "a tenth of the scale or more"
+		REF @DECISION.AConsumerShareOnThePowerPageIsItsShareOfProduction
+		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::WRITTEN_SHARE_MIN_WIDTH_PERCENTAGE"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::each"
+			+ "segment naming its share of production"
+	REJECTED "each bar on its own total, as the mockup draws it: the consumption bar would write"
+		+ "shares of the consumption, which the Power page refuses, and fill its track whatever the"
+		+ "load"
+		REF @DECISION.AConsumerShareOnThePowerPageIsItsShareOfProduction
+		REF @URL.SaveManagerRedesignMockup
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT184
+	RATIONALE "On one scale the shares the segments write and their widths agree whenever the"
+		+ "planet produces at least what it consumes, and the empty end of the consumption track"
+		+ "reads the available power; in a deficit the production bar is the shorter one"
+	SOURCE "Ruling of the FEAT184 agent on 2026-10-04, the mockup of page F drawing each bar on its"
+		+ "own total"
+		PR 277
+		REF @URL.SaveManagerRedesignMockup
