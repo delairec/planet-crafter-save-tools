@@ -1,6 +1,7 @@
 import {UnreadableLine} from "../../save/domain/save/SaveSectionLocation";
 import {describe, expect, it, mock} from 'bun:test';
 import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
+import {FakeSaveSectionsMapperServiceWithAnOptimizer} from "../testing/FakeSaveSectionsMapperServiceWithAnOptimizer";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {stubGameReleasesReader} from "../../save/testing/stubGameReleasesReader";
 import {LoadPowerPage} from "./LoadPowerPage";
@@ -15,32 +16,13 @@ import {TerraformationLevelEntity} from "../domain/entities/TerraformationLevelE
 import {SaveSectionsReaderPort} from "./ports/SaveSectionsReaderPort";
 import {WorldObjectLabelsReaderPort} from "./ports/WorldObjectLabelsReaderPort";
 import {WorldObjectLabelsResponse} from "./responses/WorldObjectLabelsResponse";
-import {InventoryEntity} from "../domain/entities/InventoryEntity";
 import {stubEnergyLevelsReader} from "../testing/stubEnergyLevelsReader";
 import {stubOptimizerRangesReader} from "../testing/stubOptimizerRangesReader";
 import {PRIME_PLANET_NUMERIC_ID, stubPlanetNamesReader} from "../testing/stubPlanetNamesReader";
 
 const CONSUMER = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: 1});
 
-const OPTIMIZER = new PlacedWorldObjectEntity({id: '3', name: 'Optimizer1' as const, position: [0, 0, 0], planetId: 1, inventoryId: 99});
-const BOOSTED_GENERATOR = new PlacedWorldObjectEntity({id: '4', name: 'EnergyGenerator1' as const, position: [1, 0, 0], planetId: 1});
-const ENERGY_FUSE = new WorldObjectEntity({id: 'fuse-1', name: 'FuseEnergy1' as const});
-
-class SaveSectionsWithAnOptimizer extends FakeSaveSectionsMapperService {
-  override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
-    return [createPlanetWorldObjectsValueObject({planetId: 1, placedWorldObjects: [OPTIMIZER, BOOSTED_GENERATOR]})];
-  }
-
-  override getWorldObjects(): WorldObjectEntity[] {
-    return [OPTIMIZER, BOOSTED_GENERATOR, ENERGY_FUSE];
-  }
-
-  override getInventories(): InventoryEntity[] {
-    return [new InventoryEntity({id: 99, worldObjectIds: ['fuse-1'], size: 1})];
-  }
-}
-
-class SaveSectionsWithoutSaveConfiguration extends FakeSaveSectionsMapperService {
+class FakeSaveSectionsMapperServiceWithoutSaveConfiguration extends FakeSaveSectionsMapperService {
   override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
     return [createPlanetWorldObjectsValueObject({planetId: 1, placedWorldObjects: [CONSUMER]})];
   }
@@ -60,7 +42,7 @@ class SaveSectionsWithoutSaveConfiguration extends FakeSaveSectionsMapperService
 
 const UNKNOWN_PLANET_NUMERIC_ID = 1;
 
-class SaveSectionsWithPlanetsToName extends FakeSaveSectionsMapperService {
+class FakeSaveSectionsMapperServiceWithPlanetsToName extends FakeSaveSectionsMapperService {
   override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
     return [
       createPlanetWorldObjectsValueObject({
@@ -157,7 +139,7 @@ describe('LoadPowerPage', () => {
     it('should charge the base consumption levels, the modifier being 1', async () => {
       // Arrange
       const presenter = createPresenter();
-      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new SaveSectionsWithoutSaveConfiguration()}), presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new FakeSaveSectionsMapperServiceWithoutSaveConfiguration()}), presenter);
 
       // Act
       await useCase.execute({content: SAVE_CONTENT});
@@ -175,7 +157,7 @@ describe('LoadPowerPage', () => {
     it('should present the optimizer with the machine it boosts and the production it contributes', async () => {
       // Arrange
       const presenter = createPresenter();
-      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new SaveSectionsWithAnOptimizer()}), presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new FakeSaveSectionsMapperServiceWithAnOptimizer()}), presenter);
 
       // Act
       await useCase.execute({content: SAVE_CONTENT});
@@ -216,7 +198,7 @@ describe('LoadPowerPage', () => {
     it('should name a planet from its numeric id (Rule EN-PLANET-3)', async () => {
       // Arrange
       const presenter = createPresenter();
-      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new SaveSectionsWithPlanetsToName()}), presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new FakeSaveSectionsMapperServiceWithPlanetsToName()}), presenter);
 
       // Act
       await useCase.execute({content: SAVE_CONTENT});
@@ -230,7 +212,7 @@ describe('LoadPowerPage', () => {
     it('should offer the terraformed planet names as hints when the numeric id is unknown (Rule EN-PLANET-2)', async () => {
       // Arrange
       const presenter = createPresenter();
-      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new SaveSectionsWithPlanetsToName()}), presenter);
+      const useCase = createUseCase(stubSaveSectionsReader({saveSections: new FakeSaveSectionsMapperServiceWithPlanetsToName()}), presenter);
 
       // Act
       await useCase.execute({content: SAVE_CONTENT});

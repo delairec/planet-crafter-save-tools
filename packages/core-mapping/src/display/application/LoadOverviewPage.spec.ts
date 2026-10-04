@@ -1,6 +1,12 @@
 import {UnreadableLine} from "../../save/domain/save/SaveSectionLocation";
 import {describe, expect, it, mock} from 'bun:test';
 import {FakeSaveSectionsMapperService} from "../testing/FakeSaveSectionsMapperService";
+import {
+  FakeSaveSectionsMapperServiceWithPrimeTerraformedAndEquipped,
+  PRIME_DRILL,
+  PRIME_GENERATOR,
+  PRIME_TERRAFORMATION_LEVEL
+} from "../testing/FakeSaveSectionsMapperServiceWithPrimeTerraformedAndEquipped";
 import {SAVE_CONTENT, stubSaveSectionsReader} from "../testing/stubSaveSectionsReader";
 import {stubGameReleasesReader} from "../../save/testing/stubGameReleasesReader";
 import {WORLD_OBJECTS_SECTION} from "../../save/testing/saveSectionLocations";
@@ -22,36 +28,9 @@ import {LoadOverviewPage} from "./LoadOverviewPage";
 
 const UNNAMED_PLANET_NUMERIC_ID = 1;
 
-const PRIME_TERRAFORMATION_LEVEL = new TerraformationLevelEntity({
-  planetId: 'Prime',
-  unitOxygenLevel: 1_000,
-  unitHeatLevel: 2_000,
-  unitPressureLevel: 3_000,
-  unitPlantsLevel: 400,
-  unitInsectsLevel: 500,
-  unitAnimalsLevel: 600,
-  unitPurificationLevel: undefined
-});
-
-const PRIME_GENERATOR = new PlacedWorldObjectEntity({id: '1', name: 'EnergyGenerator6' as const, position: [0, 0, 0], planetId: PRIME_PLANET_NUMERIC_ID});
-const PRIME_DRILL = new PlacedWorldObjectEntity({id: '2', name: 'Drill4' as const, position: [10, 0, 0], planetId: PRIME_PLANET_NUMERIC_ID});
 const UNNAMED_PLANET_GENERATOR = new PlacedWorldObjectEntity({id: '3', name: 'EnergyGenerator1' as const, position: [0, 0, 0], planetId: UNNAMED_PLANET_NUMERIC_ID});
 
-class SaveSectionsWithPrimeTerraformedAndEquipped extends FakeSaveSectionsMapperService {
-  override getTerraformationLevels(): TerraformationLevelEntity[] {
-    return [PRIME_TERRAFORMATION_LEVEL];
-  }
-
-  override getPlacedWorldObjectsByPlanet(): PlanetWorldObjectsValueObject[] {
-    return [createPlanetWorldObjectsValueObject({planetId: PRIME_PLANET_NUMERIC_ID, placedWorldObjects: [PRIME_GENERATOR, PRIME_DRILL]})];
-  }
-
-  override getWorldObjects(): WorldObjectEntity[] {
-    return [PRIME_GENERATOR, PRIME_DRILL];
-  }
-}
-
-class SaveSectionsWithPrimeTerraformedWithoutMachines extends FakeSaveSectionsMapperService {
+class FakeSaveSectionsMapperServiceWithPrimeTerraformedWithoutMachines extends FakeSaveSectionsMapperService {
   override getTerraformationLevels(): TerraformationLevelEntity[] {
     return [PRIME_TERRAFORMATION_LEVEL];
   }
@@ -65,7 +44,7 @@ class SaveSectionsWithPrimeTerraformedWithoutMachines extends FakeSaveSectionsMa
   }
 }
 
-class SaveSectionsWithAnUnnamedPlanetEquippedBeforePrime extends FakeSaveSectionsMapperService {
+class FakeSaveSectionsMapperServiceWithAnUnnamedPlanetEquippedBeforePrime extends FakeSaveSectionsMapperService {
   override getTerraformationLevels(): TerraformationLevelEntity[] {
     return [PRIME_TERRAFORMATION_LEVEL];
   }
@@ -82,7 +61,7 @@ class SaveSectionsWithAnUnnamedPlanetEquippedBeforePrime extends FakeSaveSection
   }
 }
 
-class SaveSectionsWithoutTerraformationLevels extends FakeSaveSectionsMapperService {
+class FakeSaveSectionsMapperServiceWithoutTerraformationLevels extends FakeSaveSectionsMapperService {
   override getTerraformationLevels(): TerraformationLevelEntity[] {
     return [];
   }
@@ -214,7 +193,7 @@ describe('LoadOverviewPage', () => {
       const presenter = createPresenter();
 
       // Act
-      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new SaveSectionsWithPrimeTerraformedAndEquipped()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
+      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new FakeSaveSectionsMapperServiceWithPrimeTerraformedAndEquipped()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
 
       // Assert
       expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.objectContaining({
@@ -246,7 +225,7 @@ describe('LoadOverviewPage', () => {
       const presenter = createPresenter();
 
       // Act
-      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new SaveSectionsWithPrimeTerraformedWithoutMachines()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
+      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new FakeSaveSectionsMapperServiceWithPrimeTerraformedWithoutMachines()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
 
       // Assert
       expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.objectContaining({
@@ -277,7 +256,7 @@ describe('LoadOverviewPage', () => {
       const presenter = createPresenter();
 
       // Act
-      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new SaveSectionsWithAnUnnamedPlanetEquippedBeforePrime()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
+      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new FakeSaveSectionsMapperServiceWithAnUnnamedPlanetEquippedBeforePrime()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
 
       // Assert
       expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.objectContaining({
@@ -330,7 +309,7 @@ describe('LoadOverviewPage', () => {
       const presenter = createPresenter();
 
       // Act
-      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new SaveSectionsWithoutTerraformationLevels()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
+      await createUseCase(presenter, stubSaveSectionsReader({saveSections: new FakeSaveSectionsMapperServiceWithoutTerraformationLevels()})).execute({content: SAVE_CONTENT, fileName: 'Standard-1.json', fileSize: SAVE_FILE_SIZE});
 
       // Assert
       expect(presenter.displayOverviewPage).toHaveBeenCalledWith(expect.not.objectContaining({
