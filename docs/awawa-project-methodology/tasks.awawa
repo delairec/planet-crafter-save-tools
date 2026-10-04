@@ -2689,6 +2689,8 @@ TASK FEAT189
 		IMPL "packages/ui-save-manager/src/styles/players.css::--gauge-icon-height: 2rem;"
 		IMPL "packages/ui-save-manager/src/styles/layout.css::.notification + .notification"
 		IMPL "packages/ui-save-manager/src/styles/buttons.css::.button-compact {"
+		IMPL "packages/ui-save-manager/src/styles/players.css::--slot-min-width: 9rem;"
+		IMPL "packages/ui-save-manager/src/styles/players.css::hyphens: auto;"
 	AFTER @TASK.FEAT145
 	AFTER @TASK.FEAT186
 	AFTER @TASK.FEAT187
