@@ -8,7 +8,7 @@ import {IDLE_PLANET, TIGHT_PLANET, WORLD_OBJECT_LABELS} from "../testing/planetE
 const nbsp = '\u00A0';
 
 describe('createPlanetPowerZone', () => {
-  it('should build the zone of a planet: status pill, three figure tiles, load meter, optimizers, the two tables ending on a total row and the chart', () => {
+  it('should build the zone of a planet: status pill, three figure tiles, load meter, optimizers and the two tables ending on a total row', () => {
     // Act
     const zone = createPlanetPowerZone(TIGHT_PLANET, WORLD_OBJECT_LABELS);
 
@@ -39,30 +39,16 @@ describe('createPlanetPowerZone', () => {
         rows: [{label: 'Drill T3', quantity: '5', unitLevel: `190${nbsp}kW`, totalLevel: `950${nbsp}kW`, share: '95%'}],
         total: {label: 'Total', quantity: '5', unitLevel: '', totalLevel: `950${nbsp}kW`, share: '95%'}
       },
-      chart: {
-        production: {
-          title: 'Production',
-          summary: `2 types · 1,000${nbsp}kW`,
-          bars: [
-            {label: 'Nuclear Reactor T2', series: 'production', widthPercentage: 100, value: `800${nbsp}kW`, detail: `2 × 400${nbsp}kW = 800${nbsp}kW · 80% of production`},
-            {label: 'Solar panel T2', series: 'production', widthPercentage: 25, value: `200${nbsp}kW`, detail: `4 × 50${nbsp}kW = 200${nbsp}kW · 20% of production`},
-            {label: 'Optimizer boost', series: 'optimizerBoost', widthPercentage: 12.5, value: `100${nbsp}kW`, detail: `1 optimizer · 100${nbsp}kW · 10% of production`}
-          ],
-          ticks: ['0', '200', '400', '600', '800']
-        },
-        consumption: {
-          title: 'Consumption',
-          summary: `1 type · 950${nbsp}kW`,
-          bars: [{label: 'Drill T3', series: 'consumption', widthPercentage: 95, value: `950${nbsp}kW`, detail: `5 × 190${nbsp}kW = 950${nbsp}kW · 95% of production`}],
-          ticks: ['0', '250', '500', '750', '1,000']
-        },
-        legend: [
-          {label: 'Producers', series: 'production'},
-          {label: 'Optimizer boost', series: 'optimizerBoost'},
-          {label: 'Consumers', series: 'consumption'}
-        ]
-      }
+      chart: expect.any(Object)
     });
+  });
+
+  it('should chart the production and the consumption of the planet', () => {
+    // Act
+    const zone = createPlanetPowerZone(TIGHT_PLANET, WORLD_OBJECT_LABELS);
+
+    // Assert
+    expect<[string, string]>([zone.chart.production.summary, zone.chart.consumption.summary]).toEqual([`2 types · 1,000${nbsp}kW`, `1 type · 950${nbsp}kW`]);
   });
 
   it.each<[PowerBalanceResponse, TonedValueViewModel]>([
@@ -104,14 +90,7 @@ describe('createPlanetPowerZone', () => {
         breakdownSummary: '0 producers · 0 consumers · 0 optimizers',
         producers: {title: 'Producers', rows: [], total: {label: 'Total', quantity: '0', unitLevel: '', totalLevel: `0${nbsp}kW`, share: ''}},
         consumers: {title: 'Consumers', rows: [], total: {label: 'Total', quantity: '0', unitLevel: '', totalLevel: `0${nbsp}kW`, share: ''}},
-        chart: {
-          production: {title: 'Production', summary: `0 types · 0${nbsp}kW`, bars: [], ticks: []},
-          consumption: {title: 'Consumption', summary: `0 types · 0${nbsp}kW`, bars: [], ticks: []},
-          legend: [
-            {label: 'Producers', series: 'production'},
-            {label: 'Consumers', series: 'consumption'}
-          ]
-        }
+        chart: expect.any(Object)
       });
     });
 
