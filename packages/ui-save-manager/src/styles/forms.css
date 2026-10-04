@@ -27,8 +27,8 @@ select:focus {
 }
 
 .drop-zone {
-    outline: 2px dashed transparent;
-    outline-offset: -2px;
+    outline: var(--border-width-medium) dashed transparent;
+    outline-offset: calc(-1 * var(--border-width-medium));
     border-radius: var(--space-sm);
     transition: outline-color 0.2s;
 }
@@ -68,7 +68,7 @@ select:focus {
     align-items: center;
     gap: var(--space-sm);
     padding: var(--space-lg);
-    border: 2px dashed var(--muted);
+    border: var(--border-width-medium) dashed var(--muted);
     text-align: center;
 }
 

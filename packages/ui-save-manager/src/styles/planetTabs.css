@@ -7,7 +7,7 @@
 
 .planet-tab {
     padding: var(--space-xs) var(--space-md);
-    border: 2px solid var(--neon-purple);
+    border: var(--border-width-medium) solid var(--neon-purple);
     border-radius: var(--radius-sm);
     background-color: var(--surface);
     color: var(--content);
