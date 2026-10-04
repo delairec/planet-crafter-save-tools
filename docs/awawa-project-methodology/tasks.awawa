@@ -944,33 +944,36 @@ TASK FEAT142
 	DELIVERED_BY 262
 
 TASK FEAT143
-	TITLE "Give each planet a page with a Power tab and a Terraformation tab"
-	STATUS todo
-	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27"
-	SPEC "each planet card of the Overview page gains a Details button that opens the page of that"
-		+ "planet, the request carrying the planet identifier the card holds, stable for a planet"
-		+ "without a name; the breadcrumb reads Save, Overview, then the planet name, Overview"
-		+ "leading back"
-	SPEC "the planet page carries two tabs, Power first and Terraformation second, opening on"
-		+ "Power; the Power tab shows the notifications, the figures, the optimizers, the chart and"
-		+ "the tables the Power page shows for that planet, the Terraformation tab the hero figures"
-		+ "and the tables the Terraformation page shows for it"
-	SPEC "the planet page reads one view model composed of its own instance of the power zone and"
-		+ "of the terraformation zone of that planet, built by one presenter through the"
-		+ "presentation helpers of the Power and Terraformation pages, from one use case that takes"
-		+ "the planet"
+	TITLE "Show a disabled Details button on each planet card, the planet page announced for a"
+		+ "later version"
+	STATUS implemented
+	DESC "from page F of the mockup, ratified on the reviewed plan on 2026-09-27, narrowed by the"
+		+ "owner on 2026-10-04"
+	SPEC "each planet card of the Overview page shows a Details button, disabled, that opens no"
+		+ "page"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::aria-disabled=\"true\""
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should offer on each planet"
+			+ "card a Details button, disabled"
+	SPEC "a tooltip describes the Details button, shown on hover and while the button holds the"
+		+ "keyboard focus, saying that the page of the planet comes in a later version"
+		IMPL "packages/ui-save-manager/src/messages/overviewPageMessages.js::overviewPlanetDetailsButtonDescription"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should say in a tooltip over"
+			+ "the Details button that the page of the planet comes in a later version"
+		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::should describe the"
+			+ "Details button of a planet card by its tooltip"
+		IMPL "packages/ui-save-manager/e2e/accessibility/overview.e2e.ts::should show the tooltip"
+			+ "of the Details button while the button holds the keyboard focus"
 	AFTER @TASK.FEAT183
 	AFTER @TASK.FEAT184
 	AFTER @TASK.FEAT141
 	WAVE @WAVE.15
-	RATIONALE "Proposal C opened the detail of a planet in a side drawer over the comparison; the"
-		+ "owner kept the detail and made it a page of its own, reached from the overview card. Its"
-		+ "view model composes the two planet zones already built for the Power and Terraformation"
-		+ "pages, so the three views agree by construction; the notifications qualify the power"
-		+ "figures, so the Power tab repeats them"
+	DELIVERED_BY 280
+	RATIONALE "The planet page first specified here, a Power tab and a Terraformation tab composed"
+		+ "of the zones the Power and Terraformation pages show for that planet, repeated those"
+		+ "pages; the owner withdrew it and kept the button, which marks on the card where the"
+		+ "planet page will open once its own content is designed"
+		REF @TASK.FEAT196
 		REF @URL.SaveManagerRedesignMockup
-		REF @DECISION.AViewModelServesOneView
-		REF @PACKAGE.core_mapping
 		REF @PACKAGE.ui_save_manager
 	SOURCE "Owner ruling of 2026-09-26 on the mockup: the side panel of C becomes a full page"
 		+ "opened from a planet card of the overview"
@@ -979,6 +982,16 @@ TASK FEAT143
 		+ "one wave, the Overview first, then Power, its tables before its charts, Terraformation,"
 		+ "Players, and the Merge two saves page with the last adjustments"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner review of the planet page, 2026-10-04: « en fait ça va pas, car on répète"
+		+ "quasiment exactement les mêmes infos que si on allait voir sur l'onglet d'une planète"
+		+ "dans le menu power par exemple. »"
+		PR 280
+	SOURCE "Owner ruling of 2026-10-04: « Je pense que cette tâche doit être revue pour en faire"
+		+ "quelque chose d'intéressant. Je veux y afficher des choses qui ne sont pas sur les"
+		+ "autres pages. Donc pour l'instant le bouton détails on le grise et il ne renvoie"
+		+ "nullepart. On enlève tout le reste. On met un tooltip pour dire que ça viendra dans une"
+		+ "version ultérieure. »"
+		PR 280
 
 TASK FEAT144
 	TITLE "Give the Players page its view model: player cards with the host badge and vital gauges"
@@ -1385,8 +1398,8 @@ TASK REFACTOR160
 		+ "and resolvePlanetName are called by the use cases"
 		IMPL "packages/core-mapping/src/save/infrastructure/validateSaveContent.js"
 		IMPL "packages/core-mapping/src/display/infrastructure/SaveSectionsMapperService.ts"
-		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::namePlanet(planet,"
-			+ "this.planetNamesReader.findPlanetNameOfNumericId(planet.planetId)"
+		IMPL "packages/core-mapping/src/display/domain/rules/measureEnergyOfEachPlanet.ts::namePlanet(planet,"
+			+ "findPlanetNameOfNumericId(planet.planetId)"
 		IMPL "packages/core-mapping/src/display/domain/rules/namePlanet.ts::planetName:"
 			+ "resolvePlanetName("
 		IMPL "packages/core-mapping/src/save/domain/rules/checkSaveInvariants.ts::validateUniqueHost(sections.players)"
@@ -2930,3 +2943,24 @@ TASK FEAT195
 	SOURCE "Refinement with the owner, 2026-10-04: one icon per kind, named by a column of the"
 		+ "table, an empty slot drawing its icon in dotted lines, a decision written by the"
 		+ "delivering pull request"
+
+TASK FEAT196
+	TITLE "Give each planet a page showing what no other page shows"
+	STATUS draft
+	DESC "the intent of the owner alone; the content is chosen with the owner by refining this task"
+		+ "before it is ratified"
+	SPEC "the Details button of each planet card of the Overview opens the page of that planet,"
+		+ "which shows data of that planet no other page of the save manager shows"
+	AFTER @TASK.FEAT143
+	RATIONALE "Data of a planet read from the save and shown on no page on 2026-10-04, none chosen"
+		+ "yet: the buildings placed on the planet, in total and by category, already mapped per"
+		+ "planet; the flora and the fauna, the growth of each and the hunger of the animals, read"
+		+ "by the codec only; the drone logistics groups and the priority of each inventory, weakly"
+		+ "tied to a planet; marginally the exchange platforms, the world events and the signs"
+		REF @DATATABLE.WorldObjectLabels
+		REF @RULE.AnAnimalHungerLevelLiesBetweenMinus100And100
+	SOURCE "Owner ruling of 2026-10-04 on the planet page of FEAT143: « Je pense que cette tâche"
+		+ "doit être revue pour en faire quelque chose d'intéressant. Je veux y afficher des choses"
+		+ "qui ne sont pas sur les autres pages. »"
+		PR 280
+		REF @TASK.FEAT143

@@ -78,6 +78,11 @@
     gap: var(--space-xs) var(--space-sm);
 }
 
+.overview-planet-head .tooltip {
+    left: auto;
+    right: 0;
+}
+
 .overview-planet-stage {
     margin: 0;
 }

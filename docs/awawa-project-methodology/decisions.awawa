@@ -882,15 +882,29 @@ DECISION APlanetEnergyGridIsAnAggregate
 		+ "the complete PlanetEnergyLevelsValueObject through levels()"
 		IMPL "packages/core-mapping/src/display/domain/PlanetEnergyGrid.ts::levels():"
 			+ "PlanetEnergyLevelsValueObject"
-		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::new PlanetEnergyGrid("
+		IMPL "packages/core-mapping/src/display/domain/rules/measureEnergyOfEachPlanet.ts::new"
+			+ "PlanetEnergyGrid("
 		IMPL "packages/core-mapping/src/display/application/ports/SaveSectionsMapperPort.ts::getPlacedWorldObjectsByPlanet"
+	SPEC "The display use cases measure the energy of the planets of a save through the domain rule"
+		+ "measureEnergyOfEachPlanet, which names each planet and builds its grid; none chains"
+		+ "namePlanet and PlanetEnergyGrid itself"
+		IMPL "packages/core-mapping/src/display/domain/rules/measureEnergyOfEachPlanet.ts::export"
+			+ "function measureEnergyOfEachPlanet("
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::measureEnergyOfEachPlanet({"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::measureEnergyOfEachPlanet({"
 	REJECTED "Energy rules taking the same triple of lists: an unnamed object, and the boosts"
 		+ "computed three times per planet"
+	REJECTED "The clone of the planet naming and gridding listed as reviewed in fallow.toml: the"
+		+ "computation is a domain one, so a rule can hold it, which a reviewed key would only hide"
+	REJECTED "A function of the application the use cases share: ruled out by"
+		+ "@RULE.application_holds_use_cases_ports_requests_responses of ~/.ai"
 	SOURCE "T15, owner review"
 		PR 72
 	SOURCE "Rewritten with the section reader port: the use case builds one grid per planet the"
 		+ "port returns"
 		PR 232
+	SOURCE "Owner review relaying the fallow duplication between the planet and overview use cases"
+		PR 280
 
 DECISION APresenterReceivesAValueObjectNeverAnEntity
 	STATUS archived
@@ -2903,7 +2917,7 @@ DECISION AViewModelServesOneView
 		+ "its own instance of it, built by a presentation helper the presenters of those pages"
 		+ "call; what two views share is that helper, a pure mapping from value objects to the"
 		+ "zone, never one view model read by two views"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT143"
+		IMPL "packages/core-mapping/src/display/presentation/createPowerNotifications.ts"
 		IMPL "packages/core-mapping/src/display/presentation/createDroneLogisticsBadge.ts"
 	SPEC "a controller serves one view and a presenter builds one view model; a use case is one"
 		+ "meaningful action of the save manager, load one page or one zone, and orchestrates the"
@@ -4522,7 +4536,7 @@ DECISION TheDisplayFormOfThePowerLivesInAProviderAboveTheRouter
 		+ "same module instance, so one reader's choice would leak to the next"
 	REJECTED "the choice in the query of the address: the planet page is another route and would"
 		+ "not carry it"
-		REF @TASK.FEAT143
+		REF @TASK.FEAT196
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	APPLIES_TO_TASK @TASK.FEAT140
 	RATIONALE "The same reason as for the merged saves: only a store above the router outlives"
@@ -4612,7 +4626,7 @@ DECISION TheExportGuardReadsTheManifestAndTheCompositionRootsOfCoreMapping
 		+ "reaches is the composition root"
 	REJECTED "an allow list of the wired controllers: every page task would edit the guard, the"
 		+ "planet page first"
-		REF @TASK.FEAT143
+		REF @TASK.FEAT196
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.FEAT145
 	RATIONALE "The section controllers are gone; what keeps one from coming back is the boundary a"

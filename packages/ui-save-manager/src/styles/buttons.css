@@ -37,7 +37,8 @@ button:hover {
     cursor: pointer;
 }
 
-button:disabled {
+button:disabled,
+button[aria-disabled='true'] {
     background-color: var(--button-primary-bg-disabled);
     cursor: not-allowed;
 }
