@@ -2915,24 +2915,41 @@ TASK REFACTOR194
 TASK FEAT195
 	TITLE "Draw an original icon for each equipment kind and show it in the equipment slots of the"
 		+ "player card"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 282
 	SPEC "each kind of the EquipmentKinds table names its icon in a column of the table, the tiers"
 		+ "of a kind sharing it; the icon reaches the slot through the view model of the player"
 		+ "card, never through a second table of the kinds in the interface"
+		IMPL "packages/data-world-objects/equipmentKinds.schema.json::\"icon\""
+		IMPL "packages/core-mapping/src/display/domain/rules/arrangeEquipmentSlots.ts::iconByKind"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts::icon:"
+			+ "string"
 		REF @DATATABLE.EquipmentKinds
 	SPEC "each equipment slot of the player card shows the icon of its kind, hidden from screen"
 		+ "readers; an empty slot shows the icon of its kind drawn in dotted lines"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentKindIcon.tsx::aria-hidden"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentSlots.tsx::<EquipmentKindIcon"
+		IMPL "packages/ui-save-manager/src/styles/players.css::.slot.empty .slot-icon"
 		REF @DECISION.AnEquipmentSlotIsAKindOfTheEquipmentKindsTable
 		REF @DECISION.ADecorativeCharacterIsRenderedByIcon
 	SPEC "a worn item the table names no kind for shows a generic equipment icon"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts::GENERIC_EQUIPMENT_ICON"
 	SPEC "the icons take the colour of the text, in the light theme and in the dark theme"
+		IMPL "packages/ui-save-manager/public/icons/equipment.svg::stroke=\"currentColor\""
 	SPEC "every icon shipped is an original drawing, simplified, versioned in the public"
 		+ "repository: no file of the game, nothing extracted from it and no image of the wiki is"
 		+ "committed, shipped or loaded"
+		IMPL "packages/ui-save-manager/public/icons/equipment.svg::<symbol id=\"oxygen-tank\""
+		IMPL "scripts/guards/ui/check-equipment-icons.ts::EQUIPMENT_SPRITE_PATH"
 	SPEC "a decision records the ruling and the options refused, so that none is proposed again"
 		+ "once the task is deleted with its wave"
+		IMPL "docs/awawa-project-methodology/decisions.awawa::DECISION"
+			+ "AnEquipmentKindNamesTheOriginalIconItsSlotShows"
 	SPEC "the inventory items keep no icon"
+		IMPL "packages/ui-save-manager/src/components/players/InventoryChips.tsx"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/merge-cli.node.spec.js"
+		IMPL "packages/cli-validate/cli/validate-cli.node.spec.js"
 	AFTER @TASK.FEAT185
 	WAVE @WAVE.15
 	RATIONALE "The owner wanted the game's icons in the equipment slots; they are assets of Miju"

@@ -4682,3 +4682,4 @@ DECISION AnEquipmentKindNamesTheOriginalIconItsSlotShows
 	SOURCE "Owner ruling of 2026-10-04: original simplified icons for the equipment only, the"
 		+ "game's icons looked at as a reference only; ruled while delivering the icons of the"
 		+ "equipment slots"
+		PR 282
