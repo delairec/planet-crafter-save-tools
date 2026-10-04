@@ -1,46 +1,11 @@
 import {describe, expect, it} from 'bun:test';
 import {createPlanetPowerZone} from "./createPlanetPowerZone";
 import {PlanetEnergyLevelsResponse, PowerBalanceResponse} from "../application/responses/EnergyLevelsResponse";
-import {WorldObjectLabelsResponse} from "../application/responses/WorldObjectLabelsResponse";
 import {TonedValueViewModel} from "./viewModels/ConfigurationPageViewModel";
 import {PlanetPowerZoneViewModel, PowerBreakdownTableViewModel, PowerLoadMeterViewModel, PowerOptimizersViewModel} from "./viewModels/PlanetPowerZoneViewModel";
+import {IDLE_PLANET, TIGHT_PLANET, WORLD_OBJECT_LABELS} from "../testing/planetEnergyLevelsFixture";
 
 const nbsp = '\u00A0';
-const WORLD_OBJECT_LABELS: WorldObjectLabelsResponse = {
-  Drill2: 'Drill T3',
-  EnergyGenerator3: 'Solar panel T2',
-  EnergyGenerator5: 'Nuclear Reactor T2',
-  Optimizer2: 'Machine Optimizer T2',
-  WindTurbine1: 'Wind turbine T2'
-};
-const TIGHT_PLANET: PlanetEnergyLevelsResponse = {
-  planetId: 1,
-  planetName: 'Prime',
-  production: 1_000,
-  consumption: 950,
-  available: 50,
-  balance: 'tight',
-  productionBreakdown: [
-    {name: 'EnergyGenerator5', quantity: 2, unitLevel: 400, totalLevel: 800, productionRatio: 0.8},
-    {name: 'EnergyGenerator3', quantity: 4, unitLevel: 50, totalLevel: 200, productionRatio: 0.2}
-  ],
-  consumptionBreakdown: [
-    {name: 'Drill2', quantity: 5, unitLevel: 190, totalLevel: 950, productionRatio: 0.95}
-  ],
-  optimizers: [
-    {name: 'Optimizer2', fuseCount: 3, fuseSlots: 4, boostedMachines: [{name: 'WindTurbine1', quantity: 2}, {name: 'Drill2', quantity: 1}], contribution: 100, productionRatio: 0.1}
-  ]
-};
-const IDLE_PLANET: PlanetEnergyLevelsResponse = {
-  planetId: 3,
-  production: 0,
-  consumption: 0,
-  available: 0,
-  balance: 'balanced',
-  productionBreakdown: [],
-  consumptionBreakdown: [],
-  optimizers: []
-};
 
 describe('createPlanetPowerZone', () => {
   it('should build the zone of a planet: status pill, three figure tiles, load meter, optimizers, the two tables ending on a total row and the chart', () => {

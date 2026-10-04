@@ -4455,7 +4455,7 @@ DECISION AnOtherPowerBarFoldsTwoMachineTypesOrMore
 		+ "counts more than twelve"
 		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::UNFOLDED_MACHINE_TYPE_LIMIT"
 		ENFORCED_BY "packages/core-mapping/src/display/presentation/createPowerChart.spec.ts::should"
-			+ "keep a bar for each of them and fold none"
+			+ "keep the twelfth type as the last bar, folding none"
 	SPEC "the optimizer boost is counted among no machine type: its bar takes its place by its"
 		+ "total among the kept bars, and the fold counts machine types alone"
 		IMPL "packages/core-mapping/src/display/presentation/createPowerChart.ts::companionBars:"
