@@ -287,6 +287,19 @@ spec file outside `testing/` passes; and an area folder named after a layer is r
 not a relative path, so outside `infrastructure/` it is refused as a package. The guard runs with no exemption.
 
 ```
+bun run check:core-mapping-exports
+```
+
+Reads the `exports` of the manifest of `core-mapping` and fails on an entry other than the composition root of a
+business, `./<business>/composition/compositionRoot`, or the view models of a business,
+`./<business>/presentation/viewModels/*`, each served from the same path under `./src` with the `.ts` extension: a
+controllers folder, a use case, the composition folder by a wildcard or a controller exported under the path of a
+composition root are all refused. It then reads each composition root the manifest exports and fails on an export
+line naming a `Load*SectionController`: a wired controller serves a page or a zone of the save manager, or a CLI,
+never one section of the save. A page controller a later task wires passes with no change to the guard, which carries
+no allow-list. A section controller exported under a class of another name is not recognised.
+
+```
 bun run check:action-pins
 ```
 
