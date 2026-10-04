@@ -2592,47 +2592,56 @@ TASK CHORE191
 TASK FEAT190
 	TITLE "Show the toxicity gauge on the player card"
 	STATUS draft
-	DESC "split from FEAT144 in the review of pull request 263; when the task starts, two facts are"
-		+ "observed in game: the toxicity maximum each of the three Toxins Filter tiers gives, and"
-		+ "whether a filter outside the equipment counts"
-		REF @HYPOTHESIS.EachToxinsFilterTierRaisesTheToxicityMaximumByFive
-	SPEC "each player card shows a fourth flat gauge for toxicity, filled by percentage of its"
-		+ "maximum like the three vital gauges, the percentage next to the label and the value over"
-		+ "its maximum under the gauge"
-	SPEC "the toxicity gauge is full when playerGaugeToxic equals its maximum and empty at 0, the"
-		+ "value being the protection left, as the toxicity meter of the game runs down from its"
-		+ "maximum to 0"
-	SPEC "the toxicity maximum is 5 without a Toxins Filter in the equipment; the maximum each"
-		+ "Toxins Filter tier, T1 to T3, gives is read from a value table of a data- package, by an"
-		+ "infrastructure adapter behind an application port, a filter in any other inventory"
-		+ "counting for nothing, and the use case hands value, maximum and percentage to the"
-		+ "presenter as primitives of its application response"
+	DESC "stays draft until DOCS193 reports the toxic time of every toxic area: one time shared by"
+		+ "every area is the maximum of the gauge; differing times reopen the refinement, the save"
+		+ "not carrying the area a player stands in"
+		REF @TASK.DOCS193
+	SPEC "a player card whose playerGaugeToxic is above 0 shows a fourth flat gauge for toxicity,"
+		+ "filled by percentage of its maximum like the three vital gauges, the percentage next to"
+		+ "the label and the value over its maximum under the gauge; a card at 0 shows none, as the"
+		+ "game hides its meter"
+	SPEC "the toxicity gauge shows the protection left, its maximum less playerGaugeToxic, as the"
+		+ "meter of the game does: full at no exposure, empty once playerGaugeToxic reaches the"
+		+ "maximum, where the game damages the player"
+	SPEC "the toxicity maximum is the toxic time DOCS193 reads, from a value table of a data-"
+		+ "package, by an infrastructure adapter behind an application port, no equipment changing"
+		+ "it; the use case hands value, maximum and percentage to the presenter as primitives of"
+		+ "its application response"
+		REF @TASK.DOCS193
+	SPEC "a RULE states that playerGaugeToxic is the exposure a player has accumulated in a toxic"
+		+ "area, 0 for none, capped at the toxic time of that area, attested by the tests of the"
+		+ "gauge"
 	SPEC "the specs of cli-merge and cli-validate pass unchanged"
 	AFTER @TASK.FEAT144
+	AFTER @TASK.DOCS193
 	RATIONALE "The save carries the toxicity of each player as playerGaugeToxic, without its"
-		+ "maximum. The base maximum is 5, and a Toxins Filter in the equipment is assumed to raise"
-		+ "it by an amount not yet observed, which the wiki contradicts by saying a filter slows"
-		+ "the depletion of the meter: a gauge drawn before the observation would measure a"
-		+ "filtered player against a wrong maximum. The meter starts at its maximum and runs down"
-		+ "to 0, so playerGaugeToxic is the protection left and the 4.9999995 of the private"
-		+ "reference save Standard-5-toxic.json is a full gauge"
+		+ "maximum. The game accumulates it while the player stands in a toxic area that is not"
+		+ "fully cleaned, at a rate a Toxins Filter in the equipment slows, caps it at the toxic"
+		+ "time of that area and damages the player there, then drains it outside; its meter shows"
+		+ "the maximum less that value and hides at 0. The maximum is a value of each area, set in"
+		+ "the scene, and the save does not say which area a player stands in: the gauge can be"
+		+ "drawn only if every area shares one time. The 4.9999995 of the private reference save"
+		+ "Standard-5-toxic.json is then a player at the cap of an area whose time is 5, an empty"
+		+ "meter"
 		REF @SECTION.Players
 		REF @DECISION.APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
-		REF @URL.WikiToxinsFilters
-	SOURCE "Owner reply of 2026-10-03 in the review of pull request 263: the toxicity gauge is 5 at"
-		+ "base and the Toxins Filter T1 and T2 raise it by an amount to verify in game; the"
-		+ "private reference save Standard-5-toxic.json holds a player at 5 with no Toxins Filter"
-		PR 263
+		REF @TASK.DOCS193
 		REF @PROJECT.DNC
-	SOURCE "Owner ruling of 2026-10-03 in the review of pull request 263: a T3 Toxins Filter gives"
-		+ "20, and a filter counts only in the equipment, pending a check in game"
+	SOURCE "Split from FEAT144 in the review of pull request 263"
 		PR 263
-	SOURCE "Read on 2026-10-03 in the review of pull request 263: the wiki page Toxins Filters"
-		PR 263
-		REF @URL.WikiToxinsFilters
 	SOURCE "Owner's check in game of 2026-10-03, stated in the review of pull request 263: the"
 		+ "toxicity meter starts at its maximum and runs down to 0"
 		PR 263
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: PlayerGaugesHandler raises the toxic value in a tracked ToxicArea at the"
+		+ "toxic consumption rate times the share left to clean and 1 - v/100 for the Toxins Filter"
+		+ "value v, caps it at ToxicArea.GetToxicTime, 10 by default, and drains it outside the"
+		+ "area at the toxic remove rate times 1 + v/100; PlayerGaugeToxic draws the maximum less"
+		+ "the value and hides at 0; PlayerToxicArea activates the damage zone when the ratio"
+		+ "reaches 1"
+		REF @GAME_RELEASE.2.103
+	SOURCE "Owner ruling of 2026-10-04, refining the task: the toxicity is drawn as a gauge, after"
+		+ "DOCS193 has read the toxic time of the areas"
 
 TASK DOCS192
 	TITLE "Verify the rules and hypotheses of the specification against the files of the game"
@@ -2715,8 +2724,8 @@ TASK DOCS193
 		REF @DATATABLE.EnergyLevels
 		REF @DATATABLE.EquipmentKinds
 		REF @DATATABLE.OxygenTankCapacities
-	SPEC "the Toxins Filter value of each tier, T1 to T3, is recorded in a RULE, so that the"
-		+ "toxicity gauge can be drawn from it"
+	SPEC "the toxic time of every toxic area, ToxicArea.GetToxicTime, is read with the planet that"
+		+ "carries it and recorded in a value table of a data- package, with its DATATABLE"
 		REF @TASK.FEAT190
 	SPEC "no extracted asset and no file of the game reaches the public repository: only the value"
 		+ "read and where it was read"
@@ -2730,7 +2739,8 @@ TASK DOCS193
 		+ "equipment, the bounds of a difficulty slider and the group ids are fields of the group"
 		+ "data that Unity serialises in the asset files under Planet Crafter_Data, which a"
 		+ "decompiler does not open. The Power and Players pages draw these figures, and the"
-		+ "toxicity gauge of FEAT190 waits on the value of each Toxins Filter tier"
+		+ "toxicity gauge of FEAT190 waits on the toxic time of the areas, a value of each area set"
+		+ "in the scene"
 		REF @TASK.DOCS192
 		REF @TASK.FEAT190
 		REF @GAME_RELEASE.2.103
