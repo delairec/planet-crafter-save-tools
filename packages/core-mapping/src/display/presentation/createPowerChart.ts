@@ -12,6 +12,8 @@ import {
   PowerChartViewModel
 } from "./viewModels/PowerChartViewModel";
 import {formatKilowatts} from "./formatKilowatts";
+import {sumOptimizerBoost} from "./sumOptimizerBoost";
+import {sumProductionRatios} from "./sumProductionRatios";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
 import {
@@ -140,26 +142,22 @@ function createFoldedTailBar(foldedEntries: readonly EnergyBreakdownEntryRespons
     totalLevel,
     detail: appendShare(
       resolvePowerPageFoldedTailBarDetail(machineCount, formatKilowatts(totalLevel)),
-      sumRatios(foldedEntries.map((entry) => entry.productionRatio))
+      sumProductionRatios(foldedEntries.map((entry) => entry.productionRatio))
     )
   };
 }
 
 function createOptimizerBoostBar(optimizers: readonly OptimizerResponse[]): ChartBar {
-  const totalLevel = optimizers.reduce((total, optimizer) => total + optimizer.contribution, 0);
+  const boost = sumOptimizerBoost(optimizers);
   return {
     label: powerPageOptimizerBoostLabel,
     series: 'optimizerBoost',
-    totalLevel,
+    totalLevel: boost.contribution,
     detail: appendShare(
-      resolvePowerPageOptimizerBoostBarDetail(optimizers.length, formatKilowatts(totalLevel)),
-      sumRatios(optimizers.map((optimizer) => optimizer.productionRatio))
+      resolvePowerPageOptimizerBoostBarDetail(optimizers.length, formatKilowatts(boost.contribution)),
+      boost.productionRatio
     )
   };
-}
-
-function sumRatios(ratios: readonly (number | undefined)[]): number | undefined {
-  return ratios.reduce<number | undefined>((total, ratio) => ratio === undefined ? total : (total ?? 0) + ratio, undefined);
 }
 
 function appendShare(detail: string, productionRatio: number | undefined): string {

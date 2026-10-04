@@ -15,6 +15,8 @@ import {
 } from "./viewModels/PlanetPowerZoneViewModel";
 import {formatPowerFigures} from "./formatPowerFigures";
 import {createPowerChart} from "./createPowerChart";
+import {sumOptimizerBoost} from "./sumOptimizerBoost";
+import {sumProductionRatios} from "./sumProductionRatios";
 import {formatKilowatts} from "./formatKilowatts";
 import {formatNumber} from "./formatters/formatNumber/formatNumber";
 import {FormatNumberStrategies} from "./formatters/formatNumber/FormatNumberStrategies";
@@ -90,12 +92,11 @@ function createLoadMeter(shareOfProductionConsumed: string, {production, consump
 }
 
 function createOptimizers(optimizers: readonly OptimizerResponse[], worldObjectLabels: WorldObjectLabelsResponse): PowerOptimizersViewModel {
-  const boost = optimizers.reduce((total, optimizer) => total + optimizer.contribution, 0);
-  const boostRatio = sumRatios(optimizers.map((optimizer) => optimizer.productionRatio));
+  const boost = sumOptimizerBoost(optimizers);
 
   return {
     title: powerPageOptimizersTitle,
-    summary: resolvePowerPageOptimizersSummary(optimizers.length, formatKilowattsWithShare(boost, boostRatio)),
+    summary: resolvePowerPageOptimizersSummary(optimizers.length, formatKilowattsWithShare(boost.contribution, boost.productionRatio)),
     rows: optimizers.map((optimizer) => ({
       label: worldObjectLabels[optimizer.name],
       fuses: `${formatNumber(optimizer.fuseCount)} / ${formatNumber(optimizer.fuseSlots)}`,
@@ -134,12 +135,8 @@ function sumBreakdown(breakdown: readonly EnergyBreakdownEntryResponse[]): Break
   return {
     quantity: breakdown.reduce((total, entry) => total + entry.quantity, 0),
     totalLevel: breakdown.reduce((total, entry) => total + entry.totalLevel, 0),
-    productionRatio: sumRatios(breakdown.map((entry) => entry.productionRatio))
+    productionRatio: sumProductionRatios(breakdown.map((entry) => entry.productionRatio))
   };
-}
-
-function sumRatios(ratios: readonly (number | undefined)[]): number | undefined {
-  return ratios.reduce<number | undefined>((total, ratio) => ratio === undefined ? total : (total ?? 0) + ratio, undefined);
 }
 
 function formatKilowattsWithShare(kilowatts: number, productionRatio: number | undefined): string {
