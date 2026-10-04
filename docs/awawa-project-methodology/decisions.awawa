@@ -637,6 +637,7 @@ DECISION CoreMappingExportsOnlyControllersAndViewModels
 		IMPL "packages/core-mapping/package.json::./validation/presentation/viewModels/*"
 		IMPL "packages/core-mapping/package.json::./merge/presentation/viewModels/*"
 		IMPL "packages/core-mapping/package.json::./display/presentation/viewModels/*"
+		ENFORCED_BY "scripts/guards/architecture/check-core-mapping-exports.ts::EXPORT_BEYOND_BOUNDARY_REASON"
 	REJECTED "Export infrastructure modules of core-mapping to its consumers"
 	REJECTED "One composition root exporting the controllers of the three businesses, the previous"
 		+ "form of this ruling: an interface loaded the wiring of the businesses it does not call"
@@ -2915,7 +2916,8 @@ DECISION AViewModelServesOneView
 		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
 	SPEC "a section controller, one per section of the save, is retired once no page reads its view"
 		+ "model, in the pull request of the page that stops reading it"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT145"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts"
+		ENFORCED_BY "scripts/guards/architecture/check-core-mapping-exports.ts::SECTION_CONTROLLER_EXPORT"
 	REJECTED "one view model per section of the save, assembled by the UI: the page then joins,"
 		+ "folds and formats what the presentation should have decided, and the figures of two"
 		+ "zones showing the same planet can disagree"
@@ -4596,3 +4598,28 @@ DECISION TheShareFormDrawsBothBarsOnTheScaleOfTheLargerTotal
 		+ "own total"
 		PR 277
 		REF @URL.SaveManagerRedesignMockup
+
+DECISION TheExportGuardReadsTheManifestAndTheCompositionRootsOfCoreMapping
+	SPEC "check:core-mapping-exports reads the exports of the core-mapping manifest and the export"
+		+ "lines of each composition root they name: it refuses an export other than the"
+		+ "composition root or the view models folder of a business served from the same path under"
+		+ "src, and an exported Load*SectionController"
+		IMPL "scripts/guards/architecture/check-core-mapping-exports.ts::checkCoreMappingExports"
+		IMPL "package.json::check:core-mapping-exports"
+		ENFORCED_BY "scripts/guards/architecture/check-core-mapping-exports.spec.ts::checkCoreMappingExports"
+	REJECTED "reading the controllers folders of core-mapping by file name: a controller file left"
+		+ "there unwired is already an unimported file for the quality gate, and what a consumer"
+		+ "reaches is the composition root"
+	REJECTED "an allow list of the wired controllers: every page task would edit the guard, the"
+		+ "planet page first"
+		REF @TASK.FEAT143
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT145
+	RATIONALE "The section controllers are gone; what keeps one from coming back is the boundary a"
+		+ "consumer reaches, the manifest exports and the controllers each composition root wires."
+		+ "Reading that boundary accepts any page or zone controller a later task wires and refuses"
+		+ "a section controller by the name every one of them carried"
+		REF @DECISION.CoreMappingExportsOnlyControllersAndViewModels
+		REF @DECISION.AViewModelServesOneView
+	SOURCE "Choice FEAT145 left open until it started, taken by the pull request delivering it"
+		PR 279

@@ -1045,7 +1045,8 @@ TASK FEAT144
 
 TASK FEAT145
 	TITLE "Close the transition: no section controller exported, the export boundary guarded"
-	STATUS todo
+	STATUS implemented
+	DELIVERED_BY 279
 	DESC "ratified on the reviewed plan on 2026-09-27 without refinement; the guard reads the"
 		+ "controllers of core-mapping or the wired controllers its composition root exports,"
 		+ "chosen when the task starts"
@@ -1053,11 +1054,24 @@ TASK FEAT145
 		+ "exports no section view model: every wired controller serves one page or one zone of the"
 		+ "save manager, or a CLI, and a guard of the repository refuses a new"
 		+ "Load*SectionController"
+		IMPL "packages/core-mapping/package.json::./display/composition/compositionRoot"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts"
+		IMPL "scripts/guards/architecture/check-core-mapping-exports.ts::SECTION_CONTROLLER_EXPORT"
+		IMPL "scripts/guards/architecture/check-core-mapping-exports.spec.ts::When an exported"
+			+ "composition root wires a section controller"
 	SPEC "the generic table view model and the field group components of today are gone from"
 		+ "core-mapping and from the UI, and the coverage gates of the repository stay green"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlanetPowerZoneViewModel.ts::PowerBreakdownTableViewModel"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlanetTerraformationZoneViewModel.ts::TerraformationLevelsTableViewModel"
+		IMPL "packages/ui-save-manager/src/components/power/PowerBreakdownTable.tsx"
+		IMPL "packages/ui-save-manager/src/components/terraformation/TerraformationLevelsTable.tsx"
 	SPEC "the controller methods and view models the CLIs call are unchanged, the CLIs importing"
 		+ "the wired controllers from the composition root, and the specs of cli-merge and"
 		+ "cli-validate pass unchanged"
+		IMPL "packages/cli-merge/cli/merge-cli.js::core-mapping/merge/composition/compositionRoot"
+		IMPL "packages/cli-validate/cli/validate-cli.js::core-mapping/validation/composition/compositionRoot"
+		IMPL "packages/cli-merge/cli/initMergeCli.spec.js"
+		IMPL "packages/cli-validate/cli/initValidateCli.spec.js"
 	AFTER @TASK.FEAT139
 	AFTER @TASK.FEAT141
 	AFTER @TASK.FEAT142
