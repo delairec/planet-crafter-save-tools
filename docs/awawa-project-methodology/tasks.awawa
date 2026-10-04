@@ -155,7 +155,7 @@ TASK FEAT73
 		+ "world objects placed on that planet and is not edited. The purification sentinel is the"
 		+ "one level whose lower bound is not zero"
 		REF @SECTION.TerraformationLevels
-		REF @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+		REF @RULE.APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification
 		REF @TASK.FEAT71
 	SOURCE "Wave 6 rewritten on the owner ruling of 2026-09-21 rejecting the tasks of pull request"
 		+ "108: every field the save manager displays becomes editable, the computed ones staying"
@@ -807,7 +807,7 @@ TASK FEAT141
 		REF @TASK.FEAT132
 		REF @TASK.FEAT139
 		REF @SECTION.TerraformationLevels
-		REF @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+		REF @RULE.APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification
 		REF @PACKAGE.core_mapping
 		REF @PACKAGE.ui_save_manager
 	SOURCE "Owner review of 2026-09-26 of the first working version: the bars are not aligned,"

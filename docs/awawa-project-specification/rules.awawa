@@ -422,7 +422,7 @@ RULE APlanetNumericIdIsStableAcrossSaves
 		REF @GAME_RELEASE.2.103
 		PR 276
 
-RULE APurificationLevelOfMinusOneMeansNotUnlocked
+RULE APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification
 	HOLDS_FOR all
 	DOMAIN format
 	SPEC "unitPurificationLevel carries -1 on a planet that needs no purification, and a"
@@ -831,7 +831,7 @@ RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
 		REF @GAME_RELEASE.2.103
 		PR 276
 
-RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+RULE TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 	HOLDS_FOR all
 	DOMAIN game
 	SPEC "the SysTi of a save folds the Terraformation Index of its planets in save order: while"

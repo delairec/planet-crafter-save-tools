@@ -4008,7 +4008,7 @@ DECISION APlanetWithoutPurificationCarriesNoPurificationLevel
 		+ "section printed"
 	REJECTED "A Purification column showing a placeholder for such a planet: the planet does not"
 		+ "handle purification, so there is nothing to show"
-	RESTS_ON @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+	RESTS_ON @RULE.APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification
 	RATIONALE "The value is how the save format writes that a planet has no purification; decoded"
 		+ "at the boundary, the merge rule and the display reason on a level that is there or not,"
 		+ "and the format keeps its value"
@@ -4329,7 +4329,7 @@ DECISION ThePowerUseCaseIsNamedAfterItsPageItsResponseAfterTheEnergyLevels
 	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
 		PR 269
 
-DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
+DECISION TheOverviewShowsTheSysTiOfTheSaveInATileOfItsOwn
 	SPEC "the Overview page shows the SysTi of the save in a tile of its own, folded from the"
 		+ "Terraformation Index of its planets by a domain rule as the game folds it, captioned"
 		+ "with how many planets have a non-zero index; a save where no planet has an index shows"
@@ -4338,7 +4338,7 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
 		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
 		IMPL "packages/ui-save-manager/src/components/overview/OverviewTiles.tsx::overview-system-terraformation-index"
-		REF @RULE.TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 	SPEC "the SysTi figure is written in the unit of the game, the short-scale prefix glued to"
 		+ "SysTi, as in 4.369 SpdSysTi"
 		IMPL "packages/core-mapping/src/display/presentation/formatters/formatNumber/systemTerraformationIndex.strategy.ts"
@@ -4356,7 +4356,7 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 	REJECTED "the plain product of the non-zero indexes the wiki gives: the game assembly of 2.103"
 		+ "multiplies by max(Ti, 1) once the SysTi has a value, so a later planet below 1 leaves it"
 		+ "unchanged"
-		REF @RULE.TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
+		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
 	REJECTED "a SysTi of 1 or 0 when no planet has an index: the empty product is no figure of the"
 		+ "game; the tile is left out, as the crafted objects tile is for a save without statistics"
 	REJECTED "the SI symbol strategy of the Terraformation Index of a planet: it stops at Y, 1e24,"
