@@ -2636,7 +2636,7 @@ TASK FEAT190
 
 TASK DOCS192
 	TITLE "Verify the rules and hypotheses of the specification against the files of the game"
-	STATUS todo
+	STATUS implemented
 	DESC "the owner installs dotnet and ilspycmd before the task starts; either missing, stop and"
 		+ "say so rather than read the game by strings alone"
 	SPEC "every active RULE and HYPOTHESIS of the specification area that describes the game or its"
@@ -2644,15 +2644,31 @@ TASK DOCS192
 		+ "file and the type, member or string that settles it, or, where the files of the game"
 		+ "cannot settle it, what was searched"
 		REF @GAME_RELEASE.2.103
+		IMPL "docs/awawa-project-specification/rules.awawa"
+		IMPL "docs/awawa-project-specification/hypotheses.awawa"
 	SPEC "a HYPOTHESIS the files of the game prove becomes a RULE"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
+			+ "AnAnimalHungerLevelLiesBetweenMinus100And100"
+		IMPL "docs/awawa-project-specification/rules.awawa::RULE"
+			+ "APlayerIdentifierIsTheSteamAccountOrTheNetworkClient"
 	SPEC "a RULE or HYPOTHESIS the files of the game contradict is corrected in the corpus, and the"
 		+ "code and the tests that applied it are corrected in the same pull request"
+		IMPL "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.spec.ts::should"
+			+ "multiply the SysTi by one for a planet after the first planet with an index"
+		IMPL "packages/core-mapping/src/save/infrastructure/SaveSectionsParserService.spec.ts::should"
+			+ "report a world object carrying a list of held world objects"
 	SPEC "no decompiled code and no file of the game reaches the public repository: only the fact"
 		+ "read and where it was read"
+		IMPL "agents/jeu-lire.md::Jamais une ligne de code décompilé"
 	SPEC "a PROCESS of the methodology area states how the files of the game are read and what of"
 		+ "them may be published, and agents/jeu-lire.md, named by a row of the loading table of"
 		+ "AGENTS.md, carries the tool and the command, so that a check can be repeated"
+		IMPL "docs/awawa-project-methodology/processes.awawa::PROCESS"
+			+ "TheGameFilesAreReadByDecompilingTheirAssemblyInAScratchDirectory"
+		IMPL "agents/jeu-lire.md::ilspycmd -p -o"
+		IMPL "AGENTS.md::agents/jeu-lire.md"
 	WAVE @WAVE.15
+	DELIVERED_BY 276
 	PRIORITY high
 	RATIONALE "The rules and hypotheses of the specification come from reference saves and from the"
 		+ "wiki; the review of PR 268 found the wiki contradicting the game on the SysTi units, and"

@@ -10,6 +10,7 @@ HYPOTHESIS APlayerIdentifierIsASteamAccountReusedAcrossGames
 		+ "Steam account only when the game runs under Steam"
 		REF @RULE.APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
 		REF @GAME_RELEASE.2.103
+		PR 276
 	STATUS archived
 	ARCHIVED_ON 2026-10-04
 
@@ -31,6 +32,7 @@ HYPOTHESIS AWorldObjectMayCarryALinkedObjectList
 		+ "assembly reads one; the contents of a world object are reached through its linked"
 		+ "inventory"
 		REF @GAME_RELEASE.2.103
+		PR 276
 	STATUS archived
 	ARCHIVED_ON 2026-10-04
 
@@ -50,6 +52,7 @@ HYPOTHESIS AnAnimalHungerLevelLiesBetweenMinus100And100
 	SOURCE "Proven by the game assembly of release 2.103 read on 2026-10-04"
 		REF @RULE.AnAnimalHungerLevelLiesBetweenMinus100And100
 		REF @GAME_RELEASE.2.103
+		PR 276
 	STATUS archived
 	ARCHIVED_ON 2026-10-04
 
@@ -70,6 +73,7 @@ HYPOTHESIS ProceduralWrecksAreSpawnedByThePortalGenerator
 		+ "WorldInstanceHandler, and WorldInstanceScene loads the wrecks of a portal world instance"
 		+ "without that world object"
 		REF @GAME_RELEASE.2.103
+		PR 276
 	STATUS archived
 	ARCHIVED_ON 2026-10-04
 
@@ -91,6 +95,7 @@ HYPOTHESIS ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform
 		+ "destination chosen in UiWindowInterplanetaryExchange; which group carries that machine,"
 		+ "and whether the planet the platform stands on is offered, are data of the assets"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 	DESC "terraTokens and allTimeTerraTokens stay below 2^53 in a real save, so reading them as a"
@@ -109,6 +114,7 @@ HYPOTHESIS TerraTokensStayWithinTheExactIntegerRangeOfADouble
 		+ "bounds nothing below 2^64 and the reach of a real save is not settled by the files of"
 		+ "the game"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 HYPOTHESIS PodUndergroundAndRocketAnimals2DrawNoPower
 	DESC "PodUnderground and RocketAnimals2 neither draw nor produce power in game 2.103"
@@ -183,6 +189,7 @@ HYPOTHESIS AGameOf1618DropsTheContentItDoesNotKnow
 		+ "2026-10-04: the assembly read is release 2.103: what release 1.618 drops on load cannot"
 		+ "be read there"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 HYPOTHESIS EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 	DESC "a Toxins Filter in the equipment of a player raises their toxicity maximum from 5 by 5"
@@ -214,5 +221,6 @@ HYPOTHESIS EachToxinsFilterTierRaisesTheToxicityMaximumByFive
 		+ "from the equipment alone, PlayerEquipment.GetEquipmentValue, multiplies the filling of"
 		+ "the gauge by 1 - v/100 and its emptying by 1 + v/100, and no filter raises the maximum"
 		REF @GAME_RELEASE.2.103
+		PR 276
 	STATUS archived
 	ARCHIVED_ON 2026-10-04

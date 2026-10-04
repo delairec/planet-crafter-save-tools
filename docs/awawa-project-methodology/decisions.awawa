@@ -4383,6 +4383,7 @@ DECISION TheOverviewShowsTheSysTiAsTheProductOfThePlanetsTi
 		+ "2026-10-04: WorldUnitSystemTerraformation.GetValue multiplies the SysTi by max(Ti, 1)"
 		+ "once it is above 2.220446049250313E-16"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 DECISION TheScrollingBodyOfATableCardIsANamedRegionInTheTabSequence
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager

@@ -294,3 +294,4 @@ PROCESS TheGameFilesAreReadByDecompilingTheirAssemblyInAScratchDirectory
 		+ "suggests"
 	SOURCE "Owner rulings of 2026-10-03, refining task DOCS192: the reading is recorded in a"
 		+ "PROCESS and in agents/jeu-lire.md; the owner installs the decompiler"
+		PR 276

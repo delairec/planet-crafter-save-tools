@@ -15,6 +15,7 @@ RULE ASaveHasElevenSectionsTheLastReservedAndEmpty
 		+ "2026-10-04: JSONExport.SaveToJson writes ten parts and SaveStringsInFile closes each"
 		+ "with @, so a split on @ yields eleven parts, the last empty"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE ASectionLineIsOneJsonEntry
 	HOLDS_FOR all
@@ -31,6 +32,7 @@ RULE ASectionLineIsOneJsonEntry
 		+ "|, and ParseStringAndAddJsonablesToList splits a part on | and reads each piece with"
 		+ "JsonUtility.FromJson"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 	HOLDS_FOR all
@@ -49,6 +51,7 @@ RULE ThePlayerIdentifierIsTheOnlyInt64FieldBeyondDoubleRange
 		+ "allTimeTerraTokens and JsonablePlayerState.totalTerraTokenEarned are ulong too, which"
 		+ "the reference saves keep within the exact range of a double"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 	HOLDS_FOR all
@@ -70,6 +73,7 @@ RULE FloatFieldsCarryADotZeroSuffixInFlatRecords
 		+ "JsonUtility writes for a float zero, and every Jsonable record declares fields of"
 		+ "primitive and string types only"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheSaveOnPrimeBecomesSaveA
 	HOLDS_FOR all
@@ -331,6 +335,7 @@ RULE IdentifiersAreSharedByInventoriesAndWorldObjects
 		+ "the objects of a scene staying below 200,000,000: two allocators over one integer space,"
 		+ "which may give one number to an inventory and a world object"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlayerIdentifierIsCarriedAsExactDecimalText
 	HOLDS_FOR all
@@ -355,6 +360,7 @@ RULE APlayerIdentifierIsCarriedAsExactDecimalText
 	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
 		+ "2026-10-04: JsonablePlayerState.id is a ulong, an unsigned 64-bit integer"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE DuplicateIdentifiersAreRemappedOnTheSaveBSide
 	HOLDS_FOR all
@@ -414,6 +420,7 @@ RULE APlanetNumericIdIsStableAcrossSaves
 		+ "planetId.GetStableHashCode(): a hash of the planet name, owing nothing to the seed or to"
 		+ "the save"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APurificationLevelOfMinusOneMeansNotUnlocked
 	HOLDS_FOR all
@@ -434,6 +441,7 @@ RULE APurificationLevelOfMinusOneMeansNotUnlocked
 		+ "WorldUnitTerraformation.GetTerraformationStartingValue counts max(unitPurificationLevel,"
 		+ "0)"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 	HOLDS_FOR @GAME_RELEASE.2.004
@@ -453,6 +461,7 @@ RULE APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 		+ "from the statistics and allTimeTerraTokens when both read zero, as for a save written"
 		+ "without them"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheGlobalMetadataEntryCarriesLogisticsPaused
 	HOLDS_FOR @GAME_RELEASE.2.102
@@ -475,6 +484,7 @@ RULE TheGlobalMetadataEntryCarriesLogisticsPaused
 		+ "2026-10-04: JsonableWorldState declares logisticsPaused, a bool false by default, which"
 		+ "SavedDataHandler.LoadSavedData hands to LogisticManager.SetPaused"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 	HOLDS_FOR @GAME_RELEASE.1.618
@@ -500,6 +510,7 @@ RULE ALegacySaveCarriesTerrainLayersInTwelveParts
 		+ "and reads the procedural instances from part 10; no type of the assembly holds a terrain"
 		+ "layer record, so the six properties are not settled there"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheGameKeepsDeprecatedPhytoplanktonGroupIds
 	HOLDS_FOR @GAME_RELEASE.2.102
@@ -524,6 +535,7 @@ RULE TheGameKeepsDeprecatedPhytoplanktonGroupIds
 		+ "and JSONExport.LoadFromJson renames only SpaceMultiplierBiomass, DeparturePlatformHumble"
 		+ "and BlueprintDeparturePlatformHumble on load"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 	HOLDS_FOR all
@@ -551,6 +563,7 @@ RULE AMachineTheGameShowsDrawingNoPowerAddsNothingToConsumption
 		+ "the assembly, the energy level of a group being data of the game assets, so the files of"
 		+ "the game do not settle it"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 	HOLDS_FOR all
@@ -591,6 +604,7 @@ RULE APlanetConsumesTheSumOfTheBaseLevelsOfItsMachines
 		+ "through AddUnitGenerationMultiplier to the machines of its range; the base levels are"
 		+ "data of the game assets, not of the assembly"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 	HOLDS_FOR all
@@ -644,6 +658,7 @@ RULE EveryDifficultyModifierOfTheSaveMultipliesTheQuantityItNames
 		+ "modifierMeteoOccurence; the bounds of each slider of GameSettingsUi are data of the game"
 		+ "assets"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
 	HOLDS_FOR all
@@ -688,6 +703,7 @@ RULE EachDifficultyModifierPenalisesThePlayerInOneDirectionFromOne
 		+ "JsonableGameState sets the first four to 1 and leaves the multiplayer factor at 0, the"
 		+ "value a new game takes coming from the presets of the assets"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE ASaveDesignatesExactlyOneHostPlayer
 	HOLDS_FOR all
@@ -710,6 +726,7 @@ RULE ASaveDesignatesExactlyOneHostPlayer
 		+ "2026-10-04: SavedDataHandler.InitSavedData loads the planet of the first player entry"
 		+ "flagged host; searched for a check of the count of hosts: the assembly makes none"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheOxygenMaximumIsTheCapacityOfTheTankWorn
 	HOLDS_FOR all
@@ -734,6 +751,7 @@ RULE TheOxygenMaximumIsTheCapacityOfTheTankWorn
 		+ "the group value of the OxygenTank in the equipment, 100 without one; the value of each"
 		+ "tier is data of the assets"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheInventorySizeOfAPlayerCountsTheSlotsOfTheirBackpack
 	HOLDS_FOR all
@@ -760,6 +778,7 @@ RULE TheInventorySizeOfAPlayerCountsTheSlotsOfTheirBackpack
 		+ "when it is removed, GameConfig.startPlayerInventorySize being 12; the value of each tier"
 		+ "is data of the assets"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlayerWearsAtMostOneItemOfEachEquipmentKind
 	HOLDS_FOR all
@@ -785,6 +804,7 @@ RULE APlayerWearsAtMostOneItemOfEachEquipmentKind
 		+ "EquipableType the equipment already holds; the kinds are the EquipableType enum of"
 		+ "DataConfig, and the kind of each group id is data of the game assets"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
 	HOLDS_FOR all
@@ -809,6 +829,7 @@ RULE APlanetPowerBalanceIsTightBelowATenthOfItsProduction
 		+ "only asks whether the energy unit of a planet is increasing, so the tenth stays the"
 		+ "owner's ruling"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
 	HOLDS_FOR all
@@ -846,6 +867,7 @@ RULE TheSysTiIsTheProductOfTheNonZeroTiOfThePlanets
 		+ "WorldUnitTerraformation.GetTerraformationStartingValue makes the Ti of a planet its"
 		+ "oxygen, heat, pressure, plants, insects, animals and max(purification, 0)"
 		REF @GAME_RELEASE.2.103
+		PR 276
 
 RULE AnAnimalHungerLevelLiesBetweenMinus100And100
 	HOLDS_FOR all
@@ -861,6 +883,7 @@ RULE AnAnimalHungerLevelLiesBetweenMinus100And100
 		+ "2026-10-04: InventorySpawnContent sets the hunger of a fed animal to 100, lowers it with"
 		+ "math.max(-100, hunger - 0.1 per second) and raises it on feeding with math.min(100, ...)"
 		REF @GAME_RELEASE.2.103
+		PR 276
 	SOURCE "Observed on 2026-09-10 in pull request 48: 345 occurrences over 190338 world objects,"
 		+ "from -100 to 94.22"
 		PR 48
@@ -884,5 +907,6 @@ RULE APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
 		+ "NetworkObject.OwnerClientId; JSONExport inserts an id of 0 into the player entry of a"
 		+ "save written before multiplayer"
 		REF @GAME_RELEASE.2.103
+		PR 276
 	SOURCE "Extracted from the ruling on player identity, decision of 2026-09-07"
 		PR 39
