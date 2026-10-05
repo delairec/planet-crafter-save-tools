@@ -1,5 +1,11 @@
 # Changelog of cli-validate
 
+## 0.1.4 — 2026-10-05
+
+- Core engine updated
+- Planet values updated
+- World object values updated
+
 ## 0.1.3 — 2026-10-02
 
 - Core engine updated

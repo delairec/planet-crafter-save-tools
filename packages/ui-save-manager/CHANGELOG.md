@@ -1,5 +1,9 @@
 # Changelog of ui-save-manager
 
+## 0.1.4 — 2026-10-05
+
+- feat(ui): redesign the web ui and add power levels charts (#266)
+
 ## 0.1.3 — 2026-10-02
 
 - fix(core-mapping): tone the difficulty modifiers the right way round (#249)
