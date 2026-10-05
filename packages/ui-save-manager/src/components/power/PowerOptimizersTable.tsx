@@ -1,4 +1,5 @@
 import {createUniqueId, For} from 'solid-js';
+import ColumnNamedCell from '~/components/power/ColumnNamedCell';
 import {PowerOptimizersViewModel} from 'core-mapping/display/presentation/viewModels/PlanetPowerZoneViewModel';
 import {
   powerBoostedMachinesHeader,
@@ -23,7 +24,7 @@ export default function PowerOptimizersTable(props: PowerOptimizersTableProps) {
       <div class="card-body power-table-body" role="region" aria-labelledby={titleId} tabindex="0" data-testid="power-optimizers-body">
         <table class="power-table" data-testid="power-optimizers">
           <thead>
-            <tr>
+            <tr data-testid="power-optimizers-column-names">
               <th scope="col">{powerOptimizerHeader}</th>
               <th scope="col">{powerEnergyFusesHeader}</th>
               <th scope="col">{powerBoostedMachinesHeader}</th>
@@ -35,11 +36,17 @@ export default function PowerOptimizersTable(props: PowerOptimizersTableProps) {
             <For each={props.optimizers.rows}>
               {(row, index) => (
                 <tr data-testid={`power-optimizers-row-${index()}`}>
-                  <th scope="row">{row.label}</th>
-                  <td>{row.fuses}</td>
-                  <td>{row.boostedMachines}</td>
-                  <td class="power-table-figure">{row.contribution}</td>
-                  <td class="power-table-figure">{row.share}</td>
+                  <th scope="row" data-testid={`power-optimizers-row-${index()}-optimizer`}>{row.label}</th>
+                  <ColumnNamedCell column={powerEnergyFusesHeader} testId={`power-optimizers-row-${index()}-fuses`}>{row.fuses}</ColumnNamedCell>
+                  <ColumnNamedCell column={powerBoostedMachinesHeader} testId={`power-optimizers-row-${index()}-boosted-machines`}>
+                    {row.boostedMachines}
+                  </ColumnNamedCell>
+                  <ColumnNamedCell column={powerContributionHeader} testId={`power-optimizers-row-${index()}-contribution`} class="power-table-figure">
+                    {row.contribution}
+                  </ColumnNamedCell>
+                  <ColumnNamedCell column={powerShareHeader} testId={`power-optimizers-row-${index()}-share`} class="power-table-figure">
+                    {row.share}
+                  </ColumnNamedCell>
                 </tr>
               )}
             </For>

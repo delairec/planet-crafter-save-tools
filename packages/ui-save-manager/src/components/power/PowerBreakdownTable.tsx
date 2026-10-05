@@ -1,4 +1,5 @@
 import {createUniqueId, For} from 'solid-js';
+import ColumnNamedCell from '~/components/power/ColumnNamedCell';
 import {PowerBreakdownRowViewModel, PowerBreakdownTableViewModel} from 'core-mapping/display/presentation/viewModels/PlanetPowerZoneViewModel';
 import {
   powerMachineHeader,
@@ -16,11 +17,11 @@ interface PowerBreakdownRowProps {
 function PowerBreakdownRow(props: PowerBreakdownRowProps) {
   return (
     <tr data-testid={props.testId}>
-      <th scope="row">{props.row.label}</th>
-      <td class="power-table-figure">{props.row.quantity}</td>
-      <td class="power-table-figure">{props.row.unitLevel}</td>
-      <td class="power-table-figure">{props.row.totalLevel}</td>
-      <td class="power-table-figure">{props.row.share}</td>
+      <th scope="row" data-testid={`${props.testId}-machine`}>{props.row.label}</th>
+      <ColumnNamedCell column={powerQuantityHeader} testId={`${props.testId}-quantity`} class="power-table-figure">{props.row.quantity}</ColumnNamedCell>
+      <ColumnNamedCell column={powerUnitHeader} testId={`${props.testId}-unit`} class="power-table-figure">{props.row.unitLevel}</ColumnNamedCell>
+      <ColumnNamedCell column={powerTotalHeader} testId={`${props.testId}-total`} class="power-table-figure">{props.row.totalLevel}</ColumnNamedCell>
+      <ColumnNamedCell column={powerShareHeader} testId={`${props.testId}-share`} class="power-table-figure">{props.row.share}</ColumnNamedCell>
     </tr>
   );
 }
@@ -40,7 +41,7 @@ export default function PowerBreakdownTable(props: PowerBreakdownTableProps) {
       <div class="card-body power-table-body" role="region" aria-labelledby={titleId} tabindex="0" data-testid={`${props.testId}-body`}>
         <table class="power-table" data-testid={props.testId}>
           <thead>
-            <tr>
+            <tr data-testid={`${props.testId}-column-names`}>
               <th scope="col">{powerMachineHeader}</th>
               <th scope="col" class="power-table-figure">{powerQuantityHeader}</th>
               <th scope="col" class="power-table-figure">{powerUnitHeader}</th>

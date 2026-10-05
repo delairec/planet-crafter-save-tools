@@ -96,6 +96,41 @@
     margin-bottom: var(--space-sm);
 }
 
+.player-equipment-toggle {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .player-equipment-caption,
+    .player-equipment:not(.player-equipment-unfolded) .slots {
+        display: none;
+    }
+
+    .player-equipment-toggle {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        border: var(--border-medium);
+        background-color: transparent;
+        color: var(--content);
+        font-size: var(--text-base);
+    }
+
+    .player-equipment-toggle:hover {
+        background-color: var(--elevated);
+    }
+
+    .player-equipment-toggle::after {
+        content: "▸" / "";
+    }
+
+    .player-equipment-toggle[aria-expanded="true"]::after {
+        content: "▾" / "";
+    }
+}
+
 .slots {
     --slot-min-width: 9rem;
     display: grid;

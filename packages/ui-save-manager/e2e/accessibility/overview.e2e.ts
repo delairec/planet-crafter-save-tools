@@ -2,6 +2,7 @@ import {type Page} from '@playwright/test';
 import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
 import {describeTheColorRulesAuditInTheDarkColorScheme} from '../helpers/describeTheColorRulesAuditInTheDarkColorScheme';
 import {holdEveryFileRead} from '../helpers/holdEveryFileRead';
+import {reachWithTheTabKey} from '../helpers/reachWithTheTabKey';
 import {visualizeSave} from '../helpers/visualizeSave';
 import {expect, test} from '../scenarioTest';
 import {locateTheFixture, visualizeTheSave} from '../scenarioSteps';
@@ -92,6 +93,21 @@ test.describe('Overview page accessibility', () => {
     });
   });
 
+  test.describe('When a save file is being read for display and the reader prefers reduced motion', () => {
+    test('should hold the busy indicator still', async ({page}) => {
+      // Arrange
+      await page.emulateMedia({reducedMotion: 'reduce'});
+      await holdEveryFileRead(page);
+      await page.goto('/load-save');
+
+      // Act
+      await visualizeSave(page, saveAFixturePath);
+
+      // Assert
+      await expect(page.getByTestId('display-busy-indicator-animation')).toHaveCSS('animation-name', 'none');
+    });
+  });
+
   test.describe('When a save is visualized', () => {
     test('should conform to WCAG 2 at levels A and AA', async ({page}) => {
       // Arrange
@@ -143,6 +159,17 @@ test.describe('Overview page accessibility', () => {
 
       // Assert
       await expect(page.getByTestId('overview-planet-0-details-description')).toBeVisible();
+    });
+
+    test('should show a visible focus on the Details button the Tab key reaches', async ({page}) => {
+      // Arrange
+      await visualizeTheSave(page, saveAFixturePath);
+
+      // Act
+      await reachWithTheTabKey(page, page.getByTestId('overview-planet-0-details'));
+
+      // Assert
+      await expect(page.getByTestId('overview-planet-0-details')).toHaveCSS('outline-style', 'solid');
     });
   });
 

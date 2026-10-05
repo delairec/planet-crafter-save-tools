@@ -1,6 +1,7 @@
 import {type Page} from '@playwright/test';
 import {createAWcag2Audit, noViolation} from '../helpers/createAWcag2Audit';
 import {describeTheColorRulesAuditInTheDarkColorScheme} from '../helpers/describeTheColorRulesAuditInTheDarkColorScheme';
+import {reachWithTheTabKey} from '../helpers/reachWithTheTabKey';
 import {expect, test} from '../scenarioTest';
 import {locateTheFixture, openThePageOfTheMenu, visualizeTheSave} from '../scenarioSteps';
 
@@ -82,6 +83,39 @@ test.describe('Power page accessibility', () => {
       await expect(page.getByTestId('power-chart-production-bar-0')).toHaveAccessibleDescription(/ × .* = /);
     });
 
+    test('should show a visible focus on the planet tab the Tab key reaches', async ({page}) => {
+      // Arrange
+      await openThePowerPageOfAVisualizedSave(page);
+
+      // Act
+      await reachWithTheTabKey(page, page.getByTestId('power-planet-tab-0'));
+
+      // Assert
+      await expect(page.getByTestId('power-planet-tab-0')).toHaveCSS('outline-style', 'solid');
+    });
+
+    test('should show a visible focus on the Display as selector the Tab key reaches', async ({page}) => {
+      // Arrange
+      await openThePowerPageOfAVisualizedSave(page);
+
+      // Act
+      await reachWithTheTabKey(page, page.getByTestId('power-display-form'));
+
+      // Assert
+      await expect(page.getByTestId('power-display-form')).toHaveCSS('outline-style', 'solid');
+    });
+
+    test('should show a visible focus on the bar the Tab key reaches', async ({page}) => {
+      // Arrange
+      await openThePowerPageOfAVisualizedSave(page);
+
+      // Act
+      await reachWithTheTabKey(page, page.getByTestId('power-chart-production-bar-0'));
+
+      // Assert
+      await expect(page.getByTestId('power-chart-production-bar-0')).toHaveCSS('outline-style', 'solid');
+    });
+
     test('should let the keyboard reach the scrolling body of each table, a region named after its title, once Table is chosen', async ({page}) => {
       // Arrange
       await openThePowerPageOfAVisualizedSave(page);
@@ -124,6 +158,17 @@ test.describe('Power page accessibility', () => {
       await expect(page.getByTestId('power-share-production-segment-0')).toHaveAttribute('tabindex', '0');
       await expect(page.getByTestId('power-share-production-segment-0')).toHaveAccessibleName(/\S/);
       await expect(page.getByTestId('power-share-production-segment-0')).toHaveAccessibleDescription(/ of production$/);
+    });
+
+    test('should show a visible focus on the segment the Tab key reaches', async ({page}) => {
+      // Arrange
+      await openTheShareOfEachMachineTypeOfAVisualizedSave(page);
+
+      // Act
+      await reachWithTheTabKey(page, page.getByTestId('power-share-production-segment-0'));
+
+      // Assert
+      await expect(page.getByTestId('power-share-production-segment-0')).toHaveCSS('outline-style', 'solid');
     });
   });
 
