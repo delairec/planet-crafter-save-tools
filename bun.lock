@@ -15,7 +15,7 @@
     },
     "packages/cli-merge": {
       "name": "cli-merge",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "dependencies": {
         "core-mapping": "*",
         "shared-platforms": "*",
@@ -23,7 +23,7 @@
     },
     "packages/cli-validate": {
       "name": "cli-validate",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "dependencies": {
         "core-mapping": "*",
         "shared-platforms": "*",
@@ -64,7 +64,7 @@
     },
     "packages/ui-save-manager": {
       "name": "ui-save-manager",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "dependencies": {
         "@solidjs/router": "^1.0.0",
         "@solidjs/start": "2.0.5",
