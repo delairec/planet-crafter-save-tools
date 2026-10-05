@@ -1,0 +1,13 @@
+export const resolvePlayersPageCountHint = (playerCount) => `${playerCount} in this save`;
+export const resolvePlayersPagePlanetLabel = (planet) => `on ${planet}`;
+export const playersPageHostBadgeLabel = 'Host';
+export const playersPageOxygenGaugeLabel = 'Oxygen';
+export const playersPageHealthGaugeLabel = 'Health';
+export const playersPageThirstGaugeLabel = 'Thirst';
+export const resolvePlayersPageUnknownItemLabel = (itemName) => `Unknown Item (${itemName})`;
+export const resolvePlayersPageEquipmentCaption = (worn, slots) => `Equipment · ${worn} of ${slots} slots`;
+export const resolvePlayersPageInventoryCaption = (items, slots, kinds) => `Inventory · ${items} of ${slots} slots, ${kinds} ${kinds === 1 ? 'kind' : 'kinds'}`;
+export const playersPageEmptySlotLabel = 'Empty';
+export const playersPageEmptySlotsLabel = 'Empty slots';
+export const resolvePlayersPageCountLabel = (count) => `×${count}`;
+export const playersPageOtherKindLabel = 'Other';

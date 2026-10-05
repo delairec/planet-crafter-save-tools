@@ -1,6 +1,7 @@
 import {Accessor, createEffect, JSX, Resource, Show} from "solid-js";
 import {SaveValidationMessageViewModel} from "core-mapping/save/presentation/viewModels/SaveValidationMessageViewModel";
 import Spinner from "~/components/structure/Spinner";
+import SectionTitle from "~/components/structure/SectionTitle";
 import ValidationMessagesList from "~/components/validation/ValidationMessagesList";
 import {sectionLoadingErrorMessage, sectionUnreadableLinesTitle} from "~/messages/sectionStateMessages";
 
@@ -26,15 +27,15 @@ export default function SectionState<ViewModel extends SectionViewModel>(props: 
   });
 
   return (
-    <Show when={!props.resource.loading} fallback={<><h3>{props.title}</h3><Spinner/></>}>
+    <Show when={!props.resource.loading} fallback={<><SectionTitle testId="section-state-title">{props.title}</SectionTitle><Spinner/></>}>
       <Show when={!props.resource.error}
-            fallback={<><h3>{props.title}</h3><p class="text-color-danger">{sectionLoadingErrorMessage}</p></>}>
+            fallback={<><SectionTitle testId="section-state-title">{props.title}</SectionTitle><p class="message-group-title text-color-danger">{sectionLoadingErrorMessage}</p></>}>
         <Show when={props.resource()}>
           {(viewModel) => (
             <Show when={findUnreadableLines(viewModel())}
                   fallback={props.children(viewModel)}>
               {(unreadableLines) => <>
-                <h3>{props.title}</h3>
+                <SectionTitle testId="section-state-title">{props.title}</SectionTitle>
                 <ValidationMessagesList title={sectionUnreadableLinesTitle} severity="danger"
                                         messages={unreadableLines()} testId="section-unreadable-lines"/>
               </>}

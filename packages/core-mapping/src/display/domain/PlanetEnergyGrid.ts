@@ -57,8 +57,8 @@ export class PlanetEnergyGrid {
       production,
       consumption,
       available: production - consumption,
-      productionBreakdown: this.productionBreakdown(production),
-      consumptionBreakdown: computeEnergyBreakdown(this.planet.placedWorldObjects, this.consumptionLevels),
+      productionBreakdown: this.breakdown(this.energyLevels.production, production),
+      consumptionBreakdown: this.breakdown(this.consumptionLevels, production),
       optimizers: this.optimizers(production)
     });
   }
@@ -126,8 +126,8 @@ export class PlanetEnergyGrid {
       .reduce((total, worldObject) => total + (this.consumptionLevels[worldObject.name] ?? 0), 0);
   }
 
-  private productionBreakdown(production: number) {
-    return computeEnergyBreakdown(this.planet.placedWorldObjects, this.energyLevels.production)
+  private breakdown(levels: EnergyLevelsOfRelease["production"], production: number) {
+    return computeEnergyBreakdown(this.planet.placedWorldObjects, levels)
       .map((entry) => createEnergyBreakdownEntryValueObject({
         name: entry.name,
         quantity: entry.quantity,

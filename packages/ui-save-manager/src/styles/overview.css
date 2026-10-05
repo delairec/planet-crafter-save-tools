@@ -1,0 +1,180 @@
+.overview-tiles {
+    --tile-min-width: 10rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--tile-min-width), 1fr));
+    gap: var(--space-md);
+    margin: 0;
+}
+
+.overview-tile {
+    min-width: 0;
+    padding: var(--space-sm) var(--space-md);
+    border: var(--border-card);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+}
+
+.overview-tile dt {
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
+.overview-tile-value {
+    margin: var(--space-xxs) 0 0;
+    font-size: var(--text-xl);
+    font-weight: var(--semibold);
+    overflow-wrap: anywhere;
+}
+
+.overview-tile-unit {
+    margin-left: var(--space-xs);
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
+.overview-tile-caption {
+    margin: var(--space-xxs) 0 0;
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
+.overview-planets {
+    margin-top: var(--space-xl);
+}
+
+.overview-planet-cards {
+    --card-min-width: 20rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--card-min-width), 1fr));
+    gap: var(--space-md);
+}
+
+.overview-planet-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    min-width: 0;
+    padding: var(--space-md);
+    border: var(--border-card);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+}
+
+.overview-planet-name {
+    margin: 0;
+    padding: var(--space-xxs) var(--space-md);
+    font-size: var(--text-base);
+}
+
+.overview-planet-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs) var(--space-sm);
+}
+
+.overview-planet-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (min-width: 769px) {
+    .overview-planet-actions .tooltip {
+        left: auto;
+        right: 0;
+    }
+}
+
+.overview-planet-stage {
+    margin: 0;
+}
+
+.overview-planet-terraformation {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.overview-planet-index {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-xs) var(--space-sm);
+    margin: 0;
+}
+
+.overview-planet-index-value {
+    font-size: var(--text-xl);
+    font-weight: var(--semibold);
+}
+
+.overview-planet-index-label {
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
+.overview-planet-foot {
+    margin: auto 0 0;
+    padding-top: var(--space-sm);
+    border-top: var(--border-thin);
+}
+
+.overview-planet-power {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+    font-size: var(--text-sm);
+}
+
+.overview-planet-power-row {
+    display: contents;
+}
+
+.overview-planet-power-row dt {
+    color: var(--muted);
+}
+
+.overview-planet-power-row dd {
+    margin: 0;
+}
+
+.overview-planet-bar {
+    height: var(--space-sm);
+    overflow: hidden;
+    border-radius: var(--radius-xs);
+    background-color: var(--elevated);
+}
+
+.overview-planet-bar-production,
+.overview-planet-bar-consumption {
+    display: block;
+    height: 100%;
+}
+
+.overview-planet-bar-production {
+    background-color: var(--series-production);
+}
+
+.overview-planet-bar-consumption {
+    background-color: var(--series-consumption);
+}
+
+.overview-planet-share {
+    color: var(--muted);
+    font-size: var(--text-xs);
+}
+
+.overview-planet-power-value {
+    font-weight: var(--semibold);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.overview-planet-absent-side {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--text-sm);
+    font-style: italic;
+}

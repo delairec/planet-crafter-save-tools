@@ -115,14 +115,14 @@ DECISION UserTextLivesInCoreMappingPresentation
 		+ "into a sentence by the core-mapping presentation, in the messages directory of the"
 		+ "business that shows it, or of save when several do; the ViewModel exposes strings ready"
 		+ "to display"
-		IMPL "packages/core-mapping/src/save/presentation/formatSaveWarning.ts"
-		IMPL "packages/core-mapping/src/save/presentation/formatValidationIssue.ts"
-		IMPL "packages/core-mapping/src/save/presentation/formatUnreadableLine.ts"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatSaveWarning.ts"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatValidationIssue.ts"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatUnreadableLine.ts"
 		IMPL "packages/core-mapping/src/save/presentation/messages/validationIssueMessages.js"
 		IMPL "packages/core-mapping/src/save/presentation/messages"
 		IMPL "packages/core-mapping/src/merge/presentation/messages"
 		IMPL "packages/core-mapping/src/display/presentation/messages"
-		ENFORCED_BY "packages/core-mapping/src/save/presentation/formatValidationError.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/save/presentation/mappers/formatValidationError.spec.ts"
 	SPEC "A validation issue and a parse error carry a code and its data, never a sentence; neither"
 		+ "the infrastructure of core-mapping nor its wire format modules build a sentence shown to"
 		+ "the user"
@@ -134,7 +134,7 @@ DECISION UserTextLivesInCoreMappingPresentation
 	SPEC "An outcome that already carries its messages gets no additional sentence"
 		IMPL "packages/core-mapping/src/merge/presentation/messages/mergeFailureMessages.js::mergedSaveUnusableMessage"
 	SPEC "An unknown code falls back to a generic message, and the code itself is never displayed"
-		IMPL "packages/core-mapping/src/save/presentation/formatSaveWarning.ts::unknownSaveWarningMessage"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatSaveWarning.ts::unknownSaveWarningMessage"
 	REJECTED "Translating the codes in the UI: the table would be duplicated for the CLI"
 	REJECTED "A single messages directory for the three businesses, the previous form of this"
 		+ "ruling: a business would import the folder of another"
@@ -151,8 +151,8 @@ DECISION ALocationIsABusinessLabelFollowedByTheIndex
 	APPLIES_TO_TASK @TASK.REFACTOR164
 	SPEC "A validation message travels as a message and a location, null when the issue concerns"
 		+ "the whole file"
-		IMPL "packages/core-mapping/src/save/presentation/formatValidationError.ts::'section' in"
-			+ "issue"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatValidationError.ts::'section'"
+			+ "in issue"
 	SPEC "An issue or an unreadable line located in the save carries the name and the index of its"
 		+ "section, both resolved by the infrastructure from the format of the save; no module"
 		+ "under presentation imports the section indexes of the save format"
@@ -165,15 +165,15 @@ DECISION ALocationIsABusinessLabelFollowedByTheIndex
 	SPEC "The location is the business label of the section followed by its index, formatted in"
 		+ "presentation from the name and the index the issue carries; the ViewModel never exposes"
 		+ "the raw indexes"
-		IMPL "packages/core-mapping/src/save/presentation/formatErrorLocation.ts::saveSectionLabels[name]"
-		ENFORCED_BY "packages/core-mapping/src/save/presentation/formatErrorLocation.spec.ts::When"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatErrorLocation.ts::saveSectionLabels[name]"
+		ENFORCED_BY "packages/core-mapping/src/save/presentation/mappers/formatErrorLocation.spec.ts::When"
 			+ "the error was found in a save entry"
 	SPEC "The empty part closing the save is named reserved by the infrastructure and shown by its"
 		+ "index alone, section N, as it read before the name was carried"
 		IMPL "packages/core-mapping/src/save/domain/save/SaveSectionLocation.ts::RESERVED_SAVE_PART"
-		IMPL "packages/core-mapping/src/save/presentation/formatErrorLocation.ts::name ==="
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatErrorLocation.ts::name ==="
 			+ "RESERVED_SAVE_PART"
-		ENFORCED_BY "packages/core-mapping/src/save/presentation/formatErrorLocation.spec.ts::When"
+		ENFORCED_BY "packages/core-mapping/src/save/presentation/mappers/formatErrorLocation.spec.ts::When"
 			+ "the error was found in the reserved part of the save"
 		ENFORCED_BY "packages/core-mapping/src/save/infrastructure/locateSaveSection.spec.ts::When"
 			+ "the index designates the empty part closing the save"
@@ -214,7 +214,8 @@ DECISION BothMessageListsShareOneRendering
 	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
 	SPEC "A single component renders both lists, foldable and monospace; that rendering is never a"
 		+ "parameter of the component"
-		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::<details>"
+		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::<details"
+			+ "class=\"message-group-details\">"
 	SPEC "The severity of a list sets the colour of its title alone"
 		IMPL "packages/ui-save-manager/src/components/validation/ValidationMessagesList.tsx::text-color-${props.severity}"
 	SPEC "A validation message reads as a stack frame: monospace, the message first, its origin"
@@ -290,8 +291,8 @@ DECISION AnInt64IdentifierIsCarriedByItsDecimalText
 	SPEC "Exactness is produced and consumed in the wire format modules of core-mapping alone, and"
 		+ "the section schema declares a decimal string"
 		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.js::keepInt64IdentifierText"
-		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::Player"
-			+ "Steam ID (primary key, int64)"
+		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/schemas/section2-players.schema.json::Primary"
+			+ "key, int64"
 	REJECTED "Typing the field as BigInt: JSON.stringify throws on it and ajv cannot validate it"
 	REJECTED "Keeping the raw text of the section entries: the merge rebuilds every player entry"
 	REJECTED "A validation rule on integer precision: a large literal in a save is normal"
@@ -370,7 +371,7 @@ DECISION APlayerIdentityIsCarriedByItsEntry
 		+ "account"
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	RESTS_ON @RULE.APlayerIdentifierIsCarriedAsExactDecimalText
-	ASSUMES @HYPOTHESIS.APlayerIdentifierIsASteamAccountReusedAcrossGames
+	RESTS_ON @RULE.APlayerIdentifierIsTheSteamAccountOrTheNetworkClient
 	SOURCE "Pull request"
 		PR 39
 		PR 41
@@ -637,6 +638,7 @@ DECISION CoreMappingExportsOnlyControllersAndViewModels
 		IMPL "packages/core-mapping/package.json::./validation/presentation/viewModels/*"
 		IMPL "packages/core-mapping/package.json::./merge/presentation/viewModels/*"
 		IMPL "packages/core-mapping/package.json::./display/presentation/viewModels/*"
+		ENFORCED_BY "scripts/guards/architecture/check-core-mapping-exports.ts::EXPORT_BEYOND_BOUNDARY_REASON"
 	REJECTED "Export infrastructure modules of core-mapping to its consumers"
 	REJECTED "One composition root exporting the controllers of the three businesses, the previous"
 		+ "form of this ruling: an interface loaded the wiring of the businesses it does not call"
@@ -743,7 +745,7 @@ DECISION ASectionIndexIsNeverHardCoded
 		+ "presentation carry it as data, so a change of that order is written in the declaration"
 		+ "alone"
 		IMPL "packages/core-mapping/src/save/infrastructure/locateSaveSection.ts"
-		IMPL "packages/core-mapping/src/save/presentation/formatErrorLocation.ts::(section"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatErrorLocation.ts::(section"
 			+ "${index})"
 	SPEC "A location built outside the infrastructure, in a spec or in testing/, carries a"
 		+ "two-digit index that is visibly not the real position of its section, and a presenter"
@@ -829,7 +831,7 @@ DECISION SectionControllersReceiveTheValidatedText
 	SPEC "Each section controller hands the save text to its use case in the request, and the"
 		+ "composition root builds the reader port without any content; the UI knows no"
 		+ "representation of the sections"
-		IMPL "packages/core-mapping/src/display/controllers/LoadEnergyLevelsSectionController.ts::execute({content:"
+		IMPL "packages/core-mapping/src/display/controllers/LoadPowerPageController.ts::execute({content:"
 			+ "validatedContent})"
 		IMPL "packages/core-mapping/src/display/composition/useCaseFactories.ts::createSaveSectionsReader():"
 			+ "SaveSectionsReaderPort"
@@ -881,16 +883,29 @@ DECISION APlanetEnergyGridIsAnAggregate
 		+ "the complete PlanetEnergyLevelsValueObject through levels()"
 		IMPL "packages/core-mapping/src/display/domain/PlanetEnergyGrid.ts::levels():"
 			+ "PlanetEnergyLevelsValueObject"
-		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts::new"
+		IMPL "packages/core-mapping/src/display/domain/rules/measureEnergyOfEachPlanet.ts::new"
 			+ "PlanetEnergyGrid("
 		IMPL "packages/core-mapping/src/display/application/ports/SaveSectionsMapperPort.ts::getPlacedWorldObjectsByPlanet"
+	SPEC "The display use cases measure the energy of the planets of a save through the domain rule"
+		+ "measureEnergyOfEachPlanet, which names each planet and builds its grid; none chains"
+		+ "namePlanet and PlanetEnergyGrid itself"
+		IMPL "packages/core-mapping/src/display/domain/rules/measureEnergyOfEachPlanet.ts::export"
+			+ "function measureEnergyOfEachPlanet("
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::measureEnergyOfEachPlanet({"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::measureEnergyOfEachPlanet({"
 	REJECTED "Energy rules taking the same triple of lists: an unnamed object, and the boosts"
 		+ "computed three times per planet"
+	REJECTED "The clone of the planet naming and gridding listed as reviewed in fallow.toml: the"
+		+ "computation is a domain one, so a rule can hold it, which a reviewed key would only hide"
+	REJECTED "A function of the application the use cases share: ruled out by"
+		+ "@RULE.application_holds_use_cases_ports_requests_responses of ~/.ai"
 	SOURCE "T15, owner review"
 		PR 72
 	SOURCE "Rewritten with the section reader port: the use case builds one grid per planet the"
 		+ "port returns"
 		PR 232
+	SOURCE "Owner review relaying the fallow duplication between the planet and overview use cases"
+		PR 280
 
 DECISION APresenterReceivesAValueObjectNeverAnEntity
 	STATUS archived
@@ -1633,8 +1648,8 @@ DECISION ASaveIsNeverDiscriminatedByItsVersionAlone
 			+ "present the contradiction among the warnings of that save"
 		IMPL "packages/core-mapping/src/save/infrastructure/wireFormat/parseSaveSections.spec.js::should"
 			+ "still read the save by the format it carries"
-		IMPL "packages/core-mapping/src/save/presentation/formatSaveWarning.spec.ts::should name"
-			+ "the declared version, its release and the release whose format the save carries"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatSaveWarning.spec.ts::should"
+			+ "name the declared version, its release and the release whose format the save carries"
 	REJECTED "Reading a save by its declared version alone: a hand-edited save contradicts its"
 		+ "version"
 	REJECTED "The parser of shared-save-processing raising the contradiction warning, as it did"
@@ -1688,6 +1703,22 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 			+ "var(--primary-idle);"
 		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::When a merge result"
 			+ "is shown"
+	SPEC "a series colour, --series-production, --series-consumption or --series-optimizer-boost,"
+		+ "fills a graphic and never serves as text; every graphic/background pair the catalog"
+		+ "names reaches the WCAG 2.1 non-text floor, 3:1, in both themes"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::GRAPHIC_TOKEN_PAIRS"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-production"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-optimizer-boost"
+		ENFORCED_BY "scripts/guards/ui/check-color-contrast.ts::MINIMUM_GRAPHIC_CONTRAST_RATIO"
+		ENFORCED_BY "scripts/guards/ui/check-color-contrast.spec.ts::should print the graphic pair"
+			+ "at the 3:1 floor, then the count, and exit with one"
+	SPEC "a segment of Share of each machine type fills with a shade token,"
+		+ "--series-production-shade-N or --series-consumption-shade-N, nine per series in each"
+		+ "theme, dark in the light theme and light in the dark one, so that every fill carries the"
+		+ "share written on it in --inverted at 4.5:1 and reaches 3:1 on its track and on the page"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--series-production-shade-1"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::SHARE_FILLS"
+		ENFORCED_BY "scripts/guards/ui/check-color-contrast.ts::MINIMUM_CONTRAST_RATIO"
 	REJECTED "WCAG 2.1 AAA (7:1): unreachable by the neon accent palette (--neon-pink,"
 		+ "--neon-purple, --neon-cyan) without abandoning the palette's own identity"
 	REJECTED "The full cross-product of every declared color token, text or not: produces pairs no"
@@ -1704,6 +1735,13 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 		+ "#5677fa is 3.87:1, and the catalog, pairing the label with --primary, passed it; the axe"
 		+ "audit of the merge result caught it on the download link"
 		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
+	REJECTED "the series colours held to 4.5:1 as text colours: the pair measured on the mockup,"
+		+ "which passes the colour-vision check on both surfaces, would have to darken, while no"
+		+ "text is ever written in them"
+		REF @TASK.FEAT183
+	REJECTED "the shades of the mockup, the series colour lightened toward white with white text on"
+		+ "every segment: the lighter shades fail 4.5:1 under their text and 3:1 on the light"
+		+ "track, and white on --series-production of the light theme is 3.68:1"
 	RATIONALE "The task's SPEC left the threshold and the verification method open. WCAG 2.1 AA is"
 		+ "the widely defensible floor; the catalog is CSS-only and does not verify the actually"
 		+ "-rendered DOM, a gap the axe audits of the accessibility tests close in the light"
@@ -1718,6 +1756,12 @@ DECISION ColorTokenPairsMeetWcagAaByCatalog
 	SOURCE "Owner ruling of 2026-09-28 on the second review round: the contrast of the download"
 		+ "link of the merge result is fixed in this pull request"
 		PR 211
+	SOURCE "Ruled while delivering FEAT183: the series colours fill the power bars, never text,"
+		+ "checked at the non-text floor"
+		PR 264
+	SOURCE "Ruled while delivering FEAT184: the share segments take shades that carry their written"
+		+ "share in --inverted"
+		PR 277
 
 DECISION AHypothesisedZeroEnergyMachineIsNotAnUnknownEnergyMachine
 	REJECTED "Counting TreePlanter3, PodUnderground and RocketAnimals2 among the placed machines"
@@ -2335,7 +2379,7 @@ DECISION TheFuseBoostIsCountedInTheOptimizerNotInTheMachineBreakdown
 	SPEC "A production breakdown entry carries the base level of its machines, without the boost of"
 		+ "energy fuses"
 		IMPL "packages/core-mapping/src/display/domain/PlanetEnergyGrid.ts::private"
-			+ "productionBreakdown(production: number)"
+			+ "breakdown(levels:"
 		ENFORCED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should add"
 			+ "the machine levels and the optimizer contributions up to the production of the"
 			+ "planet"
@@ -2651,13 +2695,11 @@ DECISION TheSubmergedMachinesLimitationIsCarriedByTheEnergyViewModel
 		+ "section, the first of the notifications of the energy ViewModel, once for the whole"
 		+ "section and never per planet"
 		IMPL "packages/core-mapping/src/display/presentation/messages/energyLevelsSectionMessages.js::energyLevelsSectionSubmergedMachinesNotification"
-		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.ts::submergedMachinesNotification"
-		ENFORCED_BY "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "present the submerged machines limitation once for the whole section, whatever the"
-			+ "number of planets"
+		IMPL "packages/core-mapping/src/display/presentation/PowerPagePresenter.ts::submergedMachinesNotification"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerNotifications.spec.ts"
 	SPEC "The Power section prints it unconditionally, under its title"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
-			+ "each={energyLevels().notifications}>"
+		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<For"
+			+ "each={props.notifications}>"
 	REJECTED "A constant of the ui-save-manager messages: the message qualifies the computed"
 		+ "energy, it is a message of the section and not a technical label of the page"
 	REJECTED "One notification per planet heading: the same sentence repeated under every planet"
@@ -2676,8 +2718,7 @@ DECISION ANotificationIsRenderedByTheNotificationComponent
 	SPEC "A message qualifying the figures of a section of the page is a notification, rendered by"
 		+ "the Notification component, never by a bare paragraph nor by a component of its own"
 		IMPL "packages/ui-save-manager/src/components/structure/Notification.tsx"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
-			+ "severity={notification.severity}"
+		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<Notification"
 	SPEC "The severity of a notification is decided by the presenter and carried by its ViewModel:"
 		+ "limitation for a limit of the tool, warning for a potential gap between the figures and"
 		+ "the game, information for a fact of the save the figures take into account"
@@ -2726,7 +2767,7 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 		+ "energy table for the newest, has a table of its own, named by that release and holding"
 		+ "only the rows that differ; the table applies to its release and to every earlier one"
 		IMPL "packages/data-energy/selectEnergyLevelRowsByRelease.ts::'2.004': energyLevelsOf2004"
-		IMPL "packages/core-mapping/src/display/infrastructure/EnergyLevelsReaderService.ts::readDivergingEnergyLevelsByRelease"
+		IMPL "packages/core-mapping/src/display/infrastructure/EnergyLevelsReaderService.ts::divergingEnergyLevelsByRelease:"
 		ENFORCED_BY "packages/core-mapping/src/display/infrastructure/EnergyLevelsReaderService.spec.ts::should"
 			+ "hold in the table of %s only values that differ from the next newer table, or from"
 			+ "the energy table for the newest"
@@ -2755,16 +2796,12 @@ DECISION TheEnergyOfASaveTakesTheValuesOfItsRelease
 	SPEC "the Power section names in a warning notification, under the submerged machines one, the"
 		+ "release whose values it applies when that release is earlier than the last of the"
 		+ "releases table, and names none for the last"
-		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.ts::if"
-			+ "(energyLevels.gameReleaseIsEarlierThanCurrent)"
-		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts::precedesCurrentGameRelease"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
-			+ "each={energyLevels().notifications}>"
-		ENFORCED_BY "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "warn, under the submerged machines limitation, that the values are those of that"
-			+ "game release"
-		ENFORCED_BY "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "name no game release"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerNotifications.ts::if"
+			+ "(energySettings.gameReleaseIsEarlierThanCurrent)"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::precedesCurrentGameRelease"
+		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<For"
+			+ "each={props.notifications}>"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerNotifications.spec.ts"
 		ENFORCED_BY "packages/ui-save-manager/e2e/display-power.e2e.ts::should name that game"
 			+ "release in a notification, under the submerged machines one"
 	REJECTED "Showing no energy for a save whose version resolves to no release: the values of the"
@@ -2811,21 +2848,18 @@ DECISION TheConsumptionModifierIsAppliedByThePlanetEnergyGrid
 		ENFORCED_BY "packages/core-mapping/src/display/domain/PlanetEnergyGrid.spec.ts::should"
 			+ "multiply the unit and total level of each consumption breakdown entry"
 	SPEC "a save with no save configuration section consumes at modifier 1"
-		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts::modifiers.powerConsumption"
-			+ "?? GAME_DEFAULT_MODIFIER"
-		ENFORCED_BY "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.spec.ts::should"
+		IMPL "packages/core-mapping/src/display/domain/rules/resolvePowerConsumptionModifier.ts::??"
+			+ "GAME_DEFAULT_MODIFIER"
+		ENFORCED_BY "packages/core-mapping/src/display/domain/rules/resolvePowerConsumptionModifier.spec.ts::should"
+			+ "take the game default modifier"
+		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPowerPage.spec.ts::should"
 			+ "charge the base consumption levels, the modifier being 1"
 	SPEC "the Power section names the modifier in an information notification, under the game"
 		+ "release one, when it is not 1, and names none at 1"
-		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.ts::resolveEnergyLevelsSectionPowerConsumptionModifierNotification("
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<For"
-			+ "each={energyLevels().notifications}>"
-		ENFORCED_BY "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "name that modifier in an information, under the submerged machines limitation"
-		ENFORCED_BY "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "name that modifier under the game release warning"
-		ENFORCED_BY "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.spec.ts::should"
-			+ "name no modifier"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerNotifications.ts::resolveEnergyLevelsSectionPowerConsumptionModifierNotification("
+		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<For"
+			+ "each={props.notifications}>"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerNotifications.spec.ts"
 	REJECTED "Multiplying the planet total alone, the breakdown keeping the base levels: its"
 		+ "entries would stop summing to the consumption shown above them"
 	REJECTED "Applying the modifier in the presenter: the available energy is computed in the"
@@ -2879,20 +2913,26 @@ DECISION AViewModelServesOneView
 		+ "of a page; a page view model composes the view models of its zones, and a zone view"
 		+ "model is the type its zone component receives"
 		IMPL "packages/core-mapping/src/display/presentation/viewModels/ConfigurationPageViewModel.ts"
+		IMPL "packages/core-mapping/src/display/presentation/viewModels/PlayersPageViewModel.ts"
 	SPEC "a zone rendered by one component on several pages is one view: each page view model holds"
 		+ "its own instance of it, built by a presentation helper the presenters of those pages"
 		+ "call; what two views share is that helper, a pure mapping from value objects to the"
 		+ "zone, never one view model read by two views"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT143"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerNotifications.ts"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createDroneLogisticsBadge.ts"
 	SPEC "a controller serves one view and a presenter builds one view model; a use case is one"
 		+ "meaningful action of the save manager, load one page or one zone, and orchestrates the"
 		+ "sections that view needs"
 		IMPL "packages/core-mapping/src/display/controllers/LoadSaveIdentityController.ts"
 		IMPL "packages/core-mapping/src/display/presentation/SaveIdentityPresenter.ts"
 		IMPL "packages/core-mapping/src/display/application/LoadSaveIdentity.ts"
+		IMPL "packages/core-mapping/src/display/controllers/LoadOverviewPageController.ts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
 	SPEC "a section controller, one per section of the save, is retired once no page reads its view"
 		+ "model, in the pull request of the page that stops reading it"
-		IMPL "docs/awawa-project-methodology/tasks.awawa::TASK FEAT145"
+		IMPL "packages/core-mapping/src/display/composition/compositionRoot.ts"
+		ENFORCED_BY "scripts/guards/architecture/check-core-mapping-exports.ts::SECTION_CONTROLLER_EXPORT"
 	REJECTED "one view model per section of the save, assembled by the UI: the page then joins,"
 		+ "folds and formats what the presentation should have decided, and the figures of two"
 		+ "zones showing the same planet can disagree"
@@ -3172,7 +3212,7 @@ DECISION APresentationPieceLandsWithTheFirstPageThatRendersIt
 		+ "renders it, never ahead of that page: the tone badge and the on or off pill by the task"
 		+ "of the Configuration modifiers and unlock flags"
 		IMPL "packages/ui-save-manager/src/routes/configuration.tsx::<SectionTitle testId"
-		IMPL "packages/ui-save-manager/src/components/EnergyLevelsSection.tsx::<Notification"
+		IMPL "packages/ui-save-manager/src/components/power/PowerPlanetZone.tsx::<Notification"
 		IMPL "packages/ui-save-manager/src/components/configuration/ModifiersCard.tsx::<ToneBadge"
 		IMPL "packages/ui-save-manager/src/components/configuration/UnlocksCard.tsx::<OnOffPill"
 	REJECTED "Shipping the tone badge and the on or off pill with the shell of the save manager,"
@@ -3207,7 +3247,7 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 	SPEC "the Overview page has the address /overview and opens once a save is loaded; requested"
 		+ "with no save loaded, it opens the Load save page"
 		IMPL "packages/ui-save-manager/src/lib/pagePaths.ts::const overviewPath = '/overview';"
-		IMPL "packages/ui-save-manager/src/routes/overview.tsx::fallback={<Navigate"
+		IMPL "packages/ui-save-manager/src/components/shell/SavePage.tsx::fallback={<Navigate"
 			+ "href={PAGE_PATHS.loadSavePath}/>}"
 		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should open the Overview page"
 			+ "at its own address"
@@ -3215,14 +3255,16 @@ DECISION OneLoadSavePageLoadsTheFirstAndEveryNextSave
 		+ "the routes takes a save only once it validated, and a load that ends after the page was"
 		+ "left is dropped"
 		IMPL "packages/ui-save-manager/src/routes/load-save.tsx::loadedSave.loadSave({content:"
-			+ "result.content, fileName: result.fileName, warnings: result.warnings});"
+			+ "result.content, fileName: result.fileName, fileSize: result.fileSize, warnings:"
+			+ "result.warnings});"
 		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::if (!isDisposed) {"
 		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should keep the loaded save"
 		ENFORCED_BY "packages/ui-save-manager/e2e/load-save.e2e.ts::should offer nothing to"
 			+ "visualize before a file is picked on it"
 	SPEC "the Overview page names the loaded save from the validated save, never from the file"
 		+ "chosen in the input"
-		IMPL "packages/ui-save-manager/src/routes/overview.tsx::resolveLoadedSaveTitle(loadedSave().fileName)"
+		IMPL "packages/ui-save-manager/src/providers/LoadedSaveProvider.tsx::const [overviewPage] ="
+			+ "createResource(validatedSave,"
 	REJECTED "the Overview page carrying the load section before a save is loaded, beside a Load"
 		+ "another save page: the same form at two addresses, and no entry of the menu marked"
 		+ "current before a save is loaded"
@@ -3357,31 +3399,31 @@ DECISION AGuardAllowListOnlyShrinks
 DECISION AProjectionForOnePresenterIsAResponseBuiltByItsUseCase
 	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
 	APPLIES_TO_TASK @TASK.REFACTOR159
-	SPEC "PlayerMenuEntry, PlayerSummary, SaveIdentity, TerraformationLevelSummary and EnergyLevels"
+	SPEC "PlayerMenuEntry, PlayerCard, SaveIdentity, TerraformationLevelSummary and EnergyLevels"
 		+ "are interfaces of application/responses, each built as a literal by its use case; no"
 		+ "factory re-checks their fields"
 		IMPL "packages/core-mapping/src/display/application/responses/PlayerMenuEntryResponse.ts"
-		IMPL "packages/core-mapping/src/display/application/responses/PlayerSummaryResponse.ts"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerCardResponse"
 		IMPL "packages/core-mapping/src/display/application/responses/SaveIdentityResponse.ts"
 		IMPL "packages/core-mapping/src/display/application/responses/TerraformationLevelSummaryResponse.ts"
 		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts"
 		ENFORCED_BY "scripts/guards/architecture/check-presentation-entities.ts::PRESENTER_PORT_REFUSAL"
 	SPEC "A domain entity exposes a figure it computes as a getter and builds no projection:"
 		+ "TerraformationLevelEntity exposes biomass and terraformationIndex, and"
-		+ "LoadTerraformationLevelsSection reads them into the response"
+		+ "LoadTerraformationPage reads them into the response"
 		IMPL "packages/core-mapping/src/display/domain/entities/TerraformationLevelEntity.ts::get"
 			+ "biomass()"
-		IMPL "packages/core-mapping/src/display/application/LoadTerraformationLevelsSection.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadTerraformationPage.ts"
 	SPEC "EnergyLevelsResponse and ConfigurationPageResponse describe what the domain computes as"
 		+ "plain records of the response file, PlanetEnergyLevelsResponse with the breakdown and"
-		+ "optimizer records under it and AssessedSaveConfigurationResponse, that"
-		+ "LoadEnergyLevelsSection and LoadConfigurationPage build from the value objects; no value"
-		+ "object crosses the output boundary and the presenters import nothing from domain/"
+		+ "optimizer records under it and AssessedSaveConfigurationResponse, that LoadPowerPage and"
+		+ "LoadConfigurationPage build from the value objects; no value object crosses the output"
+		+ "boundary and the presenters import nothing from domain/"
 		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts::PlanetEnergyLevelsResponse"
 		IMPL "packages/core-mapping/src/display/application/responses/ConfigurationPageResponse.ts::AssessedSaveConfigurationResponse"
-		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts::describePlanetEnergyLevels"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::describePlanetEnergyLevels"
 		IMPL "packages/core-mapping/src/display/application/LoadConfigurationPage.ts::assessSaveConfiguration"
-		IMPL "packages/core-mapping/src/display/presentation/EnergyLevelsPresenter.ts"
+		IMPL "packages/core-mapping/src/display/presentation/PowerPagePresenter.ts"
 		IMPL "packages/core-mapping/src/display/presentation/ConfigurationPagePresenter.ts"
 	REJECTED "A factory per response asserting its fields: a factory that only re-checks the types"
 		+ "of already typed data makes neither a value object nor a response"
@@ -3447,7 +3489,7 @@ DECISION EachBrokenSchemaConstraintIsAValidationIssueOfItsOwn
 		+ "path of the field first, as the schema validator worded it"
 		IMPL "packages/core-mapping/src/save/presentation/messages/validationIssueMessages.js::function"
 			+ "formatEntryFieldMessage"
-		ENFORCED_BY "packages/core-mapping/src/save/presentation/formatValidationError.spec.ts::When"
+		ENFORCED_BY "packages/core-mapping/src/save/presentation/mappers/formatValidationError.spec.ts::When"
 			+ "the entry breaks a constraint of its schema"
 	REJECTED "The message of the schema validator carried as data of the issue and shown as"
 		+ "written: it says how the violation was detected, which stays in the infrastructure, in a"
@@ -3475,21 +3517,21 @@ DECISION ASectionUseCaseReportsTheLinesItCannotRead
 		+ "reader reports at least one unreadable line, and no other presenter method, whether or"
 		+ "not validation refused the save first"
 		IMPL "packages/core-mapping/src/display/application/LoadConfigurationPage.ts::displaySaveWithUnreadableLines"
-		IMPL "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::displaySaveWithUnreadableLines"
 		IMPL "packages/core-mapping/src/display/application/LoadPlayersMenu.ts::displaySaveWithUnreadableLines"
-		IMPL "packages/core-mapping/src/display/application/LoadPlayersSection.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts::displaySaveWithUnreadableLines"
 		IMPL "packages/core-mapping/src/display/application/LoadSaveIdentity.ts::displaySaveWithUnreadableLines"
-		IMPL "packages/core-mapping/src/display/application/LoadTerraformationLevelsSection.ts::displaySaveWithUnreadableLines"
+		IMPL "packages/core-mapping/src/display/application/LoadTerraformationPage.ts::displaySaveWithUnreadableLines"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadConfigurationPage.spec.ts"
-		ENFORCED_BY "packages/core-mapping/src/display/application/LoadEnergyLevelsSection.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPowerPage.spec.ts"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPlayersMenu.spec.ts"
-		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPlayersSection.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/display/application/LoadPlayersPage.spec.ts"
 		ENFORCED_BY "packages/core-mapping/src/display/application/LoadSaveIdentity.spec.ts"
-		ENFORCED_BY "packages/core-mapping/src/display/application/LoadTerraformationLevelsSection.spec.ts"
+		ENFORCED_BY "packages/core-mapping/src/display/application/LoadTerraformationPage.spec.ts"
 	SPEC "the presenter of a section carries the unreadable lines, each located, in its view model;"
 		+ "when that list is not empty, SectionState renders the section title and each line with"
 		+ "its location in the danger style, instead of the section"
-		IMPL "packages/core-mapping/src/save/presentation/formatUnreadableLine.ts"
+		IMPL "packages/core-mapping/src/save/presentation/mappers/formatUnreadableLine.ts"
 		IMPL "packages/ui-save-manager/src/components/structure/SectionState.tsx::unreadableLines"
 	REJECTED "Relying on validation having refused every unreadable save: a defect in validation"
 		+ "would show a partial save as whole, and the case could not be exercised with a test"
@@ -3987,19 +4029,844 @@ DECISION APlanetWithoutPurificationCarriesNoPurificationLevel
 		IMPL "packages/core-mapping/src/display/domain/entities/TerraformationLevelEntity.ts::NO_PURIFICATION_CONTRIBUTION"
 		ENFORCED_BY "packages/core-mapping/src/display/domain/entities/TerraformationLevelEntity.spec.ts::should"
 			+ "leave purification out of the terraformation index"
-	SPEC "The Terraformation section shows no Purification column for a planet without a"
-		+ "purification level"
-		IMPL "packages/core-mapping/src/display/presentation/TerraformationLevelsPresenter.ts::presentPurificationColumns"
-		ENFORCED_BY "packages/core-mapping/src/display/presentation/TerraformationLevelsPresenter.spec.ts::should"
-			+ "leave the purification column out of its environmental levels"
+	SPEC "The Terraformation page shows no Purification row for a planet without a purification"
+		+ "level"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPlanetTerraformationZone.ts::listPurificationLevel"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPlanetTerraformationZone.spec.ts::should"
+			+ "leave the purification row out of its environmental levels"
 	REJECTED "The -1 carried into the domain and compared there: a sentinel of the save format read"
 		+ "by a domain rule, which the terraformation index then added and the Terraformation"
 		+ "section printed"
 	REJECTED "A Purification column showing a placeholder for such a planet: the planet does not"
 		+ "handle purification, so there is nothing to show"
-	RESTS_ON @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+	RESTS_ON @RULE.APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification
 	RATIONALE "The value is how the save format writes that a planet has no purification; decoded"
 		+ "at the boundary, the merge rule and the display reason on a level that is there or not,"
 		+ "and the format keeps its value"
 	SOURCE "Owner ruling of 2026-10-02 on the Clean Architecture review of core-mapping: -1 means"
 		+ "the planet does not handle purification, so the save manager does not display it"
+
+DECISION TheApplicationTitleIsTheFirstLevelHeadingOfEveryPage
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT187
+	SPEC "the application title is the one first-level heading of every page: at the top of the"
+		+ "menu on a page that shows the menu, above the content on the home page; a page title is"
+		+ "a heading of a lower level"
+		IMPL "packages/ui-save-manager/src/components/shell/ApplicationTitle.tsx::<h1"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::<ApplicationTitle"
+		IMPL "packages/ui-save-manager/src/app.tsx::<ApplicationTitle"
+	SPEC "the title at the top of the menu sits in a header of its own above the navigation"
+		+ "landmark, never inside it"
+		IMPL "packages/ui-save-manager/src/components/shell/SaveManagerMenu.tsx::<header"
+			+ "class=\"menu-header\">"
+	REJECTED "the page title as the first-level heading and the title of the menu as a plain line,"
+		+ "as page F draws it: page titles are third-level headings rendered by components the page"
+		+ "tasks of the wave own, so pages would hold none or two first-level headings until the"
+		+ "last of them lands"
+		REF @WAVE.15
+	REJECTED "the title inside the navigation landmark: the landmark then opens on the name of the"
+		+ "application rather than on its first group of pages"
+	SOURCE "Ruled while delivering FEAT187, the title moving from the header above the shell to the"
+		+ "top of the menu"
+		PR 260
+
+DECISION TheFileSizeIsReadWhereTheFileIsRead
+	SPEC "the save manager reads the size of a save from the file it was given, where it reads the"
+		+ "file, and hands it to core-mapping with the content and the file name"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::selectedFile.size"
+		IMPL "packages/core-mapping/src/display/controllers/LoadOverviewPageController.ts::LoadedSaveFile"
+	SPEC "core-mapping presentation formats a file size in base 1024, in B, KB, MB or GB, with"
+		+ "three fraction digits at most"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/formatters/formatNumber/fileSize.strategy.ts"
+	REJECTED "measuring the size by encoding the content back to UTF-8 in core-mapping: the decoded"
+		+ "text is not the file, a byte order mark dropped and invalid bytes replaced, and"
+		+ "TextEncoder is a runtime global no core- package declares"
+	REJECTED "base 1000: Windows Explorer, on the platform the game runs on, shows a size in base"
+		+ "1024 under KB"
+	REJECTED "formatting the size in the save manager: the page computes no figure"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT142
+	SOURCE "Ruling taken when the task started, the task leaving open how the file size reaches the"
+		+ "view model"
+		PR 262
+		REF @TASK.FEAT142
+
+DECISION ASaveAreaOfTheMergePageShowsItsNativeFileInput
+	SPEC "Each save area of the Merge two saves page shows the native file input of its save under"
+		+ "the name of the save, above the hint to drop a save or choose a file: the input is the"
+		+ "choose a file of page F, and it shows the name of the chosen save"
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::data-testid=\"save-a-drop-hint\""
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-drop-area .save-file-field {"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/merge.e2e.ts::should label each"
+			+ "save file input"
+	REJECTED "A visually hidden file input behind a choose a file link, as page F draws it: the"
+		+ "page would have to print the chosen file name the input shows today, and rebuild the"
+		+ "focus ring and the keyboard access the native control gives"
+		REF @DECISION.ADroppedSaveIsSelectedThroughItsFileInput
+		REF @URL.SaveManagerRedesignMockup
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT186
+	SOURCE "Ruled while delivering FEAT186: page F draws a choose a file link, the save areas keep"
+		+ "the native input a drop writes into"
+		PR 261
+
+DECISION TheOverviewPowerBarsShareTheLargestFigureOfTheSaveAsTheirScale
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT183
+	SPEC "the production and the consumption bars of every planet card of the Overview share one"
+		+ "scale: 100 % is the largest production or consumption over every planet of the save, a"
+		+ "bar is as wide as its value divided by that largest figure, and empty when that figure"
+		+ "is 0"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::fullBarKilowatts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::function"
+			+ "scaleBar("
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
+			+ "show the terraformation figures of each planet, then its power on a scale common to"
+			+ "every planet"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
+			+ "draw empty bars without a share of production consumed"
+	REJECTED "the largest production alone as 100 %: a consumption above every production overflows"
+		+ "its bar and has to be clipped"
+	REJECTED "each planet's share of the total of the save: the bars of a small planet fall to"
+		+ "almost nothing"
+	SOURCE "Owner ruling of 2026-10-02 at the launch of FEAT183"
+		PR 264
+
+DECISION TheOverviewShowsACardForEveryPlanetOfEitherList
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT183
+	SPEC "the Overview shows one card per planet of the union of the terraformation levels and the"
+		+ "energy planets: the terraformation entries in save order, then the planets with machines"
+		+ "placed and no terraformation entry, in energy order"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::energyOnlyPlanets"
+		ENFORCED_BY "packages/core-mapping/src/display/application/LoadOverviewPage.spec.ts::should"
+			+ "present it after the terraformed planets, with its energy alone"
+	SPEC "a planet with terraformation levels and no machine placed shows its terraformation"
+		+ "figures and, in place of the bars, a line saying no machine is placed; a planet with"
+		+ "machines placed and no terraformation level shows its name, or its numeric identifier,"
+		+ "then a line saying no terraformation level is recorded in place of the figures; nothing"
+		+ "of the missing side is shown as zero"
+		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js::overviewPageNoMachinePlaced"
+		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js::overviewPageNoTerraformationLevelRecorded"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::card.absentSide"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::overview-planet-absent-side"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
+			+ "show its terraformation figures and say that no machine is placed"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/OverviewPagePresenter.spec.ts::should"
+			+ "name it after its numeric identifier, show its power and say that no terraformation"
+			+ "level is recorded"
+	REJECTED "the missing side shown as zeros: it invents a value the save does not hold"
+		REF @DECISION.AnUnprintedEnergyValueIsNeitherInferredNorZero
+	REJECTED "cards for the terraformation planets only: a planet with machines placed vanishes"
+		+ "from the Overview"
+	SOURCE "Owner ruling of 2026-10-02 at the launch of FEAT183"
+		PR 264
+
+DECISION TheStylesOfOnePageLiveInAStylesheetNamedAfterIt
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT183
+	SPEC "the rules whose selectors serve one page of ui-save-manager live in a stylesheet of"
+		+ "src/styles named after that page and imported by app.css; components.css keeps the rules"
+		+ "of the pieces several pages share"
+		IMPL "packages/ui-save-manager/src/styles/overview.css::.overview-planet-card"
+		IMPL "packages/ui-save-manager/src/app.css::@import \"styles/overview.css\";"
+		IMPL "packages/ui-save-manager/src/styles/home.css::.home-page"
+	REJECTED "the rules of each page appended to components.css: the file mixes the layout of one"
+		+ "page with the pieces every page shares, and grows with every page of the redesign"
+	SOURCE "Owner review of 2026-10-03, r4170801024: \"on pourrait avoir un overview.css\""
+		PR 264
+
+DECISION APlayerGaugeIsMeasuredAgainstTheMaximumItsEquipmentGives
+	SPEC "the Players page measures the oxygen, the health and the thirst of each player against"
+		+ "their maximum: the oxygen maximum is the capacity of the oxygen tank worn, read from a"
+		+ "value table of data-world-objects behind an application port, and health and thirst are"
+		+ "measured against the base capacity of 100"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts"
+		IMPL "packages/core-mapping/src/display/domain/rules/resolveOxygenCapacity.ts"
+		IMPL "packages/core-mapping/src/display/infrastructure/OxygenTankCapacitiesReaderService.ts"
+		REF @DATATABLE.OxygenTankCapacities
+		REF @RULE.TheOxygenMaximumIsTheCapacityOfTheTankWorn
+	SPEC "a gauge percentage is held between 0 and 100, and the value over its maximum is shown as"
+		+ "the save carries it, above the maximum included"
+		IMPL "packages/core-mapping/src/display/domain/rules/computeGaugePercentage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts"
+	SPEC "the use case hands the presenter each gauge as its value, its maximum and its percentage,"
+		+ "primitives of the application response; the presenter rounds them for the labels"
+		IMPL "packages/core-mapping/src/display/application/responses/PlayersPageResponse.ts::PlayerGaugeResponse"
+	REJECTED "the oxygen capacities written as constants of the domain rule: a value table is read"
+		+ "by an infrastructure adapter behind a port, and the wiki moves the figures with the game"
+	REJECTED "the maximum taken as the highest value the save holds for a gauge: a save whose"
+		+ "players are all half full would show them full"
+	REJECTED "a percentage above 100 drawn as an overflow: the gauge shape has no room for it, and"
+		+ "the value over its maximum already says it"
+	REJECTED "a fourth gauge for toxicity in this task: its maximum is the toxic time of the area"
+		+ "the player stands in, which the save does not carry; left to a task of its own"
+		REF @TASK.FEAT190
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT144
+	RATIONALE "The save stores each gauge as a raw value without its maximum. Health and thirst"
+		+ "never exceed 100 in the reference saves; oxygen reaches 280, 370 or 450 with the tank"
+		+ "tiers 3, 4 and 5 and 100 without a tank, which the wiki confirms. One reference save"
+		+ "holds players at 450 oxygen with no tank found, so a value may exceed the computed"
+		+ "maximum: the fill is held at full and the figure stays truthful"
+	SOURCE "Research of task FEAT144 on 2026-10-02: the wiki page Oxygen Tanks and the gauges of"
+		+ "the players of the reference saves"
+		REF @URL.WikiOxygenTanks
+		REF @PROJECT.DNC
+		PR 263
+
+DECISION TheToolsPagesDrawTheirSaveFormWithSharedStyles
+	SPEC "the Load save and the Merge two saves pages draw their form with the same style rules of"
+		+ "forms.css: a card holding each visible drop zone, a dashed area showing the native file"
+		+ "input above the hint to drop a save or choose a file, then a row ending on the submit"
+		+ "button in the primary pink"
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-form {"
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-drop-area {"
+		IMPL "packages/ui-save-manager/src/styles/forms.css::.save-form-actions {"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::class=\"save-drop-area\""
+		IMPL "packages/ui-save-manager/src/components/MergeSection.tsx::class=\"save-drop-area\""
+	SPEC "the Load save page has one drop zone, its dashed area; the card around it takes no drop"
+		IMPL "packages/ui-save-manager/src/components/LoadSaveSection.tsx::<div class=\"card"
+			+ "save-form\">"
+	REJECTED "the merge rules reused on the Load save page under their merge names, or copied under"
+		+ "load names: one look would carry the name of one page, or drift between two"
+	REJECTED "the card of the Load save page as a second drop zone around the dashed area, as the"
+		+ "merge card is: with one save to pick, it adds a zone the reader does not see for the"
+		+ "button row alone"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT188
+	RATIONALE "The two tools pages load files the same way, so their form is one piece of two"
+		+ "pages: its rules stay in the shared forms stylesheet rather than in a stylesheet named"
+		+ "after one page"
+		REF @DECISION.TheStylesOfOnePageLiveInAStylesheetNamedAfterIt
+	SOURCE "Ruled while delivering FEAT188: the Load save page takes the form pieces the Merge two"
+		+ "saves page leaves"
+		PR 267
+
+DECISION AnEquipmentSlotIsAKindOfTheEquipmentKindsTable
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT185
+	SPEC "the player card shows one equipment slot per kind of the EquipmentKinds table, in the"
+		+ "order of the table, each holding the item worn of that kind or marked Empty; a worn item"
+		+ "the table names no kind for takes a slot of its own after them; the caption counts the"
+		+ "worn slots of all slots"
+		IMPL "packages/core-mapping/src/display/domain/rules/arrangeEquipmentSlots.ts::arrangeEquipmentSlots"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentSlots.tsx"
+	SPEC "the inventory is grouped by world object with its count, in the order the items first"
+		+ "appear, and ends on a chip counting the free slots, the inventory size the save carries"
+		+ "less the items, never below zero"
+		IMPL "packages/core-mapping/src/display/domain/rules/groupInventoryItems.ts::groupInventoryItems"
+		IMPL "packages/core-mapping/src/display/domain/entities/PlayerEntity.ts::get"
+			+ "freeInventorySlotCount()"
+		IMPL "packages/ui-save-manager/src/components/players/InventoryChips.tsx"
+	SPEC "the table is read behind EquipmentKindsReaderPort by an infrastructure adapter; the use"
+		+ "case computes the slots and the counts and hands them to the presenter as primitives of"
+		+ "PlayerCardResponse, and the presenter only labels them"
+		IMPL "packages/core-mapping/src/display/application/ports/EquipmentKindsReaderPort.ts"
+		IMPL "packages/core-mapping/src/display/infrastructure/EquipmentKindsReaderService.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadPlayersPage.ts::createPlayerCard"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts"
+	REJECTED "As many slots as the equipment inventory of the save has: the game's slots are"
+		+ "untyped, and an empty one would have no kind to name"
+	REJECTED "A kind derived from the world object name by a pattern in the domain: a value table"
+		+ "is read by infrastructure, and a new tier or skin would need code"
+	REJECTED "Kind codes in the table translated by presentation messages: a second home for the"
+		+ "kinds; the table carries the English title the card shows, as worldObjectLabels does for"
+		+ "the items"
+	REJECTED "Dropping a worn item the table does not name: the card would hide what the player"
+		+ "wears"
+	RATIONALE "No export of the game gives an equipable type; the kind of each wearable is the"
+		+ "family of its world object, and in the reference saves no player wears two items of one"
+		+ "kind. The mockup page F draws one slot per kind with its title, which is what the table"
+		+ "orders"
+		REF @DATATABLE.EquipmentKinds
+		REF @RULE.APlayerWearsAtMostOneItemOfEachEquipmentKind
+		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Ruled while implementing the equipment slots and the grouped inventory of the player"
+		+ "card"
+		PR 270
+
+DECISION AConsumerShareOnThePowerPageIsItsShareOfProduction
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT139
+	SPEC "the share of a consumer on the Power page is its total divided by the production of its"
+		+ "planet, as the share of a producer is, so the total row of the consumers reads the share"
+		+ "the load meter shows"
+		IMPL "packages/core-mapping/src/display/domain/PlanetEnergyGrid.ts::private"
+			+ "breakdown(levels:"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPlanetPowerZone.spec.ts::should"
+			+ "build the zone of a planet"
+	REJECTED "its share of the consumption: the column of the consumers would always total 100 %"
+		+ "and the table would contradict the load meter"
+	SOURCE "Ruling of the FEAT139 agent on 2026-10-03, the mockup of page F leaving the base of the"
+		+ "share open"
+		PR 269
+		REF @URL.SaveManagerRedesignMockup
+
+DECISION ATightPowerBalanceTakesTheNeutralTone
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT139
+	SPEC "the status pill of a tight power balance takes the neutral tone, as a balanced one does,"
+		+ "the deficit taking the danger tone and the surplus the positive one; its word and its"
+		+ "tone label tell it apart"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPlanetPowerZone.ts::tight:"
+			+ "{value: powerPageTightBalance, tone: 'neutral'"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPlanetPowerZone.spec.ts::should"
+			+ "map a %s balance to its word and tone"
+	REJECTED "a warning tone: the tone badge has none, and adding one needs a new colour token pair"
+		+ "the contrast guard approves in both themes, a change of the palette this task does not"
+		+ "carry"
+	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
+		PR 269
+		REF @DECISION.ColorTokenPairsMeetWcagAaByCatalog
+
+DECISION ThePowerBreakdownSummaryCountsMachines
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT139
+	SPEC "the line above the producers and the consumers of the Power page counts machines, the sum"
+		+ "of the quantities of each table, and optimizers placed"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPlanetPowerZone.ts::sumBreakdown(planet.productionBreakdown).quantity"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPlanetPowerZone.spec.ts::should"
+			+ "build the zone of a planet"
+	REJECTED "the number of machine types: it is the number of rows of each table, which the line"
+		+ "would only repeat"
+	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
+		PR 269
+
+DECISION ThePowerUseCaseIsNamedAfterItsPageItsResponseAfterTheEnergyLevels
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT139
+	SPEC "the use case of the Power page is LoadPowerPage, its presenter port"
+		+ "PowerPagePresenterPort and its controller LoadPowerPageController, while its response"
+		+ "keeps the name EnergyLevelsResponse"
+		IMPL "packages/core-mapping/src/display/application/LoadPowerPage.ts::export class"
+			+ "LoadPowerPage"
+		IMPL "packages/core-mapping/src/display/application/responses/EnergyLevelsResponse.ts::export"
+			+ "interface EnergyLevelsResponse"
+		IMPL "packages/core-mapping/src/display/controllers/LoadPowerPageController.ts::export"
+			+ "class LoadPowerPageController"
+	REJECTED "PowerPageResponse: the response describes the energy levels the domain computes, not"
+		+ "the page that shows them, and the decisions anchoring EnergyLevelsResponse would be"
+		+ "rewritten for no gain"
+	REJECTED "keeping LoadEnergyLevelsSection: the section is gone, the use case now serves the"
+		+ "Power page alone"
+		REF @DECISION.AViewModelServesOneView
+	SOURCE "Ruling of the FEAT139 agent on 2026-10-03"
+		PR 269
+
+DECISION TheOverviewShowsTheSysTiOfTheSaveInATileOfItsOwn
+	SPEC "the Overview page shows the SysTi of the save in a tile of its own, folded from the"
+		+ "Terraformation Index of its planets by a domain rule as the game folds it, captioned"
+		+ "with how many planets have a non-zero index; a save where no planet has an index shows"
+		+ "no SysTi tile"
+		IMPL "packages/core-mapping/src/display/domain/rules/computeSystemTerraformationIndex.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts"
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewTiles.tsx::overview-system-terraformation-index"
+		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
+	SPEC "the SysTi figure is written in the unit of the game, the short-scale prefix glued to"
+		+ "SysTi, as in 4.369 SpdSysTi"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/formatters/formatNumber/systemTerraformationIndex.strategy.ts"
+		IMPL "packages/core-mapping/src/display/presentation/messages/overviewPageMessages.js"
+	SPEC "the SysTi tile opens the overview tiles, on the left"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewTiles.tsx::overview-system-terraformation-index"
+		IMPL "packages/ui-save-manager/e2e/display-overview.e2e.ts::should open the tiles on the"
+			+ "SysTi, on the left"
+	REJECTED "the plain sum of the Terraformation Index of the planets, the arithmetic of the"
+		+ "sample data of the mockup: the wiki gives the product, and a reference save whose"
+		+ "indexes sum to 3.65e14 holds objects the game unlocks at 1.5e31 SysTi"
+		REF @URL.SaveManagerRedesignMockup
+	REJECTED "a weighted sum of the indexes: no source names a weight, and the product already"
+		+ "reaches every unlock the reference saves hold"
+	REJECTED "the plain product of the non-zero indexes the wiki gives: the game assembly of 2.103"
+		+ "multiplies by max(Ti, 1) once the SysTi has a value, so a later planet below 1 leaves it"
+		+ "unchanged"
+		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
+	REJECTED "a SysTi of 1 or 0 when no planet has an index: the empty product is no figure of the"
+		+ "game; the tile is left out, as the crafted objects tile is for a save without statistics"
+	REJECTED "the SI symbol strategy of the Terraformation Index of a planet: it stops at Y, 1e24,"
+		+ "while a SysTi passes 1e54, and the game writes Qi, No and Ud where SI writes E, Z and Y"
+	REJECTED "the label SysTi alone, as the mockup writes it: the tile label spells out the System"
+		+ "Terraformation Index, the abbreviation kept as the unit of the figure"
+	REJECTED "the prefixes UDc, DDc, TDc on up to SpDc, OcDc and NoDc of the first SysTi table of"
+		+ "the wiki: the game assembly writes Ud, Dd, Td on up to Spd, Ocd and Nod"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT132
+	APPLIES_TO_TASK @TASK.DOCS192
+	RATIONALE "The task left open whether the SysTi sums or weighs the Ti of the planets. The wiki"
+		+ "states a product that leaves out the planets at zero, and the reference saves confirm"
+		+ "it: the objects they hold are unlocked at thresholds only the product reaches"
+	SOURCE "Research of task FEAT132 on 2026-10-03: the wiki page Terraformation Index and the"
+		+ "reference saves"
+		REF @URL.WikiTerraformationIndex
+		REF @PROJECT.DNC
+		PR 268
+	SOURCE "Owner review of 2026-10-03: the SysTi is the first card of the list, on the left"
+		PR 268
+	SOURCE "Game assembly Assembly-CSharp.dll of release 2.103, Steam build 25296421, decompiled on"
+		+ "2026-10-04: WorldUnitSystemTerraformation.GetValue multiplies the SysTi by max(Ti, 1)"
+		+ "once it is above 2.220446049250313E-16"
+		REF @GAME_RELEASE.2.103
+		PR 276
+
+DECISION TheScrollingBodyOfATableCardIsANamedRegionInTheTabSequence
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	SPEC "the body of a table card that scrolls on its own is a region in the tab sequence, named"
+		+ "by the title of its card, so that the keyboard can scroll it"
+		IMPL "packages/ui-save-manager/src/components/power/PowerBreakdownTable.tsx::role=\"region\""
+			+ "aria-labelledby={titleId} tabindex=\"0\""
+		IMPL "packages/ui-save-manager/src/components/power/PowerOptimizersTable.tsx::role=\"region\""
+			+ "aria-labelledby={titleId} tabindex=\"0\""
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::should let the"
+			+ "keyboard reach the scrolling body of each table"
+	REJECTED "removing the horizontal scroll of the table body: on a narrow viewport the table then"
+		+ "overflows its card and the page"
+	REJECTED "a tab stop without a role and a name: a screen reader announces an unnamed group when"
+		+ "the keyboard lands on it"
+	RATIONALE "axe reports scrollable-region-focusable on a scrolling body no key can reach, in"
+		+ "firefox and webkit where the Power tables overflow their card"
+		REF @DECISION.AUiTestIsEitherAScenarioOrAnAccessibilityTest
+	SOURCE "Owner ruling of 2026-10-03: the Power page accessibility failure inherited from #269 is"
+		+ "fixed in this pull request"
+		PR 268
+
+DECISION TheOverviewCardOfAPlanetNamesTheTerraformationStageItHasReached
+	SPEC "the overview card of a planet with terraformation levels carries, beside its name, a"
+		+ "neutral badge naming the stage the planet has reached, found by a domain rule from its"
+		+ "Terraformation Index; a planet no stage lists, or without terraformation levels, carries"
+		+ "no badge"
+		IMPL "packages/core-mapping/src/display/domain/rules/findReachedTerraformationStage.ts::export"
+			+ "function findReachedTerraformationStage"
+		IMPL "packages/core-mapping/src/display/application/LoadOverviewPage.ts::findReachedTerraformationStage("
+		IMPL "packages/core-mapping/src/display/presentation/OverviewPagePresenter.ts::overviewPageTerraformationStageLabel"
+		IMPL "packages/ui-save-manager/src/components/overview/OverviewPlanetCard.tsx::terraformation-stage"
+		ENFORCED_BY "packages/ui-save-manager/e2e/display-overview.e2e.ts::should name the"
+			+ "terraformation stage the planet has reached in a badge beside its name"
+		REF @RULE.APlanetIsAtTheLatestOfItsStagesStartedAtOrBelowItsTerraformationIndex
+	SPEC "the stages are the rows of the TerraformationStages table of data-planets, one per stage"
+		+ "object of the game, keyed by its name, listing the planets that use it, its start and"
+		+ "its English name; an adapter reads it behind TerraformationStagesReaderPort, and the use"
+		+ "case hands the stage name to the presenter as a primitive of OverviewPlanetResponse"
+		IMPL "packages/data-planets/terraformationStages.json"
+		IMPL "packages/core-mapping/src/display/application/ports/TerraformationStagesReaderPort.ts::TerraformationStagesReaderPort"
+		IMPL "packages/core-mapping/src/display/infrastructure/TerraformationStagesReaderService.ts::selectTerraformationStageRows()"
+		IMPL "packages/core-mapping/src/display/application/responses/OverviewPageResponse.ts::terraformationStage"
+		REF @DATATABLE.TerraformationStages
+	REJECTED "One row per planet and stage: Prime and Humble share the stage objects of the game,"
+		+ "and a row each would state every start of that list twice"
+	REJECTED "The starts of the wiki: it gives Herds on Skeo a start of 0 Ti, where the game data"
+		+ "gives 2.5 TTi"
+		REF @URL.WikiTerraformationStages
+	REJECTED "Stage codes translated by presentation messages: a second home for the names; the"
+		+ "table carries the English name the game shows, as EquipmentKinds carries the kinds"
+		REF @DATATABLE.EquipmentKinds
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_PACKAGE @PACKAGE.data_planets
+	APPLIES_TO_TASK @TASK.FEAT131
+	RESTS_ON @RULE.APlanetIsAtTheLatestOfItsStagesStartedAtOrBelowItsTerraformationIndex
+	RATIONALE "The task left the stages, their thresholds and the value they are read from to its"
+		+ "start. The game reads them from its own data, per planet, against the Terraformation"
+		+ "Index; the card shows the stage the game would show, under the name the game gives it"
+	SOURCE "Ruled while implementing the terraformation stage badge of the overview planet cards on"
+		+ "2026-10-04, from the game files of release 2.103 and the wiki"
+		REF @GAME_RELEASE.2.103
+		REF @URL.WikiTerraformationStages
+		PR 274
+
+DECISION AnOtherPowerBarFoldsTwoMachineTypesOrMore
+	SPEC "a panel of Bars by machine draws every machine type when it counts twelve or fewer, and"
+		+ "folds the types beyond the eleven largest into one Other bar, drawn last, only when it"
+		+ "counts more than twelve"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerChart.ts::UNFOLDED_MACHINE_TYPE_LIMIT"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerChart.spec.ts::should"
+			+ "keep the twelfth type as the last bar, folding none"
+	SPEC "the optimizer boost is counted among no machine type: its bar takes its place by its"
+		+ "total among the kept bars, and the fold counts machine types alone"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerChart.ts::companionBars:"
+			+ "optimizerBoostBars"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerChart.spec.ts::while"
+			+ "the optimizer boost keeps its own bar"
+	SPEC "each panel scales its bars on its own ticks, the largest bar of the panel reaching the"
+		+ "last tick or near it"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerChart.ts::TICK_INTERVALS"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerChart.spec.ts::each"
+			+ "panel on its own ticks"
+	SPEC "a stacked bar of Share of each machine type draws every machine type when it counts nine"
+		+ "or fewer, and folds the types beyond the eight largest into one Other segment, drawn"
+		+ "last, only when it counts more than nine; the optimizer boost is a segment of its own"
+		+ "and counts among no type"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerChart.ts::UNFOLDED_SHARE_MACHINE_TYPE_LIMIT"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerChart.spec.ts::should"
+			+ "keep the ninth type as the last segment"
+	REJECTED "folding from the twelfth type whatever the count, as the task's wording read alone"
+		+ "allows: an Other bar of one type hides a name its own bar could show in the same space"
+	REJECTED "the optimizer boost counted among the twelve bars, as the mockup did: the task keeps"
+		+ "it out of the fold, and counting it would fold one more machine type for a bar that"
+		+ "never folds"
+	REJECTED "one scale for the two panels, as the planet cards of the Overview page share one:"
+		+ "page F draws each panel on its own ticks, and the figure tiles above already compare the"
+		+ "two totals"
+		REF @DECISION.TheOverviewPowerBarsShareTheLargestFigureOfTheSaveAsTheirScale
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT140
+	APPLIES_TO_TASK @TASK.FEAT184
+	SOURCE "Ruling of the FEAT140 agent on 2026-10-04, page F folding from the twelfth row"
+		PR 273
+		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Ruling of the FEAT184 agent on 2026-10-04, the share form folding as the bars do, page"
+		+ "F folding from the eighth segment"
+		PR 277
+		REF @URL.SaveManagerRedesignMockup
+
+DECISION TheDisplayFormOfThePowerLivesInAProviderAboveTheRouter
+	SPEC "the form chosen under Display as lives in a provider mounted around the router, read by"
+		+ "every page that draws the power breakdown, so it stays chosen across planet tabs and"
+		+ "pages; Bars by machine is chosen until the reader picks another"
+		IMPL "packages/ui-save-manager/src/app.tsx::<PowerDisplayFormProvider>"
+		ENFORCED_BY "packages/ui-save-manager/e2e/display-power.e2e.ts::should keep the tables"
+			+ "chosen"
+	REJECTED "a signal of the route component: it is disposed when the reader opens another page"
+		+ "and the choice would be lost"
+	REJECTED "a signal declared at the top of a module: the server renders every request with the"
+		+ "same module instance, so one reader's choice would leak to the next"
+	REJECTED "the choice in the query of the address: the planet page is another route and would"
+		+ "not carry it"
+		REF @TASK.FEAT196
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT140
+	RATIONALE "The same reason as for the merged saves: only a store above the router outlives"
+		+ "every page"
+		REF @DECISION.TheMergedSavesLiveInAStoreAboveTheRouter
+	SOURCE "Ruling of the FEAT140 agent on 2026-10-04"
+		PR 273
+
+DECISION TheTerraformationIndexHeroNamesTheSysTiItIsAFactorOf
+	SPEC "the caption under the Terraformation Index hero figure of a planet names the SysTi of the"
+		+ "save and how many planets it multiplies, as the SysTi tile of the Overview page does,"
+		+ "and states no share of the SysTi; both figures are those the domain rule of the SysTi"
+		+ "computes, and the page computes no product of its own"
+		IMPL "packages/core-mapping/src/display/application/LoadTerraformationPage.ts::computeSystemTerraformationIndex(terraformationLevels)"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPlanetTerraformationZone.ts::resolveTerraformationLevelsSectionMultipliedPlanets"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPlanetTerraformationZone.spec.ts::should"
+			+ "present the hero"
+		REF @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
+	SPEC "the caption of a planet whose Terraformation Index is zero, which the SysTi does not"
+		+ "count among the planets it multiplies, names no SysTi"
+		IMPL "packages/core-mapping/src/display/domain/rules/isFactorOfTheSystemTerraformationIndex.ts"
+		IMPL "packages/core-mapping/src/display/application/LoadTerraformationPage.ts::isFactorOfTheSystemTerraformationIndex(level)"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPlanetTerraformationZone.spec.ts::should"
+			+ "caption its Terraformation Index without a SysTi"
+	REJECTED "the share of the SysTi the planet holds, as the task first wrote it: the SysTi is a"
+		+ "product, in which no percentage share exists"
+	REJECTED "the share of the sum of the Ti of the planets, the arithmetic of the mockup labelled"
+		+ "of the total Ti: a figure the game shows nowhere"
+		REF @URL.SaveManagerRedesignMockup
+	REJECTED "the logarithmic share, log(Ti) / log(SysTi), the one reading where the share of a"
+		+ "product is defined: on four planets between 1e12 and 1e14 every share falls between 24 %"
+		+ "and 27 %, a figure that tells the planets apart hardly at all"
+	REJECTED "no SysTi in the caption, the Ti figure alone: the Terraformation page then drops the"
+		+ "SysTi the Overview page already computes"
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT141
+	RESTS_ON @RULE.TheSysTiMultipliesTheTiOfThePlanetsALaterTiBelowOneCountingAsOne
+	RATIONALE "The task was written when the SysTi was thought a sum, of which a planet holds a"
+		+ "share; the SysTi multiplies the Ti of the planets, so the Ti of a planet is one of its"
+		+ "factors. Naming the SysTi and its number of planets, as the domain rule computes them,"
+		+ "is true to the game, invents no figure and holds whatever that rule refines of the"
+		+ "product; a planet at zero is not counted among them, so its caption cannot name the"
+		+ "SysTi"
+	SOURCE "Owner ruling of 2026-10-04 at the launch of FEAT141, to the question what the caption"
+		+ "under the Ti names: the factor of the SysTi, without a share"
+		PR 275
+
+DECISION TheShareFormDrawsBothBarsOnTheScaleOfTheLargerTotal
+	SPEC "Share of each machine type draws its production bar and its consumption bar on one scale,"
+		+ "the larger of the production and the consumption of the planet, so the consumption bar"
+		+ "ends where the load meter does"
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerChart.ts::Math.max(planet.production,"
+			+ "planet.consumption)"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerChart.spec.ts::on"
+			+ "the scale of the consumption"
+	SPEC "a segment writes and names its share of production, written inside it only when it spans"
+		+ "a tenth of the scale or more"
+		REF @DECISION.AConsumerShareOnThePowerPageIsItsShareOfProduction
+		IMPL "packages/core-mapping/src/display/presentation/mappers/createPowerChart.ts::WRITTEN_SHARE_MIN_WIDTH_PERCENTAGE"
+		ENFORCED_BY "packages/core-mapping/src/display/presentation/mappers/createPowerChart.spec.ts::each"
+			+ "segment naming its share of production"
+	REJECTED "each bar on its own total, as the mockup draws it: the consumption bar would write"
+		+ "shares of the consumption, which the Power page refuses, and fill its track whatever the"
+		+ "load"
+		REF @DECISION.AConsumerShareOnThePowerPageIsItsShareOfProduction
+		REF @URL.SaveManagerRedesignMockup
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT184
+	RATIONALE "On one scale the shares the segments write and their widths agree whenever the"
+		+ "planet produces at least what it consumes, and the empty end of the consumption track"
+		+ "reads the available power; in a deficit the production bar is the shorter one"
+	SOURCE "Ruling of the FEAT184 agent on 2026-10-04, the mockup of page F drawing each bar on its"
+		+ "own total"
+		PR 277
+		REF @URL.SaveManagerRedesignMockup
+
+DECISION TheExportGuardReadsTheManifestAndTheCompositionRootsOfCoreMapping
+	SPEC "check:core-mapping-exports reads the exports of the core-mapping manifest and the export"
+		+ "lines of each composition root they name: it refuses an export other than the"
+		+ "composition root or the view models folder of a business served from the same path under"
+		+ "src, and an exported Load*SectionController"
+		IMPL "scripts/guards/architecture/check-core-mapping-exports.ts::checkCoreMappingExports"
+		IMPL "package.json::check:core-mapping-exports"
+		ENFORCED_BY "scripts/guards/architecture/check-core-mapping-exports.spec.ts::checkCoreMappingExports"
+	REJECTED "reading the controllers folders of core-mapping by file name: a controller file left"
+		+ "there unwired is already an unimported file for the quality gate, and what a consumer"
+		+ "reaches is the composition root"
+	REJECTED "an allow list of the wired controllers: every page task would edit the guard, the"
+		+ "planet page first"
+		REF @TASK.FEAT196
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_TASK @TASK.FEAT145
+	RATIONALE "The section controllers are gone; what keeps one from coming back is the boundary a"
+		+ "consumer reaches, the manifest exports and the controllers each composition root wires."
+		+ "Reading that boundary accepts any page or zone controller a later task wires and refuses"
+		+ "a section controller by the name every one of them carried"
+		REF @DECISION.CoreMappingExportsOnlyControllersAndViewModels
+		REF @DECISION.AViewModelServesOneView
+	SOURCE "Choice FEAT145 left open until it started, taken by the pull request delivering it"
+		PR 279
+
+DECISION AnEquipmentKindNamesTheOriginalIconItsSlotShows
+	APPLIES_TO_PACKAGE @PACKAGE.data_world_objects
+	APPLIES_TO_PACKAGE @PACKAGE.core_mapping
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT195
+	SPEC "each kind of the EquipmentKinds table names its icon in the icon column, the tiers of a"
+		+ "kind sharing it; the icon reaches the slot through the view model of the player card,"
+		+ "and a worn item the table names no kind for takes the generic-equipment icon"
+		IMPL "packages/data-world-objects/equipmentKinds.schema.json::\"icon\""
+		IMPL "packages/core-mapping/src/display/domain/rules/arrangeEquipmentSlots.ts::iconByKind"
+		IMPL "packages/core-mapping/src/display/presentation/PlayersPagePresenter.ts::GENERIC_EQUIPMENT_ICON"
+		REF @DATATABLE.EquipmentKinds
+	SPEC "the icons are original simplified drawings, one symbol per icon in one sprite component"
+		+ "of ui-save-manager rendered once on the Players page, solid pictograms filled and"
+		+ "stroked with the colour of the text, hidden from screen readers; no file of the game,"
+		+ "nothing extracted from it and no image of the wiki is committed, shipped or loaded"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentIconSprite.tsx::<symbol"
+			+ "id=\"generic-equipment\""
+		IMPL "packages/ui-save-manager/src/routes/players.tsx::<EquipmentIconSprite/>"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentKindIcon.tsx::aria-hidden"
+	SPEC "each family accents one part of its icon: orange for the oxygen tank, the backpack"
+		+ "straps, the jetpack and the agility boots; pale blue for the air and water filters;"
+		+ "yellow for the toxins filter, the goo cleaning, the toxic areas and the Warden's key"
+		+ "detector; each accent is a token of both themes reaching 3:1 on the tile of a worn slot"
+		IMPL "packages/ui-save-manager/src/styles/colors.css::--equipment-accent-yellow"
+		IMPL "packages/ui-save-manager/src/styles/players.css::.equipment-accent-yellow"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::the yellow accent of an equipment icon"
+		ENFORCED_BY "package.json::check:contrast"
+	SPEC "the three filters share one cartridge, told apart by the wind, the drop or the trefoil"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentIconSprite.tsx::<symbol"
+			+ "id=\"toxins-filter\""
+	SPEC "the toxic elements are the last kinds of the table: Toxins filter, Goo cleaning, Toxic"
+		+ "areas"
+		IMPL "packages/data-world-objects/equipmentKinds.json::\"kind\": \"Toxic areas\""
+	SPEC "the icon sits on a tile of 44 px cut at two opposite corners, at the left of the kind and"
+		+ "the item; a worn slot fills its tile, an empty slot draws it dashed and its icon faded,"
+		+ "with no accent"
+		IMPL "packages/ui-save-manager/src/components/players/EquipmentKindIcon.tsx::<polygon"
+		IMPL "packages/ui-save-manager/src/styles/players.css::.slot.empty .slot-tile-shape"
+		IMPL "packages/ui-save-manager/src/styles/players.css::.slot.empty .slot-icon"
+	SPEC "every icon the table names is a symbol of the sprite"
+		IMPL "scripts/guards/ui/check-equipment-icons.ts::findUndrawnEquipmentIcons"
+		ENFORCED_BY "package.json::check:equipment-icons"
+	REJECTED "Extracting the icons of the game from the install of the player at run time, by a"
+		+ "cli- command reading resources.assets: they stay assets of Miju Games, which the project"
+		+ "may not redistribute in any form"
+	REJECTED "Hot-linking the images of the wiki: third-party images, refused by the img-src 'self'"
+		+ "of the content security policy"
+	REJECTED "Asking Miju Games for redistribution rights: not pursued by the owner"
+	REJECTED "One icon per tier: the label of the item already names its tier"
+	REJECTED "A map of the interface from the title of a kind to its icon: a second home for the"
+		+ "kinds, broken when a title changes"
+	REJECTED "One image file per icon shown by an img element or a CSS mask: neither takes the"
+		+ "colour of the text and an accent of its own"
+	REJECTED "A sprite file of the public folder referenced by use: the page styles nothing inside"
+		+ "it, and the inline styles that would carry the accents are refused by the style-src"
+		+ "'self' of the content security policy"
+	REJECTED "The thin outline set of 1.5 px of the first version: some icons hard to read, some"
+		+ "out of the look of the game"
+	REJECTED "A sharper outline style of 2 px, style A, and solid pictograms without a tile, style"
+		+ "B: the owner chose the solid pictograms on a tile, style C"
+	REJECTED "The icon above the label, a 32 px icon without a tile, a 56 px tile: the owner chose"
+		+ "the 44 px tile at the left of the text, layout C"
+	REJECTED "An empty slot drawing its icon in dotted strokes: replaced by the dashed tile and the"
+		+ "faded icon"
+	REJECTED "Blue backpack straps: the owner chose orange"
+	RATIONALE "A ui- package imports no data- package, so the table names the icon and the view"
+		+ "model carries it. The symbols are drawn in currentColor and their accented parts carry a"
+		+ "class whose colour is a custom property set on the icon of a worn slot only, so one"
+		+ "drawing serves both themes and an empty slot falls back to the colour of its text."
+		+ "Yellow marks the toxic elements, grouped last, the goo being yellow in the game. The"
+		+ "generic icon is named by the presenter alone, outside the reach of the guard"
+		REF @DECISION.AnEquipmentSlotIsAKindOfTheEquipmentKindsTable
+		REF @DECISION.AnInterfaceReachesTheSaveFormatThroughACoreOnly
+	SOURCE "Owner ruling of 2026-10-04: original simplified icons for the equipment only, the"
+		+ "game's icons looked at as a reference only; ruled while delivering the icons of the"
+		+ "equipment slots"
+		PR 282
+	SOURCE "Owner rulings of 2026-10-04 on the first icons, then on a canvas of proposals: «"
+		+ "certaines icônes sont difficile à déchiffrer, certaines ne sont pas dans la vibe du jeu."
+		+ "Il y a une recherche à faire à ce sujet. On pourrait avoir des icônes un peu plus grande"
+		+ "et les mettre à gauche du texte peut être? »; « ok bon icon style C est bien mais"
+		+ "certaines icônes sont à retravailler »; « la goo c'est jaune, et les éléments toxiques"
+		+ "ça peut être cool de les distinguer par du jaune, voire de les grouper à la fin. »; «"
+		+ "Les filtres pourrait avoir un dessin commun et se distinguer par une icône air/eau/toxic"
+		+ "»; « bretelles oranges, disposition C, lance la reprise de #282 »"
+		PR 282
+
+DECISION TheGlowingCyanCardHeaderBelongsToTheRedesignedLook
+	SPEC "A card title and the title of a planet zone sit on the glowing neon-cyan header; the"
+		+ "redesign keeps it"
+		IMPL "packages/ui-save-manager/src/styles/components.css::.card-header {"
+		IMPL "packages/ui-save-manager/src/styles/typography.css::h4 {"
+	REJECTED "Removing the glowing card title as a remnant of the earlier look, as the first"
+		+ "acceptance line of FEAT189 listed it: the owner keeps it"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT189
+	SOURCE "Owner ruling of 2026-10-04 on the running application, during FEAT189"
+		PR 284
+
+DECISION TheHealthGaugeFillsItsTriangleByArea
+	SPEC "The health gauge fills its triangle by area, its filled height being 1 - sqrt(1 - p) of"
+		+ "the triangle height for a fill share p"
+		IMPL "packages/ui-save-manager/src/components/players/PlayerGauge.tsx::resolveFilledHeightShareOfATriangleStandingOnItsBase"
+	SPEC "The health gauge is filled in the success green"
+		IMPL "packages/ui-save-manager/src/styles/players.css::fill: var(--success);"
+	REJECTED "Filling the triangle by height: at 75 % the gauge covers 94 % of its area and shows"
+		+ "almost no consumption"
+	REJECTED "The neon pink of the earlier health gauge: the owner reads health in green"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT189
+	SOURCE "Owner ruling of 2026-10-04 on the running application, during FEAT189"
+		PR 284
+
+DECISION AValidationListTitleNamesTheValidation
+	SPEC "The title of a list of validation messages names the validation"
+		IMPL "packages/ui-save-manager/src/messages/displayRouteMessages.js::Validation Errors"
+		IMPL "packages/ui-save-manager/src/messages/mergeResultSectionMessages.js::Save A"
+			+ "validation warnings"
+	REJECTED "Naming the validation in the Merge warnings title: the merge raises those warnings,"
+		+ "not the validation"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT189
+	SOURCE "Owner ruling of 2026-10-04 on the running application, during FEAT189"
+		PR 284
+
+DECISION TheSaveManagerIsHeldAtAScreen360PixelsWide
+	SPEC "every page of the save manager fits a screen 360 pixels wide without a horizontal scroll"
+		+ "of the page"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::test.use({viewport: {width: 360,"
+			+ "height: 800}});"
+		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit the screen without"
+			+ "a horizontal scroll"
+	SPEC "the phone-width scenarios fix their viewport in their own file with test.use and run on"
+		+ "the three desktop engine projects; the Playwright configuration declares no phone"
+		+ "project"
+		IMPL "packages/ui-save-manager/playwright.config.ts::{name: 'webkit', use:"
+			+ "{...devices['Desktop Safari']}}"
+	SPEC "at 768 pixels wide and below, the menu folds behind a Menu button, the rows of a table"
+		+ "become cards and the equipment of a player card is folded when the Players page opens"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::should show the save identity and a"
+			+ "Menu button in place of the pages of the menu"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::should show each row of its tables"
+			+ "as a card inside the screen, its figures one under the other"
+		IMPL "packages/ui-save-manager/e2e/phone-width.e2e.ts::should show the inventory of each"
+			+ "player first, the equipment folded"
+		IMPL "packages/ui-save-manager/src/styles/shell/menu.css::.menu-dialog:not(.menu-dialog-open)"
+			+ ".menu-group {"
+		IMPL "packages/ui-save-manager/src/styles/players.css::.player-equipment:not(.player-equipment-unfolded)"
+			+ ".slots"
+	REJECTED "a device descriptor project, devices['Pixel 7'] or devices['iPhone 13'] with isMobile"
+		+ "and hasTouch: one more project lengthens the continuous integration run, and isMobile"
+		+ "does not exist under Firefox"
+	REJECTED "480 pixels as the width below which the menu folds and the tables turn to cards: the"
+		+ "shell already drops its side menu to one column at 768 pixels, and a table already"
+		+ "overflows its card well above 480"
+	REJECTED "the equipment unfolded when the Players page opens: the card shows the inventory"
+		+ "first, and a folded equipment makes it the shortest card on a phone"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT146
+	RATIONALE "360 pixels is the smallest common Android screen; a page that fits it fits the 375"
+		+ "and 390 pixel screens of the iPhone SE, 13 and 14"
+	SOURCE "Owner ruling of 2026-10-04 at the start of FEAT146: « 360 px (Recommandé) » as the"
+		+ "narrowest width the page holds without a horizontal scroll, and « test.use viewport"
+		+ "(Recommandé) », the file fixing {width: 360, height: 800} on the three existing engines"
+		PR 285
+	SOURCE "Owner review of 2026-10-04 on PR 285: « le menu devrait être complètement revu pour le"
+		+ "mobile. On fout un bouton rose MENU et seule la save identity reste visible [...]"
+		+ "Lorsqu'il y a des tableaux, il faut qu'on ait une vue adaptée qui affiche les rows comme"
+		+ "des sortes de cartes. Pour les inventaires des joueurs [...] un moyen de cacher/déplier"
+		+ "l'équipement »; rulings « 768 px et moins (Recommandé) » and « Replié par défaut"
+		+ "(Recommandé) »"
+		PR 285
+
+DECISION AtPhoneWidthATooltipIsFixedAlongTheBottomOfTheScreen
+	SPEC "at 768 pixels wide and below, a tooltip is fixed along the bottom of the screen inside"
+		+ "the side gutter, under the mouse as under the touch, so that a hidden tooltip never"
+		+ "widens the page and a shown one stays on the screen"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::position: fixed;"
+		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit its figures and"
+			+ "its bars by machine to the screen without a horizontal scroll"
+		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should fit the merge form and"
+			+ "the merged save to the screen without a horizontal scroll"
+	SPEC "a shown tooltip is painted above every other element of the page, the Details button of a"
+		+ "later planet card included"
+		IMPL "packages/ui-save-manager/src/styles/buttons.css::z-index: var(--layer-tooltip);"
+		ENFORCED_BY "packages/ui-save-manager/e2e/phone-width.e2e.ts::should show its tooltip above"
+			+ "the Details button of the next planet card"
+	REJECTED "hiding a tooltip with display: none instead of visibility: hidden: the shown tooltip"
+		+ "of a mark anchored right of the left edge still runs past the screen"
+	REJECTED "a tooltip next to its element when the pointer hovers, under @media (hover: hover):"
+		+ "the owner keeps one place along the bottom of a narrow screen whatever the pointer"
+	REJECTED "an absolute tooltip with a narrower max-width: a stylesheet cannot know how far its"
+		+ "anchor sits from the right edge of the screen"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT146
+	RATIONALE "a hidden absolute box still counts in the scrollable overflow of the page: the"
+		+ "tooltips of the Power bars and of the Prefer legacy format checkbox made a 360 pixel"
+		+ "screen scroll sideways"
+	SOURCE "Ruled while delivering FEAT146, on the phone-width scenarios that measured the page"
+		+ "widened by the hidden tooltips"
+		PR 285
+	SOURCE "Owner review of 2026-10-04 on PR 285: « le tooltip s'affiche toujours en bas, mais du"
+		+ "coup le bouton détail d'une autre carte peut passer au dessus (z-index) [...] Au survol"
+		+ "à la souris l'infobulle est en bas de l'écran comme au touch »; ruling « En bas, c'est"
+		+ "bien »"
+		PR 285
+
+DECISION EveryControlTheKeyboardReachesDrawsOneSolidOutline
+	SPEC "every element the keyboard reaches draws one solid neon pink outline, declared once by a"
+		+ ":focus-visible rule; no rule sets outline: none on a focused control"
+		IMPL "packages/ui-save-manager/src/styles/layout.css::outline: var(--focus-ring-width)"
+			+ "solid var(--neon-pink);"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/menu.e2e.ts::should show a visible"
+			+ "focus on the page link the Tab key reaches"
+		ENFORCED_BY "packages/ui-save-manager/e2e/accessibility/power.e2e.ts::should show a visible"
+			+ "focus on the Display as selector the Tab key reaches"
+	SPEC "the focus outline reaches the 3:1 non-text floor on the page background, on a card and in"
+		+ "the menu, in both themes"
+		IMPL "scripts/guards/ui/check-color-contrast.ts::the focus outline of the control the"
+			+ "keyboard reaches"
+		ENFORCED_BY "scripts/guards/ui/check-color-contrast.ts::MINIMUM_GRAPHIC_CONTRAST_RATIO"
+	REJECTED "a box-shadow ring: a forced colours mode drops box-shadows and leaves the focus"
+		+ "invisible"
+	REJECTED "the outline the browser draws by default: its colour and width differ by engine, and"
+		+ "nothing holds its contrast on the neon palette"
+	APPLIES_TO_PACKAGE @PACKAGE.ui_save_manager
+	APPLIES_TO_TASK @TASK.FEAT146
+	SOURCE "Ruled while delivering FEAT146: the box-shadow rings of the buttons and the form"
+		+ "controls and the default outline of the links gave way to one outline"
+		PR 285

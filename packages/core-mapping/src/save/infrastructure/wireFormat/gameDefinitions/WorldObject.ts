@@ -15,7 +15,6 @@ export interface WorldObject {
   liGrps?: string;
   linkedWo?: number;
   siIds?: string;
-  woIds?: string;
   trtVal?: number;
   hunger?: number;
   set?: number;

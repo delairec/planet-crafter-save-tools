@@ -1,4 +1,6 @@
 export const menuLabel = 'Menu';
+export const menuButtonLabel = 'Menu';
+export const closeMenuButtonLabel = 'Close the menu';
 export const breadcrumbLabel = 'Breadcrumb';
 export const saveIdentityLabel = 'Loaded save';
 
@@ -27,9 +29,6 @@ export const homeMessageAttachmentsLabel = 'Merged saves';
 
 /** @param {string} fileName */
 export const resolveRemoveMergedSaveButtonLabel = (fileName) => `Remove ${fileName}`;
-
-/** @param {string} fileName */
-export const resolveLoadedSaveTitle = (fileName) => `Loaded save: ${fileName}`;
 
 /** @param {boolean} isSaveLoaded */
 export const resolveLoadSavePageTitle = (isSaveLoaded) => isSaveLoaded ? loadAnotherSavePageTitle : loadSavePageTitle;

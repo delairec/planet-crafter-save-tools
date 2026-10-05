@@ -44,7 +44,7 @@
     "unitPurificationLevel": {
       "type": "number",
       "minimum": -1,
-      "description": "Purification level in raw units (Unity float — serialized with a trailing .0). -1 is a sentinel value meaning purification is not unlocked yet."
+      "description": "Purification level in raw units (Unity float — serialized with a trailing .0). -1 is a sentinel value carried by a planet that needs no purification (@RULE.APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification)."
     }
   }
 }

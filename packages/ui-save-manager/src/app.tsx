@@ -1,15 +1,17 @@
-import {A, Router, RouteSectionProps, useMatch} from "@solidjs/router";
+import {Router, RouteSectionProps, useMatch} from "@solidjs/router";
 import {FileRoutes} from "@solidjs/start/router";
 import "./app.css";
 import {Component, Show, Suspense} from "solid-js";
 import {appName, resolveVersionLabel} from "~/messages/appMessages";
 import HomeDisclaimer from "~/components/HomeDisclaimer";
+import ApplicationTitle from "~/components/shell/ApplicationTitle";
 import SaveManagerMenu from "~/components/shell/SaveManagerMenu";
 import {preventDropOutsideAreas} from "~/lib/preventDropOutsideAreas";
 import {PAGE_PATHS} from "~/lib/pagePaths";
 import {version} from "../package.json";
 import {LoadedSaveProvider} from "~/providers/LoadedSaveProvider.tsx";
 import {MergedSavesProvider} from "~/providers/MergedSavesProvider.tsx";
+import {PowerDisplayFormProvider} from "~/providers/PowerDisplayFormProvider.tsx";
 
 const Layout: Component<RouteSectionProps> = (props) => {
   preventDropOutsideAreas();
@@ -17,11 +19,11 @@ const Layout: Component<RouteSectionProps> = (props) => {
 
   return (
     <LoadedSaveProvider>
-      <header>
-        <h1 class="text-center drop-shadow-engraved" data-testid="application-title">
-          <A href={PAGE_PATHS.homePath} class="application-title-link" data-testid="application-title-link">{appName}</A>
-        </h1>
-      </header>
+      <Show when={isHomePage()}>
+        <header>
+          <ApplicationTitle class="text-center drop-shadow-engraved">{appName}</ApplicationTitle>
+        </header>
+      </Show>
       <div class="container rounded-lg shell" classList={{"shell-without-menu": !!isHomePage()}}>
         <Show when={!isHomePage()}>
           <SaveManagerMenu/>
@@ -44,9 +46,11 @@ export default function App() {
   return (
     <Suspense>
       <MergedSavesProvider>
-        <Router root={Layout}>
-          <FileRoutes/>
-        </Router>
+        <PowerDisplayFormProvider>
+          <Router root={Layout}>
+            <FileRoutes/>
+          </Router>
+        </PowerDisplayFormProvider>
       </MergedSavesProvider>
     </Suspense>
   );

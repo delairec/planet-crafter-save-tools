@@ -25,20 +25,27 @@ export interface ThemeTokens {
 }
 
 export interface TokenPair {
-  /** what a reader sees, in one line */
   description: string;
-  /** the stylesheet declaring the foreground color, for the coverage check and the violation message */
   file: string;
-  /** the selector citation printed in a violation message */
   selector: string;
   foreground: string;
   background: string;
 }
 
-/**
- * Every place a stylesheet of `packages/ui-save-manager/src/` sets a text color, paired with the
- * background it renders against.
- */
+interface ShareFill {
+  fill: string;
+  token: string;
+}
+
+const SHARE_SHADES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const SHARE_FILLS: ShareFill[] = [
+  ...SHARE_SHADES.map(shade => ({fill: `production-${shade}`, token: `series-production-shade-${shade}`})),
+  ...SHARE_SHADES.map(shade => ({fill: `consumption-${shade}`, token: `series-consumption-shade-${shade}`})),
+  {fill: 'optimizerBoost', token: 'series-optimizer-boost'},
+  {fill: 'foldedTail', token: 'subtle'}
+];
+
 export const TOKEN_PAIRS: TokenPair[] = [
   {
     description: 'page body text on the page background',
@@ -146,6 +153,27 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
+    description: 'an empty equipment slot on its card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot.empty',
+    foreground: 'muted',
+    background: 'surface-card'
+  },
+  {
+    description: 'the kind of an equipment slot on its card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot-kind',
+    foreground: 'muted',
+    background: 'surface-card'
+  },
+  {
+    description: 'the button that unfolds the equipment of a player at phone width, on its card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-equipment-toggle',
+    foreground: 'content',
+    background: 'surface-card'
+  },
+  {
     description: 'a loading or placeholder message on the page background',
     file: 'packages/ui-save-manager/src/styles/typography.css',
     selector: '.text-color-muted',
@@ -200,20 +228,6 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: 'input, textarea, select',
     foreground: 'content',
     background: 'surface'
-  },
-  {
-    description: 'a read-only field label on the panel surface it is nested in',
-    file: 'packages/ui-save-manager/src/styles/forms.css',
-    selector: '.fields-group .label',
-    foreground: 'primary',
-    background: 'surface'
-  },
-  {
-    description: 'a terraformation index or biomass value, nested inside a grid tile',
-    file: 'packages/ui-save-manager/src/styles/forms.css',
-    selector: '.fields-group-main-value span',
-    foreground: 'neon-purple',
-    background: 'elevated'
   },
   {
     description: 'the text-selection highlight, on the accent fill',
@@ -277,6 +291,13 @@ export const TOKEN_PAIRS: TokenPair[] = [
     selector: '.menu-player-planet',
     foreground: 'muted',
     background: 'surface'
+  },
+  {
+    description: 'the Save Manager part of the application title, at the top of the menu panel',
+    file: 'packages/ui-save-manager/src/styles/shell/menu.css',
+    selector: '.menu-application-title-highlight',
+    foreground: 'neon-pink',
+    background: 'surface-card'
   },
   {
     description: 'the Host badge of a player, on its neon fill',
@@ -356,26 +377,364 @@ export const TOKEN_PAIRS: TokenPair[] = [
     background: 'canvas'
   },
   {
-    description: 'the links of the overview to the pages of the save, on the page background',
-    file: 'packages/ui-save-manager/src/styles/shell/shell.css',
-    selector: '.overview-pages a',
-    foreground: 'content',
-    background: 'canvas'
-  },
-  {
     description: 'the file name of a merged save attached to the home message, on its chip',
     file: 'packages/ui-save-manager/src/styles/home.css',
     selector: '.home-message-attachment-download',
     foreground: 'content',
     background: 'canvas'
-  }
+  },
+  {
+    description: 'the hint beside a section title, on the page background',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.section-title-hint',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the fold toggle of a message group, on the surface of the card a merged save shows it in; on the page background the same pair is held by .section-title-hint',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.message-group-details summary',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the hovered fold toggle of a message group, on the surface of the card a merged save shows it in',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: '.message-group-details summary:hover',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the label of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-tile dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the unit after the figure of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-tile-unit',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the caption under the figure of an overview tile, on the tile',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-tile-caption',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'a label of the terraformation figures of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/components.css',
+    selector: '.key-value dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the label under the Terraformation Index of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-index-label',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the label of a power row of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-power-row dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the share of production consumed of a planet card of the Overview page, on the card',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-share',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the line naming the side a planet card of the Overview page lacks, on the card',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-absent-side',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the name of a planet tab of a page with planet tabs, on the tab',
+    file: 'packages/ui-save-manager/src/styles/planetTabs.css',
+    selector: '.planet-tab',
+    foreground: 'content',
+    background: 'surface'
+  },
+  {
+    description: 'the name of the selected planet tab of a page with planet tabs, on its neon purple fill',
+    file: 'packages/ui-save-manager/src/styles/planetTabs.css',
+    selector: '.planet-tab[aria-selected="true"]',
+    foreground: 'inverted',
+    background: 'neon-purple'
+  },
+  {
+    description: 'the label of a figure tile of the Power page, on the tile',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-tile dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the load meter label of the Power page, on its tile, and its breakdown summary line, on the page background, the darker of the two',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-load-meter-label, .power-breakdown-summary',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the title of a table card of the Power page, on the neon-cyan pill of its header',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table-card .card-header h5',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'a column header of a table of the Power page, on its card',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table thead th',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the column name of a figure of a table of the Power page shown as a card at phone width, on its card',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-table-column',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the summary of a chart panel of the Power page and the ticks under its bars, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-summary, .power-chart-tick',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  {
+    description: 'the caption under a hero figure of the Terraformation page, on its card',
+    file: 'packages/ui-save-manager/src/styles/terraformation.css',
+    selector: '.terraformation-hero-caption',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the title of a table card of the Terraformation page, on the neon-cyan pill of its header',
+    file: 'packages/ui-save-manager/src/styles/terraformation.css',
+    selector: '.terraformation-table-card .card-header h5',
+    foreground: 'inverted',
+    background: 'neon-cyan'
+  },
+  {
+    description: 'the label of a row of a table of the Terraformation page, on its card',
+    file: 'packages/ui-save-manager/src/styles/terraformation.css',
+    selector: '.terraformation-level-row dt',
+    foreground: 'muted',
+    background: 'surface'
+  },
+  {
+    description: 'the summary of a stacked bar of the share chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-share-summary',
+    foreground: 'muted',
+    background: 'canvas'
+  },
+  ...SHARE_FILLS.map(({fill, token}) => ({
+    description: `the share written inside a ${fill} segment of the share chart of the Power page, on that segment`,
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-share-written-share',
+    foreground: 'inverted',
+    background: token
+  }))
 ];
 
-/**
- * @param {string} source the whole content of colors.css
- * @returns the custom properties of the plain `:root` block and of the one nested under
- * `@media (prefers-color-scheme: dark)`, by theme
- */
+export const MINIMUM_GRAPHIC_CONTRAST_RATIO = 3;
+
+export const GRAPHIC_TOKEN_PAIRS: TokenPair[] = [
+  {
+    description: 'the orange accent of an equipment icon, on the tile of a worn slot',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot:not(.empty) .slot-icon',
+    foreground: 'equipment-accent-orange',
+    background: 'elevated'
+  },
+  {
+    description: 'the pale blue accent of an equipment icon, on the tile of a worn slot',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot:not(.empty) .slot-icon',
+    foreground: 'equipment-accent-blue',
+    background: 'elevated'
+  },
+  {
+    description: 'the yellow accent of an equipment icon, on the tile of a worn slot',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.slot:not(.empty) .slot-icon',
+    foreground: 'equipment-accent-yellow',
+    background: 'elevated'
+  },
+  {
+    description: 'the production bar of a planet card of the Overview page, on its track',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-bar-production',
+    foreground: 'series-production',
+    background: 'elevated'
+  },
+  {
+    description: 'the consumption bar of a planet card of the Overview page, on its track',
+    file: 'packages/ui-save-manager/src/styles/overview.css',
+    selector: '.overview-planet-bar-consumption',
+    foreground: 'series-consumption',
+    background: 'elevated'
+  },
+  {
+    description: 'the fill of the load meter of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-load-meter-fill',
+    foreground: 'series-consumption',
+    background: 'elevated'
+  },
+  {
+    description: 'a producer bar of the chart of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-fill-production',
+    foreground: 'series-production',
+    background: 'elevated'
+  },
+  {
+    description: 'a consumer bar of the chart of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-fill-consumption',
+    foreground: 'series-consumption',
+    background: 'elevated'
+  },
+  {
+    description: 'the optimizer boost bar of the chart of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-fill-optimizerBoost',
+    foreground: 'series-optimizer-boost',
+    background: 'elevated'
+  },
+  {
+    description: 'the folded tail bar of the chart of the Power page, on its track',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-fill-foldedTail',
+    foreground: 'subtle',
+    background: 'elevated'
+  },
+  {
+    description: 'the producers swatch of the legend of the chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-swatch-production',
+    foreground: 'series-production',
+    background: 'canvas'
+  },
+  {
+    description: 'the consumers swatch of the legend of the chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-swatch-consumption',
+    foreground: 'series-consumption',
+    background: 'canvas'
+  },
+  {
+    description: 'the optimizer boost swatch of the legend of the chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-swatch-optimizerBoost',
+    foreground: 'series-optimizer-boost',
+    background: 'canvas'
+  },
+  {
+    description: 'the folded tail swatch of the legend of the chart of the Power page, on the page background',
+    file: 'packages/ui-save-manager/src/styles/power.css',
+    selector: '.power-chart-swatch-foldedTail',
+    foreground: 'subtle',
+    background: 'canvas'
+  },
+  {
+    description: 'the bar of a row of a table of the Terraformation page, on its track',
+    file: 'packages/ui-save-manager/src/styles/terraformation.css',
+    selector: '.terraformation-level-bar-fill',
+    foreground: 'neon-purple',
+    background: 'elevated'
+  },
+  {
+    description: 'the focus outline of the control the keyboard reaches, on the page background',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: ':focus-visible',
+    foreground: 'neon-pink',
+    background: 'canvas'
+  },
+  {
+    description: 'the focus outline of the control the keyboard reaches, on a card',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: ':focus-visible',
+    foreground: 'neon-pink',
+    background: 'surface'
+  },
+  {
+    description: 'the focus outline of the control the keyboard reaches, in the menu',
+    file: 'packages/ui-save-manager/src/styles/layout.css',
+    selector: ':focus-visible',
+    foreground: 'neon-pink',
+    background: 'surface-card'
+  },
+  {
+    description: 'the empty part of a gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-empty',
+    foreground: 'subtle',
+    background: 'surface'
+  },
+  {
+    description: 'the filled part of the oxygen gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-oxygen .player-gauge-filled',
+    foreground: 'neon-cyan',
+    background: 'surface'
+  },
+  {
+    description: 'the filled part of the health gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-health .player-gauge-filled',
+    foreground: 'success',
+    background: 'surface'
+  },
+  {
+    description: 'the filled part of the thirst gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-thirst .player-gauge-filled',
+    foreground: 'information',
+    background: 'surface'
+  },
+  {
+    description: 'the outline of a gauge of a player card, on the card',
+    file: 'packages/ui-save-manager/src/styles/players.css',
+    selector: '.player-gauge-outline',
+    foreground: 'content',
+    background: 'surface'
+  },
+  ...SHARE_FILLS.flatMap(({fill, token}) => [
+    {
+      description: `a ${fill} segment of the share chart of the Power page, on its track`,
+      file: 'packages/ui-save-manager/src/styles/power.css',
+      selector: `.power-share-fill-${fill}`,
+      foreground: token,
+      background: 'elevated'
+    },
+    {
+      description: `the ${fill} swatch of the legend of the share chart of the Power page, on the page background`,
+      file: 'packages/ui-save-manager/src/styles/power.css',
+      selector: `.power-share-fill-${fill}`,
+      foreground: token,
+      background: 'canvas'
+    }
+  ])
+];
+
 export function parseColorTokens(source: string): ThemeTokens {
   const darkSchemeIndex = source.indexOf(DARK_SCHEME_MARKER);
   const light: Record<string, string> = {};
@@ -406,23 +765,12 @@ function relativeLuminance(hex: string): number {
   return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 }
 
-/**
- * The WCAG 2.1 contrast ratio of two colors, order-independent, from 1 (identical) to 21 (black on white).
- * @param {string} first a `#rgb`/`#rrggbb` color
- * @param {string} second a `#rgb`/`#rrggbb` color
- */
 export function contrastRatio(first: string, second: string): number {
   const lighter = Math.max(relativeLuminance(first), relativeLuminance(second));
   const darker = Math.min(relativeLuminance(first), relativeLuminance(second));
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-/**
- * @param {TokenPair[]} pairs the catalog to check
- * @param {ThemeTokens} tokens the color tokens read from colors.css
- * @param {number} minimumRatio the WCAG floor a pair must reach in both themes
- * @returns one violation per pair that misses the floor, or whose token is undeclared, in either theme
- */
 export function findContrastViolations(pairs: TokenPair[], tokens: ThemeTokens, minimumRatio: number): string[] {
   const themes: [ThemeName, Record<string, string>][] = [['light', tokens.light], ['dark', tokens.dark]];
   return pairs.flatMap(pair => themes.flatMap(([themeName, themeTokens]) => {
@@ -440,39 +788,20 @@ export function findContrastViolations(pairs: TokenPair[], tokens: ThemeTokens, 
   }));
 }
 
-/**
- * @param {string} source a stylesheet
- * @returns the stylesheet with every comment replaced by spaces of the same length, its newlines kept
- */
 function maskComments(source: string): string {
   return source.replace(COMMENT_PATTERN, comment => comment.replace(/[^\n]/g, ' '));
 }
 
-/**
- * @param {string} selector a selector or a selector list, as written in a stylesheet
- * @returns each selector of the list, trimmed and with its whitespace collapsed
- */
 function splitSelectorList(selector: string): string[] {
   return selector.split(',').map(part => part.trim().replace(/\s+/g, ' ')).filter(part => part.length > 0);
 }
 
-/**
- * @param {string} maskedSource a stylesheet whose comments are masked
- * @param {number} declarationIndex the offset of a declaration inside it
- * @returns the selectors of the rule enclosing that declaration
- */
 function readEnclosingSelectors(maskedSource: string, declarationIndex: number): string[] {
   const ruleOpeningIndex = maskedSource.lastIndexOf('{', declarationIndex);
   const selectorStartIndex = Math.max(...RULE_BOUNDARIES.map(boundary => maskedSource.lastIndexOf(boundary, ruleOpeningIndex - 1))) + 1;
   return splitSelectorList(maskedSource.slice(selectorStartIndex, ruleOpeningIndex));
 }
 
-/**
- * @param {TokenPair[]} filePairs the pairs catalogued for the stylesheet declaring the color
- * @param {string} token the foreground token the declaration names
- * @param {string[]} ruleSelectors the selectors of the rule holding the declaration
- * @returns whether one pair names that token for every one of those selectors, and so states their background
- */
 function isCoveredByCatalog(filePairs: TokenPair[], token: string, ruleSelectors: string[]): boolean {
   return filePairs.some(pair => {
     const pairSelectors = splitSelectorList(pair.selector);
@@ -480,13 +809,6 @@ function isCoveredByCatalog(filePairs: TokenPair[], token: string, ruleSelectors
   });
 }
 
-/**
- * @param {string} source the whole content of one stylesheet of `packages/ui-save-manager/src/`
- * @param {string} filePath that stylesheet's path, matching a `TokenPair.file`
- * @param {TokenPair[]} pairs the catalog every foreground declaration must appear in
- * @returns one violation per `color:` declaration that names no token, or whose token and selector no pair of the
- * file covers
- */
 export function findUncataloguedForegroundDeclarations(source: string, filePath: string, pairs: TokenPair[]): string[] {
   const maskedSource = maskComments(source);
   const filePairs = pairs.filter(pair => pair.file === filePath);
@@ -510,11 +832,6 @@ export function findUncataloguedForegroundDeclarations(source: string, filePath:
   return violations;
 }
 
-/**
- * @param io
- * @returns every foreground violation of the stylesheets of `packages/ui-save-manager/src/`, generated ones excluded,
- * each cited by its path relative to the workspace root
- */
 async function findForegroundViolationsInStylesheets(io: ScriptIo): Promise<string[]> {
   const violations: string[] = [];
   for await (const filePath of io.scanFiles(STYLESHEET_FILES_PATTERN)) {
@@ -531,13 +848,14 @@ export async function checkColorContrast(io: ScriptIo): Promise<void> {
   const tokens = parseColorTokens(await io.readText(COLORS_FILE_PATH));
   const violations = [
     ...findContrastViolations(TOKEN_PAIRS, tokens, MINIMUM_CONTRAST_RATIO),
+    ...findContrastViolations(GRAPHIC_TOKEN_PAIRS, tokens, MINIMUM_GRAPHIC_CONTRAST_RATIO),
     ...await findForegroundViolationsInStylesheets(io)
   ];
 
   reportViolations(io, {
     checkName: CHECK_NAME,
     violations,
-    nothingFound: 'every catalogued text/background pair meets WCAG 2.1 AA (4.5:1) in both themes.',
+    nothingFound: `every catalogued text/background pair meets WCAG 2.1 AA (${MINIMUM_CONTRAST_RATIO}:1), and every catalogued graphic/background pair ${MINIMUM_GRAPHIC_CONTRAST_RATIO}:1, in both themes.`,
     summarize: count => `${count} color contrast violation(s); see @DECISION.ColorTokenPairsMeetWcagAaByCatalog.`
   });
 }

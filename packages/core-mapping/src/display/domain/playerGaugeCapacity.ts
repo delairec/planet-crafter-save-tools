@@ -1,0 +1,1 @@
+export const PLAYER_BASE_GAUGE_CAPACITY = 100;

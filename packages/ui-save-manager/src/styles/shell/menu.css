@@ -89,3 +89,60 @@
     margin-top: var(--space-xs);
     background-color: var(--neon-pink);
 }
+
+.menu-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.menu-application-title {
+    margin: 0;
+    padding: 0 var(--space-md);
+    font-size: var(--text-lg);
+    line-height: var(--line-height-sm);
+}
+
+.menu .application-title-link {
+    padding: 0;
+}
+
+.menu-application-title-highlight {
+    color: var(--neon-pink);
+}
+
+.menu-button,
+.menu-close {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    :root:has(.menu-dialog-open) {
+        overflow: hidden;
+    }
+
+    .menu-button,
+    .menu-dialog-open .menu-close {
+        display: inline-flex;
+    }
+
+    .menu-dialog:not(.menu-dialog-open) .menu-group {
+        display: none;
+    }
+
+    .menu-dialog-open {
+        position: fixed;
+        inset: 0;
+        z-index: var(--layer-menu-dialog);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        padding: var(--space-lg) var(--space-md);
+        overflow-y: auto;
+        background-color: var(--surface-card);
+    }
+
+    .menu-close {
+        align-self: flex-end;
+    }
+}

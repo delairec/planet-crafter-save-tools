@@ -170,7 +170,8 @@ the check sees what `tsc` erases.
 bun run check:presentation
 ```
 
-Fails on four refusals, closing the output boundary of a `core-` package and the way from a controller to a presenter:
+Fails on six refusals, closing the output boundary of a `core-` package, the way from a controller to a presenter and
+the way to a mapper:
 
 - a file of a `presentation/` directory, specs included, that imports any module under `domain/` or
   `infrastructure/`, whatever its subdirectory. A presenter reads application responses and primitives only: a domain
@@ -181,11 +182,19 @@ Fails on four refusals, closing the output boundary of a `core-` package and the
   subdirectory. The port is the contract the use case hands its outcome through, so it takes application responses
   or primitives only;
 - a file of `controllers/` that imports a concrete presenter. A controller knows the view model type only: the
-  composition root creates the presenter and hands it over with the use case.
+  composition root creates the presenter and hands it over with the use case;
+- a module at the root of a `presentation/` directory of a `core-` package that is not a presenter (`*Presenter.ts`)
+  nor the spec of one. The root holds the presenters alone; a view model sits under `viewModels/`, a messages file
+  under `messages/`, a mapper — a function that builds a view model or a part of one, a `create`, `format` or `sum`
+  function — under `mappers/`, with its spec;
+- a file that imports a module under `presentation/mappers/` while it is neither a presenter, nor a mapper, nor the
+  spec of either: a view model, a messages file, a use case, a controller, a composition root or a module of another
+  package. A presenter may import the mapper of another business, as the presenters of `merge/` and `validation/`
+  import the formatters of `save/`.
 
 Infrastructure may still build entities — that is where a save is read and validated — and the reader port still
 hands them to the application layer; only the output boundary is closed. Every `.js`, `.ts` and `.tsx` source of every
-`core-` package is scanned, outside dependencies and build outputs, and type-only and dynamic imports count. The
+package is scanned, outside dependencies and build outputs, and type-only and dynamic imports count. The
 guard runs with no exemption.
 
 ```
@@ -277,14 +286,27 @@ npm package — and on an import of a JSON table, relative or not; and on a prod
 reported once on its own, its imports of `testing/` and of the outside world still reported.
 
 One violation is reported by one guard: an import `check:presentation` refuses (a presentation file importing
-`domain/` or `infrastructure/`, a response importing `infrastructure/`) or `check:workspace-imports` refuses (another
-workspace package outside `infrastructure/`) is left to it. The production files are the `.js`, `.ts` and `.tsx`
-files under the `src/` of every `core-` package, spec files and every file under a `testing/` folder left out; a file
-of the package outside `src/`, such as `testSetup.ts`, is not read. Type-only, dynamic and JSDoc `@import` imports
+`domain/` or `infrastructure/`, a response importing `infrastructure/`, a use case or a controller importing a
+mapper) or `check:workspace-imports` refuses (another workspace package outside `infrastructure/`) is left to
+it. The production files are the `.js`, `.ts` and `.tsx` files under the `src/` of every `core-` package, spec files
+and every file under a `testing/` folder left out; a file of the package outside `src/`, such as `testSetup.ts`, is not read. Type-only, dynamic and JSDoc `@import` imports
 count. The guard keeps these limits: an import resolving to a file or a folder under no layer folder is not judged by
 the matrix, the file it reaches being reported on its own when it is a production file; a production file importing a
 spec file outside `testing/` passes; and an area folder named after a layer is read as that layer. A path alias is
 not a relative path, so outside `infrastructure/` it is refused as a package. The guard runs with no exemption.
+
+```
+bun run check:core-mapping-exports
+```
+
+Reads the `exports` of the manifest of `core-mapping` and fails on an entry other than the composition root of a
+business, `./<business>/composition/compositionRoot`, or the view models of a business,
+`./<business>/presentation/viewModels/*`, each served from the same path under `./src` with the `.ts` extension: a
+controllers folder, a use case, the composition folder by a wildcard or a controller exported under the path of a
+composition root are all refused. It then reads each composition root the manifest exports and fails on an export
+line naming a `Load*SectionController`: a wired controller serves a page or a zone of the save manager, or a CLI,
+never one section of the save. A page controller a later task wires passes with no change to the guard, which carries
+no allow-list. A section controller exported under a class of another name is not recognised.
 
 ```
 bun run check:action-pins

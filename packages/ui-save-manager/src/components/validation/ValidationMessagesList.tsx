@@ -15,13 +15,13 @@ export default function ValidationMessagesList(props: {
 
   const [isOpen, setIsOpen] = createSignal<boolean>(false);
 
-  return <>
-    <p class={`text-color-${props.severity}`} data-testid={`${props.testId}-title`}>{props.title}</p>
-    <details>
+  return <div class="message-group">
+    <p class={`message-group-title text-color-${props.severity}`} data-testid={`${props.testId}-title`}>{props.title}</p>
+    <details class="message-group-details">
       <summary data-testid={`${props.testId}-details`} onClick={() => setIsOpen((previous) => !previous)}>
         {isOpen() ? hideValidationMessagesDetails : showValidationMessagesDetails}
       </summary>
-      <ul data-testid={`${props.testId}-messages`}>
+      <ul class="message-group-list" data-testid={`${props.testId}-messages`}>
         <For each={props.messages}>
           {(validationMessage, index) => <li class="validation-message" data-testid={`${props.testId}-message-${index()}`}>
             <code>
@@ -35,5 +35,5 @@ export default function ValidationMessagesList(props: {
         </For>
       </ul>
     </details>
-  </>
+  </div>
 }

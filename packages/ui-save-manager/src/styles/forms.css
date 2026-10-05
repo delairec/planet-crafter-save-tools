@@ -1,11 +1,3 @@
-:root {
-    --fields-group-width: 220px;
-    --save-file-field-label-width: 6rem;
-    --merge-slots-swap-column-width: 1.75rem;
-    --merge-slots-column-gap: var(--space-sm);
-    --save-file-row-inset: calc(var(--merge-slots-swap-column-width) + var(--merge-slots-column-gap));
-}
-
 input,
 textarea,
 select {
@@ -29,93 +21,18 @@ select:hover {
 input:focus,
 textarea:focus,
 select:focus {
-    outline: none;
     border-color: var(--neon-pink);
-    box-shadow: var(--shadow-medium) var(--neon-pink);
-}
-.fields-group-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(var(--fields-group-width), 1fr));
-    gap: var(--space-xxl);
-    margin-top: var(--space-lg);
-}
-.fields-group-container h4 {
-    grid-column: 1 / -1; /* Prend toute la largeur de la grille */
-}
-
-
-.fields-group-container .fields-group.readonly {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(var(--fields-group-width), 1fr));
-    gap: var(--space-xxl);
-}
-
-.fields-group.readonly {
-    border: var(--border-medium);
-    background-color: var(--surface);
-    padding: var(--space-lg);
-    border-radius: var(--space-sm);
-}
-
-.fields-group .label {
-    color: var(--primary);
-}
-
-.fields-group-main-value {
-    font-size: var(--text-xl);
-    margin-bottom: var(--space-sm);
-}
-
-.fields-group-main-value span {
-    color: var(--neon-purple);
-    font-weight: var(--bold);
 }
 
 .drop-zone {
-    outline: 2px dashed transparent;
-    outline-offset: -2px;
+    outline: var(--border-width-medium) dashed transparent;
+    outline-offset: calc(-1 * var(--border-width-medium));
     border-radius: var(--space-sm);
     transition: outline-color 0.2s;
 }
 
 .drop-zone-active {
     outline-color: var(--neon-pink);
-}
-
-.save-file-field-label {
-    display: inline-block;
-    min-width: var(--save-file-field-label-width);
-}
-
-.merge-slots {
-    display: grid;
-    grid-template-columns: var(--merge-slots-swap-column-width) auto;
-    gap: var(--space-lg) var(--merge-slots-column-gap);
-    align-items: center;
-    width: fit-content;
-    margin-block: var(--space-lg);
-}
-
-.merge-slots p {
-    margin: 0;
-}
-
-.merge-slots-swap {
-    grid-column: 1;
-    justify-self: start;
-    grid-row: 1 / span 2;
-}
-
-.merge-slots > .drop-zone {
-    grid-column: 2;
-}
-
-.save-file-row {
-    padding-inline-start: var(--save-file-row-inset);
-}
-
-.merge-option {
-    padding-inline-start: calc(var(--save-file-row-inset) + var(--save-file-field-label-width));
 }
 
 .checkbox-field input {
@@ -125,4 +42,89 @@ select:focus {
 .checkbox-field .tooltip {
     top: calc(100% + var(--space-sm));
     bottom: auto;
+}
+
+.merge-page > .card {
+    margin-block: var(--space-lg);
+}
+
+.earlier-merged-saves {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.earlier-merged-save {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-md);
+}
+
+.save-form {
+    margin-block: var(--space-lg);
+    padding: var(--space-lg);
+}
+
+.merge-save-areas {
+    --area-min-width: 16rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--area-min-width)), 1fr));
+    gap: var(--space-lg);
+}
+
+.save-drop-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border: var(--border-width-medium) dashed var(--muted);
+    text-align: center;
+}
+
+.save-drop-area.drop-zone-holds-a-file {
+    border-style: solid;
+    border-color: var(--neon-cyan);
+}
+
+.save-drop-area.drop-zone-active {
+    border-color: var(--neon-pink);
+}
+
+.save-drop-area p {
+    margin: 0;
+}
+
+.save-drop-area .save-file-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 100%;
+}
+
+.save-drop-area .save-file-field-label {
+    font-weight: var(--semibold);
+}
+
+.save-drop-area input {
+    max-width: 100%;
+    margin-right: 0;
+}
+
+.save-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md) var(--space-lg);
+    margin-top: var(--space-lg);
+}
+
+.save-form-submit {
+    margin-inline-start: auto;
 }

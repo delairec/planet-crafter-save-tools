@@ -16,7 +16,7 @@ test.describe('Save validation errors', () => {
       await visualizeAndRevealTheMessages(page, invalidSaveFixturePath, 'display-errors');
 
       // Assert
-      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Validation Errors');
       await expect(page.getByTestId('display-errors-messages')).toContainText(errorLocationInTheSave);
     });
 
@@ -29,8 +29,8 @@ test.describe('Save validation errors', () => {
       await page.getByTestId('visualize').click();
 
       // Assert
-      await expect(page.getByTestId('display-errors-title')).toHaveText('Errors');
-      await expect(page.getByTestId('loaded-save-title')).toBeHidden();
+      await expect(page.getByTestId('display-errors-title')).toHaveText('Validation Errors');
+      await expect(page.getByTestId('overview-identity-title')).toBeHidden();
     });
   });
 

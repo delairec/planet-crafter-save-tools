@@ -275,3 +275,23 @@ PROCESS EveryChangeReachesMasterThroughAPullRequest
 		+ "escaped the title check"
 	SOURCE "Ruled with the user on 2026-09-23 during CHORE83"
 		PR 135
+
+PROCESS TheGameFilesAreReadByDecompilingTheirAssemblyInAScratchDirectory
+	SPEC "a RULE or a HYPOTHESIS is checked against the game by decompiling Assembly-CSharp.dll of"
+		+ "the installed release with ilspycmd into the temporary directory of the session, the"
+		+ "release and the Steam build read from the install, as agents/jeu-lire.md commands it"
+	SPEC "only the fact read reaches the repository, in a SOURCE of the entity it settles naming"
+		+ "the release, the build, the date and the type, member or string that carries it; no"
+		+ "decompiled code, no file of the game and no path of the workstation"
+	SPEC "a statement the files of the game cannot settle carries a SOURCE saying what was searched"
+	REJECTED "reading the game by its strings alone: a string names a member or a unit, never the"
+		+ "arithmetic that uses it"
+	REJECTED "committing the decompiled sources so that a check repeats: they are the code of the"
+		+ "publisher, and the command repeats the check"
+	RATIONALE "The rules and hypotheses came from reference saves and the wiki, which the review of"
+		+ "PR 268 found contradicting the game; the game ships its logic as a Mono assembly that a"
+		+ "decompiler reads, and its constants and methods settle what a sample of saves only"
+		+ "suggests"
+	SOURCE "Owner rulings of 2026-10-03, refining task DOCS192: the reading is recorded in a"
+		+ "PROCESS and in agents/jeu-lire.md; the owner installs the decompiler"
+		PR 276

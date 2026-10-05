@@ -35,11 +35,12 @@ WAVE 15
 	MILESTONE "save-manager-redesign"
 	BRANCH "integration/save-manager-redesign"
 	DESC "the save manager wears page F, page by page, each page reading a view model of its own:"
-		+ "the Overview first, then Power, its tables before its charts, Terraformation and the"
-		+ "planet page, Players, and the Merge two saves page with the application title at the top"
-		+ "of the menu and the Load save page harmonised; the redesign closes in the wave, no"
-		+ "section controller left, nothing of the earlier look left, the whole save manager usable"
-		+ "at phone width and by keyboard"
+		+ "the Overview first, then Power, its tables before its charts, Terraformation, the"
+		+ "Details button of each planet card disabled until a planet page shows what no other page"
+		+ "shows, Players, and the Merge two saves page with the application title at the top of"
+		+ "the menu and the Load save page harmonised; the redesign closes in the wave, no section"
+		+ "controller left, nothing of the earlier look left, the whole save manager usable at"
+		+ "phone width and by keyboard"
 		REF @URL.SaveManagerRedesignMockup
 		REF @DECISION.AViewModelServesOneView
 	SOURCE "Owner request of 2026-10-02: the redesign towards page F is delivered page by page in"
@@ -47,3 +48,7 @@ WAVE 15
 		+ "Players, and the Merge two saves page with the last adjustments; the pages first planned"
 		+ "as six waves are one wave, their tasks being few"
 		REF @URL.SaveManagerRedesignMockup
+	SOURCE "Owner ruling of 2026-10-04 on the planet page of FEAT143: the Details button is"
+		+ "disabled with a tooltip, the planet page waits for content no other page shows"
+		PR 280
+		REF @TASK.FEAT196

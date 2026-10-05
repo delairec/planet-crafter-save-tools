@@ -100,17 +100,6 @@ describe('Rewrite references', () => {
       // Assert
       expect(result.fromSaveB).toEqual([{id: 2, groupId: 'WaterGenerator', linkedWorldObjectId: 501}]);
     });
-
-    it('should point the contained world object ids of a save B world object at the new id', () => {
-      // Arrange
-      const worldObjects = {fromSaveA: noWorldObjects, fromSaveB: [{id: 2, groupId: 'Container2', heldWorldObjectIds: [100, 200]}]};
-
-      // Act
-      const result = rewriteWorldObjectReferences(worldObjects, worldObject100BecameWorldObject501);
-
-      // Assert
-      expect(result.fromSaveB).toEqual([{id: 2, groupId: 'Container2', heldWorldObjectIds: [501, 200]}]);
-    });
   });
 
   describe('When a save B inventory holds a renumbered world object', () => {
@@ -142,14 +131,14 @@ describe('Rewrite references', () => {
       // Arrange
       const worldObjects = {
         fromSaveA: noWorldObjects,
-        fromSaveB: [{id: 2, groupId: 'Container2', linkedInventoryId: 10, subInventoryIds: [10, 20], linkedWorldObjectId: 100, heldWorldObjectIds: [100]}]
+        fromSaveB: [{id: 2, groupId: 'Container2', linkedInventoryId: 10, subInventoryIds: [10, 20], linkedWorldObjectId: 100}]
       };
 
       // Act
       const result = rewriteWorldObjectReferences(worldObjects, noRemapping);
 
       // Assert
-      expect(result.fromSaveB).toEqual([{id: 2, groupId: 'Container2', linkedInventoryId: 10, subInventoryIds: [10, 20], linkedWorldObjectId: 100, heldWorldObjectIds: [100]}]);
+      expect(result.fromSaveB).toEqual([{id: 2, groupId: 'Container2', linkedInventoryId: 10, subInventoryIds: [10, 20], linkedWorldObjectId: 100}]);
     });
 
     it('should leave an empty contained world object list as it is', () => {

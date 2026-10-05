@@ -37,14 +37,10 @@ button:hover {
     cursor: pointer;
 }
 
-button:disabled {
+button:disabled,
+button[aria-disabled='true'] {
     background-color: var(--button-primary-bg-disabled);
     cursor: not-allowed;
-}
-
-button:focus-visible {
-    outline: none;
-    box-shadow: var(--shadow-medium) var(--neon-pink), var(--shadow-thick) var(--neon-pink);
 }
 
 .tooltip-anchor {
@@ -78,6 +74,7 @@ button:focus-visible {
     font-size: var(--text-sm);
     width: max-content;
     max-width: min(48ch, calc(var(--app-width) - var(--space-xxl)));
+    z-index: var(--layer-tooltip);
     visibility: hidden;
     pointer-events: none;
 }
@@ -87,18 +84,34 @@ button:focus-visible {
     visibility: visible;
 }
 
+@media (max-width: 768px) {
+    .tooltip-anchor .tooltip {
+        position: fixed;
+        top: auto;
+        right: var(--space-lg);
+        bottom: var(--space-lg);
+        left: var(--space-lg);
+        width: auto;
+        max-width: none;
+    }
+
+    .tooltip-anchor:hover .tooltip,
+    .tooltip-anchor:focus-within .tooltip {
+        pointer-events: auto;
+    }
+}
+
 .button-link {
     text-decoration: none;
+}
+
+.button-compact {
+    padding: var(--space-xs) var(--space-md);
 }
 
 .button-link:hover {
     background-color: var(--button-primary-bg-hover);
     cursor: pointer;
-}
-
-.button-link:focus-visible {
-    outline: none;
-    box-shadow: var(--shadow-medium) var(--neon-pink), var(--shadow-thick) var(--neon-pink);
 }
 
 .button-link-neon-pink,
@@ -109,4 +122,34 @@ button:focus-visible {
 
 .button-link-neon-pink:hover {
     text-decoration: underline;
+}
+
+:root {
+    --button-neon-pink-bg-hover: color-mix(in srgb, var(--neon-pink) 85%, var(--content));
+
+    --button-neon-pink-bg-disabled: color-mix(
+            in srgb,
+            var(--neon-pink) 50%,
+            white
+    );
+
+    @media (prefers-color-scheme: dark) {
+        --button-neon-pink-bg-disabled: color-mix(
+                in srgb,
+                var(--neon-pink) 50%,
+                black
+        );
+    }
+}
+
+.button-neon-pink {
+    background-color: var(--neon-pink);
+}
+
+.button-neon-pink:hover {
+    background-color: var(--button-neon-pink-bg-hover);
+}
+
+.button-neon-pink:disabled {
+    background-color: var(--button-neon-pink-bg-disabled);
 }

@@ -31,7 +31,7 @@ describe('PlacedWorldObjectEntity', () => {
     const optimizer = new PlacedWorldObjectEntity({
       id: 'opt-1', name: 'Optimizer1' as WorldObjectName, position: [0, 0, 0], planetId: 1
     });
-    const range: OptimizerRangeValueObject = {radius: 120, maxMachines: 5};
+    const range: OptimizerRangeValueObject = {radius: 120, maxMachines: 5, fuseSlots: 1};
     const productionLevels: EnergyLevelsByWorldObjectName = {EnergyGenerator1: 1.2};
 
     function producerAt(id: string, distance: number, planetId = 1): PlacedWorldObjectEntity {

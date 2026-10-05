@@ -26,8 +26,7 @@ export function rewriteWorldObjectReferences(worldObjects: EntriesByOrigin<World
       ...worldObject,
       linkedInventoryId: remapOptionalId(worldObject.linkedInventoryId, remappings.inventoryIds),
       subInventoryIds: remapOptionalIdList(worldObject.subInventoryIds, remappings.inventoryIds),
-      linkedWorldObjectId: remapOptionalId(worldObject.linkedWorldObjectId, remappings.worldObjectIds),
-      heldWorldObjectIds: remapOptionalIdList(worldObject.heldWorldObjectIds, remappings.worldObjectIds)
+      linkedWorldObjectId: remapOptionalId(worldObject.linkedWorldObjectId, remappings.worldObjectIds)
     }))
   };
 }

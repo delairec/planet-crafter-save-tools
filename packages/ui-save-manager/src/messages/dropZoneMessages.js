@@ -5,3 +5,4 @@ export const resolveNotJsonFileMessage = (fileName) => `${fileName} is not a JSO
 const resolveTooManyFilesMessage = (acceptedFiles) => `Drop ${acceptedFiles} here.`;
 export const tooManyFilesForOneSaveMessage = resolveTooManyFilesMessage('a single save file');
 export const tooManyFilesForTwoSavesMessage = resolveTooManyFilesMessage('two save files at most');
+export const saveDropHint = 'Drop a save here or choose a file.';

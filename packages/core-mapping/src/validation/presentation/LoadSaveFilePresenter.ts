@@ -1,11 +1,11 @@
 import {SaveFileValidationPresenterPort} from "../application/ports/SaveFileValidationPresenterPort";
 import type {SaveWarningResponse} from "../../save/application/responses/SaveWarningResponse";
 import {LoadSaveFileViewModel} from "./viewModels/LoadSaveFileViewModel";
-import {formatValidationError} from "../../save/presentation/formatValidationError";
-import {formatUnreadableLine} from "../../save/presentation/formatUnreadableLine";
-import {formatSaveWarning} from "../../save/presentation/formatSaveWarning";
-import {formatUniqueHostError} from "../../save/presentation/formatUniqueHostError";
-import {formatJsonExtensionError} from "../../save/presentation/formatJsonExtensionError";
+import {formatValidationError} from "../../save/presentation/mappers/formatValidationError";
+import {formatUnreadableLine} from "../../save/presentation/mappers/formatUnreadableLine";
+import {formatSaveWarning} from "../../save/presentation/mappers/formatSaveWarning";
+import {formatUniqueHostError} from "../../save/presentation/mappers/formatUniqueHostError";
+import {formatJsonExtensionError} from "../../save/presentation/mappers/formatJsonExtensionError";
 import type {SaveFileWithUnreadableLinesResponse} from "../application/responses/SaveFileWithUnreadableLinesResponse";
 import type {InvalidSaveFileResponse} from "../application/responses/InvalidSaveFileResponse";
 

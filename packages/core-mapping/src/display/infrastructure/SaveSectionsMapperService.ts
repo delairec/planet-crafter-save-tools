@@ -63,9 +63,11 @@ export class SaveSectionsMapperService implements SaveSectionsMapperPort {
         id: player.id,
         name: player.name,
         inventory: playerInventoryIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),
+        inventorySize: playerInventory?.size ?? 0,
         equipment: playerEquipmentIds.map((id) => worldObjects.find((worldObject) => worldObject.id === id)?.name ?? id),
         planetId: player.planetId,
-        host: player.host
+        host: player.host,
+        gauges: {oxygen: player.playerGaugeOxygen, health: player.playerGaugeHealth, thirst: player.playerGaugeThirst}
       });
     });
   }

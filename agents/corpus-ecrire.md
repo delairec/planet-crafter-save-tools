@@ -44,7 +44,7 @@ ne s'y anticipe pas : elle se nomme depuis une `TASK`, par un `REF @GAME_RELEASE
   `@DECISION.AMergeProducesAnOrdinarySave` (décision), `@PROCESS.ATaskBranchIsRebasedNeverMerged` (règle de
   conduite), `@LIMITATION.AnAtSignInAFolderNameCorruptsTheMergedSave` (limitation),
   `@TASK.DOCS1` (tâche), `@SECTION.Players` (section de la save), `@RULE.PlayersAreDeduplicatedByName` (règle),
-  `@COMMAND.MergeSaves` (commande), `@HYPOTHESIS.AWorldObjectMayCarryALinkedObjectList` (hypothèse). Pas de fichier d'exemple : la
+  `@COMMAND.MergeSaves` (commande), `@HYPOTHESIS.ALinkedInventoryPlanetIsCarriedOnlyByAnExchangePlatform` (hypothèse). Pas de fichier d'exemple : la
   marche le chargerait et `status` le compterait (@DECISION.AgentsMdNamesOneModelEntityPerType).
 - **Les commentaires `//` ne sont lus par aucune commande.** Un fait écrit là n'atteint pas la session suivante ; ce
   qu'un outil doit savoir est un champ.

@@ -14,6 +14,10 @@
     /** Sidebar **/
     --sidebar-width: 14rem;
 
+    /** Layers **/
+    --layer-tooltip: 1;
+    --layer-menu-dialog: 2;
+
     /** Spacing */
     --space-xxs: 0.125rem; /*  2px */
     --space-xs:  0.25rem;  /*  4px */
@@ -26,20 +30,29 @@
     --line-height-md: 1.5;
 
     /** Borders **/
-    --border-thin: 1px solid var(--border-color-inverted);
-    --border-medium: 2px solid var(--border-color-inverted);
-    --border-thick: 3px solid var(--neon-pink);
-    --notification-border: 0.375rem solid;
+    --border-width-thin: 1px;
+    --border-width-medium: 2px;
+    --border-width-thick: 3px;
+    --notification-border-width: 0.375rem;
+    --border-thin: var(--border-width-thin) solid var(--border-color-inverted);
+    --border-medium: var(--border-width-medium) solid var(--border-color-inverted);
+    --border-thick: var(--border-width-thick) solid var(--neon-pink);
+    --border-card: var(--border-width-thick) solid var(--neon-purple);
+    --notification-border: var(--notification-border-width) solid;
 
     /** Radii */
     --radius-xs: var(--space-xs);
     --radius-sm: var(--space-sm);
 
+    /** Focus **/
+    --focus-ring-width: var(--border-width-medium);
+    --focus-ring-offset: var(--space-xxs);
+
     /** Shadows **/
-    --shadow-medium: 0 0 0 2px;
-    --shadow-thick: 0 0 0 4px;
-    --shadow-glow: 0 0 1rem 0;
-    --text-shadow-thin: -1px 1px;
+    --glow-radius: 1rem;
+    --text-shadow-offset: 1px;
+    --shadow-glow: 0 0 var(--glow-radius) 0;
+    --text-shadow-thin: calc(-1 * var(--text-shadow-offset)) var(--text-shadow-offset);
 }
 
 *, *::before, *::after {
@@ -53,6 +66,11 @@ body {
     background: var(--canvas);
     color: var(--content);
     line-height: var(--line-height-md);
+}
+
+:focus-visible {
+    outline: var(--focus-ring-width) solid var(--neon-pink);
+    outline-offset: var(--focus-ring-offset);
 }
 
 details.surface summary {
@@ -105,8 +123,21 @@ summary::marker {
     align-items: baseline;
     gap: var(--space-sm);
     padding: var(--space-sm) var(--space-md);
+    margin-block: 0;
     border-left: var(--notification-border);
     border-radius: 0 var(--space-xs) var(--space-xs) 0;
+}
+
+.notification:not(.notification + .notification) {
+    margin-top: var(--space-xl);
+}
+
+.notification + .notification {
+    margin-top: var(--space-sm);
+}
+
+.notification:not(:has(+ .notification)) {
+    margin-bottom: var(--space-xl);
 }
 
 .notification-warning {
@@ -147,14 +178,12 @@ summary::marker {
     color: var(--information);
 }
 
-.inline-block {
-    display: inline-block;
-}
-
 .visually-hidden {
+    --visually-hidden-size: 1px;
+
     position: absolute;
-    width: 1px;
-    height: 1px;
+    width: var(--visually-hidden-size);
+    height: var(--visually-hidden-size);
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
@@ -173,6 +202,42 @@ code {
     color: var(--muted);
 }
 
+.message-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin: var(--space-lg) 0;
+}
+
+.message-group-title {
+    margin: 0;
+    font-weight: var(--semibold);
+}
+
+.message-group-details {
+    --summary-marker: '▸ ';
+}
+
+.message-group-details[open] {
+    --summary-marker: '▾ ';
+}
+
+.message-group-details summary {
+    width: fit-content;
+    color: var(--muted);
+    font-size: var(--text-sm);
+}
+
+.message-group-details summary:hover {
+    color: var(--content);
+}
+
+.message-group-list {
+    margin: var(--space-sm) 0 0;
+    padding-left: 0;
+    list-style: none;
+}
+
 /* A validation message reads like a stack frame: the message, then its origin on the line below. */
 .validation-message + .validation-message {
     margin-top: var(--space-sm);
@@ -186,28 +251,25 @@ code {
 }
 
 .validation-message-location {
+    --location-indent: 2ch;
+
     display: block;
-    padding-left: 2ch;
+    padding-left: var(--location-indent);
     color: var(--subtle);
 }
 
 
 pre {
+    --code-block-radius: 0.375rem;
+
     padding: var(--space-lg);
-    border-radius: 0.375rem;
+    border-radius: var(--code-block-radius);
     background-color: var(--elevated);
     overflow-x: auto;
 }
 
 .rounded-lg {
     border-radius: var(--space-sm);
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--space-lg);
-    align-items: start;
 }
 
 .configuration-cards {
@@ -221,19 +283,7 @@ pre {
     grid-column: 1 / -1;
 }
 
-.grid-item {
-    padding: var(--space-lg);
-    background-color: var(--elevated);
-    border: 3px solid var(--neon-purple);
-    border-radius: 0.375rem;
-}
-
-.mb-2 {
-    margin-bottom: var(--space-xxl);
-}
-
 @media (max-width: 768px) {
-    .grid-container,
     .configuration-cards {
         grid-template-columns: 1fr;
     }

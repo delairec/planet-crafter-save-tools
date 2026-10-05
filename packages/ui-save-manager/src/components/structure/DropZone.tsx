@@ -8,6 +8,7 @@ interface DropZoneProps {
   tooManyFilesMessage: string;
   onFilesDropped: (files: File[]) => void;
   class?: string;
+  holdsAFile?: boolean;
   children: JSX.Element;
 }
 
@@ -65,7 +66,7 @@ export default function DropZone(props: DropZoneProps) {
   return (
     <div role="group" aria-label={props.label} data-testid={props.testId}
          class={`drop-zone ${props.class ?? ''}`}
-         classList={{'drop-zone-active': dragEnterDepth() > 0}}
+         classList={{'drop-zone-active': dragEnterDepth() > 0, 'drop-zone-holds-a-file': props.holdsAFile}}
          onDragEnter={handleDragEnter}
          onDragLeave={() => setDragEnterDepth((depth) => Math.max(depth - 1, 0))}
          onDragOver={handleDragOver}

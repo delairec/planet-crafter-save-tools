@@ -20,6 +20,7 @@ modification ou réponse qu'il gouverne. Ne charger rien d'autre.
 | Lire une save de référence, un plan ou une ressource du dépôt privé `.do-not-commit/`        | `agents/contexte-prive.md`     |
 | Créer, renommer ou supprimer un package, ajouter une dépendance entre packages               | `agents/packages.md`           |
 | Ouvrir, rebaser, mettre à jour ou relire une pull request ; travailler sur une branche poussée | `agents/pull-request.md`       |
+| Vérifier une règle ou une hypothèse dans les fichiers du jeu (assembly décompilée)             | `agents/jeu-lire.md`           |
 
 ## Corpus de spécification (awawa)
 

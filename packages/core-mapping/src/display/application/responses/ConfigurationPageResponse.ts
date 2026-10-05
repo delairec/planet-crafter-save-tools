@@ -1,9 +1,4 @@
-export type DroneLogisticsEffectResponse = 'penalisesThePlayer' | 'helpsThePlayer';
-
-export interface DroneLogisticsResponse {
-  readonly paused: boolean;
-  readonly effect: DroneLogisticsEffectResponse;
-}
+import type {DroneLogisticsResponse} from "./DroneLogisticsResponse";
 
 export interface GlobalProgressionResponse {
   readonly allTimeTerraTokens: number;

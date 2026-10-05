@@ -5,8 +5,9 @@ import {useLoadedSave} from '~/hooks/useLoadedSave.ts';
 import {PAGE_PATHS} from '~/lib/pagePaths';
 
 interface SavePageProps {
-  group: string;
+  group?: string;
   page: string;
+  subject?: string;
   children: JSX.Element;
 }
 
@@ -15,7 +16,7 @@ export default function SavePage(props: SavePageProps) {
 
   return (
     <Show when={loadedSave.isSaveLoaded()} fallback={<Navigate href={PAGE_PATHS.loadSavePath}/>}>
-      <Breadcrumb group={props.group} page={props.page}/>
+      <Breadcrumb group={props.group} page={props.page} subject={props.subject}/>
       {props.children}
     </Show>
   );

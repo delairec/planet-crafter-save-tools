@@ -36,7 +36,7 @@ function createSectionsWithTwoPlayers(): SaveSections {
     terraformationLevels: [createTerraformationLevelEntry()],
     players: [
       createPlayerEntry({name: 'Nikowa'}),
-      createPlayerEntry({id: '76561190000000007', name: 'Chileny', inventoryId: 46, equipmentId: 47, host: false})
+      createPlayerEntry({id: '76561190000000007', name: 'Chileny', inventoryId: 46, equipmentId: 47, host: false, playerGaugeOxygen: 370, playerGaugeHealth: 54, playerGaugeThirst: 12.5})
     ],
     worldObjects: CARRIED_WORLD_OBJECTS,
     inventories: [
@@ -109,16 +109,20 @@ describe('SaveSectionsMapperService', () => {
       id: '76561190000000001',
       name: 'Nikowa',
       inventory: ['Phytoplankton3', 'MagnetarQuartz'],
+      inventorySize: 20,
       equipment: ['Backpack4', 'OxygenTank5'],
       planetId: 'Toxicity',
-      host: true
+      host: true,
+      gauges: {oxygen: 280, health: 72.67363739013672, thirst: 96.3858642578125}
     }), new PlayerEntity({
       id: '76561190000000007',
       name: 'Chileny',
       inventory: ['Phytoplankton1', 'PulsarQuartz'],
+      inventorySize: 20,
       equipment: ['Backpack7', 'OxygenTank4'],
       planetId: 'Toxicity',
-      host: false
+      host: false,
+      gauges: {oxygen: 370, health: 54, thirst: 12.5}
     })]);
   });
 

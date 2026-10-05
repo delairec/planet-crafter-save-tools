@@ -20,7 +20,7 @@ COMMAND MergeSaves
 	APPLIES @RULE.ASaveHasElevenSectionsTheLastReservedAndEmpty
 	APPLIES @RULE.ASectionLineIsOneJsonEntry
 	APPLIES @RULE.FloatFieldsCarryADotZeroSuffixInFlatRecords
-	APPLIES @RULE.APurificationLevelOfMinusOneMeansNotUnlocked
+	APPLIES @RULE.APurificationLevelOfMinusOneMarksAPlanetThatNeedsNoPurification
 	APPLIES @RULE.APlayerEntryCarriesCameraViewAndItsLifetimeTotals
 	APPLIES @RULE.TheGlobalMetadataEntryCarriesLogisticsPaused
 	APPLIES @RULE.ASaveDesignatesExactlyOneHostPlayer
