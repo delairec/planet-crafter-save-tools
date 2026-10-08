@@ -81,7 +81,7 @@
     "ajv": "^8.20.0",
     "bun": "1.4.2",
     "esbuild": "^0.28.2",
-    "fallow": "^3.28.0",
+    "fallow": "^3.31.0",
     "typescript": "^7.0.2"
   },
   "engines": {
